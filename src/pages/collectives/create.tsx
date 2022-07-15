@@ -17,11 +17,11 @@ const CollectivesView: React.FC = () => {
       syndicateContracts: { erc721CollectiveFactory }
     },
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
-  const addresses = CONTRACT_ADDRESSES[4];
+  const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
 
   const _name = Math.random().toString(36).slice(2, 7);
   const _symbol = Math.random().toString(36).slice(2, 5);
@@ -33,7 +33,7 @@ const CollectivesView: React.FC = () => {
     _symbol.toUpperCase()
   );
 
-  const [salt, setSalt] = useState<number>();
+  const [salt, setSalt] = useState<string>();
   const [contractAddresses, setContractAddresses] = useState<string[]>([]);
   const [encodedFunctions, setEncodedFunctions] = useState<string[]>([]);
   const [predictedAddress, setPredictedAddress] = useState<string>();
@@ -108,13 +108,20 @@ const CollectivesView: React.FC = () => {
   };
 
   const createCollective = async () => {
-    await erc721CollectiveFactory.createERC721Collective(
-      account,
+    const collectiveParams = {
       collectiveName,
       collectiveSymbol,
-      salt,
-      contractAddresses,
-      encodedFunctions,
+      totalSupply,
+      maxPerMember,
+      ethPrice,
+      tokenURI,
+      startTime: '0',
+      endTime: '1684952525'
+    };
+
+    await erc721CollectiveFactory.createERC721Collective(
+      account,
+      collectiveParams,
       onTxConfirm,
       onTxReceipt,
       onTxFail

@@ -1,8 +1,14 @@
-export abstract class EncodeCalls {
-  web3: Web3;
+import { IActiveNetwork } from '@/state/wallet/types';
+import { ContractBase } from '../ContractBase';
 
-  constructor(web3: Web3) {
-    this.web3 = web3;
+export class EncodeCalls extends ContractBase {
+  constructor(
+    address: string,
+    web3: Web3,
+    activeNetwork: IActiveNetwork,
+    CONTRACT_ABI: AbiItem[]
+  ) {
+    super(address, web3, activeNetwork, CONTRACT_ABI);
   }
 
   public allowModule(token: string, module: string): string {

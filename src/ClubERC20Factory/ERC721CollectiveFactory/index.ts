@@ -1,121 +1,138 @@
-import ERC721_Collective_Factory_ABI from 'src/contracts/ERC721CollectiveFactory.json';
+import ERC721_COLLECTIVE_FACTORY_ABI from 'src/contracts/ERC721CollectiveFactory.json';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { estimateGas } from '../shared/getGasEstimate';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { EncodeCalls } from './encodeCalls';
 
+interface ICollectiveParams {
+  collectiveName: string;
+  collectiveSymbol: string;
+  totalSupply: number;
+  maxPerMember: number;
+  ethPrice: string;
+  tokenURI: string;
+  startTime: string;
+  endTime: string;
+}
+
 export class ERC721CollectiveFactory extends EncodeCalls {
-  web3;
-  address;
-  activeNetwork;
-  erc721CollectiveFactory;
-
-  // initialize new instance of ERC721CollectiveFactory
-  constructor(
-    erc721CollectiveFactoryAddress: string,
-    web3: Web3,
-    activeNetwork: IActiveNetwork
-  ) {
-    super(web3);
-    this.web3 = web3;
-    this.activeNetwork = activeNetwork;
-    this.address = erc721CollectiveFactoryAddress;
-    this.init();
-  }
-
-  init(): void {
-    try {
-      this.erc721CollectiveFactory = new this.web3.eth.Contract(
-        ERC721_Collective_Factory_ABI,
-        this.address
-      );
-    } catch (error) {
-      this.erc721CollectiveFactory = null;
-    }
+  constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
+    super(
+      address,
+      web3,
+      activeNetwork,
+      ERC721_COLLECTIVE_FACTORY_ABI as AbiItem[]
+    );
   }
 
   /**
    *
    * @param account address
-   * @param collectiveName Name of token
-   * @param collectiveSymbol Symbol of token
-   * @param salt random salt for deterministic token creation
-   * @param contractAddresses `setupContracts` array of contracts to setup
-   * @param encodedFunctions array of bytes for setup contract calls
+   * @param collectiveParams
    * @param onTxConfirm
    * @param onTxReceipt
    * @param onTxFail
    */
   public async createERC721Collective(
     account: string,
-    collectiveName: string,
-    collectiveSymbol: string,
-    salt: number,
-    contractAddresses: string[],
-    encodedFunctions: string[],
+    collectiveParams: ICollectiveParams,
     onTxConfirm: (transactionHash) => void,
     onTxReceipt: (receipt) => void,
     onTxFail: (err) => void
   ): Promise<void> {
-    let gnosisTxHash;
-    const gasEstimate = await estimateGas(this.web3);
+    const { collectiveName, collectiveSymbol } = collectiveParams;
 
-    await new Promise((resolve, reject) => {
-      this.erc721CollectiveFactory.methods
-        .create(
+    const { salt, contractAddresses, encodedFunctions } =
+      await this.createSetupParams(account, collectiveParams);
+
+    await this.send(
+      account,
+      () =>
+        this.contract.methods.create(
           collectiveName,
           collectiveSymbol,
           salt,
           contractAddresses,
           encodedFunctions
-        )
-        .send({ from: account, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
-          onTxConfirm(transactionHash);
-          if (
-            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
-          ) {
-            gnosisTxHash = transactionHash;
-            resolve(transactionHash);
-            onTxConfirm('');
-          }
-        })
-        .on('receipt', (receipt) => {
-          onTxReceipt(receipt);
-          resolve(receipt);
-        })
-        .on('error', (err) => {
-          onTxFail(err);
-          reject(err);
-        });
-    });
-
-    if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(
-        gnosisTxHash,
-        this.activeNetwork
-      );
-      onTxConfirm(receipt.transactionHash);
-      if (receipt.isSuccessful) {
-        onTxReceipt(receipt);
-      } else {
-        onTxFail('Transaction failed');
-      }
-    }
+        ),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
   }
 
   /**
    * Predict collective token address for given salt
    * @param account address
    * @param salt Salt for determinisitic clone
-   * @returns token Address of token created with salt
+   * @returns {Promise} token Address of token created with salt
    */
-  public async predictAddress(account: string, salt: number): Promise<string> {
-    return this.erc721CollectiveFactory.methods
-      .predictAddress(salt)
-      .call({ from: account });
+  public async predictAddress(account: string, salt: string): Promise<string> {
+    return this.contract.methods.predictAddress(salt).call({ from: account });
   }
 
+  /**
+   * Create Setup Params
+   * @param account  address
+   * @param collectiveParams
+   * @returns {Promise}
+   */
+  public async createSetupParams(
+    account: string,
+    collectiveParams: ICollectiveParams
+  ): Promise<{
+    salt: string;
+    contractAddresses: string[];
+    encodedFunctions: string[];
+  }> {
+    const {
+      totalSupply,
+      maxPerMember,
+      ethPrice,
+      tokenURI,
+      startTime,
+      endTime
+    } = collectiveParams;
+
+    const salt = this.web3.utils.randomHex(32);
+
+    const predictedAddress = await this.predictAddress(account, salt);
+    const mixins = [
+      this.addresses.TimeRequirements,
+      this.addresses.MaxPerMemberERC721,
+      this.addresses.MaxTotalSupplyERC721
+    ];
+
+    const contractAddresses = [
+      this.addresses.TimeRequirements,
+      this.addresses.MaxTotalSupplyERC721,
+      this.addresses.MaxPerMemberERC721,
+      this.addresses.GuardMixinManager,
+      this.addresses.GuardMixinManager,
+      this.addresses.EthPriceMintModule,
+      this.addresses.FixedRenderer
+    ];
+
+    const encodedFunctions = [
+      this.setTimeRequirements(predictedAddress, startTime, endTime),
+      this.setTotalSupplyRequirements(predictedAddress, totalSupply),
+      this.setMaxPerMemberRequirements(predictedAddress, maxPerMember),
+      this.updateDefaultMixins(predictedAddress, mixins),
+      this.allowModule(predictedAddress, this.addresses.EthPriceMintModule),
+      this.updateEthPrice(predictedAddress, ethPrice),
+      this.updateTokenURI(predictedAddress, tokenURI)
+    ];
+
+    return {
+      salt,
+      contractAddresses,
+      encodedFunctions
+    };
+  }
+
+  /**
+   * Estimate Gas
+   * @param account
+   * @param onResponse
+   */
   public async getEstimateGas(
     account: string,
     onResponse: (gas?: number) => void
@@ -143,23 +160,17 @@ export class ERC721CollectiveFactory extends EncodeCalls {
       '0xf6a4b4d7000000000000000000000000ff8012d695cb421ed4cea306f3485410640698530000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000b697066733a2f2f68617368000000000000000000000000000000000000000000'
     ];
 
-    await new Promise(() => {
-      this.erc721CollectiveFactory.methods
-        .create(
+    this.estimateGas(
+      account,
+      () =>
+        this.contract.methods.create(
           collectiveName,
           collectiveSymbol,
           salt,
           contractAddresses,
           encodedFunctions
-        )
-        .estimateGas(
-          {
-            from: account
-          },
-          (_error, gasAmount) => {
-            if (gasAmount) onResponse(gasAmount);
-          }
-        );
-    });
+        ),
+      onResponse
+    );
   }
 }
