@@ -36,6 +36,7 @@ interface Props {
   allowOwnershipTransfer: boolean;
   handleChangeAllowOwnershipTransfer: (newAllowingTransfer: boolean) => void;
   isContinueButtonActive: boolean;
+  handleContinue: (e) => void;
 }
 
 export const CollectiveFormCustomize: React.FC<Props> = ({
@@ -58,7 +59,8 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
   handleCloseTimeChange,
   allowOwnershipTransfer,
   handleChangeAllowOwnershipTransfer,
-  isContinueButtonActive
+  isContinueButtonActive,
+  handleContinue
 }) => {
   const [openUntilRadioIndex, setOpenUntilRadioIndex] = useState(null);
 
@@ -264,6 +266,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
         </button>

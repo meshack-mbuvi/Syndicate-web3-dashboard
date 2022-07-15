@@ -44,5 +44,6 @@ const Template = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   isContinueButtonActive: false,
-  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' }
+  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
+  handleContinue: () => {}
 };

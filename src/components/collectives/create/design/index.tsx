@@ -14,6 +14,7 @@ interface Props {
   descriptionValue: string;
   handleDescriptionChange: (input: string) => void;
   isContinueButtonActive: boolean;
+  handleContinue: (e) => void;
   handleUpload: (e) => void;
   handleCancelUpload: () => void;
 }
@@ -26,6 +27,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   descriptionValue,
   handleDescriptionChange,
   isContinueButtonActive,
+  handleContinue,
   handleUpload,
   handleCancelUpload
 }) => {
@@ -73,6 +75,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
         </button>
