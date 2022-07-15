@@ -9,25 +9,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
 import Layout from '@/components/layout';
-
-// Factory
-// const factoryAddress = '0xe16d032f1cf5974cf8d1985278b464ed91220733';
-
-// Fixed Renderer
-const fixedRenderer = '0x6c4f220416751503e81e38deee9899082a803275';
-
-// Guard
-const mintGuard = '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b';
-
-// Modules
-const ethPriceModule = '0x89583ad6aba72c7c6de70ee9a290884abc4000c3';
-// const ownerMintModule = '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471';
-
-// Mixins
-const timeMixin = '0x723541996f751ea24608e9de75488746a067d61b';
-const maxPerWalletMixin = '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46';
-const totalSupplyMixin = '0x50ab2de08f81522fffe1156af22374d37222e14f';
-const mixins = [timeMixin, maxPerWalletMixin, totalSupplyMixin];
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const CollectivesView: React.FC = () => {
   const {
@@ -38,6 +20,8 @@ const CollectivesView: React.FC = () => {
       web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
+
+  const addresses = CONTRACT_ADDRESSES[4];
 
   const _name = Math.random().toString(36).slice(2, 7);
   const _symbol = Math.random().toString(36).slice(2, 5);
@@ -57,6 +41,11 @@ const CollectivesView: React.FC = () => {
 
   const { gasPrice, getEstimateGas } = useGasEstimate();
 
+  const totalSupply = 10000;
+  const maxPerMember = 3;
+  const ethPrice = getWeiAmount(web3, '0.5', 18, true);
+  const tokenURI = 'ipfs://hash';
+
   const generateSalt = async () => {
     const _salt = web3.utils.randomHex(32);
     setSalt(_salt);
@@ -75,14 +64,20 @@ const CollectivesView: React.FC = () => {
   };
 
   const createSetupParams = async () => {
+    const mixins = [
+      addresses.TimeRequirements,
+      addresses.MaxPerMemberERC721,
+      addresses.MaxTotalSupplyERC721
+    ];
+
     const _contractAddresses = [
-      timeMixin,
-      totalSupplyMixin,
-      maxPerWalletMixin,
-      mintGuard,
-      mintGuard,
-      ethPriceModule,
-      fixedRenderer
+      addresses.TimeRequirements,
+      addresses.MaxTotalSupplyERC721,
+      addresses.MaxPerMemberERC721,
+      addresses.GuardMixinManager,
+      addresses.GuardMixinManager,
+      addresses.EthPriceMintModule,
+      addresses.FixedRenderer
     ];
 
     const _encodedFunctions = [
@@ -93,16 +88,19 @@ const CollectivesView: React.FC = () => {
       ),
       erc721CollectiveFactory.setTotalSupplyRequirements(
         predictedAddress,
-        10000
+        totalSupply
       ),
-      erc721CollectiveFactory.setMaxPerMemberRequirements(predictedAddress, 3),
-      erc721CollectiveFactory.updateDefaultMixins(predictedAddress, mixins),
-      erc721CollectiveFactory.allowModule(predictedAddress, ethPriceModule),
-      erc721CollectiveFactory.updateEthPrice(
+      erc721CollectiveFactory.setMaxPerMemberRequirements(
         predictedAddress,
-        web3.utils.toWei('0.5')
+        maxPerMember
       ),
-      erc721CollectiveFactory.updateTokenURI(predictedAddress, 'ipfs://hash')
+      erc721CollectiveFactory.updateDefaultMixins(predictedAddress, mixins),
+      erc721CollectiveFactory.allowModule(
+        predictedAddress,
+        addresses.EthPriceMintModule
+      ),
+      erc721CollectiveFactory.updateEthPrice(predictedAddress, ethPrice),
+      erc721CollectiveFactory.updateTokenURI(predictedAddress, tokenURI)
     ];
 
     setContractAddresses(_contractAddresses);

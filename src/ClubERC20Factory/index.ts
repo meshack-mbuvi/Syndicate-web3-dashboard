@@ -172,7 +172,7 @@ export const getSyndicateContracts = async (
   );
 
   const erc721CollectiveFactory = new ERC721CollectiveFactory(
-    addresses.erc721CollectiveFactory,
+    addresses.ERC721CollectiveFactory,
     web3,
     activeNetwork
   );
