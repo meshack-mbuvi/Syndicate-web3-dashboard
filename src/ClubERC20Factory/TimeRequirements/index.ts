@@ -13,36 +13,7 @@ export class TimeRequirements extends ContractBase {
     end: string
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'token',
-            type: 'address'
-          },
-          {
-            components: [
-              {
-                internalType: 'uint128',
-                name: 'startTime',
-                type: 'uint128'
-              },
-              {
-                internalType: 'uint128',
-                name: 'endTime',
-                type: 'uint128'
-              }
-            ],
-            internalType: 'struct TimeBased.TimeWindow',
-            name: 'timeWindow_',
-            type: 'tuple'
-          }
-        ],
-        name: 'setMixinRequirements',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('setMixinRequirements'),
       [token, { startTime: start, endTime: end }] as string[]
     );
   }

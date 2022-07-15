@@ -9,24 +9,7 @@ export class FixedRenderer extends ContractBase {
 
   public updateTokenURI(token: string, uri: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'collective',
-            type: 'address'
-          },
-          {
-            internalType: 'string',
-            name: 'uri',
-            type: 'string'
-          }
-        ],
-        name: 'updateTokenURI',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('updateTokenURI'),
       [token, uri]
     );
   }

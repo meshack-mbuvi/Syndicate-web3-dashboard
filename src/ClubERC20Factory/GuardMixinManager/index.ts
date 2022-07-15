@@ -9,53 +9,14 @@ export class GuardMixinManager extends ContractBase {
 
   public updateDefaultMixins(token: string, mixins: string[]): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'token',
-            type: 'address'
-          },
-          {
-            internalType: 'address[]',
-            name: 'mixins_',
-            type: 'address[]'
-          }
-        ],
-        name: 'updateDefaultMixins',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('updateDefaultMixins'),
       [token, mixins] as string[]
     );
   }
 
   public allowModule(token: string, module: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'token',
-            type: 'address'
-          },
-          {
-            internalType: 'address',
-            name: 'module',
-            type: 'address'
-          },
-          {
-            internalType: 'bool',
-            name: 'allowed',
-            type: 'bool'
-          }
-        ],
-        name: 'updateModule',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('updateModule'),
       [token, module, true] as string[]
     );
   }

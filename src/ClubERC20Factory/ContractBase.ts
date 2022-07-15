@@ -99,4 +99,8 @@ export abstract class ContractBase {
       );
     });
   }
+
+  protected getAbiObject(functionName: string): AbiItem | undefined {
+    return this.abiItem.find((item) => item.name === functionName);
+  }
 }

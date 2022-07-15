@@ -9,24 +9,7 @@ export class EthPriceMintModule extends ContractBase {
 
   public updateEthPrice(token: string, price: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'collective',
-            type: 'address'
-          },
-          {
-            internalType: 'uint256',
-            name: 'ethPrice_',
-            type: 'uint256'
-          }
-        ],
-        name: 'updateEthPrice',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('updateEthPrice'),
       [token, price]
     );
   }

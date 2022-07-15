@@ -14,24 +14,7 @@ export class MaxTotalSupplyERC721 extends ContractBase {
 
   public setTotalSupplyRequirements(token: string, number: number): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'address',
-            name: 'token',
-            type: 'address'
-          },
-          {
-            internalType: 'uint256',
-            name: 'maxTotalSupply_',
-            type: 'uint256'
-          }
-        ],
-        name: 'setMixinRequirements',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
+      this.getAbiObject('setMixinRequirements'),
       [token, number] as string[]
     );
   }
