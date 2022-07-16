@@ -184,37 +184,37 @@ export const getSyndicateContracts = async (
   );
 
   const ethPriceMintModule = new EthPriceMintModule(
-    addresses.ERC721CollectiveFactory,
+    addresses.EthPriceMintModule,
     web3,
     activeNetwork
   );
 
   const fixedRenderer = new FixedRenderer(
-    addresses.ERC721CollectiveFactory,
+    addresses.FixedRenderer,
     web3,
     activeNetwork
   );
 
   const guardMixinManager = new GuardMixinManager(
-    addresses.ERC721CollectiveFactory,
+    addresses.GuardMixinManager,
     web3,
     activeNetwork
   );
 
   const maxPerMemberERC721 = new MaxPerMemberERC721(
-    addresses.ERC721CollectiveFactory,
+    addresses.MaxPerMemberERC721,
     web3,
     activeNetwork
   );
 
   const maxTotalSupplyERC721 = new MaxTotalSupplyERC721(
-    addresses.ERC721CollectiveFactory,
+    addresses.MaxTotalSupplyERC721,
     web3,
     activeNetwork
   );
 
   const timeRequirements = new TimeRequirements(
-    addresses.ERC721CollectiveFactory,
+    addresses.TimeRequirements,
     web3,
     activeNetwork
   );
