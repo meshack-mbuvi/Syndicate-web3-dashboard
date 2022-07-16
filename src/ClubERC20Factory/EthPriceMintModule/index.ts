@@ -7,7 +7,7 @@ export class EthPriceMintModule extends ContractBase {
     super(address, web3, activeNetwork, ETH_PRICE_MINT_MODULE_ABI as AbiItem[]);
   }
 
-  public updateEthPrice(token: string, price: string): string {
+  public setEthPrice(token: string, price: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
       this.getAbiObject('updateEthPrice'),
       [token, price]

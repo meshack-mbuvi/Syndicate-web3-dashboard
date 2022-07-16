@@ -130,13 +130,13 @@ export class ERC721CollectiveFactory extends ContractBase {
         predictedAddress,
         maxPerMember
       ),
-      mintGuard.updateDefaultMixins(predictedAddress, mixins),
-      mintGuard.allowModule(
+      mintGuard.setDefaultMixins(predictedAddress, mixins),
+      mintGuard.setAllowModule(
         predictedAddress,
         this.addresses.EthPriceMintModule
       ),
-      ethPriceModule.updateEthPrice(predictedAddress, ethPrice),
-      fixedRenderer.updateTokenURI(predictedAddress, tokenURI)
+      ethPriceModule.setEthPrice(predictedAddress, ethPrice),
+      fixedRenderer.setTokenURI(predictedAddress, tokenURI)
     ];
 
     return {

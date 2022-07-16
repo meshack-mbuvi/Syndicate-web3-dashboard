@@ -7,14 +7,14 @@ export class GuardMixinManager extends ContractBase {
     super(address, web3, activeNetwork, GUARD_MIXIN_MANAGER_ABI as AbiItem[]);
   }
 
-  public updateDefaultMixins(token: string, mixins: string[]): string {
+  public setDefaultMixins(token: string, mixins: string[]): string {
     return this.web3.eth.abi.encodeFunctionCall(
       this.getAbiObject('updateDefaultMixins'),
       [token, mixins] as string[]
     );
   }
 
-  public allowModule(token: string, module: string): string {
+  public setAllowModule(token: string, module: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
       this.getAbiObject('updateModule'),
       [token, module, true] as string[]

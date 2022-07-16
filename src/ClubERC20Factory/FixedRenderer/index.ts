@@ -7,7 +7,7 @@ export class FixedRenderer extends ContractBase {
     super(address, web3, activeNetwork, FIXED_RENDERER_ABI as AbiItem[]);
   }
 
-  public updateTokenURI(token: string, uri: string): string {
+  public setTokenURI(token: string, uri: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
       this.getAbiObject('updateTokenURI'),
       [token, uri]
