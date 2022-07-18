@@ -9,6 +9,13 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
 import Layout from '@/components/layout';
+import moment from 'moment';
+
+const timeWindow = {
+  day: moment().add(1, 'days').valueOf(),
+  week: moment().add(1, 'weeks').valueOf(),
+  month: moment().add(1, 'months').valueOf()
+};
 
 const CollectivesView: React.FC = () => {
   const {
@@ -30,24 +37,27 @@ const CollectivesView: React.FC = () => {
     _symbol.toUpperCase()
   );
 
+  const [collectivePrice, setCollectivePrice] = useState('0.5');
+  const [collectiveMaxMint, setCollectiveMaxMint] = useState('3');
+  const [collectiveTotalSupply, setCollectiveTotalSupply] = useState('10000');
+  const [collectiveTime, setCollectiveTime] = useState(
+    timeWindow.day.toString()
+  );
+  const [collectiveIPFS, setCollectiveIPFS] = useState('ipfs://hash');
+
   const [txn, setTxn] = useState<string>();
   const { gasPrice, getEstimateGas } = useGasEstimate();
-
-  const totalSupply = 10000;
-  const maxPerMember = 3;
-  const ethPrice = getWeiAmount(web3, '0.5', 18, true);
-  const tokenURI = 'ipfs://hash';
 
   const createCollective = async () => {
     const collectiveParams = {
       collectiveName,
       collectiveSymbol,
-      totalSupply,
-      maxPerMember,
-      ethPrice,
-      tokenURI,
+      totalSupply: +collectiveTotalSupply,
+      maxPerMember: +collectiveMaxMint,
+      ethPrice: getWeiAmount(web3, collectivePrice, 18, true),
+      tokenURI: collectiveIPFS,
       startTime: '0',
-      endTime: '1684952525'
+      endTime: collectiveTime
     };
 
     await erc721CollectiveFactory.createERC721Collective(
@@ -102,6 +112,90 @@ const CollectivesView: React.FC = () => {
                 <InputField
                   value={collectiveSymbol}
                   onChange={(e) => setCollectiveSymbol(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Price per NFT */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">Price per NFT</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex justify-between">
+                <InputField
+                  value={collectivePrice}
+                  onChange={(e) => setCollectivePrice(e.target.value)}
+                  type="number"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Max per wallet */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">Max per wallet</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex justify-between">
+                <InputField
+                  value={collectiveMaxMint}
+                  onChange={(e) => setCollectiveMaxMint(e.target.value)}
+                  type="number"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Time window */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">Time window</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex justify-between">
+                <select
+                  name="time"
+                  className="mt-1 pl-3 pr-10 py-2 text-base border-gray-300 bg-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  defaultValue={collectiveTime}
+                  onChange={(e) => setCollectiveTime(e.target.value)}
+                >
+                  <option value={timeWindow.day}>24 hours</option>
+                  <option value={timeWindow.week}>1 week</option>
+                  <option value={timeWindow.month}>1 month</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Max supply of NFTs */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">Max supply of NFTs</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex justify-between">
+                <InputField
+                  value={collectiveTotalSupply}
+                  onChange={(e) => setCollectiveTotalSupply(e.target.value)}
+                  type="number"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ipfs hash */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">IPFS hash</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex justify-between">
+                <InputField
+                  value={collectiveIPFS}
+                  onChange={(e) => setCollectiveIPFS(e.target.value)}
                 />
               </div>
             </div>
