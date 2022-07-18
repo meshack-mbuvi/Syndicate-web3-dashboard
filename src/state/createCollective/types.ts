@@ -1,4 +1,7 @@
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
+import { MembershipType } from '@/components/collectives/create/customize';
 export interface CollectiveCreation {
   name: string;
   symbol: string;
@@ -8,12 +11,15 @@ export interface CollectiveCreation {
   description: string;
   pricePerNFT: number;
   maxPerWallet: number;
-  invitation: boolean; // allowlist, token gating, anyone with link.
-  openUntil: string; // future date., maxMembers, manualClose
-  closeDate: string;
+  membershipType: MembershipType;
+  openUntil: OpenUntil;
+  timeWindow: TimeWindow;
+  closeDate: Date;
+  closeTime: string;
   closeAfterMaxSupply: boolean;
   maxSupply: number;
   transferrable: boolean;
+  tokenDetails: { symbol: string; icon: string };
   creationStatus: {
     transactionHash: string;
     creationReceipt:
@@ -33,12 +39,15 @@ export const initialState: CollectiveCreation = {
   description: '',
   pricePerNFT: 0,
   maxPerWallet: 0,
-  invitation: false, // allowlist, token gating, anyone with link.
-  openUntil: '', // future date., maxMembers, manualClose
-  closeDate: '',
+  membershipType: MembershipType.OPEN,
+  openUntil: OpenUntil.FUTURE_DATE,
+  timeWindow: TimeWindow.DAY,
+  closeDate: new Date(),
+  closeTime: '23:59',
   closeAfterMaxSupply: false,
   maxSupply: 0,
   transferrable: false,
+  tokenDetails: { symbol: '', icon: '' },
   creationStatus: {
     transactionHash: '',
     creationReceipt: {

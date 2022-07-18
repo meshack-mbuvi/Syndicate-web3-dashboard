@@ -12,11 +12,15 @@ export const useCreateState = () => {
       description,
       pricePerNFT,
       maxPerWallet,
-      invitation,
+      membershipType,
+      timeWindow,
       openUntil,
       closeDate,
+      closeTime,
       closeAfterMaxSupply,
-      maxSupply
+      maxSupply,
+      transferrable,
+      tokenDetails
     }
   } = useSelector((state: AppState) => state);
 
@@ -29,11 +33,15 @@ export const useCreateState = () => {
     description,
     pricePerNFT,
     maxPerWallet,
-    invitation,
+    membershipType,
+    timeWindow,
     openUntil,
     closeDate,
+    closeTime,
     closeAfterMaxSupply,
-    maxSupply
+    maxSupply,
+    transferrable,
+    tokenDetails
   };
 };
 

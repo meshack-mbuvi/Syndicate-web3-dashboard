@@ -63,7 +63,7 @@ export const InputTimeWindow: React.FC<Props> = ({
             onChange={(e) => {
               handleCloseTimeChange(e.target.value);
             }}
-            placeholderLabel="Select a time"
+            placeholderLabel="11:59PM"
             extraClasses="mt-2"
           />
         </div>

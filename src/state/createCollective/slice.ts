@@ -25,14 +25,20 @@ const createCollectiveSlice = createSlice({
     setCollectiveMaxPerWallet(state, action: PayloadAction<number>) {
       state.maxPerWallet = action.payload;
     },
-    setCollectiveInvitation(state, action: PayloadAction<boolean>) {
-      state.invitation = action.payload;
+    setCollectiveMembershipType(state, action) {
+      state.membershipType = action.payload;
     },
     setCollectiveOpenUntil(state, action) {
       state.openUntil = action.payload;
     },
-    setCollectiveCloseDate(state, action: PayloadAction<string>) {
+    setCollectiveCloseDate(state, action: PayloadAction<Date>) {
       state.closeDate = action.payload;
+    },
+    setCollectiveCloseTime(state, action: PayloadAction<string>) {
+      state.closeTime = action.payload;
+    },
+    setCollectiveTimeWindow(state, action) {
+      state.timeWindow = action.payload;
     },
     setCollectiveCloseAfterMaxSupply(state, action: PayloadAction<boolean>) {
       state.closeAfterMaxSupply = action.payload;
@@ -42,6 +48,9 @@ const createCollectiveSlice = createSlice({
     },
     setCollectiveTransferrable(state, action: PayloadAction<boolean>) {
       state.transferrable = action.payload;
+    },
+    setColectiveTokenDetails(state, action: PayloadAction<any>) {
+      state.tokenDetails = action.payload;
     },
     setCollectiveCreationStatus(state, action: PayloadAction<any>) {
       state.creationStatus = action.payload;
@@ -59,12 +68,15 @@ export const {
   setCollectiveDescription,
   setCollectivePricePerNFT,
   setCollectiveMaxPerWallet,
-  setCollectiveInvitation,
+  setCollectiveMembershipType,
   setCollectiveOpenUntil,
+  setCollectiveTimeWindow,
   setCollectiveCloseDate,
+  setCollectiveCloseTime,
   setCollectiveCloseAfterMaxSupply,
   setCollectiveMaxSupply,
   setCollectiveTransferrable,
+  setColectiveTokenDetails,
   setCollectiveCreationStatus,
   resetCollectiveCreationState
 } = createCollectiveSlice.actions;
