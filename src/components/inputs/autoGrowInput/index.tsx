@@ -1,3 +1,4 @@
+import { getTextWidth } from '@/utils/getTextWidth';
 import { useEffect, useRef, useState } from 'react';
 import NumberFormat, { NumberFormatProps } from 'react-number-format';
 
@@ -18,14 +19,6 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   const [extraWidth, setExtraWidth] = useState(0);
   const [dynamicFontSize, setDynamicFontSize] = useState(48);
   const span = useRef<HTMLSpanElement>(null);
-
-  // Use canvas to determine text width
-  const getTextWidth = (text, font) => {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.font = font || getComputedStyle(document.body).font;
-    return context.measureText(text).width;
-  };
 
   useEffect(() => {
     const textWidth = getTextWidth(

@@ -1,7 +1,7 @@
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import Head from '@/components/syndicates/shared/HeaderTitle';
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 const TwoColumnLayout: FC<{
   dotIndicatorOptions: string[];
@@ -9,7 +9,6 @@ const TwoColumnLayout: FC<{
   leftColumnComponent;
   rightColumnComponent;
   handleExitClick?;
-  headerComponent; // For most cases, this will be the club Header component
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   headerTitle: string;
@@ -20,7 +19,6 @@ const TwoColumnLayout: FC<{
   leftColumnComponent,
   rightColumnComponent,
   headerTitle,
-  headerComponent,
   activeIndex,
   setActiveIndex,
   handleExitClick = () => ({}),
@@ -53,12 +51,8 @@ const TwoColumnLayout: FC<{
                     managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                   } col-span-12`}
                 >
-                  {headerComponent}
-
-                  {/* Show distribution or syndicateDetails components */}
-
                   <div className="w-full mt-5">{leftColumnComponent}</div>
-                  <div className="w-full md:hidden mt-8">
+                  <div className="w-full flex md:hidden mt-8">
                     {rightColumnComponent}
                   </div>
                 </div>

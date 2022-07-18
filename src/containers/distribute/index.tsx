@@ -576,13 +576,13 @@ const Distribute: FC = () => {
               setActiveIndex={handleSetActiveIndex}
               hideWalletAndEllipsis={true}
               showCloseButton={true}
-              headerComponent={headerComponent}
               headerTitle={name}
               managerSettingsOpen={true}
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
               leftColumnComponent={
                 <div>
+                  {headerComponent}
                   <TokenSelector
                     options={_options}
                     activeIndices={activeIndices}
