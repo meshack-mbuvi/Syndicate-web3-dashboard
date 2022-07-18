@@ -1,6 +1,7 @@
 import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
 
 export interface ERC20Token {
+  isValid?: boolean;
   name: string;
   owner: string;
   address: string;

@@ -48,7 +48,7 @@ import {
 import window from 'global';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { syndicateActionConstants } from 'src/components/syndicates/shared/Constants';
 import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
@@ -74,6 +74,7 @@ const LayoutWithSyndicateDetails: FC<{
   } = useSelector((state: AppState) => state);
 
   const {
+    isValid,
     owner,
     loading,
     name,
@@ -268,7 +269,13 @@ const LayoutWithSyndicateDetails: FC<{
    * Fetch club details
    */
   useEffect(() => {
-    if (!clubAddress || status == Status.CONNECTING || isEmpty(web3)) return;
+    if (
+      !clubAddress ||
+      status == Status.CONNECTING ||
+      isEmpty(web3) ||
+      pageLoading
+    )
+      return;
 
     if (
       clubAddress !== zeroAddress &&
@@ -292,7 +299,7 @@ const LayoutWithSyndicateDetails: FC<{
       // using "Active" as the default view.
       dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
-  }, [web3?._provider, clubAddress, account, status]);
+  }, [web3?._provider, clubAddress, account, status, pageLoading]);
 
   const showOnboardingIfNeeded =
     router.pathname.endsWith('[clubAddress]') && !isDemoMode;
@@ -391,7 +398,7 @@ const LayoutWithSyndicateDetails: FC<{
             <div className="w-full">
               {!pageLoading &&
               router.isReady &&
-              !name &&
+              !isValid &&
               !loading &&
               !isDemoMode ? (
                 syndicateEmptyState
