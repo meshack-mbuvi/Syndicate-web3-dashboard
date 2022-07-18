@@ -9,7 +9,7 @@ import {
   numberWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
   options: {
@@ -122,42 +122,74 @@ export const AssetList: React.FC<Props> = ({
       {
         ...options[index],
         tokenAmount,
-        fiatAmount: _fiatAmount
+        fiatAmount: _fiatAmount,
+        error: ''
       },
       ...options.slice(index + 1)
     ]);
   };
 
+  const inputRefs = useRef([]);
+
+  useEffect(() => {
+    inputRefs.current = inputRefs.current.slice(0, options.length);
+  }, [options]);
+
+  const handleOnClick = (index: number) => {
+    // The index was active so make it inactive
+    if (isIndexActive(index)) {
+      let newActiveIndices;
+      const indexToRemove = activeIndices.indexOf(index);
+      if (indexToRemove > -1) {
+        const arrayWithoutIndex = (array, index) =>
+          array.filter((_, i) => i !== index);
+        newActiveIndices = arrayWithoutIndex(activeIndices, indexToRemove);
+
+        handleActiveIndicesChange(newActiveIndices);
+      }
+    }
+
+    // The index was inactive so make it active
+    else {
+      handleActiveIndicesChange([...activeIndices, index]);
+      setTimeout(() => {
+        inputRefs.current[index].focus();
+      }, 300);
+    }
+  };
+
   const renderedOptions = options.map((option, index) => (
     <button
-      onClick={() => {
-        // The index was active so make it inactive
-        if (isIndexActive(index)) {
-          let newActiveIndices;
-          const indexToRemove = activeIndices.indexOf(index);
-          if (indexToRemove > -1) {
-            const arrayWithoutIndex = (array, index) =>
-              array.filter((_, i) => i !== index);
-            newActiveIndices = arrayWithoutIndex(activeIndices, indexToRemove);
-
-            handleActiveIndicesChange(newActiveIndices);
-          }
-        }
-
-        // The index was inactive so make it active
-        else {
-          handleActiveIndicesChange([...activeIndices, index]);
-        }
-      }}
       className={`w-full md:min-w-112 text-sm sm:text-base flex items-center justify-between md:space-x-3 ${
         activeIndices.includes(index)
-          ? 'py-5 bg-gray-syn8 hover:bg-gray-syn8 my-2'
-          : 'py-3 hover:bg-gray-syn9'
-      } transition-all px-3 sm:px-4 md:px-6 cursor-pointer rounded-custom`}
+          ? 'py-5 bg-gray-syn8 hover:bg-gray-syn8 my-2 cursor-text'
+          : 'py-3 hover:bg-gray-syn9 cursor-pointer'
+      } transition-all px-3 sm:px-4 md:px-6 rounded-custom`}
       key={index}
+      onClick={() => {
+        // click target is the button when checkbox is unchecked
+        if (!isIndexActive(index)) {
+          handleOnClick(index);
+        }
+      }}
     >
       {/* Left column */}
-      <div className="flex space-x-4 md:space-x-4 items items-center w-full max-w-6/12">
+      <div
+        className="flex space-x-4 md:space-x-4 items items-center w-full max-w-6/12"
+        onClick={() => {
+          if (isIndexActive(index)) {
+            handleOnClick(index);
+          }
+        }}
+        onKeyPress={() => {
+          // This div becomes click target when checkbox is checked
+          if (isIndexActive(index)) {
+            handleOnClick(index);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
         <Checkbox
           isActive={isIndexActive(index)}
           extraClasses="flex-shrink-0"
@@ -169,7 +201,6 @@ export const AssetList: React.FC<Props> = ({
         />
         {/* Name */}
         <div className="text-left flex-grow overflow-hidden md:overflow-visible">
-          {/* <div className='h-full w-full truncate'>fdvdfdvfdvfdvfdvfdvvfvdf</div> */}
           <div className="block whitespace-nowrap md:whitespace-normal md:inline truncate">
             {option.name}
           </div>
@@ -187,7 +218,7 @@ export const AssetList: React.FC<Props> = ({
             <div
               className={`${
                 isIndexActive(index) ? 'scale-100 max-w-20' : 'scale-0 max-w-0'
-              } hidden xl:block transition-all transform duration-300`}
+              } hidden xl:block transition-all transform duration-300 -mt-6`}
             >
               <PillButton
                 onClick={(e) => {
@@ -196,7 +227,7 @@ export const AssetList: React.FC<Props> = ({
                 }}
                 extraClasses={`${
                   isIndexActive(index)
-                    ? 'ml-2 transition-all duration-300 opacity-0 md:opacity-100'
+                    ? 'ml-2 mr-4 transition-all duration-300 opacity-0 md:opacity-100'
                     : 'opacity-0'
                 }`}
               >
@@ -248,6 +279,8 @@ export const AssetList: React.FC<Props> = ({
                   }}
                 >
                   <InputField
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    disabled={!isIndexActive(index)}
                     value={
                       // Check if we have a temporary input field value to use (for incomplete decimals), otherwise use
                       // the appropriate amount
@@ -266,15 +299,20 @@ export const AssetList: React.FC<Props> = ({
                       )
                     }
                     onClick={(e) => {
-                      // This stops the row from toggling active/unactive
+                      // This stops the row from toggling active/inactive
                       e.stopPropagation();
                     }}
                     onChange={(e) => {
                       const input = e.target.value;
                       const strNumber = stringNumberRemoveCommas(input);
+                      const validChars = /^[0-9]+\.?[0-9]*$/;
 
-                      // Check if the user is typing a "." for a decimal
+                      // Don't proceed if input contains invalid characters
+                      if (!validChars.test(strNumber) && strNumber !== '')
+                        return;
+
                       if (isStringIncompleteDecimalNumber(strNumber)) {
+                        // Check if the user is typing a "." for a decimal
                         // Use temporary input field values to wait for the user to type a complete decimal number.
                         // Before returning new options to handleOptionsChange.
                         setTemporaryInputFieldValues([
@@ -364,7 +402,7 @@ export const AssetList: React.FC<Props> = ({
                         ? 'text-red-error'
                         : 'text-white'
                     } `}
-                    extraClasses={`border-none bg-transparent p-0 text-right`}
+                    extraClasses={`border-none bg-transparent p-0 text-right focus:cursor-text`}
                   />
                 </div>
 
@@ -380,6 +418,11 @@ export const AssetList: React.FC<Props> = ({
                         : option.tokenAmount
                     )
                   )}`}
+                  // clicking symbol should focus the input field
+                  onClick={() => inputRefs.current[index].focus()}
+                  tabIndex={0}
+                  role="button"
+                  onKeyPress={() => inputRefs.current[index].focus()}
                 >
                   {!option.isEditingInFiat ? option.symbol : `USD`}
                 </div>

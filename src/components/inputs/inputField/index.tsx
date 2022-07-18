@@ -69,13 +69,20 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           )}
 
           <input
-            className={`block text-base focus:outline-none text-white ${
+            className={`block text-base focus:outline-none focus:cursor-text text-white ${
               classesOverride ? classesOverride : inputStyles
             } ${errorStyles} ${icon && 'pl-11'} w-full ${extraClasses}`}
             placeholder={placeholderLabel}
             value={value}
             onChange={onChange}
             onClick={onClick}
+            onBlur={() => {
+              // remove leading . for numbers
+              if (value.endsWith('.')) {
+                const newValue = value.slice(0, -1);
+                onChange({ target: { value: newValue } });
+              }
+            }}
             ref={ref}
             type={type}
             style={{

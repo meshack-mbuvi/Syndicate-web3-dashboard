@@ -3,6 +3,7 @@ import { SearchInput } from '@/components/inputs';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import { B2, H4 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
@@ -150,7 +151,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
   const wideCellStyles = `w-60 xl:w-72`;
   const narrowCellStyles = `w-12`;
-  const headerCellStyles = 'w-60 xl:w-72 pr-1';
+  const headerCellStyles = 'w-60 xl:w-72';
   const amountCellStyles = 'font-mono';
 
   // This iterates through the rows finding all unique
@@ -338,7 +339,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
           setHoveredRow(null);
         }}
         className={`w-full flex justify-between ${
-          isEditing ? 'cursor-pointer' : ''
+          isEditing ? 'cursor-pointer' : 'cursor-text'
         } transition-all ease-out`}
         key={memberDetails.memberName}
       >
@@ -430,9 +431,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
                   {memberDetails.receivingTokens.find((receivingToken) => {
                     return receivingToken.tokenSymbol === tokenSymbol;
                   }) && isAddressActive(memberDetails.memberName)
-                    ? memberDetails.receivingTokens?.find((receivingToken) => {
-                        return receivingToken.tokenSymbol === tokenSymbol;
-                      }).amount
+                    ? floatedNumberWithCommas(
+                        memberDetails.receivingTokens?.find(
+                          (receivingToken) => {
+                            return receivingToken.tokenSymbol === tokenSymbol;
+                          }
+                        ).amount
+                      )
                     : 0}
                 </div>
                 <div
@@ -487,7 +492,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
               key={index}
             >
               <div>
-                {tokenAmountTotals[index]}{' '}
+                {floatedNumberWithCommas(tokenAmountTotals[index])}{' '}
                 <span className={`text-gray-syn4`}>{tokenSymbol}</span>
               </div>
             </div>

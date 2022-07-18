@@ -659,6 +659,8 @@ const ReviewDistribution: React.FC = () => {
     );
   };
 
+  const socialURL = window.location.href;
+
   return (
     <div className="container mx-auto w-full">
       <div className="flex items-center justify-between mb-5">
@@ -708,7 +710,7 @@ const ReviewDistribution: React.FC = () => {
             greenCta={true}
             fullWidth={false}
             onClick={showDistributeDisclaimer}
-            disabled={memberDetails.length == 0}
+            disabled={activeAddresses.length == 0}
           >
             Submit
           </CtaButton>
@@ -740,6 +742,7 @@ const ReviewDistribution: React.FC = () => {
         isModalVisible={isConfirmationModalVisible}
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
+        showCloseButton={!isTransactionPending}
       >
         <>
           {steps?.[activeIndex].status !== '' && (
@@ -767,7 +770,7 @@ const ReviewDistribution: React.FC = () => {
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
         handleModalClose={() => setShareDistributionNews(false)}
-        socialURL={`https://app.syndicate.io/clubs/${clubAddress}`}
+        socialURL={socialURL}
         transactionHash={transactionHash}
         description={`Just made an investment distribution for ${name} (${symbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
         handleClick={handleViewDashboard}

@@ -7,6 +7,7 @@ export const MOCK_START_TIME = 1642429321762;
 export const MOCK_END_TIME = 1647526921762;
 
 export const mockERC20Token: ERC20Token = {
+  isValid: true,
   totalSupply: 12044.45,
   address: 'demo',
   name: 'Alpha Beta Club',

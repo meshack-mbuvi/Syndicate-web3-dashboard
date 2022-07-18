@@ -14,6 +14,7 @@ import { getTokenDetails } from '@/utils/api';
 import { getWeiAmount } from '@/utils/conversions';
 
 export const ERC20TokenDefaultState = {
+  isValidClub: false,
   name: '',
   owner: '',
   address: '',
@@ -118,11 +119,14 @@ export const getERC20TokenDetails = async (
         depositsEnabled = endDateInFuture;
       }
 
+      const isValid = +startTime > 0;
+
       return {
+        isValid,
         currentMintPolicyAddress,
         totalSupply,
         address,
-        name,
+        name: name || '',
         owner,
         tokenDecimals,
         symbol,

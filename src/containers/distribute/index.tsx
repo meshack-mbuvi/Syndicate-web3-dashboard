@@ -35,7 +35,7 @@ import {
 } from '@/utils/mockdata';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
@@ -187,21 +187,6 @@ const Distribute: FC = () => {
     dispatch(setDistributionMembers(clubMembers));
   }, [JSON.stringify(clubMembers), loadingClubMembers]);
 
-  // check whether we have sufficient gas for distribution
-  useEffect(() => {
-    if (
-      eth &&
-      gasEstimate &&
-      +(parseFloat(eth.available) - parseFloat(eth.totalToDistribute)).toFixed(
-        5
-      ) >= parseFloat(gasEstimate.tokenAmount)
-    ) {
-      setSufficientGas(true);
-    } else {
-      setSufficientGas(false);
-    }
-  }, [JSON.stringify(gasEstimate), JSON.stringify(eth)]);
-
   /**
    * Prepare and handle token selection.
    */
@@ -209,6 +194,42 @@ const Distribute: FC = () => {
   const [_options, setOptions] = useState([]);
   const [processingTokens, setProcessingTokens] = useState(true);
 
+  // check whether we have sufficient gas for distribution
+  useEffect(() => {
+    if (!activeIndices.length) return; // return, there is nothing to distribute
+
+    const [_loadedNativeToken] = tokensResult.filter(
+      (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+    );
+    const [_nativeToken] = distributionTokens.filter(
+      (token) => token.symbol === activeNetwork.nativeCurrency.symbol
+    );
+
+    const _totalNativeCurrencyGasEstimate =
+      distributionTokens.length * +gasEstimate.tokenAmount;
+
+    // _nativeToken is undefined if its not selected
+    if (_nativeToken) {
+      const { tokenAmount } = _nativeToken;
+
+      if (tokenAmount > _totalNativeCurrencyGasEstimate) {
+        // we have enough gas
+        setSufficientGas(true);
+      } else {
+        setSufficientGas(false);
+      }
+    } else {
+      // token not selected for distribution
+      if (_loadedNativeToken?.tokenBalance > _totalNativeCurrencyGasEstimate) {
+        // we have enough gas
+        setSufficientGas(true);
+      } else {
+        setSufficientGas(false);
+      }
+    }
+  }, [distributionTokens, activeIndices]);
+
+  // Calculates maximum tokens that can be distributed per given token
   const getTransferableTokens = useCallback(async () => {
     if (_options.length) {
       setOptions(_options);
@@ -262,7 +283,12 @@ const Distribute: FC = () => {
       setOptions(tokens);
       setProcessingTokens(false);
     }
-  }, [tokensResult, activeNetwork.chainId, gasEstimate.tokenAmount]);
+  }, [
+    tokensResult,
+    activeNetwork.chainId,
+    activeNetwork.nativeCurrency.symbol,
+    gasEstimate.tokenAmount
+  ]);
 
   useEffect(() => {
     getTransferableTokens();
@@ -280,6 +306,48 @@ const Distribute: FC = () => {
       dispatch(setDistributeTokens([]));
     }
   }, [_options, activeIndices, dispatch]);
+
+  // Whenever the a new token is selected, maximum native token value should be recalculated
+  useEffect(() => {
+    let _ethIndex = -1;
+    const [nativeToken] = _options.filter((token, ethIndex) => {
+      if (token.symbol === activeNetwork.nativeCurrency.symbol) {
+        _ethIndex = ethIndex;
+        return token;
+      }
+    });
+
+    if (nativeToken) {
+      const { maximumTokenAmount: currentMax } = nativeToken;
+
+      // Calculate maximum amount of nativeToken that can be distributed
+      // Note: Added a 0.5 margin for gas estimate inaccuracy
+      const _newMaxTokenAmount = activeIndices.length
+        ? +eth.available - +gasEstimate.tokenAmount * activeIndices.length * 1.5
+        : +eth.available - +gasEstimate.tokenAmount * 1.5;
+
+      // if maximum value is selected, trigger error message
+      let error = '';
+      if (currentMax > _newMaxTokenAmount) {
+        error = 'Exceeds amount available for distribution';
+        setSufficientGas(false);
+      } else {
+        error = '';
+        setSufficientGas(true);
+      }
+
+      // update maximumTokenAmount on ETH token
+      setOptions([
+        ..._options.slice(0, _ethIndex),
+        {
+          ..._options[_ethIndex],
+          error,
+          maximumTokenAmount: _newMaxTokenAmount
+        },
+        ..._options.slice(_ethIndex + 1)
+      ]);
+    }
+  }, [activeIndices, gasEstimate.tokenAmount]);
 
   // dispatch the price of the deposit token for use in other
   // components
@@ -376,29 +444,29 @@ const Distribute: FC = () => {
     };
 
     if (tokensResult.length) {
-      const [ETH] = tokensResult.filter(
+      const [nativeToken] = tokensResult.filter(
         (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
       );
-      eth.available = ETH?.tokenBalance || '0';
+      eth.available = nativeToken?.tokenBalance || '0';
     }
 
-    const [ethToken] = distributionTokens.filter(
+    const [nativeToken] = distributionTokens.filter(
       (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
 
     // update total selected amount
-    eth.totalToDistribute = ethToken?.tokenAmount ?? '0';
+    eth.totalToDistribute = nativeToken?.tokenAmount ?? '0';
 
     if (
       tokensResult.length > 1 &&
       distributionTokens.length < tokensResult.length
     ) {
-      if (ethToken) {
+      if (nativeToken) {
         if (
-          ethToken.tokenAmount > 0 &&
-          ethToken.tokenAmount == ethToken.maximumTokenAmount
+          nativeToken.tokenAmount > 0 &&
+          nativeToken.tokenAmount == nativeToken.maximumTokenAmount
         ) {
-          warning = `Consider reserving ${ethToken.symbol} to pay gas on future 
+          warning = `Consider reserving ${nativeToken.symbol} to pay gas on future 
           distributions`;
         } else {
           warning = '';
@@ -432,6 +500,12 @@ const Distribute: FC = () => {
     loadingAssets
   ]);
 
+  const [hasError, setHasError] = useState(true);
+  useEffect(() => {
+    const _hasError = _options.some((option) => option.error);
+    setHasError(_hasError);
+  }, [_options]);
+
   const handleNext = (event) => {
     event.preventDefault();
     setCurrentStep(Steps.selectMembers);
@@ -445,7 +519,7 @@ const Distribute: FC = () => {
         gasEstimate={gasEstimate}
         isLoading={isLoading}
         numSelectedTokens={distributionTokens.length}
-        isCTADisabled={ctaButtonDisabled || !sufficientGas}
+        isCTADisabled={ctaButtonDisabled || !sufficientGas || hasError}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
         }

@@ -213,9 +213,23 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         walletState === WalletState.CONNECTED ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
-            title="Approve transaction from your wallet"
+            title="Confirm in wallet"
+            description="Please confirm the changes in your wallet"
             state={progressState}
-            transactionHash={''}
+            transactionHash=""
+            transactionType={transactionType}
+          />
+        </div>
+      ) : progressState &&
+        progressState === ProgressState.FAILURE &&
+        walletState === WalletState.CONNECTED ? (
+        <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
+          <ProgressCard
+            title="Claim failed"
+            state={progressState}
+            transactionHash={transactionHash}
+            buttonLabel="Try again"
+            buttonFullWidth={true}
             transactionType={transactionType}
           />
         </div>
