@@ -3,7 +3,7 @@ import { Switch, SwitchType } from '@/components/switch';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import { B2, B3 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import React, { useState } from 'react';
+import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';

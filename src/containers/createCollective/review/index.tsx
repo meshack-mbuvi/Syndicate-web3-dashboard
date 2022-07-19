@@ -1,59 +1,130 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
-import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
-import { Callout } from '@/components/callout';
+import {
+  useCreateState,
+  useUpdateState
+} from '@/hooks/collectives/useCreateCollective';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 
 interface Props {
   handleNext: (e) => void;
 }
 const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
+  const {
+    name,
+    symbol,
+    // artwork,
+    // artworkType,
+    artworkUrl,
+    description,
+    pricePerNFT,
+    maxPerWallet,
+    membershipType,
+    timeWindow,
+    openUntil,
+    closeDate,
+    closeTime,
+    // closeAfterMaxSupply,
+    maxSupply,
+    transferrable,
+    tokenDetails
+  } = useCreateState();
+
+  const {
+    handleNameChange,
+    handleTokenSymbolChange,
+    // handleDescriptionChange,
+    // setContinueButtonActive,
+    // ContinueButtonActive,
+    handleTimeWindowChange,
+    handlePriceToJoinChange,
+    handleMaxPerWalletChange,
+    handleMaxSupplyChange,
+    handleClickToChangeToken,
+    handleOpenUntilChange,
+    handleCloseDateChange,
+    handleCloseTimeChange,
+    handleChangeAllowOwnershipTransfer,
+    submitButtonActive,
+    setSubmiteButtonActive,
+    handleSubmit
+  } = useUpdateState();
+
+  useEffect(() => {
+    if (
+      membershipType &&
+      pricePerNFT &&
+      maxPerWallet &&
+      timeWindow >= 0 &&
+      closeDate &&
+      closeTime &&
+      tokenDetails &&
+      name &&
+      artworkUrl &&
+      description &&
+      symbol
+    ) {
+      let proceed = true;
+
+      if (openUntil === OpenUntil.MAX_MEMBERS && !maxSupply) {
+        proceed = false;
+      }
+      setSubmiteButtonActive(proceed);
+      return;
+    }
+    setSubmiteButtonActive(false);
+  }, [
+    membershipType,
+    pricePerNFT,
+    maxPerWallet,
+    maxSupply,
+    openUntil,
+    timeWindow,
+    closeDate,
+    closeTime,
+    tokenDetails,
+    transferrable,
+    name,
+    artworkUrl,
+    description,
+    symbol
+  ]);
+
   return (
     <div>
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
       <div className="mt-8">
         <CollectiveFormReview
-          nameValue={''}
-          handleNameChange={() => {}}
-          tokenSymbolValue={''}
-          handleTokenSymbolChange={() => {}}
-          priceToJoin={1000}
-          handlePriceToJoinChange={() => {}}
-          tokenDetails={{ symbol: '', icon: '' }}
-          handleClickToChangeToken={() => {}}
-          maxPerWallet={10}
-          handleMaxPerWalletChange={() => {}}
-          openUntil={OpenUntil.FUTURE_DATE}
-          setOpenUntil={() => {}}
-          closeDate={new Date('10/10/2022')}
-          handleCloseDateChange={() => {}}
-          closeTime={'234234'}
-          handleCloseTimeChange={() => {}}
-          selectedTimeWindow={TimeWindow.DAY}
-          handleTimeWindowChange={() => {}}
+          nameValue={name}
+          handleNameChange={handleNameChange}
+          tokenSymbolValue={symbol}
+          handleTokenSymbolChange={handleTokenSymbolChange}
+          priceToJoin={pricePerNFT}
+          handlePriceToJoinChange={handlePriceToJoinChange}
+          tokenDetails={tokenDetails}
+          handleClickToChangeToken={handleClickToChangeToken}
+          maxPerWallet={maxPerWallet}
+          handleMaxPerWalletChange={handleMaxPerWalletChange}
+          openUntil={openUntil}
+          setOpenUntil={handleOpenUntilChange}
+          closeDate={closeDate}
+          handleCloseDateChange={handleCloseDateChange}
+          closeTime={closeTime}
+          handleCloseTimeChange={handleCloseTimeChange}
+          selectedTimeWindow={timeWindow}
+          handleTimeWindowChange={handleTimeWindowChange}
           endOfTimeWindow={'Jun 11, 2021 11:59pm PST'}
-          allowOwnershipTransfer={true}
-          handleChangeAllowOwnershipTransfer={() => {}}
+          maxSupply={maxSupply}
+          handleMaxSupplyChange={handleMaxSupplyChange}
+          allowOwnershipTransfer={transferrable}
+          handleChangeAllowOwnershipTransfer={
+            handleChangeAllowOwnershipTransfer
+          }
+          isSubmitButtonActive={submitButtonActive}
+          handleSubmit={handleSubmit}
         />
-        <div className="flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
-          {/* Gas fees */}
-          <div className="flex-grow">
-            <Callout>
-              <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
-            </Callout>
-          </div>
-
-          {/* Submit button */}
-          <button
-            onClick={handleNext}
-            className={`green-CTA transition-all duration-700 w-full lg:w-auto`}
-          >
-            Launch
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -62,12 +133,14 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
 export default CreateCollectiveReview;
 
 export const ReviewRightPanel: React.FC = () => {
+  const { artworkType, artworkUrl } = useCreateState();
   return (
     <div className="bg-black w-full h-full pb-38">
       <CollectivesInteractiveBackground
         heightClass="h-full"
         widthClass="w-full"
-        floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
+        mediaType={artworkType}
+        floatingIcon={artworkUrl}
         numberOfParticles={40}
       />
     </div>

@@ -18,6 +18,7 @@ const Template = (args) => {
   const [closeTime, setCloseTime] = useState('00:00');
   const [timeWindow, setTimeWindow] = useState(TimeWindow.CUSTOM);
   const [allowOwnershipTransfer, setAllowOwnershipTransfer] = useState(true);
+  const [maxSupply, setMaxSupply] = useState(123);
 
   return (
     <CollectiveFormReview
@@ -39,6 +40,8 @@ const Template = (args) => {
       selectedTimeWindow={timeWindow}
       handleTimeWindowChange={setTimeWindow}
       endOfTimeWindow={'Jun 11, 2021 11:59pm PST'}
+      maxSupply={maxSupply}
+      handleMaxSupplyChange={setMaxSupply}
       allowOwnershipTransfer={allowOwnershipTransfer}
       handleChangeAllowOwnershipTransfer={setAllowOwnershipTransfer}
       {...args}
@@ -48,5 +51,7 @@ const Template = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' }
+  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
+  isSubmitButtonActive: true,
+  handleSubmit: () => {}
 };
