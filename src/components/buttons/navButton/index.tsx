@@ -12,12 +12,18 @@ export enum NavButtonType {
 interface Props {
   type?: NavButtonType;
   onClick?: (event?) => void;
+  handlePrevious?: (event?) => void;
+  handleNext?: (event?) => void;
 }
 
-export const NavButton: React.FC<Props> = ({ type, onClick }) => {
+export const NavButton: React.FC<Props> = ({
+  type,
+  onClick,
+  handleNext,
+  handlePrevious
+}) => {
   return (
-    <button
-      onClick={onClick}
+    <div
       className={`flex ${
         type === NavButtonType.HORIZONTAL
           ? 'w-24 space-x-5 align-middle py-auto'
@@ -27,7 +33,10 @@ export const NavButton: React.FC<Props> = ({ type, onClick }) => {
       }`}
     >
       {type === NavButtonType.CLOSE && (
-        <div className="p-1 -m-2 text-gray-syn4 hover:text-white ease-out transition-all">
+        <button
+          className="p-1 -m-2 text-gray-syn4 hover:text-white ease-out transition-all"
+          onClick={onClick}
+        >
           <svg
             className="fill-current w-4 h-4"
             viewBox="0 0 16 16"
@@ -36,7 +45,7 @@ export const NavButton: React.FC<Props> = ({ type, onClick }) => {
           >
             <path d="M0.261088 14.4651C-0.0819663 14.8081 -0.0920561 15.3933 0.261088 15.7364C0.614233 16.0794 1.19944 16.0794 1.5425 15.7364L8 9.27889L14.4575 15.7364C14.8006 16.0794 15.3959 16.0895 15.7389 15.7364C16.082 15.3832 16.082 14.8081 15.7389 14.4651L9.28141 7.99748L15.7389 1.53998C16.082 1.19692 16.0921 0.61171 15.7389 0.268655C15.3858 -0.0844891 14.8006 -0.0844891 14.4575 0.268655L8 6.72616L1.5425 0.268655C1.19944 -0.0844891 0.604143 -0.094579 0.261088 0.268655C-0.0819663 0.6218 -0.0819663 1.19692 0.261088 1.53998L6.71859 7.99748L0.261088 14.4651Z" />
           </svg>
-        </div>
+        </button>
       )}
       {(type === NavButtonType.UP || type === NavButtonType.VERTICAL) && (
         <div
@@ -73,26 +82,36 @@ export const NavButton: React.FC<Props> = ({ type, onClick }) => {
 
       {/* Horizontal navigation buttons */}
       {type === NavButtonType.HORIZONTAL && (
-        <div className="flex py-auto text-gray-syn4 hover:text-white ease-out transition-all">
+        <button
+          className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
+            !handlePrevious && 'cursor-not-allowed'
+          }`}
+          onClick={handlePrevious ? handlePrevious : null}
+        >
           <Image
             src="/images/chevron-left-gray.svg"
             width={20}
             height={20}
             alt=""
           />
-        </div>
+        </button>
       )}
 
       {type === NavButtonType.HORIZONTAL && (
-        <div className="flex py-auto text-gray-syn4 hover:text-white ease-out transition-all">
+        <button
+          className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
+            !handleNext && 'cursor-not-allowed'
+          }`}
+          onClick={handleNext ? handleNext : null}
+        >
           <Image
             src="/images/chevron-right-gray.svg"
             width={20}
             height={20}
             alt=""
           />
-        </div>
+        </button>
       )}
-    </button>
+    </div>
   );
 };

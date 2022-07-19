@@ -212,7 +212,7 @@ const Header: React.FC<props> = ({
 
                 {activeIndex > 0 ? (
                   <NavButton
-                    onClick={setActiveIndex}
+                    handlePrevious={setActiveIndex}
                     type={NavButtonType.HORIZONTAL}
                   />
                 ) : null}

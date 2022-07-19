@@ -617,6 +617,8 @@ const Distribute: FC = () => {
               handleExitClick={handleExitClick}
               activeIndex={activeIndex}
               setActiveIndex={handleSetActiveIndex}
+              hideWalletAndEllipsis={true}
+              showCloseButton={true}
             >
               <ReviewDistribution />
             </Layout>
