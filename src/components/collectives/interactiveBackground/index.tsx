@@ -12,6 +12,7 @@ interface Props {
   mediaType: FloatingIconMediaType;
   numberOfParticles?: number;
   floatingIcon?: string;
+  isDuplicate?: boolean; // For displaying multiple times on a page use different IDs. Limited to 2
 }
 
 export const CollectivesInteractiveBackground: React.FC<Props> = ({
@@ -19,7 +20,8 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
   widthClass = 'h-full',
   mediaType,
   numberOfParticles = 40,
-  floatingIcon
+  floatingIcon,
+  isDuplicate = false
 }) => {
   const particlesInit = async (main) => {
     await loadFull(main);
@@ -30,7 +32,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
       className={`relative ${heightClass} ${widthClass} overflow-hidden select-none`}
     >
       <Particles
-        id="particles-js"
+        id={isDuplicate ? 'particles-js-duplicate' : 'particles-js'}
         init={particlesInit}
         canvasClassName="particles-container relative"
         params={{

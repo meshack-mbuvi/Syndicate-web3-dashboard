@@ -984,6 +984,11 @@ input[type='time']::-webkit-calendar-picker-indicator {
   width: 100%;
 }
 
+#particles-js-duplicate {
+  height: 100%;
+  width: 100%;
+}
+
 /* WalletConnect */
 
 #walletconnect-qrcode-text,
