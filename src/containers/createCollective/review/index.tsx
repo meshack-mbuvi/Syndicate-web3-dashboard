@@ -93,9 +93,9 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
   ]);
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
-      <div className="mt-8">
+      <div className="mt-8 h-full flex-grow">
         <CollectiveFormReview
           nameValue={name}
           handleNameChange={handleNameChange}
@@ -135,7 +135,7 @@ export default CreateCollectiveReview;
 export const ReviewRightPanel: React.FC = () => {
   const { artworkType, artworkUrl } = useCreateState();
   return (
-    <div className="bg-black w-full h-full pb-38">
+    <div className="bg-black w-full h-full pb-38 ">
       <CollectivesInteractiveBackground
         heightClass="h-full"
         widthClass="w-full"

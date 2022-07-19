@@ -136,7 +136,6 @@ const NftClaimAndInfoCard: React.FC = () => {
         customVisual={
           <div className="bg-black w-full h-full">
             <CollectivesInteractiveBackground
-              mediaType={FloatingIconMediaType.IMAGE}
               heightClass="h-full"
               widthClass="w-full"
               mediaType={NFTMediaType.IMAGE}

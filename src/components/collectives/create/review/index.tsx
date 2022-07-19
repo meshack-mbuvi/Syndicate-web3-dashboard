@@ -74,7 +74,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
   const [currentlyEditingIndex, setCurrentlyEditingIndex] = useState(null);
 
   const bottomBar = (
-    <div className="py-6 bg-black bg-opacity-40 flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
+    <div className="py-6 bg-black  flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
       <div className="flex-grow">
         <Callout>
           <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
@@ -93,8 +93,8 @@ export const CollectiveFormReview: React.FC<Props> = ({
   );
 
   return (
-    <div>
-      <div className="-mt-8">
+    <div className="h-full">
+      <div className="-mt-8 pb-28 ">
         {/* Name */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div>
@@ -460,7 +460,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </button>
         </div>
       </div>
-      <div className="">{bottomBar}</div>
+      <div className=" fixed bottom-0">{bottomBar}</div>
     </div>
   );
 };
