@@ -18,7 +18,15 @@ import {
   setCollectiveCloseTime,
   setCollectiveMaxSupply,
   setCollectiveTransferrable,
-  setColectiveTokenDetails
+  setColectiveTokenDetails,
+  setCollectiveSubmittingToIPFS,
+  // setIpfsError,
+  setCollectiveWaitingForConfirmation,
+  setCollectiveConfirmed,
+  setCollectiveTransactionSuccess,
+  // setCollectiveTransactionError,
+  setCollectiveTransactionHash,
+  setIpfsHash
 } from '@/state/createCollective/slice';
 import { useState, useEffect } from 'react';
 
@@ -38,10 +46,12 @@ export const useCreateState = () => {
       openUntil,
       closeDate,
       closeTime,
+      EpochCloseTime,
       closeAfterMaxSupply,
       maxSupply,
       transferrable,
-      tokenDetails
+      tokenDetails,
+      creationStatus
     }
   } = useSelector((state: AppState) => state);
 
@@ -59,10 +69,12 @@ export const useCreateState = () => {
     openUntil,
     closeDate,
     closeTime,
+    EpochCloseTime,
     closeAfterMaxSupply,
     maxSupply,
     transferrable,
-    tokenDetails
+    tokenDetails,
+    creationStatus
   };
 };
 
@@ -145,6 +157,18 @@ export const useUpdateState = () => {
 
   const handleTimeWindowChange = (timeWindow: TimeWindow) => {
     dispatch(setCollectiveTimeWindow(timeWindow));
+    let now = new Date();
+    let time = `${now.getHours()}:${now.getMinutes()}`;
+    if (timeWindow === TimeWindow.DAY) {
+      handleCloseDateChange(new Date(now.getTime() + 60 * 60 * 24 * 1000));
+    }
+    if (timeWindow === TimeWindow.WEEK) {
+      handleCloseDateChange(new Date(now.getTime() + 60 * 60 * 24 * 7 * 1000));
+    }
+    if (timeWindow === TimeWindow.MONTH) {
+      handleCloseDateChange(new Date(now.getTime() + 60 * 60 * 24 * 30 * 1000));
+    }
+    handleCloseTimeChange(time);
   };
   // const handleMaxMembersChange = (maxMembers: MembershipType) => {
   //   dispatch(setCollectiveMembershipType(maxMembers));
@@ -159,7 +183,7 @@ export const useUpdateState = () => {
     dispatch(setCollectiveMaxSupply(maxSupply));
   };
   const handleClickToChangeToken = () => {
-    dispatch(setColectiveTokenDetails({}));
+    // dispatch(setColectiveTokenDetails({}));
   };
   const handleTokenDetailsChange = (tokenDetails: any) => {
     dispatch(setColectiveTokenDetails(tokenDetails));
@@ -171,6 +195,7 @@ export const useUpdateState = () => {
     dispatch(setCollectiveCloseDate(closeDate));
   };
   const handleCloseTimeChange = (closeTime: string) => {
+    if (!closeTime) closeTime = '00:00';
     dispatch(setCollectiveCloseTime(closeTime));
   };
   const handleChangeAllowOwnershipTransfer = (
@@ -179,7 +204,24 @@ export const useUpdateState = () => {
     dispatch(setCollectiveTransferrable(allowOwnershipTransfer));
   };
 
-  const handleSubmit = () => {};
+  // Create collective
+  const handleSubmit = () => {
+    dispatch(setCollectiveSubmittingToIPFS(true));
+
+    setTimeout(() => {
+      dispatch(setIpfsHash('QmYwAPJzv5CZsnA8DifXqzXVMBXrXwQPzionfhfhHvhx8'));
+      dispatch(setCollectiveWaitingForConfirmation(true));
+    }, 10000);
+
+    setTimeout(() => {
+      dispatch(setCollectiveConfirmed(true));
+      dispatch(setCollectiveTransactionHash('0x123'));
+    }, 20000);
+
+    setTimeout(() => {
+      dispatch(setCollectiveTransactionSuccess(true));
+    }, 40000);
+  };
 
   return {
     handleNameChange,
@@ -206,11 +248,3 @@ export const useUpdateState = () => {
     handleSubmit
   };
 };
-
-export const useCreateCollective = () => {
-  return;
-};
-
-export const useSumbitIPFSData = () => {};
-
-export const useSubmitToContract = () => {};

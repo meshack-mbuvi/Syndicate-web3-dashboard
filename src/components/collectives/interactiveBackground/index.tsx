@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 // import { NFTMediaType } from '@/components/collectives/nftPreviewer';
@@ -24,9 +25,11 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
   floatingIcon,
   isDuplicate = false
 }) => {
-  const particlesInit = async (main) => {
-    await loadFull(main);
-  };
+  const particlesInit = useMemo(() => {
+    return async (main) => {
+      await loadFull(main);
+    };
+  }, []);
 
   return (
     <div

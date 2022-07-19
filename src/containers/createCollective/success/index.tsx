@@ -1,16 +1,20 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { CollectivesCreateSuccess } from '@/components/collectives/create/success';
-import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 
 const CreateCollectiveSuccess: FC = () => {
+  const { artworkUrl, artworkType } = useCreateState();
   return (
     <div className="bg-black w-full h-full pb-38">
       <CollectivesInteractiveBackground
         heightClass="h-full"
-        mediaType={NFTMediaType.IMAGE}
+        mediaType={artworkType}
         widthClass="w-full"
-        floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
+        floatingIcon={artworkUrl}
         numberOfParticles={40}
       />
     </div>
@@ -20,13 +24,34 @@ const CreateCollectiveSuccess: FC = () => {
 export default CreateCollectiveSuccess;
 
 export const SuccessRightPanel: React.FC = () => {
+  const router = useRouter();
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+  const { name } = useCreateState();
+
+  const [collectiveAddress, setCollectiveAddress] = useState('0x0');
+
+  const collectiveURL = useMemo(() => {
+    return `${window.location.origin}/collectives/${collectiveAddress}?chain=${activeNetwork.network}`;
+  }, [collectiveAddress]);
+
+  const CTAOnClick = () => {
+    router.push(
+      `/collectives/${collectiveAddress}${'?chain=' + activeNetwork.network}`
+    );
+  };
+
   return (
     <div className="flex h-full items-center justify-center">
       <CollectivesCreateSuccess
-        name={'NFTs and Stuff'}
-        inviteLink={'https://www.google.com'}
-        CTAonClick={() => {}}
-        etherscanLink={'sdfsfd'}
+        name={name}
+        inviteLink={collectiveURL}
+        CTAonClick={CTAOnClick}
+        blockExplorerLink={activeNetwork?.blockExplorer?.baseUrl + '/' + '0x0'}
+        blockExplorerName={activeNetwork?.blockExplorer?.name}
       />
     </div>
   );

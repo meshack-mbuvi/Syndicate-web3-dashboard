@@ -29,6 +29,7 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
     timeWindow,
     closeDate,
     closeTime,
+    EpochCloseTime,
     tokenDetails,
     transferrable
   } = useCreateState();
