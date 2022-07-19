@@ -134,7 +134,7 @@ const StatusBadge = (props: Props): JSX.Element => {
                 <div className="m-0">{badgeIcon}</div>
               )}
               {/* <p className="h3 sm:text-xl">{titleText}</p> */}
-              <div className="flex justify-between w-full leading-snug ml-4">
+              <div className="flex justify-between items-center w-full leading-snug ml-4">
                 <H4>{titleText}</H4> <B2>{subTitleText}</B2>
               </div>
             </div>
