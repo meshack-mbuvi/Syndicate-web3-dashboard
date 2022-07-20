@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import {
   CopiedLinkIcon,
@@ -16,6 +16,8 @@ interface Props {
   borderColor?: string;
   accentColor?: string;
   copyButtonText?: string;
+  hoverEffect?: boolean;
+  customZIndex?: string;
 }
 const CopyLink: FC<Props> = ({
   link,
@@ -26,7 +28,9 @@ const CopyLink: FC<Props> = ({
   showConfettiSuccess = false,
   borderColor = 'border-gray-syn6',
   accentColor = 'green',
-  copyButtonText = 'Copy'
+  copyButtonText = 'Copy',
+  hoverEffect = true,
+  customZIndex = ''
 }) => {
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
@@ -54,7 +58,11 @@ const CopyLink: FC<Props> = ({
   // content to display after completion of the syndicate creation process.
   const defaultContent = (
     <div
-      className={`w-full border-1 ${borderColor} bg-gray-syn8 hover:bg-gray-syn7 transition-all duration-300 rounded flex ${
+      className={`w-full border-1 relative ${
+        customZIndex ?? ''
+      } ${borderColor} bg-gray-syn8 ${
+        hoverEffect ? 'hover:bg-gray-syn7' : ''
+      } transition-all duration-300 rounded flex ${
         syndicateSuccessfullyCreated && showConfettiSuccess
           ? 'p-4'
           : 'pl-4 py-2 pr-2'
@@ -62,7 +70,7 @@ const CopyLink: FC<Props> = ({
     >
       <CopyToClipboard text={link}>
         <button
-          className="overflow-hidden flex items-center"
+          className="overflow-hidden flex items-center w-full"
           onClick={updateCopyState}
         >
           <div className="flex-grow-1 mr-2">
@@ -70,7 +78,7 @@ const CopyLink: FC<Props> = ({
           </div>
 
           <span
-            className={`line-clamp-1 overflow-hidden flex-grow-1 text-left text-sm ${
+            className={`line-clamp-1 w-full overflow-hidden flex-grow-1 text-left text-sm ${
               syndicateSuccessfullyCreated && showConfettiSuccess
                 ? `text-${accentColor}`
                 : `text-transparent bg-clip-text bg-gradient-to-r from-${accentColor}`
@@ -82,7 +90,7 @@ const CopyLink: FC<Props> = ({
             <div
               className={`flex-grow-1 px-3 ${
                 showCopiedState ? 'border-transparent' : `bg-${accentColor}`
-              } text-black flex h-10 justify-center items-center rounded`}
+              } text-black flex h-10 justify-center items-center rounded hover:opacity-80`}
             >
               {showCopiedState ? (
                 <CopiedLinkIcon color={`text-${accentColor}`} />

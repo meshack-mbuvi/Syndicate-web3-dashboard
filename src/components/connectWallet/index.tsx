@@ -116,7 +116,7 @@ const ConnectWallet: React.FC = () => {
       hidden: !loadedAsSafeApp
     },
     {
-      name: 'Wallet Connect',
+      name: 'WalletConnect',
       icon: '/images/walletConnect.svg',
       providerToActivate: () => activateWalletConnect(),
       hidden: loadedAsSafeApp

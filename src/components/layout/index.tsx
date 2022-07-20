@@ -20,7 +20,7 @@ import { isZeroAddress } from '@/utils';
 import { mockActiveERC20Token, mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
@@ -182,7 +182,7 @@ const Layout: FC<Props> = ({
         return;
       }
       stopPolling();
-      // fallback for if single club details query doesn't initally work
+      // fallback for if single club details query doesn't initially work
       if (!totalDeposits) {
         refetchSingleClubDetails();
         return;

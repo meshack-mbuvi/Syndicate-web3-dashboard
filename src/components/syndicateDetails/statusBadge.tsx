@@ -1,14 +1,15 @@
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { AppState } from '@/state';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
 import { getCountDownDays } from '@/utils/dateUtils';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
+import { B2, H4 } from '../typography';
 
 interface Props {
   isManager?: boolean;
@@ -41,7 +42,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     syndicateCreationFailed,
     showConfettiSuccess,
     isDistributing,
-    isWaitingForSelection
+    isWaitingForSelection,
+    isOpenToNewMembers
   } = props;
 
   const {
@@ -57,7 +59,10 @@ const StatusBadge = (props: Props): JSX.Element => {
 
   let badgeBackgroundColor = 'bg-blue-darker';
   let badgeIcon: string | React.ReactNode = 'depositIcon.svg';
+
   let titleText = 'Open to deposits';
+  let subTitleText = '';
+
   if (claimEnabled) {
     badgeBackgroundColor = 'bg-green-phthalo-green';
     badgeIcon = 'claimToken.svg';
@@ -69,9 +74,15 @@ const StatusBadge = (props: Props): JSX.Element => {
   } else if (isCollective) {
     badgeBackgroundColor = 'bg-cyan-collective';
     titleText = numberOfMembers
-      ? `${numberOfMembers} member${numberOfMembers > 1 && 's'}`
+      ? `${numberOfMembers} member${numberOfMembers > 1 ? 's' : ''}`
       : 'Members';
     badgeIcon = 'collectiveIcon.svg';
+
+    if (isOpenToNewMembers) {
+      subTitleText = 'Open to new members';
+    } else {
+      subTitleText = '';
+    }
   } else if (!depositsEnabled) {
     badgeBackgroundColor = 'bg-green-dark';
     badgeIcon = 'active.svg';
@@ -122,7 +133,10 @@ const StatusBadge = (props: Props): JSX.Element => {
               ) : (
                 <div className="m-0">{badgeIcon}</div>
               )}
-              <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
+              {/* <p className="h3 sm:text-xl">{titleText}</p> */}
+              <div className="flex justify-between items-center w-full leading-snug ml-4">
+                <H4>{titleText}</H4> <B2>{subTitleText}</B2>
+              </div>
             </div>
             {depositsEnabled &&
             !syndicateCreationFailed &&

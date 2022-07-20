@@ -1,6 +1,7 @@
 import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
-import { B2, B3, B4, H1, H2, H3, H4, L2 } from '@/components/typography';
+import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
+import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
 import { showWalletModal } from '@/state/wallet/actions';
 import { useDispatch } from 'react-redux';
 
@@ -65,19 +66,6 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         <B4 extraClasses="text-gray-syn4">
           Created {dateOfCreation} by {nameOfCreator}
         </B4>
-      </div>
-    </>
-  );
-
-  const title = (
-    <>
-      {/* Desktop */}
-      <div className="hidden sm:block">
-        <H1 extraClasses="leading-10">{nameOfCollective}</H1>
-      </div>
-      {/* Mobile */}
-      <div className="sm:hidden">
-        <H2 extraClasses="leading-10">{nameOfCollective}</H2>
       </div>
     </>
   );
@@ -175,33 +163,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
             : 'the'}{' '}
           members of
         </L2>
-        <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
-          {title}
-          {links && (
-            <div className="flex items-center space-x-4">
-              <a
-                href={links.openSea}
-                className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
-              >
-                <img
-                  src="/images/collectives/opensea.svg"
-                  alt="Opensea"
-                  className="mx-auto vertically-center"
-                />
-              </a>
-              <a
-                href={links.externalLink}
-                className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
-              >
-                <img
-                  src="/images/collectives/external-link.svg"
-                  alt="External link"
-                  className="mx-auto vertically-center"
-                />
-              </a>
-            </div>
-          )}
-        </div>
+        <CollectiveHeader collectiveName={nameOfCollective} links={links} />
         {created}
       </div>
 
