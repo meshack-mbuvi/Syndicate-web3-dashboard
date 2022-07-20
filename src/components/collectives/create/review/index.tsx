@@ -69,7 +69,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
   );
 
   return (
-    <div>
+    <div className="max-w-730">
       <div className="-mt-8">
         {/* Name */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
@@ -121,14 +121,14 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Distribution */}
+        {/* Invitation */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div className="space-y-2">
-            <div className={taglineStyles}>Distribution</div>
+            <div className={taglineStyles}>Invitation</div>
             <div className="flex space-x-2">
               <div>Unrestricted</div>
               <div className="text-gray-syn4">
-                Anyone with the link can mint
+                Anyone with the link can join
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div>
             <div className="space-y-2">
-              <div className={taglineStyles}>Price per pass</div>
+              <div className={taglineStyles}>Price per NFT</div>
               <div>
                 <div
                   className={`${

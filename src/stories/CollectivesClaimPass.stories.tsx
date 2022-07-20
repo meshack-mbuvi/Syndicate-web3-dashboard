@@ -39,7 +39,12 @@ ConnectedWallet.args = {
   nameOfCreator: '0x1a2b...3c4d',
   remainingPasses: 2000,
   priceToJoin: { tokenAmount: 0.08, tokenSymbol: 'ETH', fiatAmount: 141.78 },
-  walletState: WalletState.CONNECTED
+  walletState: WalletState.CONNECTED,
+  gasEstimate: {
+    tokenAmount: 0.015,
+    tokenSymbol: 'ETH',
+    fiatAmount: 56.78
+  }
 };
 
 export const WrongWallet = Template.bind({});
@@ -51,7 +56,8 @@ WrongWallet.args = {
   nameOfCreator: '0x1a2b...3c4d',
   remainingPasses: 2000,
   priceToJoin: { tokenAmount: 0.08, tokenSymbol: 'ETH', fiatAmount: 141.78 },
-  walletState: WalletState.WRONG_WALLET
+  walletState: WalletState.WRONG_WALLET,
+  walletAddress: '0x1a2b...3c4d'
 };
 
 export const DisconnectedWallet = Template.bind({});
@@ -80,4 +86,16 @@ Pending.args = {
   transactionHash:
     '0x5e3d4545afda8da89a6da42ec4793fd3c4b45972290ba45b83d095337880d796',
   transactionType: 'transaction'
+};
+
+export const MaxReached = Template.bind({});
+MaxReached.args = {
+  links: { openSea: '/', externalLink: '/' },
+  numberOfExistingMembers: 8000,
+  nameOfCollective: 'Alpha Beta Punks',
+  dateOfCreation: 'Apr 20, 2022',
+  nameOfCreator: '0x1a2b...3c4d',
+  remainingPasses: 2000,
+  priceToJoin: { tokenAmount: 0.08, tokenSymbol: 'ETH', fiatAmount: 141.78 },
+  walletState: WalletState.MAX_PASSES_REACHED
 };

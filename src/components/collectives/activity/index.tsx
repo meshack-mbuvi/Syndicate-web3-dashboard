@@ -85,7 +85,7 @@ export const CollectiveActivity: React.FC<Props> = ({
             </div>
             <div className="flex space-x-2 items-center">
               <B2>
-                Membership pass{' '}
+                Collective NFT{' '}
                 <span className="text-gray-syn4">transfered from </span>
                 {transfer.fromUsername
                   ? `@${transfer.fromUsername}`
@@ -113,7 +113,7 @@ export const CollectiveActivity: React.FC<Props> = ({
             </div>
             <div className="flex space-x-2 items-center">
               <B2>
-                Membership pass <span className="text-gray-syn4">sold by </span>
+                Collective NFT <span className="text-gray-syn4">sold by </span>
                 {sale.fromUsername
                   ? `@${sale.fromUsername}`
                   : sale.fromAddress
@@ -152,7 +152,7 @@ export const CollectiveActivity: React.FC<Props> = ({
                   : list.address
                   ? list.address
                   : ''}
-                <span className="text-gray-syn4"> listed </span> Membership pass{' '}
+                <span className="text-gray-syn4"> listed </span> Collective NFT{' '}
                 <span className="text-gray-syn4">for </span>
                 <img
                   src="/images/chains/ethereum.svg"
@@ -181,7 +181,7 @@ export const CollectiveActivity: React.FC<Props> = ({
                   ? offer.address
                   : ''}
                 <span className="text-gray-syn4"> offered to buy </span>{' '}
-                Membership pass <span className="text-gray-syn4">for </span>
+                Collective NFTs <span className="text-gray-syn4">for </span>
                 <img
                   src="/images/chains/ethereum.svg"
                   alt="Transfer"

@@ -18,8 +18,8 @@ export const RadioButtonsOpenUntil: React.FC<Props> = ({
   return (
     <RadioButtons
       options={[
-        'a future date',
-        'a max number of members is reached',
+        'A future date',
+        'A max number of collective NFTs are claimed',
         'I close it'
       ]}
       activeIndex={openUntil}
