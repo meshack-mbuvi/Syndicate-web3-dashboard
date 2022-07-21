@@ -20,6 +20,14 @@ import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
+import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
+import { IActiveNetwork } from '@/state/wallet/types';
+import { TimeRequirements } from './TimeRequirements';
+import { EthPriceMintModule } from './EthPriceMintModule';
+import { FixedRenderer } from './FixedRenderer';
+import { GuardMixinManager } from './GuardMixinManager';
+import { MaxPerMemberERC721 } from './MaxPerMemberERC721';
+import { MaxTotalSupplyERC721 } from './MaxTotalSupplyERC721';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -32,8 +40,8 @@ const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
 
 export const getSyndicateContracts = async (
-  web3,
-  activeNetwork
+  web3: Web3,
+  activeNetwork: IActiveNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.
   const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
@@ -169,6 +177,48 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  const erc721CollectiveFactory = new ERC721CollectiveFactory(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const ethPriceMintModule = new EthPriceMintModule(
+    addresses.EthPriceMintModule,
+    web3,
+    activeNetwork
+  );
+
+  const fixedRenderer = new FixedRenderer(
+    addresses.FixedRenderer,
+    web3,
+    activeNetwork
+  );
+
+  const guardMixinManager = new GuardMixinManager(
+    addresses.GuardMixinManager,
+    web3,
+    activeNetwork
+  );
+
+  const maxPerMemberERC721 = new MaxPerMemberERC721(
+    addresses.MaxPerMemberERC721,
+    web3,
+    activeNetwork
+  );
+
+  const maxTotalSupplyERC721 = new MaxTotalSupplyERC721(
+    addresses.MaxTotalSupplyERC721,
+    web3,
+    activeNetwork
+  );
+
+  const timeRequirements = new TimeRequirements(
+    addresses.TimeRequirements,
+    web3,
+    activeNetwork
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -192,6 +242,13 @@ export const getSyndicateContracts = async (
     GenesisNFTContract,
     rugBonusClaimModule,
     OwnerMintModule,
-    depositExchangeMintModule
+    depositExchangeMintModule,
+    erc721CollectiveFactory,
+    ethPriceMintModule,
+    fixedRenderer,
+    guardMixinManager,
+    maxPerMemberERC721,
+    maxTotalSupplyERC721,
+    timeRequirements
   };
 };
