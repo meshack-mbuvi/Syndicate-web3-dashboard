@@ -52,7 +52,7 @@ const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
         handleCancelUpload={handleCancelUpload}
         progressPercentage={progressPercent}
         fileName={fileName}
-        acceptFileTypes={'.png, .gif, .mp4'}
+        acceptFileTypes={'.png, .jpg, .jpeg, .gif, .mp4'}
       />
     </div>
   );

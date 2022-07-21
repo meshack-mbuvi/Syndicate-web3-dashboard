@@ -87,7 +87,7 @@ export const useUpdateState = () => {
   const [ContinueButtonActive, setContinueButtonActive] = useState(false);
   const [submitButtonActive, setSubmiteButtonActive] = useState(false);
   const [progressPercent, setProgressPercent] = useState(artworkUrl ? 100 : 0);
-  const [fileName, setFileName] = useState(artwork.name);
+  const [fileName, setFileName] = useState(artwork?.name);
 
   const getArtworkType = (fileObject) => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
@@ -131,16 +131,18 @@ export const useUpdateState = () => {
         artworkUrl: ''
       })
     );
-    const { mediaType, mediaSource } = getArtworkType(e.target.files[0]);
-    dispatch(
-      setCollectiveArtwork({
-        artwork: e.target.files[0],
-        artworkType: mediaType,
-        artworkUrl: mediaSource
-      })
-    );
-    setFileName(e.target.files[0].name);
-    setProgressPercent(100);
+    if (e.target.files.length) {
+      const { mediaType, mediaSource } = getArtworkType(e.target.files[0]);
+      dispatch(
+        setCollectiveArtwork({
+          artwork: e.target.files[0],
+          artworkType: mediaType,
+          artworkUrl: mediaSource
+        })
+      );
+      setFileName(e.target.files[0].name);
+      setProgressPercent(100);
+    }
   };
 
   const handleCancelUpload = () => {
