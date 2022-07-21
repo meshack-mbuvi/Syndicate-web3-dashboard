@@ -8,7 +8,7 @@ import { GuardMixinManager } from '../GuardMixinManager';
 import { MaxPerMemberERC721 } from '../MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '../MaxTotalSupplyERC721';
 
-interface ICollectiveParams {
+export interface ICollectiveParams {
   collectiveName: string;
   collectiveSymbol: string;
   totalSupply: number;
@@ -17,6 +17,7 @@ interface ICollectiveParams {
   tokenURI: string;
   startTime: string;
   endTime: string;
+  allowTransfer: boolean;
 }
 
 export class ERC721CollectiveFactory extends ContractBase {
@@ -89,7 +90,8 @@ export class ERC721CollectiveFactory extends ContractBase {
       ethPrice,
       tokenURI,
       startTime,
-      endTime
+      endTime,
+      allowTransfer
     } = collectiveParams;
 
     const {
@@ -138,6 +140,13 @@ export class ERC721CollectiveFactory extends ContractBase {
       ethPriceModule.setEthPrice(predictedAddress, ethPrice),
       fixedRenderer.setTokenURI(predictedAddress, tokenURI)
     ];
+
+    if (allowTransfer) {
+      contractAddresses.push(predictedAddress);
+      encodedFunctions.push(
+        this.setTransferGuard(this.addresses.AlwaysAllowGuard)
+      );
+    }
 
     return {
       salt,
@@ -226,6 +235,31 @@ export class ERC721CollectiveFactory extends ContractBase {
           encodedFunctions
         ),
       onResponse
+    );
+  }
+
+  public setTransferGuard(guard: string): string {
+    return this.web3.eth.abi.encodeFunctionCall(
+      this.getAbiObject('updateTransferGuard'),
+      [guard]
+    );
+  }
+
+  public async updateTransferGuard(
+    account: string,
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () =>
+        this.contract.methods.updateTransferGuard(
+          this.addresses.AlwaysAllowGuard
+        ),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
     );
   }
 }

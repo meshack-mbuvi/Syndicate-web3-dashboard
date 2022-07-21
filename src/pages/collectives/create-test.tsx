@@ -10,6 +10,9 @@ import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
 import Layout from '@/components/layout';
 import moment from 'moment';
+import { Spinner } from '@/components/shared/spinner';
+import { Switch, SwitchType } from '@/components/switch';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 
 const timeWindow = {
   day: moment().add(1, 'days').valueOf(),
@@ -45,11 +48,19 @@ const CollectivesView: React.FC = () => {
   );
   const [collectiveIPFS, setCollectiveIPFS] = useState('ipfs://hash');
 
+  const [allowTransfer, setAllowTransfer] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [txn, setTxn] = useState<string>();
+  const [collectiveDetails, setCollectiveDetails] = useState({
+    collective: '',
+    name: '',
+    symbol: ''
+  });
   const { gasPrice, getEstimateGas } = useGasEstimate();
 
   const createCollective = async () => {
-    const collectiveParams = {
+    setLoading(true);
+    const collectiveParams: ICollectiveParams = {
       collectiveName,
       collectiveSymbol,
       totalSupply: +collectiveTotalSupply,
@@ -57,7 +68,8 @@ const CollectivesView: React.FC = () => {
       ethPrice: getWeiAmount(web3, collectivePrice, 18, true),
       tokenURI: collectiveIPFS,
       startTime: '0',
-      endTime: collectiveTime
+      endTime: collectiveTime,
+      allowTransfer
     };
 
     await erc721CollectiveFactory.createERC721Collective(
@@ -73,11 +85,21 @@ const CollectivesView: React.FC = () => {
     setTxn(_txn);
   };
 
-  const onTxReceipt = (receipt: unknown) => {
+  const onTxReceipt = (receipt: any) => {
+    setLoading(false);
     console.log({ receipt });
+    if (receipt?.events?.ERC721CollectiveCreated?.returnValues?.collective) {
+      setCollectiveDetails({
+        collective:
+          receipt.events.ERC721CollectiveCreated.returnValues.collective,
+        name: receipt.events.ERC721CollectiveCreated.returnValues.name,
+        symbol: receipt.events.ERC721CollectiveCreated.returnValues.symbol
+      });
+    }
   };
 
   const onTxFail = (error: unknown) => {
+    setLoading(false);
     console.log({ error });
   };
 
@@ -201,6 +223,24 @@ const CollectivesView: React.FC = () => {
             </div>
           </div>
 
+          {/* Allow members to transfer */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">
+                Allow members to transfer
+              </div>
+            </div>
+            <div className="col-span-8">
+              <Switch
+                isOn={allowTransfer}
+                type={SwitchType.EXPLICIT}
+                onClick={() => {
+                  setAllowTransfer(!allowTransfer);
+                }}
+              />
+            </div>
+          </div>
+
           <hr className="border-gray-syn7" />
 
           {/* Estimate Gas Price */}
@@ -242,13 +282,40 @@ const CollectivesView: React.FC = () => {
             </div>
           </div>
 
+          {/* Collective Details */}
+          <div className="grid grid-cols-12 gap-5 group relative  items-center">
+            <div className="col-span-4">
+              <div className="text-base text-gray-syn4">Created Collective</div>
+            </div>
+            <div className="col-span-8">
+              <div className="w-full flex flex-col justify-between">
+                <div className="w-full flex space-x-4">
+                  <span>{collectiveDetails.name}</span>
+                  <span>{collectiveDetails.symbol}</span>
+                </div>
+                <a
+                  href={`https://rinkeby.etherscan.io/address/${collectiveDetails.collective}`}
+                  className="text-blue-500"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {collectiveDetails.collective}
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div>
             <PrimaryButton
-              customClasses="primary-CTA w-full mt-6 mb-4"
+              customClasses={`${
+                loading ? 'primary-CTA-disabled' : 'green-CTA'
+              } w-full mt-6 mb-4 space-x-2`}
               textColor="text-black"
               onClick={createCollective}
+              disabled={loading}
             >
-              Create
+              <span>Create</span>
+              {loading && <Spinner height="h-5" width="w-5" margin="" />}
             </PrimaryButton>
           </div>
         </div>

@@ -24,7 +24,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     EthPriceMintModule: '', // AllowModules // TODO
     TimeRequirements: '', // TODO
     MaxPerMemberERC721: '', // TODO
-    MaxTotalSupplyERC721: '' // TODO
+    MaxTotalSupplyERC721: '', // TODO
+    AlwaysAllowGuard: '' // TODO
   },
   // Rinkeby
   4: {
@@ -51,7 +52,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     EthPriceMintModule: '0x89583ad6aba72c7c6de70ee9a290884abc4000c3', // AllowModules
     TimeRequirements: '0x723541996f751ea24608e9de75488746a067d61b',
     MaxPerMemberERC721: '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
-    MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f'
+    MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f',
+    AlwaysAllowGuard: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057'
   },
   // Matic
   137: {
@@ -78,6 +80,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     EthPriceMintModule: '', // AllowModules // TODO
     TimeRequirements: '', // TODO
     MaxPerMemberERC721: '', // TODO
-    MaxTotalSupplyERC721: '' // TODO
+    MaxTotalSupplyERC721: '', // TODO
+    AlwaysAllowGuard: '' // TODO
   }
 });
