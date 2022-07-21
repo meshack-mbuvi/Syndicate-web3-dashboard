@@ -210,7 +210,7 @@ export class ERC721CollectiveFactory extends ContractBase {
     account: string,
     onResponse: (gas?: number) => void
   ): Promise<void> {
-    const collectiveParams = {
+    const collectiveParams: ICollectiveParams = {
       collectiveName: 'Alpha Beta Punks',
       collectiveSymbol: 'ABP',
       totalSupply: 1000,
@@ -218,7 +218,8 @@ export class ERC721CollectiveFactory extends ContractBase {
       ethPrice: this.web3.utils.toWei('0.5'),
       tokenURI: 'ipfs://hash',
       startTime: '0',
-      endTime: '1684952525'
+      endTime: '1684952525',
+      allowTransfer: true
     };
 
     const { salt, contractAddresses, encodedFunctions } =
