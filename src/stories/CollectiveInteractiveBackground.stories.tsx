@@ -1,6 +1,6 @@
 import {
   CollectivesInteractiveBackground,
-  FloatingIconMediaType
+  NFTMediaType
 } from '@/components/collectives/interactiveBackground';
 
 export default {
@@ -36,7 +36,7 @@ FloatingImage.args = {
   numberOfParticles: 40,
   floatingIcon:
     'https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA',
-  mediaType: FloatingIconMediaType.IMAGE
+  mediaType: NFTMediaType.IMAGE
 };
 
 export const FloatingVideo = Template.bind({});
@@ -46,5 +46,5 @@ FloatingVideo.args = {
   numberOfParticles: 40,
   floatingIcon:
     'https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4',
-  mediaType: FloatingIconMediaType.VIDEO
+  mediaType: NFTMediaType.VIDEO
 };

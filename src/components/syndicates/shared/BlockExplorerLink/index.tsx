@@ -68,7 +68,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
           </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
-            iconColor={iconcolor}
+            iconcolor={iconcolor}
           />
         </div>
       ) : !grouped ? (

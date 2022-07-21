@@ -411,6 +411,7 @@ module.exports = {
         '9px': '9px',
         3.5: '0.875rem',
         7.5: '1.875rem',
+        18: '4.5rem',
         33: '8.5rem',
         50: '12.5rem',
         66: '16.5rem',
@@ -501,6 +502,7 @@ module.exports = {
         25.5: '6.25rem',
         25: '6.35rem',
         26: '6.6rem',
+        38: '9.5rem',
         '6-percent': '6%'
       },
       borderRadius: {

@@ -1,7 +1,5 @@
-import {
-  CollectivesInteractiveBackground,
-  FloatingIconMediaType
-} from '@/components/collectives/interactiveBackground';
+import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 
 const NftImageCard: React.FC = () => {
@@ -23,9 +21,9 @@ const NftImageCard: React.FC = () => {
           <CollectivesInteractiveBackground
             heightClass="h-full"
             widthClass="w-full"
+            mediaType={NFTMediaType.IMAGE}
             floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
             numberOfParticles={75}
-            mediaType={FloatingIconMediaType.IMAGE}
           />
         )}
       </div>
