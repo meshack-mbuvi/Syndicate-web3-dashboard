@@ -24,5 +24,6 @@ const Template = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  isContinueButtonActive: false
+  isContinueButtonActive: false,
+  handleContinue: () => {}
 };

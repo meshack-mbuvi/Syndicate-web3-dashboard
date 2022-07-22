@@ -7,14 +7,16 @@ interface Props {
   name: string;
   inviteLink: string;
   CTAonClick: (e) => void;
-  etherscanLink: string;
+  blockExplorerLink: string;
+  blockExplorerName: string;
 }
 
 export const CollectivesCreateSuccess: React.FC<Props> = ({
   name,
   inviteLink,
   CTAonClick,
-  etherscanLink
+  blockExplorerLink,
+  blockExplorerName
 }) => {
   const [showCopiedState, setShowCopiedState] = useState(false);
   return (
@@ -42,10 +44,12 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         Manage on dashboard
       </CtaButton>
       <a
-        href={etherscanLink}
+        href={blockExplorerLink}
+        rel="noreferrer"
+        target="_blank"
         className="etherscanLink flex space-x-2 items-center justify-center"
       >
-        <div>View on Etherscan</div>
+        <div>View on {blockExplorerName}</div>
         <img
           src="/images/externalLinkWhite.svg"
           alt="Etherscan"

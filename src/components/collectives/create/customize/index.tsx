@@ -3,10 +3,10 @@ import { Switch, SwitchType } from '@/components/switch';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import { B2, B3 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import React, { useState } from 'react';
+import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
-import { RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
+import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
 import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 
@@ -35,7 +35,10 @@ interface Props {
   handleCloseTimeChange?: (newTime: string) => void;
   allowOwnershipTransfer: boolean;
   handleChangeAllowOwnershipTransfer: (newAllowingTransfer: boolean) => void;
+  handleOpenUntilChange: (newOpenUntil: OpenUntil) => void;
+  openUntil: OpenUntil;
   isContinueButtonActive: boolean;
+  handleContinue: (e) => void;
 }
 
 export const CollectiveFormCustomize: React.FC<Props> = ({
@@ -58,10 +61,11 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
   handleCloseTimeChange,
   allowOwnershipTransfer,
   handleChangeAllowOwnershipTransfer,
-  isContinueButtonActive
+  openUntil,
+  handleOpenUntilChange,
+  isContinueButtonActive,
+  handleContinue
 }) => {
-  const [openUntilRadioIndex, setOpenUntilRadioIndex] = useState(null);
-
   return (
     <div className="max-w-730">
       <div>
@@ -185,13 +189,13 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             </span>
           </ReactTooltip>
           <RadioButtonsOpenUntil
-            openUntil={openUntilRadioIndex}
-            setOpenUntil={setOpenUntilRadioIndex}
+            openUntil={openUntil}
+            setOpenUntil={handleOpenUntilChange}
           />
           {/* A future date */}
           <div
             className={`${
-              openUntilRadioIndex === 0
+              openUntil === 0
                 ? 'max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
             } transition-all duration-500 overflow-hidden`}
@@ -209,7 +213,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           {/* A max number of members is reached */}
           <div
             className={`w-1/2 ${
-              openUntilRadioIndex === 1
+              openUntil === 1
                 ? 'max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
             } transition-all duration-500 overflow-hidden`}
@@ -273,6 +277,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
         </button>

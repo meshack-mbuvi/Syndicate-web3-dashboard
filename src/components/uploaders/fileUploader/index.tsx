@@ -17,6 +17,7 @@ interface Props {
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
   heightClass?: string;
+  accept?: string;
   customClasses?: string;
 }
 
@@ -31,6 +32,7 @@ export const FileUploader: React.FC<Props> = ({
   handleCancelUpload,
   progressDisplayType = UploaderProgressType.LOADING_BAR,
   heightClass = 'h-52',
+  accept = '*',
   customClasses
 }) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -58,6 +60,7 @@ export const FileUploader: React.FC<Props> = ({
             setIsInputFocused(false);
           }
         }}
+        accept={accept}
       />
 
       {/* Waiting for file */}

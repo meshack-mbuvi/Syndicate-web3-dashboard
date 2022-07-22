@@ -37,6 +37,8 @@ interface Props {
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
+  customClasses?: string;
+  showNavButton?: boolean;
 }
 
 const Layout: FC<Props> = ({
@@ -50,12 +52,14 @@ const Layout: FC<Props> = ({
   showNav = true,
   hideWalletAndEllipsis = false,
   showCloseButton = false,
+  customClasses,
   navItems = [
     {
       url: '/clubs',
       navItemText: 'Portfolio'
     }
-  ]
+  ],
+  showNavButton = false
 }) => {
   const {
     web3Reducer: {
@@ -298,13 +302,14 @@ const Layout: FC<Props> = ({
           setActiveIndex={setActiveIndex}
           hideWalletAndEllipsis={hideWalletAndEllipsis}
           showCloseButton={showCloseButton}
+          showNavButton={showNavButton}
         />
         <DemoBanner />
 
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
-          } z-20 justify-center items-center my-0 mx-auto`}
+          } z-20 justify-center items-center my-0 mx-auto ${customClasses}`}
         >
           {children}
         </div>
