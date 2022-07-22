@@ -17,6 +17,7 @@ interface Props {
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
   heightClass?: string;
+  accept?: string;
   customClasses?: string;
 }
 
@@ -31,6 +32,7 @@ export const FileUploader: React.FC<Props> = ({
   handleCancelUpload,
   progressDisplayType = UploaderProgressType.LOADING_BAR,
   heightClass = 'h-52',
+  accept = '*',
   customClasses
 }) => {
   return (
@@ -45,6 +47,7 @@ export const FileUploader: React.FC<Props> = ({
           progressPercent > 0 && 'pointer-events-none'
         } cursor-pointer w-full text-white`}
         onChange={handleUpload}
+        accept={accept}
       />
 
       {/* Waiting for file */}

@@ -8,6 +8,7 @@ import clubMembersSliceReducer from '@/state/clubMembers';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
+import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import distributeTokensReducer from '@/state/distributions';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
 import transactionsReducer from '@/state/erc20transactions/index';
@@ -30,6 +31,7 @@ export const store = configureStore({
     clubERC20sReducer,
     clubMembersSliceReducer,
     createInvestmentClubSliceReducer,
+    createCollectiveSliceReducer,
     erc20TokenSliceReducer,
     erc721TokenSliceReducer,
     modalsReducer,

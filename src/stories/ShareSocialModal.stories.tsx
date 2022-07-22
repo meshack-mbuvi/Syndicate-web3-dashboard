@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import {
   CollectivesInteractiveBackground,
-  FloatingIconMediaType
+  NFTMediaType
 } from '@/components/collectives/interactiveBackground';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 
@@ -49,7 +49,7 @@ Collectives.args = {
         widthClass="w-full"
         floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
         numberOfParticles={75}
-        mediaType={FloatingIconMediaType.IMAGE}
+        mediaType={NFTMediaType.IMAGE}
       />
     </div>
   ),

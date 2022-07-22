@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
+// import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
-export enum FloatingIconMediaType {
+export enum NFTMediaType {
   IMAGE = 'IMAGE',
   VIDEO = 'VIDEO'
 }
@@ -9,7 +11,7 @@ export enum FloatingIconMediaType {
 interface Props {
   heightClass: string;
   widthClass: string;
-  mediaType: FloatingIconMediaType;
+  mediaType: NFTMediaType;
   numberOfParticles?: number;
   floatingIcon?: string;
   isDuplicate?: boolean; // For displaying multiple times on a page use different IDs. Limited to 2
@@ -23,9 +25,11 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
   floatingIcon,
   isDuplicate = false
 }) => {
-  const particlesInit = async (main) => {
-    await loadFull(main);
-  };
+  const particlesInit = useMemo(() => {
+    return async (main) => {
+      await loadFull(main);
+    };
+  }, []);
 
   return (
     <div
@@ -150,14 +154,14 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
         <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
           <div className="p-2 border border-gray-syn4 animate-float">
             <div className="w-full h-full bg-gray-syn9">
-              {mediaType === FloatingIconMediaType.IMAGE && (
+              {mediaType === NFTMediaType.IMAGE && (
                 <img
                   src={floatingIcon}
                   alt="Collective icon"
                   className="w-20 h-20 bg-gray-syn7 select-none"
                 />
               )}
-              {mediaType === FloatingIconMediaType.VIDEO && (
+              {mediaType === NFTMediaType.VIDEO && (
                 // eslint-disable-next-line jsx-a11y/media-has-caption
                 <video
                   autoPlay
