@@ -5,7 +5,10 @@ import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import { useFetchRecentTransactions } from '@/hooks/useFetchRecentTransactions';
+import {
+  useFetchRecentTransactions,
+  getInput
+} from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import {
   setLoadingTransactions,
@@ -30,10 +33,13 @@ const ActivityTable: React.FC = () => {
   const {
     transactionsReducer: { totalTransactionsCount },
     erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled: isOpenForDeposits }
+      erc20Token: {
+        depositsEnabled: isOpenForDeposits,
+        address: erc20TokenAddress
+      }
     },
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, account }
     }
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
@@ -377,7 +383,9 @@ const ActivityTable: React.FC = () => {
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: txnAnnotationListData
+        transactionAnnotationList: txnAnnotationListData,
+        chainId: activeNetwork.chainId,
+        input: getInput(`${erc20TokenAddress}:${account}`)
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
