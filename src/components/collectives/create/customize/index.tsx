@@ -175,8 +175,14 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             arrowColor="#222529"
             backgroundColor="#222529"
           >
-            As an admin, you can open membership again anytime after closing via
-            an on-chain transaction with gas.
+            <span
+              style={{
+                lineHeight: '157%'
+              }}
+            >
+              As an admin, you can open membership again anytime after closing
+              via an on-chain transaction with gas.
+            </span>
           </ReactTooltip>
           <RadioButtonsOpenUntil
             openUntil={openUntilRadioIndex}
@@ -270,10 +276,6 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
         >
           Continue
         </button>
-        <div className="mt-2 text-sm text-gray-syn4">
-          All fields (except token symbol) are modifiable later via an on-chain
-          transaction with gas.
-        </div>
       </div>
     </div>
   );
