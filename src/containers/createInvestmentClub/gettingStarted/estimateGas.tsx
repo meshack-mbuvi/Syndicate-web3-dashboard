@@ -18,12 +18,14 @@ interface Props {
   contract: ContractMapper;
   customClasses?: string;
   withFiatCurrency?: boolean;
+  args?: Record<string, any>;
 }
 
 const EstimateGas: React.FC<Props> = ({
   contract,
   customClasses = '',
-  withFiatCurrency = false
+  withFiatCurrency = false,
+  args = {}
 }) => {
   const {
     web3Reducer: {
@@ -82,14 +84,20 @@ const EstimateGas: React.FC<Props> = ({
       syndicateContract: mintPolicy,
       estimateGas: () => {
         if (!mintPolicy) return;
-        mintPolicy.getEstimateGas(account, setGasUnits);
+        mintPolicy.getEstimateGas(account, args.clubAddress, setGasUnits);
       }
     },
     [ContractMapper.OwnerMintModule]: {
       syndicateContract: OwnerMintModule,
       estimateGas: () => {
         if (!OwnerMintModule) return;
-        OwnerMintModule.getEstimateGas(account, setGasUnits);
+        OwnerMintModule.getEstimateGas(
+          account,
+          args.clubAddress,
+          args.memberAddress,
+          web3.utils.toWei(args.amountToMint),
+          setGasUnits
+        );
       }
     }
   };
@@ -114,7 +122,7 @@ const EstimateGas: React.FC<Props> = ({
           .then((res) => setNativeTokenPrice(res))
           .catch(() => 0)
     ]);
-  }, [account, contracts[contract].syndicateContract]);
+  }, [account, contracts[contract].syndicateContract, args]);
 
   useEffect(() => {
     if (activeNetwork.chainId) {

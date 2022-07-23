@@ -864,6 +864,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                 <Callout>
                   <EstimateGas
                     contract={ContractMapper.MintPolicy}
+                    args={{ clubAddress }}
                     customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
                   />
                 </Callout>

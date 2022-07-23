@@ -153,12 +153,12 @@ export class MintPolicyContract {
 
   public async getEstimateGas(
     account: string,
+    club: string,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     await new Promise(() => {
       this.mintPolicyContract.methods
-        .updateConfig('0x21c68b2b6017258e8793ff0070a1f8f9b76b3afe', [
-          // TODO make this address dynamic
+        .updateConfig(club, [
           0,
           1684952525,
           99,
