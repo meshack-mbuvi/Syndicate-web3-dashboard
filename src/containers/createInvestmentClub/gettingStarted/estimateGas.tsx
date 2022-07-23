@@ -8,17 +8,20 @@ import { useSelector } from 'react-redux';
 export enum ContractMapper {
   ClubERC20Factory,
   DistributionsERC20,
-  DistributionsETH
+  DistributionsETH,
+  ERC721CollectiveFactory,
+  MintPolicy,
+  OwnerMintModule
 }
 
 interface Props {
-  contract?: ContractMapper; // TODO shouldn't be optional
+  contract: ContractMapper;
   customClasses?: string;
   withFiatCurrency?: boolean;
 }
 
 const EstimateGas: React.FC<Props> = ({
-  contract = ContractMapper.ClubERC20Factory, // TODO shouldn't be optional
+  contract,
   customClasses = '',
   withFiatCurrency = false
 }) => {
@@ -30,7 +33,10 @@ const EstimateGas: React.FC<Props> = ({
       syndicateContracts: {
         clubERC20Factory,
         distributionsERC20,
-        distributionsETH
+        distributionsETH,
+        erc721CollectiveFactory,
+        mintPolicy,
+        OwnerMintModule
       }
     }
   } = useSelector((state: AppState) => state);
@@ -63,6 +69,27 @@ const EstimateGas: React.FC<Props> = ({
       estimateGas: () => {
         if (!distributionsETH) return;
         distributionsETH.getEstimateGasDistributeETH(account, setGasUnits);
+      }
+    },
+    [ContractMapper.ERC721CollectiveFactory]: {
+      syndicateContract: erc721CollectiveFactory,
+      estimateGas: () => {
+        if (!erc721CollectiveFactory) return;
+        erc721CollectiveFactory.getEstimateGas(account, setGasUnits);
+      }
+    },
+    [ContractMapper.MintPolicy]: {
+      syndicateContract: mintPolicy,
+      estimateGas: () => {
+        if (!mintPolicy) return;
+        mintPolicy.getEstimateGas(account, setGasUnits);
+      }
+    },
+    [ContractMapper.OwnerMintModule]: {
+      syndicateContract: OwnerMintModule,
+      estimateGas: () => {
+        if (!OwnerMintModule) return;
+        OwnerMintModule.getEstimateGas(account, setGasUnits);
       }
     }
   };

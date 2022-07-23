@@ -1,3 +1,6 @@
+/**
+ * TODO: This component is not called anywhere in the app
+ */
 import React, { Dispatch, SetStateAction } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import {
@@ -5,7 +8,9 @@ import {
   numberWithCommas
 } from '@/utils/formattedNumbers';
 import { formatAddress } from '@/utils/formatAddress';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, {
+  ContractMapper
+} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 import { Callout } from '@/components/callout';
 import { L2 } from '@/components/typography';
 
@@ -142,7 +147,10 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
 
           <div className="rounded-custom overflow-hidden">
             <Callout extraClasses="p-3 text-sm w-full">
-              <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
+              <EstimateGas
+                contract={ContractMapper.ClubERC20Factory}
+                customClasses="bg-opacity-30 w-full flex cursor-default items-center"
+              />
             </Callout>
             <div className="bg-blue bg-opacity-20 rounded-b-lg">
               <button

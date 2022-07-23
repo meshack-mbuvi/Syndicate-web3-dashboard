@@ -1,7 +1,9 @@
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { ProgressModal } from '@/components/progressModal';
 import { Switch, SwitchType } from '@/components/switch';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, {
+  ContractMapper
+} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -860,7 +862,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                 } transition-opacity duration-700`}
               >
                 <Callout>
-                  <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
+                  <EstimateGas
+                    contract={ContractMapper.MintPolicy}
+                    customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
+                  />
                 </Callout>
               </div>
             </div>

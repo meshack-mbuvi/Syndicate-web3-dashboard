@@ -8,7 +8,9 @@ import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 import { InputField } from '@/components/inputs/inputField';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, {
+  ContractMapper
+} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 
 interface Props {
   nameValue: string;
@@ -77,7 +79,10 @@ export const CollectiveFormReview: React.FC<Props> = ({
     <div className="py-6 bg-black  flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
       <div className="flex-grow">
         <Callout>
-          <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
+          <EstimateGas
+            contract={ContractMapper.ERC721CollectiveFactory}
+            customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
+          />
         </Callout>
       </div>
       {/* Submit button */}
