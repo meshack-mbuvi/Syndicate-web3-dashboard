@@ -98,4 +98,27 @@ export class OwnerMintModuleContract {
       }
     }
   }
+
+  public async getEstimateGas(
+    account: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    await new Promise(() => {
+      this.OwnerMintModuleContract.methods
+        .ownerMint(
+          '0x3f45a6a40fcd8ee8c1ef4a89c97336cae61aa9ef', // TODO should be dynamic
+          '0xd06C255743610EdAb434668956b4fB55Fea51384', // TODO should be dynamic
+          '500000000000000000'
+        )
+        .estimateGas(
+          {
+            from: account
+          },
+          (_error, gasAmount) => {
+            if (gasAmount) onResponse(gasAmount);
+            if (_error) console.log(_error);
+          }
+        );
+    });
+  }
 }

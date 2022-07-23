@@ -1,7 +1,9 @@
 import { Callout } from '@/components/callout';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, {
+  ContractMapper
+} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
@@ -133,7 +135,10 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
         </div>
         <div className="mx-5 rounded-custom overflow-hidden">
           <Callout extraClasses="p-4 text-sm">
-            <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
+            <EstimateGas
+              contract={ContractMapper.OwnerMintModule}
+              customClasses="bg-opacity-30 w-full flex cursor-default items-center"
+            />
           </Callout>
           <div className="bg-blue bg-opacity-20 rounded-b-lg">
             <button
