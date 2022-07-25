@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import ERC20ABI from 'src/utils/abi/erc20';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -96,18 +97,19 @@ const EstimateGas: React.FC<Props> = ({
     [ContractMapper.MintPolicy]: {
       syndicateContract: policyMintERC20,
       estimateGas: () => {
+        if (!policyMintERC20) return;
+
         const now = new Date();
         const startTime = moment(now).valueOf();
         const endTime = moment(moment(now).valueOf()).add(1, 'days').valueOf();
 
-        if (!policyMintERC20) return;
         policyMintERC20.getEstimateGas(
           account,
           args.clubAddress,
           startTime,
           endTime,
           args.maxMemberCount,
-          args.maxTotalSupply,
+          web3.utils.toWei(args.maxTotalSupply),
           setGasUnits
         );
       }
