@@ -6,7 +6,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
-import ERC20ABI from 'src/utils/abi/erc20';
 
 export enum ContractMapper {
   ClubERC20Factory,
