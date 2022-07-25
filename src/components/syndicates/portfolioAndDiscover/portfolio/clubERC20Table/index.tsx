@@ -6,7 +6,7 @@ import {
 import { hasDecimals } from '@/utils/hasDecimals';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import GradientAvatar from '../GradientAvatar';
 

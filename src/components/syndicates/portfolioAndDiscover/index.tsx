@@ -1,21 +1,21 @@
 import CreateClubButton from '@/components/createClubButton';
 import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/club';
+import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import React, { useState, useEffect } from 'react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import ClubERC20Table from './portfolio/clubERC20Table';
-import CollectivesTable from './portfolio/collectivesTable';
 import {
-  MyClubERC20TableColumns,
   clubERCTableColumns,
-  collectivesTableColumns
+  collectivesTableColumns,
+  MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
-import TabsButton from '@/components/TabsButton';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import CollectivesTable from './portfolio/collectivesTable';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -67,18 +67,16 @@ const EmptyState: React.FC<{
 const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading }
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s }
   } = useSelector((state: AppState) => state);
 
   const {
-    account,
     ethereumNetwork: { invalidEthereumNetwork }
   } = web3;
 
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const { collectives } = useFlags();
 
-  const { loading: adminClubsLoading, memberClubLoading } = useClubERC20s();
+  const { isLoading } = useClubERC20s();
 
   const { width } = useWindowSize();
   enum TabsType {
@@ -299,18 +297,9 @@ const PortfolioAndDiscover: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminCollectives.length, memberCollectives.length]);
 
-  useEffect(() => {
-    if (adminClubsLoading || memberClubLoading || loading) return;
-    setIsPageLoading(false);
-
-    return () => {
-      setIsPageLoading(true);
-    };
-  }, [loading, account, adminClubsLoading, memberClubLoading]);
-
   return (
     <div className="-mt-8">
-      {isPageLoading ? (
+      {isLoading ? (
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
             <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
@@ -359,6 +348,7 @@ const PortfolioAndDiscover: React.FC = () => {
               <CreateClubButton />
             ) : null}
           </div>
+
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div className="mt-6">
               {otherClubERC20s.length !== 0 && myClubERC20s.length !== 0 && (
