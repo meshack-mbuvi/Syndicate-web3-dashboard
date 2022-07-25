@@ -37,7 +37,7 @@ const EstimateGas: React.FC<Props> = ({
         distributionsERC20,
         distributionsETH,
         erc721CollectiveFactory,
-        mintPolicy,
+        policyMintERC20,
         OwnerMintModule
       }
     }
@@ -81,10 +81,10 @@ const EstimateGas: React.FC<Props> = ({
       }
     },
     [ContractMapper.MintPolicy]: {
-      syndicateContract: mintPolicy,
+      syndicateContract: policyMintERC20,
       estimateGas: () => {
-        if (!mintPolicy) return;
-        mintPolicy.getEstimateGas(account, args.clubAddress, setGasUnits);
+        if (!policyMintERC20) return;
+        policyMintERC20.getEstimateGas(account, args.clubAddress, setGasUnits);
       }
     },
     [ContractMapper.OwnerMintModule]: {
