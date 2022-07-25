@@ -5,6 +5,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -80,7 +81,16 @@ const EstimateGas: React.FC<Props> = ({
       syndicateContract: erc721CollectiveFactory,
       estimateGas: () => {
         if (!erc721CollectiveFactory) return;
-        erc721CollectiveFactory.getEstimateGas(account, setGasUnits);
+        // convert price to wei
+        args.collectiveParams.ethPrice = web3.utils.toWei(
+          String(args.collectiveParams.ethPrice)
+        );
+
+        erc721CollectiveFactory.getEstimateGas(
+          account,
+          args.collectiveParams as ICollectiveParams,
+          setGasUnits
+        );
       }
     },
     [ContractMapper.MintPolicy]: {

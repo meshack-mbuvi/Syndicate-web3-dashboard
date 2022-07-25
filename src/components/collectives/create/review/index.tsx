@@ -11,6 +11,7 @@ import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import EstimateGas, {
   ContractMapper
 } from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 
 interface Props {
   nameValue: string;
@@ -75,12 +76,38 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const [currentlyEditingIndex, setCurrentlyEditingIndex] = useState(null);
 
+  const {
+    name,
+    symbol,
+    pricePerNFT,
+    maxPerWallet: maxPerMember,
+    openUntil: openUntilWindow,
+    EpochCloseTime,
+    maxSupply: totalSupply,
+    transferrable,
+    creationStatus
+  } = useCreateState();
+
   const bottomBar = (
     <div className="py-6 bg-black  flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
       <div className="flex-grow">
         <Callout>
           <EstimateGas
             contract={ContractMapper.ERC721CollectiveFactory}
+            args={{
+              collectiveParams: {
+                collectiveName: name,
+                collectiveSymbol: symbol,
+                totalSupply,
+                maxPerMember,
+                openUntil: openUntilWindow,
+                ethPrice: pricePerNFT,
+                tokenURI: creationStatus.ipfsHash,
+                startTime: '0',
+                endTime: String(EpochCloseTime),
+                allowTransfer: transferrable
+              }
+            }}
             customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
           />
         </Callout>
