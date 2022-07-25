@@ -154,15 +154,19 @@ export class MintPolicyContract {
   public async getEstimateGas(
     account: string,
     club: string,
+    startTime: number,
+    endTime: number,
+    maxMemberCount: number,
+    maxTotalSupply: number,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     await new Promise(() => {
       this.mintPolicyContract.methods
         .updateConfig(club, [
-          0,
-          1684952525,
-          99,
-          10000000000,
+          startTime,
+          endTime,
+          maxMemberCount,
+          maxTotalSupply,
           '0x0000000000000000000000000000000000000000',
           0
         ])

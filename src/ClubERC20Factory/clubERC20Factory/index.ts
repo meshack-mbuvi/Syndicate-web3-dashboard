@@ -3,13 +3,14 @@ import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.j
 import DISTRIBUTION_ERC20_ABI from 'src/contracts/DistributionModuleERC20.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
+import { IActiveNetwork } from '@/state/wallet/types';
 
 export class ClubERC20Factory {
   web3;
   address;
   clubERC20Factory;
   distributionERC20;
-  activeNetwork;
+  activeNetwork: IActiveNetwork;
 
   // initialize new instance of clubERC20FactoryAddress
   constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork) {
@@ -151,9 +152,11 @@ export class ClubERC20Factory {
     const endTime = 1688849940;
     const maxMembers = 99;
     const tokenCap = BigInt(5000 * 10 ** 18);
-    const usdcAddress = isDev
-      ? '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926'
-      : '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+    const usdcAddress = {
+      1: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+      4: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+      137: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+    };
 
     await new Promise(() => {
       this.clubERC20Factory.methods
@@ -166,7 +169,7 @@ export class ClubERC20Factory {
           tokenCap,
           '0x0000000000000000000000000000000000000000',
           0,
-          usdcAddress
+          usdcAddress[this.activeNetwork.chainId]
         )
         .estimateGas(
           {

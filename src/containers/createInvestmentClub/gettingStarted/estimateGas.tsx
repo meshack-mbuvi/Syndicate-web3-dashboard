@@ -4,6 +4,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -19,13 +20,15 @@ interface Props {
   customClasses?: string;
   withFiatCurrency?: boolean;
   args?: Record<string, any>;
+  skipQuery?: boolean;
 }
 
 const EstimateGas: React.FC<Props> = ({
   contract,
   customClasses = '',
   withFiatCurrency = false,
-  args = {}
+  args = {},
+  skipQuery = false
 }) => {
   const {
     web3Reducer: {
@@ -83,8 +86,20 @@ const EstimateGas: React.FC<Props> = ({
     [ContractMapper.MintPolicy]: {
       syndicateContract: policyMintERC20,
       estimateGas: () => {
+        const now = new Date();
+        const startTime = moment(now).valueOf();
+        const endTime = moment(moment(now).valueOf()).add(1, 'days').valueOf();
+
         if (!policyMintERC20) return;
-        policyMintERC20.getEstimateGas(account, args.clubAddress, setGasUnits);
+        policyMintERC20.getEstimateGas(
+          account,
+          args.clubAddress,
+          startTime,
+          endTime,
+          args.maxMemberCount,
+          args.maxTotalSupply,
+          setGasUnits
+        );
       }
     },
     [ContractMapper.OwnerMintModule]: {
@@ -125,10 +140,11 @@ const EstimateGas: React.FC<Props> = ({
   }, [account, contracts[contract].syndicateContract, args]);
 
   useEffect(() => {
+    if (skipQuery) return;
     if (activeNetwork.chainId) {
       void fetchGasUnitAndBaseFee();
     }
-  }, [fetchGasUnitAndBaseFee, activeNetwork.chainId]);
+  }, [fetchGasUnitAndBaseFee, activeNetwork.chainId, skipQuery]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
