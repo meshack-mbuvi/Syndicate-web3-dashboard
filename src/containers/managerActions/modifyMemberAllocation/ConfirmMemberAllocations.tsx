@@ -8,9 +8,7 @@ import {
   numberWithCommas
 } from '@/utils/formattedNumbers';
 import { formatAddress } from '@/utils/formatAddress';
-import EstimateGas, {
-  ContractMapper
-} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { Callout } from '@/components/callout';
 import { L2 } from '@/components/typography';
 

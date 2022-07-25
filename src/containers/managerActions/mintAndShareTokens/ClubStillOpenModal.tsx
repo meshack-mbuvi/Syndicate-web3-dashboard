@@ -1,9 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Callout } from '@/components/callout';
-import EstimateGas, {
-  ContractMapper
-} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 
 interface IClubStillOpenModal {
   showClubStillOpenModal: boolean;

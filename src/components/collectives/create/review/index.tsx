@@ -8,9 +8,7 @@ import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 import { InputField } from '@/components/inputs/inputField';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import EstimateGas, {
-  ContractMapper
-} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 
 interface Props {

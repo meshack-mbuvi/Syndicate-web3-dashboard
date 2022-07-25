@@ -1,9 +1,7 @@
 import { Callout } from '@/components/callout';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
-import EstimateGas, {
-  ContractMapper
-} from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
