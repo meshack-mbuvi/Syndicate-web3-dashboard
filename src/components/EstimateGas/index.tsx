@@ -9,8 +9,6 @@ import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 
 export enum ContractMapper {
   ClubERC20Factory,
-  DistributionsERC20,
-  DistributionsETH,
   ERC721CollectiveFactory,
   MintPolicy,
   OwnerMintModule
@@ -38,8 +36,6 @@ const EstimateGas: React.FC<Props> = ({
     initializeContractsReducer: {
       syndicateContracts: {
         clubERC20Factory,
-        distributionsERC20,
-        distributionsETH,
         erc721CollectiveFactory,
         policyMintERC20,
         OwnerMintModule
@@ -47,7 +43,7 @@ const EstimateGas: React.FC<Props> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
+  const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
   const [nativeTokenPrice, setNativeTokenPrice] = useState<
@@ -61,20 +57,6 @@ const EstimateGas: React.FC<Props> = ({
       estimateGas: () => {
         if (!clubERC20Factory) return;
         clubERC20Factory.getEstimateGas(account, setGasUnits);
-      }
-    },
-    [ContractMapper.DistributionsERC20]: {
-      syndicateContract: distributionsERC20,
-      estimateGas: () => {
-        if (!distributionsERC20) return;
-        distributionsERC20.getEstimateGasDistributeERC20(account, setGasUnits);
-      }
-    },
-    [ContractMapper.DistributionsETH]: {
-      syndicateContract: distributionsETH,
-      estimateGas: () => {
-        if (!distributionsETH) return;
-        distributionsETH.getEstimateGasDistributeETH(account, setGasUnits);
       }
     },
     [ContractMapper.ERC721CollectiveFactory]: {
@@ -129,6 +111,7 @@ const EstimateGas: React.FC<Props> = ({
   };
 
   const processBaseFee = async (result) => {
+    if (result.status === '0') return;
     const baseFee = result.result;
     const baseFeeInDecimal = parseInt(baseFee, 16);
     setGasBaseFee(baseFeeInDecimal);
@@ -155,7 +138,7 @@ const EstimateGas: React.FC<Props> = ({
     if (activeNetwork.chainId) {
       void fetchGasUnitAndBaseFee();
     }
-  }, [fetchGasUnitAndBaseFee, activeNetwork.chainId, skipQuery]);
+  }, [activeNetwork.chainId, skipQuery]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
