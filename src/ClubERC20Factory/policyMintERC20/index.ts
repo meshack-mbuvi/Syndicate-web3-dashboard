@@ -172,7 +172,7 @@ export class MintPolicyContract {
           },
           (_error, gasAmount) => {
             if (gasAmount) onResponse(gasAmount);
-            if (_error) console.log('EstimateGasError', _error);
+            if (_error) console.log('EstimateGasError', _error); // TODO: should be logged to Error monitoring tool (Sentry)
           }
         );
     });
