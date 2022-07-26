@@ -39,7 +39,7 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
           ? numberWithCommas(
               Number(temporaryInputFieldValues.priceToJoin.slice(0, -1))
             ) + '.'
-          : priceToJoin
+          : priceToJoin || priceToJoin === 0
           ? numberWithCommas(priceToJoin)
           : ''
       }
@@ -52,7 +52,7 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
             priceToJoin: amount
           });
         } else {
-          if (Number(amount)) {
+          if (Number(amount) || Number(amount) === 0) {
             handlePriceToJoinChange(Number(amount));
           } else if (amount === '') {
             handlePriceToJoinChange(null);
