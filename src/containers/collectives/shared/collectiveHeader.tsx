@@ -4,8 +4,8 @@ import Link from 'next/link';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import {
-  ExternalLinkIcon,
   ExternalLinkColor,
+  ExternalLinkIcon,
   OpenSeaIcon,
   SettingsIcon
 } from 'src/components/iconWrappers';
@@ -13,8 +13,9 @@ import {
 export const CollectiveHeader: React.FC<{
   collectiveName: string;
   links?: { openSea: string; externalLink: string };
+  showModifySettings?: boolean;
 }> = (props) => {
-  const { collectiveName, links } = props;
+  const { collectiveName, links, showModifySettings = false } = props;
 
   const title = (
     <>
@@ -37,27 +38,30 @@ export const CollectiveHeader: React.FC<{
       {title}
       {!isEmpty(links) && (
         <div className="flex items-center space-x-4">
-          <Link href={`/collectives/${collectiveAddress}/modify`}>
-            <div
-              className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
-              data-tip
-              data-for="customize"
-            >
-              <div className="flex justify-center items-center vertically-center">
-                <SettingsIcon />
-              </div>
-              <ReactTooltip
-                id="customize"
-                place="bottom"
-                effect="solid"
-                className="actionsTooltip"
-                arrowColor="#222529"
-                backgroundColor="#222529"
+          {showModifySettings ? (
+            <Link href={`/collectives/${collectiveAddress}/modify`}>
+              <div
+                className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
+                data-tip
+                data-for="customize"
               >
-                <B3 extraClasses="text-white">Modify collective</B3>
-              </ReactTooltip>
-            </div>
-          </Link>
+                <div className="flex justify-center items-center vertically-center">
+                  <SettingsIcon />
+                </div>
+                <ReactTooltip
+                  id="customize"
+                  place="bottom"
+                  effect="solid"
+                  className="actionsTooltip"
+                  arrowColor="#222529"
+                  backgroundColor="#222529"
+                >
+                  <B3 extraClasses="text-white">Modify collective</B3>
+                </ReactTooltip>
+              </div>
+            </Link>
+          ) : null}
+
           <a
             href={links.openSea}
             className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"

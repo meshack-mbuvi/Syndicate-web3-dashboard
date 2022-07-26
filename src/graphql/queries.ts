@@ -225,3 +225,35 @@ export const GetSynToken = gql`
     }
   }
 `;
+
+export const GetAdminCollectives = gql`
+  query SyndicateCollectives($where: SyndicateCollective_filter) {
+    syndicateCollectives(where: $where) {
+      contractAddress
+      ownerAddress
+      name
+      symbol
+      maxTotalSupply
+      mintPrice
+      numMinted
+      totalSupply
+    }
+  }
+`;
+
+export const GetMemberCollectives = gql`
+  query Nfts($where: Nft_filter) {
+    nfts(where: $where) {
+      collective {
+        contractAddress
+        ownerAddress
+        name
+        symbol
+        maxTotalSupply
+        mintPrice
+        totalSupply
+        numMinted
+      }
+    }
+  }
+`;

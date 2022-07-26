@@ -2,6 +2,7 @@ import CreateClubButton from '@/components/createClubButton';
 import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/club';
 import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
+import useCollectives from '@/hooks/collectives/useGetCollectives';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
@@ -67,7 +68,8 @@ const EmptyState: React.FC<{
 const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s }
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s },
+    collectivesSlice: { adminCollectives, memberCollectives }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -79,6 +81,9 @@ const PortfolioAndDiscover: React.FC = () => {
   const { isLoading } = useClubERC20s();
 
   const { width } = useWindowSize();
+
+  useCollectives();
+
   enum TabsType {
     ADMIN = 'ADMIN',
     MEMBER = 'MEMBER'
@@ -99,179 +104,6 @@ const PortfolioAndDiscover: React.FC = () => {
       label: 'Member',
       value: TabsType.MEMBER
     }
-  ];
-
-  // TODO: Placeholder content for collectives.
-  // get collectives from Redux/graph
-  // commented these out for now since we're done checking placeholders.
-  const adminCollectives = [
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.5,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.35,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.15,
-    //   inviteLink: 'http://localhost:3000/'
-    // }
-  ];
-  const memberCollectives = [
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // }
   ];
 
   // show only the available section when there's either

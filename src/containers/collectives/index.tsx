@@ -17,7 +17,13 @@ const HeaderComponent = () => {
     openSea: '/'
   };
 
-  return <CollectiveHeader collectiveName={collectiveName} links={links} />;
+  return (
+    <CollectiveHeader
+      collectiveName={collectiveName}
+      links={links}
+      showModifySettings={true}
+    />
+  );
 };
 
 const CollectiveDescription = () => {

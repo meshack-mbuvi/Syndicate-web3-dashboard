@@ -2,11 +2,11 @@ import {
   ClaimCollectivePass,
   WalletState
 } from '@/components/collectives/claimCollectivePass';
+import ConnectWallet from '@/components/connectWallet';
 import { ProgressState } from '@/components/progressCard';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
-import ConnectWallet from '@/components/connectWallet';
-import { Provider } from 'react-redux';
 import { store } from '@/state/index';
+import { Provider } from 'react-redux';
 
 export default {
   title: '4. Organisms/Collectives/Claim Pass',
