@@ -2,10 +2,24 @@ import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radi
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
 import { CollectiveFormReview as CollectiveFormReview } from '@/components/collectives/create/review';
 import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import ConnectWallet from '@/components/connectWallet';
 
 export default {
   title: '4. Organisms/Collectives/Create/Review',
-  isFullscreen: true
+  isFullscreen: true,
+  decorators: [
+    (Story) => (
+      <Provider store={store}>
+        <ConnectWalletProvider>
+          <Story />
+          <ConnectWallet />
+        </ConnectWalletProvider>
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args) => {
