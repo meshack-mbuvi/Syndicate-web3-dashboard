@@ -208,20 +208,9 @@ export class ERC721CollectiveFactory extends ContractBase {
    */
   public async getEstimateGas(
     account: string,
+    collectiveParams: ICollectiveParams,
     onResponse: (gas?: number) => void
   ): Promise<void> {
-    const collectiveParams: ICollectiveParams = {
-      collectiveName: 'Alpha Beta Punks',
-      collectiveSymbol: 'ABP',
-      totalSupply: 1000,
-      maxPerMember: 3,
-      ethPrice: this.web3.utils.toWei('0.5'),
-      tokenURI: 'ipfs://hash',
-      startTime: '0',
-      endTime: '1684952525',
-      allowTransfer: true
-    };
-
     const { salt, contractAddresses, encodedFunctions } =
       await this.createSetupParams(account, collectiveParams);
 

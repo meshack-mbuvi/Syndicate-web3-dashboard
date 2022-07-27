@@ -1,7 +1,7 @@
 import { Callout } from '@/components/callout';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
@@ -16,7 +16,7 @@ interface IConfirmMemberDetailsModal {
   ownershipShare: number;
   totalSupply: string;
   totalSupplyPostMint: number;
-  memberAddress;
+  memberAddress: string;
   handleShow: (show: boolean) => void;
   setPreview: Dispatch<SetStateAction<boolean>>;
   handleMinting: () => void;
@@ -34,6 +34,8 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
   setPreview,
   handleMinting
 }): React.ReactElement => {
+  const clubAddress = window?.location?.pathname.split('/')[2];
+
   const DetailContent = ({ label, value, symbol, showPlusSign = false }) => (
     <div className="flex justify-between">
       <span className="text-gray-syn4 font-whyte text-base leading-6">
@@ -133,7 +135,15 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
         </div>
         <div className="mx-5 rounded-custom overflow-hidden">
           <Callout extraClasses="p-4 text-sm">
-            <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
+            <EstimateGas
+              contract={ContractMapper.OwnerMintModule}
+              args={{
+                clubAddress,
+                memberAddress,
+                amountToMint
+              }}
+              customClasses="bg-opacity-30 w-full flex cursor-default items-center bg-green"
+            />
           </Callout>
           <div className="bg-blue bg-opacity-20 rounded-b-lg">
             <button

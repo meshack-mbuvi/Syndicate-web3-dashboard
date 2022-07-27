@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Callout } from '@/components/callout';
-import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 
 interface IClubStillOpenModal {
   showClubStillOpenModal: boolean;
@@ -66,7 +66,10 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
           </div>
           <div className="mx-5 rounded-custom overflow-hidden">
             <Callout extraClasses="p-4 text-sm">
-              <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
+              <EstimateGas
+                contract={ContractMapper.MintPolicy}
+                customClasses="bg-opacity-30 w-full flex cursor-default items-center"
+              />
             </Callout>
             <div className="bg-blue bg-opacity-20 rounded-b-lg">
               <button

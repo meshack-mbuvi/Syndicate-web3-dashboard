@@ -95,6 +95,7 @@ export abstract class ContractBase {
         },
         (_error, gasAmount) => {
           if (gasAmount) onResponse(gasAmount);
+          if (_error) console.log('EstimateGasError', _error); // TODO: should be logged to Error monitoring tool (Sentry)
         }
       );
     });
