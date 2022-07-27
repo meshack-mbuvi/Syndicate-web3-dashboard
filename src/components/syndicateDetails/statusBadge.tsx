@@ -112,58 +112,66 @@ const StatusBadge = (props: Props): JSX.Element => {
     titleText = 'Waiting for selection...';
   }
 
+  const badgeIconContent = (
+    <>
+      {typeof badgeIcon === 'string' ? (
+        <div className="w-6 h-6">
+          <img
+            src={`/images/syndicateStatusIcons/${badgeIcon}`}
+            alt={titleText}
+            style={{ height: '100%', width: '100%' }}
+          />
+        </div>
+      ) : (
+        <div className="m-0">{badgeIcon}</div>
+      )}
+    </>
+  );
+
   return (
     <div className="h-fit-content rounded-3xl bg-gray-syn8">
       <div
-        className={`h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
+        className={`h-auto sm:h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
         {loading || merkleLoading || claimLoading ? (
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
         ) : (
-          <div className="flex items-center justify-between space-x-4 w-full">
-            <div className="flex items-center space-x-4 w-full">
-              {typeof badgeIcon === 'string' ? (
-                <div className="w-6 h-6">
-                  <img
-                    src={`/images/syndicateStatusIcons/${badgeIcon}`}
-                    alt={titleText}
-                    style={{ height: '100%', width: '100%' }}
-                  />
+          <div className="flex w-full">
+            <div className="flex mt-4 sm:hidden">{badgeIconContent}</div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 space-x-4 sm:space-y-0 w-full flex-nowrap">
+              <div className="flex items-center space-x-4 flex-shrink-0">
+                <div className="hidden sm:block">{badgeIconContent}</div>
+                <div className="flex justify-between items-center w-full leading-snug ml-4">
+                  <H4>{titleText}</H4> <B2>{subTitleText}</B2>
                 </div>
-              ) : (
-                <div className="m-0">{badgeIcon}</div>
-              )}
-              {/* <p className="h3 sm:text-xl">{titleText}</p> */}
-              <div className="flex justify-between items-center w-full leading-snug ml-4">
-                <H4>{titleText}</H4> <B2>{subTitleText}</B2>
               </div>
+              {depositsEnabled &&
+              !syndicateCreationFailed &&
+              !showConfettiSuccess ? (
+                <div className="flex">
+                  <Tooltip
+                    content={
+                      <span className="w-200 flex-shrink-0">
+                        {`Closing to deposits on ${getFormattedDateTimeWithTZ(
+                          endTime
+                        )}`}
+                      </span>
+                    }
+                    arrow={false}
+                    tipContentClassName="actionsTooltip"
+                    background="#232529"
+                    padding="12px 16px"
+                    distance={8}
+                  >
+                    <div className="flex-shrink-0">
+                      <span className="font-whyte-light">{`Closes in ${getCountDownDays(
+                        endTime.toString()
+                      )}`}</span>
+                    </div>
+                  </Tooltip>
+                </div>
+              ) : null}
             </div>
-            {depositsEnabled &&
-            !syndicateCreationFailed &&
-            !showConfettiSuccess ? (
-              <div className="flex flex-shrink-0">
-                <Tooltip
-                  content={
-                    <span className="w-200 flex-shrink-0">
-                      {`Closing to deposits on ${getFormattedDateTimeWithTZ(
-                        endTime
-                      )}`}
-                    </span>
-                  }
-                  arrow={false}
-                  tipContentClassName="actionsTooltip"
-                  background="#232529"
-                  padding="12px 16px"
-                  distance={8}
-                >
-                  <div className="flex-shrink-0">
-                    <span className="font-whyte-light">{`Closes in ${getCountDownDays(
-                      endTime.toString()
-                    )}`}</span>
-                  </div>
-                </Tooltip>
-              </div>
-            ) : null}
           </div>
         )}
       </div>
