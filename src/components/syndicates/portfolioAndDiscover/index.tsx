@@ -195,8 +195,8 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div
                   className={`${
                     activeClubsTab === TabsType.ADMIN
-                      ? 'opacity-100 z-10'
-                      : 'opacity-0 z-0'
+                      ? 'opacity-100 z-10 h-full'
+                      : 'opacity-0 z-0 h-0'
                   } transition-all duration-700 row-start-1 col-start-1 `}
                 >
                   <ClubERC20Table
@@ -208,9 +208,9 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div
                   className={`${
                     activeClubsTab === TabsType.MEMBER
-                      ? 'opacity-100 z-10'
-                      : 'opacity-0 z-0'
-                  } transition-opacity duration-700 row-start-1 col-start-1`}
+                      ? 'opacity-100 z-10 h-full'
+                      : 'opacity-0 z-0 h-0'
+                  } transition-all duration-700 row-start-1 col-start-1`}
                 >
                   <ClubERC20Table
                     tableData={otherClubERC20s}
