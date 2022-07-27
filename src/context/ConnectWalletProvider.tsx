@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
-import { Flow, amplitudeLogger } from '@/components/amplitude';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   ERROR_WALLET_CONNECTION,
   SUCCESSFUL_WALLET_CONNECT
 } from '@/components/amplitude/eventNames';
 import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
+import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { setContracts } from '@/state/contracts';
 import {
@@ -18,19 +19,22 @@ import {
   setDisConnected,
   setLibrary,
   showErrorModal,
+  showWalletModal,
   storeCurrentEthNetwork,
   storeEthereumNetwork
 } from '@/state/wallet/actions';
+import { IActiveNetwork } from '@/state/wallet/types';
 import { isSSR } from '@/utils/environment';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
 import router from 'next/router';
 import React, {
-  ReactNode,
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useMemo,
@@ -38,9 +42,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
-import { NETWORKS } from '@/Networks';
-import { IActiveNetwork } from '@/state/wallet/types';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -126,7 +127,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     [chainId]
   );
 
-  const supportdedNetworks: number[] = useMemo(() => {
+  const supportedNetworks: number[] = useMemo(() => {
     if (polygon !== undefined) {
       return Object.keys(NETWORKS).map((key) => {
         if (!polygon && Number(key) === 137) {
@@ -244,9 +245,19 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // allows us to listed for account and chain changes
   useEffect(() => {
     if (activeProvider?.on) {
-      const handleAccountsChanged = async () => {
-        const { address } = await getProviderAccountAndNetwork(activeProvider);
-        setAccount(address);
+      const handleAccountsChanged = async (accounts) => {
+        let _address = '';
+        if (accounts.length) {
+          ({ address: _address } = await getProviderAccountAndNetwork(
+            activeProvider
+          ));
+        } else {
+          disconnectWallet();
+
+          // clear storage :- no accounts in any given provider
+          localStorage.removeItem('cache');
+        }
+        setAccount(_address);
       };
 
       const handleChainChanged = async () => {
@@ -346,8 +357,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // be connected to the 'rinkeby' network.
   // otherwise it should be connected to mainnet
   const getCurrentEthNetwork = async () => {
-    const currentNetwork = await web3.eth.net.getNetworkType();
-    dispatch(storeCurrentEthNetwork(currentNetwork));
+    try {
+      const currentNetwork = await web3.eth.net.getNetworkType();
+      dispatch(storeCurrentEthNetwork(currentNetwork));
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const switchNetworks = async (_chainId) => {
@@ -407,8 +422,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   // Checks if we are connected to the supported networks.
   useEffect(() => {
-    if (chainId && providerName === 'Injected' && supportdedNetworks.length) {
-      if (supportdedNetworks.includes(chainId)) {
+    if (chainId && providerName === 'Injected' && supportedNetworks.length) {
+      if (supportedNetworks.includes(chainId)) {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: false,
@@ -429,12 +444,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
     }
-  }, [chainId, supportdedNetworks]);
+  }, [chainId, supportedNetworks]);
 
   // This handles the connect for a wallet
   const connectWallet = async (providerName: string) => {
     closeWalletModal();
     setWalletConnecting(true);
+
+    let showWalletConnecting = false;
+    let providerNotFound = false;
+    let connectionRejected = false;
 
     try {
       if (
@@ -453,17 +472,52 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         });
       }
     } catch (error) {
-      const customError = getErrorMessage();
-      setWalletConnecting(false);
-      setShowSuccessModal(false);
-      dispatch(showErrorModal(customError));
-      amplitudeLogger(ERROR_WALLET_CONNECTION, {
-        flow: Flow.WALLET_CONNECT,
-        error
-      });
+      if (
+        error.code === -32002 ||
+        error.message === 'Already processing eth_requestAccounts. Please wait.'
+      ) {
+        showWalletConnecting = true;
+      } else if (error.message === 'User Rejected') {
+        connectionRejected = true;
+      } else if (error.message === 'No Web3 Provider found') {
+        providerNotFound = true;
+      } else {
+        const customError = getErrorMessage();
+        setWalletConnecting(false);
+        setShowSuccessModal(false);
+        dispatch(showErrorModal(customError));
+        amplitudeLogger(ERROR_WALLET_CONNECTION, {
+          flow: Flow.WALLET_CONNECT,
+          error
+        });
+      }
     } finally {
-      setWalletConnecting(false);
-      closeWalletModal();
+      if (showWalletConnecting) {
+        setWalletConnecting(true);
+      } else if (connectionRejected) {
+        setWalletConnecting(false);
+        dispatch(showWalletModal());
+      } else if (providerNotFound) {
+        setWalletConnecting(false);
+        dispatch(showWalletModal());
+
+        switch (providerName) {
+          case 'WalletConnect':
+            window.open('https://metamask.io/download/', '_blank');
+            break;
+
+          case 'Coinbase Wallet':
+            window.open('https://www.coinbase.com/wallet', '_blank');
+            break;
+
+          default:
+            window.open('https://metamask.io/download/', '_blank');
+            break;
+        }
+      } else {
+        setWalletConnecting(false);
+        closeWalletModal();
+      }
     }
   };
 

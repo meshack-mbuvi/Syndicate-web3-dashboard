@@ -1,4 +1,5 @@
 import { CollectiveFormCustomize } from '@/components/collectives/create/customize';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { useState } from 'react';
 
 export default {
@@ -43,6 +44,10 @@ const Template = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
+  openUntil: OpenUntil.FUTURE_DATE,
+  handleOpenUntilChange: () => {},
   isContinueButtonActive: false,
-  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' }
+  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
+  handleClickToChangeToken: () => {},
+  handleContinue: () => {}
 };

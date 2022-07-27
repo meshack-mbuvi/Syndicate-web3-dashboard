@@ -1,5 +1,5 @@
 import { B3 } from '@/components/typography';
-import React from 'react';
+import React, { useState } from 'react';
 
 export enum UploaderProgressType {
   LOADING_BAR = 'LOADING_BAR',
@@ -17,6 +17,7 @@ interface Props {
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
   heightClass?: string;
+  accept?: string;
   customClasses?: string;
 }
 
@@ -31,11 +32,15 @@ export const FileUploader: React.FC<Props> = ({
   handleCancelUpload,
   progressDisplayType = UploaderProgressType.LOADING_BAR,
   heightClass = 'h-52',
+  accept = '*',
   customClasses
 }) => {
+  const [isInputFocused, setIsInputFocused] = useState(false);
   return (
-    <div
-      className={`relative ${heightClass} p-6 border border-gray-syn6 border-dashed rounded ${
+    <button
+      className={`w-full relative ${heightClass} p-6 border ${
+        isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6'
+      } border-dashed rounded ${
         progressPercent <= 0 && 'hover:bg-gray-syn8'
       } transition-all ease-out ${customClasses}`}
     >
@@ -45,11 +50,22 @@ export const FileUploader: React.FC<Props> = ({
           progressPercent > 0 && 'pointer-events-none'
         } cursor-pointer w-full text-white`}
         onChange={handleUpload}
+        onFocus={() => {
+          if (!isInputFocused) {
+            setIsInputFocused(true);
+          }
+        }}
+        onBlur={() => {
+          if (isInputFocused) {
+            setIsInputFocused(false);
+          }
+        }}
+        accept={accept}
       />
 
       {/* Waiting for file */}
       <div
-        className={`pointer-events-none vertically-center text-center space-y-2 text-gray-syn4 ${
+        className={`pointer-events-none text-center space-y-2 text-gray-syn4 ${
           progressPercent > 0 && 'hidden'
         }`}
       >
@@ -136,6 +152,6 @@ export const FileUploader: React.FC<Props> = ({
             </div>
           )}
       </div>
-    </div>
+    </button>
   );
 };

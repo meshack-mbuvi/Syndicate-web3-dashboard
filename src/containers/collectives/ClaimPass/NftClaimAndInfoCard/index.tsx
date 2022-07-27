@@ -3,11 +3,11 @@ import {
   WalletState
 } from '@/components/collectives/claimCollectivePass';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { AppState } from '@/state';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -17,10 +17,6 @@ const NftClaimAndInfoCard: React.FC = () => {
       web3: { account }
     }
   } = useSelector((state: AppState) => state);
-  const router = useRouter();
-  const {
-    query: { collectiveAddress }
-  } = router;
   // TODO: to fetch loading state from redux store
   const loading = false;
 
@@ -61,6 +57,8 @@ const NftClaimAndInfoCard: React.FC = () => {
   const handleViewOnEtherscan = () => {
     /// handle view on etherscan
   };
+
+  const shareUrl = window.location.href;
 
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
@@ -132,7 +130,7 @@ const NftClaimAndInfoCard: React.FC = () => {
         isModalVisible={progressState === ProgressState.SUCCESS}
         handleModalClose={() => null}
         transactionHash={transactionHash}
-        socialURL={`https://app.syndicate.io/collectives/${collectiveAddress}`}
+        socialURL={shareUrl}
         description={`Just joined Alpha Beta Punks (✺ABP) by claiming the collective’s NFT on Syndicate 🎉 `}
         handleClick={handleViewOnEtherscan}
         customVisual={
@@ -140,8 +138,10 @@ const NftClaimAndInfoCard: React.FC = () => {
             <CollectivesInteractiveBackground
               heightClass="h-full"
               widthClass="w-full"
+              mediaType={NFTMediaType.IMAGE}
               floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
               numberOfParticles={75}
+              isDuplicate={true}
             />
           </div>
         }

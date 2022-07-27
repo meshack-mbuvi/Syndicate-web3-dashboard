@@ -1,3 +1,4 @@
+import { CopiedLinkIcon, CopyLinkIcon } from '@/components/iconWrappers';
 import { B2 } from '@/components/typography';
 import { AppState } from '@/state';
 import {
@@ -7,10 +8,9 @@ import {
 import { hasDecimals } from '@/utils/hasDecimals';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { CopiedLinkIcon, CopyLinkIcon } from '@/components/iconWrappers';
+import { useSelector } from 'react-redux';
 
 interface Props {
   columns: string[];
@@ -150,7 +150,10 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                           objectFit="contain"
                         />
                       </div>
-                      <div>{formatAmount(pricePerNft)} ETH</div>
+                      <div>
+                        {formatAmount(pricePerNft)}{' '}
+                        {activeNetwork.nativeCurrency.symbol}
+                      </div>
                     </div>
 
                     <div className="flex text-base items-center justify-end opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500">

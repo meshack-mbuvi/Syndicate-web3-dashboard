@@ -2,7 +2,10 @@ import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
-import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import {
+  CollectivesInteractiveBackground,
+  NFTMediaType
+} from '@/components/collectives/interactiveBackground';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 
 export default {
@@ -46,6 +49,7 @@ Collectives.args = {
         widthClass="w-full"
         floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
         numberOfParticles={75}
+        mediaType={NFTMediaType.IMAGE}
       />
     </div>
   ),

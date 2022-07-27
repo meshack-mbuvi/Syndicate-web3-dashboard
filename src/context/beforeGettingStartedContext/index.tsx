@@ -45,7 +45,18 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
   }, [agreementChecked]);
 
   useEffect(() => {
-    if (!clubAddress || isDemoMode) return;
+    // ChoiceDAO club addresses to exclude
+    const choiceDAOAddresses = [
+      '0x5d185575D086F97a42D8cB38B04f0e5725805DC1',
+      '0x1a4bd62b6d69fdcf1a79546382e7dbc40e78d339'
+    ];
+
+    if (
+      !clubAddress ||
+      isDemoMode ||
+      choiceDAOAddresses.indexOf(clubAddress as string) > -1
+    )
+      return;
 
     const { showBeforeGettingStarted } =
       JSON.parse(localStorage.getItem(clubAddress as string)) || {};

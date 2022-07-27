@@ -6,7 +6,7 @@ import React, { FC } from 'react';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 
 /**
- * Diplays all clubs.
+ * Displays all clubs.
  
  *
  */

@@ -3,10 +3,10 @@ import { Switch, SwitchType } from '@/components/switch';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import { B2, B3 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import React, { useState } from 'react';
+import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
-import { RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
+import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
 import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 
@@ -35,7 +35,10 @@ interface Props {
   handleCloseTimeChange?: (newTime: string) => void;
   allowOwnershipTransfer: boolean;
   handleChangeAllowOwnershipTransfer: (newAllowingTransfer: boolean) => void;
+  handleOpenUntilChange: (newOpenUntil: OpenUntil) => void;
+  openUntil: OpenUntil;
   isContinueButtonActive: boolean;
+  handleContinue: (e) => void;
 }
 
 export const CollectiveFormCustomize: React.FC<Props> = ({
@@ -58,12 +61,13 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
   handleCloseTimeChange,
   allowOwnershipTransfer,
   handleChangeAllowOwnershipTransfer,
-  isContinueButtonActive
+  openUntil,
+  handleOpenUntilChange,
+  isContinueButtonActive,
+  handleContinue
 }) => {
-  const [openUntilRadioIndex, setOpenUntilRadioIndex] = useState(null);
-
   return (
-    <>
+    <div className="max-w-730">
       <div>
         {/* Who can join */}
         <div>
@@ -92,8 +96,11 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                 subTitle: 'Unrestricted'
               }
             ]}
-            customClasses="mt-2"
+            customClasses="my-2"
           />
+          <B3 extraClasses="text-gray-syn4">
+            Members join by claiming your collective’s NFT
+          </B3>
         </div>
 
         {/* Max members */}
@@ -128,10 +135,10 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           />
         </div>
 
-        {/* Price to join / Max per wallet */}
+        {/* Price per NFT / Max per wallet */}
         <div className="mt-8 flex space-x-5">
           <div className="w-1/2">
-            <div>Price to join</div>
+            <div>Price per NFT</div>
             <InputFieldPriceToJoin
               priceToJoin={priceToJoin}
               handlePriceToJoinChange={handlePriceToJoinChange}
@@ -172,17 +179,23 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             arrowColor="#222529"
             backgroundColor="#222529"
           >
-            As an admin, you can open membership again anytime after closing via
-            an on-chain transaction with gas.
+            <span
+              style={{
+                lineHeight: '157%'
+              }}
+            >
+              As an admin, you can open membership again anytime after closing
+              via an on-chain transaction with gas.
+            </span>
           </ReactTooltip>
           <RadioButtonsOpenUntil
-            openUntil={openUntilRadioIndex}
-            setOpenUntil={setOpenUntilRadioIndex}
+            openUntil={openUntil}
+            setOpenUntil={handleOpenUntilChange}
           />
           {/* A future date */}
           <div
             className={`${
-              openUntilRadioIndex === 0
+              openUntil === 0
                 ? 'max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
             } transition-all duration-500 overflow-hidden`}
@@ -200,12 +213,12 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           {/* A max number of members is reached */}
           <div
             className={`w-1/2 ${
-              openUntilRadioIndex === 1
+              openUntil === 1
                 ? 'max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
             } transition-all duration-500 overflow-hidden`}
           >
-            <B2>Max supply of passes</B2>
+            <B2>Max supply of NFTs</B2>
             <InputField
               value={
                 maxSupply
@@ -222,7 +235,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                   handleMaxSupplyChange(null);
                 }
               }}
-              placeholderLabel="e.g. 3"
+              placeholderLabel="e.g. 1,000"
               extraClasses="my-2"
             />
             <B3 extraClasses="text-gray-syn4">
@@ -243,9 +256,9 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
         {/* Allow transfer */}
         <div className="mt-8 flex items-center justify-between">
           <div className="space-y-1">
-            <div>Allow owners to transfer ownership</div>
+            <div>Allow members to transfer</div>
             <div className="text-sm text-gray-syn4">
-              Owners are able to transfer and sell their membership pass
+              Members will be able to transfer the collective NFTs they own
             </div>
           </div>
           <Switch
@@ -264,14 +277,11 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
         </button>
-        <div className="mt-2 text-sm text-gray-syn4">
-          All fields (except token symbol) are modifiable later via an on-chain
-          transaction with gas.
-        </div>
       </div>
-    </>
+    </div>
   );
 };

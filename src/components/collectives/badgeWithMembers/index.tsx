@@ -8,12 +8,14 @@ interface Props {
   inviteLink?: string;
   admins?: CollectiveMemberProps[];
   members?: CollectiveMemberProps[];
+  isOpenToNewMembers: boolean;
 }
 
 export const BadgeWithMembers: React.FC<Props> = ({
   inviteLink,
   admins,
-  members
+  members,
+  isOpenToNewMembers
 }) => {
   const [copyState, setCopyState] = useState(false);
 
@@ -22,6 +24,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
       <div className="relative z-10">
         <StatusBadge
           isCollective={true}
+          isOpenToNewMembers={isOpenToNewMembers}
           numberOfMembers={admins.length + members.length}
         />
       </div>
@@ -48,7 +51,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
               <img src="/images/copy-link-white.svg" alt="Link" />
               <B3>Unrestricted</B3>
             </div>
-            <B3 extraClasses="text-gray-syn4">Anyone with the link can mint</B3>
+            <B3 extraClasses="text-gray-syn4">Anyone with the link can join</B3>
           </div>
         </div>
 
@@ -63,7 +66,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
           </div>
         )}
 
-        {members && (
+        {members.length > 0 && (
           <div>
             <L2 extraClasses="mb-4 text-gray-syn4">
               Members - {members.length}

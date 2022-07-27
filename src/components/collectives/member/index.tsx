@@ -1,7 +1,7 @@
 import { B4 } from '@/components/typography';
 
 export interface CollectiveMemberProps {
-  profilePicture: string;
+  profilePicture?: string;
   username: string;
   alsoMemberOf?: string[];
   maxClubsToDisplay?: number;
@@ -19,14 +19,17 @@ export const CollectiveMember: React.FC<CollectiveMemberProps> = ({
 
   return (
     <div className="flex space-x-2 items-center">
-      <img
-        src={profilePicture}
-        alt="Profile"
-        className="w-8 h-8 rounded-full"
-      />
+      {profilePicture ? (
+        <img
+          src={profilePicture}
+          alt="Profile"
+          className="w-8 h-8 rounded-full"
+        />
+      ) : null}
+
       <div className="space-y-1">
-        <div>@{username}</div>
-        {alsoMemberOf && (
+        <div>{username}</div>
+        {alsoMemberOf?.length > 0 && (
           <B4 extraClasses="text-gray-syn4">
             Member of
             {clubNamesToDisplay.map((clubName, index) => {

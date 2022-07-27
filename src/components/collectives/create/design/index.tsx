@@ -14,8 +14,13 @@ interface Props {
   descriptionValue: string;
   handleDescriptionChange: (input: string) => void;
   isContinueButtonActive: boolean;
+  handleContinue: (e) => void;
   handleUpload: (e) => void;
+  uploadSuccessText?: string;
   handleCancelUpload: () => void;
+  progressPercentage?: number;
+  fileName?: string;
+  acceptFileTypes?: string;
 }
 
 export const CollectiveFormDesign: React.FC<Props> = ({
@@ -26,11 +31,16 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   descriptionValue,
   handleDescriptionChange,
   isContinueButtonActive,
+  handleContinue,
   handleUpload,
-  handleCancelUpload
+  uploadSuccessText,
+  handleCancelUpload,
+  progressPercentage = 0,
+  fileName = 'FILENAME',
+  acceptFileTypes
 }) => {
   return (
-    <>
+    <div className="max-w-730">
       <div className="space-y-8">
         <div className="space-y-8">
           <InputFieldsNameAndSymbol
@@ -41,14 +51,15 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           />
           <div>
             <FileUploader
-              progressPercent={0}
-              fileName="FILENAME"
-              successText="SUCCESS TEXT"
+              progressPercent={progressPercentage}
+              fileName={fileName}
+              successText={uploadSuccessText}
               promptTitle="Upload artwork"
               promptSubtitle="PNG or MP4 allowed"
               progressDisplayType={UploaderProgressType.SPINNER}
               handleUpload={handleUpload}
               handleCancelUpload={handleCancelUpload}
+              accept={acceptFileTypes}
             />
             <div className="text-sm text-gray-syn4 mt-2">
               This file will live in IPFS and Pinata, and the metadata will
@@ -62,7 +73,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           <TextArea
             value={descriptionValue}
             handleValueChange={handleDescriptionChange}
-            placeholderLabel="Description about this NFT collection that will be visible everywhere"
+            placeholderLabel="Description about your collective’s NFT that will be visible everywhere"
             widthClass="w-full"
             heightRows={5}
           />
@@ -73,6 +84,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
         </button>
@@ -81,6 +93,6 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           transaction with gas.
         </div>
       </div>
-    </>
+    </div>
   );
 };

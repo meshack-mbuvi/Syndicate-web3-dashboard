@@ -26,18 +26,20 @@ interface props {
   setActiveIndex?: (event) => void;
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
+  showNavButton?: boolean;
 }
 
 const Header: React.FC<props> = ({
   navItems,
   handleExitClick,
   setActiveIndex,
-  showBackButton = false,
+  showBackButton = true,
   showNav = true,
   activeIndex = 0,
   hideWalletAndEllipsis = false,
   showCloseButton = false,
-  dotIndicatorOptions = []
+  dotIndicatorOptions = [],
+  showNavButton = false
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -210,9 +212,9 @@ const Header: React.FC<props> = ({
                   customClasses="pr-5"
                 />
 
-                {activeIndex > 0 ? (
+                {activeIndex > 0 && showNavButton ? (
                   <NavButton
-                    onClick={setActiveIndex}
+                    handlePrevious={setActiveIndex}
                     type={NavButtonType.HORIZONTAL}
                   />
                 ) : null}

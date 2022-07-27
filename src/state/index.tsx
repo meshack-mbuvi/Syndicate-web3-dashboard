@@ -5,9 +5,11 @@ import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
 import clubERC20sReducer from '@/state/clubERC20';
 import clubMembersSliceReducer from '@/state/clubMembers';
+import collectivesSlice from '@/state/collectives/slice';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
+import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import distributeTokensReducer from '@/state/distributions';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
 import transactionsReducer from '@/state/erc20transactions/index';
@@ -30,6 +32,7 @@ export const store = configureStore({
     clubERC20sReducer,
     clubMembersSliceReducer,
     createInvestmentClubSliceReducer,
+    createCollectiveSliceReducer,
     erc20TokenSliceReducer,
     erc721TokenSliceReducer,
     modalsReducer,
@@ -49,7 +52,8 @@ export const store = configureStore({
     utilityNFTSliceReducer,
     modifyClubSettingsReducer,
     connectClubMemberReducer,
-    distributeTokensReducer
+    distributeTokensReducer,
+    collectivesSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

@@ -1,6 +1,7 @@
 import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
-import { B2, B3, B4, H1, H2, H3, H4, L2 } from '@/components/typography';
+import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
+import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
 import { showWalletModal } from '@/state/wallet/actions';
 import { useDispatch } from 'react-redux';
 
@@ -24,6 +25,7 @@ interface Props {
     fiatAmount: number;
   };
   walletState: WalletState;
+  walletAddress?: string;
   gasEstimate?: {
     tokenAmount: number;
     tokenSymbol: string;
@@ -43,6 +45,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   remainingPasses,
   priceToJoin,
   walletState,
+  walletAddress,
   gasEstimate,
   progressState,
   transactionHash,
@@ -67,24 +70,13 @@ export const ClaimCollectivePass: React.FC<Props> = ({
     </>
   );
 
-  const title = (
-    <>
-      {/* Desktop */}
-      <div className="hidden sm:block">
-        <H1 extraClasses="leading-10">{nameOfCollective}</H1>
-      </div>
-      {/* Mobile */}
-      <div className="sm:hidden">
-        <H2 extraClasses="leading-10">{nameOfCollective}</H2>
-      </div>
-    </>
-  );
-
   const walletText =
     walletState === WalletState.CONNECTED
       ? 'Your wallet is eligible to claim this NFT'
       : walletState === WalletState.WRONG_WALLET
-      ? `Your connected wallet is not eligible to claim this NFT`
+      ? `Your connected wallet${
+          walletAddress ? `, ${walletAddress}, ` : ' '
+        }is not eligible to claim this NFT`
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect your wallet to claim a pass'
       : walletState === WalletState.MAX_PASSES_REACHED
@@ -95,7 +87,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
     <div>
       {/* Desktop */}
       <div className="hidden sm:block">
-        <H4 extraClasses="mt-2">{walletText}</H4>
+        <H4 regular>{walletText}</H4>
       </div>
       {/* Mobile */}
       <div className="sm:hidden">
@@ -119,16 +111,19 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       {/* Desktop */}
       <div className="sm:flex sm:justify-between hidden sm:block space-y-4 sm:space-y-0 sm:space-x-5">
         <div>
-          <B2 extraClasses="text-gray-syn4">Remaining passes</B2>
+          <B2 extraClasses="text-gray-syn4">Remaining NFTs</B2>
           <H3 regular>
-            {remainingPasses}{' '}
+            {remainingPasses.toLocaleString('en-US')}{' '}
             <span className="text-gray-syn4">
-              of {remainingPasses + numberOfExistingMembers}
+              of{' '}
+              {(remainingPasses + numberOfExistingMembers).toLocaleString(
+                'en-US'
+              )}
             </span>
           </H3>
         </div>
         <div>
-          <B2 extraClasses="text-gray-syn4">Price to join</B2>
+          <B2 extraClasses="text-gray-syn4">Price per NFT</B2>
           <H3 regular>
             {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
             <span className="text-gray-syn4">${priceToJoin.fiatAmount}</span>
@@ -139,7 +134,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       {/* Mobile */}
       <div className="sm:flex sm:justify-between sm:hidden space-y-4 sm:space-y-0 sm:space-x-5">
         <div className="space-y-2">
-          <B3 extraClasses="text-gray-syn4">Remaining passes</B3>
+          <B3 extraClasses="text-gray-syn4">Remaining NFTs</B3>
           <H4 regular>
             {remainingPasses}{' '}
             <span className="text-gray-syn4">
@@ -148,7 +143,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           </H4>
         </div>
         <div className="space-y-2">
-          <B3 extraClasses="text-gray-syn4">Price to join</B3>
+          <B3 extraClasses="text-gray-syn4">Price per NFT</B3>
           <H4 regular>
             {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
             <span className="text-gray-syn4">{priceToJoin.fiatAmount}</span>
@@ -162,36 +157,13 @@ export const ClaimCollectivePass: React.FC<Props> = ({
     <div className="space-y-6 sm:space-y-10 max-w-120">
       <div className="sm:space-y-4">
         <L2 extraClasses="mb-2">
-          Join {numberOfExistingMembers > 0 ? numberOfExistingMembers : 'the'}{' '}
+          Join{' '}
+          {numberOfExistingMembers > 0
+            ? numberOfExistingMembers.toLocaleString('en-US')
+            : 'the'}{' '}
           members of
         </L2>
-        <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
-          {title}
-          {links && (
-            <div className="flex items-center space-x-4">
-              <a
-                href={links.openSea}
-                className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
-              >
-                <img
-                  src="/images/collectives/opensea.svg"
-                  alt="Opensea"
-                  className="mx-auto vertically-center"
-                />
-              </a>
-              <a
-                href={links.externalLink}
-                className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
-              >
-                <img
-                  src="/images/collectives/external-link.svg"
-                  alt="External link"
-                  className="mx-auto vertically-center"
-                />
-              </a>
-            </div>
-          )}
-        </div>
+        <CollectiveHeader collectiveName={nameOfCollective} links={links} />
         {created}
       </div>
 
@@ -234,31 +206,42 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           />
         </div>
       ) : (
-        <div className="fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:p-8 bg-gray-syn8 space-y-4 sm:space-y-10 text-center sm:rounded-2.5xl">
+        <div className="fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:px-8 sm:py-10 bg-gray-syn8 space-y-4 sm:space-y-10 text-center sm:rounded-2.5xl">
           {walletLabel}
-          <CtaButton
-            greenCta={walletState === WalletState.CONNECTED}
-            onClick={() => {
-              if (
-                walletState === WalletState.NOT_CONNECTED ||
-                walletState === WalletState.WRONG_WALLET ||
-                walletState === WalletState.MAX_PASSES_REACHED
-              ) {
-                dispatch(showWalletModal());
-              } else if (walletState === WalletState.CONNECTED) {
-                // TODO: add trigger for claiming here
-                return;
-              }
-            }}
-          >
-            {walletButtonText}
-          </CtaButton>
-          {walletState === WalletState.CONNECTED && gasEstimate && (
-            <B3 extraClasses="text-gray-syn5">
-              Est. gas fee: {gasEstimate.tokenAmount} {gasEstimate.tokenSymbol}{' '}
-              (56.78 USD)
-            </B3>
-          )}
+          <div className="space-y-4">
+            {walletState !== WalletState.MAX_PASSES_REACHED && (
+              <CtaButton
+                greenCta={walletState === WalletState.CONNECTED}
+                onClick={() => {
+                  if (
+                    walletState === WalletState.NOT_CONNECTED ||
+                    walletState === WalletState.WRONG_WALLET
+                  ) {
+                    dispatch(showWalletModal());
+                  } else if (walletState === WalletState.CONNECTED) {
+                    // TODO: add trigger for claiming here
+                    return;
+                  }
+                }}
+              >
+                {walletButtonText}
+              </CtaButton>
+            )}
+            {walletState === WalletState.CONNECTED && gasEstimate && (
+              // Positioned absolutely so it doesn't take up space
+              <div className="relative">
+                <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
+                  Est. gas fee: {gasEstimate.tokenAmount}{' '}
+                  {gasEstimate.tokenSymbol}{' '}
+                  {Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(gasEstimate.fiatAmount)}{' '}
+                  USD
+                </B3>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

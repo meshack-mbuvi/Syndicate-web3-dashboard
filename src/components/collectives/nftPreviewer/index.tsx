@@ -14,6 +14,7 @@ interface Props {
   loading?: { name?: boolean; description?: boolean };
   mediaType?: NFTMediaType;
   mediaSource?: string;
+  customClasses?: string;
 }
 
 export const NFTPreviewer: React.FC<Props> = ({
@@ -22,7 +23,8 @@ export const NFTPreviewer: React.FC<Props> = ({
   description,
   loading,
   mediaType,
-  mediaSource
+  mediaSource,
+  customClasses
 }) => {
   const descriptionText = (
     <>
@@ -41,9 +43,11 @@ export const NFTPreviewer: React.FC<Props> = ({
   const [muted, setaMuted] = useState(true);
 
   return (
-    <div className="max-w-120 border border-gray-syn6 rounded-2.5xl overflow-hidden">
+    <div
+      className={`max-w-120 border border-gray-syn6 rounded-2.5xl overflow-hidden ${customClasses}`}
+    >
       {/* Media */}
-      <div className="perfect-square bg-gray-syn8 relative">
+      <div className={'perfect-square bg-gray-syn8 relative'}>
         {mediaType === NFTMediaType.VIDEO && (
           // eslint-disable-next-line jsx-a11y/media-has-caption
           <video
@@ -51,7 +55,7 @@ export const NFTPreviewer: React.FC<Props> = ({
             playsInline={true}
             loop
             muted={muted}
-            className={`${'object-cover'} absolute`}
+            className={`${'object-cover'} absolute h-full w-full`}
           >
             <source src={mediaSource} type="video/mp4"></source>
           </video>
@@ -67,22 +71,24 @@ export const NFTPreviewer: React.FC<Props> = ({
           ></div>
         )}
         <div className="absolute right-4 bottom-4 flex space-x-3 items-center">
-          <button
-            className="bg-white bg-opacity-20 rounded-full w-8 h-8"
-            onClick={() => {
-              setaMuted(!muted);
-            }}
-          >
-            <img
-              src={`${
-                muted
-                  ? '/images/nftClaim/mute-overlay.svg'
-                  : '/images/nftClaim/unmute-overlay.svg'
-              }`}
-              alt="Enter fullscreen"
-              className="mx-auto"
-            />
-          </button>
+          {mediaType === NFTMediaType.VIDEO && (
+            <button
+              className="bg-white bg-opacity-20 rounded-full w-8 h-8"
+              onClick={() => {
+                setaMuted(!muted);
+              }}
+            >
+              <img
+                src={`${
+                  muted
+                    ? '/images/nftClaim/mute-overlay.svg'
+                    : '/images/nftClaim/unmute-overlay.svg'
+                }`}
+                alt="Enter fullscreen"
+                className="mx-auto"
+              />
+            </button>
+          )}
           <button
             className="bg-white bg-opacity-20 rounded-full w-8 h-8"
             onClick={() => {
@@ -134,22 +140,24 @@ export const NFTPreviewer: React.FC<Props> = ({
               )}
             </div>
             <div className="absolute right-14 bottom-14 flex space-x-3 items-center">
-              <button
-                className="bg-white rounded-full w-8 h-8"
-                onClick={() => {
-                  setaMuted(!muted);
-                }}
-              >
-                <img
-                  src={`${
-                    muted
-                      ? '/images/actionIcons/unmuteIcon.svg'
-                      : '/images/actionIcons/muteIcon.svg'
-                  }`}
-                  alt="Enter fullscreen"
-                  className="mx-auto"
-                />
-              </button>
+              {mediaType === NFTMediaType.VIDEO && (
+                <button
+                  className="bg-white rounded-full w-8 h-8"
+                  onClick={() => {
+                    setaMuted(!muted);
+                  }}
+                >
+                  <img
+                    src={`${
+                      muted
+                        ? '/images/actionIcons/unmuteIcon.svg'
+                        : '/images/actionIcons/muteIcon.svg'
+                    }`}
+                    alt="Enter fullscreen"
+                    className="mx-auto"
+                  />
+                </button>
+              )}
               <button
                 className="bg-white rounded-full w-8 h-8"
                 onClick={() => {

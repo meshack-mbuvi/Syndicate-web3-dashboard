@@ -5,7 +5,7 @@ import { L2 } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ExternalLinkIcon } from 'src/components/iconWrappers';
-import EstimateGas from './estimateGas';
+import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 
 const GettingStarted: React.FC<{
   setClubStep: Dispatch<SetStateAction<string>>;
@@ -76,7 +76,7 @@ const GettingStarted: React.FC<{
                       enable the on-chain cap table
                     </p>
                     <div className="text-blue text-xs mt-3">
-                      <EstimateGas />
+                      <EstimateGas contract={ContractMapper.ClubERC20Factory} />
                     </div>
                     <div className="mt-2 text-gray-syn4 text-xs">
                       Create <AnimatedText text={'unlimited clubs for free'} />{' '}

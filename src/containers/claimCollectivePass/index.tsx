@@ -96,7 +96,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       {/* Desktop */}
       <div className="sm:flex sm:justify-between hidden sm:block space-y-4 sm:space-y-0 sm:space-x-5">
         <div>
-          <B2 extraClasses="text-gray-syn4">Remaining passes</B2>
+          <B2 extraClasses="text-gray-syn4">Remaining NFTs</B2>
           <H3 regular>
             {remainingPasses}{' '}
             <span className="text-gray-syn4">
@@ -105,7 +105,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           </H3>
         </div>
         <div>
-          <B2 extraClasses="text-gray-syn4">Price to join</B2>
+          <B2 extraClasses="text-gray-syn4">Price per NFT</B2>
           <H3 regular>
             {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
             <span className="text-gray-syn4">{priceToJoin.fiatAmount}</span>
@@ -116,7 +116,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       {/* Mobile */}
       <div className="sm:flex sm:justify-between sm:hidden space-y-4 sm:space-y-0 sm:space-x-5">
         <div className="space-y-2">
-          <B3 extraClasses="text-gray-syn4">Remaining passes</B3>
+          <B3 extraClasses="text-gray-syn4">Remaining NFTs</B3>
           <H4 regular>
             {remainingPasses}{' '}
             <span className="text-gray-syn4">
@@ -125,7 +125,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           </H4>
         </div>
         <div className="space-y-2">
-          <B3 extraClasses="text-gray-syn4">Price to join</B3>
+          <B3 extraClasses="text-gray-syn4">Price per NFT</B3>
           <H4 regular>
             {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
             <span className="text-gray-syn4">{priceToJoin.fiatAmount}</span>

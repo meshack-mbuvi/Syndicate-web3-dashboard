@@ -70,3 +70,6 @@ export const MGR_SIGN_LEGAL_DOC = 'Manager signs legal documents';
 export const MGR_MAKE_DISTRIBUTE_EVENT = 'Manager make distribution';
 export const ERROR_MGR_DISTRIBUTION = 'Error in distribution';
 export const APPROVE_DISTRIBUTION_ALLOWANCE = 'Approve distribution allowance';
+
+export const CLICK_COPY_COLLECTIVE_LINK_TO_SHARE =
+  'Clicked copy collective link to share';

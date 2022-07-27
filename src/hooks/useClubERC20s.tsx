@@ -15,7 +15,7 @@ import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocalStorage } from './utils/useLocalStorage';
 
@@ -41,6 +41,9 @@ const useClubERC20s = () => {
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isLoadingMemberClubs, setIsLoadingMemberClubs] = useState(true);
+  const [isLoadingAdminClubs, setIsLoadingAdminClubs] = useState(true);
+
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
     variables: {
@@ -57,7 +60,7 @@ const useClubERC20s = () => {
 
   const {
     loading: memberClubLoading,
-    data: memberClubData = [],
+    data: memberClubData,
     refetch: refetchMyClubs
   } = useQuery(CLUBS_HAVE_INVESTED, {
     variables: {
@@ -80,7 +83,6 @@ const useClubERC20s = () => {
       dispatch(setOtherClubERC20s([]));
 
       dispatch(setMyClubERC20s([]));
-      dispatch(setOtherClubERC20s([]));
       return;
     }
 
@@ -106,38 +108,129 @@ const useClubERC20s = () => {
     status
   ]);
 
-  const [clubIAmMember, setClubIamMember] = useState([]);
-  const [myClubs, setMyClubs] = useState([]);
-
-  // process clubs a given wallet has invested into
+  // Loading state when account is connected and when not connected
   useEffect(() => {
-    if (memberClubLoading || status == Status.DISCONNECTED || !accountAddress)
+    if (!accountAddress) {
+      setIsLoadingAdminClubs(false);
+      setIsLoadingMemberClubs(false);
+      dispatch(setMyClubERC20s([]));
+      dispatch(setOtherClubERC20s([]));
+
+      return;
+    }
+    if (data == undefined || memberClubData == undefined) {
+      setIsLoadingAdminClubs(true);
+      setIsLoadingMemberClubs(true);
+    }
+  }, [data, memberClubData, accountAddress]);
+
+  const getMemberClubs = useCallback(async () => {
+    dispatch(setOtherClubERC20s([]));
+
+    if (
+      memberClubLoading ||
+      status == Status.DISCONNECTED ||
+      !accountAddress ||
+      !memberClubData ||
+      !accountAddress ||
+      isEmpty(web3)
+    )
       return;
 
-    processClubERC20Tokens(clubIAmMember).then((data) => {
-      dispatch(setOtherClubERC20s(data));
-    });
-  }, [activeNetwork, clubIAmMember, memberClubLoading, status, accountAddress]);
+    const clubTokens = [];
 
-  const [newlyCreatedClub, , remove] = useLocalStorage('newlyCreatedClub');
+    // get clubs connected account has invested in
+    if (memberClubData?.members?.length) {
+      for (
+        let memberIndex = 0;
+        memberIndex < memberClubData?.members?.length;
+        memberIndex++
+      ) {
+        const member = memberClubData.members[memberIndex];
+        if (
+          member?.memberAddress.toLowerCase() !== accountAddress.toLowerCase()
+        )
+          return;
+        if (member?.syndicateDAOs?.length) {
+          const { syndicateDAOs } = member;
+          for (
+            let clubIndex = 0;
+            clubIndex < syndicateDAOs.length;
+            clubIndex++
+          ) {
+            const syndicateDAO = syndicateDAOs[clubIndex];
+            const {
+              depositAmount,
+              syndicateDAO: {
+                contractAddress,
+                createdAt,
+                ownerAddress,
+                totalSupply,
+                totalDeposits,
+                maxTotalSupply,
+                members,
+                endTime,
+                startTime
+              }
+            } = syndicateDAO;
 
-  // Process clubs a given wallet manages
+            clubTokens.push({
+              depositAmount,
+              contractAddress,
+              createdAt,
+              ownerAddress,
+              totalSupply,
+              totalDeposits,
+              maxTotalSupply,
+              members,
+              endTime,
+              startTime
+            });
+          }
+        }
+      }
+    }
+
+    const tokens = await processClubERC20Tokens(clubTokens);
+    dispatch(setOtherClubERC20s(tokens));
+    setIsLoadingMemberClubs(false);
+  }, [
+    activeNetwork,
+    memberClubData,
+    memberClubLoading,
+    status,
+    accountAddress
+  ]);
+
   useEffect(() => {
+    getMemberClubs();
+  }, [memberClubData]);
+
+  const getAdminClubs = useCallback(async () => {
+    // Reset clubs
+    dispatch(setMyClubERC20s([]));
+
     if (
       loading ||
       isEmpty(web3) ||
       status == Status.DISCONNECTED ||
-      !accountAddress
+      !accountAddress ||
+      !data
     )
       return;
 
-    processClubERC20Tokens(myClubs).then((data) => {
+    processClubERC20Tokens(data?.syndicateDAOs).then((data) => {
       const clubsIAdmin = data;
 
       if (newlyCreatedClub && web3) {
         getClubDataFromContract({
           ...newlyCreatedClub,
-          state: { activeNetwork, account, syndicateContracts, web3 }
+          state: {
+            activeNetwork,
+            account: accountAddress,
+            syndicateContracts,
+            web3
+          }
         }).then((club) => {
           // add new club at the top and filter incase the club has been loaded
           // from the graph
@@ -160,21 +253,44 @@ const useClubERC20s = () => {
           }
 
           dispatch(setMyClubERC20s(filteredClubs));
-          dispatch(setLoadingClubERC20s(false));
+          setIsLoadingAdminClubs(false);
         });
       } else {
         dispatch(setMyClubERC20s(clubsIAdmin));
-        dispatch(setLoadingClubERC20s(false));
+        setIsLoadingAdminClubs(false);
       }
     });
-  }, [JSON.stringify(myClubs), activeNetwork, loading, status]);
+  }, [
+    getMemberClubs,
+    data?.syndicateDAOs,
+    activeNetwork,
+    loading,
+    status,
+    accountAddress
+  ]);
+
+  const [newlyCreatedClub, , remove] = useLocalStorage('newlyCreatedClub');
+
+  useEffect(() => {
+    if (isLoadingAdminClubs || isLoadingMemberClubs) return;
+
+    dispatch(setLoadingClubERC20s(false));
+    setIsLoading(false);
+
+    return () => {
+      setIsLoading(true);
+    };
+  }, [dispatch, isLoadingAdminClubs, isLoadingMemberClubs]);
+
+  // Process clubs a given wallet manages
+  useEffect(() => {
+    getAdminClubs();
+  }, [data?.syndicateDAOs]);
 
   const processClubERC20Tokens = async (tokens) => {
     if (!tokens || !tokens?.length) {
       return [];
     }
-
-    setIsLoading(true);
 
     const processedTokens = await (
       await Promise.all([
@@ -337,105 +453,22 @@ const useClubERC20s = () => {
       ])
     ).filter((club) => club !== undefined);
 
-    dispatch(setLoadingClubERC20s(false));
-    setIsLoading(false);
     return processedTokens;
   };
-
-  /**
-   * We need to be sure syndicateContracts is initialized before retrieving events.
-   */
-  useEffect(() => {
-    if (isEmpty(web3) || memberClubLoading) return;
-
-    if (accountAddress) {
-      const clubTokens = [];
-      // get clubs connected account has invested in
-      if (memberClubData?.members?.length) {
-        for (
-          let memberIndex = 0;
-          memberIndex < memberClubData?.members?.length;
-          memberIndex++
-        ) {
-          const member = memberClubData.members[memberIndex];
-          if (member?.memberAddress.toLowerCase() !== account.toLowerCase())
-            return;
-          if (member?.syndicateDAOs?.length) {
-            const { syndicateDAOs } = member;
-            for (
-              let clubIndex = 0;
-              clubIndex < syndicateDAOs.length;
-              clubIndex++
-            ) {
-              const syndicateDAO = syndicateDAOs[clubIndex];
-              const {
-                depositAmount,
-                syndicateDAO: {
-                  contractAddress,
-                  createdAt,
-                  ownerAddress,
-                  totalSupply,
-                  totalDeposits,
-                  maxTotalSupply,
-                  members,
-                  endTime,
-                  startTime
-                }
-              } = syndicateDAO;
-
-              clubTokens.push({
-                depositAmount,
-                contractAddress,
-                createdAt,
-                ownerAddress,
-                totalSupply,
-                totalDeposits,
-                maxTotalSupply,
-                members,
-                endTime,
-                startTime
-              });
-            }
-          }
-        }
-      }
-
-      setClubIamMember(clubTokens);
-      setIsLoading(false);
-    } else {
-      dispatch(setLoadingClubERC20s(false));
-      setIsLoading(false);
-    }
-  }, [
-    accountAddress,
-    memberClubLoading,
-    activeNetwork,
-    memberClubData?.members,
-    invalidEthereumNetwork,
-    web3,
-    dispatch
-  ]);
 
   useEffect(() => {
     if (isEmpty(web3)) return;
     // This will reset syndicate details when we are on portfolio page.
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
-    if (account && !loading && data?.syndicateDAOs) {
-      // check whether connected account has clubs
-      if (data.syndicateDAOs.length) {
-        setAccountHasClubs(true);
-      } else {
-        setAccountHasClubs(false);
-      }
-
-      setMyClubs(data.syndicateDAOs);
+    if (accountAddress && !loading && data?.syndicateDAOs?.length) {
+      setAccountHasClubs(true);
     } else {
-      setIsLoading(false);
+      setAccountHasClubs(false);
     }
-  }, [account, activeNetwork, data?.syndicateDAOs, loading]);
+  }, [accountAddress, activeNetwork, data?.syndicateDAOs, loading, web3]);
 
-  return { loading: isLoading, memberClubLoading, accountHasClubs };
+  return { isLoading, memberClubLoading, accountHasClubs };
 };
 
 export default useClubERC20s;

@@ -1,21 +1,22 @@
 import CreateClubButton from '@/components/createClubButton';
 import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/club';
+import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
+import useCollectives from '@/hooks/collectives/useGetCollectives';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import React, { useState, useEffect } from 'react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import ClubERC20Table from './portfolio/clubERC20Table';
-import CollectivesTable from './portfolio/collectivesTable';
 import {
-  MyClubERC20TableColumns,
   clubERCTableColumns,
-  collectivesTableColumns
+  collectivesTableColumns,
+  MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
-import TabsButton from '@/components/TabsButton';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import CollectivesTable from './portfolio/collectivesTable';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -67,20 +68,22 @@ const EmptyState: React.FC<{
 const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading }
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s },
+    collectivesSlice: { adminCollectives, memberCollectives }
   } = useSelector((state: AppState) => state);
 
   const {
-    account,
     ethereumNetwork: { invalidEthereumNetwork }
   } = web3;
 
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const { collectives } = useFlags();
 
-  const { loading: adminClubsLoading, memberClubLoading } = useClubERC20s();
+  const { isLoading } = useClubERC20s();
 
   const { width } = useWindowSize();
+
+  useCollectives();
+
   enum TabsType {
     ADMIN = 'ADMIN',
     MEMBER = 'MEMBER'
@@ -101,179 +104,6 @@ const PortfolioAndDiscover: React.FC = () => {
       label: 'Member',
       value: TabsType.MEMBER
     }
-  ];
-
-  // TODO: Placeholder content for collectives.
-  // get collectives from Redux/graph
-  // commented these out for now since we're done checking placeholders.
-  const adminCollectives = [
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.5,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.35,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Alpha Beta Punks',
-    //   tokenSymbol: '✺ABP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-    //   totalUnclaimed: 1800,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3200,
-    //   pricePerNft: 0.15,
-    //   inviteLink: 'http://localhost:3000/'
-    // }
-  ];
-  const memberCollectives = [
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.05,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.55,
-    //   inviteLink: 'http://localhost:3000/'
-    // },
-    // {
-    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
-    //   tokenName: 'Omega Gamma Punks',
-    //   tokenSymbol: '✺OGP',
-    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
-    //   totalUnclaimed: 1900,
-    //   maxTotalSupply: 4000,
-    //   totalClaimed: 3100,
-    //   pricePerNft: 0.25,
-    //   inviteLink: 'http://localhost:3000/'
-    // }
   ];
 
   // show only the available section when there's either
@@ -299,18 +129,9 @@ const PortfolioAndDiscover: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminCollectives.length, memberCollectives.length]);
 
-  useEffect(() => {
-    if (adminClubsLoading || memberClubLoading || loading) return;
-    setIsPageLoading(false);
-
-    return () => {
-      setIsPageLoading(true);
-    };
-  }, [loading, account, adminClubsLoading, memberClubLoading]);
-
   return (
     <div className="-mt-8">
-      {isPageLoading ? (
+      {isLoading ? (
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
             <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
@@ -359,6 +180,7 @@ const PortfolioAndDiscover: React.FC = () => {
               <CreateClubButton />
             ) : null}
           </div>
+
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div className="mt-6">
               {otherClubERC20s.length !== 0 && myClubERC20s.length !== 0 && (
@@ -373,8 +195,8 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div
                   className={`${
                     activeClubsTab === TabsType.ADMIN
-                      ? 'opacity-100 z-10'
-                      : 'opacity-0 z-0'
+                      ? 'opacity-100 z-10 h-full'
+                      : 'opacity-0 z-0 h-0'
                   } transition-all duration-700 row-start-1 col-start-1 `}
                 >
                   <ClubERC20Table
@@ -386,9 +208,9 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div
                   className={`${
                     activeClubsTab === TabsType.MEMBER
-                      ? 'opacity-100 z-10'
-                      : 'opacity-0 z-0'
-                  } transition-opacity duration-700 row-start-1 col-start-1`}
+                      ? 'opacity-100 z-10 h-full'
+                      : 'opacity-0 z-0 h-0'
+                  } transition-all duration-700 row-start-1 col-start-1`}
                 >
                   <ClubERC20Table
                     tableData={otherClubERC20s}

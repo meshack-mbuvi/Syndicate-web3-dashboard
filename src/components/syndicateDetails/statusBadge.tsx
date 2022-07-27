@@ -1,14 +1,14 @@
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { AppState } from '@/state';
+import { getCountDownDays } from '@/utils/dateUtils';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
-import useFetchTokenClaim from '@/hooks/useTokenClaim';
-import { useDemoMode } from '@/hooks/useDemoMode';
-import { getCountDownDays } from '@/utils/dateUtils';
 import Tooltip from 'react-tooltip-lite';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
+import { B2, H4 } from '../typography';
 
 interface Props {
   isManager?: boolean;
@@ -26,6 +26,7 @@ interface Props {
   showConfettiSuccess?: boolean;
   isDistributing?: boolean;
   isWaitingForSelection?: boolean;
+  merkleLoading?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -41,7 +42,9 @@ const StatusBadge = (props: Props): JSX.Element => {
     syndicateCreationFailed,
     showConfettiSuccess,
     isDistributing,
-    isWaitingForSelection
+    isWaitingForSelection,
+    isOpenToNewMembers,
+    merkleLoading = false
   } = props;
 
   const {
@@ -52,12 +55,14 @@ const StatusBadge = (props: Props): JSX.Element => {
 
   const isDemoMode = useDemoMode();
 
-  const { loading: merkleLoading } = useFetchMerkleProof(isDemoMode);
   const { loading: claimLoading } = useFetchTokenClaim(isDemoMode);
 
   let badgeBackgroundColor = 'bg-blue-darker';
   let badgeIcon: string | React.ReactNode = 'depositIcon.svg';
+
   let titleText = 'Open to deposits';
+  let subTitleText = '';
+
   if (claimEnabled) {
     badgeBackgroundColor = 'bg-green-phthalo-green';
     badgeIcon = 'claimToken.svg';
@@ -69,9 +74,15 @@ const StatusBadge = (props: Props): JSX.Element => {
   } else if (isCollective) {
     badgeBackgroundColor = 'bg-cyan-collective';
     titleText = numberOfMembers
-      ? `${numberOfMembers} member${numberOfMembers > 1 && 's'}`
+      ? `${numberOfMembers} member${numberOfMembers > 1 ? 's' : ''}`
       : 'Members';
     badgeIcon = 'collectiveIcon.svg';
+
+    if (isOpenToNewMembers) {
+      subTitleText = 'Open to new members';
+    } else {
+      subTitleText = '';
+    }
   } else if (!depositsEnabled) {
     badgeBackgroundColor = 'bg-green-dark';
     badgeIcon = 'active.svg';
@@ -101,55 +112,66 @@ const StatusBadge = (props: Props): JSX.Element => {
     titleText = 'Waiting for selection...';
   }
 
+  const badgeIconContent = (
+    <>
+      {typeof badgeIcon === 'string' ? (
+        <div className="w-6 h-6">
+          <img
+            src={`/images/syndicateStatusIcons/${badgeIcon}`}
+            alt={titleText}
+            style={{ height: '100%', width: '100%' }}
+          />
+        </div>
+      ) : (
+        <div className="m-0">{badgeIcon}</div>
+      )}
+    </>
+  );
+
   return (
     <div className="h-fit-content rounded-3xl bg-gray-syn8">
       <div
-        className={`h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
+        className={`h-auto sm:h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
         {loading || merkleLoading || claimLoading ? (
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
         ) : (
-          <div className="flex items-center justify-between space-x-4 w-full">
-            <div className="flex items-center space-x-4 w-full">
-              {typeof badgeIcon === 'string' ? (
-                <div className="w-6 h-6">
-                  <img
-                    src={`/images/syndicateStatusIcons/${badgeIcon}`}
-                    alt={titleText}
-                    style={{ height: '100%', width: '100%' }}
-                  />
+          <div className="flex w-full">
+            <div className="flex mt-4 sm:hidden">{badgeIconContent}</div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 space-x-4 sm:space-y-0 w-full flex-nowrap">
+              <div className="flex items-center space-x-4 flex-shrink-0">
+                <div className="hidden sm:block">{badgeIconContent}</div>
+                <div className="flex justify-between items-center w-full leading-snug ml-4">
+                  <H4>{titleText}</H4> <B2>{subTitleText}</B2>
                 </div>
-              ) : (
-                <div className="m-0">{badgeIcon}</div>
-              )}
-              <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
-            </div>
-            {depositsEnabled &&
-            !syndicateCreationFailed &&
-            !showConfettiSuccess ? (
-              <div className="flex flex-shrink-0">
-                <Tooltip
-                  content={
-                    <span className="w-200 flex-shrink-0">
-                      {`Closing to deposits on ${getFormattedDateTimeWithTZ(
-                        endTime
-                      )}`}
-                    </span>
-                  }
-                  arrow={false}
-                  tipContentClassName="actionsTooltip"
-                  background="#232529"
-                  padding="12px 16px"
-                  distance={8}
-                >
-                  <div className="flex-shrink-0">
-                    <span className="font-whyte-light">{`Closes in ${getCountDownDays(
-                      endTime.toString()
-                    )}`}</span>
-                  </div>
-                </Tooltip>
               </div>
-            ) : null}
+              {depositsEnabled &&
+              !syndicateCreationFailed &&
+              !showConfettiSuccess ? (
+                <div className="flex">
+                  <Tooltip
+                    content={
+                      <span className="w-200 flex-shrink-0">
+                        {`Closing to deposits on ${getFormattedDateTimeWithTZ(
+                          endTime
+                        )}`}
+                      </span>
+                    }
+                    arrow={false}
+                    tipContentClassName="actionsTooltip"
+                    background="#232529"
+                    padding="12px 16px"
+                    distance={8}
+                  >
+                    <div className="flex-shrink-0">
+                      <span className="font-whyte-light">{`Closes in ${getCountDownDays(
+                        endTime.toString()
+                      )}`}</span>
+                    </div>
+                  </Tooltip>
+                </div>
+              ) : null}
+            </div>
           </div>
         )}
       </div>

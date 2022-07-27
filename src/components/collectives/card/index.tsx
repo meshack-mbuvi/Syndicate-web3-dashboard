@@ -52,7 +52,7 @@ export const CollectiveCard: React.FC<Props> = ({
           <B2>{passes.total - passes.available}</B2>
         </div>
         <div className="sm:w-1/3 space-y-1">
-          <B3 extraClasses="text-gray-syn4">Price per pass</B3>
+          <B3 extraClasses="text-gray-syn4">Price per NFT</B3>
           <B2>
             {cardType === CollectiveCardType.FREE ? (
               'Free to mint'

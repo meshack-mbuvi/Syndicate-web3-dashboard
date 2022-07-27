@@ -98,4 +98,26 @@ export class OwnerMintModuleContract {
       }
     }
   }
+
+  public async getEstimateGas(
+    account: string,
+    clubAddress: string,
+    memberAddress: string,
+    amountToMint: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    await new Promise(() => {
+      this.OwnerMintModuleContract.methods
+        .ownerMint(clubAddress, memberAddress, amountToMint)
+        .estimateGas(
+          {
+            from: account
+          },
+          (_error, gasAmount) => {
+            if (gasAmount) onResponse(gasAmount);
+            if (_error) console.log('Estimate Gas Error', _error);
+          }
+        );
+    });
+  }
 }
