@@ -51,7 +51,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
               <img src="/images/copy-link-white.svg" alt="Link" />
               <B3>Unrestricted</B3>
             </div>
-            <B3 extraClasses="text-gray-syn4">Anyone with the link can mint</B3>
+            <B3 extraClasses="text-gray-syn4">Anyone with the link can join</B3>
           </div>
         </div>
 

@@ -40,7 +40,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   acceptFileTypes
 }) => {
   return (
-    <>
+    <div className="max-w-730">
       <div className="space-y-8">
         <div className="space-y-8">
           <InputFieldsNameAndSymbol
@@ -73,7 +73,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           <TextArea
             value={descriptionValue}
             handleValueChange={handleDescriptionChange}
-            placeholderLabel="Description about this NFT collection that will be visible everywhere"
+            placeholderLabel="Description about your collective’s NFT that will be visible everywhere"
             widthClass="w-full"
             heightRows={5}
           />
@@ -93,6 +93,6 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           transaction with gas.
         </div>
       </div>
-    </>
+    </div>
   );
 };

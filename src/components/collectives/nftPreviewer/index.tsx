@@ -71,22 +71,24 @@ export const NFTPreviewer: React.FC<Props> = ({
           ></div>
         )}
         <div className="absolute right-4 bottom-4 flex space-x-3 items-center">
-          <button
-            className="bg-white bg-opacity-20 rounded-full w-8 h-8"
-            onClick={() => {
-              setaMuted(!muted);
-            }}
-          >
-            <img
-              src={`${
-                muted
-                  ? '/images/nftClaim/mute-overlay.svg'
-                  : '/images/nftClaim/unmute-overlay.svg'
-              }`}
-              alt="Enter fullscreen"
-              className="mx-auto"
-            />
-          </button>
+          {mediaType === NFTMediaType.VIDEO && (
+            <button
+              className="bg-white bg-opacity-20 rounded-full w-8 h-8"
+              onClick={() => {
+                setaMuted(!muted);
+              }}
+            >
+              <img
+                src={`${
+                  muted
+                    ? '/images/nftClaim/mute-overlay.svg'
+                    : '/images/nftClaim/unmute-overlay.svg'
+                }`}
+                alt="Enter fullscreen"
+                className="mx-auto"
+              />
+            </button>
+          )}
           <button
             className="bg-white bg-opacity-20 rounded-full w-8 h-8"
             onClick={() => {
@@ -138,22 +140,24 @@ export const NFTPreviewer: React.FC<Props> = ({
               )}
             </div>
             <div className="absolute right-14 bottom-14 flex space-x-3 items-center">
-              <button
-                className="bg-white rounded-full w-8 h-8"
-                onClick={() => {
-                  setaMuted(!muted);
-                }}
-              >
-                <img
-                  src={`${
-                    muted
-                      ? '/images/actionIcons/unmuteIcon.svg'
-                      : '/images/actionIcons/muteIcon.svg'
-                  }`}
-                  alt="Enter fullscreen"
-                  className="mx-auto"
-                />
-              </button>
+              {mediaType === NFTMediaType.VIDEO && (
+                <button
+                  className="bg-white rounded-full w-8 h-8"
+                  onClick={() => {
+                    setaMuted(!muted);
+                  }}
+                >
+                  <img
+                    src={`${
+                      muted
+                        ? '/images/actionIcons/unmuteIcon.svg'
+                        : '/images/actionIcons/muteIcon.svg'
+                    }`}
+                    alt="Enter fullscreen"
+                    className="mx-auto"
+                  />
+                </button>
+              )}
               <button
                 className="bg-white rounded-full w-8 h-8"
                 onClick={() => {

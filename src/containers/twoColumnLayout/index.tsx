@@ -51,26 +51,26 @@ const TwoColumnLayout: FC<{
         >
           <Head title={headerTitle || 'Club'} />
           <ErrorBoundary>
-          <div className="w-full">
-            <div className="container mx-auto">
-              {/* Two Columns (Syndicate Details + Widget Cards) */}
-              <div className="grid grid-cols-12 gap-5">
-                {/* Left Column */}
-                <div
-                  className={`md:col-start-1 ${
-                    managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
-                  } col-span-12`}
-                >
-                  <div className="w-full mt-5">{leftColumnComponent}</div>
-                  <div className="w-full flex md:hidden mt-8">
-                    {rightColumnComponent}
+            <div className="w-full">
+              <div className="container mx-auto">
+                {/* Two Columns (Syndicate Details + Widget Cards) */}
+                <div className="grid grid-cols-12 gap-5">
+                  {/* Left Column */}
+                  <div
+                    className={`md:col-start-1 ${
+                      managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
+                    } col-span-12`}
+                  >
+                    <div className="w-full mt-5">{leftColumnComponent}</div>
+                    <div className="w-full flex md:hidden mt-8">
+                      {rightColumnComponent}
                     </div>
                   </div>
                   {/* Right Column */}
                   <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                  <div className="sticky top-33 w-full max-w-120">
-                    {rightColumnComponent}
-                  </div>
+                    <div className="sticky top-33 w-full max-w-120">
+                      {rightColumnComponent}
+                    </div>
                   </div>
                 </div>
               </div>
