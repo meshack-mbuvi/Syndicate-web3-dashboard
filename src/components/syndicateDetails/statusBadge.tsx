@@ -1,7 +1,6 @@
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { AppState } from '@/state';
 import { getCountDownDays } from '@/utils/dateUtils';
@@ -27,6 +26,7 @@ interface Props {
   showConfettiSuccess?: boolean;
   isDistributing?: boolean;
   isWaitingForSelection?: boolean;
+  merkleLoading?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -43,7 +43,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     showConfettiSuccess,
     isDistributing,
     isWaitingForSelection,
-    isOpenToNewMembers
+    isOpenToNewMembers,
+    merkleLoading = false
   } = props;
 
   const {
@@ -54,7 +55,6 @@ const StatusBadge = (props: Props): JSX.Element => {
 
   const isDemoMode = useDemoMode();
 
-  const { loading: merkleLoading } = useFetchMerkleProof(isDemoMode);
   const { loading: claimLoading } = useFetchTokenClaim(isDemoMode);
 
   let badgeBackgroundColor = 'bg-blue-darker';

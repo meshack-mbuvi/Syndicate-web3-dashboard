@@ -1048,6 +1048,7 @@ const DepositSyndicate: React.FC = () => {
       <div className="w-full mt-4 sm:mt-0 top-44">
         <div className={`rounded-2-half bg-gray-syn8`}>
           <StatusBadge
+            merkleLoading={merkleLoading}
             depositsEnabled={depositsEnabled}
             depositExceedTotal={+totalSupply === +maxTotalSupply}
             claimEnabled={claimEnabled && !invalidClaim ? claimEnabled : false}

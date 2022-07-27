@@ -5,10 +5,11 @@ import {
   setLoadingMerkleProof,
   setMerkleProof
 } from '@/state/merkleProofs/slice';
+import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
@@ -17,7 +18,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
 
   const {
     web3Reducer: {
-      web3: { account: address, web3, activeNetwork }
+      web3: { account: address, web3, activeNetwork, status }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress, tokenDecimals }
@@ -34,7 +35,12 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address, chainId: activeNetwork.chainId },
-    skip: !address || skipQuery || !activeNetwork.chainId || isDemoMode,
+    skip:
+      !address ||
+      !clubAddress ||
+      skipQuery ||
+      !activeNetwork.chainId ||
+      isDemoMode,
     context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
@@ -51,11 +57,18 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   };
 
   useEffect(() => {
-    if (!activeNetwork.chainId) return;
+    if (
+      !activeNetwork.chainId ||
+      !clubAddress ||
+      !address ||
+      status !== Status.CONNECTED
+    )
+      return;
+
     if (router.isReady && web3.utils.isAddress(clubAddress)) {
       refetchMerkle();
     }
-  }, [clubAddress, address, router.isReady, activeNetwork.chainId]);
+  }, [clubAddress, address, activeNetwork.chainId, status]);
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));
