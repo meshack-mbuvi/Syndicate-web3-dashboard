@@ -1,6 +1,6 @@
 import IconGas from '@/components/icons/Gas';
-import IconWalletConnect from '@/components/icons/walletConnect';
 import IconInfo from '@/components/icons/info';
+import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
@@ -26,7 +26,7 @@ const NetworkMenuDropDown: FC = () => {
   const { providerName } = useProvider();
 
   const [nativeBalance, setNativeBalance] = useState('');
-  const [blockNumber, setblockNumber] = useState('');
+  const [blockNumber, setBlockNumber] = useState('');
   const [gas, setGas] = useState('');
 
   // Switch networks based on URL param
@@ -70,14 +70,18 @@ const NetworkMenuDropDown: FC = () => {
   };
 
   const getGasAndBlock = async () => {
-    // block number of latest mined block
-    await web3Instance.eth.getBlockNumber().then((data) => {
-      setblockNumber(data);
-    });
-    await web3Instance.eth.getGasPrice().then((value) => {
-      const _gas = +web3Instance.utils.fromWei(value, 'gwei');
-      setGas(String(Math.ceil(_gas)));
-    });
+    try {
+      // block number of latest mined block
+      await web3Instance.eth.getBlockNumber().then((data) => {
+        setBlockNumber(data);
+      });
+      await web3Instance.eth.getGasPrice().then((value) => {
+        const _gas = +web3Instance.utils.fromWei(value, 'gwei');
+        setGas(String(Math.ceil(_gas)));
+      });
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   useEffect(() => {
@@ -95,7 +99,7 @@ const NetworkMenuDropDown: FC = () => {
       getGasAndBlock();
     }, 3000);
     return () => {
-      setblockNumber('--');
+      setBlockNumber('--');
       setGas('--');
       clearInterval(gasAndBlockInterval);
     };
