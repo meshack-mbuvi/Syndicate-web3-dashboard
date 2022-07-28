@@ -7,12 +7,14 @@ import { FixedRenderer } from '../FixedRenderer';
 import { GuardMixinManager } from '../GuardMixinManager';
 import { MaxPerMemberERC721 } from '../MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '../MaxTotalSupplyERC721';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 
 export interface ICollectiveParams {
   collectiveName: string;
   collectiveSymbol: string;
   totalSupply: number;
   maxPerMember: number;
+  openUntil: OpenUntil;
   ethPrice: string;
   tokenURI: string;
   startTime: string;
@@ -91,7 +93,8 @@ export class ERC721CollectiveFactory extends ContractBase {
       tokenURI,
       startTime,
       endTime,
-      allowTransfer
+      allowTransfer,
+      openUntil
     } = collectiveParams;
 
     const {
@@ -106,38 +109,31 @@ export class ERC721CollectiveFactory extends ContractBase {
     const salt = this.web3.utils.randomHex(32);
 
     const predictedAddress = await this.predictAddress(account, salt);
-    const mixins = [
-      this.addresses.TimeRequirements,
-      this.addresses.MaxPerMemberERC721,
-      this.addresses.MaxTotalSupplyERC721
-    ];
+    let mixins = [this.addresses.MaxPerMemberERC721];
 
-    const contractAddresses = [
-      this.addresses.TimeRequirements,
-      this.addresses.MaxTotalSupplyERC721,
+    let contractAddresses = [
       this.addresses.MaxPerMemberERC721,
-      this.addresses.GuardMixinManager,
       this.addresses.GuardMixinManager,
       this.addresses.EthPriceMintModule,
       this.addresses.FixedRenderer
     ];
 
-    const encodedFunctions = [
-      timeMixin.setTimeRequirements(predictedAddress, startTime, endTime),
-      totalSupplyMixin.setTotalSupplyRequirements(
-        predictedAddress,
-        totalSupply
-      ),
+    let encodedFunctions = [
+      // Required
       maxPerWalletMixin.setMaxPerMemberRequirements(
         predictedAddress,
         maxPerMember
       ),
-      mintGuard.setDefaultMixins(predictedAddress, mixins),
+
       mintGuard.setAllowModule(
         predictedAddress,
         this.addresses.EthPriceMintModule
       ),
+
+      // Required
       ethPriceModule.setEthPrice(predictedAddress, ethPrice),
+
+      // Required
       fixedRenderer.setTokenURI(predictedAddress, tokenURI)
     ];
 
@@ -147,6 +143,28 @@ export class ERC721CollectiveFactory extends ContractBase {
         this.setTransferGuard(this.addresses.AlwaysAllowGuard)
       );
     }
+
+    if (openUntil === OpenUntil.FUTURE_DATE) {
+      mixins.push(this.addresses.TimeRequirements);
+      contractAddresses.push(this.addresses.TimeRequirements);
+      encodedFunctions.push(
+        timeMixin.setTimeRequirements(predictedAddress, startTime, endTime)
+      );
+    }
+    if (openUntil === OpenUntil.MAX_MEMBERS) {
+      mixins.push(this.addresses.MaxTotalSupplyERC721);
+      contractAddresses.push(this.addresses.MaxTotalSupplyERC721);
+      encodedFunctions.push(
+        totalSupplyMixin.setTotalSupplyRequirements(
+          predictedAddress,
+          totalSupply
+        )
+      );
+    }
+
+    // set Default Mixins
+    contractAddresses.push(this.addresses.GuardMixinManager);
+    encodedFunctions.push(mintGuard.setDefaultMixins(predictedAddress, mixins));
 
     return {
       salt,

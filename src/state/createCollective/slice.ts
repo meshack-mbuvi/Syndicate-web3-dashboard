@@ -88,12 +88,14 @@ const createCollectiveSlice = createSlice({
     setCollectiveWaitingForConfirmation(state, action: PayloadAction<boolean>) {
       state.creationStatus = {
         ...initialState.creationStatus,
+        ipfsHash: state.creationStatus.ipfsHash,
         waitingForConfirmation: action.payload
       };
     },
     setCollectiveConfirmed(state, action: PayloadAction<boolean>) {
       state.creationStatus = {
         ...initialState.creationStatus,
+        ipfsHash: state.creationStatus.ipfsHash,
         confirmed: action.payload
       };
     },
@@ -106,12 +108,14 @@ const createCollectiveSlice = createSlice({
     setCollectiveTransactionError(state, action: PayloadAction<boolean>) {
       state.creationStatus = {
         ...initialState.creationStatus,
+        ipfsHash: state.creationStatus.ipfsHash,
         transactionError: action.payload
       };
     },
     setCollectiveTransactionHash(state, action: PayloadAction<string>) {
       state.creationStatus = {
         ...initialState.creationStatus,
+        ipfsHash: state.creationStatus.ipfsHash,
         confirmed: true,
         transactionHash: action.payload
       };
@@ -119,14 +123,22 @@ const createCollectiveSlice = createSlice({
     setIpfsHash(state, action: PayloadAction<string>) {
       state.creationStatus = {
         ...initialState.creationStatus,
-        submittingToIPFS: true,
         ipfsHash: action.payload
+      };
+    },
+    setCollectiveCreationReceipt(state, action: PayloadAction<any>) {
+      state.creationStatus = {
+        ...initialState.creationStatus,
+        creationReceipt: action.payload
       };
     },
 
     // reset
+    partialCollectiveCreationStateReset(state) {
+      state = { ...initialState, creationStatus: state.creationStatus };
+    },
     resetCollectiveCreationState(state) {
-      state = initialState;
+      Object.assign(state, initialState);
     }
   }
 });
@@ -156,6 +168,8 @@ export const {
   setCollectiveTransactionError,
   setCollectiveTransactionHash,
   setIpfsHash,
+  setCollectiveCreationReceipt,
+  partialCollectiveCreationStateReset,
   resetCollectiveCreationState
 } = createCollectiveSlice.actions;
 export default createCollectiveSlice.reducer;

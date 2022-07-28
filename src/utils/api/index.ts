@@ -14,6 +14,18 @@ export const proxyGet = async <R>(
   );
 };
 
+export const proxyPost = async <R>(
+  path: string,
+  data: any,
+  config: any
+): Promise<AxiosResponse<R>> => {
+  return await axios.post<R>(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/${path}`,
+    data,
+    config
+  );
+};
+
 // Queries the web2-backend endpoint 'token/details' OR 'token/native_token_details' for native tokens with no contract address
 export const getTokenDetails = (
   tokenAddress: string,

@@ -1,10 +1,14 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { CollectivesCreateSuccess } from '@/components/collectives/create/success';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
+import {
+  partialCollectiveCreationStateReset,
+  resetCollectiveCreationState
+} from '@/state/createCollective/slice';
 
 const CreateCollectiveSuccess: FC = () => {
   const { artworkUrl, artworkType } = useCreateState();
@@ -25,14 +29,28 @@ export default CreateCollectiveSuccess;
 
 export const SuccessRightPanel: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const {
     web3Reducer: {
       web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-  const { name } = useCreateState();
+  const { name, creationStatus } = useCreateState();
+  const [collectiveAddress, setCollectiveAddress] = useState<string | null>(
+    null
+  );
 
-  const [collectiveAddress, setCollectiveAddress] = useState('0x0');
+  const onCollectiveCreated = async (address: string) => {
+    await setCollectiveAddress(address);
+    dispatch(resetCollectiveCreationState());
+  };
+
+  useEffect(() => {
+    if (creationStatus.creationReceipt.collective) {
+      onCollectiveCreated(creationStatus.creationReceipt.collective);
+    }
+  }, [creationStatus.creationReceipt.collective]);
 
   const collectiveURL = useMemo(() => {
     return `${window.location.origin}/collectives/${collectiveAddress}?chain=${activeNetwork.network}`;
@@ -50,7 +68,11 @@ export const SuccessRightPanel: React.FC = () => {
         name={name}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}
-        blockExplorerLink={activeNetwork?.blockExplorer?.baseUrl + '/' + '0x0'}
+        blockExplorerLink={
+          activeNetwork?.blockExplorer?.baseUrl +
+          '/address/' +
+          collectiveAddress
+        }
         blockExplorerName={activeNetwork?.blockExplorer?.name}
       />
     </div>

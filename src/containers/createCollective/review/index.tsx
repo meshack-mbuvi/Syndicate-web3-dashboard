@@ -1,12 +1,15 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import {
   useCreateState,
-  useUpdateState
+  useSubmitCollective,
+  useUpdateState,
+  useSubmitToContracts
 } from '@/hooks/collectives/useCreateCollective';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { default as _moment } from 'moment-timezone';
 
 interface Props {
   handleNext: (e) => void;
@@ -15,8 +18,6 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
   const {
     name,
     symbol,
-    // artwork,
-    // artworkType,
     artworkUrl,
     description,
     pricePerNFT,
@@ -26,10 +27,11 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     openUntil,
     closeDate,
     closeTime,
-    // closeAfterMaxSupply,
+    EpochCloseTime,
     maxSupply,
     transferrable,
-    tokenDetails
+    tokenDetails,
+    creationStatus
   } = useCreateState();
 
   const {
@@ -48,9 +50,19 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     handleCloseTimeChange,
     handleChangeAllowOwnershipTransfer,
     submitButtonActive,
-    setSubmiteButtonActive,
-    handleSubmit
+    setSubmiteButtonActive
   } = useUpdateState();
+
+  const { handleSubmit } = useSubmitCollective();
+  const { submit: submitToContracts } = useSubmitToContracts();
+
+  const launchCollective = () => {
+    if (creationStatus.ipfsHash) {
+      submitToContracts();
+    } else {
+      handleSubmit();
+    }
+  };
 
   useEffect(() => {
     if (
@@ -92,6 +104,19 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     symbol
   ]);
 
+  const [timeString, setTimeString] = React.useState('');
+
+  useEffect(() => {
+    if (EpochCloseTime) {
+      const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setTimeString(
+        _moment(EpochCloseTime * 1000)
+          .tz(timeZoneString)
+          .format('MMM D,  YYYY, hh:mmA zz')
+      );
+    }
+  }, [EpochCloseTime]);
+
   return (
     <div className="h-full flex flex-col">
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
@@ -115,7 +140,7 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
           handleCloseTimeChange={handleCloseTimeChange}
           selectedTimeWindow={timeWindow}
           handleTimeWindowChange={handleTimeWindowChange}
-          endOfTimeWindow={'Jun 11, 2021 11:59pm PST'}
+          endOfTimeWindow={timeString}
           maxSupply={maxSupply}
           handleMaxSupplyChange={handleMaxSupplyChange}
           allowOwnershipTransfer={transferrable}
@@ -123,7 +148,7 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
             handleChangeAllowOwnershipTransfer
           }
           isSubmitButtonActive={submitButtonActive}
-          handleSubmit={handleSubmit}
+          handleSubmit={launchCollective}
         />
       </div>
     </div>

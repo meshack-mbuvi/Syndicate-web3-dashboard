@@ -6,20 +6,39 @@ import TwoColumnLayout, { TwoColumnLayoutType } from '../twoColumnLayout';
 import CreateCollectiveSuccess, { SuccessRightPanel } from './success';
 import Modal, { ModalStyle } from '@/components/modal';
 import Image from 'next/image';
-import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import {
+  useCreateState,
+  useSubmitCollective,
+  useSubmitToContracts
+} from '@/hooks/collectives/useCreateCollective';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import {
+  setCollectiveSubmittingToIPFS,
+  setCollectiveTransactionError,
+  setCollectiveWaitingForConfirmation,
+  setIpfsError
+} from '@/state/createCollective/slice';
+import { useDispatch } from 'react-redux';
 
 const CreateCollectiveContainer: FC = () => {
+  const dispatch = useDispatch();
+  const { creationStatus } = useCreateState();
+  const { handleSubmit } = useSubmitCollective();
+  const { submit: submitToContracts } = useSubmitToContracts();
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [showNavButton, setShowNavButton] = useState(true);
   const [showBackButton, setShowBackButton] = useState(true);
-  const { creationStatus } = useCreateState();
 
   const [showModal, setShowModal] = useState(false);
   const [processingModalTitle, setProcessingModalTitle] = useState('');
   const [processingModalDescription, setProcessingModalDescription] =
     useState('');
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalTitle, setErrorModalTitle] = useState('');
+  const [errorModalDescription, setErrorModalDescription] = useState('');
 
   useEffect(() => {
     if (creationStatus.submittingToIPFS) {
@@ -46,6 +65,43 @@ const CreateCollectiveContainer: FC = () => {
     creationStatus.submittingToIPFS,
     creationStatus.confirmed
   ]);
+
+  useEffect(() => {
+    if (creationStatus.ipfsError) {
+      setErrorModalTitle('Media Upload Failed');
+      setErrorModalDescription('');
+      setShowErrorModal(true);
+      setShowModal(false);
+    }
+    if (creationStatus.transactionError) {
+      setErrorModalTitle('Collective Creation Failed');
+      setErrorModalDescription('');
+      setShowErrorModal(true);
+      setShowModal(false);
+    }
+  }, [creationStatus.ipfsError, creationStatus.transactionError]);
+
+  const handleCloseErrorModal = () => {
+    if (creationStatus.ipfsError) {
+      dispatch(setIpfsError(false));
+    }
+    if (creationStatus.transactionError) {
+      dispatch(setCollectiveTransactionError(false));
+    }
+    setShowErrorModal(false);
+  };
+  const handleRetry = () => {
+    if (creationStatus.ipfsError) {
+      dispatch(setIpfsError(false));
+      setShowErrorModal(false);
+      handleSubmit();
+    }
+    if (creationStatus.transactionError) {
+      dispatch(setCollectiveTransactionError(false));
+      setShowErrorModal(false);
+      submitToContracts();
+    }
+  };
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {
@@ -180,17 +236,10 @@ const CreateCollectiveContainer: FC = () => {
       </Modal>
 
       {/* Error modal */}
-      {/* <Modal
-        show={errorModal}
+      <Modal
+        show={showErrorModal}
         modalStyle={ModalStyle.DARK}
-        closeModal={() =>
-          setShowModal(() => ({
-            waitingConfirmationModal: false,
-            transactionModal: false,
-            errorModal: false,
-            warningModal: false
-          }))
-        }
+        closeModal={handleCloseErrorModal}
         showCloseButton={false}
         outsideOnClick={true}
         customWidth="w-11/12 md:w-1/2 lg:w-1/3"
@@ -207,7 +256,7 @@ const CreateCollectiveContainer: FC = () => {
             />
           </div>
           <div className="flex justify-center items-center w-full text-xl">
-            Club creation failed
+            {errorModalTitle}
           </div>
           <div className="h-fit-content rounded-2-half flex justify-center items-center flex-col mt-6">
             <div>
@@ -224,10 +273,11 @@ const CreateCollectiveContainer: FC = () => {
                 if the issue persists.
               </p>
             </div>
-            {transactionHash ? (
+            {creationStatus.transactionError &&
+            creationStatus.transactionHash ? (
               <div className="mt-6">
                 <BlockExplorerLink
-                  resourceId={transactionHash}
+                  resourceId={creationStatus.transactionHash}
                   resource="transaction"
                 />
               </div>
@@ -236,14 +286,14 @@ const CreateCollectiveContainer: FC = () => {
               <button
                 type="button"
                 className="bg-white rounded-custom text-black py-4 w-full px-8"
-                onClick={handleCreateInvestmentClub}
+                onClick={handleRetry}
               >
                 Try again
               </button>
             </div>
           </div>
         </div>
-      </Modal> */}
+      </Modal>
     </>
   );
 };

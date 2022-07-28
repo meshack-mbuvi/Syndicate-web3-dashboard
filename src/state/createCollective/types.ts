@@ -30,11 +30,11 @@ export interface CollectiveCreation {
     transactionError: boolean;
     transactionHash: string;
     ipfsHash: string;
-    creationReceipt:
-      | {
-          token: string;
-        }
-      | any;
+    creationReceipt: {
+      collective: string;
+      name: string;
+      symbol: string;
+    };
   };
 }
 
@@ -52,7 +52,9 @@ export const initialState: CollectiveCreation = {
   timeWindow: TimeWindow.DAY,
   closeDate: new Date(new Date().getTime() + 60 * 60 * 24 * 1000), // 1 day from now
   closeTime: '23:59',
-  EpochCloseTime: ~~(new Date(new Date().getDate() + 7).getTime() / 1000),
+  EpochCloseTime: ~~(
+    new Date(new Date().getTime() + 60 * 60 * 24 * 1000).getTime() / 1000
+  ),
   closeAfterMaxSupply: false,
   maxSupply: 0,
   transferrable: false,
@@ -67,7 +69,9 @@ export const initialState: CollectiveCreation = {
     transactionHash: '',
     ipfsHash: '',
     creationReceipt: {
-      token: ''
+      collective: '',
+      name: '',
+      symbol: ''
     }
   }
 };
