@@ -878,6 +878,12 @@ input[type='checkbox'] {
 .__react_component_tooltip.show {
   opacity: 1 !important;
 }
+.__tooltip_override {
+  line-height: 22px !important;
+  letter-spacing: 0.1px !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+}
 
 .beta {
   font-family: Whyte Regular;

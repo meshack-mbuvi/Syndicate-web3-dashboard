@@ -1,25 +1,59 @@
 import useWindowSize from '@/hooks/useWindowSize';
-import { useEffect, useRef, useState } from 'react';
+import {
+  EditButton,
+  SubmitContent
+} from '@/components/collectives/edit/editables';
+import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
 import { Switch, SwitchType } from '../switch';
-import { B2, H3 } from '../typography';
+import { B2, B3, H3 } from '../typography';
+
+const transitionSettings = 'transition-all duration-700';
 
 interface Props {
   title: string;
+  subtitle?: string;
+  isExpandable?: boolean;
   rows: {
-    title: string;
-    value: string | any;
+    title: string | React.ReactNode;
+    value: string | React.ReactNode;
+    edit: {
+      isEditable: boolean;
+      inputWithPreview?: boolean;
+      handleEdit?: () => void;
+      inputField?: React.ReactNode;
+      rowIndex?: number;
+      showCallout?: boolean;
+    };
   }[];
-  extraClasses: string;
+  expander?: {
+    isExpanded?: boolean;
+    isExpandable?: boolean;
+    showSubmitCTA?: boolean;
+    setIsExpanded?: Dispatch<SetStateAction<boolean>>;
+  };
+  extraClasses?: string;
+  showForm?: boolean;
+  activeRow?: number;
+  setActiveRow?: Dispatch<SetStateAction<number>>;
 }
 
 export const CollapsibleTable: React.FC<Props> = ({
   title,
   rows,
-  extraClasses
+  subtitle,
+  extraClasses = '',
+  activeRow,
+  setActiveRow,
+  expander: {
+    isExpandable = true,
+    isExpanded = true,
+    setIsExpanded,
+    showSubmitCTA
+  }
 }) => {
   const rowsRef = useRef<HTMLInputElement>();
+  const editRef = useRef<HTMLInputElement>();
   const [maxHeight, setMaxHeight] = useState('100vh');
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const windowWidth = useWindowSize().width;
 
@@ -28,7 +62,12 @@ export const CollapsibleTable: React.FC<Props> = ({
       const rowsHeight = rowsRef.current
         ? rowsRef.current.getBoundingClientRect().height
         : 0;
-      if (rowsHeight) {
+      const editHeight = editRef.current
+        ? editRef.current.getBoundingClientRect().height
+        : 0;
+      if (rowsHeight && editHeight) {
+        setMaxHeight(`${rowsHeight + editHeight}px`);
+      } else {
         setMaxHeight(`${rowsHeight}px`);
       }
     }
@@ -36,21 +75,36 @@ export const CollapsibleTable: React.FC<Props> = ({
 
   useEffect(() => {
     updateMaxHeight();
-  }, [windowWidth]);
+  }, [windowWidth, activeRow]);
 
   return (
     <div className="space-y-8">
       {/* Top row */}
-      <div className="flex justify-between items-center">
-        <H3>{title}</H3>
-        <Switch
-          isOn={isExpanded}
-          type={SwitchType.EXPLICIT}
-          onClick={() => {
-            setIsExpanded(!isExpanded);
+      <div
+        className={`flex justify-between items-center ${
+          activeRow && 'opacity-50'
+        }`}
+      >
+        <div className="flex flex-col">
+          <H3>{title}</H3>
+          {subtitle && <B3 extraClasses="text-gray-syn4">{subtitle}</B3>}
+        </div>
+        {isExpandable && (
+          <Switch
+            isOn={isExpanded}
+            type={SwitchType.EXPLICIT}
+            onClick={() => setIsExpanded(!isExpanded)}
+          />
+        )}
+      </div>
+      {showSubmitCTA && (
+        <SubmitContent
+          handleEdit={() => console.log('TODO')}
+          cancelEdit={() => {
+            setActiveRow(0);
           }}
         />
-      </div>
+      )}
 
       {/* Divider */}
       <hr className="border-gray-syn7" />
@@ -65,12 +119,66 @@ export const CollapsibleTable: React.FC<Props> = ({
         }}
       >
         {rows.map((row, index) => {
+          const {
+            edit: {
+              handleEdit,
+              isEditable,
+              inputField,
+              rowIndex,
+              showCallout,
+              inputWithPreview
+            }
+          } = row;
+
           return (
-            <div key={index} className={`flex justify-between`}>
-              <B2 className="text-gray-syn4 flex-shrink-0">{row.title}</B2>
-              <B2 className="flex space-x-3 items-center max-w-7/12">
-                <div>{row.value}</div>
+            <div
+              key={index}
+              className={`flex flex-col sm:grid sm:grid-cols-12 sm:gap-5 group ${
+                activeRow && activeRow !== rowIndex
+                  ? 'opacity-50'
+                  : 'opacity-100'
+              } ${transitionSettings}`}
+            >
+              <B2 className="sm:col-span-4 text-gray-syn4 flex-shrink-0">
+                {row.title}
               </B2>
+              {(inputWithPreview && activeRow === rowIndex) ||
+              (isEditable && activeRow === rowIndex) ? (
+                <div
+                  className={`xl:mr-0 ${
+                    inputWithPreview ? 'sm:col-span-6' : 'sm:col-span-8'
+                  }`}
+                  ref={editRef}
+                >
+                  {inputField}
+                  <SubmitContent
+                    showCallout={showCallout}
+                    handleEdit={handleEdit}
+                    cancelEdit={() => {
+                      setActiveRow(0);
+                    }}
+                  />
+                </div>
+              ) : (
+                <>
+                  <B2
+                    extraClasses={`sm:col-span-6 xl:mr-0 flex space-x-3 items-center ${
+                      isEditable ? 'text-white' : 'text-gray-syn4'
+                    }`}
+                  >
+                    <div className="flex w-full">{row.value}</div>
+                  </B2>
+                  <div className="sm:col-span-2 flex justify-end">
+                    {isEditable && (
+                      <EditButton
+                        handleClick={() => {
+                          setActiveRow(rowIndex);
+                        }}
+                      />
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           );
         })}

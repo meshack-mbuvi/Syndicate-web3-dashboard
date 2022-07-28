@@ -1,6 +1,7 @@
 import { B3, H1, H2 } from '@/components/typography';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import {
@@ -30,8 +31,10 @@ export const CollectiveHeader: React.FC<{
     </>
   );
 
-  //TODO: Get this from router query once we have actual collective address.
-  const collectiveAddress = '0x05badb669dfb5ec3c736f3b694293a9b542e3cf1';
+  const router = useRouter();
+  const {
+    query: { collectiveAddress }
+  } = router;
 
   return (
     <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">

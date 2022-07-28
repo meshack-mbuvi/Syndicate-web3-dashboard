@@ -107,7 +107,7 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                 <Link
                   key={`token-table-row-${index}`}
                   href={`/collectives/${address}/${isOwner ? 'manage' : ''}${
-                    '?network=' + activeNetwork.chainId
+                    '?chain=' + activeNetwork.network
                   }`}
                 >
                   <div

@@ -1,3 +1,4 @@
+import EditIcon from '@/components/icons/editIcon';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B2, B3, H4 } from '@/components/typography';
 import { useState } from 'react';
@@ -14,7 +15,10 @@ interface Props {
   loading?: { name?: boolean; description?: boolean };
   mediaType?: NFTMediaType;
   mediaSource?: string;
+  mediaOnly?: boolean;
   customClasses?: string;
+  isEditable?: boolean;
+  handleEdit?: () => void;
 }
 
 export const NFTPreviewer: React.FC<Props> = ({
@@ -24,7 +28,10 @@ export const NFTPreviewer: React.FC<Props> = ({
   loading,
   mediaType,
   mediaSource,
-  customClasses
+  mediaOnly,
+  customClasses,
+  isEditable,
+  handleEdit
 }) => {
   const descriptionText = (
     <>
@@ -69,6 +76,17 @@ export const NFTPreviewer: React.FC<Props> = ({
               backgroundPosition: 'center'
             }}
           ></div>
+        )}
+        {isEditable && (
+          <div className="absolute right-4 top-4 flex space-x-3 items-center">
+            <button
+              onClick={handleEdit}
+              className="flex space-x-2 items-center bg-white bg-opacity-20 rounded-full px-3 py-1 text-white opacity-100 sm:opacity-0 cursor-pointer sm:group-hover:opacity-100 transition-opacity duration-200"
+            >
+              <EditIcon fill="#FFFFFF" />
+              <span>Edit</span>
+            </button>
+          </div>
         )}
         <div className="absolute right-4 bottom-4 flex space-x-3 items-center">
           {mediaType === NFTMediaType.VIDEO && (
@@ -176,50 +194,60 @@ export const NFTPreviewer: React.FC<Props> = ({
       </div>
 
       {/* Name and description */}
-      <div className="px-10 pb-10 pt-8 space-y-3.5">
-        <div>
-          <div
-            className={`${
-              loading.name === true
-                ? 'opacity-100 max-h-32 duration-500'
-                : 'opacity-0 max-h-0'
-            } overflow-hidden transition-all`}
-          >
-            <SkeletonLoader height="6" width="1/2" borderRadius="rounded-md" />
+      {!mediaOnly && (
+        <div className="px-10 pb-10 pt-8 space-y-3.5">
+          <div>
+            <div
+              className={`${
+                loading.name === true
+                  ? 'opacity-100 max-h-32 duration-500'
+                  : 'opacity-0 max-h-0'
+              } overflow-hidden transition-all`}
+            >
+              <SkeletonLoader
+                height="6"
+                width="1/2"
+                borderRadius="rounded-md"
+              />
+            </div>
+            <div
+              className={`${
+                loading.name !== true
+                  ? 'opacity-100 max-h-32 duration-500 '
+                  : 'opacity-0 max-h-0'
+              } overflow-hidden transition-all`}
+            >
+              <H4>
+                {name} <span className="text-gray-syn4">{symbol}</span>
+              </H4>
+            </div>
           </div>
-          <div
-            className={`${
-              loading.name !== true
-                ? 'opacity-100 max-h-32 duration-500 '
-                : 'opacity-0 max-h-0'
-            } overflow-hidden transition-all`}
-          >
-            <H4>
-              {name} <span className="text-gray-syn4">{symbol}</span>
-            </H4>
+          <div>
+            <div
+              className={`${
+                loading.description === true
+                  ? 'opacity-100 max-h-32 duration-500 '
+                  : 'opacity-0 max-h-0'
+              } overflow-hidden transition-all`}
+            >
+              <SkeletonLoader
+                height="6"
+                width="full"
+                borderRadius="rounded-md"
+              />
+            </div>
+            <div
+              className={`${
+                loading.description !== true
+                  ? 'opacity-100 max-h-screen duration-500'
+                  : 'opacity-0 max-h-0'
+              } overflow-hidden transition-all`}
+            >
+              {descriptionText}
+            </div>
           </div>
         </div>
-        <div>
-          <div
-            className={`${
-              loading.description === true
-                ? 'opacity-100 max-h-32 duration-500 '
-                : 'opacity-0 max-h-0'
-            } overflow-hidden transition-all`}
-          >
-            <SkeletonLoader height="6" width="full" borderRadius="rounded-md" />
-          </div>
-          <div
-            className={`${
-              loading.description !== true
-                ? 'opacity-100 max-h-screen duration-500'
-                : 'opacity-0 max-h-0'
-            } overflow-hidden transition-all`}
-          >
-            {descriptionText}
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

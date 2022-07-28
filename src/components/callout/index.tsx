@@ -3,17 +3,16 @@ export enum CalloutType {
   WARNING = 'WARNING'
 }
 
-export const Callout = (props: {
+export const Callout: React.FC<{
   type?: CalloutType;
   extraClasses?: string;
-  children: any;
+  showIcon?: boolean;
+}> = ({
+  type = CalloutType.REGULAR,
+  extraClasses = 'rounded-xl p-4',
+  showIcon = true,
+  children
 }) => {
-  const {
-    type = CalloutType.REGULAR,
-    extraClasses = 'rounded-xl p-4',
-    children
-  } = props;
-
   let styles = `bg-blue-navy bg-opacity-20 text-blue-navy`;
   let icon;
   switch (type) {
@@ -28,7 +27,7 @@ export const Callout = (props: {
 
   return (
     <div className={`${styles} flex items-center space-x-3.5 ${extraClasses}`}>
-      {icon && <img src={icon} className="w-5 h-5" alt="Icon" />}
+      {showIcon && icon && <img src={icon} className="w-5 h-5" alt="Icon" />}
       <div className="w-full">{children}</div>
     </div>
   );

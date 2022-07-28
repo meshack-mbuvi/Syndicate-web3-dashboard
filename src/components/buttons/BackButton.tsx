@@ -1,16 +1,35 @@
+import { AppState } from '@/state';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
+import { useSelector } from 'react-redux';
 
 const BackButton: React.FC<{
   isSticky?: boolean;
   customClasses?: string;
   transform?: any;
   isHidden?: boolean;
+  isSettingsPage?: boolean;
 }> = ({
   isSticky = false,
   customClasses = '',
   transform = 'translateY(-50%)',
-  isHidden = false
+  isHidden = false,
+  isSettingsPage = false
 }) => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+  const router = useRouter();
+
+  const backUrl = generateBackUrl(
+    activeNetwork.network,
+    isSettingsPage,
+    router.query
+  );
+
   return (
     <div
       className={`${
@@ -18,12 +37,16 @@ const BackButton: React.FC<{
       } sticky ${customClasses} w-0 h-full z-30 transition-all`}
     >
       <div
-        className={`absolute hidden sm:block -left-9 sm:-left-14 xl:-left-20 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
-          isSticky ? 'top-9' : 'sm:top-5 lg:top-11'
+        className={`absolute hidden sm:block ${
+          isSettingsPage
+            ? '-left-20 sm:-left-24'
+            : '-left-9 sm:-left-14 xl:-left-20 '
+        } cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
+          isSticky ? 'top-9' : isSettingsPage ? 'top-0' : 'sm:top-5 lg:top-11'
         }`}
         style={{ transform }}
       >
-        <Link href="/clubs">
+        <Link href={backUrl}>
           <a>
             <svg
               style={{ left: '-1px' }}
@@ -44,3 +67,16 @@ const BackButton: React.FC<{
 };
 
 export default BackButton;
+
+const generateBackUrl = (
+  network: string,
+  isSettingsPage: boolean,
+  query: ParsedUrlQuery
+): string => {
+  const { clubAddress, collectiveAddress } = query;
+  const address = collectiveAddress || clubAddress;
+  const page = collectiveAddress ? '/collectives' : '/clubs';
+  const params = `?chain=${network}`;
+  const baseUrl = `${page}/${address}/manage/`;
+  return isSettingsPage ? baseUrl + params : page;
+};

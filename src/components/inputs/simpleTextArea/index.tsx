@@ -30,9 +30,7 @@ export const TextArea: React.FC<Props> = ({
         className={`${widthClass} ${inputStyles} ${errorStyles}`}
         rows={heightRows}
         value={value}
-        onChange={(e) => {
-          handleValueChange(e.target.value);
-        }}
+        onChange={(e) => handleValueChange(e.target.value)}
         placeholder={placeholderLabel}
       />
       {helperText && (

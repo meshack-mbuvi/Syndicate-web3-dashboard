@@ -22,6 +22,7 @@ import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
 import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
+import collectiveDetailsReducer from '@/state/collectiveDetails';
 import web3Reducer from '@/state/wallet/reducer';
 import { isDev } from '@/utils/environment';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -53,6 +54,7 @@ export const store = configureStore({
     modifyClubSettingsReducer,
     connectClubMemberReducer,
     distributeTokensReducer,
+    collectiveDetailsReducer,
     collectivesSlice
   },
   middleware: (getDefaultMiddleware) =>

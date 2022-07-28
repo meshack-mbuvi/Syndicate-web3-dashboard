@@ -149,9 +149,7 @@ const useCollectives = () => {
           tokenImage: '/images/placeholderCollectiveThumbnail.svg',
           inviteLink: `${
             window.location.origin
-          }/collectives/${contractAddress}${
-            '?network=' + activeNetwork.chainId
-          }`
+          }/collectives/${contractAddress}${'?chain=' + activeNetwork.network}`
         };
       })
       .filter((collective) => collective !== undefined);
@@ -205,7 +203,7 @@ const useCollectives = () => {
             inviteLink: `${
               window.location.origin
             }/collectives/${contractAddress}${
-              '?network=' + activeNetwork.chainId
+              '?chain=' + activeNetwork.network
             }`
           };
         }

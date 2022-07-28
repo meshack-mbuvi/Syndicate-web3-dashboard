@@ -38,11 +38,13 @@ export const FileUploader: React.FC<Props> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   return (
     <button
-      className={`w-full relative ${heightClass} p-6 border ${
+      className={`w-full relative ${heightClass} px-6 border ${
         isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6'
       } border-dashed rounded ${
         progressPercent <= 0 && 'hover:bg-gray-syn8'
-      } transition-all ease-out ${customClasses}`}
+      } transition-all ease-out ${customClasses} ${
+        progressPercent > 0 ? 'py-6-percent' : ''
+      }`}
     >
       <input
         type="file"

@@ -237,6 +237,9 @@ export const GetAdminCollectives = gql`
       mintPrice
       numMinted
       totalSupply
+      maxPerMember
+      numOwners
+      areNftsTransferable
     }
   }
 `;
