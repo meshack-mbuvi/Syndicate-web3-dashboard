@@ -127,7 +127,12 @@ const PortfolioAndDiscover: React.FC = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adminCollectives.length, memberCollectives.length]);
+  }, [
+    adminCollectives.length,
+    memberCollectives.length,
+    otherClubERC20s.length,
+    myClubERC20s.length
+  ]);
 
   return (
     <div className="-mt-8">
