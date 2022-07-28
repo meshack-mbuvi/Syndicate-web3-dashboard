@@ -18,6 +18,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OwnerMintModule: '0xA7c2400CBbeafFFaF77d3080bF8Ca50f51c8afC6',
     OwnerMintModule2: '0x06507C449B1E8EBB8247f44b715F9Fe4E51B365A',
+    ERC721Collective: '', // TODO
     ERC721CollectiveFactory: '', // TODO
     FixedRenderer: '', // TODO
     GuardMixinManager: '', // TODO
@@ -25,7 +26,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     TimeRequirements: '', // TODO
     MaxPerMemberERC721: '', // TODO
     MaxTotalSupplyERC721: '', // TODO
-    AlwaysAllowGuard: '' // TODO
+    GuardAlwaysAllow: '', // TODO
+    GuardNeverAllow: '' // TODO
   },
   // Rinkeby
   4: {
@@ -46,6 +48,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
     OwnerMintModule2: '',
+    ERC721Collective: '0x208Ca3C62FC05135d96ACB08e94Bc62B1e0e463B',
     ERC721CollectiveFactory: '0xe16d032f1cf5974cf8d1985278b464ed91220733',
     FixedRenderer: '0x6c4f220416751503e81e38deee9899082a803275',
     GuardMixinManager: '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
@@ -53,7 +56,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     TimeRequirements: '0x723541996f751ea24608e9de75488746a067d61b',
     MaxPerMemberERC721: '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
     MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f',
-    AlwaysAllowGuard: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057'
+    GuardAlwaysAllow: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057',
+    GuardNeverAllow: '0x701EAE459BF3E501852E11499117b2eC333EBdF9'
   },
   // Matic
   137: {
@@ -74,6 +78,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x4dd964Bb38828789de447787B3435D519E4E7282',
     OwnerMintModule2: '',
+    ERC721Collective: '', // TODO
     ERC721CollectiveFactory: '', // TODO
     FixedRenderer: '', // TODO
     GuardMixinManager: '', // TODO
@@ -81,6 +86,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     TimeRequirements: '', // TODO
     MaxPerMemberERC721: '', // TODO
     MaxTotalSupplyERC721: '', // TODO
-    AlwaysAllowGuard: '' // TODO
+    GuardAlwaysAllow: '', // TODO
+    GuardNeverAllow: '' // TODO
   }
 });

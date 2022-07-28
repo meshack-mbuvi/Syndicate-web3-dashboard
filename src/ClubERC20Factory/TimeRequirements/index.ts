@@ -17,4 +17,44 @@ export class TimeRequirements extends ContractBase {
       [token, { startTime: start, endTime: end }] as string[]
     );
   }
+
+  public async updateTimeRequirements(
+    account: string,
+    token: string,
+    startTime: number,
+    endTime: number,
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () =>
+        this.contract.methods.setMixinRequirements(token, {
+          startTime,
+          endTime
+        }),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
+  }
+
+  public async getEstimateGas(
+    account: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    this.estimateGas(
+      account,
+      () =>
+        this.contract.methods.setMixinRequirements(
+          '0x0000000000000000000000000000000000000000',
+          {
+            startTime: 0,
+            endTime: 1684952525
+          }
+        ),
+      onResponse
+    );
+  }
 }

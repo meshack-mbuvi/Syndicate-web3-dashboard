@@ -20,6 +20,7 @@ import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
+import { ERC721Collective } from './ERC721Collective';
 import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { TimeRequirements } from './TimeRequirements';
@@ -177,6 +178,12 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  const erc721Collective = new ERC721Collective(
+    addresses.ERC721Collective,
+    web3,
+    activeNetwork
+  );
+
   const erc721CollectiveFactory = new ERC721CollectiveFactory(
     addresses.ERC721CollectiveFactory,
     web3,
@@ -243,6 +250,7 @@ export const getSyndicateContracts = async (
     rugBonusClaimModule,
     OwnerMintModule,
     depositExchangeMintModule,
+    erc721Collective,
     erc721CollectiveFactory,
     ethPriceMintModule,
     fixedRenderer,

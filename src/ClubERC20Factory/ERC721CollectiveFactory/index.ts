@@ -8,6 +8,7 @@ import { GuardMixinManager } from '../GuardMixinManager';
 import { MaxPerMemberERC721 } from '../MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '../MaxTotalSupplyERC721';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { ERC721Collective } from '../ERC721Collective';
 
 export interface ICollectiveParams {
   collectiveName: string;
@@ -68,6 +69,12 @@ export class ERC721CollectiveFactory extends ContractBase {
         this.addresses.FixedRenderer,
         this.web3,
         this.activeNetwork
+      ),
+
+      erc721Collective: new ERC721Collective(
+        this.addresses.ERC721Collective,
+        this.web3,
+        this.activeNetwork
       )
     };
   }
@@ -103,22 +110,24 @@ export class ERC721CollectiveFactory extends ContractBase {
       maxPerWalletMixin,
       mintGuard,
       ethPriceModule,
-      fixedRenderer
+      fixedRenderer,
+      erc721Collective
     } = this.setupContract();
 
     const salt = this.web3.utils.randomHex(32);
 
     const predictedAddress = await this.predictAddress(account, salt);
-    let mixins = [this.addresses.MaxPerMemberERC721];
+    const mixins = [this.addresses.MaxPerMemberERC721];
 
-    let contractAddresses = [
+    const contractAddresses = [
       this.addresses.MaxPerMemberERC721,
       this.addresses.GuardMixinManager,
       this.addresses.EthPriceMintModule,
-      this.addresses.FixedRenderer
+      this.addresses.FixedRenderer,
+      predictedAddress
     ];
 
-    let encodedFunctions = [
+    const encodedFunctions = [
       // Required
       maxPerWalletMixin.setMaxPerMemberRequirements(
         predictedAddress,
@@ -140,7 +149,7 @@ export class ERC721CollectiveFactory extends ContractBase {
     if (allowTransfer) {
       contractAddresses.push(predictedAddress);
       encodedFunctions.push(
-        this.setTransferGuard(this.addresses.AlwaysAllowGuard)
+        erc721Collective.setTransferGuard(this.addresses.GuardAlwaysAllow)
       );
     }
 
@@ -243,31 +252,6 @@ export class ERC721CollectiveFactory extends ContractBase {
           encodedFunctions
         ),
       onResponse
-    );
-  }
-
-  public setTransferGuard(guard: string): string {
-    return this.web3.eth.abi.encodeFunctionCall(
-      this.getAbiObject('updateTransferGuard'),
-      [guard]
-    );
-  }
-
-  public async updateTransferGuard(
-    account: string,
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
-  ): Promise<void> {
-    await this.send(
-      account,
-      () =>
-        this.contract.methods.updateTransferGuard(
-          this.addresses.AlwaysAllowGuard
-        ),
-      onTxConfirm,
-      onTxReceipt,
-      onTxFail
     );
   }
 }

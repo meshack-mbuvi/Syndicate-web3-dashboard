@@ -25,6 +25,7 @@ import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
 import { MaxPerMemberERC721 } from '@/ClubERC20Factory/MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
 import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
+import { ERC721Collective } from '@/ClubERC20Factory/ERC721Collective';
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
@@ -49,6 +50,7 @@ export interface ISyndicateContracts {
   rugBonusClaimModule: RugBonusTokenModule;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
+  erc721Collective: ERC721Collective;
   erc721CollectiveFactory: ERC721CollectiveFactory;
   ethPriceMintModule: EthPriceMintModule;
   fixedRenderer: FixedRenderer;
@@ -86,6 +88,7 @@ const initialState: InitialState = {
     rugBonusClaimModule: null,
     OwnerMintModule: null,
     depositExchangeMintModule: null,
+    erc721Collective: null,
     erc721CollectiveFactory: null,
     ethPriceMintModule: null,
     fixedRenderer: null,

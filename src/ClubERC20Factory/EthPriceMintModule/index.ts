@@ -13,4 +13,36 @@ export class EthPriceMintModule extends ContractBase {
       [token, price]
     );
   }
+
+  public async updatePrice(
+    account: string,
+    token: string,
+    price: string,
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () => this.contract.methods.updateEthPrice(token, price),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
+  }
+
+  public async getEstimateGas(
+    account: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    this.estimateGas(
+      account,
+      () =>
+        this.contract.methods.updateEthPrice(
+          '0x0000000000000000000000000000000000000000',
+          this.web3.utils.toWei('0.5')
+        ),
+      onResponse
+    );
+  }
 }

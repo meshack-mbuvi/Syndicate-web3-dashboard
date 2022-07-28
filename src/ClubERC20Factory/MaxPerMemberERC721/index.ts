@@ -16,4 +16,36 @@ export class MaxPerMemberERC721 extends ContractBase {
       [token, maxPerMember] as string[]
     );
   }
+
+  public async updateMaxPerMember(
+    account: string,
+    token: string,
+    maxPerMember: number,
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () => this.contract.methods.setMixinRequirements(token, maxPerMember),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
+  }
+
+  public async getEstimateGas(
+    account: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    this.estimateGas(
+      account,
+      () =>
+        this.contract.methods.setMixinRequirements(
+          '0x0000000000000000000000000000000000000000',
+          3
+        ),
+      onResponse
+    );
+  }
 }
