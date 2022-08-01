@@ -103,7 +103,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { currentEthereumNetwork }
+      web3: { currentEthereumNetwork, status }
     }
   } = useSelector((state: AppState) => state);
 
@@ -126,6 +126,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     () => NETWORKS[chainId] ?? NETWORKS[1],
     [chainId]
   );
+
+  const detachedWeb3 = useMemo(() => {
+    if (chainId) {
+      return new Web3(`${NETWORKS[chainId].rpcUrl}`);
+    }
+    return new Web3(`${NETWORKS[1].rpcUrl}`);
+  }, [chainId]);
 
   const supportedNetworks: number[] = useMemo(() => {
     if (polygon !== undefined) {
@@ -166,31 +173,32 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     dispatch(setContracts(contracts));
     try {
       dispatch(hideErrorModal());
-      if (account && activeProvider && chainId) {
+      if (account || activeProvider || chainId) {
         localStorage.removeItem('cache');
         localStorage.setItem(
           'cache',
           stringify({ account, providerName, chainId })
         );
-      }
-      if (account) {
-        return dispatch(
-          setLibrary({
-            account,
-            web3: web3,
-            providerName,
-            activeNetwork
-          })
-        );
-      } else {
-        return dispatch(
-          setLibrary({
-            account,
-            web3: web3,
-            providerName,
-            activeNetwork
-          })
-        );
+
+        if (account) {
+          return dispatch(
+            setLibrary({
+              account,
+              web3: web3,
+              providerName,
+              activeNetwork
+            })
+          );
+        } else {
+          return dispatch(
+            setLibrary({
+              account,
+              web3: detachedWeb3,
+              providerName,
+              activeNetwork
+            })
+          );
+        }
       }
     } catch (error) {
       dispatch(setDisConnected());
@@ -211,6 +219,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       setCachedWalletData(parseCacheWallet);
     } else {
       setLoading(false);
+      if (!chainId) {
+        setChainId(activeNetwork.chainId);
+      }
       initializeWeb3();
     }
   }, []);
@@ -222,6 +233,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       if (providerName === 'Injected' || providerName === 'WalletConnect') {
         activateProvider(providerName);
         setChainId(chainId);
+      } else if (chainId && !providerName && !account) {
+        setChainId(chainId);
+        setLoading(false);
+        initializeWeb3();
       }
     }
   }, [cachedWalletData]);

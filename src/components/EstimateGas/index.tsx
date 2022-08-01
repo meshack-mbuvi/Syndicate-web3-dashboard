@@ -131,7 +131,12 @@ const EstimateGas: React.FC<Props> = ({
           .then((res) => setNativeTokenPrice(res))
           .catch(() => 0)
     ]);
-  }, [account, contracts[contract].syndicateContract, args]);
+  }, [
+    activeNetwork.chainId,
+    account,
+    contracts[contract].syndicateContract,
+    args
+  ]);
 
   useEffect(() => {
     if (skipQuery) return;

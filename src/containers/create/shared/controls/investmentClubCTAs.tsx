@@ -1,8 +1,11 @@
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
 import { setDispatchCreateFlow, showWalletModal } from '@/state/wallet/actions';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useProvider } from '@/hooks/web3/useProvider';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -21,16 +24,40 @@ const InvestmentClubCTAs: React.FC = () => {
     setCurrentStep
   } = useCreateInvestmentClubContext();
 
+  const { switchNetworks } = useConnectWalletContext();
+
   const {
     web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
 
+  const { account, activeNetwork } = web3;
+
   const dispatch = useDispatch();
+  const { providerName } = useProvider();
+
+  const [preSelectednetwork, setPreSelectedNetwork] = useState<number>(null);
 
   const connectWallet = () => {
+    setPreSelectedNetwork(activeNetwork.chainId);
     dispatch(showWalletModal());
     dispatch(setDispatchCreateFlow(true));
   };
+
+  useEffect(() => {
+    if (
+      activeNetwork.chainId &&
+      account &&
+      providerName &&
+      preSelectednetwork !== activeNetwork.chainId
+    ) {
+      if (providerName === 'WalletConnect') {
+        // TODO: handle wallet connect info here
+        // inform users when they connect to a different network from the pre-selected one.
+      } else {
+        switchNetworks(preSelectednetwork);
+      }
+    }
+  }, [account, activeNetwork.chainId, providerName]);
 
   const confirmWallet = () => {
     setShowModal((prev) => ({
@@ -44,8 +71,6 @@ const InvestmentClubCTAs: React.FC = () => {
     from: { y: -50 },
     delay: 500
   });
-
-  const { account } = web3;
 
   return (
     <animated.div
