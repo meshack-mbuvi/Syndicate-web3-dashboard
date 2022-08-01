@@ -34,6 +34,7 @@ const useUpdateState = () => {
   const [submitButtonActive, setSubmiteButtonActive] = useState(false);
   const [progressPercent, setProgressPercent] = useState(artworkUrl ? 100 : 0);
   const [fileName, setFileName] = useState(artwork?.name);
+  const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
 
   const getArtworkType = (fileObject) => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
@@ -166,6 +167,8 @@ const useUpdateState = () => {
     ContinueButtonActive,
     progressPercent,
     fileName,
+    hasAgreedToTerms,
+    setAgreedToTerms,
     handleTimeWindowChange,
     handlePriceToJoinChange,
     handleMaxPerWalletChange,

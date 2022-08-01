@@ -10,6 +10,7 @@ import { InputField } from '@/components/inputs/inputField';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import AgreementTerms from '@/components/AgreementTerms';
 
 interface Props {
   nameValue: string;
@@ -37,6 +38,8 @@ interface Props {
   handleChangeAllowOwnershipTransfer: (newAllowingTransfer: boolean) => void;
   isSubmitButtonActive: boolean;
   handleSubmit: () => void;
+  hasAgreedToTerms: boolean;
+  handleAgreedToTerms: () => void;
 }
 
 export const CollectiveFormReview: React.FC<Props> = ({
@@ -64,7 +67,9 @@ export const CollectiveFormReview: React.FC<Props> = ({
   allowOwnershipTransfer,
   handleChangeAllowOwnershipTransfer,
   isSubmitButtonActive,
-  handleSubmit
+  handleSubmit,
+  hasAgreedToTerms,
+  handleAgreedToTerms
 }) => {
   const spaceBetweenTitleAndSubtitleStyles =
     'px-5 py-4 -my-4 -mx-5 mt-4 hover:bg-gray-syn8 rounded-2xl flex justify-between items-center visibility-container transition-all ease-out';
@@ -489,6 +494,14 @@ export const CollectiveFormReview: React.FC<Props> = ({
             {currentlyEditingIndex === 7 ? 'Done' : 'Edit'}
           </button>
         </div>
+        {
+          <div className="pt-10 pb-28">
+            <AgreementTerms
+              hasAgreed={hasAgreedToTerms}
+              handleAgreed={handleAgreedToTerms}
+            />
+          </div>
+        }
       </div>
       <div className=" fixed bottom-0">{bottomBar}</div>
     </div>

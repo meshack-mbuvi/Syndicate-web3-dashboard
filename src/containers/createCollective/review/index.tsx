@@ -50,7 +50,9 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     handleCloseTimeChange,
     handleChangeAllowOwnershipTransfer,
     submitButtonActive,
-    setSubmiteButtonActive
+    setSubmiteButtonActive,
+    hasAgreedToTerms,
+    setAgreedToTerms
   } = useUpdateState();
 
   const { handleSubmit } = useSubmitCollective();
@@ -76,13 +78,18 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
       name &&
       artworkUrl &&
       description &&
-      symbol
+      symbol &&
+      hasAgreedToTerms
     ) {
       let proceed = true;
 
-      if (openUntil === OpenUntil.MAX_MEMBERS && !maxSupply) {
+      if (
+        (openUntil === OpenUntil.MAX_MEMBERS && !maxSupply) ||
+        !hasAgreedToTerms
+      ) {
         proceed = false;
       }
+
       setSubmiteButtonActive(proceed);
       return;
     }
@@ -101,7 +108,8 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     name,
     artworkUrl,
     description,
-    symbol
+    symbol,
+    hasAgreedToTerms
   ]);
 
   const [timeString, setTimeString] = React.useState('');
@@ -149,6 +157,8 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
           }
           isSubmitButtonActive={submitButtonActive}
           handleSubmit={launchCollective}
+          hasAgreedToTerms={hasAgreedToTerms}
+          handleAgreedToTerms={() => setAgreedToTerms(!hasAgreedToTerms)}
         />
       </div>
     </div>

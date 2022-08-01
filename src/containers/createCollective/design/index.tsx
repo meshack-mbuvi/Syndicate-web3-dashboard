@@ -65,19 +65,18 @@ export const DesignRightPanel: React.FC = () => {
     useCreateState();
 
   return (
-    <div className=" w-full flex justify-center">
-      <NFTPreviewer
-        description={description}
-        loading={{
-          description: description === '',
-          name: name === ''
-        }}
-        mediaSource={artworkUrl}
-        mediaType={artworkType}
-        name={name}
-        symbol={'✺' + symbol}
-        customClasses={'w-full'}
-      />
-    </div>
+    <NFTPreviewer
+      description={description}
+      loading={{
+        description: description === '',
+        name: name === '',
+        artwork: artworkUrl === ''
+      }}
+      mediaSource={artworkUrl}
+      mediaType={artworkType}
+      name={name}
+      symbol={'✺' + symbol}
+      customClasses={'w-full'}
+    />
   );
 };
