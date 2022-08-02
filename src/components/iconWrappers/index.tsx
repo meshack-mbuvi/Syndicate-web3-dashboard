@@ -51,7 +51,7 @@ export enum ExternalLinkColor {
 /**Shows an icon for external links */
 export const ExternalLinkIcon = (props) => {
   let icon;
-  switch (props.iconcolor) {
+  switch (props.iconColor) {
     case ExternalLinkColor.GRAY:
       icon = '/images/externalLinkGray.svg';
       break;

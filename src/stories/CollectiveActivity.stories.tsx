@@ -11,9 +11,9 @@ const Template = (args) => {
   return <CollectiveActivity {...args} />;
 };
 
-export const Recieved = Template.bind({});
-Recieved.args = {
-  activityType: CollectiveActivityType.RECIEVED,
+export const Received = Template.bind({});
+Received.args = {
+  activityType: CollectiveActivityType.RECEIVED,
   profile: {
     picture: '/images/collectives/alex.jpg',
     username: 'alexzandi'

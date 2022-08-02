@@ -89,6 +89,7 @@ const images = [
   '/images/chevron-down.svg',
   '/images/chevron-left-blue.svg',
   '/images/chevron-right-dark.svg',
+  '/images/chevron-right-black.svg',
   '/images/chevron-right.svg',
   '/images/chevron-up.svg',
   '/images/chrome-dark.svg',

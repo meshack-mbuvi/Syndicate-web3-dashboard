@@ -13,7 +13,8 @@ module.exports = {
       backgroundOpacity: ['active'],
       borderRadius: ['first', 'last'],
       borderWidth: ['first', 'last', 'hover'],
-      ringWidth: ['hover', 'active']
+      ringWidth: ['hover', 'active'],
+      transitionProperty: ['responsive', 'motion-safe', 'motion-reduce']
     }
   },
   plugins: [
@@ -83,6 +84,7 @@ module.exports = {
       },
       height: () => ({
         'fit-content': 'fit-content',
+        0.25: '0.063rem',
         2.5: '0.625rem',
         4.5: '1.125rem',
         5.5: '1.375rem',
@@ -139,6 +141,7 @@ module.exports = {
         24: '6rem',
         26: '6.5rem',
         28: '7rem',
+        56: '14rem',
         88: '22rem',
         100: '25rem',
         104: '26rem',

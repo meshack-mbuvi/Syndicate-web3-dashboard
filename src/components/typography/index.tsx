@@ -255,7 +255,7 @@ export const H4 = ({
           : regular
           ? 'font-regular'
           : 'font-medium'
-      } ${weightClassOverride} ${extraClasses}`}
+      } ${weightClassOverride ?? ''} ${extraClasses ?? ''}`}
       {...rest}
     >
       {children}
@@ -280,7 +280,7 @@ export const L1 = ({
     <div
       className={`text-base uppercase tracking-px transform transition-font-size ${
         weightClassOverride ? weightClassOverride : 'font-bold'
-      } ${weightClassOverride} ${extraClasses}`}
+      } ${weightClassOverride ?? ''} ${extraClasses ?? ''}`}
       {...rest}
     >
       {children}

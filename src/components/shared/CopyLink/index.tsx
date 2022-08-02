@@ -18,6 +18,9 @@ interface Props {
   copyButtonText?: string;
   hoverEffect?: boolean;
   customZIndex?: string;
+  backgroundColor?: string;
+  borderRadius?: string;
+  copyBorderRadius?: string;
 }
 const CopyLink: FC<Props> = ({
   link,
@@ -30,12 +33,15 @@ const CopyLink: FC<Props> = ({
   accentColor = 'green',
   copyButtonText = 'Copy',
   hoverEffect = true,
-  customZIndex = ''
+  customZIndex = '',
+  backgroundColor = 'bg-gray-syn8',
+  borderRadius = 'rounded',
+  copyBorderRadius = 'rounded'
 }) => {
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
     <div
-      className={`w-full border-1 border-gray-syn6 bg-gray-syn8 rounded pl-4 py-2 pr-2 flex`}
+      className={`w-full border-1 border-gray-syn6 ${backgroundColor} rounded pl-4 py-2 pr-2 flex`}
     >
       <div className="flex items-center justify-between w-full">
         <div className="flex-grow-1 -mr-2">
@@ -60,9 +66,9 @@ const CopyLink: FC<Props> = ({
     <div
       className={`w-full border-1 relative ${
         customZIndex ?? ''
-      } ${borderColor} bg-gray-syn8 ${
+      } ${borderColor} ${backgroundColor} ${
         hoverEffect ? 'hover:bg-gray-syn7' : ''
-      } transition-all duration-300 rounded flex ${
+      } transition-all duration-300 ${borderRadius} flex ${
         syndicateSuccessfullyCreated && showConfettiSuccess
           ? 'p-4'
           : 'pl-4 py-2 pr-2'
@@ -90,7 +96,7 @@ const CopyLink: FC<Props> = ({
             <div
               className={`flex-grow-1 px-3 ${
                 showCopiedState ? 'border-transparent' : `bg-${accentColor}`
-              } text-black flex h-10 justify-center items-center rounded hover:opacity-80`}
+              } text-black flex h-10 justify-center items-center ${copyBorderRadius} hover:opacity-80`}
             >
               {showCopiedState ? (
                 <CopiedLinkIcon color={`text-${accentColor}`} />

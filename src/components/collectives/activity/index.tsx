@@ -1,7 +1,8 @@
 import { B2, B3 } from '@/components/typography';
+import { formatAddress } from '@/utils/formatAddress';
 
 export enum CollectiveActivityType {
-  RECIEVED = 'RECIEVED',
+  RECEIVED = 'RECEIVED',
   TRANSFER = 'TRANSFER',
   SALE = 'SALE',
   LIST = 'LIST',
@@ -11,7 +12,7 @@ export enum CollectiveActivityType {
 interface Props {
   activityType: CollectiveActivityType;
   timeStamp?: string;
-  profile?: { picture: string; username?: string; address?: string };
+  profile?: { picture?: string; username?: string; address?: string };
   transfer?: {
     fromUsername?: string;
     fromAddress?: string;
@@ -54,22 +55,32 @@ export const CollectiveActivity: React.FC<Props> = ({
   offer,
   externalLink
 }) => {
+  const formattedAddress = formatAddress(profile.address, 6, 4);
+
   return (
     <a href={externalLink} className="flex justify-between items-center">
       <div>
-        {activityType === CollectiveActivityType.RECIEVED && (
+        {activityType === CollectiveActivityType.RECEIVED && (
           <div className="flex space-x-2 items-center">
             <img
-              src={profile.picture}
+              src={profile.picture || '/images/user.svg'}
               alt="Profile"
               className="w-6 h-6 rounded-full"
             />
+
             <B2>
-              {profile.username
-                ? `@${profile.username}`
-                : profile.address
-                ? profile.address
-                : ''}{' '}
+              {profile.username ? (
+                `@${profile.username}`
+              ) : profile.address ? (
+                <>
+                  <span className="text-gray-syn4">
+                    {formattedAddress.slice(0, 2)}
+                  </span>
+                  {formattedAddress.slice(2)}
+                </>
+              ) : (
+                ''
+              )}{' '}
               <span className="text-gray-syn4">joined the collective</span>
             </B2>
           </div>

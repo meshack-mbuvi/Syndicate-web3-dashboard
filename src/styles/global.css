@@ -1001,3 +1001,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .walletconnect-modal__mobile__toggle {
   @apply text-black;
 }
+
+.blurredText {
+  text-shadow: #111 0 0 15px;
+}
