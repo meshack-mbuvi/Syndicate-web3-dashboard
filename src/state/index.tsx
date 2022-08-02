@@ -13,6 +13,7 @@ import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import distributeTokensReducer from '@/state/distributions';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
 import transactionsReducer from '@/state/erc20transactions/index';
+import erc721CollectiveReducer from '@/state/erc721Collective/index';
 import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
 import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
@@ -21,6 +22,7 @@ import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
+import gasDetailsSlice from '@/state/gasDetails';
 import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
 import collectiveDetailsReducer from '@/state/collectiveDetails';
 import web3Reducer from '@/state/wallet/reducer';
@@ -47,6 +49,7 @@ export const store = configureStore({
     airdopInfoSliceReducer,
     erc721MerkleProofSliceReducer,
     erc721AirdropInfoSliceReducer,
+    erc721CollectiveReducer,
     claimedERC721SliceReducer,
     modifyCapTableSlice,
     setCollectibleDetailsSliceReducer,
@@ -55,7 +58,8 @@ export const store = configureStore({
     connectClubMemberReducer,
     distributeTokensReducer,
     collectiveDetailsReducer,
-    collectivesSlice
+    collectivesSlice,
+    gasDetailsSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

@@ -231,6 +231,7 @@ export const GetAdminCollectives = gql`
     syndicateCollectives(where: $where) {
       contractAddress
       ownerAddress
+      createdAt
       name
       symbol
       maxTotalSupply

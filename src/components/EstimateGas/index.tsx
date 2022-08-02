@@ -1,11 +1,10 @@
-import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
-import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import useGasDetails from '@/hooks/useGasDetails';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -40,15 +39,16 @@ const EstimateGas: React.FC<Props> = ({
         policyMintERC20,
         OwnerMintModule
       }
+    },
+    gasDetailsSlice: {
+      gasDetails: { gasMultipler, nativeTokenPrice }
     }
   } = useSelector((state: AppState) => state);
 
+  useGasDetails();
+
   const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
-  const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [nativeTokenPrice, setNativeTokenPrice] = useState<
-    number | undefined
-  >();
   const [fiatAmount, setFiatAmount] = useState('');
 
   const contracts = {
@@ -110,44 +110,20 @@ const EstimateGas: React.FC<Props> = ({
     }
   };
 
-  const processBaseFee = async (result) => {
-    if (result.status === '0') return;
-    const baseFee = result.result;
-    const baseFeeInDecimal = parseInt(baseFee, 16);
-    setGasBaseFee(baseFeeInDecimal);
-  };
-
-  const fetchGasUnitAndBaseFee = useCallback(async () => {
-    await Promise.all([
-      !account ? setGasUnits(380000) : contracts[contract].estimateGas(),
-      axios
-        .get(
-          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`
-        )
-        .then((res) => processBaseFee(res.data))
-        .catch(() => 0),
-      withFiatCurrency &&
-        getNativeTokenPrice(activeNetwork.chainId)
-          .then((res) => setNativeTokenPrice(res))
-          .catch(() => 0)
-    ]);
-  }, [
-    activeNetwork.chainId,
-    account,
-    contracts[contract].syndicateContract,
-    args
-  ]);
+  const fetchGasUnit = useCallback(async () => {
+    !account ? setGasUnits(380000) : contracts[contract].estimateGas();
+  }, [account, contracts[contract].syndicateContract, args]);
 
   useEffect(() => {
     if (skipQuery) return;
     if (activeNetwork.chainId) {
-      void fetchGasUnitAndBaseFee();
+      void fetchGasUnit();
     }
   }, [activeNetwork.chainId, skipQuery]);
 
   useEffect(() => {
-    if (!gasUnits || !gasBaseFee) return;
-    const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
+    if (!gasUnits || !gasMultipler) return;
+    const estimatedGasInWei = gasUnits * gasMultipler;
     const estimatedGas = getWeiAmount(
       web3,
       estimatedGasInWei.toString(),
@@ -155,7 +131,7 @@ const EstimateGas: React.FC<Props> = ({
       false
     );
     setGas(+estimatedGas);
-  }, [gasUnits, gasBaseFee]);
+  }, [gasUnits, gasMultipler]);
 
   useEffect(() => {
     if (withFiatCurrency && nativeTokenPrice) {

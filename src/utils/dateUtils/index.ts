@@ -88,3 +88,8 @@ export const getFormattedDateTimeWithTZ = (date: number): string => {
   const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return _moment(date).tz(timeZoneString).format('dddd, MMM D [at] h:mma zz');
 };
+
+export const formatUnix = (date: number, dateFormat: string): string => {
+  const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return _moment(moment.unix(date)).tz(timeZoneString).format(dateFormat);
+};

@@ -7,44 +7,138 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import useCollectiveClaimDetails from '@/hooks/useCollectiveClaimDetails';
 import { AppState } from '@/state';
+import { formatUnix } from 'src/utils/dateUtils';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { getWeiAmount } from '@/utils/conversions';
+import { getCollectiveBalance } from '@/utils/contracts/collective';
+import useGasDetails from '@/hooks/useGasDetails';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
+    initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account }
+      web3: {
+        account,
+        web3,
+        activeNetwork: {
+          nativeCurrency: { symbol }
+        }
+      }
+    },
+    erc721CollectiveReducer: { erc721Collective },
+    gasDetailsSlice: {
+      gasDetails: { gasMultipler, nativeTokenPrice }
     }
   } = useSelector((state: AppState) => state);
-  // TODO: to fetch loading state from redux store
-  const loading = false;
 
-  // TODO: check wallet account eligibility here
-  const isAccountEligible = true;
-  // TODO: add check for whether account has reached max passes
-  const hasAccountReachedMaxPasses = false;
+  const {
+    contractAddress,
+    ownerAddress,
+    createdAt,
+    tokenName,
+    tokenSymbol,
+    priceEth,
+    totalSupply,
+    totalUnclaimed,
+    maxTotalSupply,
+    maxPerMember,
+    numOwners
+  } = erc721Collective;
+  const collectivePrice = getWeiAmount(web3, priceEth.toString(), 18, false);
+
+  const { loading } = useCollectiveClaimDetails();
+  useGasDetails();
+
+  const [isAccountEligible, setIsAccountEligible] = useState(true);
+  const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
+    useState(false);
+
+  const [gasUnits, setGasUnits] = useState(0);
+  const [gasPrice, setGasPrice] = useState<number>(0);
 
   const [walletState, setWalletState] = useState<WalletState>(
     WalletState.NOT_CONNECTED
   );
 
-  const [transactionHash, setTransactionHash] = useState(
-    '0x5e3d4545afda8da89a6da42ec4793fd3c4b45972290ba45b83d095337880d796'
-  );
-
-  // monitor claim progress state
+  const [transactionHash, setTransactionHash] = useState('');
   const [progressState, setProgressState] = useState<ProgressState>();
+
+  const onTxConfirm = (hash: string) => {
+    setProgressState(ProgressState.PENDING);
+    setTransactionHash(hash);
+  };
+
+  const onTxReceipt = () => {
+    setProgressState(ProgressState.SUCCESS);
+  };
+
+  const onTxFail = () => {
+    setProgressState(ProgressState.FAILURE);
+  };
+
+  const claimCollective = async () => {
+    setProgressState(ProgressState.CONFIRM);
+    try {
+      const { ethPriceMintModule } = syndicateContracts;
+      await ethPriceMintModule.mint(
+        priceEth.toString(),
+        contractAddress,
+        '1', // Hardcode to mint a single token
+        account,
+        onTxConfirm,
+        onTxReceipt,
+        onTxFail
+      );
+    } catch (error) {
+      setProgressState(ProgressState.FAILURE);
+    }
+  };
+
+  useEffect(() => {
+    getCollectiveBalance(contractAddress, account, web3).then((balance) => {
+      setHasAccountReachedMaxPasses(balance >= maxPerMember);
+    });
+  }, [account, contractAddress, maxPerMember, web3]);
+
+  useEffect(() => {
+    setIsAccountEligible(+maxTotalSupply > +totalSupply);
+  }, [maxTotalSupply, totalSupply]);
+
+  useEffect(() => {
+    if (!gasUnits || !gasMultipler) return;
+    const estimatedGasInWei = gasUnits * gasMultipler;
+    const estimatedGas = getWeiAmount(
+      web3,
+      estimatedGasInWei.toString(),
+      18,
+      false
+    );
+    setGasPrice(+estimatedGas);
+  }, [gasUnits, gasMultipler, web3]);
+
+  useEffect(() => {
+    if (loading) return;
+    syndicateContracts.ethPriceMintModule.getMintEstimateGas(
+      priceEth.toString(),
+      contractAddress,
+      '1', // Hardcode to mint a single token
+      account,
+      setGasUnits
+    );
+  }, [loading, account, contractAddress, priceEth, syndicateContracts]);
 
   useEffect(() => {
     let _walletState = WalletState.NOT_CONNECTED;
     if (!account) {
       _walletState = WalletState.NOT_CONNECTED;
     } else {
-      if (!isAccountEligible) {
-        _walletState = WalletState.WRONG_WALLET;
-      } else if (hasAccountReachedMaxPasses) {
+      if (hasAccountReachedMaxPasses) {
         _walletState = WalletState.MAX_PASSES_REACHED;
+      } else if (!isAccountEligible) {
+        _walletState = WalletState.WRONG_WALLET;
       } else {
         _walletState = WalletState.CONNECTED;
       }
@@ -52,13 +146,18 @@ const NftClaimAndInfoCard: React.FC = () => {
 
     // check whether connected account can claim and update _walletState
     setWalletState(_walletState);
-  }, [account]);
+  }, [account, isAccountEligible]);
 
   const handleViewOnEtherscan = () => {
     /// handle view on etherscan
   };
 
-  const shareUrl = window.location.href;
+  const shortenOwnerAddress = (address: string) => {
+    const addr = address.toLowerCase();
+    return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
+  };
+
+  const shareUrl = window.location.href; // TODO: Use open sea link
 
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
@@ -105,23 +204,38 @@ const NftClaimAndInfoCard: React.FC = () => {
           </div>
         ) : (
           <ClaimCollectivePass
-            dateOfCreation="Apr 20, 2022"
-            nameOfCollective="Alpha Beta Punks"
-            nameOfCreator="0x1a2b...3c4d"
+            dateOfCreation={formatUnix(createdAt, 'MMM D, yyyy')}
+            nameOfCollective={tokenName}
+            nameOfCreator={shortenOwnerAddress(ownerAddress)}
             links={{
-              externalLink: '/',
-              openSea: '/'
+              externalLink: 'https://etherscan.io/address/' + contractAddress,
+              openSea: '/' // TODO: Populate the open sea link
             }}
-            numberOfExistingMembers={8000}
+            numberOfExistingMembers={numOwners}
             priceToJoin={{
-              fiatAmount: 141.78,
-              tokenAmount: 0.08,
-              tokenSymbol: 'ETH'
+              fiatAmount: collectivePrice * nativeTokenPrice,
+              tokenAmount: collectivePrice,
+              tokenSymbol: symbol
             }}
-            remainingPasses={2000}
+            gasEstimate={
+              gasPrice
+                ? {
+                    fiatAmount: gasPrice * nativeTokenPrice,
+                    tokenAmount: gasPrice,
+                    tokenSymbol: symbol
+                  }
+                : null
+            }
+            maxTotalPasses={maxTotalSupply}
+            remainingPasses={totalUnclaimed}
             walletState={walletState}
             progressState={progressState}
             transactionHash={transactionHash}
+            transactionType="transaction"
+            claimCollective={claimCollective}
+            tryAgain={() => {
+              setProgressState(null);
+            }}
           />
         )}
       </div>
@@ -131,7 +245,7 @@ const NftClaimAndInfoCard: React.FC = () => {
         handleModalClose={() => null}
         transactionHash={transactionHash}
         socialURL={shareUrl}
-        description={`Just joined Alpha Beta Punks (✺ABP) by claiming the collective’s NFT on Syndicate 🎉 `}
+        description={`Just joined ${tokenName} (${tokenSymbol}) by claiming the collective’s NFT on Syndicate 🎉 `}
         handleClick={handleViewOnEtherscan}
         customVisual={
           <div className="bg-black w-full h-full">
@@ -145,7 +259,7 @@ const NftClaimAndInfoCard: React.FC = () => {
             />
           </div>
         }
-        title={'Welcome, Alpha Beta Punks #2001.'}
+        title={`Welcome, ${tokenName} #${+totalSupply + 1}.`}
         buttonLabel={
           <div className="flex justify-center space-x-2">
             <div>View on OpenSea</div>

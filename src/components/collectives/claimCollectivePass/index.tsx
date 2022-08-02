@@ -18,6 +18,7 @@ interface Props {
   nameOfCollective: string;
   dateOfCreation: string;
   nameOfCreator: string;
+  maxTotalPasses: number;
   remainingPasses: number;
   priceToJoin: {
     tokenAmount: number;
@@ -34,6 +35,8 @@ interface Props {
   progressState?: ProgressState;
   transactionHash?: string;
   transactionType?: string;
+  claimCollective: any;
+  tryAgain: any;
 }
 
 export const ClaimCollectivePass: React.FC<Props> = ({
@@ -42,6 +45,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   nameOfCollective,
   dateOfCreation,
   nameOfCreator,
+  maxTotalPasses,
   remainingPasses,
   priceToJoin,
   walletState,
@@ -49,7 +53,9 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   gasEstimate,
   progressState,
   transactionHash,
-  transactionType
+  transactionType,
+  claimCollective,
+  tryAgain
 }) => {
   const dispatch = useDispatch();
 
@@ -115,10 +121,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           <H3 regular>
             {remainingPasses.toLocaleString('en-US')}{' '}
             <span className="text-gray-syn4">
-              of{' '}
-              {(remainingPasses + numberOfExistingMembers).toLocaleString(
-                'en-US'
-              )}
+              of {maxTotalPasses.toLocaleString('en-US')}
             </span>
           </H3>
         </div>
@@ -137,9 +140,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           <B3 extraClasses="text-gray-syn4">Remaining NFTs</B3>
           <H4 regular>
             {remainingPasses}{' '}
-            <span className="text-gray-syn4">
-              of {remainingPasses + numberOfExistingMembers}
-            </span>
+            <span className="text-gray-syn4">of {maxTotalPasses}</span>
           </H4>
         </div>
         <div className="space-y-2">
@@ -201,6 +202,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
             state={progressState}
             transactionHash={transactionHash}
             buttonLabel="Try again"
+            buttonOnClick={tryAgain}
             buttonFullWidth={true}
             transactionType={transactionType}
           />
@@ -219,8 +221,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
                   ) {
                     dispatch(showWalletModal());
                   } else if (walletState === WalletState.CONNECTED) {
-                    // TODO: add trigger for claiming here
-                    return;
+                    claimCollective();
                   }
                 }}
               >
@@ -231,7 +232,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
               // Positioned absolutely so it doesn't take up space
               <div className="relative">
                 <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
-                  Est. gas fee: {gasEstimate.tokenAmount}{' '}
+                  Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
                   {gasEstimate.tokenSymbol}{' '}
                   {Intl.NumberFormat('en-US', {
                     style: 'currency',

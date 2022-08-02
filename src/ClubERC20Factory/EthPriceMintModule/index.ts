@@ -45,4 +45,58 @@ export class EthPriceMintModule extends ContractBase {
       onResponse
     );
   }
+
+  /**
+   * Estimate Gas for mint
+   *
+   * @param amount
+   * @param clubAddress
+   * @param numOfTokens
+   * @param ownerAddress
+   */
+  async getMintEstimateGas(
+    amount: string,
+    collective: string,
+    numOfTokens: string,
+    ownerAddress: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    this.estimateGas(
+      ownerAddress,
+      () => this.contract.methods.mint(collective, numOfTokens),
+      onResponse,
+      amount
+    );
+  }
+
+  /**
+   * Method to mint collective tokens
+   *
+   * Note: All validation should be handled before calling this method.
+   *
+   * @param amount
+   * @param clubAddress
+   * @param numOfTokens
+   * @param ownerAddress
+   * @param onTxConfirm
+   * @param onTxReceipt
+   */
+  async mint(
+    amount: string,
+    collective: string,
+    numOfTokens: string,
+    ownerAddress: string,
+    onTxConfirm: (transactionHash?) => void,
+    onTxReceipt: (receipt?) => void,
+    onTxFail: (error?) => void
+  ): Promise<void> {
+    await this.send(
+      ownerAddress,
+      () => this.contract.methods.mint(collective, numOfTokens),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail,
+      amount
+    );
+  }
 }

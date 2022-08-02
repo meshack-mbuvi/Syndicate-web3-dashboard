@@ -40,14 +40,15 @@ export abstract class ContractBase {
     contractMethod: any,
     onTxConfirm: (txHash: string) => void,
     onTxReceipt: (receipt: string) => void,
-    onTxFail: (err: any) => void
+    onTxFail: (err: any) => void,
+    value?: string
   ): Promise<void> {
     let gnosisTxHash;
     const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       contractMethod()
-        .send({ from: account, gasPrice: gasEstimate })
+        .send({ from: account, gasPrice: gasEstimate, ...(value && { value }) })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
           if (
@@ -86,12 +87,14 @@ export abstract class ContractBase {
   protected async estimateGas(
     account: string,
     contractMethod: any,
-    onResponse: (gas?: number) => void
+    onResponse: (gas?: number) => void,
+    value?: string
   ): Promise<void> {
     await new Promise(() => {
       contractMethod().estimateGas(
         {
-          from: account
+          from: account,
+          ...(value && { value })
         },
         (_error, gasAmount) => {
           if (gasAmount) onResponse(gasAmount);
