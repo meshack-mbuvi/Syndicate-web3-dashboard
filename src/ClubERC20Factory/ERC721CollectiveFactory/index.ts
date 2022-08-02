@@ -123,8 +123,7 @@ export class ERC721CollectiveFactory extends ContractBase {
       this.addresses.MaxPerMemberERC721,
       this.addresses.GuardMixinManager,
       this.addresses.EthPriceMintModule,
-      this.addresses.FixedRenderer,
-      predictedAddress
+      this.addresses.FixedRenderer
     ];
 
     const encodedFunctions = [
