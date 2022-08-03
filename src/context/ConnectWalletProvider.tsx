@@ -29,7 +29,6 @@ import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
 import router from 'next/router';
 import React, {
@@ -120,7 +119,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   const dispatch = useDispatch();
-  const { polygon } = useFlags();
 
   const activeNetwork: IActiveNetwork = useMemo(
     () => NETWORKS[chainId] ?? NETWORKS[1],
@@ -135,18 +133,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [chainId]);
 
   const supportedNetworks: number[] = useMemo(() => {
-    if (polygon !== undefined) {
-      return Object.keys(NETWORKS).map((key) => {
-        if (!polygon && Number(key) === 137) {
-          return null;
-        } else {
-          return Number(key);
-        }
-      });
-    } else {
-      return [];
-    }
-  }, [NETWORKS, polygon]);
+    return Object.keys(NETWORKS).map((key) => {
+      return Number(key);
+    });
+  }, [NETWORKS]);
 
   /*
    * Allows running as a gnosis safe app
@@ -454,7 +444,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: true,
-            correctEthereumNetwork: `mainnet ${polygon ? 'or polygon' : ''}`
+            correctEthereumNetwork: `mainnet or polygon`
           })
         );
       }

@@ -8,7 +8,6 @@ import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { Menu, Transition } from '@headlessui/react';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -19,8 +18,6 @@ const NetworkMenuDropDown: FC = () => {
       web3: { web3: web3Instance, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-
-  const { polygon } = useFlags();
 
   const { switchNetworks } = useConnectWalletContext();
   const { providerName } = useProvider();
@@ -147,8 +144,7 @@ const NetworkMenuDropDown: FC = () => {
               className="absolute right-0 w-64 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
             >
               {Object.entries(NETWORKS).map(([key, value]) =>
-                (value.testNetwork && !isDev) ||
-                (!polygon && Number(key) === 137) ? (
+                value.testNetwork && !isDev ? (
                   <React.Fragment key={key}></React.Fragment>
                 ) : (
                   <button
