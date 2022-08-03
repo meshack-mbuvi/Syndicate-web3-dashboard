@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { CopiedLinkIcon, CopyToClipboardIcon } from '@/components/iconWrappers';
 
 interface Props {
   description: string | any;
@@ -17,6 +18,12 @@ export const ShareCard: React.FC<Props> = ({
   const [randomImageIndex] = useState(
     Math.round(Math.random() * (imageOptions.length - 1))
   );
+  const [showCopiedState, setShowCopiedState] = useState(false);
+
+  const changeCopiedState = () => {
+    setShowCopiedState(true);
+    setTimeout(() => setShowCopiedState(false), 1000);
+  };
 
   return (
     <div className="flex flex-col bg-gray-syn7 max-w-104 rounded-custom overflow-hidden">
@@ -35,17 +42,24 @@ export const ShareCard: React.FC<Props> = ({
         <div className="p-5">{description}</div>
         <div className="p-5 flex justify-between text-gray-syn3 border-gray-syn8">
           <CopyToClipboard text={`${description} ${URL}` as string}>
-            <button className="flex space-x-2 items-center hover:text-white text-gray-syn3">
-              <div>Copy</div>
-              <img
-                src="/images/copy-clipboard-gray3.svg"
-                alt="Copy icon"
-                className="w-4 h-4"
-              />
+            <button
+              className="flex space-x-2 items-center hover:text-white text-gray-syn3"
+              onClick={changeCopiedState}
+              onKeyDown={changeCopiedState}
+            >
+              <div>{showCopiedState ? 'Copied' : 'Copy'}</div>
+
+              <div className="flex items-center">
+                {showCopiedState ? (
+                  <CopiedLinkIcon color="text-gray-syn3 hover:text-white" />
+                ) : (
+                  <CopyToClipboardIcon color="text-gray-syn3 hover:text-white" />
+                )}
+              </div>
             </button>
           </CopyToClipboard>
           <div className="flex items-center space-x-4">
-            <span className="hidden sm:visible">Share via</span>
+            <span className="hidden sm:inline">Share via</span>
 
             {/* Telegram */}
             <a

@@ -97,7 +97,7 @@ export const CollectiveHeader: React.FC<{
             rel="noreferrer"
           >
             <div className="flex justify-center items-center vertically-center">
-              <ExternalLinkIcon iconColor={ExternalLinkColor.GRAY4} />
+              <ExternalLinkIcon iconcolor={ExternalLinkColor.GRAY4} />
             </div>
 
             <ReactTooltip

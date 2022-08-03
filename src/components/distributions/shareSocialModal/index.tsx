@@ -43,6 +43,7 @@ export const ShareSocialModal: React.FC<Props> = ({
         customWidth=""
         customClassName=""
         showHeader={false}
+        outsideOnClick={true}
       >
         <div className="m-h-screen px-5">
           <img

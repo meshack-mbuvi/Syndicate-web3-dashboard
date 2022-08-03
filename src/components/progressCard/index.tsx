@@ -19,7 +19,7 @@ export const ProgressCard = (props: {
   transactionHash?: string;
   transactionType?: string;
   explorerLinkText?: string;
-  iconColor?: ExternalLinkColor;
+  iconcolor?: ExternalLinkColor;
 }): React.ReactElement => {
   const {
     title,
@@ -30,7 +30,7 @@ export const ProgressCard = (props: {
     transactionHash,
     transactionType,
     buttonFullWidth = false,
-    iconColor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE
   } = props;
 
   let icon;
@@ -83,7 +83,7 @@ export const ProgressCard = (props: {
             prefix="View on "
             resourceId={transactionHash}
             resource={transactionType}
-            iconcolor={iconColor}
+            iconcolor={iconcolor}
           />
         </div>
       )}

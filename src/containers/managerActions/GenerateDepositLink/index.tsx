@@ -398,7 +398,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
                 rel="noopener noreferrer"
               >
                 <span>existing LLC</span>
-                <ExternalLinkIcon iconColor={ExternalLinkColor.GRAY4} />
+                <ExternalLinkIcon iconcolor={ExternalLinkColor.GRAY4} />
               </a>
             </div>
 

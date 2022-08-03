@@ -13,7 +13,7 @@ export const ProgressModal = (props: {
   transactionHash?: string;
   transactionType?: string;
   explorerLinkText?: string;
-  iconColor?: ExternalLinkColor;
+  iconcolor?: ExternalLinkColor;
 }): React.ReactElement => {
   const {
     title,
@@ -25,7 +25,7 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    iconColor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE
   } = props;
 
   return (
@@ -44,7 +44,7 @@ export const ProgressModal = (props: {
           description={description}
           buttonLabel={buttonLabel}
           buttonOnClick={buttonOnClick}
-          iconColor={iconColor}
+          iconcolor={iconcolor}
           transactionHash={transactionHash}
           transactionType={transactionType}
           buttonFullWidth={buttonFullWidth}

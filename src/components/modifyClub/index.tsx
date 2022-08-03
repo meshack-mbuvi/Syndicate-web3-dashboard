@@ -385,7 +385,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
               ? () => setProgressState('')
               : handleExit,
           explorerLinkText: 'View on ',
-          iconColor: ExternalLinkColor.BLUE,
+          iconcolor: ExternalLinkColor.BLUE,
           transactionType: 'transaction'
         }}
       />

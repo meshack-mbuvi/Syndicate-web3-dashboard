@@ -148,16 +148,22 @@ const NftClaimAndInfoCard: React.FC = () => {
     setWalletState(_walletState);
   }, [account, isAccountEligible]);
 
-  const handleViewOnEtherscan = () => {
-    /// handle view on etherscan
-  };
-
   const shortenOwnerAddress = (address: string) => {
     const addr = address.toLowerCase();
     return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
   };
 
-  const shareUrl = window.location.href; // TODO: Use open sea link
+  const shareUrl = window.location.href;
+
+  // open the collective details page
+  const handleClick = () => {
+    window.location.pathname = `/collectives/${contractAddress}`;
+  };
+
+  // Close modal on outside click
+  const handleModalClose = () => {
+    setProgressState(null);
+  };
 
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
@@ -242,11 +248,11 @@ const NftClaimAndInfoCard: React.FC = () => {
 
       <ShareSocialModal
         isModalVisible={progressState === ProgressState.SUCCESS}
-        handleModalClose={() => null}
+        handleModalClose={handleModalClose}
         transactionHash={transactionHash}
+        handleClick={handleClick}
         socialURL={shareUrl}
         description={`Just joined ${tokenName} (${tokenSymbol}) by claiming the collective’s NFT on Syndicate 🎉 `}
-        handleClick={handleViewOnEtherscan}
         customVisual={
           <div className="bg-black w-full h-full">
             <CollectivesInteractiveBackground
@@ -262,8 +268,7 @@ const NftClaimAndInfoCard: React.FC = () => {
         title={`Welcome, ${tokenName} #${+totalSupply + 1}.`}
         buttonLabel={
           <div className="flex justify-center space-x-2">
-            <div>View on OpenSea</div>
-            <img src="/images/nftClaim/opensea-black.svg" alt="Opensea" />
+            <div>View collective</div>
           </div>
         }
       />
