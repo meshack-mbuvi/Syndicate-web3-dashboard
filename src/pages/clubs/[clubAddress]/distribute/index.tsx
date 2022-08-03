@@ -3,11 +3,10 @@ import { Spinner } from '@/components/shared/spinner';
 import DistributionContainer from '@/containers/distribute';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
 
 /**
  * This page shows the manager container for a given syndicate address
@@ -20,22 +19,16 @@ const DistributeTokensPage: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const router = useRouter();
-
-  const { isReady } = router;
-
-  // LaunchDarkly distributions feature flag
-  const { distributions } = useFlags();
+  const { isReady, readyDistributionsClient } = useDistributionsFeatureFlag();
 
   useEffect(() => {
-    // distributions is undefined on page load
-    if (distributions == undefined || isEmpty(web3) || !isReady) return;
+    if (!readyDistributionsClient || isEmpty(web3) || !isReady) return;
 
     setPageIsLoading(false);
     return () => {
       setPageIsLoading(true);
     };
-  }, [distributions, web3]);
+  }, [readyDistributionsClient, web3, isReady]);
 
   return pageIsLoading ? (
     <Layout>
@@ -43,7 +36,7 @@ const DistributeTokensPage: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : distributions ? (
+  ) : isReady && readyDistributionsClient.treatment === 'on' ? (
     <DistributionContainer />
   ) : (
     <NotFoundPage />

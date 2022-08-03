@@ -21,6 +21,7 @@
     "@netlify/functions": "^0.7.0",
     "@popperjs/core": "^2.9.2",
     "@reduxjs/toolkit": "^1.6.2",
+    "@splitsoftware/splitio-react": "^1.6.0",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@truffle/hdwallet-provider": "^2.0.0",
     "@typechain/truffle-v5": "^5.1.0",

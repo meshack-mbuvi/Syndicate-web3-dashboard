@@ -3,10 +3,10 @@ import Layout from '@/components/layout';
 import { Spinner } from '@/components/shared/spinner';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 
 const CreateCollectivePage: React.FC = () => {
   const {
@@ -14,20 +14,19 @@ const CreateCollectivePage: React.FC = () => {
       web3: { web3 }
     }
   } = useSelector((state: AppState) => state);
+
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  // LaunchDarkly collectives feature flag
-  const { collectives } = useFlags();
+  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   useEffect(() => {
-    // collectives is undefined on page load
-    if (collectives == undefined || isEmpty(web3)) return;
+    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
 
     setPageIsLoading(false);
     return () => {
       setPageIsLoading(true);
     };
-  }, [collectives, web3]);
+  }, [readyCollectivesClient, web3, isReady]);
 
   return pageIsLoading ? (
     <Layout>
@@ -35,7 +34,7 @@ const CreateCollectivePage: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : collectives ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
     <CreateCollectiveContainer />
   ) : (
     <NotFoundPage />

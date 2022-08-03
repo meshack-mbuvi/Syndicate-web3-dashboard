@@ -110,6 +110,8 @@ const Layout: FC<Props> = ({
 
   // we don't need to render the footer on the creation page.
   const createClubPage = router.pathname === '/clubs/create';
+  const modifyClubPage =
+    router.pathname === `/collectives/[collectiveAddress]/modify`;
 
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
@@ -316,7 +318,8 @@ const Layout: FC<Props> = ({
         <ConnectWallet />
       </div>
 
-      {createClubPage || managerSettingsOpen ? null : (
+      {/* need to add in a check for collectives settings open because it uses Layout component */}
+      {createClubPage || modifyClubPage || managerSettingsOpen ? null : (
         <div>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

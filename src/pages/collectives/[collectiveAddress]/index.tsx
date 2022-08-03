@@ -3,11 +3,10 @@ import { Spinner } from '@/components/shared/spinner';
 import CollectivesContainer from '@/containers/collectives';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 
 /**
  * This page shows the manager container for a given syndicate address
@@ -20,22 +19,16 @@ const CollectiveIndexPage: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const router = useRouter();
-
-  const { isReady } = router;
-
-  // LaunchDarkly collect feature flag
-  const { collectives } = useFlags();
+  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   useEffect(() => {
-    // collect is undefined on page load
-    if (collectives == undefined || isEmpty(web3) || !isReady) return;
+    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
 
     setPageIsLoading(false);
     return () => {
       setPageIsLoading(true);
     };
-  }, [collectives, isReady, web3]);
+  }, [readyCollectivesClient, isReady, web3]);
 
   return pageIsLoading ? (
     <Layout>
@@ -43,7 +36,7 @@ const CollectiveIndexPage: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : collectives ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
     <CollectivesContainer />
   ) : (
     <NotFoundPage />

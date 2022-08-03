@@ -1,14 +1,13 @@
 import ClaimPass from '@/containers/collectives/ClaimPass';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { Spinner } from '@/stories/FileUploader.stories';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import { Spinner } from '@/components/shared/spinner';
 import { isEmpty } from 'lodash';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from 'src/components/layout';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
+import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 
 const ClaimCollectiveNftView: React.FC = () => {
   const {
@@ -19,21 +18,16 @@ const ClaimCollectiveNftView: React.FC = () => {
 
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const router = useRouter();
-
-  const { isReady } = router;
-
-  const { collectives } = useFlags();
+  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   useEffect(() => {
-    // collectives is undefined on page load
-    if (collectives == undefined || isEmpty(web3) || !isReady) return;
+    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
 
     setPageIsLoading(false);
     return () => {
       setPageIsLoading(true);
     };
-  }, [collectives, isReady, web3]);
+  }, [readyCollectivesClient, isReady, web3]);
 
   return pageIsLoading ? (
     <Layout>
@@ -41,7 +35,7 @@ const ClaimCollectiveNftView: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : collectives ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
     <Layout>
       <Head title="Claim collective pass" />
       <ClaimPass />

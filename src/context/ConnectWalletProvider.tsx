@@ -9,6 +9,7 @@ import { web3InstantiationErrorText } from '@/components/syndicates/shared/Const
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { setContracts } from '@/state/contracts';
+import { setCurrentClient } from '@/state/featureFlagClient/slice';
 import {
   hideErrorModal,
   hideWalletModal,
@@ -41,6 +42,8 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
+import { useClient } from '@splitsoftware/splitio-react';
+import { distributions_feature } from '@/pages/_app';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -119,6 +122,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   const dispatch = useDispatch();
+
+  // Initiates current client for feature flags
+  const currentClient = useClient(account, 'user');
+
+  // When Split SDK is ready, set attributes to current client and mark it as ready
+  useEffect(() => {
+    currentClient.on(currentClient.Event.SDK_READY, () => {
+      dispatch(setCurrentClient(currentClient));
+    });
+  }, [currentClient]);
 
   const activeNetwork: IActiveNetwork = useMemo(
     () => NETWORKS[chainId] ?? NETWORKS[1],

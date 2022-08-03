@@ -19,13 +19,13 @@ import { setDepositReadyInfo } from '@/state/legalInfo';
 import { Status } from '@/state/wallet/types';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { XIcon } from '@heroicons/react/solid';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
+import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -66,8 +66,8 @@ const ManagerActions = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
 
-  // LaunchDarkly distributions feature flag
-  const { distributions } = useFlags();
+  const { isReady, readyDistributionsClient } = useDistributionsFeatureFlag();
+
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -197,7 +197,7 @@ const ManagerActions = (): JSX.Element => {
     setShowShareOrChangeLegalDocs(false);
   };
 
-  return (
+  return isReady && readyDistributionsClient ? (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 relative overflow-hidden">
         <FadeIn>
@@ -410,7 +410,7 @@ const ManagerActions = (): JSX.Element => {
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
             {/* TODO: Update to distributions before merging */}
-            {distributions && !depositsEnabled ? (
+            {readyDistributionsClient.treatment === 'on' && !depositsEnabled ? (
               <div
                 className={`${
                   loading ? `` : `hover:bg-gray-syn7`
@@ -477,7 +477,7 @@ const ManagerActions = (): JSX.Element => {
         />
       </div>
     </ErrorBoundary>
-  );
+  ) : null;
 };
 
 export default ManagerActions;

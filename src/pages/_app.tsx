@@ -32,8 +32,8 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
 import { BACKEND_LINKS } from '@/Networks/backendLinks';
+import { SplitFactory } from '@splitsoftware/splitio-react';
 
-import { withLDProvider } from 'launchdarkly-react-client-sdk';
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
@@ -48,14 +48,27 @@ Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
+const sdkConfig = {
+  core: {
+    authorizationKey: isDev
+      ? process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_TEST
+      : process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_PRODUCTION,
+    key: ''
+  }
+};
+
+// Names of splits here
+export const distributions_feature = 'Distributions';
+export const collectives_feature = 'Collectives';
+
 const StateProviders: React.FC = ({ children }) => (
-  <OnboardingProvider>
-    <BeforeGettingStartedProvider>
-      <CreateInvestmentClubProvider>
-        <LDFeatureFlags>{children}</LDFeatureFlags>
-      </CreateInvestmentClubProvider>
-    </BeforeGettingStartedProvider>
-  </OnboardingProvider>
+  <SplitFactory config={sdkConfig}>
+    <OnboardingProvider>
+      <BeforeGettingStartedProvider>
+        <CreateInvestmentClubProvider>{children}</CreateInvestmentClubProvider>
+      </BeforeGettingStartedProvider>
+    </OnboardingProvider>
+  </SplitFactory>
 );
 
 const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
@@ -82,16 +95,6 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
       </ApolloProvider>
     </>
   );
-};
-
-const LDFeatureFlags: React.FC<any> = ({ children }) => {
-  const Child = () => <>{children}</>;
-  const WithLDContext = withLDProvider({
-    clientSideID: isDev
-      ? process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_TEST!
-      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!
-  })(Child);
-  return <WithLDContext />;
 };
 
 const App = (props) => {

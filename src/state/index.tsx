@@ -17,6 +17,7 @@ import erc721CollectiveReducer from '@/state/erc721Collective/index';
 import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
 import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
+import featureFlagClientSliceReducer from '@/state/featureFlagClient/slice';
 import legalInfoReducer from '@/state/legalInfo';
 import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
@@ -38,6 +39,7 @@ export const store = configureStore({
     createCollectiveSliceReducer,
     erc20TokenSliceReducer,
     erc721TokenSliceReducer,
+    featureFlagClientSliceReducer,
     modalsReducer,
     web3Reducer,
     initializeContractsReducer,

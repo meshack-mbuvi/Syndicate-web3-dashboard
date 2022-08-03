@@ -6,7 +6,6 @@ import useCollectives from '@/hooks/collectives/useGetCollectives';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
@@ -17,6 +16,7 @@ import {
   MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
 import CollectivesTable from './portfolio/collectivesTable';
+import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -76,7 +76,7 @@ const PortfolioAndDiscover: React.FC = () => {
     ethereumNetwork: { invalidEthereumNetwork }
   } = web3;
 
-  const { collectives } = useFlags();
+  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   const { isLoading } = useClubERC20s();
 
@@ -229,73 +229,75 @@ const PortfolioAndDiscover: React.FC = () => {
           ) : null}
 
           {/* Collectives  */}
-          {collectives && (
-            <div className="mt-24">
-              <div
-                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
-                style={width < 480 ? { paddingRight: '6%' } : null}
-              >
-                <H3>Collectives</H3>
+          {isReady &&
+            readyCollectivesClient &&
+            readyCollectivesClient.treatment === 'on' && (
+              <div className="mt-24">
+                <div
+                  className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
+                  style={width < 480 ? { paddingRight: '6%' } : null}
+                >
+                  <H3>Collectives</H3>
+                  {memberCollectives.length !== 0 ||
+                  adminCollectives.length !== 0 ? (
+                    <CreateClubButton creatingClub={false} />
+                  ) : null}
+                </div>
                 {memberCollectives.length !== 0 ||
                 adminCollectives.length !== 0 ? (
-                  <CreateClubButton creatingClub={false} />
-                ) : null}
-              </div>
-              {memberCollectives.length !== 0 ||
-              adminCollectives.length !== 0 ? (
-                <div className="mt-6">
-                  {memberCollectives.length !== 0 &&
-                    adminCollectives.length !== 0 && (
-                      <TabsButton
-                        options={filterOptions}
-                        value={TabsType.ADMIN}
-                        onChange={(val) => setActiveCollectivesTab(val)}
-                        activeTab={activeCollectivesTab}
-                      />
-                    )}
-                  <div className="mt-6 grid">
-                    <div
-                      className={`${
-                        activeCollectivesTab === TabsType.ADMIN
-                          ? 'opacity-100 z-10'
-                          : 'opacity-0 z-0'
-                      } transition-opacity duration-700 row-start-1 col-start-1`}
-                    >
-                      <CollectivesTable
-                        tableData={adminCollectives}
-                        columns={collectivesTableColumns}
-                      />
-                    </div>
-
-                    <div
-                      className={`${
-                        activeCollectivesTab === TabsType.MEMBER
-                          ? 'opacity-100 z-10'
-                          : 'opacity-0 z-0'
-                      } transition-opacity duration-700 row-start-1 col-start-1`}
-                    >
-                      {activeCollectivesTab === TabsType.MEMBER && (
-                        <CollectivesTable
-                          tableData={memberCollectives}
-                          columns={collectivesTableColumns}
+                  <div className="mt-6">
+                    {memberCollectives.length !== 0 &&
+                      adminCollectives.length !== 0 && (
+                        <TabsButton
+                          options={filterOptions}
+                          value={TabsType.ADMIN}
+                          onChange={(val) => setActiveCollectivesTab(val)}
+                          activeTab={activeCollectivesTab}
                         />
                       )}
+                    <div className="mt-6 grid">
+                      <div
+                        className={`${
+                          activeCollectivesTab === TabsType.ADMIN
+                            ? 'opacity-100 z-10'
+                            : 'opacity-0 z-0'
+                        } transition-opacity duration-700 row-start-1 col-start-1`}
+                      >
+                        <CollectivesTable
+                          tableData={adminCollectives}
+                          columns={collectivesTableColumns}
+                        />
+                      </div>
+
+                      <div
+                        className={`${
+                          activeCollectivesTab === TabsType.MEMBER
+                            ? 'opacity-100 z-10'
+                            : 'opacity-0 z-0'
+                        } transition-opacity duration-700 row-start-1 col-start-1`}
+                      >
+                        {activeCollectivesTab === TabsType.MEMBER && (
+                          <CollectivesTable
+                            tableData={memberCollectives}
+                            columns={collectivesTableColumns}
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <EmptyState
-                  {...{
-                    title: 'You’re not in any collectives yet.',
-                    subTitle:
-                      'Organize your purpose-driven community and customize social experiences across web3',
-                    showCreateButton: true,
-                    creatingClub: false
-                  }}
-                />
-              )}
-            </div>
-          )}
+                ) : (
+                  <EmptyState
+                    {...{
+                      title: 'You’re not in any collectives yet.',
+                      subTitle:
+                        'Organize your purpose-driven community and customize social experiences across web3',
+                      showCreateButton: true,
+                      creatingClub: false
+                    }}
+                  />
+                )}
+              </div>
+            )}
         </>
       )}
     </div>
