@@ -84,14 +84,14 @@ export const FileUploader: React.FC<Props> = ({
 
       {/* Upload progress */}
       <div
-        className={`vertically-center space-y-3.5 text-left ${
+        className={` space-y-3.5 text-left ${
           progressPercent === 0 && 'hidden'
         }`}
       >
         {/* File name */}
         <div className="flex justify-between">
           <div>
-            <div className="flex space-x-2 items-center">
+            <div className="flex space-x-2 items-center mr-4">
               <div className="flex space-x-2 items-center">
                 <img src="/images/file-icon-white.svg" alt="File" />
                 <div>{fileName}</div>

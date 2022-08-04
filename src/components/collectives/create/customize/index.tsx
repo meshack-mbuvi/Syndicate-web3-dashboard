@@ -1,7 +1,10 @@
+import IconLink from '@/components/icons/link';
+import IconShield from '@/components/icons/shield';
+import IconToken from '@/components/icons/token';
 import { InputField } from '@/components/inputs/inputField';
 import { Switch, SwitchType } from '@/components/switch';
 import { DetailedTile } from '@/components/tile/detailedTile';
-import { B2, B3 } from '@/components/typography';
+import { B2, B3, B4 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
@@ -75,32 +78,54 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           <div className="mt-1 text-sm text-gray-syn4">
             Members join by claiming a membership pass Learn more about NFTs
           </div>
-          <DetailedTile
-            activeIndex={2}
-            onClick={null}
-            disabledIndices={[0, 1]}
-            options={[
-              {
-                icon: '/images/managerActions/allow-gray-4.svg',
-                title: 'Only specific addresses',
-                subTitle: 'Allowlist coming soon'
-              },
-              {
-                icon: '/images/token-gray.svg',
-                title: 'Owners of certain tokens',
-                subTitle: 'Token-gating coming soon'
-              },
-              {
-                icon: '/images/link-chain-gray.svg',
-                title: 'Anyone with the link',
-                subTitle: 'Unrestricted'
-              }
-            ]}
-            customClasses="my-2"
-          />
-          <B3 extraClasses="text-gray-syn4">
-            Members join by claiming your collective’s NFT
-          </B3>
+          <div className="hidden xl:block">
+            <DetailedTile
+              activeIndex={2}
+              onClick={null}
+              disabledIndices={[0, 1]}
+              options={[
+                {
+                  icon: '/images/managerActions/allow-gray-4.svg',
+                  title: 'Only specific addresses',
+                  subTitle: 'Allowlist coming soon'
+                },
+                {
+                  icon: '/images/token-gray.svg',
+                  title: 'Owners of certain tokens',
+                  subTitle: 'Token-gating coming soon'
+                },
+                {
+                  icon: '/images/link-chain-gray.svg',
+                  title: 'Anyone with the link',
+                  subTitle: 'Unrestricted'
+                }
+              ]}
+              customClasses="mt-2"
+            />
+          </div>
+          <div className="xl:hidden space-y-3 mt-3">
+            <div className="flex items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
+              <IconShield width={28} height={28} extraClasses="flex-shrink-0" />
+              <div className="space-y-0.5">
+                <B3 extraClasses="text-gray-syn5">Only specific addresses</B3>
+                <B4 extraClasses="text-gray-syn4">Allowlist coming soon</B4>
+              </div>
+            </div>
+            <div className="flex items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
+              <IconToken width={27} height={27} extraClasses="flex-shrink-0" />
+              <div className="space-y-0.5">
+                <B3 extraClasses="text-gray-syn5">Owners of certain tokens</B3>
+                <B4 extraClasses="text-gray-syn4">Token-gating coming soon</B4>
+              </div>
+            </div>
+            <div className="flex items-center space-x-6 border border-blue-neptune p-4 pl-6 rounded-md">
+              <IconLink width={28} height={28} extraClasses="flex-shrink-0" />
+              <div className="space-y-0.5">
+                <B3>Anyone with the link</B3>
+                <B4 extraClasses="text-gray-syn3">Unrestricted</B4>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Max members */}
@@ -136,8 +161,8 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
         </div>
 
         {/* Price per NFT / Max per wallet */}
-        <div className="mt-8 flex space-x-5">
-          <div className="w-1/2">
+        <div className="mt-8 md:flex space-y-8 md:space-y-0 md:space-x-5">
+          <div className="md:w-1/2">
             <div>Price per NFT</div>
             <InputFieldPriceToJoin
               priceToJoin={priceToJoin}
@@ -147,7 +172,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
               extraClasses="mt-2"
             />
           </div>
-          <div className="w-1/2">
+          <div className="md:w-1/2">
             <div>Max per wallet</div>
             <InputFieldMaxPerWallet
               maxPerWallet={maxPerWallet}
@@ -196,7 +221,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           <div
             className={`${
               openUntil === 0
-                ? 'max-h-68 mt-8 opacity-100'
+                ? 'max-h-102 md:max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
             } transition-all duration-500 overflow-hidden`}
           >
@@ -212,7 +237,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           </div>
           {/* A max number of members is reached */}
           <div
-            className={`w-1/2 ${
+            className={`md:w-1/2 ${
               openUntil === 1
                 ? 'max-h-68 mt-8 opacity-100'
                 : 'max-h-0 mt-0 opacity-0'
@@ -244,7 +269,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                 onClick={() => {
                   handleMaxPerWalletChange(1);
                 }}
-                className="text-blue-neptune"
+                className="text-blue-neptune text-left"
               >
                 Set “max per wallet” to 1
               </button>{' '}

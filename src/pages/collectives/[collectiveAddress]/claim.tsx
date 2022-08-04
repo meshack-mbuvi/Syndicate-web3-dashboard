@@ -1,7 +1,7 @@
+import { Spinner } from '@/components/shared/spinner';
 import ClaimPass from '@/containers/collectives/ClaimPass';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { Spinner } from '@/components/shared/spinner';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -30,11 +30,9 @@ const ClaimCollectiveNftView: React.FC = () => {
   }, [readyCollectivesClient, isReady, web3]);
 
   return pageIsLoading ? (
-    <Layout>
-      <div className="container my-32">
-        <Spinner />
-      </div>
-    </Layout>
+    <div className="container my-32">
+      <Spinner />
+    </div>
   ) : isReady && readyCollectivesClient.treatment === 'on' ? (
     <Layout>
       <Head title="Claim collective pass" />

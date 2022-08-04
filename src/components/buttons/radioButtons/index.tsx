@@ -28,7 +28,7 @@ export const RadioButtons: React.FC<Props> = ({
                 activeIndex === index
                   ? 'border-blue border-2'
                   : 'border-gray-syn6 border-1'
-              } transition-all rounded-full`}
+              } transition-all rounded-full flex-shrink-0`}
             >
               <div
                 className={`${
@@ -36,7 +36,7 @@ export const RadioButtons: React.FC<Props> = ({
                 } transition-all mt-1 duration-500 transform w-2.5 h-2.5 bg-blue rounded-full mx-auto`}
               />
             </div>
-            <B2>{option}</B2>
+            <B2 extraClasses="text-left">{option}</B2>
           </button>
         );
       })}

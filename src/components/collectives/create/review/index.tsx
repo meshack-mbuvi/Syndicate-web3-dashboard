@@ -1,6 +1,6 @@
 import { Callout } from '@/components/callout';
 import { Switch, SwitchType } from '@/components/switch';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
@@ -8,6 +8,7 @@ import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 import { InputField } from '@/components/inputs/inputField';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
+import useWindowSize from '@/hooks/useWindowSize';
 import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import AgreementTerms from '@/components/AgreementTerms';
@@ -76,8 +77,14 @@ export const CollectiveFormReview: React.FC<Props> = ({
   const taglineStyles = 'text-sm text-gray-syn4';
   const editButtonStyles = 'text-blue-neptune visibility-hover invisible';
   const transitionStyles = 'transition-all duration-500';
-
   const [currentlyEditingIndex, setCurrentlyEditingIndex] = useState(null);
+  const windowWidth = useWindowSize().width;
+  const [bottomBarWidthPx, setBottomBarWidthPx] = useState(null);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    setBottomBarWidthPx(formRef.current.getBoundingClientRect().width);
+  }, [windowWidth]);
 
   const {
     name,
@@ -92,7 +99,12 @@ export const CollectiveFormReview: React.FC<Props> = ({
   } = useCreateState();
 
   const bottomBar = (
-    <div className="py-6 bg-black  flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
+    <div
+      className="py-6 bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
+      style={{
+        width: `${bottomBarWidthPx}px`
+      }}
+    >
       <div className="flex-grow">
         <Callout>
           <EstimateGas
@@ -128,8 +140,8 @@ export const CollectiveFormReview: React.FC<Props> = ({
   );
 
   return (
-    <div className="h-full max-w-730">
-      <div className="-mt-8 pb-28">
+    <div ref={formRef} className="h-full">
+      <div className="-mt-8 pb-28 ">
         {/* Name */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div>
@@ -503,7 +515,9 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
         }
       </div>
-      <div className=" fixed bottom-0">{bottomBar}</div>
+      {/* For taking up space, preventing the bottom bar from overlapping the content  */}
+      <div className="pointer-events-none opacity-0">{bottomBar}</div>
+      <div className="fixed bottom-0 bg-pink-500">{bottomBar}</div>
     </div>
   );
 };

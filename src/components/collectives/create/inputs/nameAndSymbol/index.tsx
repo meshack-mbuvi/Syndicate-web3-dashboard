@@ -43,8 +43,10 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
   const [symbolError, setSymbolError] = useState(null);
 
   return (
-    <div className={`flex space-x-5 ${extraClasses}`}>
-      <div className="w-2/3">
+    <div
+      className={`md:flex space-y-8 md:space-y-0 md:space-x-5 ${extraClasses}`}
+    >
+      <div className="md:w-2/3">
         <div className="mb-2">Name</div>
         <InputField
           value={nameValue}
@@ -55,7 +57,7 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
           }}
         />
       </div>
-      <div className="w-1/3">
+      <div className="md:w-1/3">
         <div className="mb-2">Token symbol</div>
         <InputField
           value={tokenSymbolValue ? `✺ ${tokenSymbolValue}` : tokenSymbolValue}

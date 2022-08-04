@@ -792,7 +792,7 @@ svg.spinner {
   animation: 2s linear infinite svg--animation;
 }
 
-circle {
+circle.spinner {
   fill: transparent;
   stroke-dasharray: 283;
   stroke-linecap: round;

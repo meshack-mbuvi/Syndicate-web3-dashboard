@@ -97,11 +97,11 @@ const TwoColumnLayout: FC<{
           <ErrorBoundary>
             <div className="w-full h-full">
               <div className="container mx-auto h-full">
-                <div className="flex justify-around space-x-18 h-full items-center">
-                  <div className="flex-1 h-full flex">
+                <div className="md:flex justify-around space-y-24 md:space-y-0 md:space-x-18 h-full items-center">
+                  <div className="flex-1 md:h-full flex">
                     {leftColumnComponent}
                   </div>
-                  <div className="flex-1 h-full flex justify-around content-center">
+                  <div className="flex-1 md:h-full flex justify-around content-center">
                     {rightColumnComponent}
                   </div>
                 </div>

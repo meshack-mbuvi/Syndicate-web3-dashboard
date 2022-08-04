@@ -33,7 +33,7 @@ export const Spinner: React.FC<ISpinner> = (props) => {
             cy="50"
             r="45"
             strokeWidth={strokeWidth}
-            className={`${color}`}
+            className={`${color} spinner`}
           />
         </svg>
       </span>

@@ -42,11 +42,11 @@ export const InputTimeWindow: React.FC<Props> = ({
       <div
         className={`${
           selectedTimeWindow === TimeWindow.CUSTOM
-            ? 'max-h-68 mt-8 opacity-100'
+            ? 'max-h-102 md:max-h-68 mt-8 opacity-100'
             : 'max-h-0 mt-0 opacity-0'
-        } transition-all duration-500 space-x-5 flex overflow-hidden`}
+        } transition-all duration-500 space-y-8 md:space-x-5 md:flex overflow-hidden`}
       >
-        <div className="w-1/2">
+        <div className="md:w-1/2">
           <div>Close date</div>
           <InputFieldWithDate
             selectedDate={closeDate}
@@ -56,7 +56,7 @@ export const InputTimeWindow: React.FC<Props> = ({
             extraClasses="mt-2"
           />
         </div>
-        <div className="w-1/2">
+        <div className="md:w-1/2">
           <div>Close time</div>
           <InputFieldWithTime
             value={closeTime}

@@ -39,6 +39,7 @@ export const SpinnerWithImage: React.FC<ISpinner> = (props) => {
             r="45"
             stroke="url(#gradient)"
             strokeWidth={strokeWidth}
+            className="spinner"
           ></circle>
         </svg>
         {icon ? (

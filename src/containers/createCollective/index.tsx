@@ -155,17 +155,17 @@ const CreateCollectiveContainer: FC = () => {
         leftColumnComponent={
           <>
             {activeIndex === 0 && (
-              <div className="h-full">
+              <div className="h-full flex-grow">
                 <CreateCollectiveDesign handleNext={handleNext} />
               </div>
             )}
             {activeIndex === 1 && (
-              <div className="h-full">
+              <div className="h-full flex-grow">
                 <CreateCollectiveCustomize handleNext={handleNext} />
               </div>
             )}
             {activeIndex === 2 && (
-              <div className="h-full">
+              <div className="h-full flex-grow">
                 <CreateCollectiveReview handleNext={handleNext} />
               </div>
             )}
@@ -191,7 +191,7 @@ const CreateCollectiveContainer: FC = () => {
               </div>
             )}
             {activeIndex === 2 && (
-              <div className="mt-8 w-full flex-grow">
+              <div className="mt-8 w-full flex-grow hidden md:block">
                 <ReviewRightPanel />
               </div>
             )}

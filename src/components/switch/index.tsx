@@ -1,3 +1,6 @@
+import useWindowSize from '@/hooks/useWindowSize';
+import { useEffect, useRef, useState } from 'react';
+
 export enum SwitchType {
   REGULAR = 'REGULAR',
   EXPLICIT = 'EXPLICIT'
@@ -15,26 +18,49 @@ export const Switch = (props: {
     extraClasses = '',
     onClick = () => false
   } = props;
+  const windowWidth = useWindowSize().width;
+  const [transitionStyles, setTransitionStyles] = useState(
+    'transition-all duration-500'
+  );
+  const [leftOffsetRem, setLeftOffsetRem] = useState(0);
+  const pixelsPerRem = 16;
+  const containerPaddingRem = 0.14375;
+  const containerRef = useRef(null);
+  const knobRef = useRef(null);
+  useEffect(() => {
+    const containerWidth = containerRef.current.getBoundingClientRect().width;
+    const knobWidth = knobRef.current.getBoundingClientRect().width;
+    const offset =
+      (containerWidth - knobWidth) / pixelsPerRem - containerPaddingRem * 2;
+    setLeftOffsetRem(offset);
 
+    // Dont animate if the window is resizing
+    setTransitionStyles('');
+  }, [windowWidth]);
   return (
     <button
+      ref={containerRef}
       className={`${
         isOn ? 'bg-blue-500' : 'bg-gray-5'
-      } rounded-full cursor-pointer transition-all ${extraClasses}`}
+      } rounded-full cursor-pointer ${transitionStyles} ${extraClasses}`}
       style={{
         width: '3rem',
         height: '1.7rem',
-        padding: '0.14375rem'
+        padding: `${containerPaddingRem}rem`
       }}
-      onClick={onClick}
+      onClick={() => {
+        onClick();
+        setTransitionStyles('transition-all duration-500');
+      }}
     >
       {/* Circle knob */}
       <div
-        className="rounded-full bg-white transition-all duration-500"
+        ref={knobRef}
+        className={`relative rounded-full bg-white ${transitionStyles}`}
         style={{
           height: '1.41rem',
           width: '1.41rem',
-          transform: `translateX(${isOn ? '92%' : '0%'})`
+          left: `${isOn ? leftOffsetRem : 0}rem`
         }}
       >
         {/* Icon */}
