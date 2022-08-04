@@ -129,7 +129,9 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           <B2 extraClasses="text-gray-syn4">Price per NFT</B2>
           <H3 regular>
             {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
-            <span className="text-gray-syn4">${priceToJoin.fiatAmount}</span>
+            <span className="text-gray-syn4">
+              ${priceToJoin.fiatAmount.toFixed(2)}
+            </span>
           </H3>
         </div>
       </div>
