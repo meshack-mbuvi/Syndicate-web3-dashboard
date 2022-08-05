@@ -8,14 +8,18 @@ enum HoverState {
   NOT_HOVERING = 0
 }
 
+export enum EmptyStateType {
+  COLLECTIVES = 'COLLECTIVES',
+  CLUBS = 'CLUBS',
+  ALL = 'ALL'
+}
+
 interface Props {
-  handleClickCreateClub: () => void;
-  handleClickCreateCollective: () => void;
+  emptyStateType?: EmptyStateType;
 }
 
 export const CreateClubOrCollective: React.FC<Props> = ({
-  handleClickCreateClub,
-  handleClickCreateCollective
+  emptyStateType = EmptyStateType.ALL
 }) => {
   const [clubHoverStateIndex, setClubHoverStateIndex] = useState(
     HoverState.NOT_HOVERING
@@ -24,110 +28,186 @@ export const CreateClubOrCollective: React.FC<Props> = ({
     HoverState.NOT_HOVERING
   );
   const animationDuration = 'duration-700';
-  return (
-    <div className="flex divide-x">
+
+  // empty state for clubs
+  const clubsEmptyState = (
+    <div
+      onMouseOver={() => {
+        setClubHoverStateIndex(HoverState.HOVERING);
+      }}
+      onFocus={() => {
+        setClubHoverStateIndex(HoverState.HOVERING);
+      }}
+      onMouseOut={() => {
+        setClubHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      onBlur={() => {
+        setClubHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      className={`flex flex-row md:flex-col sm:space-x-8 md:space-x-0 border-gray-syn7 ${
+        emptyStateType === EmptyStateType.ALL
+          ? 'w-full pr-6 sm:pr-0 md:pr-14 md:max-w-88 '
+          : 'max-w-112 md:text-center mt-14 md:mt-2'
+      }`}
+    >
       <div
-        onMouseOver={() => {
-          setClubHoverStateIndex(HoverState.HOVERING);
-        }}
-        onFocus={() => {
-          setClubHoverStateIndex(HoverState.HOVERING);
-        }}
-        onMouseOut={() => {
-          setClubHoverStateIndex(HoverState.NOT_HOVERING);
-        }}
-        onBlur={() => {
-          setClubHoverStateIndex(HoverState.NOT_HOVERING);
-        }}
-        className="inline-block pr-14 border-gray-syn7 max-w-88"
+        className={`hidden sm:block flex-shrink-0 relative ${
+          clubHoverStateIndex === HoverState.HOVERING ? 'top-0' : 'top-4'
+        } transition-all ${animationDuration}`}
       >
+        <FadeBetweenChildren
+          visibleChildIndex={clubHoverStateIndex}
+          extraClasses={`${
+            emptyStateType === EmptyStateType.CLUBS && 'w-fit-content mx-auto'
+          } w-52 md:w-60 h-64`}
+        >
+          <img
+            style={{ marginBottom: '30.42px' }}
+            src="images/syndicateStatusIcons/newPortfolioEmptyIcon-green-volt.svg"
+            alt="empty icon"
+          />
+          <img
+            style={{ marginBottom: '30.42px' }}
+            src="images/syndicateStatusIcons/newPortfolioEmptyIcon.svg"
+            alt="empty icon"
+          />
+        </FadeBetweenChildren>
+      </div>
+
+      <div>
         <div
           className={`relative ${
-            clubHoverStateIndex === HoverState.HOVERING ? 'top-0' : 'top-4'
+            clubHoverStateIndex === HoverState.HOVERING
+              ? 'sm:top-0'
+              : 'sm:top-4'
           } transition-all ${animationDuration}`}
         >
-          <FadeBetweenChildren visibleChildIndex={clubHoverStateIndex}>
-            <img
-              style={{ marginBottom: '30.42px' }}
-              src="images/syndicateStatusIcons/newPortfolioEmptyIcon-green-volt.svg"
-              alt="empty icon"
-            />
-            <img
-              style={{ marginBottom: '30.42px' }}
-              src="images/syndicateStatusIcons/newPortfolioEmptyIcon.svg"
-              alt="empty icon"
-            />
-          </FadeBetweenChildren>
-          <H3 regular>Invest together</H3>
+          <H3 regular>
+            {emptyStateType === EmptyStateType.ALL
+              ? 'Invest together'
+              : 'You’re not in any investment clubs yet'}
+          </H3>
           <B2 extraClasses="mt-2 text-gray-syn4">
             Transform any wallet into a web3 investment club, or import an
             existing treasury
           </B2>
         </div>
+
         <CtaButton
           voltCta
-          extraClasses={`${
+          extraClasses={`opacity-100 mt-6 ${
             clubHoverStateIndex === HoverState.HOVERING
               ? 'mt-6 opacity-100'
-              : 'mt-5 opacity-0'
+              : 'sm:mt-5 sm:opacity-0'
           } ${animationDuration} transition-all`}
-          onClick={handleClickCreateClub}
+          onClick={() => (window.location.pathname = '/clubs/create')}
         >
           Create an investment club
         </CtaButton>
       </div>
+    </div>
+  );
+
+  // collectives empty state
+  const collectivesEmptyState = (
+    <div
+      onMouseOver={() => {
+        setCollectivesHoverStateIndex(HoverState.HOVERING);
+      }}
+      onFocus={() => {
+        setCollectivesHoverStateIndex(HoverState.HOVERING);
+      }}
+      onMouseOut={() => {
+        setCollectivesHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      onBlur={() => {
+        setCollectivesHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      className={`flex flex-row md:flex-col sm:space-x-8 md:space-x-0 border-gray-syn7 ${
+        emptyStateType === EmptyStateType.ALL
+          ? 'w-full pr-6 sm:pr-0 md:pl-14 md:max-w-88 '
+          : 'max-w-112 md:text-center  mt-14 md:mt-2'
+      }`}
+    >
       <div
-        onMouseOver={() => {
-          setCollectivesHoverStateIndex(HoverState.HOVERING);
-        }}
-        onFocus={() => {
-          setCollectivesHoverStateIndex(HoverState.HOVERING);
-        }}
-        onMouseOut={() => {
-          setCollectivesHoverStateIndex(HoverState.NOT_HOVERING);
-        }}
-        onBlur={() => {
-          setCollectivesHoverStateIndex(HoverState.NOT_HOVERING);
-        }}
-        className="inline-block pl-14 border-gray-syn7 max-w-88"
+        className={`hidden sm:block relative flex-shrink-0 ${
+          collectivesHoverStateIndex === HoverState.HOVERING ? 'top-0' : 'top-4'
+        } transition-all ${animationDuration}`}
       >
+        <FadeBetweenChildren
+          visibleChildIndex={collectivesHoverStateIndex}
+          extraClasses={`${
+            emptyStateType === EmptyStateType.COLLECTIVES &&
+            'w-fit-content mx-auto'
+          } w-52 md:w-60 h-64`}
+        >
+          <img
+            style={{ marginBottom: '30.42px' }}
+            src="images/new-collective.svg"
+            alt="empty icon"
+          />
+          <img
+            style={{ marginBottom: '30.42px' }}
+            src="images/new-collective-cyan-cherenkov.svg"
+            alt="empty icon"
+          />
+        </FadeBetweenChildren>
+      </div>
+      <div>
         <div
           className={`relative ${
             collectivesHoverStateIndex === HoverState.HOVERING
-              ? 'top-0'
-              : 'top-4'
+              ? 'sm:top-0'
+              : 'sm:top-4'
           } transition-all ${animationDuration}`}
         >
-          <FadeBetweenChildren visibleChildIndex={collectivesHoverStateIndex}>
-            <img
-              style={{ marginBottom: '30.42px' }}
-              src="images/new-collective.svg"
-              alt="empty icon"
-            />
-            <img
-              style={{ marginBottom: '30.42px' }}
-              src="images/new-collective-cyan-cherenkov.svg"
-              alt="empty icon"
-            />
-          </FadeBetweenChildren>
-          <H3 regular>Form a collective</H3>
-          <B2 extraClasses="mt-2 text-gray-syn4">
+          <H3 regular>
+            {emptyStateType === EmptyStateType.ALL
+              ? 'Form a collective'
+              : 'You’re not in any collectives yet'}
+          </H3>
+          <B2
+            extraClasses={`mt-2 text-gray-syn4 ${
+              emptyStateType === EmptyStateType.COLLECTIVES && 'md:text-center'
+            }`}
+          >
             Organize your purpose-driven community and customize social
             experiences across web3
           </B2>
         </div>
+
         <CtaButton
           cherenkovCta
-          extraClasses={`${
+          extraClasses={`opacity-100 mt-6 ${
             collectivesHoverStateIndex === HoverState.HOVERING
               ? 'mt-6 opacity-100'
-              : 'mt-5 opacity-0'
-          } ${animationDuration} transition-all`}
-          onClick={handleClickCreateCollective}
+              : 'sm:mt-5 sm:opacity-0'
+          } ${animationDuration} transition-all `}
+          onClick={() => (window.location.pathname = '/collectives/create')}
         >
           Form a collective
         </CtaButton>
       </div>
+    </div>
+  );
+
+  let emptyState;
+  if (emptyStateType === EmptyStateType.ALL) {
+    emptyState = (
+      <>
+        {clubsEmptyState}
+        {collectivesEmptyState}
+      </>
+    );
+  } else if (emptyStateType === EmptyStateType.CLUBS) {
+    emptyState = <>{clubsEmptyState}</>;
+  } else if (emptyStateType === EmptyStateType.COLLECTIVES) {
+    emptyState = <>{collectivesEmptyState}</>;
+  }
+
+  return (
+    <div className="flex flex-col md:flex-row md:divide-x md:justify-center space-y-36 md:space-y-0">
+      {emptyState}
     </div>
   );
 };

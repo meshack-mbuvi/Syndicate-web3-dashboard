@@ -1,5 +1,4 @@
 import CreateClubButton from '@/components/createClubButton';
-import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/club';
 import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
 import useCollectives from '@/hooks/collectives/useGetCollectives';
@@ -17,6 +16,10 @@ import {
 } from './portfolio/clubERC20Table/constants';
 import CollectivesTable from './portfolio/collectivesTable';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import {
+  CreateClubOrCollective,
+  EmptyStateType
+} from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -35,28 +38,6 @@ const generateSkeletons = (
     </div>
   ));
 
-// empty state for an individual tab (collectives and clubs)
-const EmptyState: React.FC<{
-  title: string;
-  subTitle: string;
-  showCreateButton: boolean;
-  creatingClub?: boolean;
-}> = ({ title, subTitle, showCreateButton, creatingClub }) => {
-  return (
-    <div className="mt-10 w-full h-48 flex justify-center items-center">
-      <div className="text-center">
-        <span className="text-lg md:text-2xl">{title}</span>
-        <p className="text-gray-syn4 pt-2.5 max-w-112">{subTitle}</p>
-        {showCreateButton && (
-          <div className="mt-6 flex justify-center">
-            <CreateClubButton {...{ creatingClub }} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -73,13 +54,13 @@ const PortfolioAndDiscover: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const {
-    ethereumNetwork: { invalidEthereumNetwork }
+    ethereumNetwork: { invalidEthereumNetwork },
+    account
   } = web3;
 
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   const { isLoading } = useClubERC20s();
-
   const { width } = useWindowSize();
 
   useCollectives();
@@ -134,6 +115,33 @@ const PortfolioAndDiscover: React.FC = () => {
     myClubERC20s.length
   ]);
 
+  const collectivesIsReady =
+    isReady &&
+    readyCollectivesClient &&
+    readyCollectivesClient.treatment === 'on';
+
+  // connected account does not belong to any collective or club.
+  if (
+    (!otherClubERC20s.length &&
+      !myClubERC20s.length &&
+      !memberCollectives.length &&
+      !adminCollectives.length &&
+      !invalidEthereumNetwork &&
+      !isLoading &&
+      collectivesIsReady) ||
+    !account
+  ) {
+    return (
+      <div
+        className="w-full flex justify-center"
+        style={{ marginTop: '144px' }}
+      >
+        <CreateClubOrCollective />
+      </div>
+    );
+  }
+
+  // connected account belongs to at least one club or collective.
   return (
     <div className="-mt-8">
       {isLoading ? (
@@ -182,7 +190,9 @@ const PortfolioAndDiscover: React.FC = () => {
           >
             <H3>Clubs</H3>
             {otherClubERC20s.length !== 0 || myClubERC20s.length !== 0 ? (
-              <CreateClubButton />
+              <div className="mt-4 sm:mt-0">
+                <CreateClubButton />
+              </div>
             ) : null}
           </div>
 
@@ -225,79 +235,83 @@ const PortfolioAndDiscover: React.FC = () => {
               </div>
             </div>
           ) : !myClubERC20s.length && !invalidEthereumNetwork ? (
-            <PortfolioEmptyState />
+            <div className="w-full flex justify-center">
+              <CreateClubOrCollective
+                {...{
+                  emptyStateType: EmptyStateType.CLUBS
+                }}
+              />
+            </div>
           ) : null}
 
           {/* Collectives  */}
-          {isReady &&
-            readyCollectivesClient &&
-            readyCollectivesClient.treatment === 'on' && (
-              <div className="mt-24">
-                <div
-                  className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
-                  style={width < 480 ? { paddingRight: '6%' } : null}
-                >
-                  <H3>Collectives</H3>
-                  {memberCollectives.length !== 0 ||
-                  adminCollectives.length !== 0 ? (
-                    <CreateClubButton creatingClub={false} />
-                  ) : null}
-                </div>
+          {collectivesIsReady && (
+            <div className="mt-24">
+              <div
+                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
+                style={width < 480 ? { paddingRight: '6%' } : null}
+              >
+                <H3>Collectives</H3>
                 {memberCollectives.length !== 0 ||
                 adminCollectives.length !== 0 ? (
-                  <div className="mt-6">
-                    {memberCollectives.length !== 0 &&
-                      adminCollectives.length !== 0 && (
-                        <TabsButton
-                          options={filterOptions}
-                          value={TabsType.ADMIN}
-                          onChange={(val) => setActiveCollectivesTab(val)}
-                          activeTab={activeCollectivesTab}
-                        />
-                      )}
-                    <div className="mt-6 grid">
-                      <div
-                        className={`${
-                          activeCollectivesTab === TabsType.ADMIN
-                            ? 'opacity-100 z-10'
-                            : 'opacity-0 z-0'
-                        } transition-opacity duration-700 row-start-1 col-start-1`}
-                      >
+                  <div className="mt-4 sm:mt-0">
+                    <CreateClubButton creatingClub={false} />
+                  </div>
+                ) : null}
+              </div>
+              {memberCollectives.length !== 0 ||
+              adminCollectives.length !== 0 ? (
+                <div className="mt-6">
+                  {memberCollectives.length !== 0 &&
+                    adminCollectives.length !== 0 && (
+                      <TabsButton
+                        options={filterOptions}
+                        value={TabsType.ADMIN}
+                        onChange={(val) => setActiveCollectivesTab(val)}
+                        activeTab={activeCollectivesTab}
+                      />
+                    )}
+                  <div className="mt-6 grid">
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.ADMIN
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      <CollectivesTable
+                        tableData={adminCollectives}
+                        columns={collectivesTableColumns}
+                      />
+                    </div>
+
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.MEMBER
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      {activeCollectivesTab === TabsType.MEMBER && (
                         <CollectivesTable
-                          tableData={adminCollectives}
+                          tableData={memberCollectives}
                           columns={collectivesTableColumns}
                         />
-                      </div>
-
-                      <div
-                        className={`${
-                          activeCollectivesTab === TabsType.MEMBER
-                            ? 'opacity-100 z-10'
-                            : 'opacity-0 z-0'
-                        } transition-opacity duration-700 row-start-1 col-start-1`}
-                      >
-                        {activeCollectivesTab === TabsType.MEMBER && (
-                          <CollectivesTable
-                            tableData={memberCollectives}
-                            columns={collectivesTableColumns}
-                          />
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                ) : (
-                  <EmptyState
+                </div>
+              ) : (
+                <div className="w-full flex justify-center">
+                  <CreateClubOrCollective
                     {...{
-                      title: 'You’re not in any collectives yet.',
-                      subTitle:
-                        'Organize your purpose-driven community and customize social experiences across web3',
-                      showCreateButton: true,
-                      creatingClub: false
+                      emptyStateType: EmptyStateType.COLLECTIVES
                     }}
                   />
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

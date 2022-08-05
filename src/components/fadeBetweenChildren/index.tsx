@@ -19,7 +19,7 @@ const FadeBetweenChildren: FC<Props> = ({
         key={index}
         className={`absolute top-0 left-0 w-full h-full ${
           index === visibleChildIndex ? 'opacity-100' : 'opacity-0'
-        } transition-all ${transitionClassesOverride}`}
+        } transition-all ${transitionClassesOverride} w-fit-content`}
       >
         {child}
       </div>
@@ -29,7 +29,7 @@ const FadeBetweenChildren: FC<Props> = ({
   return (
     <div className={`relative ${extraClasses}`}>
       {/* This is for taking up space in the flow */}
-      <div className="opacity-0 transition-all">
+      <div className="opacity-0 transition-all w-fit-content">
         {children[visibleChildIndex]}
       </div>
 
