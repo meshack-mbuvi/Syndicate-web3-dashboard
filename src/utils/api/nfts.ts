@@ -40,6 +40,30 @@ export const getNftFloorPrices = async (
   return result.data;
 };
 
+export const getOpenSeaLink = async (
+  contractAddress: string,
+  chainId: number
+): Promise<string> => {
+  const params = {
+    contractAddress,
+    chainId
+  };
+
+  const base =
+    chainId == 4 ? 'https://testnets.opensea.io' : 'https://opensea.io';
+
+  try {
+    const res = await proxyGet<NftCollectionDetailsResponse>(
+      '/nft/collection',
+      params
+    );
+    const slug = res.data.slug;
+    return slug ? `${base}/collection/${slug}` : null;
+  } catch {
+    return null;
+  }
+};
+
 export interface NftAssetResponse {
   assets: Array<Asset>;
   totalCount: number;
@@ -76,4 +100,12 @@ export interface Asset {
 interface NftFloorPriceResponse {
   floorPrice: number;
   collectionSlug: string;
+}
+
+export interface NftCollectionDetailsResponse {
+  contractAddress: string;
+  name: string;
+  symbol: string;
+  logo: string | null;
+  slug: string | null;
 }

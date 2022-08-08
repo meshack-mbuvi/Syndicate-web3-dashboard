@@ -10,6 +10,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import useCollectiveClaimDetails from '@/hooks/useCollectiveClaimDetails';
 import { AppState } from '@/state';
 import { formatUnix } from 'src/utils/dateUtils';
+import { getOpenSeaLink } from '@/utils/api/nfts';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
@@ -23,8 +24,10 @@ const NftClaimAndInfoCard: React.FC = () => {
       web3: {
         account,
         web3,
+        chainId,
         activeNetwork: {
-          nativeCurrency: { symbol }
+          nativeCurrency: { symbol },
+          blockExplorer: { baseUrl }
         }
       }
     },
@@ -65,6 +68,7 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   const [transactionHash, setTransactionHash] = useState('');
   const [progressState, setProgressState] = useState<ProgressState>();
+  const [openSeaLink, setOpenSeaLink] = useState<string>();
 
   const onTxConfirm = (hash: string) => {
     setProgressState(ProgressState.PENDING);
@@ -118,6 +122,13 @@ const NftClaimAndInfoCard: React.FC = () => {
     );
     setGasPrice(+estimatedGas);
   }, [gasUnits, gasMultipler, web3]);
+
+  useEffect(() => {
+    if (loading) return;
+    getOpenSeaLink(contractAddress, chainId).then((link: string) => {
+      setOpenSeaLink(link);
+    });
+  }, [loading, contractAddress, chainId]);
 
   useEffect(() => {
     if (loading) return;
@@ -214,8 +225,8 @@ const NftClaimAndInfoCard: React.FC = () => {
             nameOfCollective={tokenName}
             nameOfCreator={shortenOwnerAddress(ownerAddress)}
             links={{
-              externalLink: 'https://etherscan.io/address/' + contractAddress,
-              openSea: '/' // TODO: Populate the open sea link
+              externalLink: `${baseUrl}/address/${contractAddress}`,
+              openSea: openSeaLink
             }}
             numberOfExistingMembers={numOwners}
             priceToJoin={{

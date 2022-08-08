@@ -65,28 +65,30 @@ export const CollectiveHeader: React.FC<{
             </Link>
           ) : null}
 
-          <a
-            href={links.openSea}
-            className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
-            data-tip
-            data-for="opensea"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="flex items-center justify-center vertically-center">
-              <OpenSeaIcon />
-            </div>
-            <ReactTooltip
-              id="opensea"
-              place="bottom"
-              effect="solid"
-              className="actionsTooltip"
-              arrowColor="#222529"
-              backgroundColor="#222529"
+          {links.openSea ? (
+            <a
+              href={links.openSea}
+              className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
+              data-tip
+              data-for="opensea"
+              target="_blank"
+              rel="noreferrer"
             >
-              <B3 extraClasses="text-white">View on OpenSea</B3>
-            </ReactTooltip>
-          </a>
+              <div className="flex items-center justify-center vertically-center">
+                <OpenSeaIcon />
+              </div>
+              <ReactTooltip
+                id="opensea"
+                place="bottom"
+                effect="solid"
+                className="actionsTooltip"
+                arrowColor="#222529"
+                backgroundColor="#222529"
+              >
+                <B3 extraClasses="text-white">View on OpenSea</B3>
+              </ReactTooltip>
+            </a>
+          ) : null}
 
           <a
             href={links.externalLink}
