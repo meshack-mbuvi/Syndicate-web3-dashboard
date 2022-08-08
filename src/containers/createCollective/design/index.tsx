@@ -22,18 +22,19 @@ const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
     setContinueButtonActive,
     ContinueButtonActive,
     progressPercent,
-    fileName
+    fileName,
+    exceededUploadLimit
   } = useUpdateState();
 
   const [uploadSuccessText, setUploadSuccessText] = useState('');
 
   useEffect(() => {
-    if (name && artworkUrl && description && symbol) {
+    if (name && artworkUrl && description && symbol && !exceededUploadLimit) {
       setContinueButtonActive(true);
       return;
     }
     setContinueButtonActive(false);
-  }, [name, symbol, artworkUrl, description]);
+  }, [name, symbol, artworkUrl, description, exceededUploadLimit]);
 
   return (
     <div>
@@ -49,6 +50,7 @@ const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
         handleContinue={handleNext}
         handleUpload={handleFileUpload}
         uploadSuccessText={uploadSuccessText}
+        uploadErrorText={exceededUploadLimit}
         handleCancelUpload={handleCancelUpload}
         progressPercentage={progressPercent}
         fileName={fileName}

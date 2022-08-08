@@ -60,7 +60,6 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
   useEffect(() => {
     if (
       membershipType &&
-      pricePerNFT &&
       maxPerWallet &&
       timeWindow >= 0 &&
       closeDate &&
@@ -78,7 +77,6 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
     setContinueButtonActive(false);
   }, [
     membershipType,
-    pricePerNFT,
     maxPerWallet,
     maxSupply,
     openUntil,

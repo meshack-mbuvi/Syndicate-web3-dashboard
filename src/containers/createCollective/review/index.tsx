@@ -69,7 +69,6 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
   useEffect(() => {
     if (
       membershipType &&
-      pricePerNFT &&
       maxPerWallet &&
       timeWindow >= 0 &&
       closeDate &&
@@ -96,7 +95,6 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     setSubmiteButtonActive(false);
   }, [
     membershipType,
-    pricePerNFT,
     maxPerWallet,
     maxSupply,
     openUntil,

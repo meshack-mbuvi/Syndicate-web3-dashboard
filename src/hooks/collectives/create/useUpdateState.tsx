@@ -35,6 +35,7 @@ const useUpdateState = () => {
   const [progressPercent, setProgressPercent] = useState(artworkUrl ? 100 : 0);
   const [fileName, setFileName] = useState(artwork?.name);
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
+  const [exceededUploadLimit, setExceededUploadLimit] = useState('');
 
   const getArtworkType = (fileObject) => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
@@ -78,6 +79,9 @@ const useUpdateState = () => {
 
   const handleFileUpload = async (e) => {
     dispatch(setIpfsHash(''));
+    const fileLimit = 50;
+    const fileObject = e.target.files[0];
+
     await dispatch(
       setCollectiveArtwork({
         artwork: {},
@@ -86,15 +90,20 @@ const useUpdateState = () => {
       })
     );
     if (e.target.files.length) {
-      const { mediaType, mediaSource } = getArtworkType(e.target.files[0]);
+      const { mediaType, mediaSource } = getArtworkType(fileObject);
       dispatch(
         setCollectiveArtwork({
-          artwork: e.target.files[0],
+          artwork: fileObject,
           artworkType: mediaType,
           artworkUrl: mediaSource
         })
       );
-      setFileName(e.target.files[0].name);
+      setFileName(fileObject.name);
+      setExceededUploadLimit(
+        fileObject.size / 1024 / 1024 > fileLimit
+          ? 'File exceeds size limit of ' + fileLimit + ' MB'
+          : ''
+      );
       setProgressPercent(100);
     }
   };
@@ -167,6 +176,7 @@ const useUpdateState = () => {
     ContinueButtonActive,
     progressPercent,
     fileName,
+    exceededUploadLimit,
     hasAgreedToTerms,
     setAgreedToTerms,
     handleTimeWindowChange,

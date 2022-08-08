@@ -14,12 +14,14 @@ import {
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import {
+  resetCollectiveCreationState,
   setCollectiveSubmittingToIPFS,
   setCollectiveTransactionError,
   setCollectiveWaitingForConfirmation,
   setIpfsError
 } from '@/state/createCollective/slice';
 import { useDispatch } from 'react-redux';
+import router from 'next/router';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -112,6 +114,8 @@ const CreateCollectiveContainer: FC = () => {
 
   const handleExitClick = (event) => {
     event.preventDefault();
+    dispatch(resetCollectiveCreationState());
+    router.push('/');
   };
 
   useEffect(() => {

@@ -96,17 +96,20 @@ export const FileUploader: React.FC<Props> = ({
                 <img src="/images/file-icon-white.svg" alt="File" />
                 <div>{fileName}</div>
               </div>
-              {progressDisplayType === UploaderProgressType.SPINNER && (
-                <img
-                  src={`/images/${
-                    progressPercent < 100 ? 'spinner-blue' : 'checkmark-circle'
-                  }.svg`}
-                  className={`w-4 h-4 ${
-                    progressPercent < 100 && 'animate-spin'
-                  }`}
-                  alt="Icon"
-                />
-              )}
+              {progressDisplayType === UploaderProgressType.SPINNER &&
+                !errorText && (
+                  <img
+                    src={`/images/${
+                      progressPercent < 100
+                        ? 'spinner-blue'
+                        : 'checkmark-circle'
+                    }.svg`}
+                    className={`w-4 h-4 ${
+                      progressPercent < 100 && 'animate-spin'
+                    }`}
+                    alt="Icon"
+                  />
+                )}
             </div>
 
             {/* Upload success text */}

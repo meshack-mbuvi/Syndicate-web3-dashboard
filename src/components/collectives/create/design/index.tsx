@@ -17,6 +17,7 @@ interface Props {
   handleContinue: (e) => void;
   handleUpload: (e) => void;
   uploadSuccessText?: string;
+  uploadErrorText?: string;
   handleCancelUpload: () => void;
   progressPercentage?: number;
   fileName?: string;
@@ -34,6 +35,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   handleContinue,
   handleUpload,
   uploadSuccessText,
+  uploadErrorText,
   handleCancelUpload,
   progressPercentage = 0,
   fileName = 'FILENAME',
@@ -54,8 +56,9 @@ export const CollectiveFormDesign: React.FC<Props> = ({
               progressPercent={progressPercentage}
               fileName={fileName}
               successText={uploadSuccessText}
+              errorText={uploadErrorText}
               promptTitle="Upload artwork"
-              promptSubtitle="PNG or MP4 allowed"
+              promptSubtitle="PNG, JPG, GIF or MP4 allowed"
               progressDisplayType={UploaderProgressType.SPINNER}
               handleUpload={handleUpload}
               handleCancelUpload={handleCancelUpload}
