@@ -33,15 +33,13 @@ export class EthPriceMintModule extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    token: string,
+    price: string,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     this.estimateGas(
       account,
-      () =>
-        this.contract.methods.updateEthPrice(
-          '0x0000000000000000000000000000000000000000',
-          this.web3.utils.toWei('0.5')
-        ),
+      () => this.contract.methods.updateEthPrice(token, price),
       onResponse
     );
   }

@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { Callout, CalloutType } from '@/components/callout';
 import EditIcon from '@/components/icons/editIcon';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
+import EstimateGas from '@/components/EstimateGas';
 import { M1 } from '@/components/typography';
 import { CopyToClipboardIcon } from '@/components/iconWrappers';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import { useRouter } from 'next/router';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 export const SubmitContent: React.FC<{
   isSubmitDisabled?: boolean;
@@ -20,6 +25,37 @@ export const SubmitContent: React.FC<{
   const heightTransition = isSubmitDisabled ? 'max-h-0' : 'max-h-2screen';
   const opacityTransition = isSubmitDisabled ? 'opacity-0' : 'opacity-100';
 
+  const {
+    collectiveDetailsReducer: {
+      activeRow,
+      details: { mintPrice, ipfsHash, numMinted, mintEndTime, maxPerWallet },
+      settings: { isTransferable }
+    }
+  } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
+  const { collectiveAddress } = router.query;
+
+  const activeContract = useMemo(() => {
+    switch (activeRow) {
+      case EditRowIndex.MintPrice:
+        return ContractMapper.EthPriceMintModule;
+      case EditRowIndex.Image:
+        return ContractMapper.FixedRenderer;
+      case EditRowIndex.Description:
+        return ContractMapper.FixedRenderer;
+      case EditRowIndex.MaxPerWallet:
+        return ContractMapper.MaxPerMemberERC721;
+      case EditRowIndex.Time:
+        return ContractMapper.TimeRequirements;
+      case EditRowIndex.Transfer:
+        return ContractMapper.ERC721Collective;
+
+      default:
+        return null;
+    }
+  }, [activeRow]);
+
   return (
     <div
       className={`space-y-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 ${
@@ -33,15 +69,22 @@ export const SubmitContent: React.FC<{
         >
           {showCallout && (
             <Callout type={CalloutType.WARNING} showIcon={false}>
-              {/* TODO: 123 should be dynamic */}
-              This change will impact the 123 NFTs that have already been
-              claimed.
+              This change will impact the {numMinted} NFTs that have already
+              been claimed.
             </Callout>
           )}
 
           <Callout extraClasses="rounded-xl p-4">
             <EstimateGas
-              contract={ContractMapper.ClubERC20Factory} // TODO: Temporary fix ENG-4094
+              contract={activeContract}
+              args={{
+                collectiveAddress,
+                mintPrice,
+                ipfsHash,
+                mintEndTime,
+                maxPerWallet,
+                isTransferable
+              }}
               customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
             />
           </Callout>

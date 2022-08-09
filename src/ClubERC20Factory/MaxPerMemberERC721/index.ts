@@ -36,15 +36,13 @@ export class MaxPerMemberERC721 extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    token: string,
+    maxPerMember: number,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     this.estimateGas(
       account,
-      () =>
-        this.contract.methods.setMixinRequirements(
-          '0x0000000000000000000000000000000000000000',
-          3
-        ),
+      () => this.contract.methods.setMixinRequirements(token, maxPerMember),
       onResponse
     );
   }

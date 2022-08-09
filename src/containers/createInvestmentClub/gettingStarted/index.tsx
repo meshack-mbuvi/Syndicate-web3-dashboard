@@ -5,7 +5,8 @@ import { L2 } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ExternalLinkIcon } from 'src/components/iconWrappers';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
+import EstimateGas from '@/components/EstimateGas';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 const GettingStarted: React.FC<{
   setClubStep: Dispatch<SetStateAction<string>>;

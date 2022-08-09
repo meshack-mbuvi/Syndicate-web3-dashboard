@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
 import { getCollectiveBalance } from '@/utils/contracts/collective';
-import useGasDetails from '@/hooks/useGasDetails';
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -31,10 +31,7 @@ const NftClaimAndInfoCard: React.FC = () => {
         }
       }
     },
-    erc721CollectiveReducer: { erc721Collective },
-    gasDetailsSlice: {
-      gasDetails: { gasMultipler, nativeTokenPrice }
-    }
+    erc721CollectiveReducer: { erc721Collective }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -53,14 +50,24 @@ const NftClaimAndInfoCard: React.FC = () => {
   const collectivePrice = getWeiAmount(web3, priceEth.toString(), 18, false);
 
   const { loading } = useCollectiveClaimDetails();
-  useGasDetails();
+
+  const {
+    gas: gasPrice,
+    fiatAmount,
+    nativeTokenPrice
+  } = useGasDetails({
+    contract: ContractMapper.EthPriceMintModuleMint,
+    withFiatCurrency: true,
+    args: {
+      priceEth,
+      contractAddress
+    },
+    skipQuery: !priceEth || !contractAddress
+  });
 
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
-
-  const [gasUnits, setGasUnits] = useState(0);
-  const [gasPrice, setGasPrice] = useState<number>(0);
 
   const [walletState, setWalletState] = useState<WalletState>(
     WalletState.NOT_CONNECTED
@@ -112,34 +119,11 @@ const NftClaimAndInfoCard: React.FC = () => {
   }, [maxTotalSupply, totalSupply]);
 
   useEffect(() => {
-    if (!gasUnits || !gasMultipler) return;
-    const estimatedGasInWei = gasUnits * gasMultipler;
-    const estimatedGas = getWeiAmount(
-      web3,
-      estimatedGasInWei.toString(),
-      18,
-      false
-    );
-    setGasPrice(+estimatedGas);
-  }, [gasUnits, gasMultipler, web3]);
-
-  useEffect(() => {
     if (loading) return;
     getOpenSeaLink(contractAddress, chainId).then((link: string) => {
       setOpenSeaLink(link);
     });
   }, [loading, contractAddress, chainId]);
-
-  useEffect(() => {
-    if (loading) return;
-    syndicateContracts.ethPriceMintModule.getMintEstimateGas(
-      priceEth.toString(),
-      contractAddress,
-      '1', // Hardcode to mint a single token
-      account,
-      setGasUnits
-    );
-  }, [loading, account, contractAddress, priceEth, syndicateContracts]);
 
   useEffect(() => {
     let _walletState = WalletState.NOT_CONNECTED;
@@ -237,7 +221,7 @@ const NftClaimAndInfoCard: React.FC = () => {
             gasEstimate={
               gasPrice
                 ? {
-                    fiatAmount: gasPrice * nativeTokenPrice,
+                    fiatAmount: +fiatAmount,
                     tokenAmount: gasPrice,
                     tokenSymbol: symbol
                   }

@@ -42,18 +42,18 @@ export class TimeRequirements extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    token: string,
+    startTime: number,
+    endTime: number,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     this.estimateGas(
       account,
       () =>
-        this.contract.methods.setMixinRequirements(
-          '0x0000000000000000000000000000000000000000',
-          {
-            startTime: 0,
-            endTime: 1684952525
-          }
-        ),
+        this.contract.methods.setMixinRequirements(token, {
+          startTime,
+          endTime
+        }),
       onResponse
     );
   }

@@ -44,24 +44,28 @@ export class ERC721Collective extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    collectiveAddress: string,
+    isAllowed: boolean,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     const collectiveContract = new this.web3.eth.Contract(
       ERC721_COLLECTIVE_ABI as AbiItem[],
-      '0x1147f06Abfc874BA7E47Bf75Bba6e97322885c32' // TODO this is a rinkeby collective address
+      collectiveAddress
     );
 
+    const guardToken = isAllowed
+      ? this.addresses.GuardAlwaysAllow
+      : this.addresses.GuardNeverAllow;
+
     await new Promise(() => {
-      collectiveContract.methods
-        .updateTransferGuard('0x0000000000000000000000000000000000000000')
-        .estimateGas(
-          {
-            from: account
-          },
-          (_error, gasAmount) => {
-            if (gasAmount) onResponse(gasAmount);
-          }
-        );
+      collectiveContract.methods.updateTransferGuard(guardToken).estimateGas(
+        {
+          from: account
+        },
+        (_error, gasAmount) => {
+          if (gasAmount) onResponse(gasAmount);
+        }
+      );
     });
   }
 }

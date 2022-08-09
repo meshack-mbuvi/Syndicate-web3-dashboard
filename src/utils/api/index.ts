@@ -71,3 +71,16 @@ export const getSynToken = async (
     return;
   }
 };
+
+export const getEthGasPrice = async (
+  blockExplorerUrl: string
+): Promise<AxiosResponse> => {
+  const apiKey = process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
+  try {
+    return axios.get(
+      `${blockExplorerUrl}/api?module=proxy&action=eth_gasPrice&apikey=${apiKey}`
+    );
+  } catch (error) {
+    return;
+  }
+};

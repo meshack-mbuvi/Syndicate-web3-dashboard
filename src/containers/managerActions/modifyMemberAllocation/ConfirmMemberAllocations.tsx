@@ -8,9 +8,10 @@ import {
   numberWithCommas
 } from '@/utils/formattedNumbers';
 import { formatAddress } from '@/utils/formatAddress';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
+import EstimateGas from '@/components/EstimateGas';
 import { Callout } from '@/components/callout';
 import { L2 } from '@/components/typography';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 interface IConfirmMemberAllocations {
   preview: boolean;

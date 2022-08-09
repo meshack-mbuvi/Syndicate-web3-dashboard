@@ -1,13 +1,14 @@
 import { Callout } from '@/components/callout';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
+import EstimateGas from '@/components/EstimateGas';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
 import React, { Dispatch, SetStateAction } from 'react';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 interface IConfirmMemberDetailsModal {
   preview: boolean;

@@ -34,7 +34,7 @@ interface Props {
   extraClasses?: string;
   showForm?: boolean;
   activeRow?: number;
-  setActiveRow?: Dispatch<SetStateAction<number>>;
+  setActiveRow?: (arg: number) => void;
 }
 
 export const CollapsibleTable: React.FC<Props> = ({

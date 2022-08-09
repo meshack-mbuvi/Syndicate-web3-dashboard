@@ -34,15 +34,13 @@ export class FixedRenderer extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    token: string,
+    uri: number,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     this.estimateGas(
       account,
-      () =>
-        this.contract.methods.updateTokenURI(
-          '0x0000000000000000000000000000000000000000',
-          'ipfs://hash'
-        ),
+      () => this.contract.methods.updateTokenURI(token, uri),
       onResponse
     );
   }

@@ -26,15 +26,21 @@ export const BadgeWithMembers: React.FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
   const [copyState, setCopyState] = useState(false);
 
+  const { collectiveAddress } = router.query;
+
   const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
-    router.replace(`${window.location.href}/claim`);
+
+    router.push({
+      pathname: `/collectives/${collectiveAddress}/claim`,
+      query: { chain: activeNetwork.network }
+    });
   };
 
   const dispatch = useDispatch();

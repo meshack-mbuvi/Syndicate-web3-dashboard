@@ -8,10 +8,11 @@ import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
 import { InputField } from '@/components/inputs/inputField';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
+import EstimateGas from '@/components/EstimateGas';
 import useWindowSize from '@/hooks/useWindowSize';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import AgreementTerms from '@/components/AgreementTerms';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 interface Props {
   nameValue: string;

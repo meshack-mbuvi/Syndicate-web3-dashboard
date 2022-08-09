@@ -1,3 +1,13 @@
+export enum EditRowIndex {
+  Default,
+  Image,
+  Description,
+  MintPrice,
+  MaxPerWallet,
+  Time,
+  Transfer
+}
+
 export interface ICollectiveDetails {
   collectiveName: string;
   collectiveSymbol: string;
@@ -21,7 +31,9 @@ export interface IState {
     isTransferable: boolean;
     isOpen: boolean;
   };
+  activeRow: EditRowIndex;
 }
+
 export const initialState: IState = {
   details: {
     collectiveName: '',
@@ -42,5 +54,6 @@ export const initialState: IState = {
   settings: {
     isTransferable: true,
     isOpen: true
-  }
+  },
+  activeRow: EditRowIndex.Default
 };

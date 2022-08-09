@@ -1,7 +1,7 @@
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { ProgressModal } from '@/components/progressModal';
 import { Switch, SwitchType } from '@/components/switch';
-import EstimateGas, { ContractMapper } from '@/components/EstimateGas';
+import EstimateGas from '@/components/EstimateGas';
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -41,6 +41,7 @@ import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
 import { DAY_IN_SECONDS } from '@/utils/constants';
 import { ProgressState } from '../progressCard';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 const progressModalStates = {
   confirm: {

@@ -14,7 +14,8 @@ import {
   setMintPrice,
   setMaxPerWallet,
   setIsTransferable,
-  setIsCollectiveOpen
+  setIsCollectiveOpen,
+  setActiveRowIdx
 } from '@/state/collectiveDetails';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
 import { useState } from 'react';
@@ -22,6 +23,7 @@ import {
   FileUploader,
   UploaderProgressType
 } from '@/components/uploaders/fileUploader';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
 
 const ModifyCollectiveSettings: React.FC = () => {
   const {
@@ -41,7 +43,8 @@ const ModifyCollectiveSettings: React.FC = () => {
         isTransferable: existingIsTransferable,
         isOpen: existingIsOpen
       },
-      settings: { isTransferable, isOpen }
+      settings: { isTransferable, isOpen },
+      activeRow
     }
   } = useSelector((state: AppState) => state);
 
@@ -51,7 +54,6 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const loading = false; // TODO loading state while fetching club info
 
-  const [activeRow, setActiveRow] = useState(0);
   const [showImageUploader, setShowImageUploader] = useState(false);
 
   const handleOpenCollective = () => {
@@ -86,6 +88,10 @@ const ModifyCollectiveSettings: React.FC = () => {
     //   default:
     //     break;
     // }
+  };
+
+  const setActiveRow = (rowIdx: EditRowIndex) => {
+    dispatch(setActiveRowIdx(rowIdx));
   };
 
   return (
@@ -354,12 +360,3 @@ const ModifyCollectiveSettings: React.FC = () => {
 };
 
 export default ModifyCollectiveSettings;
-
-enum EditRowIndex {
-  Default,
-  Image,
-  Description,
-  Time,
-  MaxPerWallet,
-  MintPrice
-}

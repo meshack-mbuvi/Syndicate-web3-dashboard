@@ -38,15 +38,13 @@ export class MaxTotalSupplyERC721 extends ContractBase {
 
   public async getEstimateGas(
     account: string,
+    token: string,
+    totalSupply: number,
     onResponse: (gas?: number) => void
   ): Promise<void> {
     this.estimateGas(
       account,
-      () =>
-        this.contract.methods.setMixinRequirements(
-          '0x0000000000000000000000000000000000000000',
-          1000
-        ),
+      () => this.contract.methods.setMixinRequirements(token, totalSupply),
       onResponse
     );
   }
