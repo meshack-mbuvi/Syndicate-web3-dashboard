@@ -1,4 +1,7 @@
-import { CopyToClipboardIcon } from '@/components/iconWrappers';
+import {
+  CopyToClipboardIcon,
+  ExternalLinkColor
+} from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H1 } from '@/components/typography';
 import { AppState } from '@/state';
@@ -124,6 +127,7 @@ export const ClubHeader: React.FC<{
                         resourceId={owner}
                         grouped
                         iconOnly
+                        iconcolor={ExternalLinkColor.GRAY}
                       />
                       <ReactTooltip
                         id="view-on-etherscan"

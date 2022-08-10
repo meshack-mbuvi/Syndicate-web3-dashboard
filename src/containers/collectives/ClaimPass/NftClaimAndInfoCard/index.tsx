@@ -115,7 +115,11 @@ const NftClaimAndInfoCard: React.FC = () => {
   }, [account, contractAddress, maxPerMember, web3]);
 
   useEffect(() => {
-    setIsAccountEligible(+maxTotalSupply > +totalSupply);
+    if (+maxTotalSupply > 0) {
+      setIsAccountEligible(+maxTotalSupply > +totalSupply);
+    } else {
+      setIsAccountEligible(true);
+    }
   }, [maxTotalSupply, totalSupply]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import Layout from '@/components/layout';
 import { Spinner } from '@/components/shared/spinner';
-import CollectivesContainer from '@/containers/collectives';
+import CollectiveDetails from '@/containers/collectives';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
@@ -37,7 +37,7 @@ const CollectiveIndexPage: React.FC = () => {
       </div>
     </Layout>
   ) : isReady && readyCollectivesClient.treatment === 'on' ? (
-    <CollectivesContainer />
+    <CollectiveDetails />
   ) : (
     <NotFoundPage />
   );

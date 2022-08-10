@@ -126,12 +126,12 @@ const useCollectives = () => {
           name,
           symbol,
           mintPrice,
-          numMinted,
-          maxTotalSupply
+          maxTotalSupply,
+          totalSupply
         } = collective;
 
         const totalUnclaimed = +maxTotalSupply
-          ? +maxTotalSupply - +numMinted
+          ? +maxTotalSupply - +totalSupply
           : +maxTotalSupply;
         return {
           totalUnclaimed,
@@ -145,7 +145,7 @@ const useCollectives = () => {
             +activeNetwork.nativeCurrency.decimals,
             false
           ),
-          totalClaimed: numMinted,
+          totalClaimed: totalSupply,
           tokenImage: '/images/placeholderCollectiveThumbnail.svg',
           inviteLink: `${
             window.location.origin
@@ -180,10 +180,11 @@ const useCollectives = () => {
           symbol,
           mintPrice,
           numMinted,
-          maxTotalSupply
+          maxTotalSupply,
+          totalSupply
         }) => {
           const totalUnclaimed = +maxTotalSupply
-            ? +maxTotalSupply - +numMinted
+            ? +maxTotalSupply - +totalSupply
             : +maxTotalSupply;
           +maxTotalSupply ? +maxTotalSupply - +numMinted : +maxTotalSupply;
           return {
@@ -198,7 +199,7 @@ const useCollectives = () => {
               +activeNetwork.nativeCurrency.decimals,
               false
             ),
-            totalClaimed: numMinted,
+            totalClaimed: totalSupply,
             tokenImage: '/images/placeholderCollectiveThumbnail.svg',
             inviteLink: `${
               window.location.origin

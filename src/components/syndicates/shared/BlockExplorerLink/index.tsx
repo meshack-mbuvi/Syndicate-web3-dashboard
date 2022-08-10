@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   ExternalLinkColor,
-  ExternalLinkIcon,
-  OpenExternalLinkIcon
+  ExternalLinkIcon
 } from 'src/components/iconWrappers';
 
 import { useConnectWalletContext } from '../../../../context/ConnectWalletProvider';
@@ -16,6 +15,7 @@ interface LinkProp {
   suffix?: string;
   grouped?: boolean;
   iconcolor?: ExternalLinkColor;
+  iconOnlyStyles?: string;
 }
 
 /** Link used to redirect the user to the Block Explorer
@@ -54,9 +54,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
       }`}
       rel="noreferrer"
     >
-      {grouped && iconOnly && (
-        <OpenExternalLinkIcon className="text-gray-syn5 hover:text-gray-syn4" />
-      )}
+      {grouped && iconOnly && <ExternalLinkIcon iconcolor={iconcolor} />}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
           <div

@@ -3,6 +3,7 @@ import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
 import { showWalletModal } from '@/state/wallet/actions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useDispatch } from 'react-redux';
 
 export enum WalletState {
@@ -116,21 +117,24 @@ export const ClaimCollectivePass: React.FC<Props> = ({
     <>
       {/* Desktop */}
       <div className="sm:flex sm:justify-between hidden sm:block space-y-4 sm:space-y-0 sm:space-x-5">
-        <div>
-          <B2 extraClasses="text-gray-syn4">Remaining NFTs</B2>
-          <H3 regular>
-            {remainingPasses.toLocaleString('en-US')}{' '}
-            <span className="text-gray-syn4">
-              of {maxTotalPasses.toLocaleString('en-US')}
-            </span>
-          </H3>
-        </div>
+        {+maxTotalPasses > 0 && (
+          <div>
+            <B2 extraClasses="text-gray-syn4">Remaining NFTs</B2>
+            <H3 regular>
+              {remainingPasses.toLocaleString('en-US')}{' '}
+              <span className="text-gray-syn4">
+                of {maxTotalPasses.toLocaleString('en-US')}
+              </span>
+            </H3>
+          </div>
+        )}
         <div>
           <B2 extraClasses="text-gray-syn4">Price per NFT</B2>
           <H3 regular>
-            {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
+            {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
+            {priceToJoin.tokenSymbol}{' '}
             <span className="text-gray-syn4">
-              ${priceToJoin.fiatAmount.toFixed(2)}
+              ${floatedNumberWithCommas(priceToJoin.fiatAmount)}
             </span>
           </H3>
         </div>
@@ -148,8 +152,11 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         <div className="space-y-2">
           <B3 extraClasses="text-gray-syn4">Price per NFT</B3>
           <H4 regular>
-            {priceToJoin.tokenAmount} {priceToJoin.tokenSymbol}{' '}
-            <span className="text-gray-syn4">{priceToJoin.fiatAmount}</span>
+            {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
+            {priceToJoin.tokenSymbol}{' '}
+            <span className="text-gray-syn4">
+              {floatedNumberWithCommas(priceToJoin.fiatAmount)}
+            </span>
           </H4>
         </div>
       </div>
@@ -161,10 +168,10 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       <div className="sm:space-y-4">
         <L2 extraClasses="mb-2">
           Join{' '}
-          {numberOfExistingMembers > 0
+          {+numberOfExistingMembers > 0
             ? numberOfExistingMembers.toLocaleString('en-US')
             : 'the'}{' '}
-          members of
+          {+numberOfExistingMembers === 1 ? 'member' : 'members'} of
         </L2>
         <CollectiveHeader collectiveName={nameOfCollective} links={links} />
         {created}

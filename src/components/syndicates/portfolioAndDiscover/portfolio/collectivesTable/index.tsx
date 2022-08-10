@@ -133,10 +133,16 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                       </div>
                     </div>
                     <div className="flex text-base items-center space-x-2">
-                      <B2>{formatAmount(totalUnclaimed)}</B2>
-                      <B2 extraClasses="text-gray-syn4">
-                        of {formatAmount(maxTotalSupply)}
-                      </B2>
+                      {+maxTotalSupply > 0 ? (
+                        <>
+                          <B2>{formatAmount(totalUnclaimed)}</B2>
+                          <B2 extraClasses="text-gray-syn4">
+                            of {formatAmount(maxTotalSupply)}
+                          </B2>
+                        </>
+                      ) : (
+                        <B2>-</B2>
+                      )}
                     </div>
                     <div className="flex text-base items-center space-x-2">
                       <B2>{formatAmount(totalClaimed)}</B2>

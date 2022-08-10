@@ -10,6 +10,7 @@ export enum EditRowIndex {
 
 export interface ICollectiveDetails {
   collectiveName: string;
+  ownerAddress: string;
   collectiveSymbol: string;
   collectiveAddress: string;
   maxPerWallet: string;
@@ -17,12 +18,19 @@ export interface ICollectiveDetails {
   totalSupply: string;
   numMinted: string;
   numOwners: string;
+  owners: any;
   mintPrice: string;
   isTransferable: boolean;
   mintEndTime: string;
   ipfsHash: string;
   description: string;
   isOpen: boolean;
+  mediaCid: string;
+}
+
+export interface ICollectiveLoadingState {
+  isFetchingCollective: boolean;
+  collectiveNotFound: boolean;
 }
 
 export interface IState {
@@ -32,11 +40,13 @@ export interface IState {
     isOpen: boolean;
   };
   activeRow: EditRowIndex;
+  loadingState: ICollectiveLoadingState;
 }
 
 export const initialState: IState = {
   details: {
     collectiveName: '',
+    ownerAddress: '',
     collectiveSymbol: '',
     collectiveAddress: '',
     maxPerWallet: '',
@@ -44,16 +54,22 @@ export const initialState: IState = {
     totalSupply: '',
     numMinted: '',
     numOwners: '',
+    owners: [],
     mintPrice: '',
     isTransferable: true,
     mintEndTime: '',
     ipfsHash: '',
     description: '',
-    isOpen: true
+    isOpen: true,
+    mediaCid: ''
   },
   settings: {
     isTransferable: true,
     isOpen: true
   },
-  activeRow: EditRowIndex.Default
+  activeRow: EditRowIndex.Default,
+  loadingState: {
+    isFetchingCollective: false,
+    collectiveNotFound: false
+  }
 };

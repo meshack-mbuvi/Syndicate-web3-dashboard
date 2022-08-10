@@ -1,6 +1,9 @@
 import { GetAdminCollectives } from '@/graphql/queries';
 import { AppState } from '@/state';
-import { setCollectiveDetails } from '@/state/collectiveDetails';
+import {
+  setCollectiveDetails,
+  setCollectiveLoadingState
+} from '@/state/collectiveDetails';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
@@ -46,44 +49,71 @@ const useFetchCollectiveDetails = (
   }, [account, collectiveAddress, activeNetwork.chainId]);
 
   useEffect(() => {
+    if (loading) {
+      dispatch(
+        setCollectiveLoadingState({
+          isFetchingCollective: true,
+          collectiveNotFound: false
+        })
+      );
+
+      return;
+    }
     if (data && data.syndicateCollectives.length) {
       const collective =
         data.syndicateCollectives[data.syndicateCollectives.length - 1];
       const {
         mintPrice,
+        ownerAddress,
         numMinted,
         numOwners,
+        owners,
         name: collectiveName,
         symbol: collectiveSymbol,
         contractAddress: address,
         maxPerMember: maxPerWallet,
         totalSupply,
         maxTotalSupply,
-        areNftsTransferable: isTransferable
+        areNftsTransferable: isTransferable,
+        nftMetadata: { description, metadataCid, mediaCid }
       } = collective;
 
       dispatch(
         setCollectiveDetails({
           collectiveName,
+          ownerAddress,
           collectiveSymbol,
           maxPerWallet,
           maxTotalSupply,
           totalSupply,
           numMinted,
           numOwners,
+          owners,
           isTransferable,
           collectiveAddress: address,
           mintPrice: getWeiAmount(web3, mintPrice, 18, false),
           isOpen: true, // TODO: get this from graph
           mintEndTime: '1667019540', // TODO: get this from graph
-          ipfsHash: 'QmcRRRFWMZCZxsEZRAEfBp4XTrgo2MVcYWJp9vcTS9LNKi', // TODO: get this from graph
-          description:
-            'Alpha Beta Punks dreamcatcher vice affogato sartorial roof party unicorn wolf. Heirloom disrupt PBR&B normcore flexitarian bitters tote bag coloring book cornhole. Portland fixie forage selvage, disrupt +1 dreamcatcher meh ramps poutine stumptown letterpress lyft fam. Truffaut put a bird on it asymmetrical, gastropub master cleanse fingerstache succulents swag flexitarian bespoke thundercats kickstarter chartreuse.' // TODO: get this from graph
+          ipfsHash: metadataCid,
+          description,
+          mediaCid
         })
       );
       setCollectiveNotFound(false);
+      dispatch(
+        setCollectiveLoadingState({
+          isFetchingCollective: false,
+          collectiveNotFound: false
+        })
+      );
     } else {
       setCollectiveNotFound(true);
+      dispatch(
+        setCollectiveLoadingState({
+          isFetchingCollective: false,
+          collectiveNotFound: true
+        })
+      );
     }
   }, [loading, JSON.stringify(data)]);
 

@@ -29,10 +29,9 @@ export const BadgeWithMembers: React.FC<Props> = ({
       web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+  const { collectiveAddress } = router.query;
 
   const [copyState, setCopyState] = useState(false);
-
-  const { collectiveAddress } = router.query;
 
   const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();

@@ -1,3 +1,4 @@
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B3, H1, H2 } from '@/components/typography';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
@@ -6,7 +7,6 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import {
   ExternalLinkColor,
-  ExternalLinkIcon,
   OpenSeaIcon,
   SettingsIcon
 } from 'src/components/iconWrappers';
@@ -90,17 +90,17 @@ export const CollectiveHeader: React.FC<{
             </a>
           ) : null}
 
-          <a
-            href={links.externalLink}
-            className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
+          <div
+            className="flex items-center justify-center rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
             data-tip
             data-for="etherscan"
-            target="_blank"
-            rel="noreferrer"
           >
-            <div className="flex justify-center items-center vertically-center">
-              <ExternalLinkIcon iconcolor={ExternalLinkColor.GRAY4} />
-            </div>
+            <BlockExplorerLink
+              resourceId={collectiveAddress}
+              iconcolor={ExternalLinkColor.GRAY4}
+              iconOnly={true}
+              grouped={true}
+            />
 
             <ReactTooltip
               id="etherscan"
@@ -112,7 +112,7 @@ export const CollectiveHeader: React.FC<{
             >
               <B3 extraClasses="text-white">View on Etherscan</B3>
             </ReactTooltip>
-          </a>
+          </div>
         </div>
       )}
     </div>

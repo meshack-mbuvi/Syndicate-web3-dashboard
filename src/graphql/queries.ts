@@ -240,6 +240,14 @@ export const GetAdminCollectives = gql`
       totalSupply
       maxPerMember
       numOwners
+      owners {
+        id
+      }
+      nftMetadata {
+        description
+        metadataCid
+        mediaCid
+      }
       areNftsTransferable
     }
   }

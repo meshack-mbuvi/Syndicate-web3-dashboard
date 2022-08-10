@@ -1,5 +1,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { ICollectiveDetails, initialState, EditRowIndex } from './types';
+import {
+  ICollectiveDetails,
+  initialState,
+  EditRowIndex,
+  ICollectiveLoadingState
+} from './types';
 
 export const collectiveDetails = createSlice({
   name: 'collectiveDetails',
@@ -28,6 +33,12 @@ export const collectiveDetails = createSlice({
     },
     setActiveRowIdx(state, action: PayloadAction<EditRowIndex>) {
       state.activeRow = action.payload;
+    },
+    setCollectiveLoadingState(
+      state,
+      action: PayloadAction<ICollectiveLoadingState>
+    ) {
+      state.loadingState = action.payload;
     }
   }
 });
@@ -39,7 +50,8 @@ export const {
   setMaxPerWallet,
   setIsTransferable,
   setIsCollectiveOpen,
-  setActiveRowIdx
+  setActiveRowIdx,
+  setCollectiveLoadingState
 } = collectiveDetails.actions;
 
 export default collectiveDetails.reducer;
