@@ -108,6 +108,7 @@ const images = [
   '/images/danger.svg',
   '/images/delphi-labs-avatar.svg',
   '/images/deposit.svg',
+  '/images/disco-ball.svg',
   '/images/distribute-gray.svg',
   '/images/distribute-white.svg',
   '/images/edit-deposit.svg',

@@ -9,7 +9,7 @@ import {
 } from '@/components/collectives/card';
 import { PermissionType } from '@/components/collectives/shared/types';
 import { LockIcon } from '@/components/iconWrappers';
-import { B1, B3, H4 } from '@/components/typography';
+import { B2, B3, H4 } from '@/components/typography';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { useRouter } from 'next/router';
@@ -94,18 +94,17 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
               : ''
           }`}
         >
-          {account ? (
+          {permissionType !== PermissionType.NON_MEMBER ? (
             activities.length ? (
               activities.map((activity, index) => (
                 <CollectiveActivity {...activity} key={index} />
               ))
             ) : (
-              <div className="flex flex-col my-auto h-full min-h-10 align-middle justify-center">
-                <B1 extraClasses="mx-auto">No activity yet.</B1>
+              <div className="flex flex-col m-auto h-full min-h-10 align-middle justify-center">
+                <B2 extraClasses="mx-auto tracking-0.1px">No activity yet</B2>
 
-                <B3 extraClasses="pt-4 text-gray-syn4 text-center">
-                  Once members start joining this collective, you will see
-                  what’s happening here.
+                <B3 extraClasses="pt-4 text-gray-syn4 text-center w-60 tracking-0.1px">
+                  On-chain activities of this collective will be shown here
                 </B3>
               </div>
             )
@@ -180,7 +179,12 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
   const router = useRouter();
   const { isReady } = router;
 
-  const members = [];
+  const members = [
+    // {
+    //   profilePicture: '/images/user.svg',
+    //   accountAddress: '0xc8a6282282abcEf834b3bds75e7a1536c1af242af'
+    // }
+  ];
 
   const admins = [
     {
@@ -208,7 +212,7 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
 };
 
 const Collective: React.FC = () => {
-  const permissionType = PermissionType.NON_MEMBER;
+  const permissionType = PermissionType.ADMIN;
   return (
     <TwoColumnLayout
       hideWalletAndEllipsis={false}

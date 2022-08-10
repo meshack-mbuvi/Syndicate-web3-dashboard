@@ -177,6 +177,7 @@ module.exports = {
         '2screen': '200vh'
       },
       minHeight: {
+        250: '15.625rem',
         363: '22.688rem'
       },
       backgroundOpacity: {
@@ -249,6 +250,7 @@ module.exports = {
         17: '4.25rem'
       },
       letterSpacing: {
+        '0.1px': '0.1px',
         px: '0.0625rem',
         '2.5xl': '1.25rem'
       },

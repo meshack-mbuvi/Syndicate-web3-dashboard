@@ -2,10 +2,10 @@ import { GetAdminCollectives } from '@/graphql/queries';
 import { AppState } from '@/state';
 import { setERC721Collective } from '@/state/erc721Collective';
 import { useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useCollectiveClaimDetails = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,11 @@ const useCollectiveClaimDetails = () => {
       }
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
-    skip: !walletAddress || !router.isReady || !activeNetwork.chainId
+    skip:
+      !walletAddress ||
+      !router.isReady ||
+      !activeNetwork.chainId ||
+      !collectiveAddress
   });
 
   // Process collective details for claim page

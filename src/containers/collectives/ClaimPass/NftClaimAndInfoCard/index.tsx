@@ -8,14 +8,14 @@ import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useCollectiveClaimDetails from '@/hooks/useCollectiveClaimDetails';
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
-import { formatUnix } from 'src/utils/dateUtils';
 import { getOpenSeaLink } from '@/utils/api/nfts';
+import { getCollectiveBalance } from '@/utils/contracts/collective';
+import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getWeiAmount } from '@/utils/conversions';
-import { getCollectiveBalance } from '@/utils/contracts/collective';
-import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
+import { formatUnix } from 'src/utils/dateUtils';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
