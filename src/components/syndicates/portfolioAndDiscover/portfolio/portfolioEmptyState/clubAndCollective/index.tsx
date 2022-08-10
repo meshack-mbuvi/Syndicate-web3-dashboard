@@ -1,7 +1,10 @@
 import { CtaButton } from '@/components/CTAButton';
 import FadeBetweenChildren from '@/components/fadeBetweenChildren';
 import { B2, H3 } from '@/components/typography';
+import { AppState } from '@/state';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 enum HoverState {
   HOVERING = 1,
@@ -21,6 +24,12 @@ interface Props {
 export const CreateClubOrCollective: React.FC<Props> = ({
   emptyStateType = EmptyStateType.ALL
 }) => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
   const [clubHoverStateIndex, setClubHoverStateIndex] = useState(
     HoverState.NOT_HOVERING
   );
@@ -28,6 +37,14 @@ export const CreateClubOrCollective: React.FC<Props> = ({
     HoverState.NOT_HOVERING
   );
   const animationDuration = 'duration-700';
+  const router = useRouter();
+
+  const goToCreateFlow = (isCreatingClub: boolean) => {
+    router.push({
+      pathname: `/${isCreatingClub ? 'clubs' : 'collectives'}/create`,
+      query: { chain: activeNetwork.network }
+    });
+  };
 
   // empty state for clubs
   const clubsEmptyState = (
@@ -43,6 +60,12 @@ export const CreateClubOrCollective: React.FC<Props> = ({
       }}
       onBlur={() => {
         setClubHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      role="button"
+      tabIndex={0}
+      onClick={() => goToCreateFlow(true)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') goToCreateFlow(true);
       }}
       className={`flex flex-row md:flex-col sm:space-x-8 md:space-x-0 border-gray-syn7 ${
         emptyStateType === EmptyStateType.ALL
@@ -122,6 +145,12 @@ export const CreateClubOrCollective: React.FC<Props> = ({
       }}
       onBlur={() => {
         setCollectivesHoverStateIndex(HoverState.NOT_HOVERING);
+      }}
+      role="button"
+      tabIndex={0}
+      onClick={() => goToCreateFlow(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') goToCreateFlow(false);
       }}
       className={`flex flex-row md:flex-col sm:space-x-8 md:space-x-0 border-gray-syn7 ${
         emptyStateType === EmptyStateType.ALL
