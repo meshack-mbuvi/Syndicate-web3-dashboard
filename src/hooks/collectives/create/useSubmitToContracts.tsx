@@ -14,6 +14,7 @@ import {
   setCollectiveTransactionError,
   setCollectiveTransactionHash
 } from '@/state/createCollective/slice';
+import { useMemo } from 'react';
 
 const useSubmitToContracts = () => {
   const dispatch = useDispatch();
@@ -39,18 +40,30 @@ const useSubmitToContracts = () => {
     creationStatus
   } = useCreateState();
 
-  const collectiveParams: ICollectiveParams = {
-    collectiveName: name,
-    collectiveSymbol: symbol,
-    ethPrice: getWeiAmount(web3, String(pricePerNFT), 18, true),
-    maxPerMember: +maxPerWallet,
-    openUntil: openUntil,
-    startTime: '0',
-    endTime: String(EpochCloseTime),
-    totalSupply: +maxSupply,
-    tokenURI: creationStatus.ipfsHash,
-    allowTransfer: transferrable
-  };
+  const collectiveParams = useMemo<ICollectiveParams>(() => {
+    return {
+      collectiveName: name,
+      collectiveSymbol: symbol,
+      ethPrice: getWeiAmount(web3, String(pricePerNFT), 18, true),
+      maxPerMember: +maxPerWallet,
+      openUntil: openUntil,
+      startTime: '0',
+      endTime: String(EpochCloseTime),
+      totalSupply: +maxSupply,
+      tokenURI: 'ipfs://' + creationStatus.ipfsHash,
+      allowTransfer: transferrable
+    };
+  }, [
+    name,
+    symbol,
+    pricePerNFT,
+    maxPerWallet,
+    openUntil,
+    EpochCloseTime,
+    maxSupply,
+    transferrable,
+    creationStatus.ipfsHash
+  ]);
 
   const submit = async () => {
     dispatch(setCollectiveWaitingForConfirmation(true));

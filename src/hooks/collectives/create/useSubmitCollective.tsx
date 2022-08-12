@@ -8,10 +8,15 @@ import {
   setIpfsHash
 } from '@/state/createCollective/slice';
 import { useDispatch } from 'react-redux';
+import useCreateState from './useCreateState';
+import { useEffect } from 'react';
 
 const useSubmitCollective = () => {
   const dispatch = useDispatch();
   const { submit: submitToContracts } = useSubmitToContracts();
+  const {
+    creationStatus: { ipfsHash }
+  } = useCreateState();
 
   const beforeMetadataSubmission = () => {
     dispatch(setCollectiveSubmittingToIPFS(true));
@@ -25,10 +30,16 @@ const useSubmitCollective = () => {
     dispatch(setIpfsError(true));
   };
 
+  useEffect(() => {
+    if (ipfsHash) {
+      submitToContracts();
+    }
+  }, [ipfsHash]);
+
   const { submit: submitMetadata } = useSubmitMetadata(
     beforeMetadataSubmission,
     onIpfsHash,
-    submitToContracts,
+    () => {},
     onIpfsError
   );
 

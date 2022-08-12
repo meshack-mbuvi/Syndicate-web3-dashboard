@@ -2,6 +2,7 @@
 // ==============================================================
 
 import { postMetadata } from '@/utils/api/collectives';
+import { useEffect, useState } from 'react';
 import useCreateState from './useCreateState';
 
 const useSubmitMetadata = (
@@ -13,6 +14,7 @@ const useSubmitMetadata = (
   const { name, symbol, description, artwork } = useCreateState();
 
   const submit = async () => {
+    let error = false;
     beforeSubmit();
     metadataSubmission: try {
       const { IpfsHash, status } = await postMetadata({
@@ -26,12 +28,17 @@ const useSubmitMetadata = (
         break metadataSubmission;
       } else {
         onError();
+        error = true;
       }
     } catch (e) {
       onError();
+      error = true;
     }
+
     //after successful metadata submission
-    onSuccess();
+    if (!error) {
+      onSuccess();
+    }
   };
 
   return {

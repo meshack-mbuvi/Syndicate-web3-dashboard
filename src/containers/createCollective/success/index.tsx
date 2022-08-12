@@ -40,9 +40,11 @@ export const SuccessRightPanel: React.FC = () => {
   const [collectiveAddress, setCollectiveAddress] = useState<string | null>(
     null
   );
+  const [collectiveName, setCollectiveName] = useState<string | null>('');
 
   const onCollectiveCreated = async (address: string) => {
     await setCollectiveAddress(address);
+    await setCollectiveName(name);
     dispatch(resetCollectiveCreationState());
   };
 
@@ -65,7 +67,7 @@ export const SuccessRightPanel: React.FC = () => {
   return (
     <div className="flex h-full items-center justify-center">
       <CollectivesCreateSuccess
-        name={name}
+        name={collectiveName}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}
         blockExplorerLink={

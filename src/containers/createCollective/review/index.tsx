@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import CreateCollectiveModals from '../shared/createCollectiveModals';
 import {
   useCreateState,
   useSubmitCollective,
@@ -37,9 +38,6 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
   const {
     handleNameChange,
     handleTokenSymbolChange,
-    // handleDescriptionChange,
-    // setContinueButtonActive,
-    // ContinueButtonActive,
     handleTimeWindowChange,
     handlePriceToJoinChange,
     handleMaxPerWalletChange,
@@ -159,6 +157,7 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
           handleAgreedToTerms={() => setAgreedToTerms(!hasAgreedToTerms)}
         />
       </div>
+      <CreateCollectiveModals handleReSubmit={launchCollective} />
     </div>
   );
 };
