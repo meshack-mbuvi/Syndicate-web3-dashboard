@@ -7,7 +7,6 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import useCollectiveClaimDetails from '@/hooks/useCollectiveClaimDetails';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
@@ -31,25 +30,22 @@ const NftClaimAndInfoCard: React.FC = () => {
         }
       }
     },
-    erc721CollectiveReducer: { erc721Collective }
+    collectiveDetailsReducer: {
+      details: {
+        mintPrice,
+        maxTotalSupply,
+        totalSupply,
+        collectiveSymbol,
+        collectiveName,
+        createdAt,
+        ownerAddress,
+        collectiveAddress,
+        numOwners,
+        maxPerWallet
+      },
+      loadingState: { isFetchingCollective }
+    }
   } = useSelector((state: AppState) => state);
-
-  const {
-    contractAddress,
-    ownerAddress,
-    createdAt,
-    tokenName,
-    tokenSymbol,
-    priceEth,
-    totalSupply,
-    totalUnclaimed,
-    maxTotalSupply,
-    maxPerMember,
-    numOwners
-  } = erc721Collective;
-  const collectivePrice = getWeiAmount(web3, priceEth.toString(), 18, false);
-
-  const { loading } = useCollectiveClaimDetails();
 
   const {
     gas: gasPrice,
@@ -59,10 +55,10 @@ const NftClaimAndInfoCard: React.FC = () => {
     contract: ContractMapper.EthPriceMintModuleMint,
     withFiatCurrency: true,
     args: {
-      priceEth,
-      contractAddress
+      mintPrice,
+      collectiveAddress
     },
-    skipQuery: !priceEth || !contractAddress
+    skipQuery: !mintPrice || !collectiveAddress
   });
 
   const [isAccountEligible, setIsAccountEligible] = useState(true);
@@ -95,8 +91,8 @@ const NftClaimAndInfoCard: React.FC = () => {
     try {
       const { ethPriceMintModule } = syndicateContracts;
       await ethPriceMintModule.mint(
-        priceEth.toString(),
-        contractAddress,
+        getWeiAmount(web3, mintPrice, 18, true),
+        collectiveAddress,
         '1', // Hardcode to mint a single token
         account,
         onTxConfirm,
@@ -104,15 +100,16 @@ const NftClaimAndInfoCard: React.FC = () => {
         onTxFail
       );
     } catch (error) {
+      console.log({ error });
       setProgressState(ProgressState.FAILURE);
     }
   };
 
   useEffect(() => {
-    getCollectiveBalance(contractAddress, account, web3).then((balance) => {
-      setHasAccountReachedMaxPasses(balance >= maxPerMember);
+    getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
+      setHasAccountReachedMaxPasses(balance >= +maxPerWallet);
     });
-  }, [account, contractAddress, maxPerMember, web3]);
+  }, [account, collectiveAddress, maxPerWallet, web3]);
 
   useEffect(() => {
     if (+maxTotalSupply > 0) {
@@ -123,11 +120,11 @@ const NftClaimAndInfoCard: React.FC = () => {
   }, [maxTotalSupply, totalSupply]);
 
   useEffect(() => {
-    if (loading) return;
-    getOpenSeaLink(contractAddress, chainId).then((link: string) => {
+    if (isFetchingCollective) return;
+    getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
       setOpenSeaLink(link);
     });
-  }, [loading, contractAddress, chainId]);
+  }, [isFetchingCollective, collectiveAddress, chainId]);
 
   useEffect(() => {
     let _walletState = WalletState.NOT_CONNECTED;
@@ -156,7 +153,7 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   // open the collective details page
   const handleClick = () => {
-    window.location.pathname = `/collectives/${contractAddress}`;
+    window.location.pathname = `/collectives/${collectiveAddress}`;
   };
 
   // Close modal on outside click
@@ -167,7 +164,7 @@ const NftClaimAndInfoCard: React.FC = () => {
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
       <div className="w-full">
-        {loading ? (
+        {isFetchingCollective ? (
           <div className="space-y-12">
             <div className="space-y-2">
               <SkeletonLoader width="48" height="4" />
@@ -209,17 +206,17 @@ const NftClaimAndInfoCard: React.FC = () => {
           </div>
         ) : (
           <ClaimCollectivePass
-            dateOfCreation={formatUnix(createdAt, 'MMM D, yyyy')}
-            nameOfCollective={tokenName}
+            dateOfCreation={formatUnix(+createdAt, 'MMM D, yyyy')}
+            nameOfCollective={collectiveName}
             nameOfCreator={shortenOwnerAddress(ownerAddress)}
             links={{
-              externalLink: `${baseUrl}/address/${contractAddress}`,
+              externalLink: `${baseUrl}/address/${collectiveAddress}`,
               openSea: openSeaLink
             }}
-            numberOfExistingMembers={numOwners}
+            numberOfExistingMembers={+numOwners}
             priceToJoin={{
-              fiatAmount: collectivePrice * nativeTokenPrice,
-              tokenAmount: collectivePrice,
+              fiatAmount: +mintPrice * nativeTokenPrice,
+              tokenAmount: +mintPrice,
               tokenSymbol: symbol
             }}
             gasEstimate={
@@ -231,8 +228,10 @@ const NftClaimAndInfoCard: React.FC = () => {
                   }
                 : null
             }
-            maxTotalPasses={maxTotalSupply}
-            remainingPasses={totalUnclaimed}
+            maxTotalPasses={+maxTotalSupply}
+            remainingPasses={
+              +maxTotalSupply ? +maxTotalSupply - +totalSupply : 0
+            }
             walletState={walletState}
             progressState={progressState}
             transactionHash={transactionHash}
@@ -251,7 +250,7 @@ const NftClaimAndInfoCard: React.FC = () => {
         transactionHash={transactionHash}
         handleClick={handleClick}
         socialURL={shareUrl}
-        description={`Just joined ${tokenName} (${tokenSymbol}) by claiming the collective’s NFT on Syndicate 🎉 `}
+        description={`Just joined ${collectiveName} (${collectiveSymbol}) by claiming the collective’s NFT on Syndicate 🎉 `}
         customVisual={
           <div className="bg-black w-full h-full">
             <CollectivesInteractiveBackground
@@ -264,7 +263,7 @@ const NftClaimAndInfoCard: React.FC = () => {
             />
           </div>
         }
-        title={`Welcome, ${tokenName} #${+totalSupply + 1}.`}
+        title={`Welcome, ${collectiveName} #${+totalSupply + 1}.`}
         buttonLabel={
           <div className="flex justify-center space-x-2">
             <div>View collective</div>

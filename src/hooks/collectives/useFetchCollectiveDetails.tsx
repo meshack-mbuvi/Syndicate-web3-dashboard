@@ -64,6 +64,7 @@ const useFetchCollectiveDetails = (
         data.syndicateCollectives[data.syndicateCollectives.length - 1];
       const {
         mintPrice,
+        createdAt,
         ownerAddress,
         numMinted,
         numOwners,
@@ -88,6 +89,7 @@ const useFetchCollectiveDetails = (
           totalSupply,
           numMinted,
           numOwners,
+          createdAt,
           owners,
           isTransferable,
           collectiveAddress: address,

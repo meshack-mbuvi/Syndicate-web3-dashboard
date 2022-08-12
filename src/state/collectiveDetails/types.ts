@@ -16,6 +16,7 @@ export interface ICollectiveDetails {
   maxPerWallet: string;
   maxTotalSupply: string;
   totalSupply: string;
+  createdAt: string;
   numMinted: string;
   numOwners: string;
   owners: any;
@@ -52,6 +53,7 @@ export const initialState: IState = {
     maxPerWallet: '',
     maxTotalSupply: '',
     totalSupply: '',
+    createdAt: '',
     numMinted: '',
     numOwners: '',
     owners: [],
