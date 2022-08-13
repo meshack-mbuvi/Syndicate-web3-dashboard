@@ -9,6 +9,7 @@ import '../styles/animation.css';
 import '../styles/custom-datepicker.css';
 import '../styles/global.css';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAmplitude } from '@/components/amplitude';
 import FontsPreloader from '@/components/fonts';
 import BeforeGettingStartedProvider from '@/context/beforeGettingStartedContext';
@@ -42,7 +43,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/animation.css';
 import '../styles/custom-datepicker.css';
 import '../styles/global.css';
-
 //Binding events.
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
@@ -70,6 +70,11 @@ const StateProviders: React.FC = ({ children }) => (
     </OnboardingProvider>
   </SplitFactory>
 );
+
+// react-query
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5000 } }
+});
 
 const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
   Component,
@@ -103,7 +108,9 @@ const App = (props) => {
   return (
     <StateProviders>
       <ConnectWalletProvider>
-        <Body {...props} />
+        <QueryClientProvider client={queryClient}>
+          <Body {...props} />
+        </QueryClientProvider>
       </ConnectWalletProvider>
     </StateProviders>
   );

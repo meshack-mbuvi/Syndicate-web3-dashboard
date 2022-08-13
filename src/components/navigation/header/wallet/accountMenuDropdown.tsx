@@ -6,13 +6,19 @@ import { formatAddress } from '@/utils/formatAddress';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { ExternalLinkColor } from '@/components/iconWrappers';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
+import {
+  AddressImageSize,
+  AddressLayout,
+  AddressWithENS
+} from '@/components/shared/ensAddress';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 
 interface IAddressMenuDropDown {
   Web3: any;
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  Web3: { account, providerName, web3 }
+  Web3: { account, providerName, web3, ensResolver }
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
 
@@ -33,18 +39,27 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     }
   }, [account, nativeBalance]);
 
-  const formattedAddress = formatAddress(account, 7, 6);
+  const formattedAddress = formatAddress(account, 6, 4);
+
+  const { data } = useFetchEnsAssets(ensResolver);
 
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
           <Menu.Button
-            className={`flex rounded-full pl-5 pr-4 py-3 sm:py-1 items-center ${
+            className={`flex rounded-full pl-3 pr-4 py-3 sm:py-1 items-center ${
               open ? 'bg-gray-syn7' : 'bg-gray-syn8'
             } h-10 hover:bg-gray-syn7`}
           >
-            <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
+            <AddressWithENS
+              address={{ label: formattedAddress }}
+              name={data?.name}
+              image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
+              layout={AddressLayout.ONE_LINE}
+            />
+            {
+              /* <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
               <span className="text-gray-syn4">
                 {formattedAddress.slice(0, 2)}
               </span>
@@ -54,10 +69,15 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
               <span className="hidden sm:inline-block">
                 {formattedAddress.slice(2)}
               </span>
-            </span>
-            <div className="flex items-center ml-2">
-              <img src="/images/chevron-down.svg" width="9" alt="down-arrow" />
-            </div>
+            </span>*/
+              <div className="flex items-center ml-3">
+                <img
+                  src="/images/chevron-down.svg"
+                  width="9"
+                  alt="down-arrow"
+                />
+              </div>
+            }
           </Menu.Button>
           <Transition
             show={open}
