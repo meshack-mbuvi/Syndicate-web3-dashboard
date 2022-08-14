@@ -24,6 +24,8 @@ import {
   UploaderProgressType
 } from '@/components/uploaders/fileUploader';
 import { EditRowIndex } from '@/state/collectiveDetails/types';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 
 const ModifyCollectiveSettings: React.FC = () => {
   const {
@@ -38,7 +40,7 @@ const ModifyCollectiveSettings: React.FC = () => {
         maxPerWallet,
         collectiveAddress,
         mintEndTime,
-        ipfsHash,
+        metadataCid,
         description,
         isTransferable: existingIsTransferable,
         isOpen: existingIsOpen
@@ -50,9 +52,13 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const collectiveImage = `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/${ipfsHash}`;
+  // intermediate step to fetch the nft details from the metadataCid
+  const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
+    useFetchCollectiveMetadata(metadataCid);
 
-  const loading = false; // TODO loading state while fetching club info
+  // console.log('nftMetadata', nftMetadata);
+  // console.log('nftMetadata?.media', nftMetadata?.media);
+  // console.log('isLoadingNftMetadata', isLoadingNftMetadata);
 
   const [showImageUploader, setShowImageUploader] = useState(false);
 
@@ -103,7 +109,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             <div className="absolute top-0">
               {' '}
               <BackButton
-                isHidden={loading}
+                isHidden={isLoadingNftMetadata}
                 isSettingsPage={true}
                 transform="left-14 top-0"
               />
@@ -115,139 +121,156 @@ const ModifyCollectiveSettings: React.FC = () => {
 
       <div className="py-16 transition-all flex flex-col space-y-18">
         {/* Collective NFT */}
-        <CollapsibleTable
-          title="Collective NFT"
-          expander={{
-            isExpandable: false
-          }}
-          rows={[
-            {
-              title: 'Name',
-              value: collectiveName,
-              edit: {
-                isEditable: false
-              }
-            },
-            {
-              title: 'Token symbol',
-              value: collectiveSymbol,
-              edit: {
-                isEditable: false
-              }
-            },
-            {
-              title: 'Contract address',
-              value: <CopyText txt={collectiveAddress} />,
-              edit: {
-                isEditable: false
-              }
-            },
-            {
-              title: (
-                <>
-                  <span
-                    className="inline-flex space-x-2"
-                    data-tip
-                    data-for="tooltip"
-                  >
-                    <div>IPFS CID</div>
-                    <img
-                      src="/images/question.svg"
-                      alt="Tooltip"
-                      className="cursor-pointer"
-                    />
-                  </span>
-                  <ReactTooltip
-                    id="tooltip"
-                    place="right"
-                    effect="solid"
-                    className="actionsTooltip __tooltip_override w-76"
-                    arrowColor="#232529"
-                    backgroundColor="#232529"
-                  >
-                    The Content Identifier (CID) is a unique
-                    <br />
-                    identifier of this asset that is generated
-                    <br />
-                    when it’s uploaded to the IPFS network
-                  </ReactTooltip>
-                </>
-              ),
-              value: <CopyText txt={ipfsHash} />,
-              edit: {
-                isEditable: false
-              }
-            },
-            {
-              title: 'Image',
-              value: (
-                <div className="w-full">
-                  <NFTPreviewer
-                    mediaSource={collectiveImage}
-                    mediaType={NFTMediaType.IMAGE}
-                    mediaOnly={true}
-                    isEditable={true}
-                    handleEdit={() => {
-                      setShowImageUploader(true);
-                      setActiveRow(EditRowIndex.Image);
-                    }}
-                  />
-                </div>
-              ),
-              edit: {
-                isEditable: false, // Hack to make edit image with preview
-                inputWithPreview: showImageUploader,
-                showCallout: true,
-                rowIndex: EditRowIndex.Image,
-                handleEdit,
-                inputField: (
-                  <div className="w-full flex flex-col space-y-6">
+        {/* console.log('isLoadingNftMetadata', nftMetadata) */}
+        {isLoadingNftMetadata ? (
+          <SkeletonLoader width="50vw" height="50vh" />
+        ) : (
+          <CollapsibleTable
+            title="Collective NFT"
+            expander={{
+              isExpandable: false
+            }}
+            rows={[
+              {
+                title: 'Name',
+                value: collectiveName,
+                edit: {
+                  isEditable: false
+                }
+              },
+              {
+                title: 'Token symbol',
+                value: collectiveSymbol,
+                edit: {
+                  isEditable: false
+                }
+              },
+              {
+                title: 'Contract address',
+                value: <CopyText txt={collectiveAddress} />,
+                edit: {
+                  isEditable: false
+                }
+              },
+              {
+                title: (
+                  <>
+                    <span
+                      className="inline-flex space-x-2"
+                      data-tip
+                      data-for="tooltip"
+                    >
+                      <div>IPFS CID</div>
+                      <img
+                        src="/images/question.svg"
+                        alt="Tooltip"
+                        className="cursor-pointer"
+                      />
+                    </span>
+                    <ReactTooltip
+                      id="tooltip"
+                      place="right"
+                      effect="solid"
+                      className="actionsTooltip __tooltip_override w-76"
+                      arrowColor="#232529"
+                      backgroundColor="#232529"
+                    >
+                      The Content Identifier (CID) is a unique
+                      <br />
+                      identifier of this asset that is generated
+                      <br />
+                      when it’s uploaded to the IPFS network
+                    </ReactTooltip>
+                  </>
+                ),
+                value: <CopyText txt={metadataCid} />,
+                edit: {
+                  isEditable: false
+                }
+              },
+              {
+                title: 'Image',
+                value: (
+                  <div className="w-full">
                     <NFTPreviewer
-                      mediaSource={collectiveImage}
-                      mediaType={NFTMediaType.IMAGE}
+                      mediaSource={
+                        nftMetadata
+                          ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/${nftMetadata?.media}`
+                          : null
+                      }
+                      // loading={isLoadingNftMetadata} //TODO use this somehow!
+                      mediaType={
+                        nftMetadata?.image === null
+                          ? NFTMediaType.VIDEO
+                          : NFTMediaType.IMAGE
+                      }
                       mediaOnly={true}
                       isEditable={true}
-                    />
-
-                    <FileUploader
-                      progressPercent={0}
-                      fileName={'artwork.png'}
-                      successText={'uploaded'}
-                      promptTitle="Upload artwork"
-                      promptSubtitle="PNG or MP4 allowed"
-                      progressDisplayType={UploaderProgressType.SPINNER}
-                      handleUpload={() => null}
-                      handleCancelUpload={() => null}
-                      accept={'.png, .jpg, .jpeg, .gif, .mp4'}
-                      heightClass="h-18"
+                      handleEdit={() => {
+                        setShowImageUploader(true);
+                        setActiveRow(EditRowIndex.Image);
+                      }}
                     />
                   </div>
-                )
-              }
-            },
-            {
-              title: 'Description',
-              value: description,
-              edit: {
-                isEditable: true,
-                showCallout: true,
-                rowIndex: EditRowIndex.Description,
-                handleEdit,
-                inputField: (
-                  <TextArea
-                    value={description}
-                    handleValueChange={(e) => dispatch(setDescription(e))}
-                    placeholderLabel="Description about this NFT collection that will be visible everywhere"
-                    widthClass="w-full"
-                    heightRows={5}
-                  />
-                )
-              }
-            }
-          ]}
-          {...{ activeRow, setActiveRow }}
-        />
+                ),
+                edit: {
+                  isEditable: false, // Hack to make edit image with preview
+                  inputWithPreview: showImageUploader,
+                  showCallout: true,
+                  rowIndex: EditRowIndex.Image,
+                  handleEdit,
+                  inputField: (
+                    <div className="w-full flex flex-col space-y-6">
+                      <NFTPreviewer
+                        mediaSource={nftMetadata?.media}
+                        mediaType={
+                          nftMetadata?.image == null
+                            ? NFTMediaType.VIDEO
+                            : NFTMediaType.IMAGE
+                        }
+                        mediaOnly={true}
+                        isEditable={true}
+                      />
 
+                      <FileUploader
+                        progressPercent={0}
+                        fileName={'artwork.png'}
+                        successText={'uploaded'}
+                        promptTitle="Upload artwork"
+                        promptSubtitle="PNG or MP4 allowed"
+                        progressDisplayType={UploaderProgressType.SPINNER}
+                        handleUpload={() => null}
+                        handleCancelUpload={() => null}
+                        accept={'.png, .jpg, .jpeg, .gif, .mp4'}
+                        heightClass="h-18"
+                      />
+                    </div>
+                  )
+                }
+              },
+              {
+                title: 'Description',
+                value: description,
+                edit: {
+                  isEditable: true,
+                  showCallout: true,
+                  rowIndex: EditRowIndex.Description,
+                  handleEdit,
+                  inputField: (
+                    <TextArea
+                      value={description}
+                      handleValueChange={(e) => dispatch(setDescription(e))}
+                      placeholderLabel="Description about this NFT collection that will be visible everywhere"
+                      widthClass="w-full"
+                      heightRows={5}
+                    />
+                  )
+                }
+              }
+            ]}
+            {...{ activeRow, setActiveRow }}
+          />
+        )}
         {/* Open to new members */}
         <CollapsibleTable
           title="Open to new members"

@@ -73,14 +73,14 @@ export const NFTPreviewer: React.FC<Props> = ({
                 muted={muted}
                 className={`${'object-cover'} absolute h-full w-full`}
               >
-                <source src={mediaSource} type="video/mp4"></source>
+                <source src={`url(${mediaSource})`} type="video/mp4"></source>
               </video>
             )}
             {mediaType === NFTMediaType.IMAGE && (
               <div
                 className="w-full h-full absolute"
                 style={{
-                  backgroundImage: `url('${mediaSource}')`,
+                  backgroundImage: `url(${mediaSource})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -147,7 +147,7 @@ export const NFTPreviewer: React.FC<Props> = ({
                     <div
                       className="w-full h-full absolute"
                       style={{
-                        backgroundImage: `url('${mediaSource}')`,
+                        backgroundImage: `url(${mediaSource})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                       }}

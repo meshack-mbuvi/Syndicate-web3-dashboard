@@ -28,7 +28,7 @@ export const SubmitContent: React.FC<{
   const {
     collectiveDetailsReducer: {
       activeRow,
-      details: { mintPrice, ipfsHash, numMinted, mintEndTime, maxPerWallet },
+      details: { mintPrice, metadataCid, numMinted, mintEndTime, maxPerWallet },
       settings: { isTransferable }
     }
   } = useSelector((state: AppState) => state);
@@ -80,7 +80,7 @@ export const SubmitContent: React.FC<{
               args={{
                 collectiveAddress,
                 mintPrice,
-                ipfsHash,
+                metadataCid,
                 mintEndTime,
                 maxPerWallet,
                 isTransferable

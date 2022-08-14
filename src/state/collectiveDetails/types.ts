@@ -23,9 +23,9 @@ export interface ICollectiveDetails {
   mintPrice: string;
   isTransferable: boolean;
   mintEndTime: string;
-  ipfsHash: string;
   description: string;
   isOpen: boolean;
+  metadataCid: string;
   mediaCid: string;
 }
 
@@ -60,7 +60,7 @@ export const initialState: IState = {
     mintPrice: '',
     isTransferable: true,
     mintEndTime: '',
-    ipfsHash: '',
+    metadataCid: '',
     description: '',
     isOpen: true,
     mediaCid: ''

@@ -96,7 +96,7 @@ const useFetchCollectiveDetails = (
           mintPrice: getWeiAmount(web3, mintPrice, 18, false),
           isOpen: true, // TODO: get this from graph
           mintEndTime: '1667019540', // TODO: get this from graph
-          ipfsHash: metadataCid,
+          metadataCid,
           description,
           mediaCid
         })
