@@ -50,7 +50,7 @@ const useSubmitToContracts = () => {
       startTime: '0',
       endTime: String(EpochCloseTime),
       totalSupply: +maxSupply,
-      tokenURI: 'ipfs://' + creationStatus.ipfsHash,
+      tokenURI: creationStatus.ipfsHash,
       allowTransfer: transferrable
     };
   }, [
