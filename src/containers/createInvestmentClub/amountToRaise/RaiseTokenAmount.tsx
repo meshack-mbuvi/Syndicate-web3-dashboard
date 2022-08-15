@@ -82,12 +82,9 @@ const RaiseTokenAmount = (props: {
       </button>
       <p className="mt-6">Upper limit</p>
       <div
-        className={cn(
-          'mt-2 w-full flex border rounded-md overflow-hidden border-gray-24 hover:border-gray-syn3',
-          {
-            'border-red-error': error
-          }
-        )}
+        className={cn('mt-2 w-full', {
+          'border-red-error': error
+        })}
         data-tip
         data-for="disclaimer-tip"
       >
@@ -100,9 +97,9 @@ const RaiseTokenAmount = (props: {
             }
             onChange(e);
           }}
-          extraClasses={`flex w-full border-none min-w-0 text-base font-whyte focus:ring-0 ${
+          extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced ${
             error ? 'border border-red-500 focus:border-red-500' : ''
-          } flex-grow rounded-l-md dark-input-field-advanced`}
+          }`}
           value={value}
           depositTokenLogo={depositTokenLogo || '/images/token-gray-4.svg'}
         />

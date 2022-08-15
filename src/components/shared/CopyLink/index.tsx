@@ -5,6 +5,8 @@ import {
   CopyLinkIcon,
   LockIcon
 } from 'src/components/iconWrappers';
+import TokenGateBanner from '@/containers/managerActions/clubTokenMembers/tokenGateBanner';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 
 interface Props {
   link: string;
@@ -13,6 +15,7 @@ interface Props {
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
   showConfettiSuccess?: boolean;
+  hasTokenGating?: boolean;
   borderColor?: string;
   accentColor?: string;
   copyButtonText?: string;
@@ -28,6 +31,7 @@ const CopyLink: FC<Props> = ({
   showCopiedState,
   creatingSyndicate = false,
   syndicateSuccessfullyCreated = false,
+  hasTokenGating = false,
   showConfettiSuccess = false,
   borderColor = 'border-gray-syn6',
   accentColor = 'green',
@@ -38,6 +42,9 @@ const CopyLink: FC<Props> = ({
   borderRadius = 'rounded',
   copyBorderRadius = 'rounded'
 }) => {
+  const { isReady, isClubMixinGuardTreatmentOn } =
+    useClubMixinGuardFeatureFlag();
+
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
     <div
@@ -61,59 +68,67 @@ const CopyLink: FC<Props> = ({
     </div>
   );
 
+  // token-gated banner.
+  // TODO: replace this line with a check for if club is token-gated
+  const showTokenGatedBanner =
+    hasTokenGating && isReady && isClubMixinGuardTreatmentOn;
+
   // content to display after completion of the syndicate creation process.
   const defaultContent = (
-    <div
-      className={`w-full border-1 relative ${
-        customZIndex ?? ''
-      } ${borderColor} ${backgroundColor} ${
-        hoverEffect ? 'hover:bg-gray-syn7' : ''
-      } transition-all duration-300 ${borderRadius} flex ${
-        syndicateSuccessfullyCreated && showConfettiSuccess
-          ? 'p-4'
-          : 'pl-4 py-2 pr-2'
-      }`}
-    >
-      <CopyToClipboard text={link}>
-        <button
-          className="overflow-hidden flex items-center w-full"
-          onClick={updateCopyState}
-        >
-          <div className="flex-grow-1 mr-2">
-            <LockIcon color={`text-${accentColor}`} />
-          </div>
-
-          <span
-            className={`line-clamp-1 w-full overflow-hidden flex-grow-1 text-left text-sm ${
-              syndicateSuccessfullyCreated && showConfettiSuccess
-                ? `text-${accentColor}`
-                : `text-transparent bg-clip-text bg-gradient-to-r from-${accentColor}`
-            }`}
+    <div className="flex flex-col w-full">
+      <div
+        className={`w-full border-1 relative ${
+          customZIndex ?? ''
+        } ${borderColor} ${backgroundColor} ${
+          hoverEffect ? 'hover:bg-gray-syn7' : ''
+        } transition-all duration-300 ${borderRadius} flex ${
+          syndicateSuccessfullyCreated && showConfettiSuccess
+            ? 'p-4'
+            : 'pl-4 py-2 pr-2'
+        }`}
+      >
+        <CopyToClipboard text={link}>
+          <button
+            className="overflow-hidden flex items-center w-full"
+            onClick={updateCopyState}
           >
-            {link}
-          </span>
-          {!(syndicateSuccessfullyCreated && showConfettiSuccess) && (
-            <div
-              className={`flex-grow-1 px-3 ${
-                showCopiedState ? 'border-transparent' : `bg-${accentColor}`
-              } text-black flex h-10 justify-center items-center ${copyBorderRadius} hover:opacity-80`}
-            >
-              {showCopiedState ? (
-                <CopiedLinkIcon color={`text-${accentColor}`} />
-              ) : (
-                <CopyLinkIcon />
-              )}
-              <span
-                className={`ml-3 font-whyte-medium sm:text-base text-sm whitespace-nowrap ${
-                  showCopiedState && `text-${accentColor}`
-                }`}
-              >
-                {showCopiedState ? 'Copied' : copyButtonText}
-              </span>
+            <div className="flex-grow-1 mr-2">
+              <LockIcon color={`text-${accentColor}`} />
             </div>
-          )}
-        </button>
-      </CopyToClipboard>
+
+            <span
+              className={`line-clamp-1 w-full overflow-hidden flex-grow-1 text-left text-sm ${
+                syndicateSuccessfullyCreated && showConfettiSuccess
+                  ? `text-${accentColor}`
+                  : `text-transparent bg-clip-text bg-gradient-to-r from-${accentColor}`
+              }`}
+            >
+              {link}
+            </span>
+            {!(syndicateSuccessfullyCreated && showConfettiSuccess) && (
+              <div
+                className={`flex-grow-1 px-3 ${
+                  showCopiedState ? 'border-transparent' : `bg-${accentColor}`
+                } text-black flex h-10 justify-center items-center ${copyBorderRadius} hover:opacity-80`}
+              >
+                {showCopiedState ? (
+                  <CopiedLinkIcon color={`text-${accentColor}`} />
+                ) : (
+                  <CopyLinkIcon />
+                )}
+                <span
+                  className={`ml-3 font-whyte-medium sm:text-base text-sm whitespace-nowrap ${
+                    showCopiedState && `text-${accentColor}`
+                  }`}
+                >
+                  {showCopiedState ? 'Copied' : copyButtonText}
+                </span>
+              </div>
+            )}
+          </button>
+        </CopyToClipboard>
+      </div>
+      {showTokenGatedBanner && <TokenGateBanner />}
     </div>
   );
 

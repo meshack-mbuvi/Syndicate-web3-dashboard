@@ -1,4 +1,5 @@
 import React from 'react';
+import CheckmarkIcon from '../icons/checkmark';
 
 interface Props {
   title?: string;
@@ -6,6 +7,8 @@ interface Props {
   helperText?: string;
   handleAction?: () => void;
   customClasses?: string;
+  errors?: string;
+  validAddressCount?: number;
 }
 
 export const InfoActionWrapper: React.FC<Props> = ({
@@ -14,18 +17,40 @@ export const InfoActionWrapper: React.FC<Props> = ({
   helperText,
   handleAction,
   customClasses,
-  children
+  children,
+  errors,
+  validAddressCount
 }) => {
+  const handleClick = () => {
+    if (!validAddressCount && errors) return null;
+    handleAction();
+  };
+
   return (
     <div className={`${customClasses} space-y-2`}>
       <div className="flex justify-between">
         <div>{title}</div>
-        <button className="text-blue" onClick={handleAction}>
-          {actionButtonLabel}
+        <button onClick={handleClick} disabled={validAddressCount && !errors}>
+          {validAddressCount && !errors ? (
+            <span className="flex items-center space-x-2 text-green cursor-default">
+              <CheckmarkIcon />
+              <span>
+                {validAddressCount}{' '}
+                {validAddressCount === 1 ? 'address' : 'addresses'}
+              </span>
+            </span>
+          ) : (
+            <span className="text-blue">{actionButtonLabel}</span>
+          )}
         </button>
       </div>
       <div>{children}</div>
-      <div className="text-gray-syn4 text-sm">{helperText}</div>
+
+      {errors ? (
+        <p className="text-red-500 text-xs break-all -mt-1 pb-11">{errors}</p>
+      ) : (
+        <div className="text-gray-syn4 text-sm">{helperText}</div>
+      )}
     </div>
   );
 };

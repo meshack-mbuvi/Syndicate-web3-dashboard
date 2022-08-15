@@ -15,6 +15,7 @@ import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
 import { H4 } from '@/components/typography';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
+import { DetailsSteps } from '@/context/CreateInvestmentClubContext/steps';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
@@ -25,11 +26,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     currentStep,
     setNextBtnDisabled,
     setShowSaveButton,
-    setEditMintMaxDate,
-    editMintMaxDate,
-    isEditStep,
-    setIsEditStep,
-    setCurrentStep
+    stepsNames,
+    setIsCustomDate
   } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState('');
@@ -115,6 +113,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
+      setIsCustomDate(false);
       // push amount to the redux store.
       dispatch(
         setMintEndTime({
@@ -123,22 +122,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         })
       );
 
-      // auto-proceed to the next step when selecting any of the
-      // pre-defined close times when editing the field.
-      if (editMintMaxDate) {
+      if (currentStep == stepsNames.indexOf(DetailsSteps.DATE)) {
         setTimeout(() => {
-          setEditMintMaxDate(!editMintMaxDate);
-        }, 400);
-      }
-
-      if (currentStep == 2) {
-        setTimeout(() => {
-          if (isEditStep) {
-            setCurrentStep(4);
-            setIsEditStep(false);
-          } else {
-            handleNext();
-          }
+          handleNext();
           setShowNextButton(true);
         }, 400);
       }
@@ -147,6 +133,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
       setNextBtnDisabled(false);
       setShowNextButton(true);
       setShowCustomDatePicker(true);
+      setIsCustomDate(true);
     }
   };
 
@@ -215,6 +202,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     if (mintEndTime.mintTime === 'Custom') {
       setShowCustomDatePicker(true);
+      setIsCustomDate(true);
       setShowNextButton(true);
       setActiveDateCard(3);
     }
@@ -222,92 +210,90 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <Fade delay={500}>
-      <div className="ml-5">
-        <div className={className}>
-          <H4 extraClasses="pb-1">When will deposits close?</H4>
-          <div className="text-sm text-gray-syn4 pb-4">
-            {' '}
-            Extending the close date will require an on-chain transaction with
-            gas, so aim for further in the future to leave ample time for
-            collection. You can close deposits early if needed.
+      <div className={className}>
+        <H4 extraClasses="pb-1">When will deposits close?</H4>
+        <div className="text-sm text-gray-syn4 pb-4">
+          {' '}
+          Extending the close date will require an on-chain transaction with
+          gas, so aim for further in the future to leave ample time for
+          collection. You can close deposits early if needed.
+        </div>
+        <div className="pb-4">
+          <div
+            className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
+            data-tip
+            data-for="disclaimer-tip"
+          >
+            {mintTimes.map(({ mintTime, value }, index) => (
+              <button
+                className="flex items-center w-full h-full"
+                key={index}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSetMintTime(index, { mintTime, value });
+                }}
+                disabled={disableButtons}
+              >
+                <DateCard
+                  mintTime={mintTime}
+                  isLastItem={mintTime === lastMintTime.mintTime}
+                  index={index}
+                  activeIndex={activeDateCard}
+                />
+              </button>
+            ))}
           </div>
-          <div className="pb-6">
-            <div
-              className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
-              data-tip
-              data-for="disclaimer-tip"
-            >
-              {mintTimes.map(({ mintTime, value }, index) => (
-                <button
-                  className="flex items-center w-full h-full"
-                  key={index}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSetMintTime(index, { mintTime, value });
-                  }}
-                  disabled={disableButtons}
+
+          {showCustomDatePicker && (
+            <div>
+              <animated.div
+                style={styles}
+                className="pb-2 mt-6 flex items-center justify-between"
+              >
+                <div style={{ width: '48%' }}>
+                  <div className="pb-2">Close date</div>
+                  <div className="">
+                    <DatePicker
+                      minDate={new Date()}
+                      popperProps={{
+                        positionFixed: true // use this to make the popper position: fixed
+                      }}
+                      closeOnScroll={(e) => e.target === document}
+                      selected={new Date(mintEndTime?.value * 1000)}
+                      onChange={(date: Date | null) =>
+                        handleDateChange(+date as any)
+                      }
+                      todayButton="Go to Today"
+                      dateFormat="P"
+                      formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                      showPopperArrow={false}
+                      dropdownMode="select"
+                      className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
+                    />
+                  </div>
+                </div>
+                <div style={{ width: '48%' }}>
+                  <div className="w-full">
+                    <div className="pb-2">Time</div>
+
+                    <TimeField
+                      handleTimeChange={handleTimeChange}
+                      isInErrorState={Boolean(closeTimeError)}
+                    />
+                  </div>
+                </div>
+              </animated.div>
+              {(warning || closeTimeError) && (
+                <div
+                  className={`${
+                    warning && !closeTimeError && 'text-yellow-warning'
+                  } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full`}
                 >
-                  <DateCard
-                    mintTime={mintTime}
-                    isLastItem={mintTime === lastMintTime.mintTime}
-                    index={index}
-                    activeIndex={activeDateCard}
-                  />
-                </button>
-              ))}
+                  {closeTimeError ? closeTimeError : warning ? warning : ''}
+                </div>
+              )}
             </div>
-
-            {showCustomDatePicker && (
-              <div>
-                <animated.div
-                  style={styles}
-                  className="pb-2 mt-6 flex items-center justify-between"
-                >
-                  <div style={{ width: '48%' }}>
-                    <div className="pb-2">Close date</div>
-                    <div className="">
-                      <DatePicker
-                        minDate={new Date()}
-                        popperProps={{
-                          positionFixed: true // use this to make the popper position: fixed
-                        }}
-                        closeOnScroll={(e) => e.target === document}
-                        selected={new Date(mintEndTime?.value * 1000)}
-                        onChange={(date: Date | null) =>
-                          handleDateChange(+date as any)
-                        }
-                        todayButton="Go to Today"
-                        dateFormat="P"
-                        formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                        showPopperArrow={false}
-                        dropdownMode="select"
-                        className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
-                      />
-                    </div>
-                  </div>
-                  <div style={{ width: '48%' }}>
-                    <div className="w-full">
-                      <div className="pb-2">Time</div>
-
-                      <TimeField
-                        handleTimeChange={handleTimeChange}
-                        isInErrorState={Boolean(closeTimeError)}
-                      />
-                    </div>
-                  </div>
-                </animated.div>
-                {(warning || closeTimeError) && (
-                  <div
-                    className={`${
-                      warning && !closeTimeError && 'text-yellow-warning'
-                    } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full`}
-                  >
-                    {closeTimeError ? closeTimeError : warning ? warning : ''}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </Fade>

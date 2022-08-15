@@ -14,13 +14,17 @@ interface Props {
   onClick?: (event?) => void;
   handlePrevious?: (event?) => void;
   handleNext?: (event?) => void;
+  currentStep?: number;
+  disabled?: boolean;
 }
 
 export const NavButton: React.FC<Props> = ({
   type,
   onClick,
   handleNext,
-  handlePrevious
+  handlePrevious,
+  currentStep,
+  disabled
 }) => {
   return (
     <div
@@ -48,10 +52,12 @@ export const NavButton: React.FC<Props> = ({
         </button>
       )}
       {(type === NavButtonType.UP || type === NavButtonType.VERTICAL) && (
-        <div
+        <button
           className={`p-1 -m-2 relative ${
             type === NavButtonType.VERTICAL && 'top-1'
           } text-gray-syn4 hover:text-white ease-out transition-all`}
+          onClick={type === NavButtonType.UP ? onClick : handlePrevious}
+          disabled={type === NavButtonType.UP && currentStep <= 1}
         >
           <svg
             className="fill-current w-5 h-5"
@@ -61,13 +67,23 @@ export const NavButton: React.FC<Props> = ({
           >
             <path d="M9.99568 6.25C9.77979 6.25 9.5639 6.32669 9.4171 6.47239L2.73316 12.5537C2.58636 12.684 2.5 12.8528 2.5 13.0445C2.5 13.4433 2.83679 13.75 3.28584 13.75C3.50173 13.75 3.70035 13.6733 3.84715 13.5506L9.99568 7.96779L16.1528 13.5506C16.291 13.6733 16.4896 13.75 16.7142 13.75C17.1632 13.75 17.5 13.4433 17.5 13.0445C17.5 12.8528 17.4136 12.684 17.2668 12.546L10.5829 6.47239C10.4188 6.32669 10.2202 6.25 9.99568 6.25Z" />
           </svg>
-        </div>
+        </button>
       )}
       {(type === NavButtonType.DOWN || type === NavButtonType.VERTICAL) && (
-        <div
+        <button
           className={`p-1 -m-2 relative ${
             type === NavButtonType.VERTICAL && 'top-1'
-          } text-gray-syn4 hover:text-white ease-out transition-all`}
+          } text-gray-syn4 ${
+            (type === NavButtonType.VERTICAL && currentStep === 0) ||
+            disabled
+              ? ''
+              : 'hover:text-white'
+          } ease-out transition-all`}
+          onClick={type === NavButtonType.DOWN ? onClick : handleNext}
+          disabled={
+            (type === NavButtonType.VERTICAL && currentStep === 0) ||
+            disabled
+          }
         >
           <svg
             className="fill-current w-5 h-5"
@@ -77,7 +93,7 @@ export const NavButton: React.FC<Props> = ({
           >
             <path d="M10.0043 13.75C10.2202 13.75 10.4361 13.6733 10.5829 13.5276L17.2668 7.44632C17.4136 7.31595 17.5 7.14724 17.5 6.95552C17.5 6.55675 17.1632 6.25 16.7142 6.25C16.4983 6.25 16.2997 6.32669 16.1529 6.44939L10.0043 12.0322L3.84715 6.44939C3.70898 6.32669 3.51036 6.25 3.28584 6.25C2.83679 6.25 2.5 6.55675 2.5 6.95552C2.5 7.14724 2.58636 7.31595 2.73316 7.45399L9.4171 13.5276C9.58117 13.6733 9.77979 13.75 10.0043 13.75Z" />
           </svg>
-        </div>
+        </button>
       )}
 
       {/* Horizontal navigation buttons */}

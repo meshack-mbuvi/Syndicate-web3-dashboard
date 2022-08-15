@@ -2,6 +2,11 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { Token } from '@/types/token';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import ExternalLinkIcon from '../icons/externalLink';
+import { ImportButton } from './ImportToken';
+
 export interface TokenDetailsProps {
   symbol: string;
   name: string;
@@ -9,6 +14,11 @@ export interface TokenDetailsProps {
   showCheckMark: boolean;
   isNavHighlighted?: boolean;
   onClick: () => void;
+  price?: number;
+  address?: string;
+  showImportBtn?: boolean;
+  collectionCount?: number;
+  decimals?: number;
 }
 
 // render each token item inside the token select drop-down
@@ -16,11 +26,20 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
   symbol,
   name,
   logoURI,
+  price,
+  collectionCount,
+  decimals,
+  address,
   showCheckMark,
   isNavHighlighted,
-  onClick
+  onClick,
+  showImportBtn
 }) => {
   const ref = React.createRef<HTMLButtonElement>();
+
+  const {
+    createInvestmentClubSliceReducer: { showTokenGateModal }
+  } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     if (isNavHighlighted && ref.current) {
@@ -29,41 +48,103 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
   }, [isNavHighlighted, ref]);
 
   return (
-    <button
-      className={`flex justify-between items-center w-full py-9px cursor-pointer hover:bg-gray-darkInput focus:bg-gray-syn7 transition-all ${
+    <div
+      className={`flex flex-row items-center hover:bg-gray-darkInput focus:bg-gray-syn7  ${
         isNavHighlighted ? 'bg-gray-darkInput' : ''
       }`}
-      onClick={onClick}
-      aria-pressed={isNavHighlighted}
-      ref={ref}
     >
-      <div className="flex justify-start items-center pl-8">
-        <Image
-          src={logoURI || '/images/token-gray-4.svg'}
-          width={30}
-          height={30}
-          alt={`${name} logo`}
+      <button
+        className={`flex justify-between items-center w-full py-9px transition-all ${
+          showImportBtn ? 'cursor-default' : 'cursor-pointer'
+        }`}
+        onClick={onClick}
+        aria-pressed={isNavHighlighted}
+        ref={ref}
+        disabled={showImportBtn}
+      >
+        <div className="flex justify-start items-center pl-8">
+          <Image
+            src={logoURI || '/images/token-gray-5.svg'}
+            width={30}
+            height={30}
+            alt={`${name} logo`}
+          />
+
+          <div className="flex flex-col ml-3">
+            <div className="flex">
+              <p className="text-white text-base sm:text-base">{name}</p>
+              <div className="inline-flex ml-3">
+                <p className="text-gray-3 text-base sm:text-base uppercase">
+                  {symbol}
+                </p>
+              </div>
+            </div>
+            {showImportBtn && (
+              <div className="flex flex-row items-center">
+                <span className="text-sm text-left text-gray-syn4 pr-1">
+                  via CoinGecko
+                </span>
+                <Image
+                  src="/images/coingecko.svg"
+                  alt="CoinGecko"
+                  width={16}
+                  height={16}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        {/* checkmark should show on selected token */}
+        {showCheckMark && !showTokenGateModal ? (
+          <div className="justify-end pr-8">
+            <Image
+              className="text-gray-3 text-sm sm:text-base uppercase"
+              width={16}
+              height={15}
+              src="/images/check-mark-grayscale.svg"
+              alt="Selected token"
+            />
+          </div>
+        ) : null}
+        {/* Show Token price */}
+        {showTokenGateModal ? (
+          <div className="flex flex-row items-center justify-end text-gray-syn4">
+            {price || collectionCount ? (
+              <>
+                <Image
+                  className="text-gray-3 text-sm sm:text-base uppercase"
+                  width={20}
+                  height={20}
+                  src={'/images/ETH.svg'}
+                  alt="eth-logo"
+                />
+                <span className="pr-3">
+                  {collectionCount ? `${collectionCount} items` : `$${price}`}
+                </span>
+              </>
+            ) : null}
+          </div>
+        ) : null}
+      </button>
+      {showTokenGateModal && (
+        <div className={showImportBtn ? 'pr-3' : 'pr-8'}>
+          <TokenExternalLink address={address} />
+        </div>
+      )}
+      {showImportBtn && (
+        <ImportButton
+          token={{
+            symbol,
+            name,
+            logoURI,
+            price,
+            address,
+            collectionCount,
+            decimals
+          }}
         />
-        <p className="text-white text-base sm:text-base ml-3">{name}</p>
-        <div className="inline-flex ml-3">
-          <p className="text-gray-3 text-base sm:text-base uppercase">
-            {symbol}
-          </p>
-        </div>
-      </div>
-      {/* checkmark should show on selected token */}
-      {showCheckMark ? (
-        <div className="justify-end pr-8">
-          <img
-            className="text-gray-3 text-sm sm:text-base uppercase"
-            width={16}
-            height={15}
-            src={'/images/check-mark-grayscale.svg'}
-            alt="Selected token"
-          ></img>
-        </div>
-      ) : null}
-    </button>
+      )}
+    </div>
   );
 };
 
@@ -76,6 +157,7 @@ export interface TokenItemsSectionProps {
   loading?: boolean;
   activeItemIndex?: number;
   listShift?: number;
+  showImportBtn?: boolean;
 }
 
 export const TokenItemsSection: React.FC<TokenItemsSectionProps> = ({
@@ -83,21 +165,23 @@ export const TokenItemsSection: React.FC<TokenItemsSectionProps> = ({
   depositTokenSymbol,
   handleItemClick,
   activeItemIndex,
+  showImportBtn,
   listShift = 0
 }) => {
   return (
     <ul>
       {tokenList.map((token, index) => {
-        const { symbol, name, address, logoURI } = token;
+        const { symbol } = token;
 
         const isNavHighlighted = index + listShift === activeItemIndex;
         return (
           <li key={`${index + listShift}-${symbol}`}>
             <TokenItemDetails
-              {...{ symbol, name, address, logoURI }}
+              {...token}
               showCheckMark={symbol === depositTokenSymbol}
               onClick={() => handleItemClick(token)}
               isNavHighlighted={isNavHighlighted}
+              showImportBtn={showImportBtn}
             />
           </li>
         );
@@ -106,26 +190,24 @@ export const TokenItemsSection: React.FC<TokenItemsSectionProps> = ({
   );
 };
 
-export const TokenItemsLoadingSection: React.FC<{ repeat?: number }> = ({
-  repeat = 3
-}) => {
+export const TokenItemsLoadingSection: React.FC<{
+  repeat?: number;
+  showInfoLoader?: boolean;
+}> = ({ repeat = 3, showInfoLoader = false }) => {
   return (
-    <>
+    <div className="mt-2">
       {[...Array(repeat)].map((_, index) => (
-        <div
-          className="flex justify-between mt-2 px-8"
-          key={`skeleton-${index}`}
-        >
-          <div className="w-7 h-7">
+        <div className="flex w-full mt-2 px-8" key={`skeleton-${index}`}>
+          <div className=" h-7">
             <SkeletonLoader
               animate
               height="7"
-              width="full"
+              width="7"
               margin="m-0"
               borderRadius="rounded-full"
             />
           </div>
-          <div className="w-full items-end place-content-end h-7 ml-4">
+          <div className="w-full h-7 ml-4">
             <SkeletonLoader
               height="7"
               width="full"
@@ -133,8 +215,54 @@ export const TokenItemsLoadingSection: React.FC<{ repeat?: number }> = ({
               borderRadius="rounded-md"
             />
           </div>
+
+          {showInfoLoader && (
+            <div className="flex w-full items-end place-content-end h-7">
+              <div className="w-full h-7 justify-end flex">
+                <SkeletonLoader
+                  height="7"
+                  width="2/3"
+                  margin="m-0"
+                  borderRadius="rounded-md"
+                />
+              </div>
+              <div className="h-7 ml-4">
+                <SkeletonLoader
+                  animate
+                  height="7"
+                  width="7"
+                  margin="m-0"
+                  borderRadius="rounded-full"
+                />
+              </div>
+            </div>
+          )}
         </div>
       ))}
-    </>
+    </div>
+  );
+};
+
+interface ITokenExternalLink {
+  address: string;
+}
+
+export const TokenExternalLink: React.FC<ITokenExternalLink> = ({
+  address
+}) => {
+  const {
+    web3Reducer: {
+      web3: {
+        activeNetwork: {
+          blockExplorer: { baseUrl }
+        }
+      }
+    }
+  } = useSelector((state: AppState) => state);
+
+  return (
+    <a href={`${baseUrl}/address/${address}`} target="_blank" rel="noreferrer">
+      {address && <ExternalLinkIcon />}
+    </a>
   );
 };

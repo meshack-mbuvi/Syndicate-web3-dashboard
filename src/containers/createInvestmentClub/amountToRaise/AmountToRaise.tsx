@@ -10,7 +10,7 @@ import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
 import { SUPPORTED_TOKENS } from '@/Networks';
@@ -23,7 +23,7 @@ const AmountToRaise: React.FC<{
   const {
     createInvestmentClubSliceReducer: {
       tokenCap,
-      tokenDetails: { depositTokenLogo, depositTokenSymbol }
+      tokenDetails: { depositTokenLogo }
     },
     web3Reducer: {
       web3: { activeNetwork }
@@ -97,8 +97,6 @@ const AmountToRaise: React.FC<{
           closeModal: () => {
             setShowDisclaimerModal(false);
           },
-          customWidth: 'w-100',
-          customClassName: 'p-8',
           showCloseButton: false,
           outsideOnClick: true,
           showHeader: false,
@@ -125,7 +123,7 @@ const AmountToRaise: React.FC<{
         </div>
       </Modal>
       <Fade delay={500}>
-        <div className="flex pb-6 ml-5">
+        <div className="flex pb-6">
           <RaiseTokenAmount
             value={
               amount

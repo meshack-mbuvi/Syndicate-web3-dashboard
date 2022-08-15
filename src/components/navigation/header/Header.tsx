@@ -27,6 +27,7 @@ interface props {
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   showNavButton?: boolean;
+  showCreateProgressBar?: boolean;
 }
 
 const Header: React.FC<props> = ({
@@ -39,7 +40,8 @@ const Header: React.FC<props> = ({
   hideWalletAndEllipsis = false,
   showCloseButton = false,
   dotIndicatorOptions = [],
-  showNavButton = false
+  showNavButton = false,
+  showCreateProgressBar = false
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -51,9 +53,7 @@ const Header: React.FC<props> = ({
       web3: { account }
     }
   } = useSelector((state: AppState) => state);
-  const { currentStep, steps, preClubCreationStep } =
-    useCreateInvestmentClubContext();
-  const showCreateProgressBar = router.pathname === '/clubs/create';
+  const { currentStep, steps } = useCreateInvestmentClubContext();
 
   useEffect(() => {
     if (showMobileNav) {
@@ -106,9 +106,12 @@ const Header: React.FC<props> = ({
     router.push(grandParentPath || '/');
   };
 
+  // do not show the syndicate logo and nav links on the top nav for the create flow.
+  const createClubPage = router.pathname === '/clubs/create';
+
   return (
     <>
-      {showMobileNav ? (
+      {showMobileNav && !createClubPage ? (
         <div className="fixed sm:hidden h-screen w-full bg-gray-syn8 opacity-50 z-40" />
       ) : null}
       <nav
@@ -117,7 +120,7 @@ const Header: React.FC<props> = ({
         } sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
-        {showMobileNav ? (
+        {showMobileNav && !createClubPage ? (
           <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
             {navItems.map(({ navItemText, url, isLegal }, index) => (
               <React.Fragment key={index}>
@@ -154,23 +157,27 @@ const Header: React.FC<props> = ({
               </button>
             ) : null}
           </div>
-          <div className="hidden sm:flex flex-1 items-center">
-            {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <NavBarNavItem
-                key={index}
-                navItemText={navItemText}
-                url={url}
-                isLegal={isLegal}
-              />
-            ))}
-          </div>
-          <div className="flex w-max items-center">
-            <Link href="/">
-              <a href="/">
-                <img src="/images/logo.svg" alt="Syndicate Logo" />
-              </a>
-            </Link>
-          </div>
+          {createClubPage ? null : (
+            <div className="hidden sm:flex flex-1 items-center">
+              {navItems.map(({ navItemText, url, isLegal }, index) => (
+                <NavBarNavItem
+                  key={index}
+                  navItemText={navItemText}
+                  url={url}
+                  isLegal={isLegal}
+                />
+              ))}
+            </div>
+          )}
+          {createClubPage ? null : (
+            <div className="flex w-max items-center">
+              <Link href="/">
+                <a href="/">
+                  <img src="/images/logo.svg" alt="Syndicate Logo" />
+                </a>
+              </Link>
+            </div>
+          )}
           <div className="flex flex-1 sm:hidden justify-end items-center -mr-3">
             <button
               type="button"
@@ -228,9 +235,7 @@ const Header: React.FC<props> = ({
         </div>
         {showCreateProgressBar && account && (
           <ProgressBar
-            percentageWidth={
-              preClubCreationStep ? 0 : ((currentStep + 1) / steps.length) * 100
-            }
+            percentageWidth={((currentStep + 1) / steps.length) * 100}
             tailwindColor="bg-green"
           />
         )}

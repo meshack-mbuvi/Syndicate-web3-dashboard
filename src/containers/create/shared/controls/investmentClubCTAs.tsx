@@ -6,11 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useProvider } from '@/hooks/web3/useProvider';
+import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
+import EstimateGas from '@/components/EstimateGas';
+import { ContractMapper } from '@/hooks/useGasDetails';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
-    reviewStep,
-    firstStep,
+    isReviewStep,
+    // isCreatingInvestmentClub,
+    editingStep,
     handleBack,
     handleNext,
     backBtnDisabled,
@@ -19,9 +23,8 @@ const InvestmentClubCTAs: React.FC = () => {
     showNextButton,
     handleCreateInvestmentClub,
     isWalletConfirmed,
-    isEditStep,
-    setIsEditStep,
-    setCurrentStep
+    currentStep,
+    stepsCategories
   } = useCreateInvestmentClubContext();
 
   const { switchNetworks } = useConnectWalletContext();
@@ -72,68 +75,82 @@ const InvestmentClubCTAs: React.FC = () => {
     delay: 500
   });
 
+  // button text should change to 'Review' on the membership step
+  const isMembershipStep =
+    currentStep == stepsCategories.indexOf(CreateActiveSteps.MEMBERSHIP);
+
+  // Do not show the back button if we are on the getting started page (category selection page)
+  // or if we are on CLUB_DETAILS step
+  const showBackButton = !editingStep && (isReviewStep || isMembershipStep);
+
   return (
     <animated.div
-      className={`bg-black flex-none flex flex-col sm:items-center ${
-        reviewStep ? 'fixed w-full left-0 bottom-0 h-32 px-10 ' : ''
+      className={`bg-black flex-none flex flex-col items-center sm:px-5 ${
+        isReviewStep ? 'w-full h-10.875' : ''
       }`}
       style={styles}
     >
       <div
-        className={`flex flex-col-reverse items-center pt-4 sm:w-full sm:flex-row sm:max-w-480 sm:h-full sm:pt-0 sm:ml-0 ml-5 ${
-          firstStep || isEditStep ? 'justify-end' : 'justify-between'
-        }
-          ${reviewStep ? 'sm:border-t border-gray-syn4' : ''}
+        className={`flex flex-col w-full sm:max-w-520 sm:h-full sm:pt-0
+          ${isReviewStep ? 'sm:border-t border-gray-syn4' : ''}
         }`}
       >
-        {!firstStep && !isEditStep && (
-          <button
-            className={`flex items-center mt-6 sm:mt-0 text-gray-syn4 text-base opacity-80 hover:opacity-100 focus:outline-none sm:ml-5 ml-0 ${
-              backBtnDisabled ? 'cursor-not-allowed' : ''
-            }`}
-            onClick={handleBack}
-            disabled={backBtnDisabled}
-          >
-            <img className="w-5 h-5" src="/images/arrowBack.svg" alt="" />
-            <span className="ml-2">Back</span>
-          </button>
+        {isReviewStep && (
+          <div className="pt-6">
+            <EstimateGas contract={ContractMapper.ClubERC20Factory} />
+          </div>
         )}
-        {showNextButton && (
-          <button
-            className={`w-full sm:w-auto ${
-              nextBtnDisabled
-                ? 'primary-CTA-disabled text-gray-syn4'
-                : reviewStep
-                ? 'green-CTA transition-all'
-                : 'primary-CTA'
-            }`}
-            onClick={
-              reviewStep
+
+        <div
+          className={`flex flex-col-reverse sm:flex-row py-4 ${
+            !showBackButton ? 'justify-end' : 'justify-between'
+          }`}
+        >
+          {showBackButton && (
+            <button
+              className={`flex items-center my-6 sm:my-0 text-gray-syn4 text-base opacity-80 hover:opacity-100 focus:outline-none ${
+                backBtnDisabled ? 'cursor-not-allowed' : ''
+              }`}
+              onClick={handleBack}
+              disabled={backBtnDisabled}
+            >
+              <span className="ml-2">Back</span>
+            </button>
+          )}
+          {showNextButton && (
+            <button
+              className={`w-full sm:w-auto ${
+                nextBtnDisabled
+                  ? 'primary-CTA-disabled text-gray-syn4'
+                  : isReviewStep
+                  ? 'green-CTA transition-all'
+                  : 'primary-CTA'
+              }`}
+              onClick={
+                isReviewStep
+                  ? !account
+                    ? connectWallet
+                    : isWalletConfirmed
+                    ? handleCreateInvestmentClub
+                    : confirmWallet
+                  : handleNext
+              }
+              disabled={nextBtnDisabled}
+            >
+              {isReviewStep
                 ? !account
-                  ? connectWallet
+                  ? 'Connect wallet to create'
                   : isWalletConfirmed
-                  ? handleCreateInvestmentClub
-                  : confirmWallet
-                : isEditStep
-                ? () => {
-                    setIsEditStep(false);
-                    setCurrentStep(4);
-                  }
-                : handleNext
-            }
-            disabled={nextBtnDisabled}
-          >
-            {reviewStep
-              ? !account
-                ? 'Connect wallet to create'
-                : isWalletConfirmed
-                ? 'Create investment club'
-                : 'Confirm wallet'
-              : isEditStep
-              ? 'Done'
-              : 'Next'}
-          </button>
-        )}
+                  ? 'Create investment club'
+                  : 'Confirm wallet'
+                : editingStep
+                ? 'Done'
+                : isMembershipStep
+                ? 'Review'
+                : 'Next'}
+            </button>
+          )}
+        </div>
       </div>
     </animated.div>
   );

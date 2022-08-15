@@ -60,6 +60,7 @@ const sdkConfig = {
 // Names of splits here
 export const distributions_feature = 'Distributions';
 export const collectives_feature = 'Collectives';
+export const clubsMixinGuarded_feature = 'ClubsMixinGuarded';
 
 const StateProviders: React.FC = ({ children }) => (
   <SplitFactory config={sdkConfig}>

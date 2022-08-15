@@ -5,7 +5,7 @@ import PillTabs from '../tabs';
 interface Props {
   tabs: { name: string }[];
   activeIndex: number;
-  height: string;
+  height?: string;
   handleTabChange: (index) => void;
   children: React.ReactNode[];
 }

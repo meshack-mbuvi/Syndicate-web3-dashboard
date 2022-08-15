@@ -52,7 +52,8 @@ import ERC20ABI from 'src/utils/abi/erc20';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-
+import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -160,6 +161,9 @@ const DepositSyndicate: React.FC = () => {
     startPolling,
     stopPolling
   } = useAccountTokens();
+
+  const { isReady, isClubMixinGuardTreatmentOn } =
+    useClubMixinGuardFeatureFlag();
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -1043,6 +1047,18 @@ const DepositSyndicate: React.FC = () => {
     depositButtonText = 'Continue';
   }
 
+  useEffect(() => {
+    checkClubWideErrors();
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
+
+  // token gating.
+  // TODO: add check for requirements met here
+  // Toggle this to true to test.
+  const gatingRequirementsMet = false;
+
+  const isOpenWithRequirementsMet =
+    !loading && depositsEnabled && gatingRequirementsMet;
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44">
@@ -1099,6 +1115,13 @@ const DepositSyndicate: React.FC = () => {
                   />
                 </div>
               </div>
+            </div>
+          ) : status !== Status.DISCONNECTED &&
+            isReady &&
+            isClubMixinGuardTreatmentOn &&
+            !gatingRequirementsMet ? (
+            <div>
+              <TokenGatingRequirements {...{ gatingRequirementsMet }} />
             </div>
           ) : depositsEnabled ? (
             <FadeIn>
@@ -1605,7 +1628,10 @@ const DepositSyndicate: React.FC = () => {
         (+memberDeposits > 0 || +accountTokens > 0) &&
         !loading &&
         account) ||
-        isDemoMode) && (
+        isDemoMode ||
+        (isReady &&
+          isClubMixinGuardTreatmentOn &&
+          isOpenWithRequirementsMet)) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <L2 extraClasses="pb-5">Your Holdings</L2>
           {loading ? (
@@ -1643,6 +1669,16 @@ const DepositSyndicate: React.FC = () => {
           )}
         </div>
       )}
+
+      {status !== Status.DISCONNECTED &&
+        (+memberDeposits === 0 || +accountTokens === 0) &&
+        isReady &&
+        isClubMixinGuardTreatmentOn &&
+        isOpenWithRequirementsMet && (
+          <div className="mt-6">
+            <TokenGatingRequirements {...{ gatingRequirementsMet }} />
+          </div>
+        )}
 
       <Modal
         {...{

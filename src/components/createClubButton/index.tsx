@@ -1,8 +1,22 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-const CreateClubButton: React.FC<{ creatingClub?: boolean }> = ({
-  creatingClub = true
+/**
+ * Component to render button that navigates user to the club/DAO creation page
+ * @param buttonText
+ * @param showIcon
+ * Button is displayed on the empty state for the portfolio page as well in the top
+ * right corner when there are clubs/DAOs to show.
+ */
+
+interface ICreateClubButton {
+  creatingClub?: boolean;
+  showIcon?: boolean;
+}
+
+const CreateClubButton: React.FC<ICreateClubButton> = ({
+  creatingClub = true,
+  showIcon = true
 }) => {
   const router = useRouter();
 
@@ -15,7 +29,11 @@ const CreateClubButton: React.FC<{ creatingClub?: boolean }> = ({
           : router.push(`/collectives/create`);
       }}
     >
-      <Image src={`/images/add.svg`} height={16} width={16} />
+      {showIcon ? (
+        <div className="mr-3 flex items-center">
+          <Image src={`/images/add.svg`} height={16} width={16} />
+        </div>
+      ) : null}
       <p className="ml-3">
         {creatingClub ? 'Create an investment club' : 'Create a collective'}
       </p>

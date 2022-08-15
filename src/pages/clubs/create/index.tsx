@@ -5,8 +5,6 @@ import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerL
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
-import GettingStarted from '@/containers/createInvestmentClub/gettingStarted';
-import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
 import Image from 'next/image';
@@ -16,8 +14,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
 import { setDispatchCreateFlow } from '@/state/wallet/actions';
-import { L2 } from '@/components/typography';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
+import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
+import {
+  CreateFlowSteps,
+  DetailsSteps
+} from '@/context/CreateInvestmentClubContext/steps';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -31,9 +33,10 @@ const CreateInvestmentClub: React.FC = () => {
     warningModal,
     setShowModal,
     handleCreateInvestmentClub,
-    preClubCreationStep,
-    setPreClubCreationStep,
-    isEditStep
+    isCreatingInvestmentClub,
+    isFirstStep,
+    stepsNames,
+    isCustomDate
   } = useCreateInvestmentClubContext();
 
   const parentRef = useRef(null);
@@ -76,37 +79,38 @@ const CreateInvestmentClub: React.FC = () => {
     }
   }, [dispatchCreateFlow, account]);
 
+  const hideInvestmentClubCTAs =
+    currentStep === 0 ||
+    (currentStep === stepsNames.indexOf(DetailsSteps.DATE) && !isCustomDate);
+
   return (
-    <Layout>
+    <Layout showCreateProgressBar={false}>
       <Head title="Create Investment Club" />
-      <>
-        {preClubCreationStep ? (
-          <GettingStarted setClubStep={setPreClubCreationStep} />
-        ) : (
-          <div className="container mx-auto w-full">
-            <L2
-              extraClasses={`text-center ${
-                currentStep === 0 ? '' : 'pb-11'
-              } pt-11`}
-            >
-              Create an investment club
-            </L2>
-            <div className="flex justify-center w-full ">
-              <div className="w-full h-full overflow-y-scroll">
-                <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">
-                  <div className="flex flex-col w-full" ref={parentRef}>
-                    {!isEditStep && <ReviewDetails />}
-                    {steps[currentStep].component}
-                    <div className="w-full">
-                      <InvestmentClubCTAs key={currentStep} />
-                    </div>
-                  </div>
-                </div>
+      <div className="flex flex-col">
+        {!isFirstStep && (
+          <h4 className={`text-center pb-16 pt-8`}>
+            {isCreatingInvestmentClub
+              ? 'Start an investment club'
+              : 'Set up a dashboard'}
+          </h4>
+        )}
+        <div className="container mx-auto w-full h-full">
+          <div className="w-full" ref={parentRef}>
+            <div className="w-full max-w-520">
+              <ReviewDetails />
+
+              <div className="w-full sm:px-5">
+                {CreateFlowSteps(steps[currentStep].step)}
               </div>
             </div>
+            {!hideInvestmentClubCTAs ? (
+              <div className="w-full">
+                <InvestmentClubCTAs key={currentStep} />
+              </div>
+            ) : null}
           </div>
-        )}
-      </>
+        </div>
+      </div>
 
       {/* Waiting for confirmation Modal */}
       <Modal

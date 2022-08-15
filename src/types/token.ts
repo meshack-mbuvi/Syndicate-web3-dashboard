@@ -2,10 +2,12 @@ export interface Token {
   name: string;
   address: string;
   symbol: string;
-  decimals: number;
+  decimals?: number;
   logoURI: string;
   chainId?: number;
   default?: boolean;
+  price?: number;
+  collectionCount?: number;
 }
 
 /**
@@ -18,4 +20,6 @@ export interface TokenDetails {
   decimals: number;
   logo?: string;
   description?: string;
+  price?: number;
+  collectionCount?: number;
 }

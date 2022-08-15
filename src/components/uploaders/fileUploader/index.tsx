@@ -84,6 +84,9 @@ export const FileUploader: React.FC<Props> = ({
             alt="Icon"
           />
           <div>{promptTitle}</div>
+          <div className="text-xs">
+            CSV, XLS, or XLSX file with addresses in first column
+          </div>
         </div>
         <div className="text-xs">{promptSubtitle}</div>
       </div>

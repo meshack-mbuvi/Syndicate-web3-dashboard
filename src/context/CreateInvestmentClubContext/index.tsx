@@ -5,6 +5,7 @@ import {
 } from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
+// import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
@@ -23,15 +24,24 @@ import React, {
   useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import steps from './steps';
+import {
+  investmentClubSteps,
+  CategorySteps,
+  CreateActiveSteps,
+  CreateSteps
+} from './steps';
+
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
   handleBack: () => void;
   currentStep: number;
-  steps: typeof steps;
-  reviewStep: boolean;
-  lastStep: boolean;
-  firstStep: boolean;
+  steps: CategorySteps[];
+  stepsCategories: CreateActiveSteps[];
+  stepsNames: CreateSteps[];
+  isReviewStep: boolean;
+  isFirstStep: boolean;
+  editingStep: number;
+  setEditingStep: Dispatch<SetStateAction<number>>;
   showNextButton: boolean;
   setShowNextButton: Dispatch<SetStateAction<boolean>>;
   backBtnDisabled: boolean;
@@ -48,18 +58,18 @@ type CreateInvestmentClubProviderProps = {
   processingModalTitle: string;
   processingModalDescription: string;
   errorModalMessage: string;
-  preClubCreationStep: string;
-  setPreClubCreationStep: Dispatch<SetStateAction<string>>;
   resetCreationStates: () => void;
   setCurrentStep: (index: number) => void;
   isWalletConfirmed: boolean;
   setConfirmWallet: Dispatch<SetStateAction<boolean>>;
   setShowSaveButton: Dispatch<SetStateAction<boolean>>;
   showSaveButton: boolean;
-  editMintMaxDate: boolean;
-  setEditMintMaxDate: Dispatch<SetStateAction<boolean>>;
-  isEditStep: boolean;
-  setIsEditStep: Dispatch<SetStateAction<boolean>>;
+  isCustomDate: boolean;
+  setIsCustomDate: Dispatch<SetStateAction<boolean>>;
+
+  // states to distinguish between Invesment Club and DAO
+  isCreatingInvestmentClub: boolean;
+  setIsCreatingInvestmentClub: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -92,7 +102,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const dispatch = useDispatch();
 
+  // TODO: use for determining which contract to create club with
+  // const { isReady, isClubMixinGuardTreatmentOn  } = useClubMixinGuardFeatureFlag();
+
   const [currentStep, setCurrentStep] = useState(0);
+  const [editingStep, setEditingStep] = useState<number>(null);
   const [backBtnDisabled, setBackBtnDisabled] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
   const [showNextButton, setShowNextButton] = useState(true);
@@ -102,11 +116,14 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [processingModalDescription, setProcessingDescription] = useState('');
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(true);
-  const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
-  const [isEditStep, setIsEditStep] = useState(false);
-  // show initial steps in create flow
-  const [preClubCreationStep, setPreClubCreationStep] =
-    useState<string>('invite');
+
+  const [isCreatingInvestmentClub, setIsCreatingInvestmentClub] =
+    useState(true);
+  const [stepsCategories, setStepCategories] = useState<CreateActiveSteps[]>(
+    []
+  );
+  const [stepsNames, setStepNames] = useState<CreateSteps[]>([]);
+  const [isCustomDate, setIsCustomDate] = useState(false);
 
   const [
     { waitingConfirmationModal, transactionModal, errorModal, warningModal },
@@ -121,7 +138,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const resetCreationStates = () => {
     dispatch(resetClubCreationReduxState());
     setCurrentStep(0);
-    setPreClubCreationStep('invite');
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: false,
@@ -130,9 +146,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }));
   };
 
-  const reviewStep = currentStep === steps.length - 1;
-  const lastStep = currentStep === steps.length - 2;
-  const firstStep = currentStep === 0;
+  const isReviewStep = currentStep === investmentClubSteps.length - 1;
+  const isFirstStep = currentStep === 0;
 
   useEffect(() => {
     if (!nextBtnDisabled) {
@@ -143,22 +158,31 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
   });
 
+  useEffect(() => {
+    setStepCategories(investmentClubSteps.map((step) => step.category));
+    setStepNames(investmentClubSteps.map((s) => s.step));
+  }, []);
+
   const handleNext = () => {
-    if (isEditStep && mintTime !== 'Custom') {
+    if (editingStep && mintTime !== 'Custom') {
       setShowNextButton(false);
     } else {
       setShowNextButton(true);
     }
-
-    if (currentStep < 4) {
+    if (editingStep) {
+      setCurrentStep(editingStep);
+      setEditingStep(null);
+      setShowNextButton(true);
+    } else if (currentStep < investmentClubSteps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handleBack = () => {
-    setNextBtnDisabled(false);
     setShowNextButton(true);
-    if (currentStep > 0) {
+
+    if (currentStep > 1) {
+      setNextBtnDisabled(false);
       setCurrentStep((prev) => prev - 1);
     }
   };
@@ -235,7 +259,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
           account,
           investmentClubName,
           investmentClubSymbol,
-          /* depositDetails.depositToken */ depositToken,
+          depositToken,
           startTime,
           endMintTime,
           _tokenCap,
@@ -275,7 +299,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
     // it triggers by pressing the enter key
     if ((nextBtnDisabled || showNextButton) && e.keyCode === 13) {
-      if (reviewStep) {
+      if (isReviewStep) {
         handleCreateInvestmentClub();
       } else {
         handleNext();
@@ -289,10 +313,13 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         handleNext,
         handleBack,
         currentStep,
-        steps,
-        reviewStep,
-        lastStep,
-        firstStep,
+        steps: investmentClubSteps,
+        stepsCategories,
+        stepsNames,
+        isReviewStep,
+        isFirstStep,
+        editingStep,
+        setEditingStep,
         backBtnDisabled,
         nextBtnDisabled,
         handleCreateInvestmentClub,
@@ -308,18 +335,16 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         processingModalTitle,
         processingModalDescription,
         errorModalMessage,
-        preClubCreationStep,
-        setPreClubCreationStep,
         resetCreationStates,
         setCurrentStep,
         isWalletConfirmed,
         setConfirmWallet,
         showSaveButton,
         setShowSaveButton,
-        editMintMaxDate,
-        setEditMintMaxDate,
-        isEditStep,
-        setIsEditStep
+        isCreatingInvestmentClub,
+        setIsCreatingInvestmentClub,
+        isCustomDate,
+        setIsCustomDate
       }}
     >
       {children}

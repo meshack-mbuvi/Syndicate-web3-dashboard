@@ -45,7 +45,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
     depositsEnabled,
     tokensViaDeposits,
     setTokensViaDeposits,
-    activeNetwork
+    activeNetwork,
   } = props;
 
   // refs and consts

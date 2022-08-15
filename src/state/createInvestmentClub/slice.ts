@@ -1,5 +1,13 @@
+import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { initialState, mintEndTime, tokenDetails } from './types';
+import {
+  initialState,
+  mintEndTime,
+  ICurrentSelectedToken,
+  tokenDetails,
+  TokenGateOption,
+  TokenGateRule
+} from './types';
 
 const createInvestmentClubSlice = createSlice({
   name: 'createInvestmentClub',
@@ -53,6 +61,45 @@ const createInvestmentClubSlice = createSlice({
     },
     setDepositTokenDetails(state, action: PayloadAction<tokenDetails>) {
       state.tokenDetails = action.payload;
+    },
+    setMembershipAddresses(state, action: PayloadAction<string[]>) {
+      state.membershipAddresses = action.payload;
+    },
+    setMemberAddressesError(state, action: PayloadAction<string>) {
+      state.errors.memberAddresses = action.payload;
+    },
+    setActiveTokenGateOption(state, action: PayloadAction<TokenGateOption>) {
+      state.tokenGateOption = action.payload;
+    },
+    setAmountToMintPerAddress(state, action: PayloadAction<number>) {
+      state.amountToMintPerAddress = action.payload;
+    },
+    setShowTokenGateModal(state, action: PayloadAction<boolean>) {
+      state.showTokenGateModal = action.payload;
+    },
+    setShowImportTokenModal(state, action: PayloadAction<boolean>) {
+      state.showImportTokenModal = action.payload;
+    },
+    setCurrentSelectedToken(
+      state,
+      action: PayloadAction<ICurrentSelectedToken>
+    ) {
+      state.currentSelectedToken = {
+        ...state.currentSelectedToken,
+        ...action.payload
+      };
+    },
+    setTokenRules(state, action: PayloadAction<TokenGateRule[]>) {
+      state.tokenRules = action.payload;
+    },
+    setDuplicateRulesError(state, action: PayloadAction<number[]>) {
+      state.errors.duplicateRules = action.payload;
+    },
+    setNullRulesError(state, action: PayloadAction<number[]>) {
+      state.errors.nullRules = action.payload;
+    },
+    setLogicalOperator(state, action: PayloadAction<LogicalOperator>) {
+      state.logicalOperator = action.payload;
     }
   }
 });
@@ -67,6 +114,17 @@ export const {
   setTransactionHash,
   setClubCreationReceipt,
   resetClubCreationReduxState,
-  setDepositTokenDetails
+  setDepositTokenDetails,
+  setMembershipAddresses,
+  setMemberAddressesError,
+  setActiveTokenGateOption,
+  setAmountToMintPerAddress,
+  setShowTokenGateModal,
+  setShowImportTokenModal,
+  setCurrentSelectedToken,
+  setTokenRules,
+  setDuplicateRulesError,
+  setNullRulesError,
+  setLogicalOperator
 } = createInvestmentClubSlice.actions;
 export default createInvestmentClubSlice.reducer;

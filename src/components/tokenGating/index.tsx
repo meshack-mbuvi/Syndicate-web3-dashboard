@@ -1,4 +1,7 @@
-import React from 'react';
+import {
+  ICurrentSelectedToken,
+  TokenGateRule
+} from '@/state/createInvestmentClub/types';
 import { PillButtonOutlined } from '../pillButtons/pillButtonOutlined';
 import {
   LogicalOperator,
@@ -6,18 +9,16 @@ import {
 } from './tokenLogic';
 
 interface Props {
-  tokenRules: {
-    name: string;
-    symbol?: string;
-    quantity: number;
-    icon: string;
-  }[];
+  tokenRules: TokenGateRule[];
   handleRulesChange: (rules) => void;
-  logicalOperator?: LogicalOperator.OR;
+  logicalOperator?: LogicalOperator;
   handleLogicalOperatorChange: (operator: LogicalOperator) => void;
-  handleShowTokenSelector: () => void;
+  handleShowTokenSelector: (
+    currentSelectedToken: ICurrentSelectedToken
+  ) => void;
   isInErrorState?: boolean;
   customClasses?: string;
+  ruleErrors?: number[];
 }
 
 export const TokenLogicBuilder: React.FC<Props> = ({
@@ -27,25 +28,29 @@ export const TokenLogicBuilder: React.FC<Props> = ({
   handleLogicalOperatorChange,
   handleShowTokenSelector,
   isInErrorState = false,
-  customClasses
+  customClasses,
+  ruleErrors
 }) => {
   return (
     <div className={`${customClasses} space-y-4`} style={{ minWidth: '30rem' }}>
-      <div className="text-gray-syn4">
+      <div className="text-gray-syn4 text-sm">
         To deposit into this club, members must hold
       </div>
 
       {/* Display token gating logic */}
       <TokenLogicList
         tokenRules={tokenRules}
-        handleTokenSelection={handleShowTokenSelector} // TODO:
+        handleTokenSelection={(currentSelectedToken) =>
+          handleShowTokenSelector(currentSelectedToken)
+        }
         logicalOperator={logicalOperator}
         handleLogicalOperatorChange={handleLogicalOperatorChange}
         handleRulesChange={(rules) => {
           handleRulesChange(rules);
         }}
         isInErrorState={isInErrorState}
-        helperText={isInErrorState && 'Select a token or delete rule'}
+        helperText={ruleErrors.length ? 'Select a token or delete rule' : ''}
+        ruleErrors={ruleErrors}
       />
 
       {/* Button to add a rule */}

@@ -35,14 +35,8 @@ const MembersCount: React.FC<{
   const [isInputError, setIsInputError] = useState(false);
   const dispatch = useDispatch();
 
-  const {
-    setNextBtnDisabled,
-    setShowNextButton,
-    handleNext,
-    isEditStep,
-    setCurrentStep,
-    setIsEditStep
-  } = useCreateInvestmentClubContext();
+  const { setNextBtnDisabled, setShowNextButton, handleNext } =
+    useCreateInvestmentClubContext();
 
   useEffect(() => {
     if (setInputHasError) {
@@ -83,13 +77,7 @@ const MembersCount: React.FC<{
   const handleSetMax = () => {
     setMembersNumCount(MAX_MEMBERS_ALLOWED);
     setTimeout(() => {
-      if (isEditStep) {
-        setCurrentStep(4);
-        setIsEditStep(false);
-      } else {
-        handleNext();
-      }
-
+      handleNext();
       setShowNextButton(true);
     }, 400);
   };
@@ -100,8 +88,8 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
-      <H4 extraClasses="ml-5 mr-10">What’s the maximum number of members?</H4>
-      <div className="flex pb-6 ml-5">
+      <H4 extraClasses="mr-10">What’s the maximum number of members?</H4>
+      <div className="flex pb-6">
         <InputFieldWithMax
           {...{
             value: membersNumCount

@@ -1,4 +1,6 @@
 import { proxyGet } from '.';
+import { TokenDetails } from '@/types/token';
+import { AxiosResponse } from 'axios';
 
 export const getNfts = async (
   address: string,
@@ -38,6 +40,16 @@ export const getNftFloorPrices = async (
   );
 
   return result.data;
+};
+
+export const getNftCollection = async (
+  tokenAddress: string,
+  chainId: number
+): Promise<AxiosResponse<TokenDetails>> => {
+  return proxyGet<TokenDetails>('nft/collection', {
+    contractAddress: tokenAddress,
+    chainId: chainId
+  });
 };
 
 export const getOpenSeaLink = async (

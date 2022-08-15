@@ -1,5 +1,9 @@
 import { InputField } from '@/components/inputs/inputField';
 import {
+  ICurrentSelectedToken,
+  TokenGateRule
+} from '@/state/createInvestmentClub/types';
+import {
   floatedNumberWithCommas,
   numberInputRemoveCommas
 } from '@/utils/formattedNumbers';
@@ -11,36 +15,46 @@ export enum LogicalOperator {
 }
 
 interface Props {
-  tokenRules: {
-    name: string;
-    symbol?: string;
-    quantity: number;
-    icon: string;
-  }[];
+  tokenRules: TokenGateRule[];
   logicalOperator?: LogicalOperator;
   isInErrorState?: boolean;
   helperText?: string;
-  handleTokenSelection: () => void;
+  handleTokenSelection: (currentSelectedToken: ICurrentSelectedToken) => void;
   handleLogicalOperatorChange: (operator: LogicalOperator) => void;
   handleRulesChange: (rules) => void;
   customClasses?: string;
+  ruleErrors?: number[];
 }
 
 export const TokenLogicList: React.FC<Props> = ({
   tokenRules,
   logicalOperator = LogicalOperator.OR,
-  isInErrorState,
   helperText,
   handleTokenSelection,
   handleLogicalOperatorChange,
   handleRulesChange,
-  customClasses
+  customClasses,
+  ruleErrors
 }) => {
   function removeArrayElement(array: Array<any>, indexToRemove: number) {
     const newArray = array.filter(function (value, currentIndex) {
       return indexToRemove !== currentIndex;
     });
-    return newArray;
+
+    // return empty rule if there are no more rules left.
+    // makes it possible to remove all rules if needed.
+    if (newArray.length > 0) {
+      return newArray;
+    } else {
+      return [
+        {
+          icon: null,
+          name: '',
+          quantity: 1,
+          symbol: ''
+        }
+      ];
+    }
   }
 
   const renderedTokenOptions = tokenRules.map((rule, index) => (
@@ -90,7 +104,6 @@ export const TokenLogicList: React.FC<Props> = ({
           </div>
         </div>
       )}
-
       <div className="p-6 border-gray-syn6 flex items-center h-25">
         {/* Quantity */}
         <div className="w-4/12">
@@ -136,47 +149,57 @@ export const TokenLogicList: React.FC<Props> = ({
         {/* Token name / button */}
         <button
           className="w-8/12 relative flex-grow flex space-x-3 items-center"
-          onClick={handleTokenSelection}
+          onClick={() =>
+            handleTokenSelection({ idx: index, quantity: rule.quantity })
+          }
         >
           {/* Icon */}
           {!rule.name ? (
             // Plus icon
             <div
               className={`flex-shrink-0 rounded-full h-10 w-10 ${
-                isInErrorState ? 'border-red-error' : 'border-gray-syn4'
+                ruleErrors.includes(index)
+                  ? 'border-red-error'
+                  : 'border-gray-syn4'
               } transition-all border border-dashed`}
             >
               <img
-                src={`/images/plus-${isInErrorState ? 'red' : 'gray'}.svg`}
+                src={`/images/plus-${
+                  ruleErrors.includes(index) ? 'red' : 'gray'
+                }.svg`}
                 alt="Add"
                 className="w-4 h-4 mx-auto vertically-center transition-all"
               />
             </div>
           ) : (
             // Token icon
-            <div className="flex-shrink-0 rounded-full h-10 w-10 bg-gray-syn7 overflow-hidden">
-              {rule.icon && (
-                <img
-                  src={rule.icon}
-                  alt="Token Icon"
-                  className="w-full h-full mx-auto vertically-center"
-                />
-              )}
+            <div className="flex-shrink-0 rounded-full h-10 w-10 bg-transparent overflow-hidden">
+              <img
+                src={rule.icon || '/images/token-gray-5.svg'}
+                alt="Token Icon"
+                className="w-full h-full mx-auto vertically-center"
+              />
             </div>
           )}
 
           {/* Name */}
           <div
             className={`${
-              rule.name
-                ? 'text-white'
-                : isInErrorState
+              ruleErrors.includes(index)
                 ? 'text-red-error'
+                : rule.name
+                ? 'text-white'
                 : 'text-gray-syn4'
             } text-left line-clamp-3 transition-all`}
           >
             {rule.name ? rule.name : 'Select NFT or token'}
-            <span className="text-gray-syn4 ml-2">{rule.symbol}</span>
+            <span
+              className={`${
+                ruleErrors.includes(index) ? 'text-red-error' : 'text-gray-syn4'
+              } ml-2`}
+            >
+              {rule.symbol}
+            </span>
           </div>
         </button>
 
@@ -184,7 +207,7 @@ export const TokenLogicList: React.FC<Props> = ({
         <div className="w-4 ml-4 flex-shrink-0 flex items-center">
           <button
             className={`${
-              tokenRules.length <= 1 && 'hidden'
+              tokenRules.length <= 1 && !rule.name && 'hidden'
             } hover:bg-gray-syn8 transition-all ease-out p-3 -m-3 rounded-full`}
             onClick={() => {
               // Remove current rule
@@ -193,7 +216,7 @@ export const TokenLogicList: React.FC<Props> = ({
           >
             <img
               src={`/images/xmark-${
-                isInErrorState && !rule.name ? 'red' : 'gray'
+                ruleErrors.includes(index) ? 'red' : 'gray'
               }.svg`}
               alt="Close"
               className="w-4 h-4"
@@ -214,7 +237,7 @@ export const TokenLogicList: React.FC<Props> = ({
       {helperText && (
         <div
           className={`text-sm ${
-            isInErrorState ? 'text-red-error' : 'text-gray-syn4'
+            ruleErrors.length ? 'text-red-error' : 'text-gray-syn4'
           } transition-all`}
         >
           {helperText}

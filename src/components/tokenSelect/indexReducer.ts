@@ -15,7 +15,7 @@ export enum IndexReducerActionType {
   INCREMENT,
   DECREMENT,
   LAST,
-  SHIFT,
+  SHIFT
 }
 
 export interface IndexReducerState {
@@ -25,7 +25,7 @@ export interface IndexReducerState {
 
 export const indexReducer = (
   state: IndexReducerState,
-  action: InitOrIncrementAction | PayloadAction,
+  action: InitOrIncrementAction | PayloadAction
 ): IndexReducerState => {
   switch (action.type) {
     case IndexReducerActionType.FIRST:

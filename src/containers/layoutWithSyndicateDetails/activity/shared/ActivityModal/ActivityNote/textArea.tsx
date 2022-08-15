@@ -16,11 +16,13 @@ interface ITextAreaProps {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   error?: string;
+  isDisabled?: boolean;
   required?: boolean;
   value?: string;
   rows?: number;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const TextArea: React.FC<ITextAreaProps> = (props) => {
@@ -32,10 +34,12 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
     name,
     onChange,
     error,
+    isDisabled,
     value,
     rows,
     onPaste,
     onKeyUp,
+    onSelect,
     ...rest
   } = props;
   const noteTextArea = useRef(null);
@@ -68,6 +72,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onInput={() => !heightoverride && autoGrow()}
         onPaste={onPaste}
         onKeyUp={onKeyUp}
+        onSelect={onSelect}
         value={value}
         className={`${
           !allowResize && 'resize-none'
@@ -79,6 +84,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
           }`
         }}
         rows={rows}
+        disabled={isDisabled}
       ></textarea>
     </div>
   );

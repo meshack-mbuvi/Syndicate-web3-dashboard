@@ -78,7 +78,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             onClick={onClick}
             onBlur={() => {
               // remove leading . for numbers
-              if (value.endsWith('.')) {
+              if (value?.endsWith('.')) {
                 const newValue = value.slice(0, -1);
                 onChange({ target: { value: newValue } });
               }

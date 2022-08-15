@@ -7,8 +7,8 @@ interface Props {
 }
 
 export const ICBrandedWrapper: React.FC<Props> = ({
-  bottomTitle,
-  customClasses,
+  bottomTitle = '',
+  customClasses = '',
   children
 }) => {
   return (

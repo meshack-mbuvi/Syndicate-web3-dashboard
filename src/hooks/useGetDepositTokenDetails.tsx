@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTokenDetails } from '@/utils/api/index';
+import { getTokenDetails } from '@/utils/api';
 import { useRouter } from 'next/router';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
@@ -20,9 +20,7 @@ export const EmptyTokenDetails = {
   logo: ''
 };
 
-const useGetDepositTokenDetails = (
-  chainId: number,
-): Array<TokenDetails> => {
+const useGetDepositTokenDetails = (chainId: number): Array<TokenDetails> => {
   const {
     erc20TokenSliceReducer: {
       depositDetails: { depositToken }
@@ -37,16 +35,16 @@ const useGetDepositTokenDetails = (
   useEffect(() => {
     if (router.isReady) {
       getTokenDetails(depositToken, chainId)
-      .then((res) => {
-        setTokenDetails({
-          contractAddress: res.data.contractAddress,
-          name: res.data.name,
-          symbol: res.data.symbol,
-          decimals: res.data.decimals,
-          logo: res.data.logo
-        });
-      })
-      .catch((err) => setError(err));
+        .then((res) => {
+          setTokenDetails({
+            contractAddress: res.data.contractAddress,
+            name: res.data.name,
+            symbol: res.data.symbol,
+            decimals: res.data.decimals,
+            logo: res.data.logo
+          });
+        })
+        .catch((err) => setError(err));
     }
   }, [depositToken, chainId, router.isReady]);
   return [tokenDetails, error];

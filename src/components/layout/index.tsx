@@ -25,11 +25,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
+import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
+import useWindowSize from '@/hooks/useWindowSize';
+import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
-  dotIndicatorOptions?: string[];
+  dotIndicatorOptions?: CreateSteps[] | string[];
   handleExitClick?: () => void;
   showNav?: boolean;
   activeIndex?: number;
@@ -39,6 +42,7 @@ interface Props {
   showCloseButton?: boolean;
   customClasses?: string;
   showNavButton?: boolean;
+  showCreateProgressBar?: boolean;
 }
 
 const Layout: FC<Props> = ({
@@ -52,6 +56,7 @@ const Layout: FC<Props> = ({
   showNav = true,
   hideWalletAndEllipsis = false,
   showCloseButton = false,
+  showCreateProgressBar = false,
   customClasses,
   navItems = [
     {
@@ -81,6 +86,7 @@ const Layout: FC<Props> = ({
   const urlNetwork = useGetNetwork(chain);
 
   const isDemoMode = useDemoMode();
+  const { height } = useWindowSize();
 
   const {
     pathname,
@@ -93,7 +99,6 @@ const Layout: FC<Props> = ({
 
   const isOwner = useIsClubOwner();
 
-  const showCreateProgressBar = router.pathname === '/clubs/create';
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
   // get content to occupy the viewport if we are in these states.
@@ -305,9 +310,22 @@ const Layout: FC<Props> = ({
           hideWalletAndEllipsis={hideWalletAndEllipsis}
           showCloseButton={showCloseButton}
           showNavButton={showNavButton}
+          showCreateProgressBar={showCreateProgressBar}
         />
         <DemoBanner />
-
+        <div className="sticky top-18"></div>
+        {/* left side nav for the create flow
+         * z-50 allows it to appear above the top nav.
+         * height = screen height - top and bottom padding(40 + 38)
+         * */}
+        {createClubPage ? (
+          <div
+            className="fixed left-0 top-10 text-white z-50 hidden sm:block"
+            style={{ height: height - 78 }}
+          >
+            <PortfolioSideNav />
+          </div>
+        ) : null}
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'

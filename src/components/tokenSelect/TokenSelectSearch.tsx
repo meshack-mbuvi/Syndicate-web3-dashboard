@@ -1,28 +1,35 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDepositTokenDetails } from '@/state/createInvestmentClub/slice';
+import {
+  setDepositTokenDetails,
+  setDuplicateRulesError,
+  setNullRulesError,
+  setShowImportTokenModal,
+  setTokenRules
+} from '@/state/createInvestmentClub/slice';
 import { AppState } from '@/state';
 import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
 import { useDebounce } from '@/hooks/useDebounce';
 import { InputField, InputFieldStyle } from '../inputs/inputField';
-import {
-  TokenItemsLoadingSection,
-  TokenItemsSection
-} from './TokenItemDetails';
-import { Token } from '@/types/token';
+import { Token, TokenDetails } from '@/types/token';
 import {
   indexReducer,
   IndexReducerActionType
 } from '@/components/tokenSelect/indexReducer';
 import { getTokenDetails } from '@/utils/api';
 import { isDev } from '@/utils/environment';
-import { L2 } from '../typography';
+import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
+import { TokenModalVariant } from './TokenSelectModal';
+import { ImportTokenModal } from './ImportToken';
+import TokenSection from './TokenSection';
+import { getNftCollection } from '@/utils/api/nfts';
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
   defaultTokenList: Token[];
   suggestionList?: Token[];
   suggestionListTitle?: string;
   updateSuggestionList?: (token: Token) => void;
+  variant?: TokenModalVariant;
 }
 
 export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
@@ -30,21 +37,30 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   defaultTokenList,
   suggestionList,
   suggestionListTitle,
-  updateSuggestionList
+  updateSuggestionList,
+  variant = TokenModalVariant.Default
 }) => {
   const {
     web3Reducer: {
       web3: { web3, activeNetwork }
     },
-    createInvestmentClubSliceReducer: { tokenDetails }
+    createInvestmentClubSliceReducer: {
+      showTokenGateModal,
+      showImportTokenModal,
+      tokenRules,
+      currentSelectedToken,
+      logicalOperator
+    }
   } = useSelector((state: AppState) => state);
 
   const [tokensList, setTokenList] = useState<Token[]>([]);
+  const [nftList, setNftList] = useState<Token[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [noTokenFound, setNoTokenFound] = useState(false);
   const [showCryptoAssetModal, setShowCryptoAssetModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasTokenError, setHasTokenError] = useState(false);
+  const [showImportBtn, setShowImportBtn] = useState(false);
 
   const [activeOptions, reducerDispatch] = useReducer(indexReducer, {
     index: -1,
@@ -65,16 +81,33 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const getTokenByAddressChainId = useCallback(
     async (address: string, chainId: number): Promise<Token> => {
       setLoading(true);
-      return getTokenDetails(address, chainId)
-        .then((res) => res.data)
-        .then((data) => {
+      const promises = [getTokenDetails(address, chainId)];
+
+      if (showTokenGateModal) {
+        promises.push(getNftCollection(address, chainId));
+      }
+
+      return Promise.allSettled(promises)
+        .then((res) => {
+          const _res = res.find((r) => r.status === 'fulfilled');
+          if (!_res) {
+            setHasTokenError(true);
+            return null;
+          }
+
+          return (_res as any).value.data;
+        })
+        .then((data: TokenDetails) => {
+          if (!data || !data.name || !data.symbol) return null;
           return {
             address: data.contractAddress,
             name: data.name,
             symbol: data.symbol,
             decimals: data.decimals,
             chainId: chainId,
-            logoURI: data.logo
+            logoURI: data.logo,
+            price: data.price,
+            collectionCount: data.collectionCount
           };
         })
         .catch((err) => {
@@ -92,51 +125,70 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     if (isDev) {
       return true;
     }
-    return (
+
+    const isValid =
       web3.utils.isAddress(token.address) &&
       'name' in token &&
       token.name.length > 0 &&
       'symbol' in token &&
       token.symbol.length > 0 &&
-      'decimals' in token &&
-      token.decimals > 0 &&
       'chainId' in token &&
-      token.chainId > 0
-    );
+      token.chainId > 0;
+
+    // We don't need to validate for 'decimals' in NFT tokens
+    if (showTokenGateModal) return isValid;
+
+    return isValid && 'decimals' in token && token.decimals > 0;
   };
 
   useEffect(() => {
     if (debouncedSearchTerm) {
+      setShowImportBtn(false);
       const matchedTokens: Token[] = [];
       // token contractAddress
       if (web3.utils && web3.utils.isAddress(debouncedSearchTerm)) {
-        getTokenByAddressChainId(debouncedSearchTerm, activeNetwork.chainId)
-          .then((token) => {
-            if (validateToken(token)) {
-              matchedTokens.push(token);
-            } else {
+        const _token = [
+          ...defaultTokenList,
+          ...(suggestionList || []),
+          ...(showTokenGateModal ? nftList : [])
+        ].find((token) => token.address === debouncedSearchTerm);
+
+        // Avoid fetching API if token exists in tokensList or suggestionList
+        if (_token) {
+          matchedTokens.push(_token);
+          setTokenList(matchedTokens);
+        } else {
+          getTokenByAddressChainId(debouncedSearchTerm, activeNetwork.chainId)
+            .then((token) => {
+              if (token !== null && validateToken(token)) {
+                matchedTokens.push(token);
+              } else {
+                setHasTokenError(true);
+              }
+              setLoading(false);
+              setNoTokenFound(false);
+              setShowImportBtn(true);
+              setTokenList(matchedTokens);
+            })
+            .catch((err) => {
+              console.log(err);
               setHasTokenError(true);
-            }
-            setLoading(false);
-            setNoTokenFound(false);
-            setTokenList(matchedTokens);
-          })
-          .catch((err) => {
-            console.log(err);
-            setHasTokenError(true);
-          });
+            });
+        }
       } else {
-        defaultTokenList.map((defaultToken) => {
-          if (
-            defaultToken.name
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()) ||
-            defaultToken.symbol.includes(debouncedSearchTerm.toUpperCase()) ||
-            defaultToken.address === debouncedSearchTerm
-          ) {
-            matchedTokens.push(defaultToken);
+        [...defaultTokenList, ...(showTokenGateModal ? nftList : [])].map(
+          (defaultToken) => {
+            if (
+              defaultToken.name
+                .toLowerCase()
+                .includes(debouncedSearchTerm.toLowerCase()) ||
+              defaultToken.symbol.includes(debouncedSearchTerm.toUpperCase()) ||
+              defaultToken.address === debouncedSearchTerm
+            ) {
+              matchedTokens.push(defaultToken);
+            }
           }
-        });
+        );
         if (matchedTokens.length == 0) {
           setTokenList([]);
           setNoTokenFound(true);
@@ -167,16 +219,19 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     }
   }, [tokensList, suggestionList, searchTerm]);
 
+  useEffect(() => {
+    // Get NFTs from recently searched tokens
+    if (showTokenGateModal && suggestionList.length) {
+      const recentlyUsedNFTs = suggestionList.filter(
+        (token) => !token.decimals
+      );
+      setNftList(recentlyUsedNFTs);
+    }
+  }, [showTokenGateModal, suggestionList]);
+
   const handleTokenClick = (token: Token): void => {
-    dispatch(
-      setDepositTokenDetails({
-        depositToken: token.address,
-        depositTokenName: token.name,
-        depositTokenSymbol: token.symbol,
-        depositTokenLogo: token.logoURI,
-        depositTokenDecimals: token.decimals
-      })
-    );
+    dispatchTokenDetails(token);
+
     if (updateSuggestionList) {
       updateSuggestionList(token);
     }
@@ -184,11 +239,55 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     toggleTokenSelect();
   };
 
+  const dispatchTokenDetails = (token: Token): void => {
+    if (showTokenGateModal) {
+      const { idx, quantity } = currentSelectedToken;
+
+      const rules = [
+        ...tokenRules.slice(0, idx),
+        {
+          name: token.name,
+          symbol: token.symbol,
+          quantity,
+          icon: token.logoURI,
+          contractAddress: token.address,
+          decimals: token.decimals
+        },
+        ...tokenRules.slice(idx + 1)
+      ];
+      dispatch(setTokenRules(rules));
+
+      // Handle duplicate validation
+      const duplicateTokens = validateDuplicateRules(rules, logicalOperator);
+      dispatch(setDuplicateRulesError(duplicateTokens));
+
+      // Handle null rules validation
+      const _nullRules = validateNullRules(rules);
+      dispatch(setNullRulesError(_nullRules));
+    } else {
+      dispatch(
+        setDepositTokenDetails({
+          depositToken: token.address,
+          depositTokenName: token.name,
+          depositTokenSymbol: token.symbol,
+          depositTokenLogo: token.logoURI,
+          depositTokenDecimals: token.decimals
+        })
+      );
+    }
+  };
+
   const handleSearchTerm = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    // TODO: does not work as expected
+    const _tokens = [
+      ...(suggestionList || []),
+      ...(showTokenGateModal ? nftList : []),
+      ...defaultTokenList
+    ];
     if (e.key === 'Enter') {
       e.preventDefault();
       let selectedToken = activeOptions.index;
@@ -198,10 +297,10 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         }
         selectedToken = activeOptions.index - activeOptions.shift;
       }
-      handleTokenClick(tokensList[selectedToken]);
+      handleTokenClick(_tokens[selectedToken]);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (tokensList?.length + activeOptions.shift - 1 > activeOptions.index) {
+      if (_tokens?.length + activeOptions.shift - 1 > activeOptions.index) {
         reducerDispatch({ type: IndexReducerActionType.INCREMENT });
       } else {
         reducerDispatch({ type: IndexReducerActionType.FIRST });
@@ -221,10 +320,21 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     }
   };
 
+  const tokenSectionDefaultProps = {
+    handleTokenClick,
+    activeOptions,
+    searchTerm,
+    loading,
+    variant,
+    noTokenFound,
+    hasTokenError
+  };
+
   return (
     <div className="flex flex-col pt-8 pb-6 min-h-363 max-h-141 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none">
       <div className="mb-4 sm:flex items-center justify-between px-8">
         <div className="text-xl text-white">Select a token</div>
+        {!showTokenGateModal && (
         <div className="inline-flex text-xl text-gray-syn10 sm:pl-16 sm:float-right">
           <div className="text-sm">
             Each crypto asset is different.
@@ -240,6 +350,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             />
           </div>
         </div>
+        )}
       </div>
 
       {/* Search field */}
@@ -254,62 +365,47 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         />
       </div>
       <div className="overflow-auto flex flex-col flex-grow no-scroll-bar">
-        {/* Suggestion list */}
-        {!searchTerm && suggestionList?.length ? (
-          <>
-            <p className="text-xs sm:text-sm sm:leading-4 text-white opacity-50 uppercase tracking-wider font-bold mb-2 px-8">
-              {suggestionListTitle}
-            </p>
-            <TokenItemsSection
-              tokenList={suggestionList}
-              handleItemClick={handleTokenClick}
-              depositTokenSymbol={tokenDetails.depositTokenSymbol}
-              activeItemIndex={activeOptions.index}
-            />
-          </>
-        ) : null}
-        {searchTerm ? null : (
-          <L2
-            extraClasses={`sm:leading-4 text-white opacity-50 px-8 ${
-              suggestionList?.length ? 'mt-3' : ''
-            } `}
-          >
-            Common tokens
-          </L2>
-        )}
-        {loading ? (
-          <TokenItemsLoadingSection repeat={3} />
+        {searchTerm ? (
+          <TokenSection
+            tokenList={tokensList}
+            showImportBtn={showImportBtn}
+            {...tokenSectionDefaultProps}
+          />
         ) : (
           <>
-            {tokensList?.length ? (
-              <div className="mt-2">
-                <TokenItemsSection
-                  tokenList={tokensList}
-                  handleItemClick={handleTokenClick}
-                  depositTokenSymbol={tokenDetails.depositTokenSymbol}
-                  activeItemIndex={activeOptions.index}
-                  listShift={activeOptions.shift}
-                />
-              </div>
-            ) : noTokenFound ? (
-              <div className="flex-grow flex flex-col justify-center space-y-2 text-center px-8">
-                <p className="font-whyte text-white">No results found</p>
-                <p className="text-sm font-whyte text-gray-3">
-                  Try searching a different name or <br />
-                  pasting the contract address
-                </p>
-              </div>
-            ) : hasTokenError ? (
-              <div className="flex-grow flex flex-col justify-center space-y-2 text-center px-8">
-                <p className="font-whyte text-white">No matching token found</p>
-                <p className="text-sm font-whyte text-gray-3">
-                  Try searching a different token
-                </p>
-              </div>
+            {variant === TokenModalVariant.RecentlyUsed &&
+            suggestionList?.length ? (
+              <TokenSection
+                header={suggestionListTitle}
+                tokenList={suggestionList}
+                {...tokenSectionDefaultProps}
+              />
             ) : null}
+            {showTokenGateModal && nftList.length ? (
+              <TokenSection
+                header="NFTs"
+                tokenList={nftList}
+                {...tokenSectionDefaultProps}
+              />
+            ) : null}
+            <TokenSection
+              header={
+                showTokenGateModal
+                  ? 'Community or social tokens'
+                  : 'Common Tokens'
+              }
+              tokenList={tokensList}
+              {...tokenSectionDefaultProps}
+            />
           </>
         )}
       </div>
+
+      <ImportTokenModal
+        showModal={showImportTokenModal}
+        handleTokenClick={handleTokenClick}
+        closeModal={() => dispatch(setShowImportTokenModal(false))}
+      />
     </div>
   );
 };

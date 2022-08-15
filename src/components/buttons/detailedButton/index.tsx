@@ -6,6 +6,7 @@ interface Props {
   details: string;
   hoverBorderColor: string;
   inlineLink?: { label: string; URL: string };
+  onClick?: () => void;
 }
 
 export const DetailedButton: React.FC<Props> = ({
@@ -13,15 +14,17 @@ export const DetailedButton: React.FC<Props> = ({
   title,
   details,
   hoverBorderColor,
-  inlineLink
+  inlineLink,
+  onClick
 }) => {
   return (
     <button
-      className={`p-6 w-56 h-64 rounded-custom border ${
+      className={`p-6 rounded-custom border ${
         hoverBorderColor
           ? `hover:border-${hoverBorderColor}`
           : 'hover:border-white'
-      } border-gray-syn6 transition-all ease-out`}
+      } border-gray-syn6 transition-all ease-out w-full sm:w-58`}
+      onClick={onClick}
     >
       <div className="h-full w-full">
         {' '}

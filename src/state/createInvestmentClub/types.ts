@@ -1,3 +1,6 @@
+import { Token } from '@/types/token';
+import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
+
 export type mintEndTime = {
   mintTime: string;
   value: number;
@@ -11,6 +14,26 @@ export type tokenDetails = {
   depositTokenDecimals: number;
 };
 
+export enum TokenGateOption {
+  RESTRICTED,
+  UNRESTRICTED
+}
+
+export type TokenGateRule = {
+  name: string;
+  quantity: number;
+  symbol: string;
+  icon?: string | null;
+  contractAddress?: string;
+  decimals?: number;
+};
+
+export type ICurrentSelectedToken = {
+  idx?: number;
+  quantity?: number;
+  token?: Token;
+};
+
 export interface InitialState {
   investmentClubName: string;
   investmentClubSymbol: string;
@@ -19,6 +42,7 @@ export interface InitialState {
   mintEndTime: mintEndTime;
   mintSpecificEndTime: string;
   membersCount: string;
+  membershipAddresses: string[];
   clubCreationStatus: {
     transactionHash: string;
     creationReceipt:
@@ -27,13 +51,19 @@ export interface InitialState {
         }
       | any;
   };
-  tokenDetails: {
-    depositToken: string;
-    depositTokenSymbol: string;
-    depositTokenLogo: any;
-    depositTokenName: string;
-    depositTokenDecimals: number;
+  tokenDetails: tokenDetails;
+  errors: {
+    memberAddresses: string;
+    duplicateRules: number[];
+    nullRules: number[];
   };
+  tokenGateOption: TokenGateOption;
+  amountToMintPerAddress: number;
+  showTokenGateModal: boolean;
+  showImportTokenModal: boolean;
+  currentSelectedToken: ICurrentSelectedToken;
+  tokenRules: TokenGateRule[];
+  logicalOperator: LogicalOperator;
 }
 
 export const initialState: InitialState = {
@@ -49,6 +79,7 @@ export const initialState: InitialState = {
   }, // How long will deposits be accepted?
   mintSpecificEndTime: '23:59',
   membersCount: '', // How many members can join?
+  membershipAddresses: [], // Addresses of members
   clubCreationStatus: {
     transactionHash: '',
     creationReceipt: {
@@ -61,5 +92,27 @@ export const initialState: InitialState = {
     depositTokenLogo: '',
     depositTokenName: '',
     depositTokenDecimals: 0
-  }
+  },
+  errors: {
+    memberAddresses: '',
+    duplicateRules: [],
+    nullRules: []
+  },
+  tokenGateOption: TokenGateOption.RESTRICTED,
+  amountToMintPerAddress: 0,
+  showTokenGateModal: false,
+  showImportTokenModal: false,
+  currentSelectedToken: {
+    idx: 0,
+    quantity: 1
+  },
+  tokenRules: [
+    {
+      icon: null,
+      name: '',
+      quantity: 1,
+      symbol: ''
+    }
+  ],
+  logicalOperator: LogicalOperator.OR
 };

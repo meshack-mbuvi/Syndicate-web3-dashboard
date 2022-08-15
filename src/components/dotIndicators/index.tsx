@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FadeBetweenChildren from '../fadeBetweenChildren';
+import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',
   HORIZONTAL = 'HORIZONTAL'
 }
-
 interface Props {
-  options: string[];
+  options: CreateSteps[] | string[];
   activeIndex: number;
   customClasses?: string;
   orientation?: DotIndicatorsOrientation;
@@ -29,20 +29,25 @@ export const DotIndicators: React.FC<Props> = ({
     // Calculate how much to offset all the dots such that the
     // first dot is at the middle of the option label
     const containerHeight = containerRef.current.getBoundingClientRect().height;
-    const dotHeight = dotRef.current.getBoundingClientRect().height;
-    setDotsTopOffset(containerHeight / 2 - dotHeight / 2);
-  }, [options]);
+
+    // hard-coding dot height to 8px to solve an issue with dotRef being reset to null
+    // when options value is changed after selecting a different club type
+    setDotsTopOffset(containerHeight / 2 - 8 /** dotHeight */ / 2);
+  }, [options, activeIndex]);
 
   useEffect(() => {
     // We don't want the dots to animate to their starting position
     // on the first render. So check that the top offset was calculated
     // correctly before adding transitions
     const containerHeight = containerRef.current.getBoundingClientRect().height;
-    const dotHeight = dotRef.current.getBoundingClientRect().height;
-    if (dotsTopOffset >= containerHeight / 2 - dotHeight / 2) {
+
+    // hard-coding dot height to 8px to solve an issue with dotRef being reset to null
+    // when options value is changed after selecting a different club type
+    if (dotsTopOffset >= containerHeight / 2 - 8 /** dotHeight */ / 2) {
       setDotsTransitionStyles(`transition-all ${animationTimingStyles}`);
     }
-  }, [dotsTopOffset]);
+
+  }, [dotsTopOffset, activeIndex]);
 
   const renderedVerticalDots = options.map((option, index) => (
     <React.Fragment key={index}>
@@ -119,6 +124,12 @@ export const DotIndicators: React.FC<Props> = ({
         } ml-4 flex space-x-4`}
       >
         {renderedHorizontalDots}
+        </div>
+      <div className={`${
+          orientation === DotIndicatorsOrientation.VERTICAL
+            ? 'visible'
+            : 'hidden'} inline uppercase text-sm tracking-wide`}>
+        { typeof options[activeIndex] !== 'string' && options[activeIndex]}
       </div>
     </div>
   );
