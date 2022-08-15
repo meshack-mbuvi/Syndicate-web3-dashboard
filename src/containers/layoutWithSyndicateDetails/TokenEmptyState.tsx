@@ -13,7 +13,7 @@ const TokenEmptyState: React.FC<{
 }> = ({ tokenTitle, tokenAddress }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -35,6 +35,8 @@ const TokenEmptyState: React.FC<{
     setUrlNetwork(network);
   };
 
+  const isValidAddress = web3.utils.isAddress(tokenAddress);
+
   return (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
@@ -46,9 +48,13 @@ const TokenEmptyState: React.FC<{
           />
         </div>
         <p className="text-lg md:text-2xl text-center mb-3">
-          No {tokenTitle} found at that address.
+          {isValidAddress
+            ? `No ${tokenTitle} found at that address.`
+            : `Invalid ${tokenTitle} address`}
         </p>
-        <BlockExplorerLink resourceId={tokenAddress} />
+        {isValidAddress ? (
+          <BlockExplorerLink resourceId={tokenAddress} />
+        ) : null}
         {urlNetwork?.chainId &&
         urlNetwork?.chainId !== activeNetwork?.chainId ? (
           <div

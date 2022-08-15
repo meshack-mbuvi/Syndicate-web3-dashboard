@@ -5,10 +5,9 @@ import { isEmpty } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import NotFoundPage from '@/pages/404';
-import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
-import { useRouter } from 'next/router';
+
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import Head from '@/components/syndicates/shared/HeaderTitle';
-import TokenEmptyState from '@/containers/layoutWithSyndicateDetails/TokenEmptyState';
 import { Spinner } from '@/components/shared/spinner';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 
@@ -21,12 +20,6 @@ const ModifyCollectives: React.FC = () => {
       details: { collectiveName }
     }
   } = useSelector((state: AppState) => state);
-
-  const router = useRouter();
-  const { collectiveAddress } = router.query;
-
-  const { loading: fetchingCollective, collectiveNotFound } =
-    useFetchCollectiveDetails();
 
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
@@ -48,25 +41,18 @@ const ModifyCollectives: React.FC = () => {
       </div>
     </Layout>
   ) : isReady && readyCollectivesClient.treatment === 'on' ? (
-    <Layout>
-      <Head title={collectiveName || 'Collective'} />
-      <div className="relative container mx-auto">
-        <div className="grid grid-cols-12 gap-5 w-80 sm:w-730">
-          <div className="col-span-12 text-white pb-10">
-            {!fetchingCollective && collectiveNotFound ? (
-              <div className="w-full">
-                <TokenEmptyState
-                  tokenTitle="collective"
-                  tokenAddress={collectiveAddress as string}
-                />
-              </div>
-            ) : (
+    <CollectivesContainer>
+      <Layout>
+        <Head title={collectiveName || 'Collective'} />
+        <div className="relative container mx-auto">
+          <div className="grid grid-cols-12 gap-5 w-80 sm:w-730">
+            <div className="col-span-12 text-white pb-10">
               <ModifyCollectiveSettings />
-            )}
+            </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </CollectivesContainer>
   ) : (
     <NotFoundPage />
   );

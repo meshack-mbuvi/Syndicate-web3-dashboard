@@ -1,7 +1,8 @@
 import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
-import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
+import CollectiveNotFound from '@/containers/collectives/shared/collectiveNotFound';
+import Layout from '@/components/layout';
 
 const CollectivesContainer: React.FC = ({ children }) => {
   const {
@@ -13,9 +14,17 @@ const CollectivesContainer: React.FC = ({ children }) => {
   // fetch collective details for both claim and details page
   useFetchCollectiveDetails();
 
-  //TODO: using the 404 page when no collective is found for address.
-  // we'll need to switch this out with a 404 page for collectives.
-  return <div>{collectiveNotFound ? <NotFoundPage /> : children}</div>;
+  return (
+    <div>
+      {collectiveNotFound ? (
+        <Layout>
+          <CollectiveNotFound />
+        </Layout>
+      ) : (
+        children
+      )}
+    </div>
+  );
 };
 
 export default CollectivesContainer;
