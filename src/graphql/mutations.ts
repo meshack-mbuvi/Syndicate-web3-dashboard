@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const ANNOTATE_TRANSACTIONS = gql`
   mutation annotateTransactions(
-    $input: String
+    $input: String!
     $chainId: Int
     $transactionAnnotationList: [Financial_TransactionAnnotationInput]
   ) {
