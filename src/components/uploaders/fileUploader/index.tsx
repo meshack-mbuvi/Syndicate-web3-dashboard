@@ -1,4 +1,4 @@
-import { B3 } from '@/components/typography';
+import { B3, B4 } from '@/components/typography';
 import React, { useState } from 'react';
 
 export enum UploaderProgressType {
@@ -16,6 +16,7 @@ interface Props {
   handleUpload: (e) => void;
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
+  addOn?: any;
   heightClass?: string;
   accept?: string;
   customClasses?: string;
@@ -31,14 +32,18 @@ export const FileUploader: React.FC<Props> = ({
   handleUpload,
   handleCancelUpload,
   progressDisplayType = UploaderProgressType.LOADING_BAR,
+  addOn,
   heightClass = 'h-52',
   accept = '*',
   customClasses
 }) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const isAddOnVisible = addOn && progressPercent === 0;
   return (
     <button
-      className={`w-full relative ${heightClass} px-6 border ${
+      className={`w-full relative transition-all ${
+        isAddOnVisible ? 'h-auto' : heightClass
+      } px-6 ${addOn && 'py-8'} border ${
         isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6'
       } border-dashed rounded ${
         progressPercent <= 0 && 'hover:bg-gray-syn8'
@@ -48,7 +53,9 @@ export const FileUploader: React.FC<Props> = ({
     >
       <input
         type="file"
-        className={`absolute top-0 opacity-0 left-0 ${heightClass} ${
+        className={`absolute z-0 top-0 opacity-0 left-0 ${
+          addOn ? 'h-full' : heightClass
+        } ${
           progressPercent > 0 && 'pointer-events-none'
         } cursor-pointer w-full text-white`}
         onChange={handleUpload}
@@ -64,7 +71,6 @@ export const FileUploader: React.FC<Props> = ({
         }}
         accept={accept}
       />
-
       {/* Waiting for file */}
       <div
         className={`pointer-events-none text-center space-y-2 text-gray-syn4 ${
@@ -81,6 +87,12 @@ export const FileUploader: React.FC<Props> = ({
         </div>
         <div className="text-xs">{promptSubtitle}</div>
       </div>
+      {isAddOnVisible && (
+        <div>
+          <B4 extraClasses="mb-3 mt-2 text-gray-syn4">or</B4>
+          <div className="relative z-10">{addOn}</div>
+        </div>
+      )}
 
       {/* Upload progress */}
       <div
@@ -135,7 +147,7 @@ export const FileUploader: React.FC<Props> = ({
             >
               <img
                 src="/images/xmark-white.svg"
-                className="relative w-4 h-4"
+                className="relative w-3 h-3"
                 style={{ top: '1px' }}
                 alt="Icon"
               />

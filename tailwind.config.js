@@ -94,9 +94,11 @@ module.exports = {
         18: '4.5rem',
         23: '5.75rem',
         25: '6.25rem',
+        45.45: '11.375rem',
         54: '13.5rem',
         88: '22rem',
         100: '30rem',
+        120: '30rem',
         104: '26rem',
         202: '50.5rem',
         '2screen': '200vh'
@@ -114,6 +116,7 @@ module.exports = {
         75: '18.75rem',
         88: '22rem',
         100: '30rem',
+        120: '30rem',
         104: '26rem',
         'slightly-over-100': '30.25rem',
         500: '31.25rem',
@@ -198,6 +201,8 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
+        'medium-extended': ['Slussen Extended Medium'],
+        'black-extended': ['Slussen Extended Black'],
         light: ['Slussen', 'Helvetica', 'Arial', 'sans-serif'],
         'whyte-medium': [
           'Whyte Medium',

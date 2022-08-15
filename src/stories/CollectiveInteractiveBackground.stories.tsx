@@ -1,7 +1,5 @@
-import {
-  CollectivesInteractiveBackground,
-  NFTMediaType
-} from '@/components/collectives/interactiveBackground';
+import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
   title: '3. Molecules/Collectives/Interactive Background'

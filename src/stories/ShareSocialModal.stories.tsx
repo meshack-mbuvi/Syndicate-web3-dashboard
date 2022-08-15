@@ -2,11 +2,9 @@ import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
-import {
-  CollectivesInteractiveBackground,
-  NFTMediaType
-} from '@/components/collectives/interactiveBackground';
+import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
   title: '3. Molecules/Share Social Modal',

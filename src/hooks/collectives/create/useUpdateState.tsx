@@ -31,7 +31,7 @@ const useUpdateState = () => {
   const { name, artwork, artworkUrl } = useCreateState();
 
   const [ContinueButtonActive, setContinueButtonActive] = useState(false);
-  const [submitButtonActive, setSubmiteButtonActive] = useState(false);
+  const [submitButtonActive, setSubmitButtonActive] = useState(false);
   const [progressPercent, setProgressPercent] = useState(artworkUrl ? 100 : 0);
   const [fileName, setFileName] = useState(artwork?.name);
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
@@ -75,6 +75,33 @@ const useUpdateState = () => {
   const handleDescriptionChange = (input: string) => {
     dispatch(setIpfsHash(''));
     dispatch(setCollectiveDescription(input));
+  };
+
+  const handleCreateGeneratedArtwork = async (backgroundColorClass: string) => {
+    dispatch(
+      setCollectiveArtwork({
+        artwork: {
+          backgroundColorClass: backgroundColorClass
+        },
+        artworkType: NFTMediaType.CUSTOM,
+        artworkUrl: ''
+      })
+    );
+  };
+
+  const handleCaptureGeneratedArtwork = (
+    imageURI: string,
+    backgroundColorClass: string
+  ) => {
+    dispatch(
+      setCollectiveArtwork({
+        artwork: {
+          backgroundColorClass: backgroundColorClass
+        },
+        artworkType: NFTMediaType.CUSTOM,
+        artworkUrl: imageURI
+      })
+    );
   };
 
   const handleFileUpload = async (e) => {
@@ -123,8 +150,8 @@ const useUpdateState = () => {
 
   const handleTimeWindowChange = (timeWindow: TimeWindow) => {
     dispatch(setCollectiveTimeWindow(timeWindow));
-    let now = new Date();
-    let time = `${now.getHours()}:${now.getMinutes()}`;
+    const now = new Date();
+    const time = `${now.getHours()}:${now.getMinutes()}`;
     if (timeWindow === TimeWindow.DAY) {
       handleCloseDateChange(new Date(now.getTime() + 60 * 60 * 24 * 1000));
     }
@@ -172,6 +199,8 @@ const useUpdateState = () => {
     handleDescriptionChange,
     handleCancelUpload,
     handleFileUpload,
+    handleCreateGeneratedArtwork,
+    handleCaptureGeneratedArtwork,
     setContinueButtonActive,
     ContinueButtonActive,
     progressPercent,
@@ -190,7 +219,7 @@ const useUpdateState = () => {
     handleCloseTimeChange,
     handleChangeAllowOwnershipTransfer,
     submitButtonActive,
-    setSubmiteButtonActive
+    setSubmitButtonActive
   };
 };
 

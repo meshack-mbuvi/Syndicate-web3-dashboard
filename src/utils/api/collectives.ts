@@ -1,12 +1,24 @@
 import { AxiosResponse } from 'axios';
 import { proxyPost } from '.';
 
-export async function postMetadata(data): Promise<any> {
+interface ICollectiveMetadata {
+  file: File;
+  name: string;
+  description: string;
+  symbol: string;
+}
+
+export async function postMetadata({
+  file,
+  name,
+  description,
+  symbol
+}: ICollectiveMetadata): Promise<any> {
   const form = new FormData();
-  form.append('file', data.artwork);
-  form.append('name', data.name);
-  form.append('description', data.description);
-  form.append('symbol', data.symbol);
+  form.append('file', file);
+  form.append('name', name);
+  form.append('description', description);
+  form.append('symbol', symbol);
 
   const config = {
     headers: {
@@ -18,6 +30,5 @@ export async function postMetadata(data): Promise<any> {
     form,
     config
   );
-
   return { IpfsHash: result.data.json.IpfsHash, status: result.status };
 }

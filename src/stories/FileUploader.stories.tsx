@@ -1,3 +1,4 @@
+import { PillButton } from '@/components/pillButtons';
 import {
   FileUploader,
   UploaderProgressType
@@ -27,6 +28,24 @@ Default.args = {
   heightClass: 'h-32',
   promptTitle: 'Upload artwork',
   promptSubtitle: 'PNG or MP4 allowed'
+};
+
+export const AddOn = Template.bind({});
+AddOn.args = {
+  fileName: 'file.csv',
+  successText: '32 addresses',
+  progressPercent: 0,
+  promptTitle: 'Upload artwork',
+  promptSubtitle: 'PNG or MP4 allowed',
+  addOn: (
+    <PillButton
+      onClick={() => {
+        alert('Generate art!');
+      }}
+    >
+      Generate for me
+    </PillButton>
+  )
 };
 
 export const LoadingBar = Template.bind({});

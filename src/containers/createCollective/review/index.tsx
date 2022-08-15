@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
@@ -48,7 +48,7 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     handleCloseTimeChange,
     handleChangeAllowOwnershipTransfer,
     submitButtonActive,
-    setSubmiteButtonActive,
+    setSubmitButtonActive,
     hasAgreedToTerms,
     setAgreedToTerms
   } = useUpdateState();
@@ -87,10 +87,10 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
         proceed = false;
       }
 
-      setSubmiteButtonActive(proceed);
+      setSubmitButtonActive(proceed);
       return;
     }
-    setSubmiteButtonActive(false);
+    setSubmitButtonActive(false);
   }, [
     membershipType,
     maxPerWallet,

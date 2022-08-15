@@ -53,6 +53,26 @@
     font-weight: 100 900;
   }
 
+  @font-face {
+    font-family: Slussen Extended Medium;
+    src: url(/fonts/Slussen/Slussen-Extended-Medium.woff2) format('woff2');
+    src: url(/fonts/Slussen/Slussen-Extended-Medium.woff2)
+        format('woff2 supports variations'),
+      url(/fonts/Slussen/Slussen-Extended-Medium.woff2)
+        format('woff2-variations');
+    font-weight: 100 900;
+  }
+
+  @font-face {
+    font-family: Slussen Extended Black;
+    src: url(/fonts/Slussen/Slussen-Extended-Black-TRIAL.woff2) format('woff2');
+    src: url(/fonts/Slussen/Slussen-Extended-Black-TRIAL.woff2)
+        format('woff2 supports variations'),
+      url(/fonts/Slussen/Slussen-Extended-Black-TRIAL.woff2)
+        format('woff2-variations');
+    font-weight: 100 900;
+  }
+
   /* Whyte */
 
   @font-face {
