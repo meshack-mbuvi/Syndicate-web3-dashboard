@@ -77,6 +77,6 @@ const generateBackUrl = (
   const address = collectiveAddress || clubAddress;
   const page = collectiveAddress ? '/collectives' : '/clubs';
   const params = `?chain=${network}`;
-  const baseUrl = `${page}/${address}/manage/`;
+  const baseUrl = `${page}/${address}`;
   return isSettingsPage ? baseUrl + params : page;
 };

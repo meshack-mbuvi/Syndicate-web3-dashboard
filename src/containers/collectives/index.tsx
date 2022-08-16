@@ -21,6 +21,7 @@ import { CollectiveHeader } from './shared/collectiveHeader';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 
 interface IProps {
   showModifySettings: boolean;
@@ -244,42 +245,11 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
 const Collective: React.FC = () => {
   const {
     collectiveDetailsReducer: {
-      details: { ownerAddress, owners },
       loadingState: { isFetchingCollective }
-    },
-    web3Reducer: {
-      web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
 
-  const [permissionType, setPermissionType] = useState<PermissionType>(null);
-
-  // set permission type based on members list and owner address.
-  useEffect(() => {
-    if (account && ownerAddress && web3.utils) {
-      const isAdmin =
-        web3.utils.toChecksumAddress(account) ===
-        web3.utils.toChecksumAddress(ownerAddress);
-
-      const isMember =
-        !isAdmin &&
-        owners.find((member) => {
-          const { id } = member;
-          const memberAddress = id.split('-')[0];
-          return (
-            web3.utils.toChecksumAddress(memberAddress) ===
-            web3.utils.toChecksumAddress(account)
-          );
-        });
-      if (isAdmin) {
-        setPermissionType(PermissionType.ADMIN);
-      } else if (isMember) {
-        setPermissionType(PermissionType.MEMBER);
-      } else {
-        setPermissionType(PermissionType.NON_MEMBER);
-      }
-    }
-  }, [account, ownerAddress, web3?.utils, owners]);
+  const permissionType = usePermissionType();
 
   // skeleton loader content for left content
   const leftColumnLoader = (

@@ -10,20 +10,29 @@ import CollectivesContainer from '@/containers/collectives/CollectivesContainer'
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { Spinner } from '@/components/shared/spinner';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
+import { PermissionType } from '@/components/collectives/shared/types';
+import { useRouter } from 'next/router';
 
 const ModifyCollectives: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { web3 }
+      web3: { web3, activeNetwork }
     },
     collectiveDetailsReducer: {
       details: { collectiveName }
     }
   } = useSelector((state: AppState) => state);
 
+  const router = useRouter();
+
+  const { collectiveAddress } = router.query;
+
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   const [pageIsLoading, setPageIsLoading] = useState(true);
+
+  const permissionType = usePermissionType();
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
@@ -33,6 +42,23 @@ const ModifyCollectives: React.FC = () => {
       setPageIsLoading(true);
     };
   }, [readyCollectivesClient, web3, isReady]);
+
+  useEffect(() => {
+    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
+
+    if (permissionType !== PermissionType.ADMIN) {
+      router.replace(
+        `/collectives/${collectiveAddress}?chain=${activeNetwork.network}`
+      );
+    }
+  }, [
+    collectiveAddress,
+    isReady,
+    permissionType,
+    readyCollectivesClient,
+    router,
+    web3
+  ]);
 
   return pageIsLoading ? (
     <Layout>

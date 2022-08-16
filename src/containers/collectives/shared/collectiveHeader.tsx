@@ -1,9 +1,11 @@
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B3, H1, H2 } from '@/components/typography';
+import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import {
   ExternalLinkColor,
@@ -17,6 +19,12 @@ export const CollectiveHeader: React.FC<{
   showModifySettings?: boolean;
 }> = (props) => {
   const { collectiveName, links, showModifySettings = false } = props;
+
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
 
   const title = (
     <>
@@ -42,7 +50,9 @@ export const CollectiveHeader: React.FC<{
       {!isEmpty(links) && (
         <div className="flex items-center space-x-4">
           {showModifySettings ? (
-            <Link href={`/collectives/${collectiveAddress}/modify`}>
+            <Link
+              href={`/collectives/${collectiveAddress}/modify?chainId=${activeNetwork.network}`}
+            >
               <div
                 className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
                 data-tip
