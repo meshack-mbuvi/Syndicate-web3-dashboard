@@ -2,6 +2,8 @@ import { B2, B3 } from '@/components/typography';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 
 export enum CollectiveCardType {
   TIME_WINDOW = 'TIME_WINDOW',
@@ -24,11 +26,15 @@ export const CollectiveCard: React.FC<Props> = ({
 }) => {
   const {
     collectiveDetailsReducer: {
-      details: { mediaCid, numOwners }
+      details: { numOwners, metadataCid }
     }
   } = useSelector((state: AppState) => state);
-
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+
+  // intermediate step to fetch the nft details from the metadataCid
+  const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
+    useFetchCollectiveMetadata(metadataCid);
+
   const openWindowTitle =
     cardType === CollectiveCardType.TIME_WINDOW
       ? 'Open to new members'
@@ -60,21 +66,54 @@ export const CollectiveCard: React.FC<Props> = ({
         </div>
       </div>
     );
+
   return (
     <div className="xl:space-y-0 flex space-x-6 xl:items-center bg-gray-syn8 rounded-2.5xl px-6 py-6 xl:py-0 xl:px-0">
+      {isLoadingNftMetadata && (
+        <SkeletonLoader
+          width="24"
+          height="24"
+          borderRadius="rounded-xl"
+          margin="my-0"
+        />
+      )}
+      {nftMetadata?.animation_url && (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <video
+          autoPlay
+          playsInline={true}
+          loop
+          muted={true}
+          className={`${'object-cover'} rounded-xl w-24 h-24 bg-gray-syn6 flex-shrink-0`}
+        >
+          <source
+            src={`${ipfsGateway}/${nftMetadata?.animation_url.replace(
+              'ipfs://',
+              ''
+            )}`}
+            type="video/mp4"
+          ></source>
+        </video>
+      )}
+      {nftMetadata?.image && (
+        <div
+          className="rounded-xl w-24 h-24 bg-gray-syn6 flex-shrink-0"
+          style={{
+            backgroundImage: `url(${ipfsGateway}/${nftMetadata?.image.replace(
+              'ipfs://',
+              ''
+            )})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        ></div>
+      )}
+
       <div
-        className="rounded-xl w-24 h-24 bg-gray-syn6 flex-shrink-0"
-        style={{
-          backgroundImage: `url('${
-            mediaCid
-              ? `${ipfsGateway}/${mediaCid}`
-              : '/images/collectives/demo_punk.png'
-          }')`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover'
-        }}
-      />
-      <div className="items-center space-y-4 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0">
+        className={`items-center space-y-4 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
+          !isLoadingNftMetadata && !nftMetadata && 'mx-6 py-6'
+        }`}
+      >
         <div className="xl:w-1/3 space-y-1">
           <B3 extraClasses="text-gray-syn4">{openWindowTitle}</B3>
           <B2>{openWindowValue}</B2>

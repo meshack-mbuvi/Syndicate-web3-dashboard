@@ -56,10 +56,6 @@ const ModifyCollectiveSettings: React.FC = () => {
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
     useFetchCollectiveMetadata(metadataCid);
 
-  // console.log('nftMetadata', nftMetadata);
-  // console.log('nftMetadata?.media', nftMetadata?.media);
-  // console.log('isLoadingNftMetadata', isLoadingNftMetadata);
-
   const [showImageUploader, setShowImageUploader] = useState(false);
 
   const handleOpenCollective = () => {
@@ -195,10 +191,19 @@ const ModifyCollectiveSettings: React.FC = () => {
                     <NFTPreviewer
                       mediaSource={
                         nftMetadata
-                          ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/${nftMetadata?.media}`
+                          ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/${
+                              nftMetadata?.image
+                                ? nftMetadata?.image.replace('ipfs://', '')
+                                : nftMetadata?.animation_url
+                                ? nftMetadata?.animation_url.replace(
+                                    'ipfs://',
+                                    ''
+                                  )
+                                : null
+                            }`
                           : null
                       }
-                      // loading={isLoadingNftMetadata} //TODO use this somehow!
+                      loadingMediaSource={isLoadingNftMetadata}
                       mediaType={
                         nftMetadata?.image === null
                           ? NFTMediaType.VIDEO
