@@ -219,6 +219,10 @@ export const AddressUploader: React.FC<Props> = ({
             membershipAddresses.length === 1 ? 'address' : 'addresses'
           }`}
           progressPercent={progressPercent}
+          promptTitle={'Upload a spreadsheet'}
+          promptSubtitle={
+            'CSV, XLS, or PDF file with addresses in first column'
+          }
           handleUpload={handleFileUpload}
           handleCancelUpload={handleCancelUpload}
           customClasses={`${!isUploadMethodSpreadsheet && 'hidden'}`}

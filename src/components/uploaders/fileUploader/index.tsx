@@ -27,8 +27,8 @@ export const FileUploader: React.FC<Props> = ({
   fileName,
   successText,
   errorText,
-  promptTitle = 'Upload a spreadsheet',
-  promptSubtitle = 'CSV, XLS, or PDF file with addresses in first column',
+  promptTitle,
+  promptSubtitle,
   handleUpload,
   handleCancelUpload,
   progressDisplayType = UploaderProgressType.LOADING_BAR,
@@ -84,9 +84,6 @@ export const FileUploader: React.FC<Props> = ({
             alt="Icon"
           />
           <div>{promptTitle}</div>
-          <div className="text-xs">
-            CSV, XLS, or XLSX file with addresses in first column
-          </div>
         </div>
         <div className="text-xs">{promptSubtitle}</div>
       </div>
