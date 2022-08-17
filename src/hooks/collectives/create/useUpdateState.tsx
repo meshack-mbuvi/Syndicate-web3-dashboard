@@ -161,7 +161,11 @@ const useUpdateState = () => {
     if (timeWindow === TimeWindow.MONTH) {
       handleCloseDateChange(new Date(now.getTime() + 60 * 60 * 24 * 30 * 1000));
     }
-    handleCloseTimeChange(time);
+    if (timeWindow === TimeWindow.CUSTOM) {
+      handleCloseTimeChange('23:59');
+    } else {
+      handleCloseTimeChange(time);
+    }
   };
   const handlePriceToJoinChange = (priceToJoin: number) => {
     dispatch(setCollectivePricePerNFT(priceToJoin));

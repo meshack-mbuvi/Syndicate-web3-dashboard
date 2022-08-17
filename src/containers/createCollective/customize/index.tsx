@@ -64,7 +64,8 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
       timeWindow >= 0 &&
       closeDate &&
       closeTime &&
-      tokenDetails
+      tokenDetails &&
+      !isNaN(pricePerNFT)
     ) {
       let proceed = true;
 
@@ -84,7 +85,8 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
     closeDate,
     closeTime,
     tokenDetails,
-    transferrable
+    transferrable,
+    pricePerNFT
   ]);
 
   return (

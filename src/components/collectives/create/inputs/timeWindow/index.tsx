@@ -44,7 +44,7 @@ export const InputTimeWindow: React.FC<Props> = ({
           selectedTimeWindow === TimeWindow.CUSTOM
             ? 'max-h-102 md:max-h-68 mt-8 opacity-100'
             : 'max-h-0 mt-0 opacity-0'
-        } transition-all duration-500 space-y-8 md:space-x-5 md:flex overflow-hidden`}
+        } transition-all duration-500 space-y-5 md:space-y-0 space-x-0 md:space-x-5 md:flex overflow-hidden`}
       >
         <div className="md:w-1/2">
           <div>Close date</div>
@@ -63,7 +63,6 @@ export const InputTimeWindow: React.FC<Props> = ({
             onChange={(e) => {
               handleCloseTimeChange(e.target.value);
             }}
-            placeholderLabel="11:59PM"
             extraClasses="mt-2"
           />
         </div>

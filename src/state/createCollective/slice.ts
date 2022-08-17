@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './types';
 
 const getEpochCloseTime = (closeDate: Date, closeTime: string) => {
-  let newDate = new Date(
+  const newDate = new Date(
     closeDate.setHours(
       Number(closeTime.split(':')[0]),
       Number(closeTime.split(':')[1])
@@ -44,13 +44,13 @@ const createCollectiveSlice = createSlice({
     setCollectiveCloseDate(state, action: PayloadAction<Date>) {
       state.closeDate = action.payload;
 
-      let epochTime = getEpochCloseTime(action.payload, state.closeTime);
+      const epochTime = getEpochCloseTime(action.payload, state.closeTime);
       state.EpochCloseTime = epochTime;
     },
     setCollectiveCloseTime(state, action: PayloadAction<string>) {
       state.closeTime = action.payload;
 
-      let epochTime = getEpochCloseTime(state.closeDate, action.payload);
+      const epochTime = getEpochCloseTime(state.closeDate, action.payload);
       state.EpochCloseTime = epochTime;
     },
     setCollectiveTimeWindow(state, action) {
@@ -135,7 +135,7 @@ const createCollectiveSlice = createSlice({
 
     // reset
     partialCollectiveCreationStateReset(state) {
-      state = { ...initialState, creationStatus: state.creationStatus };
+      return { ...initialState, creationStatus: state.creationStatus };
     },
     resetCollectiveCreationState(state) {
       Object.assign(state, initialState);

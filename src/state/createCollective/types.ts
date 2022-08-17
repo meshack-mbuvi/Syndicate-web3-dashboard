@@ -45,7 +45,7 @@ export const initialState: CollectiveCreation = {
   artworkUrl: '',
   artworkType: NFTMediaType.IMAGE,
   description: '',
-  pricePerNFT: 0,
+  pricePerNFT: NaN,
   maxPerWallet: 0,
   membershipType: MembershipType.OPEN,
   openUntil: OpenUntil.FUTURE_DATE,

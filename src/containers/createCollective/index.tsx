@@ -52,7 +52,7 @@ const CreateCollectiveContainer: FC = () => {
     }
   };
 
-  const dotIndicatorOptions = ['Design', 'Customize', 'Review', 'Success'];
+  const dotIndicatorOptions = ['Design', 'Customize', 'Review'];
 
   return (
     <>

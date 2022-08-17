@@ -38,7 +38,7 @@ export const NavButton: React.FC<Props> = ({
     >
       {type === NavButtonType.CLOSE && (
         <button
-          className="p-1 -m-2 text-gray-syn4 hover:text-white ease-out transition-all"
+          className="p-4.5 -m-2 text-gray-syn4 hover:text-white ease-out transition-all rounded-full"
           onClick={onClick}
         >
           <svg
@@ -74,15 +74,13 @@ export const NavButton: React.FC<Props> = ({
           className={`p-1 -m-2 relative ${
             type === NavButtonType.VERTICAL && 'top-1'
           } text-gray-syn4 ${
-            (type === NavButtonType.VERTICAL && currentStep === 0) ||
-            disabled
+            (type === NavButtonType.VERTICAL && currentStep === 0) || disabled
               ? ''
               : 'hover:text-white'
           } ease-out transition-all`}
           onClick={type === NavButtonType.DOWN ? onClick : handleNext}
           disabled={
-            (type === NavButtonType.VERTICAL && currentStep === 0) ||
-            disabled
+            (type === NavButtonType.VERTICAL && currentStep === 0) || disabled
           }
         >
           <svg

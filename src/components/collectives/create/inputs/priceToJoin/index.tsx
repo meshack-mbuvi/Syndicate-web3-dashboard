@@ -63,7 +63,7 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
           });
         }
       }}
-      placeholderLabel="0.0"
+      placeholderLabel="0"
       extraClasses={extraClasses}
       symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
       depositTokenSymbol={tokenDetails.symbol}

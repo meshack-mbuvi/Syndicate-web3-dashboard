@@ -3,7 +3,6 @@ import IconShield from '@/components/icons/shield';
 import IconToken from '@/components/icons/token';
 import { InputField } from '@/components/inputs/inputField';
 import { Switch, SwitchType } from '@/components/switch';
-import { DetailedTile } from '@/components/tile/detailedTile';
 import { B2, B3, B4 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import React from 'react';
@@ -12,6 +11,7 @@ import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
 import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
+import Image from 'next/image';
 
 export enum MembershipType {
   CAPPED = 'CAPPED',
@@ -74,12 +74,33 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
       <div>
         {/* Who can join */}
         <div>
-          <div>Who is allowed to join?</div>
+          <div className="pb-2">About invitations</div>
+          {/* [ENG-4149] Uncomment below when we support Allowlist and Token-gating */}
+          {/* <div>Who is allowed to join?</div>
           <div className="mt-1 text-sm text-gray-syn4">
             Members join by claiming a membership pass Learn more about NFTs
-          </div>
+          </div> */}
           <div className="hidden xl:block">
-            <DetailedTile
+            {/* [ENG-4149] Replace the "coming soon" selector with a static section */}
+            <div className="border border-gray-24 rounded py-5 px-6 flex flex-row space-x-4">
+              <Image
+                width={24}
+                height={24}
+                src="/images/social/smallWeb.svg"
+                alt="chain"
+              />
+              <div className="flex flex-col space-y-1">
+                <B3>Anyone with the link can join</B3>
+                <B4 extraClasses="text-gray-syn4 text-xs">
+                  Members join by claiming your collective’s NFT. If you’d like
+                  to keep invitations private, only share the link with people
+                  you trust.
+                </B4>
+              </div>
+            </div>
+
+            {/* [ENG-4149] Uncomment DetailedTile when we support Allowlist and Token-gating */}
+            {/* <DetailedTile
               activeIndex={2}
               onClick={null}
               disabledIndices={[0, 1]}
@@ -101,7 +122,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                 }
               ]}
               customClasses="mt-2"
-            />
+            /> */}
           </div>
           <div className="xl:hidden space-y-3 mt-3">
             <div className="flex items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
@@ -171,6 +192,11 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
               tokenDetails={tokenDetails}
               extraClasses="mt-2"
             />
+            {priceToJoin === 0 && (
+              <B3 extraClasses="text-gray-syn4 pt-2">
+                Members will only need to pay gas
+              </B3>
+            )}
           </div>
           <div className="md:w-1/2">
             <div>Max per wallet</div>

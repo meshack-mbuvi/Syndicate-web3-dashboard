@@ -193,8 +193,8 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Invitation */}
-        <div className={spaceBetweenTitleAndSubtitleStyles}>
+        {/* [ENG-4149] Invitation */}
+        {/* <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div className="space-y-2">
             <div className={taglineStyles}>Invitation</div>
             <div className="flex space-x-2">
@@ -204,7 +204,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Price per pass */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
@@ -433,7 +433,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                         handleMaxSupplyChange(null);
                       }
                     }}
-                    placeholderLabel="e.g. "
+                    placeholderLabel="1"
                     extraClasses="my-2"
                   />
                 </div>
