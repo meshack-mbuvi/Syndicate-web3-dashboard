@@ -1,7 +1,5 @@
-import {
-  CollectiveCard,
-  CollectiveCardType
-} from '@/components/collectives/card';
+import { CollectiveCard } from '@/components/collectives/card';
+import { CollectiveCardType } from '@/state/collectiveDetails/types';
 
 export default {
   title: '3. Molecules/Collectives/Card'
@@ -25,7 +23,7 @@ TimeWindow.args = {
 
 export const MaxSupply = Template.bind({});
 MaxSupply.args = {
-  cardType: CollectiveCardType.MAX_SUPPLY,
+  cardType: CollectiveCardType.MAX_TOTAL_SUPPLY,
   closeDate: 'Jun 11, 2021',
   passes: { available: 1200, total: 4000 },
   price: {
@@ -37,7 +35,7 @@ MaxSupply.args = {
 
 export const Free = Template.bind({});
 Free.args = {
-  cardType: CollectiveCardType.FREE,
+  cardType: CollectiveCardType.OPEN_UNTIL_CLOSED,
   closeDate: 'Jun 11, 2021',
   passes: { available: 1200, total: 4000 },
   price: {

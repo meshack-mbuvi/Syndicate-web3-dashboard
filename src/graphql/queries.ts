@@ -249,6 +249,14 @@ export const GetAdminCollectives = gql`
         mediaCid
       }
       areNftsTransferable
+      modules {
+        activeRequirements {
+          requirement {
+            endTime
+            requirementType
+          }
+        }
+      }
     }
   }
 `;

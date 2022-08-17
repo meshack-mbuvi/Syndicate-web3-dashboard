@@ -4,10 +4,7 @@ import {
 } from '@/components/collectives/activity';
 import moment from 'moment';
 import { BadgeWithMembers } from '@/components/collectives/badgeWithMembers';
-import {
-  CollectiveCard,
-  CollectiveCardType
-} from '@/components/collectives/card';
+import { CollectiveCard } from '@/components/collectives/card';
 import { PermissionType } from '@/components/collectives/shared/types';
 import { LockIcon } from '@/components/iconWrappers';
 import { B2, B3, H4 } from '@/components/typography';
@@ -146,28 +143,16 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
 const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
   const {
     collectiveDetailsReducer: {
-      details: { mintPrice, mintEndTime, maxTotalSupply, totalSupply }
+      details: {
+        mintPrice,
+        mintEndTime,
+        maxTotalSupply,
+        totalSupply,
+        collectiveCardType
+      }
     }
   } = useSelector((state: AppState) => state);
   const { permissionType } = details;
-  const [cardType, setCardType] = useState<CollectiveCardType>(null);
-
-  // setting card type based on available values
-  useEffect(() => {
-    const isMaxSupplyCollective = +maxTotalSupply > 0 && !mintEndTime;
-    const isTimeWindowCollective = +maxTotalSupply === 0 && +mintEndTime > 0;
-    const isFreeCollective =
-      +maxTotalSupply > 0 && !mintEndTime && +mintPrice === 0;
-    const isOpenCollective = +maxTotalSupply === 0 && +mintEndTime === 0;
-
-    if (isMaxSupplyCollective) {
-      setCardType(CollectiveCardType.MAX_SUPPLY);
-    } else if (isTimeWindowCollective) {
-      setCardType(CollectiveCardType.TIME_WINDOW);
-    } else if (isFreeCollective) {
-      setCardType(CollectiveCardType.FREE);
-    }
-  }, [maxTotalSupply, mintEndTime, mintPrice]);
 
   return (
     <div className="flex flex-col">
@@ -177,7 +162,7 @@ const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
         />
         <CollectiveDescription />
         <CollectiveCard
-          cardType={cardType}
+          cardType={collectiveCardType}
           closeDate={moment
             .unix(parseInt(mintEndTime))
             .format('MMMM DD[,] YYYY')}

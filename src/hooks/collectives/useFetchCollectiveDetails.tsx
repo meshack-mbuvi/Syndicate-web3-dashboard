@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
+import { CollectiveCardType } from '@/state/collectiveDetails/types';
 
 const useFetchCollectiveDetails = (
   skipQuery?: boolean
@@ -76,8 +77,31 @@ const useFetchCollectiveDetails = (
         totalSupply,
         maxTotalSupply,
         areNftsTransferable: isTransferable,
-        nftMetadata: { description, metadataCid, mediaCid }
+        nftMetadata: { description, metadataCid, mediaCid },
+        modules
       } = collective;
+
+      let collectiveCardType, mintEndTime;
+
+      // set collective card type.
+      modules[0]?.activeRequirements.map((activeRequirement) => {
+        const { requirement } = activeRequirement;
+        const { endTime, requirementType } = requirement;
+
+        if (
+          +endTime > 0 &&
+          requirementType === CollectiveCardType.TIME_WINDOW
+        ) {
+          collectiveCardType = CollectiveCardType.TIME_WINDOW;
+          mintEndTime = endTime;
+          return;
+        } else if (requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY) {
+          collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
+          return;
+        } else {
+          collectiveCardType = CollectiveCardType.OPEN_UNTIL_CLOSED;
+        }
+      });
 
       dispatch(
         setCollectiveDetails({
@@ -95,10 +119,11 @@ const useFetchCollectiveDetails = (
           collectiveAddress: address,
           mintPrice: getWeiAmount(web3, mintPrice, 18, false),
           isOpen: true, // TODO: get this from graph
-          mintEndTime: '1667019540', // TODO: get this from graph
+          mintEndTime,
           metadataCid,
           description,
-          mediaCid
+          mediaCid,
+          collectiveCardType
         })
       );
       setCollectiveNotFound(false);

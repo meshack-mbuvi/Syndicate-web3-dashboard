@@ -4,12 +4,7 @@ import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-
-export enum CollectiveCardType {
-  TIME_WINDOW = 'TIME_WINDOW',
-  MAX_SUPPLY = 'MAX_SUPPLY',
-  FREE = 'FREE'
-}
+import { CollectiveCardType } from '@/state/collectiveDetails/types';
 
 interface Props {
   cardType: CollectiveCardType;
@@ -26,7 +21,7 @@ export const CollectiveCard: React.FC<Props> = ({
 }) => {
   const {
     collectiveDetailsReducer: {
-      details: { numOwners, metadataCid }
+      details: { numOwners, metadataCid, mintPrice }
     }
   } = useSelector((state: AppState) => state);
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
@@ -42,13 +37,15 @@ export const CollectiveCard: React.FC<Props> = ({
   const openWindowValue =
     cardType === CollectiveCardType.TIME_WINDOW ? (
       `Until ${closeDate}`
-    ) : (
+    ) : cardType === CollectiveCardType.MAX_TOTAL_SUPPLY ? (
       <span>
         {floatedNumberWithCommas(passes.available - passes.total)}{' '}
         <span className="text-gray-syn4">
           of {floatedNumberWithCommas(passes.available)}
         </span>
       </span>
+    ) : (
+      <span>-</span>
     );
 
   const numberOfMembersTitle = 'Members';
@@ -56,16 +53,19 @@ export const CollectiveCard: React.FC<Props> = ({
 
   const pricePerNFTTitle = 'Price per NFT';
   const pricePerNFTTitleValue =
-    cardType === CollectiveCardType.FREE ? (
+    +mintPrice === 0 ? (
       'Free to mint'
     ) : (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 justify-end">
         <img src={price.tokenIcon} alt="Price" className="" />
         <div>
           {price.tokenAmount} {price.tokenSymbol}
         </div>
       </div>
     );
+
+  const cardinfoResponsiveStyles =
+    'flex xl:flex-col space-y-0 w-full justify-between items-center xl:items-start xl:justify-start xl:flex-col xl:w-1/3 xl:space-y-1';
 
   return (
     <div className="xl:space-y-0 flex space-x-6 xl:items-center bg-gray-syn8 rounded-2.5xl px-6 py-6 xl:py-0 xl:px-0">
@@ -84,7 +84,7 @@ export const CollectiveCard: React.FC<Props> = ({
           playsInline={true}
           loop
           muted={true}
-          className={`${'object-cover'} rounded-xl w-24 h-24 bg-gray-syn6 flex-shrink-0`}
+          className={`${'object-cover'} rounded-xl w-24 h-24 bg-gray-syn6`}
         >
           <source
             src={`${ipfsGateway}/${nftMetadata?.animation_url.replace(
@@ -97,7 +97,7 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
       {nftMetadata?.image && (
         <div
-          className="rounded-xl w-24 h-24 bg-gray-syn6 flex-shrink-0"
+          className="rounded-xl w-24 h-24 bg-gray-syn6"
           style={{
             backgroundImage: `url(${ipfsGateway}/${nftMetadata?.image.replace(
               'ipfs://',
@@ -110,21 +110,21 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
 
       <div
-        className={`items-center space-y-4 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
+        className={`items-center w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
           !isLoadingNftMetadata && !nftMetadata && 'mx-6 py-6'
         }`}
       >
-        <div className="xl:w-1/3 space-y-1">
+        <div className={cardinfoResponsiveStyles}>
           <B3 extraClasses="text-gray-syn4">{openWindowTitle}</B3>
           <B2>{openWindowValue}</B2>
         </div>
 
-        <div className="xl:w-1/3 space-y-1">
+        <div className={cardinfoResponsiveStyles}>
           <B3 extraClasses="text-gray-syn4">{numberOfMembersTitle}</B3>
           <B2>{floatedNumberWithCommas(numberOfMembersValue)}</B2>
         </div>
 
-        <div className="xl:w-1/3 space-y-1">
+        <div className={cardinfoResponsiveStyles}>
           <B3 extraClasses="text-gray-syn4">{pricePerNFTTitle}</B3>
           <B2>{pricePerNFTTitleValue}</B2>
         </div>

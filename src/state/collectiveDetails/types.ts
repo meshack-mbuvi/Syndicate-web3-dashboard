@@ -8,6 +8,12 @@ export enum EditRowIndex {
   Transfer
 }
 
+export enum CollectiveCardType {
+  TIME_WINDOW = 'TIME_WINDOW',
+  MAX_TOTAL_SUPPLY = 'MAX_TOTAL_SUPPLY',
+  OPEN_UNTIL_CLOSED = 'OPEN_UNTIL_CLOSED'
+}
+
 export interface ICollectiveDetails {
   collectiveName: string;
   ownerAddress: string;
@@ -27,6 +33,7 @@ export interface ICollectiveDetails {
   isOpen: boolean;
   metadataCid: string;
   mediaCid: string;
+  collectiveCardType: CollectiveCardType;
 }
 
 export interface ICollectiveLoadingState {
@@ -63,7 +70,8 @@ export const initialState: IState = {
     metadataCid: '',
     description: '',
     isOpen: true,
-    mediaCid: ''
+    mediaCid: '',
+    collectiveCardType: CollectiveCardType.OPEN_UNTIL_CLOSED
   },
   settings: {
     isTransferable: true,
