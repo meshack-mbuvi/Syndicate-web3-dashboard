@@ -265,6 +265,9 @@ export const GetMemberCollectives = gql`
         mintPrice
         totalSupply
         numMinted
+        nftMetadata {
+          metadataCid
+        }
       }
     }
   }

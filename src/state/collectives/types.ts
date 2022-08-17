@@ -1,3 +1,8 @@
+export enum TokenMediaType {
+  ANIMATION = 'ANIMATION',
+  IMAGE = 'IMAGE'
+}
+
 export type Collective = {
   id?: string;
   isActive: boolean;
@@ -8,7 +13,8 @@ export type Collective = {
   totalClaimed: number;
   totalUnclaimed: number;
   maxTotalSupply: number;
-  tokenImage: string;
+  tokenMedia: string;
+  tokenMediaType: TokenMediaType;
   inviteLink: string;
 };
 

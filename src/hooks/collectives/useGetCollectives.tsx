@@ -4,16 +4,17 @@ import {
   setAdminCollectives,
   setMemberCollectives
 } from '@/state/collectives/slice';
-import { Collective } from '@/state/collectives/types';
+import { Collective, TokenMediaType } from '@/state/collectives/types';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getJson } from '@/hooks/collectives/create/useFetchNftMetadata';
 
-const useCollectives = () => {
+const useCollectives = (): { loading: boolean } => {
   const dispatch = useDispatch();
 
   const {
@@ -21,12 +22,13 @@ const useCollectives = () => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
 
   const { account, activeNetwork, web3, status } = web3Instance;
   const walletAddress = useMemo(() => account.toLowerCase(), [account]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Retrieve my collectives
+  // retrieve admin collectives
   const { loading, refetch, data } = useQuery(GetAdminCollectives, {
     variables: {
       where: { ownerAddress: walletAddress }
@@ -39,6 +41,7 @@ const useCollectives = () => {
       status !== Status.CONNECTED
   });
 
+  // retrieve member collectives
   const {
     data: memberCollectiveNfts,
     loading: loadingNfts,
@@ -88,7 +91,101 @@ const useCollectives = () => {
     dispatch
   ]);
 
-  // Process collectives a given wallet manages
+  // get media info for a collective
+  const getCollectiveMedia = async (
+    metadataCid: string
+  ): Promise<{
+    animation_url: string;
+    description: string;
+    image: string;
+    name: string;
+    symbol: string;
+  }> => {
+    let mediaData = null;
+    // putting this 'hash' check here because I noticed there are some
+    // test collectives with the value set to an actual 'hash'
+    if (metadataCid && metadataCid !== 'hash') {
+      mediaData = await getJson(metadataCid);
+    }
+
+    return mediaData;
+  };
+
+  // process collectives the connected account is the admin of
+  const processCollectives = useCallback(
+    async (collectives) => {
+      if (!collectives || !collectives?.length) {
+        return [];
+      }
+
+      setIsLoading(true);
+
+      const processedAdminCollectives = collectives
+        .map(
+          async ({
+            contractAddress,
+            name,
+            symbol,
+            mintPrice,
+            numMinted,
+            maxTotalSupply,
+            totalSupply,
+            nftMetadata: { metadataCid }
+          }) => {
+            // get collective image/video
+            let mediaData = null;
+            if (metadataCid && metadataCid !== 'hash') {
+              mediaData = await getCollectiveMedia(metadataCid);
+            }
+
+            const totalUnclaimed = +maxTotalSupply
+              ? +maxTotalSupply - +totalSupply
+              : +maxTotalSupply;
+            +maxTotalSupply ? +maxTotalSupply - +numMinted : +maxTotalSupply;
+            return {
+              totalUnclaimed,
+              maxTotalSupply,
+              address: contractAddress,
+              tokenName: name,
+              tokenSymbol: symbol,
+              pricePerNft: getWeiAmount(
+                web3,
+                mintPrice,
+                +activeNetwork.nativeCurrency.decimals,
+                false
+              ),
+              totalClaimed: totalSupply,
+              tokenMedia: mediaData?.animation_url
+                ? `${ipfsGateway}/${mediaData?.animation_url.replace(
+                    'ipfs://',
+                    ''
+                  )}`
+                : mediaData?.image
+                ? `${ipfsGateway}/${mediaData?.image.replace('ipfs://', '')}`
+                : '/images/placeholderCollectiveThumbnail.svg',
+              tokenMediaType: mediaData?.animation_url
+                ? TokenMediaType.ANIMATION
+                : TokenMediaType.IMAGE,
+              inviteLink: `${
+                window.location.origin
+              }/collectives/${contractAddress}${
+                '?chain=' + activeNetwork.network
+              }`
+            };
+          }
+        )
+        .filter((collective) => collective !== undefined);
+
+      Promise.all<Collective>(processedAdminCollectives).then(
+        (collective: Collective[]) => {
+          dispatch(setAdminCollectives(collective));
+        }
+      );
+    },
+    [web3, activeNetwork, dispatch, ipfsGateway]
+  );
+
+  // Process collectives the connected account is the admin of
   useEffect(() => {
     if (
       !data?.syndicateCollectives ||
@@ -98,18 +195,18 @@ const useCollectives = () => {
     )
       return;
 
-    const collectives = processedCollectives(data?.syndicateCollectives);
-    dispatch(setAdminCollectives(collectives));
+    processCollectives(data?.syndicateCollectives);
   }, [
     walletAddress,
     activeNetwork,
     data?.syndicateCollectives,
     loading,
     status,
-    web3
+    web3,
+    processCollectives
   ]);
 
-  // Process collectives a given wallet owns
+  // Process collectives the connected account is a member of
   useEffect(() => {
     if (
       !memberCollectiveNfts?.nfts.length ||
@@ -119,16 +216,23 @@ const useCollectives = () => {
     )
       return;
 
-    const collectives = memberCollectiveNfts?.nfts
-      .map(({ collective }) => {
+    const processedMemberCollectives = memberCollectiveNfts?.nfts
+      .map(async ({ collective }) => {
         const {
           contractAddress,
           name,
           symbol,
           mintPrice,
           maxTotalSupply,
-          totalSupply
+          totalSupply,
+          nftMetadata: { metadataCid }
         } = collective;
+
+        // get collective image/video
+        let mediaData = null;
+        if (metadataCid && metadataCid !== 'hash') {
+          mediaData = await getCollectiveMedia(metadataCid);
+        }
 
         const totalUnclaimed = +maxTotalSupply
           ? +maxTotalSupply - +totalSupply
@@ -146,7 +250,17 @@ const useCollectives = () => {
             false
           ),
           totalClaimed: totalSupply,
-          tokenImage: '/images/placeholderCollectiveThumbnail.svg',
+          tokenMedia: mediaData?.animation_url
+            ? `${ipfsGateway}/${mediaData?.animation_url.replace(
+                'ipfs://',
+                ''
+              )}`
+            : mediaData?.image
+            ? `${ipfsGateway}/${mediaData?.image.replace('ipfs://', '')}`
+            : '/images/placeholderCollectiveThumbnail.svg',
+          tokenMediaType: mediaData?.animation_url
+            ? TokenMediaType.ANIMATION
+            : TokenMediaType.IMAGE,
           inviteLink: `${
             window.location.origin
           }/collectives/${contractAddress}${'?chain=' + activeNetwork.network}`
@@ -154,7 +268,11 @@ const useCollectives = () => {
       })
       .filter((collective) => collective !== undefined);
 
-    dispatch(setMemberCollectives(collectives));
+    Promise.all<Collective>(processedMemberCollectives).then(
+      (collectives: Collective[]) => {
+        dispatch(setMemberCollectives(collectives));
+      }
+    );
   }, [
     walletAddress,
     activeNetwork,
@@ -162,57 +280,10 @@ const useCollectives = () => {
     loadingNfts,
     loadingNfts,
     status,
-    web3
+    web3,
+    dispatch,
+    ipfsGateway
   ]);
-
-  const processedCollectives = (collectives): Collective[] => {
-    if (!collectives || !collectives?.length) {
-      return [];
-    }
-
-    setIsLoading(true);
-
-    const processedCollectives = collectives
-      .map(
-        ({
-          contractAddress,
-          name,
-          symbol,
-          mintPrice,
-          numMinted,
-          maxTotalSupply,
-          totalSupply
-        }) => {
-          const totalUnclaimed = +maxTotalSupply
-            ? +maxTotalSupply - +totalSupply
-            : +maxTotalSupply;
-          +maxTotalSupply ? +maxTotalSupply - +numMinted : +maxTotalSupply;
-          return {
-            totalUnclaimed,
-            maxTotalSupply,
-            address: contractAddress,
-            tokenName: name,
-            tokenSymbol: symbol,
-            pricePerNft: getWeiAmount(
-              web3,
-              mintPrice,
-              +activeNetwork.nativeCurrency.decimals,
-              false
-            ),
-            totalClaimed: totalSupply,
-            tokenImage: '/images/placeholderCollectiveThumbnail.svg',
-            inviteLink: `${
-              window.location.origin
-            }/collectives/${contractAddress}${
-              '?chain=' + activeNetwork.network
-            }`
-          };
-        }
-      )
-      .filter((collective) => collective !== undefined);
-
-    return processedCollectives;
-  };
 
   return { loading: isLoading };
 };
