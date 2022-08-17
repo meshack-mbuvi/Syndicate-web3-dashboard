@@ -137,7 +137,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
   useEffect(() => {
     setblockExplorerLink(
-      `${activeNetwork.blockExplorer.baseUrl}/${transactionInfo?.transactionHash}`
+      `${activeNetwork.blockExplorer.baseUrl}/tx/${transactionInfo?.transactionHash}`
     );
   }, [transactionInfo?.transactionHash]);
 
