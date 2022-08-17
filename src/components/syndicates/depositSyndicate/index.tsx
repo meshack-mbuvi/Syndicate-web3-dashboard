@@ -1014,6 +1014,10 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    checkClubWideErrors();
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
+
   const handleCloseSuccessModal = () => {
     dispatch(setERC20Token(erc20TokenContract));
     toggleDepositProcessingModal();
@@ -1047,17 +1051,16 @@ const DepositSyndicate: React.FC = () => {
     depositButtonText = 'Continue';
   }
 
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
-
   // token gating.
   // TODO: add check for requirements met here
   // Toggle this to true to test.
-  const gatingRequirementsMet = false;
+  const gatingRequirementsMet = true;
+
+  //TODO: fetch this from subgraph/contract
+  const isClubTokenGated = false;
 
   const isOpenWithRequirementsMet =
-    !loading && depositsEnabled && gatingRequirementsMet;
+    !loading && depositsEnabled && gatingRequirementsMet && isClubTokenGated;
 
   return (
     <ErrorBoundary>
