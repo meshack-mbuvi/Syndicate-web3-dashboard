@@ -10,6 +10,8 @@ import {
   setDisConnected,
   setDispatchCreateFlow,
   setLibrary,
+  setShowNetworkDropdownMenu,
+  setShowWalletDropdownMenu,
   showErrorModal,
   showWalletModal,
   storeCurrentEthNetwork,
@@ -116,5 +118,23 @@ export default createReducer(initialState, (builder) => {
         ...state,
         dispatchCreateFlow: action.payload
       };
-    });
+    })
+    .addCase(
+      setShowNetworkDropdownMenu,
+      (state, action: PayloadAction<boolean>) => {
+        return {
+          ...state,
+          showNetworkDropdown: action.payload
+        };
+      }
+    )
+    .addCase(
+      setShowWalletDropdownMenu,
+      (state, action: PayloadAction<boolean>) => {
+        return {
+          ...state,
+          showWalletDropdown: action.payload
+        };
+      }
+    );
 });

@@ -1,11 +1,11 @@
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
-import { CollectiveFormReview as CollectiveFormReview } from '@/components/collectives/create/review';
+import { CollectiveFormReview } from '@/components/collectives/create/review';
+import ConnectWallet from '@/components/connectWallet';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import { store } from '@/state/index';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
-import { store } from '@/state/index';
-import ConnectWalletProvider from '@/context/ConnectWalletProvider';
-import ConnectWallet from '@/components/connectWallet';
 
 export default {
   title: '4. Organisms/Collectives/Create/Review',
@@ -33,6 +33,9 @@ const Template = (args) => {
   const [timeWindow, setTimeWindow] = useState(TimeWindow.CUSTOM);
   const [allowOwnershipTransfer, setAllowOwnershipTransfer] = useState(true);
   const [maxSupply, setMaxSupply] = useState(123);
+  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
+
+  const handleAgreedToTerms = () => setHasAgreedToTerms(!hasAgreedToTerms);
 
   return (
     <CollectiveFormReview
@@ -58,6 +61,8 @@ const Template = (args) => {
       handleMaxSupplyChange={setMaxSupply}
       allowOwnershipTransfer={allowOwnershipTransfer}
       handleChangeAllowOwnershipTransfer={setAllowOwnershipTransfer}
+      handleAgreedToTerms={handleAgreedToTerms}
+      hasAgreedToTerms={hasAgreedToTerms}
       {...args}
     />
   );
@@ -67,5 +72,14 @@ export const Default = Template.bind({});
 Default.args = {
   tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
   isSubmitButtonActive: true,
-  handleSubmit: () => {}
+  handleSubmit: () => ({}),
+  account: '0x93C38105cd425F876Db356068A5aC066c5096A24'
+};
+
+export const WalletNotConnected = Template.bind({});
+WalletNotConnected.args = {
+  tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
+  isSubmitButtonActive: true,
+  handleSubmit: () => ({}),
+  account: ''
 };

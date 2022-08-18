@@ -1,13 +1,13 @@
-import React, { FC, useEffect, useState } from 'react';
-import CreateCollectiveDesign, { DesignRightPanel } from './design';
-import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
-import CreateCollectiveReview, { ReviewRightPanel } from './review';
-import TwoColumnLayout, { TwoColumnLayoutType } from '../twoColumnLayout';
-import CreateCollectiveSuccess, { SuccessRightPanel } from './success';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import { resetCollectiveCreationState } from '@/state/createCollective/slice';
-import { useDispatch } from 'react-redux';
 import router from 'next/router';
+import { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import TwoColumnLayout, { TwoColumnLayoutType } from '../twoColumnLayout';
+import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
+import CreateCollectiveDesign, { DesignRightPanel } from './design';
+import CreateCollectiveReview, { ReviewRightPanel } from './review';
+import CreateCollectiveSuccess, { SuccessRightPanel } from './success';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -58,11 +58,11 @@ const CreateCollectiveContainer: FC = () => {
     <>
       <TwoColumnLayout
         managerSettingsOpen={true}
-        dotIndicatorOptions={dotIndicatorOptions}
+        dotIndicatorOptions={[]}
         handleExitClick={handleExitClick}
         activeIndex={activeIndex}
         setActiveIndex={handlePrev}
-        hideWalletAndEllipsis={true}
+        hideWalletAndEllipsis={false}
         showCloseButton={showBackButton}
         headerTitle="Create a Collective"
         type={TwoColumnLayoutType.FLEX}

@@ -27,6 +27,7 @@ import {
 import { IActiveNetwork } from '@/state/wallet/types';
 import { isSSR } from '@/utils/environment';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
+import { useClient } from '@splitsoftware/splitio-react';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
@@ -42,8 +43,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
-import { useClient } from '@splitsoftware/splitio-react';
-import { distributions_feature } from '@/pages/_app';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -129,7 +128,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   // When Split SDK is ready, set attributes to current client and mark it as ready
   useEffect(() => {
-    currentClient.on(currentClient.Event.SDK_READY, () => {
+    currentClient?.on(currentClient.Event.SDK_READY, () => {
       dispatch(setCurrentClient(currentClient));
     });
   }, [currentClient]);

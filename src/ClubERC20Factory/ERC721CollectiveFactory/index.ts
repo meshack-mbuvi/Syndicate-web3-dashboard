@@ -1,14 +1,14 @@
-import ERC721_COLLECTIVE_FACTORY_ABI from 'src/contracts/ERC721CollectiveFactory.json';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { IActiveNetwork } from '@/state/wallet/types';
+import ERC721_COLLECTIVE_FACTORY_ABI from 'src/contracts/ERC721CollectiveFactory.json';
 import { ContractBase } from '../ContractBase';
-import { TimeRequirements } from '../TimeRequirements';
+import { ERC721Collective } from '../ERC721Collective';
 import { EthPriceMintModule } from '../EthPriceMintModule';
 import { FixedRenderer } from '../FixedRenderer';
 import { GuardMixinManager } from '../GuardMixinManager';
 import { MaxPerMemberERC721 } from '../MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '../MaxTotalSupplyERC721';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
-import { ERC721Collective } from '../ERC721Collective';
+import { TimeRequirements } from '../TimeRequirements';
 
 export interface ICollectiveParams {
   collectiveName: string;
@@ -220,7 +220,7 @@ export class ERC721CollectiveFactory extends ContractBase {
   /**
    * Predict collective token address for given salt
    * @param account address
-   * @param salt Salt for determinisitic clone
+   * @param salt Salt for deterministic clone
    * @returns {Promise} token Address of token created with salt
    */
   public async predictAddress(account: string, salt: string): Promise<string> {

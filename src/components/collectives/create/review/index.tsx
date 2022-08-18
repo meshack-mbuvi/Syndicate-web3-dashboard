@@ -1,18 +1,16 @@
-import { Callout } from '@/components/callout';
+import AgreementTerms from '@/components/AgreementTerms';
+import { InputField } from '@/components/inputs/inputField';
 import { Switch, SwitchType } from '@/components/switch';
-import React, { useEffect, useRef, useState } from 'react';
+import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
+import React, { useRef, useState } from 'react';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
 import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
-import { InputField } from '@/components/inputs/inputField';
-import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
-import EstimateGas from '@/components/EstimateGas';
-import useWindowSize from '@/hooks/useWindowSize';
-import { useCreateState } from '@/hooks/collectives/useCreateCollective';
-import AgreementTerms from '@/components/AgreementTerms';
-import { ContractMapper } from '@/hooks/useGasDetails';
+import NetworkComponent from '../networkComponent';
 
 interface Props {
   nameValue: string;
@@ -38,10 +36,12 @@ interface Props {
   endOfTimeWindow: string;
   allowOwnershipTransfer: boolean;
   handleChangeAllowOwnershipTransfer: (newAllowingTransfer: boolean) => void;
-  isSubmitButtonActive: boolean;
   handleSubmit: () => void;
   hasAgreedToTerms: boolean;
   handleAgreedToTerms: () => void;
+  account: string;
+  handleConnectWallet: () => void;
+  isSubmitButtonActive: boolean;
 }
 
 export const CollectiveFormReview: React.FC<Props> = ({
@@ -68,10 +68,12 @@ export const CollectiveFormReview: React.FC<Props> = ({
   endOfTimeWindow,
   allowOwnershipTransfer,
   handleChangeAllowOwnershipTransfer,
-  isSubmitButtonActive,
   handleSubmit,
   hasAgreedToTerms,
-  handleAgreedToTerms
+  handleAgreedToTerms,
+  account,
+  handleConnectWallet,
+  isSubmitButtonActive
 }) => {
   const spaceBetweenTitleAndSubtitleStyles =
     'px-5 py-4 -my-4 -mx-5 mt-4 hover:bg-gray-syn8 rounded-2xl flex justify-between items-center visibility-container transition-all ease-out';
@@ -79,13 +81,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
   const editButtonStyles = 'text-blue-neptune visibility-hover invisible';
   const transitionStyles = 'transition-all duration-500';
   const [currentlyEditingIndex, setCurrentlyEditingIndex] = useState(null);
-  const windowWidth = useWindowSize().width;
-  const [bottomBarWidthPx, setBottomBarWidthPx] = useState(null);
   const formRef = useRef(null);
-
-  useEffect(() => {
-    setBottomBarWidthPx(formRef.current.getBoundingClientRect().width);
-  }, [windowWidth]);
 
   const {
     name,
@@ -101,48 +97,38 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const bottomBar = (
     <div
-      className="py-6 bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
+      className="w-fit-content mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
       style={{
-        width: `${bottomBarWidthPx}px`
+        borderRadius: '40px 40px 0px 0px'
       }}
     >
-      <div className="flex-grow">
-        <Callout>
-          <EstimateGas
-            contract={ContractMapper.ERC721CollectiveFactory}
-            args={{
-              collectiveParams: {
-                collectiveName: name,
-                collectiveSymbol: symbol,
-                totalSupply,
-                maxPerMember,
-                openUntil: openUntilWindow,
-                ethPrice: pricePerNFT,
-                tokenURI: creationStatus.ipfsHash,
-                startTime: '0',
-                endTime: String(EpochCloseTime),
-                allowTransfer: transferrable
-              }
-            }}
-            customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
-          />
-        </Callout>
-      </div>
-      {/* Submit button */}
-      <button
-        onClick={isSubmitButtonActive ? handleSubmit : null}
-        className={`${
-          isSubmitButtonActive ? 'green-CTA' : 'primary-CTA-disabled'
-        } transition-all duration-700 w-full lg:w-auto`}
-      >
-        Launch
-      </button>
+      <NetworkComponent
+        account={account}
+        disabled={!hasAgreedToTerms || !isSubmitButtonActive}
+        handleLaunch={handleSubmit}
+        handleConnectWallet={handleConnectWallet}
+        contract={ContractMapper.ERC721CollectiveFactory}
+        args={{
+          collectiveParams: {
+            collectiveName: name,
+            collectiveSymbol: symbol,
+            totalSupply,
+            maxPerMember,
+            openUntil: openUntilWindow,
+            ethPrice: pricePerNFT,
+            tokenURI: creationStatus.ipfsHash,
+            startTime: '0',
+            endTime: String(EpochCloseTime),
+            allowTransfer: transferrable
+          }
+        }}
+      />
     </div>
   );
 
   return (
     <div ref={formRef} className="h-full">
-      <div className="-mt-8 pb-28 ">
+      <div className="-mt-8 pb-28">
         {/* Name */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div>
@@ -518,7 +504,14 @@ export const CollectiveFormReview: React.FC<Props> = ({
       </div>
       {/* For taking up space, preventing the bottom bar from overlapping the content  */}
       <div className="pointer-events-none opacity-0">{bottomBar}</div>
-      <div className="fixed bottom-0 bg-pink-500">{bottomBar}</div>
+      <div
+        className="fixed bottom-0 md:left-1/4 md:right-1/4 transparent"
+        style={{
+          borderRadius: '40px 40px 0px 0px'
+        }}
+      >
+        {bottomBar}
+      </div>
     </div>
   );
 };

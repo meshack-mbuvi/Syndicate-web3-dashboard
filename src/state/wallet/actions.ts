@@ -25,3 +25,5 @@ export const logout = createAction('wallet/logout');
 export const setDispatchCreateFlow = createAction<boolean>(
   'wallet/setDispatchCreateFlow'
 );
+export const setShowNetworkDropdownMenu = createAction<boolean>('network/open');
+export const setShowWalletDropdownMenu = createAction<boolean>('wallet/open');

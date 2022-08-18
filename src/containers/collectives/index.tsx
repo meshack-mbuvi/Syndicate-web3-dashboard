@@ -2,23 +2,23 @@ import {
   CollectiveActivity,
   CollectiveActivityType
 } from '@/components/collectives/activity';
-import moment from 'moment';
 import { BadgeWithMembers } from '@/components/collectives/badgeWithMembers';
 import { CollectiveCard } from '@/components/collectives/card';
 import { PermissionType } from '@/components/collectives/shared/types';
 import { LockIcon } from '@/components/iconWrappers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B2, B3, H4 } from '@/components/typography';
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 
 interface IProps {
   showModifySettings: boolean;

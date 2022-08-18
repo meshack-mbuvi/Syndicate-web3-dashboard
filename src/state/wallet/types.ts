@@ -99,6 +99,8 @@ export interface InitialState {
   };
   showWalletModal: boolean;
   dispatchCreateFlow: boolean;
+  showNetworkDropdown: boolean;
+  showWalletDropdown: boolean;
 }
 
 export const initialState: InitialState = {
@@ -156,5 +158,7 @@ export const initialState: InitialState = {
     }
   },
   showWalletModal: false,
-  dispatchCreateFlow: false
+  dispatchCreateFlow: false,
+  showNetworkDropdown: false,
+  showWalletDropdown: false
 };

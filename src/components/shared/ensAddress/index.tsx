@@ -3,6 +3,7 @@ import { B2, B3, B4 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
 
 export enum AddressImageSize {
+  SMALLER = 'w-5 h-5',
   SMALL = 'w-6 h-6',
   LARGE = 'w-8 h-8'
 }

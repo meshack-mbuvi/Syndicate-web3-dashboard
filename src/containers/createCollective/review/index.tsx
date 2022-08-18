@@ -1,21 +1,30 @@
-import React, { FC, useEffect } from 'react';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
-import { CreateCollectiveTitle, createHeader } from '../shared';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
-import CreateCollectiveModals from '../shared/createCollectiveModals';
 import {
   useCreateState,
   useSubmitCollective,
-  useUpdateState,
-  useSubmitToContracts
+  useSubmitToContracts,
+  useUpdateState
 } from '@/hooks/collectives/useCreateCollective';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { AppState } from '@/state';
+import { showWalletModal } from '@/state/wallet/actions';
 import { default as _moment } from 'moment-timezone';
+import React, { FC, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CreateCollectiveTitle, createHeader } from '../shared';
+import CreateCollectiveModals from '../shared/createCollectiveModals';
 
 interface Props {
-  handleNext: (e) => void;
+  handleNext?: (e) => void;
 }
-const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
+const CreateCollectiveReview: FC<Props> = () => {
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+
   const {
     name,
     symbol,
@@ -55,6 +64,7 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
 
   const { handleSubmit } = useSubmitCollective();
   const { submit: submitToContracts } = useSubmitToContracts();
+  const dispatch = useDispatch();
 
   const launchCollective = () => {
     if (creationStatus.ipfsHash) {
@@ -121,6 +131,10 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
     }
   }, [EpochCloseTime]);
 
+  const handleConnectWallet = () => {
+    dispatch(showWalletModal());
+  };
+
   return (
     <div className="h-full flex flex-col">
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
@@ -155,6 +169,8 @@ const CreateCollectiveReview: FC<Props> = ({ handleNext }) => {
           handleSubmit={launchCollective}
           hasAgreedToTerms={hasAgreedToTerms}
           handleAgreedToTerms={() => setAgreedToTerms(!hasAgreedToTerms)}
+          handleConnectWallet={handleConnectWallet}
+          account={account}
         />
       </div>
       <CreateCollectiveModals handleReSubmit={launchCollective} />

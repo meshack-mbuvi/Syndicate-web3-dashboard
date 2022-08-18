@@ -1,6 +1,6 @@
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
-import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 
 interface Props {
   contract: ContractMapper;

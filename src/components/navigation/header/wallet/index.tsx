@@ -1,11 +1,11 @@
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { Status } from '@/state/wallet/types';
 import { formatAddress } from '@/utils/formatAddress';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import AddressMenuDropDown from './accountMenuDropdown';
 import React from 'react';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import { useDispatch, useSelector } from 'react-redux';
+import AddressMenuDropDown from './accountMenuDropdown';
 
 export const Wallet: React.FC = () => {
   /**
@@ -14,7 +14,7 @@ export const Wallet: React.FC = () => {
    * The instance is in the application's store and is passed here as props
    */
   const {
-    web3Reducer: { web3 }
+    web3Reducer: { showWalletDropdown, web3 }
   } = useSelector((state: AppState) => state);
 
   const { status } = web3;
@@ -76,7 +76,10 @@ export const Wallet: React.FC = () => {
       {/* hide wallet on signin page */}
       <div className="wallet-connect">
         {status === Status.CONNECTED ? (
-          <AddressMenuDropDown Web3={web3} />
+          <AddressMenuDropDown
+            Web3={web3}
+            showWalletDropdown={showWalletDropdown}
+          />
         ) : (
           <NotConnectedButton />
         )}
