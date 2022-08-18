@@ -47,7 +47,8 @@ const CreateCollectiveContainer: FC = () => {
   };
 
   const handleNext = () => {
-    if (activeIndex < dotIndicatorOptions.length - 1) {
+    // We are not subtracting 1 from dotIndicatorOptions.length because the last step is the success screen.
+    if (activeIndex < dotIndicatorOptions.length) {
       setActiveIndex(activeIndex + 1);
     }
   };
