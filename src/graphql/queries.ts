@@ -249,7 +249,7 @@ export const GetAdminCollectives = gql`
         mediaCid
       }
       areNftsTransferable
-      modules {
+      activeModules {
         activeRequirements {
           requirement {
             endTime
@@ -258,6 +258,7 @@ export const GetAdminCollectives = gql`
             maxTotalSupply
           }
         }
+        contractAddress
       }
     }
   }

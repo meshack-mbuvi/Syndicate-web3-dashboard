@@ -9,6 +9,7 @@ import { LockIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B2, B3, H4 } from '@/components/typography';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
@@ -47,12 +48,14 @@ const HeaderComponent: React.FC<IProps> = (args) => {
 const CollectiveDescription = () => {
   const {
     collectiveDetailsReducer: {
-      details: { description }
+      details: { metadataCid }
     }
   } = useSelector((state: AppState) => state);
+
+  const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
   return (
     <div className="flex space-y-4 flex-col">
-      <B3>{description}</B3>
+      <B3>{nftMetadata?.description}</B3>
     </div>
   );
 };

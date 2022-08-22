@@ -2,9 +2,10 @@ import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
+import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -59,6 +60,11 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   tryAgain
 }) => {
   const dispatch = useDispatch();
+  const {
+    collectiveDetailsReducer: {
+      details: { isOpen }
+    }
+  } = useSelector((state: AppState) => state);
 
   const created = (
     <>
@@ -131,11 +137,17 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         <div>
           <B2 extraClasses="text-gray-syn4">Price per NFT</B2>
           <H3 regular>
-            {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
-            {priceToJoin.tokenSymbol}{' '}
-            <span className="text-gray-syn4">
-              ${floatedNumberWithCommas(priceToJoin.fiatAmount)}
-            </span>
+            {+priceToJoin.tokenAmount > 0 ? (
+              <>
+                {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
+                {priceToJoin.tokenSymbol}{' '}
+                <span className="text-gray-syn4">
+                  ${floatedNumberWithCommas(priceToJoin.fiatAmount)}
+                </span>
+              </>
+            ) : (
+              <span>Free to mint</span>
+            )}
           </H3>
         </div>
       </div>
@@ -223,6 +235,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
             {walletState !== WalletState.MAX_PASSES_REACHED && (
               <CtaButton
                 greenCta={walletState === WalletState.CONNECTED}
+                disabled={!isOpen}
                 onClick={() => {
                   if (
                     walletState === WalletState.NOT_CONNECTED ||

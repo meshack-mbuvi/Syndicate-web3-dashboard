@@ -1,10 +1,24 @@
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 const NftImageCard: React.FC = () => {
   // TODO: Fetch loading state from redux store
   const loading = false;
+
+  const {
+    collectiveDetailsReducer: {
+      details: { metadataCid }
+    }
+  } = useSelector((state: AppState) => state);
+
+  const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
+    useFetchCollectiveMetadata(metadataCid);
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+
   return (
     <div
       className="flex items-center justify-center w-full h-80 sm:h-auto sm:w-5/12"
@@ -21,8 +35,22 @@ const NftImageCard: React.FC = () => {
           <CollectivesInteractiveBackground
             heightClass="h-full"
             widthClass="w-full"
-            mediaType={NFTMediaType.IMAGE}
-            floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
+            isLoadingFloatingIcon={isLoadingNftMetadata}
+            mediaType={
+              nftMetadata?.animation_url
+                ? NFTMediaType.VIDEO
+                : nftMetadata?.image
+                ? NFTMediaType.IMAGE
+                : NFTMediaType.CUSTOM
+            }
+            floatingIcon={
+              nftMetadata?.animation_url
+                ? `${ipfsGateway}/${nftMetadata?.animation_url.replace(
+                    'ipfs://',
+                    ''
+                  )}`
+                : `${ipfsGateway}/${nftMetadata?.image.replace('ipfs://', '')}`
+            }
             numberOfParticles={75}
           />
         )}

@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { CollectiveCardType } from '@/state/collectiveDetails/types';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const useFetchCollectiveDetails = (
   skipQuery?: boolean
@@ -25,6 +26,8 @@ const useFetchCollectiveDetails = (
   const isDemoMode = useDemoMode();
   const router = useRouter();
   const { collectiveAddress } = router.query;
+  const MINT_MODULE =
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.EthPriceMintModule;
 
   const [collectiveNotFound, setCollectiveNotFound] = useState(false);
 
@@ -78,96 +81,76 @@ const useFetchCollectiveDetails = (
         maxTotalSupply,
         areNftsTransferable: isTransferable,
         nftMetadata: { description, metadataCid, mediaCid },
-        modules
+        activeModules
       } = collective;
 
-      let collectiveCardType;
+      let collectiveCardType,
+        mintEndTime,
+        isOpen = true,
+        maxSupply = 0;
 
-      // set collective card type.
-      modules[0]?.activeRequirements.map((activeRequirement) => {
-        const { requirement } = activeRequirement;
-        const { endTime, requirementType } = requirement;
-
+      // set collective card type and check if collective is active
+      activeModules.map((module) => {
+        const { contractAddress, activeRequirements } = module;
         if (
-          +endTime > 0 &&
-          requirementType === CollectiveCardType.TIME_WINDOW
+          web3.utils.toChecksumAddress(contractAddress) ===
+          web3.utils.toChecksumAddress(MINT_MODULE)
         ) {
-          collectiveCardType = CollectiveCardType.TIME_WINDOW;
+          activeRequirements.map((activeRequirement) => {
+            const { requirement } = activeRequirement;
+            const { endTime, requirementType } = requirement;
+
+            if (
+              +endTime > 0 &&
+              requirementType === CollectiveCardType.TIME_WINDOW
+            ) {
+              collectiveCardType = CollectiveCardType.TIME_WINDOW;
+              mintEndTime = String(endTime);
+              isOpen =
+                parseInt((new Date().getTime() / 1000).toString()) < +endTime;
+              return;
+            } else if (
+              requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY
+            ) {
+              const currentTime = Date.now();
+              collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
+              isOpen = +totalSupply < +maxTotalSupply;
+              mintEndTime = String(Math.ceil(currentTime / 1000));
+              maxSupply = maxTotalSupply;
+              return;
+            } else {
+              collectiveCardType = CollectiveCardType.OPEN_UNTIL_CLOSED;
+            }
+          });
+
           return;
-        } else if (requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY) {
-          collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
-          return;
-        } else {
-          collectiveCardType = CollectiveCardType.OPEN_UNTIL_CLOSED;
         }
       });
 
-      modules[0]?.activeRequirements.map((activeRequirement) => {
-        const { requirement } = activeRequirement;
-        const { requirementType } = requirement;
-        // case where time is chosen upon creation
-        if (requirementType === 'TIME_WINDOW') {
-          const currentTime = Date.now();
-          const endTime =
-            collective.modules[0].activeRequirements[1].requirement.endTime;
-          dispatch(
-            setCollectiveDetails({
-              collectiveName,
-              ownerAddress,
-              collectiveSymbol,
-              maxPerWallet,
-              maxTotalSupply,
-              totalSupply,
-              numMinted,
-              numOwners,
-              createdAt,
-              owners,
-              isTransferable,
-              collectiveAddress: address,
-              mintPrice: getWeiAmount(web3, mintPrice, 18, false),
-              // default is open only when endTime has not past yet, otherwise default is closed
-              isOpen: currentTime / 1000 < endTime,
-              mintEndTime: endTime,
-              maxSupply: 0,
-              metadataCid,
-              description,
-              mediaCid,
-              collectiveCardType
-            })
-          );
-        } else {
-          const currentTime = Date.now();
-          const currentMaxTotalSupply =
-            collective.modules[0].activeRequirements[1].requirement
-              .maxTotalSupply;
-          dispatch(
-            setCollectiveDetails({
-              collectiveName,
-              ownerAddress,
-              collectiveSymbol,
-              maxPerWallet,
-              maxTotalSupply,
-              totalSupply,
-              numMinted,
-              numOwners,
-              createdAt,
-              owners,
-              isTransferable,
-              collectiveAddress: address,
-              mintPrice: getWeiAmount(web3, mintPrice, 18, false),
-              // default is open only when totalSupply < maxTotalSupply, otherwise default is closed
-              isOpen: totalSupply < maxTotalSupply,
-              mintEndTime: String(Math.ceil(currentTime / 1000)),
-              maxSupply: currentMaxTotalSupply,
-              metadataCid,
-              description,
-              mediaCid,
-              collectiveCardType
-            })
-          );
-        }
-      });
-
+      dispatch(
+        setCollectiveDetails({
+          collectiveName,
+          ownerAddress,
+          collectiveSymbol,
+          maxPerWallet,
+          maxTotalSupply,
+          totalSupply,
+          numMinted,
+          numOwners,
+          createdAt,
+          owners,
+          isTransferable,
+          collectiveAddress: address,
+          mintPrice: getWeiAmount(web3, mintPrice, 18, false),
+          isOpen,
+          mintEndTime,
+          maxSupply,
+          metadataCid,
+          description,
+          mediaCid,
+          collectiveCardType
+        })
+      );
       setCollectiveNotFound(false);
       dispatch(
         setCollectiveLoadingState({
