@@ -16,6 +16,7 @@ export enum ContractMapper {
   FixedRenderer,
   MaxPerMemberERC721,
   TimeRequirements,
+  MaxTotalSupplyERC721,
   ERC721Collective,
   EthPriceMintModuleMint
 }
@@ -46,6 +47,7 @@ const useGasDetails: (props: IProps) => {
         fixedRenderer,
         maxPerMemberERC721,
         timeRequirements,
+        maxTotalSupplyERC721,
         erc721Collective
       }
     }
@@ -134,11 +136,12 @@ const useGasDetails: (props: IProps) => {
     [ContractMapper.FixedRenderer]: {
       syndicateContract: fixedRenderer,
       estimateGas: () => {
-        if (!fixedRenderer || !args.collectiveAddress || !args.ipfsHash) return;
+        if (!fixedRenderer || !args.collectiveAddress || !args.metadataCid)
+          return;
         fixedRenderer.getEstimateGas(
           account,
           args.collectiveAddress,
-          args.ipfsHash,
+          args.metadataCid,
           setGasUnits
         );
       }
@@ -170,6 +173,23 @@ const useGasDetails: (props: IProps) => {
           args.collectiveAddress,
           0,
           args.mintEndTime,
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.MaxTotalSupplyERC721]: {
+      syndicateContract: maxTotalSupplyERC721,
+      estimateGas: () => {
+        if (
+          !maxTotalSupplyERC721 ||
+          !args.collectiveAddress ||
+          !args.maxTotalSupply
+        )
+          return;
+        maxTotalSupplyERC721.getEstimateGas(
+          account,
+          args.collectiveAddress,
+          args.maxTotalSupply,
           setGasUnits
         );
       }

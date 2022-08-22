@@ -1,3 +1,4 @@
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import {
   ICollectiveDetails,
@@ -14,15 +15,28 @@ export const collectiveDetails = createSlice({
       state.details = action.payload;
       state.settings.isTransferable = action.payload.isTransferable;
       state.settings.isOpen = action.payload.isOpen;
+      state.settings.mintPrice = action.payload.mintPrice;
+      state.settings.maxPerWallet = action.payload.maxPerWallet;
+      state.settings.mintEndTime = action.payload.mintEndTime;
+      state.settings.maxSupply = action.payload.maxSupply;
+    },
+    setMetadataCid(state, action: PayloadAction<string>) {
+      state.details.metadataCid = action.payload;
     },
     setDescription(state, action: PayloadAction<string>) {
       state.details.description = action.payload;
     },
     setMintPrice(state, action: PayloadAction<string>) {
-      state.details.mintPrice = action.payload;
+      state.settings.mintPrice = action.payload;
+    },
+    setMintEndTime(state, action: PayloadAction<string>) {
+      state.details.mintEndTime = action.payload;
+    },
+    setMaxSupply(state, action: PayloadAction<number>) {
+      state.details.maxSupply = action.payload;
     },
     setMaxPerWallet(state, action: PayloadAction<string>) {
-      state.details.maxPerWallet = action.payload;
+      state.settings.maxPerWallet = action.payload;
     },
     setIsTransferable(state) {
       state.settings.isTransferable = !state.settings.isTransferable;
@@ -30,6 +44,12 @@ export const collectiveDetails = createSlice({
     },
     setIsCollectiveOpen(state) {
       state.settings.isOpen = !state.settings.isOpen;
+    },
+    setUpdateEnded(state, action: PayloadAction<boolean>) {
+      state.updateEnded = action.payload;
+    },
+    setOpenUntil(state, action: PayloadAction<OpenUntil>) {
+      state.settings.openUntil = action.payload;
     },
     setActiveRowIdx(state, action: PayloadAction<EditRowIndex>) {
       state.activeRow = action.payload;
@@ -45,11 +65,16 @@ export const collectiveDetails = createSlice({
 
 export const {
   setCollectiveDetails,
+  setMetadataCid,
   setDescription,
   setMintPrice,
+  setMintEndTime,
+  setMaxSupply,
   setMaxPerWallet,
   setIsTransferable,
   setIsCollectiveOpen,
+  setUpdateEnded,
+  setOpenUntil,
   setActiveRowIdx,
   setCollectiveLoadingState
 } = collectiveDetails.actions;

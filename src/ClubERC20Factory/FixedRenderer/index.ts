@@ -18,7 +18,7 @@ export class FixedRenderer extends ContractBase {
   public async updateTokenURI(
     account: string,
     token: string,
-    uri: number,
+    uri: string,
     onTxConfirm: (transactionHash) => void,
     onTxReceipt: (receipt) => void,
     onTxFail: (err) => void

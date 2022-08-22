@@ -15,6 +15,23 @@ export class GuardMixinManager extends ContractBase {
     );
   }
 
+  public async updateDefaultMixins(
+    account: string,
+    token: string,
+    mixins: string[],
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () => this.contract.methods.updateDefaultMixins(token, mixins),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
+  }
+
   // Allow Eth Price module
   public setAllowModule(token: string, module: string): string {
     return this.web3.eth.abi.encodeFunctionCall(

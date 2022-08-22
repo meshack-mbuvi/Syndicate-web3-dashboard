@@ -1,10 +1,11 @@
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+
 export enum EditRowIndex {
   Default,
-  Image,
-  Description,
+  ImageDescriptionGroup,
   MintPrice,
   MaxPerWallet,
-  Time,
+  OpenUntil,
   Transfer
 }
 
@@ -22,13 +23,14 @@ export interface ICollectiveDetails {
   maxPerWallet: string;
   maxTotalSupply: string;
   totalSupply: string;
-  createdAt: string;
+  createdAt: any;
   numMinted: string;
   numOwners: string;
   owners: any;
   mintPrice: string;
   isTransferable: boolean;
   mintEndTime: string;
+  maxSupply: number;
   description: string;
   isOpen: boolean;
   metadataCid: string;
@@ -46,7 +48,13 @@ export interface IState {
   settings: {
     isTransferable: boolean;
     isOpen: boolean;
+    mintPrice: string;
+    maxPerWallet: string;
+    mintEndTime: string;
+    maxSupply: number;
+    openUntil: OpenUntil;
   };
+  updateEnded: boolean;
   activeRow: EditRowIndex;
   loadingState: ICollectiveLoadingState;
 }
@@ -67,6 +75,7 @@ export const initialState: IState = {
     mintPrice: '',
     isTransferable: true,
     mintEndTime: '',
+    maxSupply: 0,
     metadataCid: '',
     description: '',
     isOpen: true,
@@ -75,8 +84,14 @@ export const initialState: IState = {
   },
   settings: {
     isTransferable: true,
-    isOpen: true
+    isOpen: true,
+    mintPrice: '',
+    maxPerWallet: '',
+    mintEndTime: '',
+    maxSupply: 0,
+    openUntil: OpenUntil.FUTURE_DATE
   },
+  updateEnded: true,
   activeRow: EditRowIndex.Default,
   loadingState: {
     isFetchingCollective: false,

@@ -3,19 +3,21 @@
 
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { postMetadata } from '@/utils/api/collectives';
-import { useEffect, useState } from 'react';
-import useCreateState from './useCreateState';
 
 const useSubmitMetadata = (
   beforeSubmit: () => void,
   onIpfsHash: (hash: string) => void,
   onSuccess: () => void,
   onError: () => void
-) => {
-  const { name, symbol, description, artwork, artworkType, artworkUrl } =
-    useCreateState();
-
-  const submit = async () => {
+): any => {
+  const submit = async (
+    name,
+    symbol,
+    description,
+    artwork,
+    artworkType,
+    artworkUrl
+  ) => {
     let error = false;
     beforeSubmit();
     metadataSubmission: try {
@@ -46,7 +48,7 @@ const useSubmitMetadata = (
       error = true;
     }
 
-    //after successful metadata submission
+    // after successful metadata submission
     if (!error) {
       onSuccess();
     }

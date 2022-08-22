@@ -39,7 +39,6 @@ const ReviewDetails: React.FC = () => {
 
   const [hasCheckedAgreement, setCheckedAgreement] = useState<boolean>(false);
 
-
   useEffect(() => {
     if (isReviewStep && !hasCheckedAgreement) {
       setNextBtnDisabled(true);

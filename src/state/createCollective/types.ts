@@ -8,6 +8,8 @@ export interface CollectiveCreation {
   artwork: any;
   artworkUrl: string;
   artworkType: NFTMediaType;
+  fileName: string;
+  progressPercent: number;
   description: string;
   pricePerNFT: number;
   maxPerWallet: number;
@@ -44,6 +46,8 @@ export const initialState: CollectiveCreation = {
   artwork: {},
   artworkUrl: '',
   artworkType: NFTMediaType.IMAGE,
+  fileName: '',
+  progressPercent: 0,
   description: '',
   pricePerNFT: NaN,
   maxPerWallet: 0,

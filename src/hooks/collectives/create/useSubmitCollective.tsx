@@ -15,6 +15,12 @@ const useSubmitCollective = () => {
   const dispatch = useDispatch();
   const { submit: submitToContracts } = useSubmitToContracts();
   const {
+    name,
+    symbol,
+    description,
+    artwork,
+    artworkType,
+    artworkUrl,
     creationStatus: { ipfsHash }
   } = useCreateState();
 
@@ -45,7 +51,7 @@ const useSubmitCollective = () => {
 
   // Create collective
   const handleSubmit = () => {
-    submitMetadata();
+    submitMetadata(name, symbol, description, artwork, artworkType, artworkUrl);
   };
 
   return {

@@ -28,10 +28,11 @@ interface Props {
     };
   }[];
   expander?: {
-    isExpanded?: boolean;
+    isNotInteractableExpanded?: boolean;
     isExpandable?: boolean;
-    showSubmitCTA?: boolean;
-    setIsExpanded?: Dispatch<SetStateAction<boolean>>;
+    setIsNotInteractableExpanded?: Dispatch<SetStateAction<boolean>>;
+    subfieldEditing?: boolean;
+    setSubfieldEditing?: Dispatch<SetStateAction<boolean>>;
   };
   extraClasses?: string;
   showForm?: boolean;
@@ -42,19 +43,19 @@ interface Props {
   switchRowIndex?: number;
 }
 
-export const CollapsibleTable: React.FC<Props> = ({
+export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
   title,
   rows,
   subtitle,
   extraClasses = '',
   activeRow,
   setActiveRow,
-  handleDisclaimerConfirmation,
   expander: {
     isExpandable = true,
-    isExpanded = true,
-    setIsExpanded,
-    showSubmitCTA
+    isNotInteractableExpanded = true,
+    setIsNotInteractableExpanded,
+    subfieldEditing,
+    setSubfieldEditing
   },
   cancelEdit,
   switchRowIndex
@@ -68,13 +69,14 @@ export const CollapsibleTable: React.FC<Props> = ({
   const dispatch = useDispatch();
 
   const updateMaxHeight = () => {
-    if (isExpanded && rowsRef) {
+    if (rowsRef) {
       const rowsHeight = rowsRef.current
         ? rowsRef.current.getBoundingClientRect().height
         : 0;
       const editHeight = editRef.current
         ? editRef.current.getBoundingClientRect().height
         : 0;
+
       if (rowsHeight && editHeight) {
         setMaxHeight(`${rowsHeight + editHeight}px`);
       } else {
@@ -85,7 +87,7 @@ export const CollapsibleTable: React.FC<Props> = ({
 
   useEffect(() => {
     updateMaxHeight();
-  }, [windowWidth, activeRow]);
+  }, [windowWidth, subfieldEditing]);
 
   return (
     <div className="space-y-8">
@@ -101,31 +103,16 @@ export const CollapsibleTable: React.FC<Props> = ({
         </div>
         {isExpandable && (
           <Switch
-            isOn={isExpanded}
+            isOn={isNotInteractableExpanded}
             type={SwitchType.EXPLICIT}
             onClick={() => {
-              if (isExpanded) {
-                setActiveRow(0);
-                dispatch(setActiveRowIdx(0));
-              } else {
-                setActiveRow(switchRowIndex);
-                dispatch(setActiveRowIdx(switchRowIndex));
-              }
-              setIsExpanded(!isExpanded);
+              setIsNotInteractableExpanded(!isNotInteractableExpanded);
+              setActiveRow(switchRowIndex);
+              dispatch(setActiveRowIdx(switchRowIndex));
             }}
           />
         )}
       </div>
-      {showSubmitCTA && (
-        <SubmitContent
-          handleEdit={handleDisclaimerConfirmation}
-          cancelEdit={() => {
-            cancelEdit();
-            setActiveRow(0);
-            dispatch(setActiveRowIdx(0));
-          }}
-        />
-      )}
 
       {/* Divider */}
       <hr className="border-gray-syn7" />
@@ -135,8 +122,8 @@ export const CollapsibleTable: React.FC<Props> = ({
         ref={rowsRef}
         className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
         style={{
-          maxHeight: `${isExpanded ? maxHeight : '0px'}`,
-          opacity: `${isExpanded ? '100' : '0'}`
+          maxHeight: `${isNotInteractableExpanded ? maxHeight : '0px'}`,
+          opacity: `${isNotInteractableExpanded ? '100' : '0'}`
         }}
       >
         {rows.map((row, index) => {
@@ -178,6 +165,8 @@ export const CollapsibleTable: React.FC<Props> = ({
                     cancelEdit={() => {
                       cancelEdit();
                       setActiveRow(0);
+                      dispatch(setActiveRowIdx(0));
+                      setSubfieldEditing(false);
                     }}
                   />
                 </div>
@@ -196,6 +185,7 @@ export const CollapsibleTable: React.FC<Props> = ({
                         handleClick={() => {
                           setActiveRow(rowIndex);
                           dispatch(setActiveRowIdx(rowIndex));
+                          setSubfieldEditing(true);
                         }}
                       />
                     )}

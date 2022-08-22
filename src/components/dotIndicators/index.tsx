@@ -46,7 +46,6 @@ export const DotIndicators: React.FC<Props> = ({
     if (dotsTopOffset >= containerHeight / 2 - 8 /** dotHeight */ / 2) {
       setDotsTransitionStyles(`transition-all ${animationTimingStyles}`);
     }
-
   }, [dotsTopOffset, activeIndex]);
 
   const renderedVerticalDots = options.map((option, index) => (
@@ -124,12 +123,15 @@ export const DotIndicators: React.FC<Props> = ({
         } ml-4 flex space-x-4`}
       >
         {renderedHorizontalDots}
-        </div>
-      <div className={`${
+      </div>
+      <div
+        className={`${
           orientation === DotIndicatorsOrientation.VERTICAL
             ? 'visible'
-            : 'hidden'} inline uppercase text-sm tracking-wide`}>
-        { typeof options[activeIndex] !== 'string' && options[activeIndex]}
+            : 'hidden'
+        } inline uppercase text-sm tracking-wide`}
+      >
+        {typeof options[activeIndex] !== 'string' && options[activeIndex]}
       </div>
     </div>
   );

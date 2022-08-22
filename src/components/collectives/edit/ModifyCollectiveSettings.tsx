@@ -1,5 +1,7 @@
 import BackButton from '@/components/buttons/BackButton';
-import { CollapsibleTable } from '@/components/collapsibleTable';
+import { CollapsibleTable } from '@/components/collapsibleTable/index';
+import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
+import { GroupSettingsTable } from '@/components/groupSettingsTable';
 import { T5, H4 } from '@/components/typography';
 import ReactTooltip from 'react-tooltip';
 import { NFTPreviewer, NFTMediaType } from '../nftPreviewer';
@@ -9,54 +11,369 @@ import { TextArea } from '@/components/inputs/simpleTextArea';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
+import { useRouter } from 'next/router';
 import {
-  setDescription,
   setMintPrice,
   setMaxPerWallet,
   setIsTransferable,
   setIsCollectiveOpen,
-  setActiveRowIdx
+  setMetadataCid,
+  setUpdateEnded,
+  setOpenUntil,
+  setMaxSupply,
+  setMintEndTime
 } from '@/state/collectiveDetails';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
-import { useState } from 'react';
+import EditMaxSupply from './EditMaxSupply';
+import { useState, useEffect } from 'react';
 import {
   FileUploader,
   UploaderProgressType
 } from '@/components/uploaders/fileUploader';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { ChangeSettingsDisclaimerModal } from '@/components/collectives/changeSettingsDisclaimerModal/index';
+import { ProgressState } from '@/components/progressCard';
+import { ProgressModal } from '@/components/progressModal';
+import { ExternalLinkColor } from '@/components/iconWrappers';
+import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
+import { setActiveRowIdx } from '@/state/collectiveDetails/index';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import {
+  setCollectiveSubmittingToIPFS,
+  setIpfsError,
+  setCollectiveArtwork
+} from '@/state/createCollective/slice';
+import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
+import {
+  OpenUntil,
+  RadioButtonsOpenUntil
+} from '@/components/collectives/create/inputs/openUntil/radio';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { OpenUntilStepModal } from '@/components/collectives/confirmOpenUntilStepModal';
+import {
+  ProgressDescriptor,
+  ProgressDescriptorState
+} from '@/components/progressDescriptor';
+import { CtaButton } from '@/components/CTAButton';
+
+type step = {
+  title: string;
+  action: string;
+  isInErrorState: boolean;
+  status: string;
+};
 
 const ModifyCollectiveSettings: React.FC = () => {
   const {
+    initializeContractsReducer: {
+      syndicateContracts: {
+        ethPriceMintModule,
+        erc721Collective,
+        fixedRenderer,
+        maxPerMemberERC721,
+        timeRequirements,
+        maxTotalSupplyERC721,
+        guardMixinManager
+      }
+    },
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, account, web3 }
     },
     collectiveDetailsReducer: {
       details: {
         collectiveName,
         collectiveSymbol,
+        createdAt,
         mintPrice,
         maxPerWallet,
         collectiveAddress,
         mintEndTime,
+        maxSupply,
         metadataCid,
-        description,
-        isTransferable: existingIsTransferable,
-        isOpen: existingIsOpen
+        isTransferable: existingIsTransferable
       },
-      settings: { isTransferable, isOpen },
-      activeRow
+
+      settings: {
+        isTransferable,
+        isOpen,
+        mintPrice: settingsMintPrice,
+        maxPerWallet: settingsMaxPerWallet,
+        mintEndTime: settingsMintEndTime,
+        maxSupply: settingsMaxSupply
+      },
+      activeRow: activeRowRedux,
+      updateEnded
     }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
-  // intermediate step to fetch the nft details from the metadataCid
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
     useFetchCollectiveMetadata(metadataCid);
 
-  const [showImageUploader, setShowImageUploader] = useState(false);
+  const { getArtworkType } = useUpdateState();
+
+  const [description, setDescription] = useState(nftMetadata?.description);
+  const [artworkState, setArtworkState] = useState({});
+  const [artworkTypeState, setArtworkTypeState] = useState(NFTMediaType.CUSTOM);
+  const [artworkUrlState, setArtworkUrlState] = useState('');
+  const [activeRow, setActiveRow] = useState<number>(0);
+  const [showImageUploader, setShowImageUploader] = useState<boolean>(false);
+  const [exceededUploadLimit, setExceededUploadLimit] = useState('');
+  const [progressPercent, setProgressPercent] = useState<number>(
+    artworkUrlState ? 100 : 0
+  );
+  const [fileName, setFileName] = useState(null);
+
+  const [editGroupFieldClicked, setEditGroupFieldClicked] =
+    useState<boolean>(false);
+  const [transactionHash, setTransactionHash] = useState<string>('');
+  const [progressState, setProgressState] = useState<string>('');
+
+  // Modal change settings states
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  const [openUntilSettingsChanged, setOpenUntilSettingsChanged] =
+    useState<boolean>(false);
+  const [openUntilStepModalVisible, setOpenUntilStepModalVisible] =
+    useState<boolean>(false);
+  const [steps, setSteps] = useState<step[]>();
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [progressDescriptorTitle, setProgressDescriptorTitle] =
+    useState<string>('');
+  const [progressDescriptorStatus, setProgressDescriptorStatus] =
+    useState<ProgressDescriptorState>(ProgressDescriptorState.PENDING);
+  const [progressDescriptorDescription, setProgressDescriptorDescription] =
+    useState<string>('');
+  // flag to check whether there is pending transaction before closing modal
+  const [isTransactionPending, setIsTransactionPending] =
+    useState<boolean>(false);
+  const [currentOpenUntilState, setCurrentOpenUntilState] = useState(null);
+
+  const [subfieldEditing, setSubfieldEditing] = useState(false);
+
+  // const [openUntilTransactionError, setOpenUntilTransactionError] = useState(false);
+
+  useEffect(() => {
+    if (maxSupply === 0) {
+      setCurrentOpenUntilState(OpenUntil.FUTURE_DATE);
+    } else {
+      setCurrentOpenUntilState(OpenUntil.MAX_MEMBERS);
+    }
+  }, [maxSupply]);
+
+  useEffect(() => {
+    const steps = [];
+    const tokenDetails = [
+      {
+        title: `Update setting`,
+        isInErrorState: false,
+        action: 'update',
+        status: ProgressDescriptorState.PENDING
+      },
+      {
+        title: `Apply changes to collective`,
+        isInErrorState: false,
+        action: 'apply',
+        status: ''
+      }
+    ];
+
+    steps.push(...tokenDetails);
+
+    setSteps(steps);
+  }, []);
+
+  useEffect(() => {
+    if (!nftMetadata) return;
+    setArtworkUrlState(
+      `${
+        process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+      }/${nftMetadata?.image.replace('ipfs://', '')}`
+    );
+    setDescription(nftMetadata?.description);
+  }, [nftMetadata]);
+
+  useEffect(() => {
+    async function updateURI() {
+      try {
+        await fixedRenderer.updateTokenURI(
+          account,
+          collectiveAddress as string,
+          metadataCid,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if (metadataCid && !updateEnded) {
+      updateURI();
+      setEditGroupFieldClicked(false);
+      dispatch(setUpdateEnded(true));
+    }
+  }, [metadataCid, account, collectiveAddress, fixedRenderer, updateEnded]);
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+  };
+
+  const onTxConfirm = (transactionHash: string) => {
+    setActiveRow(0);
+    dispatch(setActiveRowIdx(0));
+    setSubfieldEditing(false);
+    setTransactionHash(transactionHash);
+    setProgressState('pending');
+    if (openUntilSettingsChanged) {
+      setOpenUntilSettingsChanged(false);
+      setOpenUntilStepModalVisible(false);
+    }
+  };
+
+  const onTxReceipt = () => {
+    setProgressState('success');
+  };
+
+  const onTxFail = () => {
+    setProgressState('failure');
+  };
+
+  const onSwitchTxConfirm = (transactionHash) => {
+    // Update progress state
+    setProgressDescriptorTitle(`Updating...`);
+    setProgressDescriptorDescription(
+      `This could take anywhere from seconds to hours depending on network congestion and the gas fees you set.`
+    );
+    updateSteps('status', ProgressDescriptorState.PENDING);
+
+    setTransactionHash(transactionHash);
+  };
+
+  const onSwitchTxReceipt = () => {
+    setOpenUntilStepModalVisible(true);
+
+    if (activeIndex == steps.length - 1) {
+      setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
+      setOpenUntilStepModalVisible(false);
+    } else {
+      const nextIndex = activeIndex + 1;
+      setProgressDescriptorTitle('');
+      setActiveIndex(nextIndex);
+    }
+
+    setIsTransactionPending(false);
+  };
+
+  const onSwitchTxFail = (error?) => {
+    setOpenUntilStepModalVisible(true);
+    // setOpenUntilTransactionError(true);
+
+    updateSteps('isInErrorState', true);
+    updateSteps('status', ProgressDescriptorState.FAILURE);
+
+    // Update progress state
+    setProgressDescriptorTitle(`Error updating`);
+    if (
+      error?.message?.indexOf('Transaction was not mined within 50 blocks') > -1
+    ) {
+      setProgressDescriptorDescription(
+        'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
+      );
+    } else {
+      setProgressDescriptorDescription(
+        'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
+      );
+    }
+
+    // User rejected transaction does not have transactionHash
+    if (error.code == 4001) {
+      setTransactionHash('');
+    }
+
+    setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
+    setIsTransactionPending(false);
+  };
+
+  const updateSteps = (key, value) => {
+    const updatedSteps = steps;
+    updatedSteps[activeIndex][`${key}`] = value;
+    setSteps(updatedSteps);
+  };
+
+  const updateMixin = async () => {
+    try {
+      setIsTransactionPending(true);
+      const mixin = [maxPerMemberERC721.address];
+
+      // switch to time
+      if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
+        mixin.push(timeRequirements.address);
+      }
+
+      // switch to max supply
+      if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
+        mixin.push(maxTotalSupplyERC721.address);
+      }
+
+      await guardMixinManager.updateDefaultMixins(
+        account,
+        collectiveAddress as string,
+        mixin,
+        onTxConfirm,
+        onTxReceipt,
+        onTxFail
+      );
+    } catch (error) {
+      onSwitchTxFail(error);
+    }
+  };
+
+  const handleClickAction = async (e) => {
+    e.preventDefault();
+
+    updateSteps('status', ProgressDescriptorState.PENDING);
+    updateSteps('isInErrorState', false);
+
+    setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
+    setProgressDescriptorTitle(`Applying changes...`);
+
+    dispatch(setOpenUntil(currentOpenUntilState));
+
+    await updateMixin();
+  };
+
+  const handleDisclaimerConfirmation = (e?) => {
+    e.preventDefault();
+    setIsModalVisible(true);
+  };
+
+  const clearErrorStepErrorStates = () => {
+    const updatedSteps = steps.map((step) => ({
+      ...step,
+      isInErrorState: false,
+      status: ProgressDescriptorState.PENDING
+    }));
+    setSteps(updatedSteps);
+    setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
+    setProgressDescriptorTitle('');
+    setProgressDescriptorDescription('');
+  };
+
+  const handleCloseConfirmModal = () => {
+    // should not close modal if there is pending transaction.
+    if (isTransactionPending) return;
+
+    setOpenUntilStepModalVisible(false);
+    clearErrorStepErrorStates();
+  };
+
+  const handleSubfieldEditing = (boolean: boolean) => {
+    setSubfieldEditing(boolean);
+  };
 
   const handleOpenCollective = () => {
     dispatch(setIsCollectiveOpen());
@@ -66,34 +383,336 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setIsTransferable());
   };
 
-  const handleEdit = () => {
-    // TODOs
-    // 1. show disclaimer modal before sending transaction to metamask. https://www.figma.com/file/OS60TNEd2YWu9y2jui7NnM/Collectives?node-id=2881%3A44554
-    // 2. Show 'Confirm in wallet' modal https://www.figma.com/file/OS60TNEd2YWu9y2jui7NnM/Collectives?node-id=3228%3A42155
-    // 3/ Once we get transaction hash from metamask, show 'Approving' modal https://www.figma.com/file/OS60TNEd2YWu9y2jui7NnM/Collectives?node-id=3228%3A42225
-    // 4. On success show 'Settings updated' modal https://www.figma.com/file/OS60TNEd2YWu9y2jui7NnM/Collectives?node-id=3228%3A42296
-    // 5. On error show 'Settings were not updated' modal https://www.figma.com/file/OS60TNEd2YWu9y2jui7NnM/Collectives?node-id=4747%3A46252
-    // NOTE: We don't have UIs for the modal mentioned
-    // 👇 example code to update mint price
-    // switch (activeRow) {
-    //   case EditRowIndex.MintPrice:
-    //     if (!ethPriceMintModule || !collectiveAddress || !editField) return;
-    //     await ethPriceMintModule.updatePrice(
-    //       account,
-    //       collectiveAddress as string,
-    //       web3.utils.toWei(editField),
-    //       onTxConfirm, // Function to handle metamask response with transaction hash
-    //       onTxReceipt, // Function to handle when transaction was successful
-    //       onTxFail // Function to handle when transaction fails
-    //     );
-    //     break;
-    //   default:
-    //     break;
-    // }
+  const handleExit = () => {
+    router &&
+      router.push(
+        `/collectives/${collectiveAddress}${'?chain=' + activeNetwork.network}`
+      );
   };
 
-  const setActiveRow = (rowIdx: EditRowIndex) => {
-    dispatch(setActiveRowIdx(rowIdx));
+  const handleCancelUpload = () => {
+    setArtworkState({});
+    setArtworkTypeState(NFTMediaType.CUSTOM);
+    setArtworkUrlState('');
+    setProgressPercent(0);
+    setFileName('');
+  };
+
+  const handleFileUpload = async (e) => {
+    const fileLimit = 50;
+    const fileObject = e.target.files[0];
+
+    if (e.target.files.length) {
+      const { mediaType, mediaSource } = getArtworkType(fileObject);
+      setArtworkState(fileObject);
+      setArtworkTypeState(mediaType);
+      setArtworkUrlState(mediaSource);
+      setFileName(fileObject.name);
+      setExceededUploadLimit(
+        fileObject.size / 1024 / 1024 > fileLimit
+          ? 'File exceeds size limit of ' + fileLimit + ' MB'
+          : ''
+      );
+      setProgressPercent(100);
+    }
+  };
+
+  const currentOpenUntilChange = (openUntil: OpenUntil) => {
+    setOpenUntilSettingsChanged(!openUntilSettingsChanged);
+    setCurrentOpenUntilState(openUntil);
+  };
+
+  const beforeMetadataSubmission = () => {
+    dispatch(setCollectiveSubmittingToIPFS(true));
+  };
+
+  const onIpfsHash = (hash: string) => {
+    dispatch(setMetadataCid(hash));
+    dispatch(setUpdateEnded(false));
+  };
+
+  const onIpfsError = () => {
+    dispatch(setIpfsError(true));
+  };
+
+  const { submit: submitMetadata } = useSubmitMetadata(
+    beforeMetadataSubmission,
+    onIpfsHash,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    () => {},
+    onIpfsError
+  );
+
+  const handleCancelEdit = () => {
+    switch (activeRowRedux) {
+      case EditRowIndex.ImageDescriptionGroup:
+        dispatch(
+          setCollectiveArtwork({
+            artwork: {},
+            artworkType: NFTMediaType.IMAGE,
+            artworkUrl: ''
+          })
+        );
+        break;
+      case EditRowIndex.MintPrice:
+        dispatch(setMintPrice(mintPrice));
+        break;
+      case EditRowIndex.MaxPerWallet:
+        dispatch(setMaxPerWallet(maxPerWallet));
+        break;
+      case EditRowIndex.OpenUntil:
+        if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
+          dispatch(setMintEndTime(settingsMintEndTime));
+        }
+        if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
+          dispatch(setMaxSupply(settingsMaxSupply));
+        }
+        break;
+      case EditRowIndex.Transfer:
+        dispatch(setIsTransferable());
+        break;
+      default:
+        break;
+    }
+    dispatch(setActiveRowIdx(0));
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setIsModalVisible(false);
+    setProgressState('confirm');
+    switch (activeRow) {
+      case EditRowIndex.ImageDescriptionGroup:
+        if (!fixedRenderer || !collectiveAddress || !web3) return;
+        try {
+          submitMetadata(
+            collectiveName,
+            collectiveSymbol,
+            description,
+            artworkState,
+            artworkTypeState,
+            artworkUrlState
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case EditRowIndex.MintPrice:
+        if (
+          !ethPriceMintModule ||
+          !collectiveAddress ||
+          !settingsMintPrice ||
+          !web3
+        )
+          return;
+        try {
+          await ethPriceMintModule.updatePrice(
+            account,
+            collectiveAddress as string,
+            web3.utils.toWei(settingsMintPrice),
+            onTxConfirm,
+            onTxReceipt,
+            onTxFail
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case EditRowIndex.MaxPerWallet:
+        if (
+          !maxPerMemberERC721 ||
+          !collectiveAddress ||
+          !settingsMaxPerWallet ||
+          !web3
+        )
+          return;
+        try {
+          await maxPerMemberERC721.updateMaxPerMember(
+            account,
+            collectiveAddress as string,
+            parseInt(settingsMaxPerWallet),
+            onTxConfirm,
+            onTxReceipt,
+            onTxFail
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case EditRowIndex.OpenUntil:
+        if (!collectiveAddress || !mintEndTime || !web3) return;
+        if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
+          if (openUntilSettingsChanged) {
+            setOpenUntilStepModalVisible(true);
+            try {
+              await timeRequirements.updateTimeRequirements(
+                account,
+                collectiveAddress as string,
+                createdAt,
+                Number(mintEndTime),
+                onSwitchTxConfirm,
+                onSwitchTxReceipt,
+                onSwitchTxFail
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            try {
+              await timeRequirements.updateTimeRequirements(
+                account,
+                collectiveAddress as string,
+                createdAt,
+                Number(mintEndTime),
+                onTxConfirm,
+                onTxReceipt,
+                onTxFail
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+
+        if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
+          if (openUntilSettingsChanged) {
+            setOpenUntilStepModalVisible(true);
+            try {
+              await maxTotalSupplyERC721.updateTotalSupply(
+                account,
+                collectiveAddress as string,
+                maxSupply,
+                onSwitchTxConfirm,
+                onSwitchTxReceipt,
+                onSwitchTxFail
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            try {
+              await maxTotalSupplyERC721.updateTotalSupply(
+                account,
+                collectiveAddress as string,
+                maxSupply,
+                onTxConfirm,
+                onTxReceipt,
+                onTxFail
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+        break;
+      case EditRowIndex.Transfer:
+        if (!erc721Collective || !collectiveAddress || !web3) return;
+        try {
+          await erc721Collective.updateTransferGuard(
+            account,
+            collectiveAddress as string,
+            isTransferable,
+            onTxConfirm,
+            onTxReceipt,
+            onTxFail
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseModal = () => {
+    setProgressState('');
+  };
+
+  const progressModalStates = {
+    confirm: {
+      title: 'Confirm in wallet',
+      description: 'Please confirm the changes in your wallet',
+      state: ProgressState.CONFIRM,
+      buttonLabel: ''
+    },
+    success: {
+      title: 'Settings updated',
+      description: (
+        <a
+          href={
+            activeNetwork?.blockExplorer?.baseUrl +
+            '/address/' +
+            collectiveAddress
+          }
+          rel="noreferrer"
+          target="_blank"
+          className={`text-blue-navy etherscanLink flex space-x-2 items-center justify-center`}
+        >
+          <div>View on {activeNetwork?.blockExplorer?.name}</div>
+          <img
+            src="/images/externalLinkBlue.svg"
+            alt="Etherscan"
+            className={`w-4 h-4`}
+          />
+        </a>
+      ),
+      state: ProgressState.SUCCESS,
+      buttonLabel: 'Back to collective'
+    },
+    pending: {
+      title: 'Approving',
+      description: (
+        <>
+          `This could take anywhere from seconds to hours depending on network
+          congestion and gas fees. You can safely leave this page while you
+          wait.
+          <a
+            href={
+              activeNetwork?.blockExplorer?.baseUrl +
+              '/address/' +
+              collectiveAddress
+            }
+            rel="noreferrer"
+            target="_blank"
+            className={`text-blue-navy etherscanLink flex space-x-2 items-center justify-center mt-4`}
+          >
+            <div>View on {activeNetwork?.blockExplorer?.name}</div>
+            <img
+              src="/images/externalLinkBlue.svg"
+              alt="Etherscan"
+              className={`w-4 h-4`}
+            />
+          </a>
+        </>
+      ),
+      state: ProgressState.PENDING,
+      buttonLabel: ''
+    },
+    failure: {
+      title: 'Settings were not updated',
+      description: (
+        <a
+          href={
+            activeNetwork?.blockExplorer?.baseUrl +
+            '/address/' +
+            collectiveAddress
+          }
+          rel="noreferrer"
+          target="_blank"
+          className={`text-blue-navy etherscanLink flex space-x-2 items-center justify-center`}
+        >
+          <div>View on {activeNetwork?.blockExplorer?.name}</div>
+          <img
+            src="/images/externalLinkBlue.svg"
+            alt="Etherscan"
+            className={`w-4 h-4`}
+          />
+        </a>
+      ),
+      state: ProgressState.FAILURE,
+      buttonLabel: 'Try again'
+    }
   };
 
   return (
@@ -117,15 +736,15 @@ const ModifyCollectiveSettings: React.FC = () => {
 
       <div className="py-16 transition-all flex flex-col space-y-18">
         {/* Collective NFT */}
-        {/* console.log('isLoadingNftMetadata', nftMetadata) */}
         {isLoadingNftMetadata ? (
           <SkeletonLoader width="50vw" height="50vh" />
         ) : (
-          <CollapsibleTable
+          <GroupSettingsTable
             title="Collective NFT"
-            expander={{
-              isExpandable: false
-            }}
+            editGroupFieldClicked={editGroupFieldClicked}
+            setEditGroupFieldClicked={setEditGroupFieldClicked}
+            handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+            cancelEdit={handleCancelEdit}
             rows={[
               {
                 title: 'Name',
@@ -213,39 +832,48 @@ const ModifyCollectiveSettings: React.FC = () => {
                       isEditable={true}
                       handleEdit={() => {
                         setShowImageUploader(true);
-                        setActiveRow(EditRowIndex.Image);
+                        setActiveRow(EditRowIndex.ImageDescriptionGroup);
+                        dispatch(
+                          setActiveRowIdx(EditRowIndex.ImageDescriptionGroup)
+                        );
+                        setEditGroupFieldClicked(true);
                       }}
                     />
                   </div>
                 ),
                 edit: {
-                  isEditable: false, // Hack to make edit image with preview
+                  isEditable: false,
                   inputWithPreview: showImageUploader,
                   showCallout: true,
-                  rowIndex: EditRowIndex.Image,
-                  handleEdit,
+                  rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
                     <div className="w-full flex flex-col space-y-6">
                       <NFTPreviewer
-                        mediaSource={nftMetadata?.media}
+                        mediaSource={
+                          artworkUrlState && artworkUrlState !== ''
+                            ? artworkUrlState
+                            : `${
+                                process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                              }/${nftMetadata?.image.replace('ipfs://', '')}`
+                        }
                         mediaType={
-                          nftMetadata?.image == null
+                          nftMetadata?.image === null
                             ? NFTMediaType.VIDEO
                             : NFTMediaType.IMAGE
                         }
                         mediaOnly={true}
-                        isEditable={true}
+                        isEditable={false}
+                        description={description}
                       />
-
                       <FileUploader
-                        progressPercent={0}
-                        fileName={'artwork.png'}
-                        successText={'uploaded'}
+                        progressPercent={progressPercent}
+                        fileName={fileName}
+                        errorText={exceededUploadLimit}
                         promptTitle="Upload artwork"
                         promptSubtitle="PNG or MP4 allowed"
                         progressDisplayType={UploaderProgressType.SPINNER}
-                        handleUpload={() => null}
-                        handleCancelUpload={() => null}
+                        handleUpload={handleFileUpload}
+                        handleCancelUpload={handleCancelUpload}
                         accept={'.png, .jpg, .jpeg, .gif, .mp4'}
                         heightClass="h-18"
                       />
@@ -255,16 +883,15 @@ const ModifyCollectiveSettings: React.FC = () => {
               },
               {
                 title: 'Description',
-                value: description,
+                value: nftMetadata?.description,
                 edit: {
                   isEditable: true,
                   showCallout: true,
-                  rowIndex: EditRowIndex.Description,
-                  handleEdit,
+                  rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
                     <TextArea
                       value={description}
-                      handleValueChange={(e) => dispatch(setDescription(e))}
+                      handleValueChange={(e) => setDescription(e)}
                       placeholderLabel="Description about this NFT collection that will be visible everywhere"
                       widthClass="w-full"
                       heightRows={5}
@@ -277,13 +904,16 @@ const ModifyCollectiveSettings: React.FC = () => {
           />
         )}
         {/* Open to new members */}
-        <CollapsibleTable
+        <CollapsibleTableNoContractInteraction
           title="Open to new members"
           expander={{
-            isExpanded: isOpen,
-            setIsExpanded: handleOpenCollective,
-            showSubmitCTA: isOpen !== existingIsOpen
+            isNotInteractableExpanded: isOpen,
+            setIsNotInteractableExpanded: handleOpenCollective,
+            subfieldEditing: subfieldEditing,
+            setSubfieldEditing: handleSubfieldEditing
           }}
+          handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+          cancelEdit={handleCancelEdit}
           rows={[
             {
               title: 'Invitation',
@@ -305,17 +935,18 @@ const ModifyCollectiveSettings: React.FC = () => {
                 <div className="flex space-x-2">
                   <img src="/images/chains/ethereum.svg" alt="" />
                   <span>
-                    {mintPrice}&nbsp;{activeNetwork.nativeCurrency.symbol}
+                    {settingsMintPrice}&nbsp;
+                    {activeNetwork.nativeCurrency.symbol}
                   </span>
                 </div>
               ),
               edit: {
                 isEditable: true,
                 rowIndex: EditRowIndex.MintPrice,
-                handleEdit,
+                handleDisclaimerConfirmation,
                 inputField: (
                   <InputField
-                    value={mintPrice}
+                    value={settingsMintPrice}
                     onChange={(e) => dispatch(setMintPrice(e.target.value))}
                     type="number"
                   />
@@ -324,14 +955,14 @@ const ModifyCollectiveSettings: React.FC = () => {
             },
             {
               title: 'Max per wallet',
-              value: maxPerWallet,
+              value: settingsMaxPerWallet,
               edit: {
                 isEditable: true,
                 rowIndex: EditRowIndex.MaxPerWallet,
-                handleEdit,
+                handleDisclaimerConfirmation,
                 inputField: (
                   <InputField
-                    value={maxPerWallet}
+                    value={settingsMaxPerWallet}
                     onChange={(e) => dispatch(setMaxPerWallet(e.target.value))}
                     type="number"
                   />
@@ -340,30 +971,63 @@ const ModifyCollectiveSettings: React.FC = () => {
             },
             {
               title: 'Open to new members until',
-              value: (
-                <div>
-                  Future date:{' '}
-                  {getFormattedDateTimeWithTZ(+mintEndTime * 1000)
-                    .split(' ')
-                    .map((item, index, arr) => {
-                      return (
-                        <span
-                          key={index}
-                          className={`${
-                            index === arr.length - 1 ? 'text-gray-syn4' : ''
-                          }`}
-                        >
-                          {item}{' '}
-                        </span>
-                      );
-                    })}
-                </div>
-              ),
+              value:
+                currentOpenUntilState === OpenUntil.FUTURE_DATE ? (
+                  <div>
+                    Future date of{' '}
+                    {getFormattedDateTimeWithTZ(+mintEndTime * 1000)
+                      .split(' ')
+                      .map((item, index, arr) => {
+                        return (
+                          <span
+                            key={index}
+                            className={`${
+                              index === arr.length - 1 ? 'text-gray-syn4' : ''
+                            }`}
+                          >
+                            {item}{' '}
+                          </span>
+                        );
+                      })}
+                  </div>
+                ) : currentOpenUntilState === OpenUntil.MAX_MEMBERS ? (
+                  <div>
+                    Max supply reaches {'  '}
+                    {numberWithCommas(maxSupply)}
+                  </div>
+                ) : null,
               edit: {
                 isEditable: true,
-                rowIndex: EditRowIndex.Time,
-                handleEdit,
-                inputField: <EditCollectiveMintTime />
+                rowIndex: EditRowIndex.OpenUntil,
+                handleDisclaimerConfirmation,
+                inputField: (
+                  <>
+                    <RadioButtonsOpenUntil
+                      openUntil={currentOpenUntilState}
+                      setOpenUntil={currentOpenUntilChange}
+                    />
+                    {/* A future date */}
+                    <div
+                      className={`${
+                        currentOpenUntilState === 0
+                          ? 'max-h-102 md:max-h-68 mt-8 opacity-100'
+                          : 'max-h-0 mt-0 opacity-0'
+                      } transition-all duration-500 overflow-hidden`}
+                    >
+                      <EditCollectiveMintTime />
+                    </div>
+                    {/* A max number of members is reached */}
+                    <div
+                      className={`md:w-full ${
+                        currentOpenUntilState === 1
+                          ? 'max-h-68 mt-8 opacity-100'
+                          : 'max-h-0 mt-0 opacity-0'
+                      } transition-all duration-500 overflow-hidden`}
+                    >
+                      <EditMaxSupply />
+                    </div>
+                  </>
+                )
               }
             }
           ]}
@@ -380,9 +1044,87 @@ const ModifyCollectiveSettings: React.FC = () => {
             setIsExpanded: handleTransferable,
             showSubmitCTA: isTransferable !== existingIsTransferable
           }}
+          handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+          switchRowIndex={EditRowIndex.Transfer}
+          cancelEdit={handleCancelEdit}
           {...{ activeRow, setActiveRow }}
         />
       </div>
+
+      {/* initial change settings disclaimer modal when clicking Submit after modifying something */}
+      <ChangeSettingsDisclaimerModal
+        {...{
+          isModalVisible,
+          handleModalClose,
+          onClick: handleEdit
+        }}
+      />
+
+      <OpenUntilStepModal
+        activeStepIndex={activeIndex}
+        isModalVisible={openUntilStepModalVisible}
+        steps={steps}
+        handleModalClose={handleCloseConfirmModal}
+        showCloseButton={
+          /* openUntilTransactionError
+            ? true
+            : */ false
+        }
+        outsideOnClick={false}
+      >
+        <>
+          {steps?.[activeIndex].status !== '' && (
+            <ProgressDescriptor
+              title={progressDescriptorTitle}
+              description={progressDescriptorDescription}
+              state={progressDescriptorStatus}
+              transactionHash={transactionHash}
+            />
+          )}
+
+          {steps?.[activeIndex].action === 'apply' &&
+            (steps?.[activeIndex].status == '' ||
+              steps?.[activeIndex].status ==
+                ProgressDescriptorState.FAILURE) && (
+              <div className="mt-6">
+                <CtaButton onClick={handleClickAction}>Apply changes</CtaButton>
+              </div>
+            )}
+        </>
+      </OpenUntilStepModal>
+
+      {/* progress modal that updates state depending on transaction outcome */}
+      {progressState && !openUntilSettingsChanged ? (
+        <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
+          <ProgressModal
+            {...{
+              ...progressModalStates[progressState],
+              isVisible: true,
+              txHash: transactionHash,
+              buttonOnClick:
+                progressModalStates[progressState].buttonLabel == 'Try again'
+                  ? handleCloseModal
+                  : handleExit,
+              explorerLinkText: 'View on ',
+              iconColor: ExternalLinkColor.BLUE,
+              transactionType: 'transaction',
+              showCloseButton:
+                progressModalStates[progressState].buttonLabel == 'Try again' ||
+                progressModalStates[progressState].buttonLabel ==
+                  'Back to collective'
+                  ? true
+                  : false,
+              closeModal: handleCloseModal,
+              outsideOnClick:
+                progressModalStates[progressState].buttonLabel == 'Try again' ||
+                progressModalStates[progressState].buttonLabel ==
+                  'Back to collective'
+                  ? true
+                  : false
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

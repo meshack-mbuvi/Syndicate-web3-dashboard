@@ -10,6 +10,8 @@ import { AppState } from '@/state';
 import { useRouter } from 'next/router';
 import { EditRowIndex } from '@/state/collectiveDetails/types';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 
 export const SubmitContent: React.FC<{
   isSubmitDisabled?: boolean;
@@ -33,6 +35,8 @@ export const SubmitContent: React.FC<{
     }
   } = useSelector((state: AppState) => state);
 
+  const { openUntil } = useCreateState();
+
   const router = useRouter();
   const { collectiveAddress } = router.query;
 
@@ -40,14 +44,16 @@ export const SubmitContent: React.FC<{
     switch (activeRow) {
       case EditRowIndex.MintPrice:
         return ContractMapper.EthPriceMintModule;
-      case EditRowIndex.Image:
-        return ContractMapper.FixedRenderer;
-      case EditRowIndex.Description:
+      case EditRowIndex.ImageDescriptionGroup:
         return ContractMapper.FixedRenderer;
       case EditRowIndex.MaxPerWallet:
         return ContractMapper.MaxPerMemberERC721;
-      case EditRowIndex.Time:
-        return ContractMapper.TimeRequirements;
+      case EditRowIndex.OpenUntil:
+        if (openUntil === OpenUntil.FUTURE_DATE) {
+          return ContractMapper.TimeRequirements;
+        } else {
+          return ContractMapper.MaxTotalSupplyERC721;
+        }
       case EditRowIndex.Transfer:
         return ContractMapper.ERC721Collective;
 
@@ -58,7 +64,7 @@ export const SubmitContent: React.FC<{
 
   return (
     <div
-      className={`space-y-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 ${
+      className={`w-full space-y-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 ${
         isSubmitDisabled ? 'mt-0' : 'mt-6'
       }`}
     >

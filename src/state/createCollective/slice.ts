@@ -26,6 +26,12 @@ const createCollectiveSlice = createSlice({
       state.artworkType = action.payload.artworkType;
       state.artworkUrl = action.payload.artworkUrl;
     },
+    setFileName(state, action: PayloadAction<string>) {
+      state.fileName = action.payload;
+    },
+    setProgressPercent(state, action: PayloadAction<number>) {
+      state.progressPercent = action.payload;
+    },
     setCollectiveDescription(state, action: PayloadAction<string>) {
       state.description = action.payload;
     },
@@ -147,6 +153,8 @@ export const {
   setCollectiveName,
   setCollectiveSymbol,
   setCollectiveArtwork,
+  setFileName,
+  setProgressPercent,
   setCollectiveDescription,
   setCollectivePricePerNFT,
   setCollectiveMaxPerWallet,

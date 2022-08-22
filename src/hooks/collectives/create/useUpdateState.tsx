@@ -223,7 +223,8 @@ const useUpdateState = () => {
     handleCloseTimeChange,
     handleChangeAllowOwnershipTransfer,
     submitButtonActive,
-    setSubmitButtonActive
+    setSubmitButtonActive,
+    getArtworkType
   };
 };
 

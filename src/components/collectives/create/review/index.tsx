@@ -313,8 +313,8 @@ export const CollectiveFormReview: React.FC<Props> = ({
                 >
                   <div>
                     {openUntil === OpenUntil.FUTURE_DATE && 'A future date'}
-                    {openUntil === OpenUntil.MANUALLY_CLOSED &&
-                      'Manually closed'}
+                    {/* {openUntil === OpenUntil.MANUALLY_CLOSED &&
+                      'Manually closed'} */}
                     {openUntil === OpenUntil.MAX_MEMBERS &&
                       'Max members reached'}
                   </div>

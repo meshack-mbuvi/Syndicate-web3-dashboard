@@ -14,6 +14,9 @@ export const ProgressModal = (props: {
   transactionType?: string;
   explorerLinkText?: string;
   iconcolor?: ExternalLinkColor;
+  showCloseButton?: boolean;
+  closeModal?: () => void;
+  outsideOnClick?: boolean;
 }): React.ReactElement => {
   const {
     title,
@@ -25,14 +28,19 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    iconcolor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE,
+    showCloseButton = false,
+    closeModal,
+    outsideOnClick
   } = props;
 
   return (
     <Modal
       show={isVisible}
       modalStyle={ModalStyle.DARK}
-      showCloseButton={false}
+      showCloseButton={showCloseButton}
+      closeModal={closeModal}
+      outsideOnClick={outsideOnClick}
       customWidth="w-full max-w-480"
       // passing empty string to remove default classes
       customClassName=""

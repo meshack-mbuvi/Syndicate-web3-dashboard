@@ -253,7 +253,9 @@ export const GetAdminCollectives = gql`
         activeRequirements {
           requirement {
             endTime
+            startTime
             requirementType
+            maxTotalSupply
           }
         }
       }

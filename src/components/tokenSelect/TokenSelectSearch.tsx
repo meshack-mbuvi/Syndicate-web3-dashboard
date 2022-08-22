@@ -335,21 +335,21 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       <div className="mb-4 sm:flex items-center justify-between px-8">
         <div className="text-xl text-white">Select a token</div>
         {!showTokenGateModal && (
-        <div className="inline-flex text-xl text-gray-syn10 sm:pl-16 sm:float-right">
-          <div className="text-sm">
-            Each crypto asset is different.
-            <button
-              className="pl-1 text-blue focus:outline-none"
-              onClick={() => setShowCryptoAssetModal(true)}
-            >
-              Learn more.
-            </button>
-            <CryptoAssetModal
-              showModal={showCryptoAssetModal}
-              closeModal={() => setShowCryptoAssetModal(false)}
-            />
+          <div className="inline-flex text-xl text-gray-syn10 sm:pl-16 sm:float-right">
+            <div className="text-sm">
+              Each crypto asset is different.
+              <button
+                className="pl-1 text-blue focus:outline-none"
+                onClick={() => setShowCryptoAssetModal(true)}
+              >
+                Learn more.
+              </button>
+              <CryptoAssetModal
+                showModal={showCryptoAssetModal}
+                closeModal={() => setShowCryptoAssetModal(false)}
+              />
+            </div>
           </div>
-        </div>
         )}
       </div>
 

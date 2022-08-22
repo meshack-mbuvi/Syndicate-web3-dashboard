@@ -2,8 +2,8 @@ import { RadioButtons } from '@/components/buttons/radioButtons';
 
 export enum OpenUntil {
   FUTURE_DATE = 0,
-  MAX_MEMBERS = 1,
-  MANUALLY_CLOSED = 2
+  MAX_MEMBERS = 1
+  // MANUALLY_CLOSED = 2
 }
 
 interface Props {
@@ -19,8 +19,8 @@ export const RadioButtonsOpenUntil: React.FC<Props> = ({
     <RadioButtons
       options={[
         'A future date',
-        'A max number of collective NFTs are claimed',
-        'I close it'
+        'A max number of collective NFTs are claimed'
+        // 'I close it'
       ]}
       activeIndex={openUntil}
       handleIndexChange={(index) => {
