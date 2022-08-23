@@ -1,11 +1,13 @@
 import { CtaButton } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
+import { Spinner } from '@/components/shared/spinner';
 import { B2, H3 } from '@/components/typography';
 import { useState } from 'react';
 
 interface Props {
   name: string;
   inviteLink: string;
+  loading: boolean;
   CTAonClick: (e) => void;
   blockExplorerLink: string;
   blockExplorerName: string;
@@ -13,6 +15,7 @@ interface Props {
 
 export const CollectivesCreateSuccess: React.FC<Props> = ({
   name,
+  loading,
   inviteLink,
   CTAonClick,
   blockExplorerLink,
@@ -40,9 +43,21 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         showCopiedState={showCopiedState}
         copyButtonText="Copy invite link"
       />
-      <CtaButton extraClasses="mt-12 mb-6" onClick={CTAonClick}>
-        Manage on dashboard
-      </CtaButton>
+      {loading ? (
+        <button className="primary-CTA-disabled mt-12 mb-6 w-full flex justify-center content-center space-x-3">
+          <span className="">Preparing dashboard</span>
+          <Spinner
+            margin="my-0 items-center"
+            color="text-gray-syn4"
+            height="h-4"
+            width="w-4"
+          />
+        </button>
+      ) : (
+        <CtaButton extraClasses="mt-12 mb-6" onClick={CTAonClick}>
+          Manage on dashboard
+        </CtaButton>
+      )}
       <a
         href={blockExplorerLink}
         rel="noreferrer"

@@ -5,20 +5,37 @@ import { CollectivesCreateSuccess } from '@/components/collectives/create/succes
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
-import {
-  partialCollectiveCreationStateReset,
-  resetCollectiveCreationState
-} from '@/state/createCollective/slice';
+import { resetCollectiveCreationState } from '@/state/createCollective/slice';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCollectiveCreation';
 
 const CreateCollectiveSuccess: FC = () => {
   const { artworkUrl, artworkType } = useCreateState();
+  const [collectiveArtwork, setCollectiveArtwork] = useState({
+    _artworkType: NFTMediaType.IMAGE,
+    _artworkUrl: ''
+  });
+
+  const onCollectiveCreated = async (artworkUrl, artworkType) => {
+    setCollectiveArtwork({
+      _artworkType: artworkType,
+      _artworkUrl: artworkUrl
+    });
+  };
+
+  useEffect(() => {
+    if (artworkUrl && artworkType) {
+      onCollectiveCreated(artworkUrl, artworkType);
+    }
+  }, [artworkUrl, artworkType]);
+
   return (
     <div className="bg-black w-full h-full pb-38">
       <CollectivesInteractiveBackground
         heightClass="h-full"
-        mediaType={artworkType}
+        mediaType={collectiveArtwork._artworkType}
         widthClass="w-full"
-        floatingIcon={artworkUrl}
+        floatingIcon={collectiveArtwork._artworkUrl}
         numberOfParticles={40}
       />
     </div>
@@ -30,6 +47,8 @@ export default CreateCollectiveSuccess;
 export const SuccessRightPanel: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { verifyCreation, collectiveIndexed } = useVerifyCollectiveCreation();
 
   const {
     web3Reducer: {
@@ -45,6 +64,7 @@ export const SuccessRightPanel: React.FC = () => {
   const onCollectiveCreated = async (address: string) => {
     await setCollectiveAddress(address);
     await setCollectiveName(name);
+    verifyCreation(address);
     dispatch(resetCollectiveCreationState());
   };
 
@@ -68,6 +88,7 @@ export const SuccessRightPanel: React.FC = () => {
     <div className="flex h-full items-center justify-center">
       <CollectivesCreateSuccess
         name={collectiveName}
+        loading={!collectiveIndexed}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}
         blockExplorerLink={
