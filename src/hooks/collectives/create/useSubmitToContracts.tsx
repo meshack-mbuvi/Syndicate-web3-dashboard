@@ -47,7 +47,7 @@ const useSubmitToContracts = () => {
       ethPrice: getWeiAmount(web3, String(pricePerNFT), 18, true),
       maxPerMember: +maxPerWallet,
       openUntil: openUntil,
-      startTime: '0',
+      startTime: (~~(new Date().getTime() / 1000)).toString(),
       endTime: String(EpochCloseTime),
       totalSupply: +maxSupply,
       tokenURI: creationStatus.ipfsHash,
