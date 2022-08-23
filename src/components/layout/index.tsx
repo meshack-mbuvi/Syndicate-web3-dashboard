@@ -321,7 +321,7 @@ const Layout: FC<Props> = ({
         {createClubPage ? (
           <div
             className="fixed left-0 top-10 text-white z-50 hidden sm:block"
-            style={{ height: height - 78 }}
+            style={{ height: height ? height - 78 : '' }}
           >
             <PortfolioSideNav />
           </div>

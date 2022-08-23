@@ -617,10 +617,6 @@ const DepositSyndicate: React.FC = () => {
     +memberDeposits >= 10000 && ((width > 868 && width < 1025) || width < 500);
 
   useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
-
-  useEffect(() => {
     const remainingClubTokensBalance = +maxTotalSupply - +totalSupply;
 
     setIsTextRed(false);
@@ -1013,10 +1009,6 @@ const DepositSyndicate: React.FC = () => {
       }
     }
   };
-
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
 
   const handleCloseSuccessModal = () => {
     dispatch(setERC20Token(erc20TokenContract));

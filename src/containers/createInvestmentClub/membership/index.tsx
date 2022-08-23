@@ -10,6 +10,10 @@ import AllowedMembers from './allowedMembers';
 import InviteMembers from './inviteMembers';
 import { TokenGateOption } from '@/state/createInvestmentClub/types';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import IconShield from '@/components/icons/shield';
+import { B3, B4 } from '@/components/typography';
+import IconToken from '@/components/icons/token';
+import IconLink from '@/components/icons/link';
 
 const Membership: React.FC<{ className }> = ({ className }) => {
   const {
@@ -113,8 +117,21 @@ const Membership: React.FC<{ className }> = ({ className }) => {
             {isCreatingInvestmentClub ? <AllowedMembers /> : <InviteMembers />}
           </>
         ) : (
-          <div className="pt-4 pb-11.5">
-            <Callout type={CalloutType.REGULAR}>Coming soon...</Callout>
+          <div className="pt-4 flex">
+            <div className="flex flex-1 items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
+              <IconToken width={28} height={28} extraClasses="flex-shrink-0" />
+              <div className="space-y-0.5">
+                <B3 extraClasses="text-gray-syn5">Owners of certain tokens</B3>
+                <B4 extraClasses="text-gray-syn4">Token-gating coming soon</B4>
+              </div>
+            </div>
+            <div className="flex flex-1 items-center space-x-6 border border-blue-neptune p-4 pl-6 rounded-md">
+              <IconLink width={28} height={28} extraClasses="flex-shrink-0" />
+              <div className="space-y-0.5">
+                <B3>Anyone with the link</B3>
+                <B4 extraClasses="text-gray-syn3">Unrestricted</B4>
+              </div>
+            </div>
           </div>
         )}
       </div>
