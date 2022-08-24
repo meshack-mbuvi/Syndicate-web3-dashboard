@@ -1,5 +1,5 @@
 import { B3, B4 } from '@/components/typography';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export enum UploaderProgressType {
   LOADING_BAR = 'LOADING_BAR',
@@ -37,8 +37,16 @@ export const FileUploader: React.FC<Props> = ({
   accept = '*',
   customClasses
 }) => {
+  const fileInput = useRef(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const isAddOnVisible = addOn && progressPercent === 0;
+
+  const cancelUpload = (e) => {
+    e.preventDefault();
+    fileInput.current.value = null;
+    handleCancelUpload();
+  };
+
   return (
     <button
       className={`w-full relative transition-all ${
@@ -53,6 +61,7 @@ export const FileUploader: React.FC<Props> = ({
     >
       <input
         type="file"
+        ref={fileInput}
         className={`absolute z-0 top-0 opacity-0 left-0 ${
           addOn ? 'h-full' : heightClass
         } ${
@@ -140,7 +149,7 @@ export const FileUploader: React.FC<Props> = ({
               <div className={`text-red-error text-sm mt-1`}>{errorText}</div>
             )}
           </div>
-          <button onClick={handleCancelUpload}>
+          <button onClick={cancelUpload}>
             <div
               className="hover:bg-gray-syn8 transition-all ease-out p-2 -m-2 relative rounded-full"
               style={{ top: '-1px' }}
