@@ -15,7 +15,7 @@ import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const useFetchCollectiveDetails = (
   skipQuery?: boolean
-): { loading: boolean; collectiveNotFound: boolean } => {
+): { loading: boolean; collectiveNotFound: boolean; refetch: () => void } => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
@@ -169,7 +169,7 @@ const useFetchCollectiveDetails = (
     }
   }, [loading, JSON.stringify(data)]);
 
-  return { loading, collectiveNotFound };
+  return { loading, collectiveNotFound, refetch };
 };
 
 export default useFetchCollectiveDetails;

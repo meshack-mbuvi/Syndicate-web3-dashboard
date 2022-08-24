@@ -15,6 +15,8 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
+import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -41,7 +43,8 @@ const NftClaimAndInfoCard: React.FC = () => {
         ownerAddress,
         collectiveAddress,
         numOwners,
-        maxPerWallet
+        maxPerWallet,
+        metadataCid
       },
       loadingState: { isFetchingCollective }
     }
@@ -65,6 +68,10 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
 
+  const { refetch } = useFetchCollectiveDetails();
+  const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+
   const [walletState, setWalletState] = useState<WalletState>(
     WalletState.NOT_CONNECTED
   );
@@ -80,6 +87,8 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   const onTxReceipt = () => {
     setProgressState(ProgressState.SUCCESS);
+    // update collective details
+    refetch();
   };
 
   const onTxFail = () => {
@@ -109,7 +118,7 @@ const NftClaimAndInfoCard: React.FC = () => {
     getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
       setHasAccountReachedMaxPasses(balance >= +maxPerWallet);
     });
-  }, [account, collectiveAddress, maxPerWallet, web3]);
+  }, [account, collectiveAddress, maxPerWallet, web3, progressState]);
 
   useEffect(() => {
     if (+maxTotalSupply > 0) {
@@ -142,7 +151,7 @@ const NftClaimAndInfoCard: React.FC = () => {
 
     // check whether connected account can claim and update _walletState
     setWalletState(_walletState);
-  }, [account, isAccountEligible]);
+  }, [account, isAccountEligible, hasAccountReachedMaxPasses]);
 
   const shortenOwnerAddress = (address: string) => {
     const addr = address.toLowerCase();
@@ -256,8 +265,24 @@ const NftClaimAndInfoCard: React.FC = () => {
             <CollectivesInteractiveBackground
               heightClass="h-full"
               widthClass="w-full"
-              mediaType={NFTMediaType.IMAGE}
-              floatingIcon="https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA"
+              mediaType={
+                nftMetadata?.animation_url
+                  ? NFTMediaType.VIDEO
+                  : nftMetadata?.image
+                  ? NFTMediaType.IMAGE
+                  : NFTMediaType.CUSTOM
+              }
+              floatingIcon={
+                nftMetadata?.animation_url
+                  ? `${ipfsGateway}/${nftMetadata?.animation_url.replace(
+                      'ipfs://',
+                      ''
+                    )}`
+                  : `${ipfsGateway}/${nftMetadata?.image.replace(
+                      'ipfs://',
+                      ''
+                    )}`
+              }
               numberOfParticles={75}
               isDuplicate={true}
             />

@@ -93,7 +93,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect your wallet to claim a pass'
       : walletState === WalletState.MAX_PASSES_REACHED
-      ? 'You have reached the maximum number of passes per wallet'
+      ? 'You have reached the maximum number of NFTs per wallet'
       : null;
 
   const walletLabel = (
@@ -229,7 +229,13 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           />
         </div>
       ) : (
-        <div className="fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:px-8 sm:py-10 bg-gray-syn8 space-y-4 sm:space-y-10 text-center sm:rounded-2.5xl">
+        <div
+          className={`fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:px-8 sm:py-10 bg-gray-syn8 ${
+            walletState !== WalletState.MAX_PASSES_REACHED
+              ? 'space-y-4 sm:space-y-10'
+              : ''
+          }text-center sm:rounded-2.5xl`}
+        >
           {walletLabel}
           <div className="space-y-4">
             {walletState !== WalletState.MAX_PASSES_REACHED && (
