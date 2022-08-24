@@ -110,7 +110,7 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
 
       <div
-        className={`items-center w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
+        className={`items-start w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
           !isLoadingNftMetadata && !nftMetadata && 'mx-6 py-6'
         }`}
       >

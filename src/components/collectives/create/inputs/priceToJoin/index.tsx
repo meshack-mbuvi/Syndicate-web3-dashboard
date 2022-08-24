@@ -53,7 +53,7 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
           });
         } else {
           if (Number(amount) || Number(amount) === 0) {
-            handlePriceToJoinChange(Number(amount));
+            handlePriceToJoinChange(amount);
           } else if (amount === '') {
             handlePriceToJoinChange(null);
           }
