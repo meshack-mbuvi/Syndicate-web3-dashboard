@@ -41,9 +41,9 @@ const CreateCollectiveDesign: FC<Props> = ({
 
   useEffect(() => {
     if (
-      name &&
+      name.trim() &&
       (artworkUrl || artworkType === NFTMediaType.CUSTOM) &&
-      description &&
+      description.trim() &&
       symbol &&
       !exceededUploadLimit
     ) {
