@@ -154,8 +154,6 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const [subfieldEditing, setSubfieldEditing] = useState(false);
 
-  // const [openUntilTransactionError, setOpenUntilTransactionError] = useState(false);
-
   useEffect(() => {
     if (maxSupply === 0) {
       setCurrentOpenUntilState(OpenUntil.FUTURE_DATE);
@@ -270,8 +268,6 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const onSwitchTxFail = (error?) => {
     setOpenUntilStepModalVisible(true);
-    // setOpenUntilTransactionError(true);
-
     updateSteps('isInErrorState', true);
     updateSteps('status', ProgressDescriptorState.FAILURE);
 
@@ -913,6 +909,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             setSubfieldEditing: handleSubfieldEditing
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+          setEditGroupFieldClicked={setEditGroupFieldClicked}
           cancelEdit={handleCancelEdit}
           rows={[
             {
@@ -1045,6 +1042,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             showSubmitCTA: isTransferable !== existingIsTransferable
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+          setEditGroupFieldClicked={setEditGroupFieldClicked}
           switchRowIndex={EditRowIndex.Transfer}
           cancelEdit={handleCancelEdit}
           {...{ activeRow, setActiveRow }}
@@ -1065,11 +1063,7 @@ const ModifyCollectiveSettings: React.FC = () => {
         isModalVisible={openUntilStepModalVisible}
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
-        showCloseButton={
-          /* openUntilTransactionError
-            ? true
-            : */ false
-        }
+        showCloseButton={false}
         outsideOnClick={false}
       >
         <>

@@ -38,6 +38,7 @@ interface Props {
   showForm?: boolean;
   activeRow?: number;
   setActiveRow?: (arg: number) => void;
+  setEditGroupFieldClicked?: (arg: boolean) => void;
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
   switchRowIndex?: number;
@@ -58,7 +59,8 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
     setSubfieldEditing
   },
   cancelEdit,
-  switchRowIndex
+  switchRowIndex,
+  setEditGroupFieldClicked
 }) => {
   const rowsRef = useRef<HTMLInputElement>();
   const editRef = useRef<HTMLInputElement>();
@@ -186,6 +188,7 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
                           setActiveRow(rowIndex);
                           dispatch(setActiveRowIdx(rowIndex));
                           setSubfieldEditing(true);
+                          setEditGroupFieldClicked(false);
                         }}
                       />
                     )}

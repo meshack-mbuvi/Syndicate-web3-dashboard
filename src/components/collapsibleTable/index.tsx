@@ -37,6 +37,7 @@ interface Props {
   showForm?: boolean;
   activeRow?: number;
   setActiveRow?: (arg: number) => void;
+  setEditGroupFieldClicked?: (arg: boolean) => void;
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
   switchRowIndex?: number;
@@ -49,6 +50,7 @@ export const CollapsibleTable: React.FC<Props> = ({
   extraClasses = '',
   activeRow,
   setActiveRow,
+  setEditGroupFieldClicked,
   handleDisclaimerConfirmation,
   expander: {
     isExpandable = true,
@@ -112,6 +114,7 @@ export const CollapsibleTable: React.FC<Props> = ({
                 dispatch(setActiveRowIdx(switchRowIndex));
               }
               setIsExpanded(!isExpanded);
+              setEditGroupFieldClicked(false);
             }}
           />
         )}
@@ -195,6 +198,7 @@ export const CollapsibleTable: React.FC<Props> = ({
                       <EditButton
                         handleClick={() => {
                           setActiveRow(rowIndex);
+                          setEditGroupFieldClicked(false);
                           dispatch(setActiveRowIdx(rowIndex));
                         }}
                       />

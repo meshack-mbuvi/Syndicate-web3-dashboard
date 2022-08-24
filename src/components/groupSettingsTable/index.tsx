@@ -74,13 +74,7 @@ export const GroupSettingsTable: React.FC<Props> = ({
         >
           {rows.map((row, index) => {
             const {
-              edit: {
-                isEditable,
-                rowIndex,
-                inputField
-                // showCallout,
-                // inputWithPreview
-              }
+              edit: { isEditable, rowIndex, inputField }
             } = row;
 
             return (
