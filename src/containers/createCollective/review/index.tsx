@@ -17,13 +17,15 @@ import CreateCollectiveModals from '../shared/createCollectiveModals';
 
 interface Props {
   handleNext?: (e) => void;
+  setNextBtnDisabled?: (disabled: boolean) => void;
 }
-const CreateCollectiveReview: FC<Props> = () => {
+const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
   const {
     web3Reducer: {
       web3: { account }
     }
   } = useSelector((state: AppState) => state);
+  setNextBtnDisabled(true);
 
   const {
     name,
@@ -136,7 +138,7 @@ const CreateCollectiveReview: FC<Props> = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="w-full h-full flex flex-col">
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
       <div className="mt-8 h-full flex-grow">
         <CollectiveFormReview

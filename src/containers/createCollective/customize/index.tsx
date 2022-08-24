@@ -1,20 +1,24 @@
-import React, { FC, useEffect } from 'react';
 import { CollectiveFormCustomize } from '@/components/collectives/create/customize';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
-import { CreateCollectiveTitle, createHeader } from '../shared';
 import {
   useCreateState,
   useUpdateState
 } from '@/hooks/collectives/useCreateCollective';
 import { AppState } from '@/state';
+import React, { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { CreateCollectiveTitle, createHeader } from '../shared';
 
 interface Props {
   handleNext: (e) => void;
+  setNextBtnDisabled: (disabled: boolean) => void;
 }
 
-const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
+const CreateCollectiveCustomize: FC<Props> = ({
+  handleNext,
+  setNextBtnDisabled
+}) => {
   const {
     web3Reducer: {
       web3: { activeNetwork }
@@ -29,7 +33,6 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
     timeWindow,
     closeDate,
     closeTime,
-    EpochCloseTime,
     tokenDetails,
     transferrable
   } = useCreateState();
@@ -51,8 +54,8 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
 
   useEffect(() => {
     if (!tokenDetails.symbol) {
-      let symbol: string = activeNetwork.nativeCurrency.symbol;
-      let icon: string = activeNetwork.nativeCurrency.logo;
+      const symbol: string = activeNetwork.nativeCurrency.symbol;
+      const icon: string = activeNetwork.nativeCurrency.logo;
       handleTokenDetailsChange({ symbol, icon });
     }
   }, [tokenDetails]);
@@ -73,9 +76,11 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
         proceed = false;
       }
       setContinueButtonActive(proceed);
+      setNextBtnDisabled(!proceed);
       return;
     }
     setContinueButtonActive(false);
+    setNextBtnDisabled(true);
   }, [
     membershipType,
     maxPerWallet,
@@ -115,7 +120,7 @@ const CreateCollectiveCustomize: FC<Props> = ({ handleNext }) => {
         isContinueButtonActive={ContinueButtonActive}
         handleContinue={handleNext}
         maxMembers={0}
-        handleMaxMembersChange={() => {}}
+        handleMaxMembersChange={() => ({})}
       />
     </div>
   );

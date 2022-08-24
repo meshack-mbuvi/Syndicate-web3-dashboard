@@ -1,8 +1,7 @@
 /* eslint-disable react/display-name */
 import useWindowSize from '@/hooks/useWindowSize';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CollectivesInteractiveBackground } from '../interactiveBackground';
-import React from 'react';
 
 export const GeneratedArtworkDarkBGColors = [
   'bg-red-hal',
@@ -25,11 +24,18 @@ interface Props {
   label?: string;
   backgroundColorClass?: string;
   numberOfNodes?: number;
+  customId?: string;
   isForDisplay?: boolean; // Mark as true when creating an instance for display in the app, and not for image capture
 }
 
 export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
-  ({ captureRef, label, backgroundColorClass, isForDisplay = false }) => {
+  ({
+    captureRef,
+    label,
+    backgroundColorClass,
+    customId,
+    isForDisplay = false
+  }) => {
     const continerRef = useRef(null);
     const containerPaddingRem = 2;
     const pxPerRem = 16;
@@ -92,7 +98,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
 
     useEffect(() => {
       adjustFontSize();
-    });
+    }, [label]);
 
     return (
       <button
@@ -105,6 +111,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
           numberOfParticles={55}
           isDuplicate={isForDisplay}
           isArtwork={true}
+          customId={customId}
         />
         <div
           className="absolute top-0 left-0"

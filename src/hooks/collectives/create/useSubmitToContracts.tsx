@@ -1,20 +1,20 @@
 // submit collective to protocol
 // ==============================================================
 
-import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
-import { getWeiAmount } from '@/utils/conversions';
-import useCreateState from './useCreateState';
+import { AppState } from '@/state';
 import {
-  setCollectiveCreationReceipt,
-  setCollectiveWaitingForConfirmation,
   setCollectiveConfirmed,
-  setCollectiveTransactionSuccess,
+  setCollectiveCreationReceipt,
   setCollectiveTransactionError,
-  setCollectiveTransactionHash
+  setCollectiveTransactionHash,
+  setCollectiveTransactionSuccess,
+  setCollectiveWaitingForConfirmation
 } from '@/state/createCollective/slice';
+import { getWeiAmount } from '@/utils/conversions';
 import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import useCreateState from './useCreateState';
 
 const useSubmitToContracts = () => {
   const dispatch = useDispatch();
@@ -44,7 +44,9 @@ const useSubmitToContracts = () => {
     return {
       collectiveName: name,
       collectiveSymbol: symbol,
-      ethPrice: getWeiAmount(web3, String(pricePerNFT), 18, true),
+      ethPrice: !isNaN(pricePerNFT)
+        ? getWeiAmount(web3, String(pricePerNFT), 18, true)
+        : '',
       maxPerMember: +maxPerWallet,
       openUntil: openUntil,
       startTime: (~~(new Date().getTime() / 1000)).toString(),

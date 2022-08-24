@@ -97,7 +97,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const bottomBar = (
     <div
-      className="w-fit-content mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
+      className="mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}
@@ -503,14 +503,16 @@ export const CollectiveFormReview: React.FC<Props> = ({
         }
       </div>
       {/* For taking up space, preventing the bottom bar from overlapping the content  */}
-      <div className="pointer-events-none opacity-0">{bottomBar}</div>
+      <div className="pointer-events-none opacity-0">
+        <div className="flex justify-center w-full">{bottomBar}</div>
+      </div>
       <div
-        className="fixed bottom-0 md:left-1/4 md:right-1/4 transparent"
+        className="fixed w-screen bottom-0 left-0 transparent"
         style={{
           borderRadius: '40px 40px 0px 0px'
         }}
       >
-        {bottomBar}
+        <div className="flex justify-center w-full">{bottomBar}</div>
       </div>
     </div>
   );

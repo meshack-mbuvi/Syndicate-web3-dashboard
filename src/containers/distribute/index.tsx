@@ -558,8 +558,9 @@ const Distribute: FC = () => {
       `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
-  const handleSetActiveIndex = (event) => {
+  const handlePrevious = (event) => {
     event.preventDefault();
+    if (activeIndex === 0) return;
     setActiveIndex(activeIndex - 1);
     setCurrentStep(Steps.selectTokens);
   };
@@ -573,7 +574,7 @@ const Distribute: FC = () => {
           {currentStep == Steps.selectTokens ? (
             <TwoColumnLayout
               activeIndex={activeIndex}
-              setActiveIndex={handleSetActiveIndex}
+              handlePrevious={handlePrevious}
               hideWalletAndEllipsis={true}
               showCloseButton={true}
               headerTitle={name}
@@ -616,7 +617,7 @@ const Distribute: FC = () => {
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
               activeIndex={activeIndex}
-              setActiveIndex={handleSetActiveIndex}
+              handlePrevious={handlePrevious}
               hideWalletAndEllipsis={true}
               showCloseButton={true}
             >

@@ -25,10 +25,10 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  investmentClubSteps,
   CategorySteps,
   CreateActiveSteps,
-  CreateSteps
+  CreateSteps,
+  investmentClubSteps
 } from './steps';
 
 type CreateInvestmentClubProviderProps = {

@@ -5,13 +5,13 @@ import { InputField } from '@/components/inputs/inputField';
 import { Switch, SwitchType } from '@/components/switch';
 import { B2, B3, B4 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
 import { InputFieldPriceToJoin } from '../inputs/priceToJoin';
 import { InputTimeWindow, TimeWindow } from '../inputs/timeWindow';
-import Image from 'next/image';
 
 export enum MembershipType {
   CAPPED = 'CAPPED',
@@ -332,6 +332,9 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
         >
           Continue
         </button>
+        <B3 extraClasses="text-gray-syn4 my-2">
+          All field are modifiable later via an on-chain transaction with gas.
+        </B3>
       </div>
     </div>
   );

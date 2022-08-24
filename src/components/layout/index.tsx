@@ -1,12 +1,15 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
+import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
+import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useWindowSize from '@/hooks/useWindowSize';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
@@ -25,9 +28,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
-import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
-import useWindowSize from '@/hooks/useWindowSize';
-import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 
 interface Props {
   showBackButton?: boolean;
@@ -36,13 +36,17 @@ interface Props {
   handleExitClick?: () => void;
   showNav?: boolean;
   activeIndex?: number;
-  setActiveIndex?: (index: number) => void;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   customClasses?: string;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
+  showSideNav?: boolean;
+  nextBtnDisabled?: boolean;
+  handleNext?: (index?: number) => void;
+  showDotIndicatorLabels?: boolean;
+  handlePrevious?: (index?: number) => void;
 }
 
 const Layout: FC<Props> = ({
@@ -50,7 +54,6 @@ const Layout: FC<Props> = ({
   activeIndex = 0,
   dotIndicatorOptions,
   handleExitClick,
-  setActiveIndex,
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
@@ -58,6 +61,11 @@ const Layout: FC<Props> = ({
   showCloseButton = false,
   showCreateProgressBar = false,
   customClasses,
+  showSideNav = false,
+  nextBtnDisabled = true,
+  showDotIndicatorLabels = true,
+  handleNext,
+  handlePrevious,
   navItems = [
     {
       url: '/clubs',
@@ -306,11 +314,15 @@ const Layout: FC<Props> = ({
           dotIndicatorOptions={dotIndicatorOptions}
           handleExitClick={handleExitClick}
           activeIndex={activeIndex || 0}
-          setActiveIndex={setActiveIndex}
+          handlePrevious={handlePrevious}
           hideWalletAndEllipsis={hideWalletAndEllipsis}
           showCloseButton={showCloseButton}
           showNavButton={showNavButton}
           showCreateProgressBar={showCreateProgressBar}
+          showLogo={!showSideNav}
+          showSideNav={showSideNav}
+          handleNext={handleNext}
+          nextBtnDisabled={nextBtnDisabled}
         />
         <DemoBanner />
         <div className="sticky top-18"></div>
@@ -318,12 +330,20 @@ const Layout: FC<Props> = ({
          * z-50 allows it to appear above the top nav.
          * height = screen height - top and bottom padding(40 + 38)
          * */}
-        {createClubPage ? (
+        {showSideNav ? (
           <div
-            className="fixed left-0 top-10 text-white z-50 hidden sm:block"
+            className="fixed left-0 top-10 text-white z-50 hidden md:block"
             style={{ height: height ? height - 78 : '' }}
           >
-            <PortfolioSideNav />
+            <PortfolioSideNav
+              dotIndicatorOptions={dotIndicatorOptions}
+              handleExitClick={handleExitClick}
+              handleBack={handlePrevious}
+              handleNext={handleNext}
+              activeIndex={activeIndex}
+              nextBtnDisabled={nextBtnDisabled}
+              showDotIndicatorLabels={showDotIndicatorLabels}
+            />
           </div>
         ) : null}
         <div

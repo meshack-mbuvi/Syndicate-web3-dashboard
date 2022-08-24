@@ -15,7 +15,7 @@ const CreateCollectiveContainer: FC = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showNavButton, setShowNavButton] = useState(true);
-  const [showBackButton, setShowBackButton] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {
@@ -32,10 +32,9 @@ const CreateCollectiveContainer: FC = () => {
   useEffect(() => {
     if (activeIndex === 3) {
       setShowNavButton(false);
-      setShowBackButton(false);
+      setNextBtnDisabled(false);
     } else {
       setShowNavButton(true);
-      setShowBackButton(true);
     }
   }, [activeIndex]);
 
@@ -59,55 +58,68 @@ const CreateCollectiveContainer: FC = () => {
     <>
       <TwoColumnLayout
         managerSettingsOpen={true}
-        dotIndicatorOptions={[]}
+        dotIndicatorOptions={activeIndex == 3 ? [] : dotIndicatorOptions}
         handleExitClick={handleExitClick}
         activeIndex={activeIndex}
-        setActiveIndex={handlePrev}
         hideWalletAndEllipsis={false}
-        showCloseButton={showBackButton}
+        showCloseButton={false}
         headerTitle="Create a Collective"
         type={TwoColumnLayoutType.FLEX}
+        showSideNav={showNavButton}
         showNavButton={showNavButton}
+        showDotIndicatorLabels={false}
+        handlePrevious={handlePrev}
+        handleNext={handleNext}
+        nextBtnDisabled={nextBtnDisabled}
         leftColumnComponent={
-          <>
+          <div className="flex justify-center lg:ml-14">
             {activeIndex === 0 && (
-              <div className="h-full flex-grow">
-                <CreateCollectiveDesign handleNext={handleNext} />
+              <div className="h-full flex-grow xl:ml-auto">
+                <CreateCollectiveDesign
+                  handleNext={handleNext}
+                  setNextBtnDisabled={setNextBtnDisabled}
+                />
               </div>
             )}
             {activeIndex === 1 && (
-              <div className="h-full flex-grow">
-                <CreateCollectiveCustomize handleNext={handleNext} />
+              <div className="h-full flex-grow xl:ml-auto">
+                <CreateCollectiveCustomize
+                  handleNext={handleNext}
+                  setNextBtnDisabled={setNextBtnDisabled}
+                />
               </div>
             )}
             {activeIndex === 2 && (
-              <div className="h-full flex-grow">
-                <CreateCollectiveReview handleNext={handleNext} />
+              <div className="flex h-full md:max-w-md flex-grow xl:ml-auto">
+                <CreateCollectiveReview
+                  handleNext={handleNext}
+                  setNextBtnDisabled={setNextBtnDisabled}
+                />
               </div>
             )}
             {activeIndex === 3 && (
-              <div className="w-full flex-grow flex">
+              <div className="w-full flex-grow flex xl:ml-auto">
                 <div className="w-full flex-grow">
                   <CreateCollectiveSuccess />
                 </div>
               </div>
             )}
-          </>
+          </div>
         }
         rightColumnComponent={
-          <div className="w-full flex-grow flex">
+          <div className="justify-center md:mt-14 h-full flex-grow flex">
             {activeIndex === 0 && (
-              <div className="mt-8 w-full flex-grow">
-                <DesignRightPanel />
+              <div className="justify-center md:justify-start w-full flex-grow hidden md:flex">
+                <DesignRightPanel customId={'design-right-panel'} />
               </div>
             )}
             {activeIndex === 1 && (
-              <div className="mt-8 w-full flex-grow">
+              <div className="w-full flex-grow hidden md:block">
                 <CustomizeRightPanel />
               </div>
             )}
             {activeIndex === 2 && (
-              <div className="mt-8 w-full flex-grow hidden md:block">
+              <div className="w-full flex-grow hidden md:block">
                 <ReviewRightPanel />
               </div>
             )}

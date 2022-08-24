@@ -1,7 +1,8 @@
 import { TextArea } from '@/components/inputs/simpleTextArea';
 import { Spinner } from '@/components/shared/spinner';
+import { DesignRightPanel } from '@/containers/createCollective/design';
 import { elementToImage } from '@/utils/elementToImage';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CollectivesGeneratedArtwork } from '../../generatedArtwork';
 import { CollectivesFileUploader } from '../../uploader';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
@@ -68,6 +69,20 @@ export const CollectiveFormDesign: React.FC<Props> = ({
       handleContinue(e);
     }
   };
+
+  // This saves the artwork so that in the event user clicks the next button on
+  // the navbar, the artwork will be already saved in store
+  useEffect(() => {
+    if (isUsingGeneratedArtwork && isContinueButtonActive) {
+      elementToImage(captureArtworkRef, 2, (imageURI) => {
+        handleCaptureGeneratedArtwork(
+          imageURI,
+          generatedArtworkBackgroundColor
+        );
+      });
+    }
+  }, [isContinueButtonActive, generatedArtworkBackgroundColor, nameValue]);
+
   return (
     <>
       {isUsingGeneratedArtwork && (
@@ -118,7 +133,12 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             />
           </div>
         </div>
-        <div className="mt-10">
+        <div className="md:hidden mt-8 mb-10">
+          <div className="flex justify-center md:justify-start w-full flex-grow">
+            <DesignRightPanel customId={'design-left-panel'} />
+          </div>
+        </div>
+        <div className="md:mt-10">
           <button
             className={`${
               isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'

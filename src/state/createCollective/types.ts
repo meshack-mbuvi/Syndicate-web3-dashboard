@@ -1,7 +1,7 @@
-import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import { MembershipType } from '@/components/collectives/create/customize';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
-import { MembershipType } from '@/components/collectives/create/customize';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 export interface CollectiveCreation {
   name: string;
   symbol: string;
@@ -49,7 +49,7 @@ export const initialState: CollectiveCreation = {
   fileName: '',
   progressPercent: 0,
   description: '',
-  pricePerNFT: NaN,
+  pricePerNFT: 0,
   maxPerWallet: 0,
   membershipType: MembershipType.OPEN,
   openUntil: OpenUntil.FUTURE_DATE,

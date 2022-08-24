@@ -398,7 +398,7 @@ export const B2 = ({
   return (
     <div
       className={`text-base transform transition-font-size ${
-        weightClassOverride && weightClassOverride
+        weightClassOverride ?? ''
       } ${extraClasses}`}
       {...rest}
     >

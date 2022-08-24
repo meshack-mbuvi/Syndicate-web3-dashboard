@@ -130,7 +130,7 @@ const NetworkComponent: React.FC<NetworkType> = ({
 
   return (
     <div
-      className="flex flex-col w-screen sm:w-auto md:w-730 sm:space-x-6 sm:flex-row justify-between space-y-4 sm:space-y-0 md:justify-between pl-6 p-4 bg-black border border-b-0 border-gray-syn7 rounded-3xl"
+      className="flex flex-col w-full sm:w-auto md:w-730 sm:space-x-6 sm:flex-row justify-between space-y-4 sm:space-y-0 md:justify-between pl-6 p-4 bg-black border border-b-0 border-gray-syn7 rounded-3xl"
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}

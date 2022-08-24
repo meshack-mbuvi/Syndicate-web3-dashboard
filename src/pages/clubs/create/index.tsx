@@ -1,25 +1,27 @@
+import AddToCalendar from '@/components/addToCalendar';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
+import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-import { AppState } from '@/state';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import AddToCalendar from '@/components/addToCalendar';
-import { setDispatchCreateFlow } from '@/state/wallet/actions';
-import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
-import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import {
+  CreateActiveSteps,
   CreateFlowSteps,
   DetailsSteps
 } from '@/context/CreateInvestmentClubContext/steps';
+import { AppState } from '@/state';
+import { setDispatchCreateFlow } from '@/state/wallet/actions';
+import moment from 'moment';
+import Image from 'next/image';
+import Link from 'next/link';
+import router from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -36,7 +38,12 @@ const CreateInvestmentClub: React.FC = () => {
     isCreatingInvestmentClub,
     isFirstStep,
     stepsNames,
-    isCustomDate
+    isCustomDate,
+    handleBack,
+    handleNext,
+    stepsCategories,
+    nextBtnDisabled,
+    resetCreationStates
   } = useCreateInvestmentClubContext();
 
   const parentRef = useRef(null);
@@ -83,8 +90,50 @@ const CreateInvestmentClub: React.FC = () => {
     currentStep === 0 ||
     (currentStep === stepsNames.indexOf(DetailsSteps.DATE) && !isCustomDate);
 
+  const [currCategory, setCurrentCategory] = useState<CreateActiveSteps>();
+  const [uniqueCategories, setUniqueCategories] = useState<CreateActiveSteps[]>(
+    []
+  );
+  const [categoryIndex, setCategoryIndex] = useState(0);
+
+  useEffect(() => {
+    const uniqueCategories = stepsCategories.reduce(
+      (unique: CreateActiveSteps[], curr) => {
+        if (!unique.includes(curr)) {
+          unique.push(curr);
+        }
+        return unique;
+      },
+      []
+    );
+
+    setUniqueCategories(uniqueCategories);
+    if (currCategory !== steps[currentStep].category) {
+      setCurrentCategory(steps[currentStep].category);
+    }
+  }, [steps, currentStep, currCategory, stepsCategories]);
+
+  useEffect(() => {
+    const index = uniqueCategories.indexOf(currCategory);
+    setCategoryIndex(index);
+  }, [stepsCategories, currCategory, uniqueCategories]);
+
+  const handleExit = () => {
+    router.replace('/');
+    resetCreationStates();
+  };
+
   return (
-    <Layout showCreateProgressBar={false}>
+    <Layout
+      showCreateProgressBar={false}
+      showSideNav={true}
+      dotIndicatorOptions={uniqueCategories}
+      handleExitClick={handleExit}
+      handleNext={handleNext}
+      handlePrevious={handleBack}
+      activeIndex={categoryIndex}
+      nextBtnDisabled={nextBtnDisabled}
+    >
       <Head title="Create Investment Club" />
       <div className="flex flex-col">
         {!isFirstStep && (

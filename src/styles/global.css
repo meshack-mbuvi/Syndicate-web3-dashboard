@@ -1000,12 +1000,13 @@ input[type='time']::-webkit-calendar-picker-indicator {
 }
 
 /* Storybook */
-
 .sb-show-main {
   color: white;
 }
 
-#particles-js {
+#particles-js,
+#design-left-panel,
+#design-right-panel {
   height: 100%;
   width: 100%;
 }
@@ -1016,7 +1017,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
 }
 
 /* WalletConnect */
-
 #walletconnect-qrcode-text,
 .walletconnect-modal__mobile__toggle {
   @apply text-black;

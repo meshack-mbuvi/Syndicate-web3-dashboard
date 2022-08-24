@@ -9,6 +9,7 @@ import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/dem
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
+import useWindowSize from '@/hooks/useWindowSize';
 import { setShowWalletDropdownMenu } from '@/state/wallet/actions';
 import { formatAddress } from '@/utils/formatAddress';
 import { Menu, Transition } from '@headlessui/react';
@@ -26,6 +27,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   showWalletDropdown
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
+  const { width } = useWindowSize();
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [nativeBalance, setNativeBalance] = useState('');
@@ -67,27 +69,38 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
           return (
             <>
               <button
-                className={`flex rounded-full pl-5 pr-4 py-3 sm:py-1 items-center ${
+                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 md:pl-3 pr-4 py-3 sm:py-1 items-center ${
                   showWalletDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
                 id="accountButton"
               >
-                <AddressWithENS
-                  address={{ label: formattedAddress }}
-                  name={data?.name}
-                  image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
-                  layout={AddressLayout.ONE_LINE}
+                <img
+                  width={24}
+                  height={24}
+                  className={`${
+                    width > 425 ? 'mr-2 block md:hidden' : 'hidden'
+                  }`}
+                  src={data?.avatar || '/images/jazzicon.png'}
+                  alt=""
                 />
-                {
-                  <div className="flex items-center ml-3">
-                    <img
-                      src="/images/chevron-down.svg"
-                      width="9"
-                      alt="down-arrow"
-                    />
-                  </div>
-                }
+                <div
+                  className={`${width <= 425 ? 'flex' : 'hidden md:flex ml-3'}`}
+                >
+                  <AddressWithENS
+                    address={{ label: formattedAddress }}
+                    name={data?.name}
+                    image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
+                    layout={AddressLayout.ONE_LINE}
+                  />
+                </div>
+                <div className="flex items-center ml-3">
+                  <img
+                    src="/images/chevron-down.svg"
+                    width="9"
+                    alt="down-arrow"
+                  />
+                </div>
               </button>
               <Transition
                 show={showWalletDropdown}

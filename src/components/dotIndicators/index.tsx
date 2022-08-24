@@ -1,6 +1,6 @@
+import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import React, { useEffect, useRef, useState } from 'react';
 import FadeBetweenChildren from '../fadeBetweenChildren';
-import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',
@@ -11,12 +11,14 @@ interface Props {
   activeIndex: number;
   customClasses?: string;
   orientation?: DotIndicatorsOrientation;
+  showDotIndicatorLabels?: boolean;
 }
 
 export const DotIndicators: React.FC<Props> = ({
   options,
   activeIndex,
   customClasses,
+  showDotIndicatorLabels = true,
   orientation = DotIndicatorsOrientation.VERTICAL
 }) => {
   const containerRef = useRef(null);
@@ -84,7 +86,7 @@ export const DotIndicators: React.FC<Props> = ({
       <div
         className={`${
           orientation === DotIndicatorsOrientation.VERTICAL ? 'block' : 'hidden'
-        } mr-4 relative space-y-4 ${
+        } relative space-y-4 ${
           dotsTransitionStyles ? dotsTransitionStyles : 'opacity-0'
         }`}
         // Each label needs to have it's corresponding dot at it's vertical center
@@ -97,22 +99,29 @@ export const DotIndicators: React.FC<Props> = ({
       </div>
 
       {/* Labels */}
-      <FadeBetweenChildren
-        visibleChildIndex={activeIndex}
-        extraClasses={`w-full ${
-          orientation === DotIndicatorsOrientation.HORIZONTAL
-            ? 'text-right'
-            : 'text-left'
-        }`}
-      >
-        {options.map((option, index) => {
-          return (
-            <div key={index} className="inline uppercase text-sm tracking-wide">
-              {option}
-            </div>
-          );
-        })}
-      </FadeBetweenChildren>
+      {showDotIndicatorLabels ? (
+        <FadeBetweenChildren
+          visibleChildIndex={activeIndex}
+          extraClasses={`w-full ${
+            orientation === DotIndicatorsOrientation.HORIZONTAL
+              ? 'text-right'
+              : 'text-left ml-4'
+          }`}
+        >
+          {options.map((option, index) => {
+            return (
+              <div
+                key={index}
+                className="inline uppercase text-sm tracking-wide"
+              >
+                {option}
+              </div>
+            );
+          })}
+        </FadeBetweenChildren>
+      ) : (
+        ''
+      )}
 
       {/* Horizontal dots */}
       <div

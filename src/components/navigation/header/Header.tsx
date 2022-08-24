@@ -23,17 +23,21 @@ interface props {
   activeIndex?: number;
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
-  setActiveIndex?: (event) => void;
+  handlePrevious?: (event?) => void;
+  handleNext?: (event?) => void;
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
+  showLogo?: boolean;
+  showSideNav?: boolean;
+  nextBtnDisabled?: boolean;
 }
 
 const Header: React.FC<props> = ({
   navItems,
   handleExitClick,
-  setActiveIndex,
+  handlePrevious,
   showBackButton = true,
   showNav = true,
   activeIndex = 0,
@@ -41,7 +45,11 @@ const Header: React.FC<props> = ({
   showCloseButton = false,
   dotIndicatorOptions = [],
   showNavButton = false,
-  showCreateProgressBar = false
+  showCreateProgressBar = false,
+  showLogo = true,
+  showSideNav = false,
+  handleNext = () => ({}),
+  nextBtnDisabled = true
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -122,6 +130,33 @@ const Header: React.FC<props> = ({
       >
         {showMobileNav && !createClubPage ? (
           <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
+            {showSideNav ? (
+              <div className="flex h-11 mb-4 ml-4 space-x-5 mr-3 md:hidden justify-between">
+                <div className="">
+                  <NavButton
+                    type={NavButtonType.CLOSE}
+                    onClick={handleExitClick}
+                  />
+                </div>
+                <NavButton
+                  type={NavButtonType.HORIZONTAL}
+                  handlePrevious={handlePrevious}
+                  handleNext={handleNext}
+                  disabled={nextBtnDisabled}
+                  currentStep={activeIndex}
+                />
+                <div className="flex align-middle">
+                  <DotIndicators
+                    {...{
+                      options: dotIndicatorOptions,
+                      activeIndex,
+                      showDotIndicatorLabels: false,
+                      orientation: DotIndicatorsOrientation.HORIZONTAL
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
             {navItems.map(({ navItemText, url, isLegal }, index) => (
               <React.Fragment key={index}>
                 <div className="container mx-auto items-center">
@@ -140,9 +175,10 @@ const Header: React.FC<props> = ({
             <WalletComponent />
           </div>
         ) : null}
+
         <div className="container mx-auto h-full flex">
-          <div className="flex flex-1 sm:hidden items-center -ml-3">
-            {showBackButton ? (
+          {showBackButton ? (
+            <div className="flex flex-1 sm:hidden items-center -ml-3">
               <button
                 type="button"
                 onClick={handleBackButton}
@@ -155,9 +191,9 @@ const Header: React.FC<props> = ({
                   height={20}
                 />
               </button>
-            ) : null}
-          </div>
-          {createClubPage ? null : (
+            </div>
+          ) : null}
+          {createClubPage || !navItems.length ? null : (
             <div className="hidden sm:flex flex-1 items-center">
               {navItems.map(({ navItemText, url, isLegal }, index) => (
                 <NavBarNavItem
@@ -169,7 +205,7 @@ const Header: React.FC<props> = ({
               ))}
             </div>
           )}
-          {createClubPage ? null : (
+          {!showLogo ? null : (
             <div className="flex w-max items-center">
               <Link href="/">
                 <a href="/">
@@ -201,16 +237,47 @@ const Header: React.FC<props> = ({
               )}
             </button>
           </div>
-          <div className="relative hidden sm:flex sm:space-x-3 flex-1 justify-end items-center">
+          <div className="relative w-full hidden sm:flex sm:space-x-3 flex-1 md:justify-end items-center">
             <div
-              className={`flex space-x-3 ${hideWalletAndEllipsis && 'hidden'}`}
+              className={`flex space-x-3 w-full justify-between md:justify-end ${
+                hideWalletAndEllipsis ? 'hidden' : ''
+              }`}
             >
-              <NetworkComponent />
-              <WalletComponent />
-              <MoreMenu />
+              {showSideNav ? (
+                <div className="flex h-11 space-x-5 mr-3 md:hidden justify-between">
+                  <div className="">
+                    <NavButton
+                      type={NavButtonType.CLOSE}
+                      onClick={handleExitClick}
+                    />
+                  </div>
+                  <NavButton
+                    type={NavButtonType.HORIZONTAL}
+                    handlePrevious={handlePrevious}
+                    handleNext={handleNext}
+                    disabled={nextBtnDisabled}
+                    currentStep={activeIndex}
+                  />
+                  <div className="flex align-middle">
+                    <DotIndicators
+                      {...{
+                        options: dotIndicatorOptions,
+                        activeIndex,
+                        showDotIndicatorLabels: false,
+                        orientation: DotIndicatorsOrientation.HORIZONTAL
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+              <div className="flex space-x-3">
+                <NetworkComponent />
+                <WalletComponent />
+                <MoreMenu />
+              </div>
             </div>
 
-            {dotIndicatorOptions?.length ? (
+            {dotIndicatorOptions?.length && !showSideNav ? (
               <>
                 <DotIndicators
                   options={dotIndicatorOptions}
@@ -221,7 +288,7 @@ const Header: React.FC<props> = ({
 
                 {activeIndex > 0 && showNavButton ? (
                   <NavButton
-                    handlePrevious={setActiveIndex}
+                    handlePrevious={handlePrevious}
                     type={NavButtonType.HORIZONTAL}
                   />
                 ) : null}

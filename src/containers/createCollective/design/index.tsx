@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
 import { CollectiveFormDesign } from '@/components/collectives/create/design';
-import { CreateCollectiveTitle, createHeader } from '../shared';
+import { CollectivesGeneratedArtwork } from '@/components/collectives/generatedArtwork';
 import {
   NFTMediaType,
   NFTPreviewer
@@ -9,13 +8,18 @@ import {
   useCreateState,
   useUpdateState
 } from '@/hooks/collectives/useCreateCollective';
-import { CollectivesGeneratedArtwork } from '@/components/collectives/generatedArtwork';
+import { FC, useEffect, useState } from 'react';
+import { CreateCollectiveTitle, createHeader } from '../shared';
 
 interface Props {
   handleNext: (e) => void;
+  setNextBtnDisabled: (disabled: boolean) => void;
 }
 
-const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
+const CreateCollectiveDesign: FC<Props> = ({
+  handleNext,
+  setNextBtnDisabled
+}) => {
   const { name, symbol, artwork, artworkUrl, artworkType, description } =
     useCreateState();
   const {
@@ -44,9 +48,11 @@ const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
       !exceededUploadLimit
     ) {
       setContinueButtonActive(true);
+      setNextBtnDisabled(false);
       return;
     }
     setContinueButtonActive(false);
+    setNextBtnDisabled(true);
   }, [name, symbol, artworkUrl, artworkType, description, exceededUploadLimit]);
 
   return (
@@ -79,7 +85,7 @@ const CreateCollectiveDesign: FC<Props> = ({ handleNext }) => {
 
 export default CreateCollectiveDesign;
 
-export const DesignRightPanel: React.FC = () => {
+export const DesignRightPanel: FC<{ customId?: string }> = ({ customId }) => {
   const { artworkType, artwork, artworkUrl, name, description, symbol } =
     useCreateState();
 
@@ -99,6 +105,7 @@ export const DesignRightPanel: React.FC = () => {
             label={name}
             backgroundColorClass={artwork.backgroundColorClass}
             isForDisplay={true}
+            customId={customId}
           />
         ) : (
           artworkUrl

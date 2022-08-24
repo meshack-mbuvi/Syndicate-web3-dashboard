@@ -1,8 +1,8 @@
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import React from 'react';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import React from 'react';
 import { NFTMediaType } from '../nftPreviewer';
-import { SkeletonLoader } from '@/components/skeletonLoader';
 
 interface Props {
   heightClass: string;
@@ -13,6 +13,7 @@ interface Props {
   isArtwork?: boolean;
   mediaType?: NFTMediaType;
   isLoadingFloatingIcon?: boolean;
+  customId?: string;
 }
 
 // eslint-disable-next-line react/display-name
@@ -25,7 +26,8 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
     isDuplicate = false,
     isArtwork,
     mediaType = NFTMediaType.IMAGE,
-    isLoadingFloatingIcon
+    isLoadingFloatingIcon,
+    customId = ''
   }) => {
     const particlesInit = async (main) => {
       await loadFull(main);
@@ -36,7 +38,13 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
         className={`relative ${heightClass} ${widthClass} overflow-hidden select-none`}
       >
         <Particles
-          id={isDuplicate ? 'particles-js-duplicate' : 'particles-js'}
+          id={
+            customId
+              ? customId
+              : isDuplicate
+              ? 'particles-js-duplicate'
+              : 'particles-js'
+          }
           init={particlesInit}
           canvasClassName="particles-container relative"
           params={{

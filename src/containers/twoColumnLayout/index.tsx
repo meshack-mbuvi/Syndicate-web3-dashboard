@@ -18,22 +18,30 @@ const TwoColumnLayout: FC<{
   showCloseButton?: boolean;
   headerTitle: string;
   activeIndex?: number;
-  setActiveIndex?: (index?: number) => void;
   type?: TwoColumnLayoutType;
   showNavButton?: boolean;
+  showSideNav?: boolean;
+  showDotIndicatorLabels?: boolean;
+  handlePrevious?: (event?) => void;
+  handleNext?: (event?) => void;
+  nextBtnDisabled?: boolean;
 }> = ({
   managerSettingsOpen,
   leftColumnComponent,
   rightColumnComponent,
   headerTitle,
   activeIndex,
-  setActiveIndex,
+  showNavButton,
+  handlePrevious = () => ({}),
+  handleNext,
   handleExitClick = () => ({}),
   dotIndicatorOptions = [],
   hideWalletAndEllipsis = false,
   showCloseButton = false,
   type = TwoColumnLayoutType.DEFAULT,
-  showNavButton
+  showSideNav = false,
+  showDotIndicatorLabels = true,
+  nextBtnDisabled = true
 }) => {
   return (
     <>
@@ -47,12 +55,19 @@ const TwoColumnLayout: FC<{
           hideWalletAndEllipsis={hideWalletAndEllipsis}
           showCloseButton={showCloseButton}
           activeIndex={activeIndex}
-          setActiveIndex={setActiveIndex}
+          navItems={[]}
+          customClasses="h-screen "
+          showNavButton={showNavButton}
+          showSideNav={showSideNav}
+          showDotIndicatorLabels={showDotIndicatorLabels}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          nextBtnDisabled={nextBtnDisabled}
         >
           <Head title={headerTitle || 'Club'} />
           <ErrorBoundary>
             <div className="w-full">
-              <div className="container mx-auto">
+              <div className="container md:mx-auto">
                 {/* Two Columns (Syndicate Details + Widget Cards) */}
                 <div className="grid grid-cols-12 gap-5">
                   {/* Left Column */}
@@ -88,20 +103,24 @@ const TwoColumnLayout: FC<{
           hideWalletAndEllipsis={hideWalletAndEllipsis}
           showCloseButton={showCloseButton}
           activeIndex={activeIndex}
-          setActiveIndex={setActiveIndex}
           navItems={[]}
           customClasses="h-screen "
           showNavButton={showNavButton}
+          showSideNav={showSideNav}
+          showDotIndicatorLabels={showDotIndicatorLabels}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          nextBtnDisabled={nextBtnDisabled}
         >
           <Head title={headerTitle || 'Club'} />
           <ErrorBoundary>
-            <div className="w-full h-full">
-              <div className="container mx-auto h-full">
+            <div className="w-full h-full flex justify-center md:block">
+              <div className="container md:mx-auto h-full">
                 <div className="md:flex justify-around space-y-24 md:space-y-0 md:space-x-18 h-full items-center">
-                  <div className="flex-1 md:h-full flex">
+                  <div className="flex-1 md:h-full flex mb-10">
                     {leftColumnComponent}
                   </div>
-                  <div className="flex-1 md:h-full flex justify-around content-center">
+                  <div className="flex flex-1 md:h-full align-middle justify-center md:justify-start content-center">
                     {rightColumnComponent}
                   </div>
                 </div>

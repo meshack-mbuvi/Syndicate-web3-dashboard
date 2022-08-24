@@ -31,9 +31,9 @@ export const NavButton: React.FC<Props> = ({
       className={`flex ${
         type === NavButtonType.HORIZONTAL
           ? 'w-24 space-x-5 align-middle py-auto'
-          : 'flex-col w-12.5 space-y-5'
+          : 'flex-col md:w-12.5 w-10 space-y-5'
       } items-center justify-center rounded-full bg-gray-syn7 transition-all ${
-        type === NavButtonType.VERTICAL ? 'h-23' : 'h-12.5'
+        type === NavButtonType.VERTICAL ? 'h-23' : 'md:h-12.5 h-10'
       }`}
     >
       {type === NavButtonType.CLOSE && (
@@ -74,14 +74,10 @@ export const NavButton: React.FC<Props> = ({
           className={`p-1 -m-2 relative ${
             type === NavButtonType.VERTICAL && 'top-1'
           } text-gray-syn4 ${
-            (type === NavButtonType.VERTICAL && currentStep === 0) || disabled
-              ? ''
-              : 'hover:text-white'
+            disabled ? 'cursor-not-allowed' : 'hover:text-white'
           } ease-out transition-all`}
-          onClick={type === NavButtonType.DOWN ? onClick : handleNext}
-          disabled={
-            (type === NavButtonType.VERTICAL && currentStep === 0) || disabled
-          }
+          onClick={handleNext}
+          disabled={disabled}
         >
           <svg
             className="fill-current w-5 h-5"
@@ -114,9 +110,10 @@ export const NavButton: React.FC<Props> = ({
       {type === NavButtonType.HORIZONTAL && (
         <button
           className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
-            !handleNext && 'cursor-not-allowed'
+            (!handleNext || disabled) && 'cursor-not-allowed'
           }`}
           onClick={handleNext ? handleNext : null}
+          disabled={disabled}
         >
           <Image
             src="/images/chevron-right-gray.svg"
