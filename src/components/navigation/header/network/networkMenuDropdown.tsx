@@ -2,7 +2,6 @@ import IconGas from '@/components/icons/Gas';
 import IconInfo from '@/components/icons/info';
 import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
@@ -11,7 +10,7 @@ import { AppState } from '@/state';
 import { setShowNetworkDropdownMenu } from '@/state/wallet/actions';
 import { Status } from '@/state/wallet/types';
 import { isDev } from '@/utils/environment';
-import { Menu, Transition } from '@headlessui/react';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -118,18 +117,8 @@ const NetworkMenuDropDown: FC = () => {
   };
 
   const wrapperRef = useRef(null);
-  useOutsideAlerter(
-    wrapperRef,
-    () => {
-      if (status === Status.CONNECTED) {
-        dispatch(setShowNetworkDropdownMenu(false));
-      }
-    },
-    'networkButton'
-  );
-
   return (
-    <div ref={wrapperRef}>
+    <>
       <Menu as="div" className="relative">
         {() => {
           return (
@@ -278,7 +267,18 @@ const NetworkMenuDropDown: FC = () => {
           );
         }}
       </Menu>
-    </div>
+      <Dialog
+        initialFocus={wrapperRef}
+        as="div"
+        static
+        open={showNetworkDropdown}
+        onClose={() => {
+          if (status === Status.CONNECTED) {
+            dispatch(setShowNetworkDropdownMenu(false));
+          }
+        }}
+      ></Dialog>
+    </>
   );
 };
 

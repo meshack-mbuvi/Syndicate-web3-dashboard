@@ -8,11 +8,10 @@ import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerL
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
-import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import useWindowSize from '@/hooks/useWindowSize';
 import { setShowWalletDropdownMenu } from '@/state/wallet/actions';
 import { formatAddress } from '@/utils/formatAddress';
-import { Menu, Transition } from '@headlessui/react';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import { FC, useEffect, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
@@ -56,14 +55,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   };
 
   const wrapperRef = useRef(null);
-  useOutsideAlerter(
-    wrapperRef,
-    () => dispatch(setShowWalletDropdownMenu(false)),
-    'accountButton'
-  );
 
   return (
-    <div ref={wrapperRef}>
+    <>
       <Menu as="div" className="relative" id="accountButton">
         {() => {
           return (
@@ -193,7 +187,14 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
           );
         }}
       </Menu>
-    </div>
+      <Dialog
+        initialFocus={wrapperRef}
+        as="div"
+        static
+        open={showWalletDropdown}
+        onClose={() => dispatch(setShowWalletDropdownMenu(false))}
+      ></Dialog>
+    </>
   );
 };
 
