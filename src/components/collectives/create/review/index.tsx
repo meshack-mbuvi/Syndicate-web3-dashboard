@@ -97,7 +97,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const bottomBar = (
     <div
-      className="mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
+      className="w-full sm:w-auto mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}

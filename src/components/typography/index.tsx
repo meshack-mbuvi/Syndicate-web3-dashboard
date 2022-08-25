@@ -421,8 +421,8 @@ export const B3 = ({
   return (
     <div
       className={`text-sm transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        weightClassOverride ?? ''
+      } ${extraClasses ?? ''}`}
       {...rest}
     >
       {children}
@@ -444,8 +444,8 @@ export const B4 = ({
   return (
     <div
       className={`text-xs transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        weightClassOverride ?? ''
+      } ${extraClasses ?? ''}`}
       {...rest}
     >
       {children}

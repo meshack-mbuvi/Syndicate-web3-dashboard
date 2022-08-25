@@ -45,14 +45,15 @@ const SharedItem: React.FC<IProps> = ({
   const toggleDropdown = () => {
     setHovered(!hovered);
   };
+
   return (
     <div
-      className="flex flex-col space-y-2"
+      className={`flex justify-between xs:flex-col xs:space-y-2 align-middle`}
       onMouseEnter={toggleDropdown}
       onMouseLeave={toggleDropdown}
     >
-      <div>
-        <B4 extraClasses="text-gray-syn4">{title}</B4>
+      <div className="flex align-middle">
+        <B4 extraClasses="text-gray-syn4 align-middle">{title}</B4>
       </div>
       <div
         className="flex space-x-2 items-center"
@@ -79,10 +80,10 @@ const SharedItem: React.FC<IProps> = ({
           </div>
         ) : null}
 
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 text-right">
           <B3 extraClasses="flex text-gray-syn2 wordwrap">{label}</B3>
           <div
-            className={`flex items-center w-3 ${
+            className={`flex items-center w-4 ${
               isClickable ? 'cursor-pointer' : ''
             }`}
           >
@@ -142,7 +143,9 @@ const NetworkComponent: React.FC<NetworkType> = ({
         borderRadius: '40px 40px 0px 0px'
       }}
     >
-      <div className="flex flex-col sm:flex-row justify-between w-full space-y-6 sm:space-y-0 md:space-x-6">
+      <div
+        className={`flex flex-col xs:flex-row xs:space-y-0 space-y-5 justify-between w-full sm:space-y-0 md:space-x-6`}
+      >
         {account ? (
           <>
             <SharedItem
