@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import Layout from 'src/components/layout';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 
 const ClaimCollectiveNftView: React.FC = () => {
   const {
@@ -19,6 +20,9 @@ const ClaimCollectiveNftView: React.FC = () => {
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+
+  // Check to make sure collectives are not viewable on Polygon
+  const { isPolygon } = useIsPolygon();
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
@@ -33,7 +37,7 @@ const ClaimCollectiveNftView: React.FC = () => {
     <div className="container my-32">
       <Spinner />
     </div>
-  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
     <Layout>
       <Head title="Claim collective pass" />
       <ClaimPass />

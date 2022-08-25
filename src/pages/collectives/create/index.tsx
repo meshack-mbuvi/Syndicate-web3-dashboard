@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 
 const CreateCollectivePage: React.FC = () => {
   const {
@@ -18,6 +19,9 @@ const CreateCollectivePage: React.FC = () => {
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+
+  // Check to make sure collectives are not viewable on Polygon
+  const { isPolygon } = useIsPolygon();
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
@@ -34,7 +38,7 @@ const CreateCollectivePage: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
     <CreateCollectiveContainer />
   ) : (
     <NotFoundPage />

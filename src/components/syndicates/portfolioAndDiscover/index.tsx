@@ -20,6 +20,7 @@ import {
   CreateClubOrCollective,
   EmptyStateType
 } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -64,6 +65,9 @@ const PortfolioAndDiscover: React.FC = () => {
   const { width } = useWindowSize();
 
   useCollectives();
+
+  // Check to make sure collectives are not viewable on Polygon
+  const { isPolygon } = useIsPolygon();
 
   enum TabsType {
     ADMIN = 'ADMIN',
@@ -136,7 +140,13 @@ const PortfolioAndDiscover: React.FC = () => {
         className="w-full flex justify-center"
         style={{ marginTop: '144px' }}
       >
-        <CreateClubOrCollective />
+        <CreateClubOrCollective
+          {...{
+            emptyStateType: isPolygon
+              ? EmptyStateType.CLUBS
+              : EmptyStateType.ALL
+          }}
+        />
       </div>
     );
   }
@@ -245,7 +255,7 @@ const PortfolioAndDiscover: React.FC = () => {
           ) : null}
 
           {/* Collectives  */}
-          {collectivesIsReady && (
+          {collectivesIsReady && !isPolygon && (
             <div className="mt-24">
               <div
                 className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"

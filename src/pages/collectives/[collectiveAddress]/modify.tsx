@@ -13,11 +13,15 @@ import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeature
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { PermissionType } from '@/components/collectives/shared/types';
 import { useRouter } from 'next/router';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 
 const ModifyCollectives: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { web3, activeNetwork }
+      web3: {
+        web3,
+        activeNetwork: { network }
+      }
     },
     collectiveDetailsReducer: {
       details: { collectiveName }
@@ -25,6 +29,9 @@ const ModifyCollectives: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+
+  // Check to make sure collectives are not viewable on Polygon
+  const { isPolygon } = useIsPolygon();
 
   const { collectiveAddress } = router.query;
 
@@ -47,9 +54,7 @@ const ModifyCollectives: React.FC = () => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
 
     if (permissionType !== PermissionType.ADMIN) {
-      router.replace(
-        `/collectives/${collectiveAddress}?chain=${activeNetwork.network}`
-      );
+      router.replace(`/collectives/${collectiveAddress}?chain=${network}`);
     }
   }, [
     collectiveAddress,
@@ -57,7 +62,8 @@ const ModifyCollectives: React.FC = () => {
     permissionType,
     readyCollectivesClient,
     router,
-    web3
+    web3,
+    network
   ]);
 
   return pageIsLoading ? (
@@ -66,7 +72,7 @@ const ModifyCollectives: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
     <CollectivesContainer>
       <Layout>
         <Head title={collectiveName || 'Collective'} />
