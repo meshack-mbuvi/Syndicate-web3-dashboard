@@ -220,8 +220,12 @@ export const CollectiveFormReview: React.FC<Props> = ({
                       : 'max-h-0 opacity-0'
                   } overflow-hidden ${transitionStyles}`}
                 >
-                  <div className="flex space-x-1">
-                    <img src={tokenDetails.icon} alt="Token" />{' '}
+                  <div className="flex space-x-1 items-center">
+                    <img
+                      src={tokenDetails.icon}
+                      alt="Token"
+                      className="h-5 w-5 mr-1"
+                    />{' '}
                     <div>{priceToJoin}</div>
                     <div>{tokenDetails.symbol}</div>
                   </div>

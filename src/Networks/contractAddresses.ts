@@ -18,17 +18,20 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OwnerMintModule: '0xA7c2400CBbeafFFaF77d3080bF8Ca50f51c8afC6',
     OwnerMintModule2: '0x06507C449B1E8EBB8247f44b715F9Fe4E51B365A',
-    ERC721Collective: '', // TODO
-    ERC721CollectiveFactory: '', // TODO
-    FixedRenderer: '', // TODO
-    GuardMixinManager: '', // TODO
-    EthPriceMintModule: '', // AllowModules // TODO
-    TimeRequirements: '', // TODO
-    MaxPerMemberERC721: '', // TODO
-    MaxTotalSupplyERC721: '', // TODO
-    GuardAlwaysAllow: '', // TODO
-    GuardNeverAllow: '' // TODO
+
+    // Collectives
+    ERC721Collective: '0x4d66954dc81b13314c90a5e87464248813b77422',
+    ERC721CollectiveFactory: '0xc1d628b9170ad61ed12f317f2146f099eb4e4727',
+    FixedRenderer: '0xf90D2d41b769C2d45e3904c35fD107e7F3c89d3C',
+    GuardMixinManager: '0x19cf03a6f1190062eeafd70c42cbc5f7ecff05a8',
+    EthPriceMintModule: '0x85da3727b0be6096654691d26939f62526ad7ffe',
+    TimeRequirements: '0x4061ec995c6e25888713a8d3d723fc5e15d62875',
+    MaxPerMemberERC721: '0xfdaf4240cb10aa0d022219fb25df5d478eb21d1d',
+    MaxTotalSupplyERC721: '0x77c86b6d1b03751b8162a6c1133dd23677863150',
+    GuardAlwaysAllow: '0x54B2b5A9835704EBEcc9AE13Feb937F89fffE124',
+    GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4'
   },
+
   // Rinkeby
   4: {
     clubERC20Factory: '0xBaE7eaA8317B3652dad3886caF454Da0706F53Ca',
@@ -48,17 +51,20 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
     OwnerMintModule2: '',
+
+    // Collectives
     ERC721Collective: '0xc11960ebf2f6a894f728e40ce47ae2ec04a4cf0b',
     ERC721CollectiveFactory: '0xe16d032f1cf5974cf8d1985278b464ed91220733',
     FixedRenderer: '0x6c4f220416751503e81e38deee9899082a803275',
     GuardMixinManager: '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
-    EthPriceMintModule: '0x89583ad6aba72c7c6de70ee9a290884abc4000c3', // AllowModules
+    EthPriceMintModule: '0x89583ad6aba72c7c6de70ee9a290884abc4000c3',
     TimeRequirements: '0xea9608d3437802aed0cec410c6d96c53b541945a',
     MaxPerMemberERC721: '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
     MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f',
     GuardAlwaysAllow: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057',
     GuardNeverAllow: '0x701EAE459BF3E501852E11499117b2eC333EBdF9'
   },
+
   // Matic
   137: {
     clubERC20Factory: '0x3902AB762a94b8088b71eE5c84bC3C7d2075646B',
@@ -78,6 +84,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x4dd964Bb38828789de447787B3435D519E4E7282',
     OwnerMintModule2: '',
+
+    // Collectives
     ERC721Collective: '', // TODO
     ERC721CollectiveFactory: '', // TODO
     FixedRenderer: '', // TODO
