@@ -122,7 +122,6 @@ export class ERC721CollectiveFactory extends ContractBase {
     const contractAddresses = [
       this.addresses.MaxPerMemberERC721,
       this.addresses.GuardMixinManager,
-      this.addresses.EthPriceMintModule,
       this.addresses.FixedRenderer
     ];
 
@@ -139,11 +138,16 @@ export class ERC721CollectiveFactory extends ContractBase {
       ),
 
       // Required
-      ethPriceModule.setEthPrice(predictedAddress, ethPrice),
-
-      // Required
       fixedRenderer.setTokenURI(predictedAddress, tokenURI)
     ];
+
+    // Default value in the contract is 0
+    if (+ethPrice > 0) {
+      contractAddresses.push(this.addresses.EthPriceMintModule);
+      encodedFunctions.push(
+        ethPriceModule.setEthPrice(predictedAddress, ethPrice)
+      );
+    }
 
     if (allowTransfer) {
       contractAddresses.push(predictedAddress);
