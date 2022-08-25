@@ -1,7 +1,12 @@
-import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import {
+  useCreateState,
+  useUpdateState
+} from '@/hooks/collectives/useCreateCollective';
 import { resetCollectiveCreationState } from '@/state/createCollective/slice';
+import { elementToImage } from '@/utils/elementToImage';
 import router from 'next/router';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import TwoColumnLayout, { TwoColumnLayoutType } from '../twoColumnLayout';
 import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
@@ -11,11 +16,13 @@ import CreateCollectiveSuccess, { SuccessRightPanel } from './success';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
-  const { creationStatus } = useCreateState();
+  const { creationStatus, artwork, artworkType } = useCreateState();
+  const { handleCaptureGeneratedArtwork } = useUpdateState();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showNavButton, setShowNavButton] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+  const captureArtworkRef = useRef(null);
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {
@@ -52,6 +59,20 @@ const CreateCollectiveContainer: FC = () => {
     }
   };
 
+  // This saves the artwork so that in the event user clicks the next button on
+  // the navbar, the artwork will be already saved in store
+  const handleNavNextButton = () => {
+    // captureArtworkRef is only available on index 0
+    if (artworkType === NFTMediaType.CUSTOM && activeIndex == 0) {
+      elementToImage(captureArtworkRef, 2, (imageURI) => {
+        handleCaptureGeneratedArtwork(imageURI, artwork.backgroundColorClass);
+        handleNext();
+      });
+    } else {
+      handleNext();
+    }
+  };
+
   const dotIndicatorOptions = ['Design', 'Customize', 'Review'];
 
   return (
@@ -69,7 +90,7 @@ const CreateCollectiveContainer: FC = () => {
         showNavButton={showNavButton}
         showDotIndicatorLabels={false}
         handlePrevious={handlePrev}
-        handleNext={handleNext}
+        handleNext={handleNavNextButton}
         nextBtnDisabled={nextBtnDisabled}
         leftColumnComponent={
           <div className="flex justify-center lg:ml-14">
@@ -78,6 +99,7 @@ const CreateCollectiveContainer: FC = () => {
                 <CreateCollectiveDesign
                   handleNext={handleNext}
                   setNextBtnDisabled={setNextBtnDisabled}
+                  captureArtworkRef={captureArtworkRef}
                 />
               </div>
             )}

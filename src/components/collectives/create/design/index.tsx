@@ -2,7 +2,7 @@ import { TextArea } from '@/components/inputs/simpleTextArea';
 import { Spinner } from '@/components/shared/spinner';
 import { DesignRightPanel } from '@/containers/createCollective/design';
 import { elementToImage } from '@/utils/elementToImage';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { CollectivesGeneratedArtwork } from '../../generatedArtwork';
 import { CollectivesFileUploader } from '../../uploader';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
@@ -30,6 +30,7 @@ interface Props {
     imageURI: string,
     backgroundColorClass: string
   ) => void;
+  captureArtworkRef;
 }
 
 export const CollectiveFormDesign: React.FC<Props> = ({
@@ -51,10 +52,10 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   isUsingGeneratedArtwork,
   generatedArtworkBackgroundColor,
   handleCreateGeneratedArtwork,
-  handleCaptureGeneratedArtwork
+  handleCaptureGeneratedArtwork,
+  captureArtworkRef
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
-  const captureArtworkRef = useRef(null);
   const handleContinueButton = (e) => {
     if (isUsingGeneratedArtwork) {
       setIsContinueButtonLoading(true);
@@ -69,19 +70,6 @@ export const CollectiveFormDesign: React.FC<Props> = ({
       handleContinue(e);
     }
   };
-
-  // This saves the artwork so that in the event user clicks the next button on
-  // the navbar, the artwork will be already saved in store
-  useEffect(() => {
-    if (isUsingGeneratedArtwork && isContinueButtonActive) {
-      elementToImage(captureArtworkRef, 2, (imageURI) => {
-        handleCaptureGeneratedArtwork(
-          imageURI,
-          generatedArtworkBackgroundColor
-        );
-      });
-    }
-  }, [isContinueButtonActive, generatedArtworkBackgroundColor, nameValue]);
 
   return (
     <>

@@ -14,11 +14,13 @@ import { CreateCollectiveTitle, createHeader } from '../shared';
 interface Props {
   handleNext: (e) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
+  captureArtworkRef;
 }
 
 const CreateCollectiveDesign: FC<Props> = ({
   handleNext,
-  setNextBtnDisabled
+  setNextBtnDisabled,
+  captureArtworkRef
 }) => {
   const { name, symbol, artwork, artworkUrl, artworkType, description } =
     useCreateState();
@@ -37,7 +39,7 @@ const CreateCollectiveDesign: FC<Props> = ({
     exceededUploadLimit
   } = useUpdateState();
 
-  const [uploadSuccessText, setUploadSuccessText] = useState('');
+  const [uploadSuccessText] = useState('');
 
   useEffect(() => {
     if (
@@ -78,6 +80,7 @@ const CreateCollectiveDesign: FC<Props> = ({
         generatedArtworkBackgroundColor={artwork.backgroundColorClass}
         handleCreateGeneratedArtwork={handleCreateGeneratedArtwork}
         handleCaptureGeneratedArtwork={handleCaptureGeneratedArtwork}
+        captureArtworkRef={captureArtworkRef}
       />
     </div>
   );

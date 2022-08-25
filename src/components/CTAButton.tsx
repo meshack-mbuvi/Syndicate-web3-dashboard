@@ -34,7 +34,7 @@ export const CtaButton: React.FC<Props> = ({
           : cherenkovCta
           ? 'cherenkov-CTA'
           : 'primary-CTA'
-      } ${extraClasses}`}
+      } ${extraClasses ?? ''}`}
       disabled={disabled}
       onClick={onClick}
       type={type}
