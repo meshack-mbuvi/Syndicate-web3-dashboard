@@ -28,6 +28,7 @@ type IProps = {
   showDropDown?: boolean;
   onClick?: () => void;
   id?: string;
+  isClickable?: boolean;
 };
 
 const SharedItem: React.FC<IProps> = ({
@@ -36,7 +37,8 @@ const SharedItem: React.FC<IProps> = ({
   label,
   onClick,
   showDropDown = false,
-  id
+  id,
+  isClickable = true
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -52,7 +54,15 @@ const SharedItem: React.FC<IProps> = ({
       <div>
         <B4 extraClasses="text-gray-syn4">{title}</B4>
       </div>
-      <div className="flex space-x-2 items-center">
+      <div
+        className="flex space-x-2 items-center"
+        // eslint-disable-next-line jsx-a11y/aria-role
+        role={`${isClickable ? 'button' : ''}`}
+        tabIndex={0}
+        id={id}
+        onClick={onClick}
+        onKeyPress={onClick}
+      >
         {icon ? (
           <div className="flex-shrink-0">
             {typeof icon === 'string' ? (
@@ -72,12 +82,9 @@ const SharedItem: React.FC<IProps> = ({
         <div className="flex space-x-2">
           <B3 extraClasses="flex text-gray-syn2 wordwrap">{label}</B3>
           <div
-            className={`flex items-center w-3 cursor-pointer`}
-            onClick={onClick}
-            onKeyPress={onClick}
-            role="button"
-            tabIndex={0}
-            id={id}
+            className={`flex items-center w-3 ${
+              isClickable ? 'cursor-pointer' : ''
+            }`}
           >
             <img
               src="/images/chevron-down.svg"
@@ -176,6 +183,7 @@ const NetworkComponent: React.FC<NetworkType> = ({
                 }).format(+fiatAmount)}`
               : ''
           }`}
+          isClickable={false}
         />
       </div>
       <div className="flex-shrink-1 w-full sm:max-w-44 sm:w-auto">
