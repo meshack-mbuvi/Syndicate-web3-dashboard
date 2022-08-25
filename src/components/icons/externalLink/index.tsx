@@ -28,3 +28,29 @@ const ExternalLinkIcon: React.FC<IProps> = ({
 };
 
 export default ExternalLinkIcon;
+
+interface IProps {
+  height?: number;
+  width?: number;
+  textColorClass?: string;
+  extraClasses?: string;
+}
+
+export const SimpleExternalLinkIcon: React.FC<IProps> = ({
+  height = 16,
+  width = 16,
+  textColorClass = 'text-white',
+  extraClasses
+}) => {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 16 16"
+      className={`fill-current ${textColorClass} ${extraClasses}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M13.6568 2.3433C13.5052 2.19171 13.2987 2.11927 13.0616 2.12591L4.99609 2.15115C4.75904 2.15779 4.57652 2.23116 4.4303 2.37738C4.13177 2.67591 4.11245 3.13181 4.41563 3.43498C4.56116 3.58051 4.76152 3.6712 4.94995 3.66468L7.69716 3.68246L11.6118 3.49082L10.0465 4.87424L2.33954 12.5812C2.02273 12.898 2.02776 13.3417 2.34306 13.657C2.65837 13.9723 3.10205 13.9773 3.41886 13.6605L11.1258 5.95356L12.5032 4.39432L12.3176 8.30291L12.3354 11.0501C12.3349 11.2446 12.4196 11.4389 12.5651 11.5844C12.8683 11.8876 13.3242 11.8683 13.6227 11.5698C13.7689 11.4235 13.8483 11.2471 13.849 10.9797L13.8742 2.93843C13.8808 2.70137 13.8084 2.49489 13.6568 2.3433Z" />
+    </svg>
+  );
+};

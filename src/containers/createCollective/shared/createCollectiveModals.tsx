@@ -52,6 +52,9 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
       );
       setShowModal(true);
     }
+    if (creationStatus.transactionSuccess) {
+      setShowModal(false);
+    }
   }, [
     creationStatus.waitingForConfirmation,
     creationStatus.submittingToIPFS,

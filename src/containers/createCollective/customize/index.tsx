@@ -13,11 +13,13 @@ import { CreateCollectiveTitle, createHeader } from '../shared';
 interface Props {
   handleNext: (e) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
+  activeIndex?: number;
 }
 
 const CreateCollectiveCustomize: FC<Props> = ({
   handleNext,
-  setNextBtnDisabled
+  setNextBtnDisabled,
+  activeIndex
 }) => {
   const {
     web3Reducer: {
@@ -94,6 +96,14 @@ const CreateCollectiveCustomize: FC<Props> = ({
     pricePerNFT
   ]);
 
+  useEffect(() => {
+    let proceed = true;
+    if (openUntil === OpenUntil.MAX_MEMBERS && !maxSupply) {
+      proceed = false;
+    }
+    setNextBtnDisabled(!proceed);
+  }, [activeIndex]);
+
   return (
     <div>
       <CreateCollectiveTitle screen={createHeader.CUSTOMIZE} />
@@ -131,12 +141,13 @@ export default CreateCollectiveCustomize;
 export const CustomizeRightPanel: React.FC = () => {
   const { artworkType } = useCreateState();
   return (
-    <div className="bg-black w-full h-full pb-38">
+    <div className="bg-black w-full h-full">
       <CollectivesInteractiveBackground
         heightClass="h-full"
         widthClass="w-full"
         mediaType={artworkType}
         numberOfParticles={40}
+        customId="particles-js-3"
       />
     </div>
   );

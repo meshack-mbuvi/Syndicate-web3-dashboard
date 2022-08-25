@@ -70,7 +70,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
   handleContinue
 }) => {
   return (
-    <div className="max-w-730">
+    <div className="max-w-730 w-full">
       <div>
         {/* Who can join */}
         <div>

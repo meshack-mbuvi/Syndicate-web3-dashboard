@@ -71,8 +71,17 @@ module.exports = {
       '4xl': '2500px'
     },
     extend: {
+      border: {
+        16: '16px'
+      },
       transitionDuration: {
         800: '800ms'
+      },
+      transitionDelay: {
+        2000: '2000ms'
+      },
+      transitionTimingFunction: {
+        ease_vertical_move: 'cubic-bezier(0.8, 0, 0.58, 1)'
       },
       opacity: {
         25: '.25',
@@ -95,9 +104,11 @@ module.exports = {
         18: '4.5rem',
         23: '5.75rem',
         25: '6.25rem',
+        38.25: '9.5625rem',
         45.45: '11.375rem',
         54: '13.5rem',
         88: '22rem',
+        355: '22.188rem',
         100: '30rem',
         120: '30rem',
         104: '26rem',
@@ -116,6 +127,7 @@ module.exports = {
         62: '15.5rem',
         75: '18.75rem',
         88: '22rem',
+        355: '22.188rem',
         100: '30rem',
         120: '30rem',
         104: '26rem',
@@ -142,11 +154,14 @@ module.exports = {
         '12/12': '100%'
       },
       maxWidth: {
+        4: '1rem',
         20: '5rem',
         24: '6rem',
         26: '6.5rem',
         28: '7rem',
+        38.25: '9.5625rem',
         56: '14rem',
+        69: '17.25rem',
         88: '22rem',
         100: '25rem',
         104: '26rem',
@@ -174,8 +189,10 @@ module.exports = {
         '12/12': '100%'
       },
       maxHeight: {
+        4: '1rem',
         25: '6.125',
         104: '26rem',
+        355: '22.188rem',
         474: '29.625rem',
         480: '30rem',
         141: '35.25rem',
@@ -184,6 +201,7 @@ module.exports = {
         '2screen': '200vh'
       },
       minHeight: {
+        38.25: '9.5625rem',
         250: '15.625rem',
         363: '22.688rem'
       },
@@ -277,7 +295,8 @@ module.exports = {
         purple: {
           ...colors.purple,
           ultraviolet: '#5551FF',
-          neon: '#7000FF'
+          neon: '#7000FF',
+          guild: '#5A67E2'
         },
         pink: {
           ...colors.pink,
@@ -340,7 +359,8 @@ module.exports = {
           'nasa-worm': '#CB0020',
           'f1-turbo': '#F10000',
           hal: '#76151D',
-          penny: '#AC6048'
+          penny: '#AC6048',
+          luma: '#CC4263'
         },
         green: {
           ...colors.green,
@@ -407,7 +427,9 @@ module.exports = {
           utopia: '#FFB80D',
           bullion: '#D28B01',
           'aces-rescue-orange': '#FF4E21',
-          terra: '#D96E0B'
+          terra: '#D96E0B',
+          snapshot: '#FCAC18',
+          slik: '#E9724C'
         },
         brown: {
           ...colors.brown,
@@ -425,7 +447,9 @@ module.exports = {
       spacing: {
         '1px': '1px',
         '9px': '9px',
+        '5/12': '41.6666%',
         3.5: '0.875rem',
+        5.5: '1.375rem',
         7.5: '1.875rem',
         18: '4.5rem',
         33: '8.5rem',
@@ -441,6 +465,12 @@ module.exports = {
         gray: theme('colors.gray.light')
       }),
       scale: {
+        1: '0.01',
+        2: '0.02',
+        3: '0.03',
+        5: '0.05',
+        10: '0.1',
+        25: '0.25',
         101: '1.01',
         102: '1.02'
       },
@@ -448,9 +478,33 @@ module.exports = {
         fade_in: 'fade_in 0.5s ease-out 1',
         fade_in_bg: 'fade_in_bg 6s ease-out 1',
         'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite',
-        float: 'float 8s ease-in-out infinite'
+        float: 'float 8s ease-in-out infinite',
+        'move-in': 'move-in 1.2s ease-in-out 1',
+        'move-in-brief': 'move-in-brief 1.4s ease-in-out'
       },
       keyframes: {
+        'move-in': {
+          '0%': {
+            transform: 'translateY(100%)'
+          },
+          '50%': {
+            transform: 'translateY(100%)'
+          },
+          '100%': {
+            transform: 'translateY(0%)'
+          }
+        },
+        'move-in-brief': {
+          '0%': {
+            transform: 'translateY(25%)'
+          },
+          '50%': {
+            transform: 'translateY(25%)'
+          },
+          '100%': {
+            transform: 'translateY(0%)'
+          }
+        },
         float: {
           '0%': {
             transform: 'translate(0%, 0%)'

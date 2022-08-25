@@ -29,18 +29,12 @@ interface Props {
 }
 
 export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
-  ({
-    captureRef,
-    label,
-    backgroundColorClass,
-    customId,
-    isForDisplay = false
-  }) => {
+  ({ captureRef, label, backgroundColorClass, customId }) => {
     const continerRef = useRef(null);
     const containerPaddingRem = 2;
     const pxPerRem = 16;
     const titleRef = useRef(null);
-    const [baseFontSize] = useState(48 / pxPerRem);
+    const [baseFontSize] = useState(34 / pxPerRem);
     const [fontSize, setFontSize] = useState(baseFontSize);
     const [previousLabelLength, setPreviousLabelLength] = useState(
       label.length
@@ -62,7 +56,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
 
       if (shouldLabelShrinkIfNeeded) {
         if (heightOfTitle > heightOfContainer) {
-          setFontSize(fontSize - 0.0625);
+          setFontSize(fontSize - 0.0625 <= 0 ? 0.1 : fontSize - 0.0625);
         }
       } else if (!shouldLabelShrinkIfNeeded) {
         if (heightOfTitle < heightOfContainer) {
@@ -82,7 +76,6 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
         setShouldLabelShrinkIfNeeded(false);
       }
       setPreviousLabelLength(currentLabelLength);
-      // adjustFontSize();
     }, [label]);
 
     // Determine if the window is growing or shrinking
@@ -109,7 +102,6 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
           heightClass="h-full"
           widthClass="w-full"
           numberOfParticles={55}
-          isDuplicate={isForDisplay}
           isArtwork={true}
           customId={customId}
         />

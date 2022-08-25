@@ -238,6 +238,41 @@
     .max-h-artwork-140 {
       max-height: 35rem;
     }
+
+    /* Two column layout */
+    .push-left-column-18 {
+      transform: translateX(calc(100% + 4.5rem));
+    }
+
+    .push-right-column-18 {
+      transform: translateX(calc(-100% + -4.5rem));
+    }
+
+    /* Collectives */
+
+    .hover-parent {
+      @apply transition-colors;
+    }
+
+    .hover-parent:hover .hover-child-invest {
+      @apply text-green-volt;
+    }
+
+    .hover-parent:hover .hover-child-snapshot {
+      @apply text-orange-snapshot;
+    }
+
+    .hover-parent:hover .hover-child-guild {
+      @apply text-purple-guild;
+    }
+
+    .hover-parent:hover .hover-child-slik {
+      @apply text-orange-slik;
+    }
+
+    .hover-parent:hover .hover-child-luma {
+      @apply text-red-luma;
+    }
   }
 
   /* Button CTAs */
@@ -1011,7 +1046,37 @@ input[type='time']::-webkit-calendar-picker-indicator {
   width: 100%;
 }
 
-#particles-js-duplicate {
+#particles-js-0 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-1 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-2 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-3 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-4 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-5 {
+  height: 100%;
+  width: 100%;
+}
+
+#particles-js-6 {
   height: 100%;
   width: 100%;
 }

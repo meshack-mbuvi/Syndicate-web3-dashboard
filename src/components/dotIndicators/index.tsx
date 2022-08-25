@@ -1,6 +1,6 @@
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import React, { useEffect, useRef, useState } from 'react';
-import FadeBetweenChildren from '../fadeBetweenChildren';
+import TransitionBetweenChildren from '../transitionBetweenChildren';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',
@@ -100,7 +100,7 @@ export const DotIndicators: React.FC<Props> = ({
 
       {/* Labels */}
       {showDotIndicatorLabels ? (
-        <FadeBetweenChildren
+        <TransitionBetweenChildren
           visibleChildIndex={activeIndex}
           extraClasses={`w-full ${
             orientation === DotIndicatorsOrientation.HORIZONTAL
@@ -118,7 +118,7 @@ export const DotIndicators: React.FC<Props> = ({
               </div>
             );
           })}
-        </FadeBetweenChildren>
+        </TransitionBetweenChildren>
       ) : (
         ''
       )}

@@ -1,5 +1,5 @@
 import { CtaButton } from '@/components/CTAButton';
-import FadeBetweenChildren from '@/components/fadeBetweenChildren';
+import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, H3 } from '@/components/typography';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
@@ -78,7 +78,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           clubHoverStateIndex === HoverState.HOVERING ? 'top-0' : 'top-4'
         } transition-all ${animationDuration}`}
       >
-        <FadeBetweenChildren
+        <TransitionBetweenChildren
           visibleChildIndex={clubHoverStateIndex}
           extraClasses={`${
             emptyStateType === EmptyStateType.CLUBS && 'w-fit-content mx-auto'
@@ -94,7 +94,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
             src="images/syndicateStatusIcons/newPortfolioEmptyIcon.svg"
             alt="empty icon"
           />
-        </FadeBetweenChildren>
+        </TransitionBetweenChildren>
       </div>
 
       <div>
@@ -163,7 +163,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           collectivesHoverStateIndex === HoverState.HOVERING ? 'top-0' : 'top-4'
         } transition-all ${animationDuration}`}
       >
-        <FadeBetweenChildren
+        <TransitionBetweenChildren
           visibleChildIndex={collectivesHoverStateIndex}
           extraClasses={`${
             emptyStateType === EmptyStateType.COLLECTIVES &&
@@ -180,7 +180,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
             src="images/new-collective-cyan-cherenkov.svg"
             alt="empty icon"
           />
-        </FadeBetweenChildren>
+        </TransitionBetweenChildren>
       </div>
       <div>
         <div

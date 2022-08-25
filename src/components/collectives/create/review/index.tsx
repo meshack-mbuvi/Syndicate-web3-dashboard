@@ -127,8 +127,8 @@ export const CollectiveFormReview: React.FC<Props> = ({
   );
 
   return (
-    <div ref={formRef} className="h-full">
-      <div className="-mt-8 pb-28">
+    <div ref={formRef} className="h-full max-w-730 w-full">
+      <div className="-mt-8">
         {/* Name */}
         <div className={spaceBetweenTitleAndSubtitleStyles}>
           <div>
@@ -498,7 +498,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </button>
         </div>
         {
-          <div className="pt-10 pb-28">
+          <div className="pt-10 pb-40">
             <AgreementTerms
               hasAgreed={hasAgreedToTerms}
               handleAgreed={handleAgreedToTerms}
@@ -506,12 +506,9 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
         }
       </div>
-      {/* For taking up space, preventing the bottom bar from overlapping the content  */}
-      <div className="pointer-events-none opacity-0">
-        <div className="flex justify-center w-full">{bottomBar}</div>
-      </div>
+
       <div
-        className="fixed w-screen bottom-0 left-0 transparent"
+        className={`transition-opacity fixed animate-move-in z-30 bottom-0 md:left-1/4 md:right-1/4 transparent`}
         style={{
           borderRadius: '40px 40px 0px 0px'
         }}

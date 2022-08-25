@@ -22,7 +22,7 @@ const Template = (args) => {
     <CollectivesGeneratedArtwork
       label={args.label}
       backgroundColorClass={backgroundColorClass}
-      isForDisplay={true}
+      customId="particles-js-1"
     />
   );
 
@@ -30,6 +30,7 @@ const Template = (args) => {
     <CollectivesGeneratedArtwork
       label={args.label}
       backgroundColorClass={backgroundColorClass}
+      customId="particles-js-0"
     />
   );
 

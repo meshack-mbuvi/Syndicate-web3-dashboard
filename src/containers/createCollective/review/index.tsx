@@ -1,6 +1,5 @@
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
-import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import {
   useCreateState,
   useSubmitCollective,
@@ -14,6 +13,7 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import CreateCollectiveModals from '../shared/createCollectiveModals';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 interface Props {
   handleNext?: (e) => void;
@@ -138,9 +138,9 @@ const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="h-full flex flex-col max-w-730 w-full">
       <CreateCollectiveTitle screen={createHeader.REVIEW} />
-      <div className="mt-8 h-full flex-grow">
+      <div className="mt-8 h-full w-full flex-grow">
         <CollectiveFormReview
           nameValue={name}
           handleNameChange={handleNameChange}
@@ -185,14 +185,32 @@ export default CreateCollectiveReview;
 export const ReviewRightPanel: React.FC = () => {
   const { artworkType, artworkUrl } = useCreateState();
   return (
-    <div className="bg-black w-full h-full pb-38 ">
-      <CollectivesInteractiveBackground
-        heightClass="h-full"
-        widthClass="w-full"
-        mediaType={artworkType}
-        floatingIcon={artworkUrl}
-        numberOfParticles={40}
-      />
+    <div className="w-full h-full relative">
+      {/* Floating icon */}
+      <div className="absolute w-full left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
+        <div className="w-full h-full">
+          {(artworkType === NFTMediaType.IMAGE ||
+            artworkType === NFTMediaType.CUSTOM) && (
+            <img
+              src={artworkUrl}
+              alt="Collective icon"
+              className="w-20 h-20 mx-auto bg-gray-syn7 select-none"
+            />
+          )}
+          {artworkType === NFTMediaType.VIDEO && (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video
+              autoPlay
+              playsInline={true}
+              loop
+              muted
+              className={`${'object-cover'} w-20 h-20`}
+            >
+              <source src={artworkUrl} type="video/mp4"></source>
+            </video>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

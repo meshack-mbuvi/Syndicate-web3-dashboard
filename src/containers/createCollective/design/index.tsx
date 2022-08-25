@@ -15,12 +15,14 @@ interface Props {
   handleNext: (e) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
   captureArtworkRef;
+  activeIndex?: number;
 }
 
 const CreateCollectiveDesign: FC<Props> = ({
   handleNext,
   setNextBtnDisabled,
-  captureArtworkRef
+  captureArtworkRef,
+  activeIndex
 }) => {
   const { name, symbol, artwork, artworkUrl, artworkType, description } =
     useCreateState();
@@ -55,7 +57,15 @@ const CreateCollectiveDesign: FC<Props> = ({
     }
     setContinueButtonActive(false);
     setNextBtnDisabled(true);
-  }, [name, symbol, artworkUrl, artworkType, description, exceededUploadLimit]);
+  }, [
+    name,
+    symbol,
+    artworkUrl,
+    artworkType,
+    description,
+    exceededUploadLimit,
+    activeIndex
+  ]);
 
   return (
     <div>
@@ -107,8 +117,7 @@ export const DesignRightPanel: FC<{ customId?: string }> = ({ customId }) => {
           <CollectivesGeneratedArtwork
             label={name}
             backgroundColorClass={artwork.backgroundColorClass}
-            isForDisplay={true}
-            customId={customId}
+            customId={customId ? customId : 'particles-js-1'}
           />
         ) : (
           artworkUrl
@@ -118,7 +127,9 @@ export const DesignRightPanel: FC<{ customId?: string }> = ({ customId }) => {
       mediaType={artworkType}
       name={name}
       symbol={'✺' + symbol}
-      customClasses={'w-full'}
+      customClasses={
+        'w-full bg-black relative transform left-1/2 -translate-x-1/2 mt-16'
+      }
     />
   );
 };

@@ -64,6 +64,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           imageURI,
           generatedArtworkBackgroundColor
         );
+        setIsContinueButtonLoading(false);
         handleContinue(e);
       });
     } else {
@@ -74,15 +75,16 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   return (
     <>
       {isUsingGeneratedArtwork && (
-        <div className="fixed w-120 h-120 opacity-0 pointer-events-none">
+        <div className="fixed h-355 w-355 opacity-0 pointer-events-none">
           <CollectivesGeneratedArtwork
             captureRef={captureArtworkRef}
             label={nameValue}
             backgroundColorClass={generatedArtworkBackgroundColor}
+            customId="particles-js-0"
           />
         </div>
       )}
-      <div className="max-w-730">
+      <div className="max-w-730 w-full">
         <div className="space-y-8">
           <div className="space-y-8">
             <InputFieldsNameAndSymbol

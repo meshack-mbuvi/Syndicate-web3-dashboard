@@ -1,5 +1,9 @@
 import { LockIcon } from '@/components/iconWrappers';
 import CopyLink from '@/components/shared/CopyLink';
+import {
+  SmallCarousel,
+  collectiveSlides
+} from '@/components/shared/smallCarousel';
 import { B2, B3, H4 } from '@/components/typography';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
@@ -116,6 +120,11 @@ export const BadgeWithMembers: React.FC<Props> = ({
           </div>
         </div>
       ) : null}
+
+      <div>
+        <H4 extraClasses="mb-4">Applications</H4>
+        <SmallCarousel slides={collectiveSlides} />
+      </div>
 
       <div>
         <H4 extraClasses="mb-4">Members</H4>

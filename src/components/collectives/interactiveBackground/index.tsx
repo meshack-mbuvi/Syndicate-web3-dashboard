@@ -9,7 +9,6 @@ interface Props {
   widthClass: string;
   numberOfParticles?: number;
   floatingIcon?: string;
-  isDuplicate?: boolean; // For disolaving multiple times on a page use different IDs. Limited to 2
   isArtwork?: boolean;
   mediaType?: NFTMediaType;
   isLoadingFloatingIcon?: boolean;
@@ -23,7 +22,6 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
     widthClass = 'h-full',
     numberOfParticles = 40,
     floatingIcon,
-    isDuplicate = false,
     isArtwork,
     mediaType = NFTMediaType.IMAGE,
     isLoadingFloatingIcon,
@@ -41,7 +39,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
           id={
             customId
               ? customId
-              : isDuplicate
+              : isArtwork
               ? 'particles-js-duplicate'
               : 'particles-js'
           }

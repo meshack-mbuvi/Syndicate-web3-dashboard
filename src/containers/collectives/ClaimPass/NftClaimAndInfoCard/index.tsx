@@ -284,7 +284,7 @@ const NftClaimAndInfoCard: React.FC = () => {
                     )}`
               }
               numberOfParticles={75}
-              isDuplicate={true}
+              customId="particles-js-2"
             />
           </div>
         }

@@ -1,5 +1,6 @@
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
+import { FinalStateModal } from '@/components/shared/transactionStates';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { FC } from 'react';
 
@@ -20,6 +21,7 @@ const TwoColumnLayout: FC<{
   activeIndex?: number;
   type?: TwoColumnLayoutType;
   showNavButton?: boolean;
+  flipColumns?: boolean;
   showSideNav?: boolean;
   showDotIndicatorLabels?: boolean;
   handlePrevious?: (event?) => void;
@@ -39,10 +41,15 @@ const TwoColumnLayout: FC<{
   hideWalletAndEllipsis = false,
   showCloseButton = false,
   type = TwoColumnLayoutType.DEFAULT,
+  flipColumns = FinalStateModal,
   showSideNav = false,
   showDotIndicatorLabels = true,
   nextBtnDisabled = true
 }) => {
+  const baseColumnStyles = `flex-1 md:h-full flex transition-all duration-800`;
+  const leftColumnStyles = `${baseColumnStyles}`;
+  const rightColumnStyles = `${baseColumnStyles} align-middle justify-center md:justify-start content-center`;
+  const spaceBetweenAmount = 18;
   return (
     <>
       {type === TwoColumnLayoutType.DEFAULT && (
@@ -117,10 +124,20 @@ const TwoColumnLayout: FC<{
             <div className="w-full h-full flex justify-center md:block">
               <div className="container md:mx-auto h-full">
                 <div className="md:flex justify-around space-y-24 md:space-y-0 md:space-x-18 h-full items-center">
-                  <div className="flex-1 md:h-full flex mb-10">
+                  <div
+                    className={`${
+                      flipColumns ? rightColumnStyles : leftColumnStyles
+                    } ${flipColumns ? 'push-left-column-18' : 'translate-x-0'}`}
+                  >
                     {leftColumnComponent}
                   </div>
-                  <div className="flex flex-1 md:h-full align-middle justify-center md:justify-start content-center">
+                  <div
+                    className={`${
+                      flipColumns ? leftColumnStyles : rightColumnStyles
+                    } ${
+                      flipColumns ? 'push-right-column-18' : 'translate-x-0'
+                    }`}
+                  >
                     {rightColumnComponent}
                   </div>
                 </div>

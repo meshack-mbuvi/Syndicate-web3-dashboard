@@ -1,15 +1,19 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { CollectivesCreateSuccess } from '@/components/collectives/create/success';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { resetCollectiveCreationState } from '@/state/createCollective/slice';
+
+interface SuccessRightPanelProps {
+  extraClasses?: string;
+}
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCollectiveCreation';
+import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 
-const CreateCollectiveSuccess: FC = () => {
+export const CreateCollectiveSuccess: FC = () => {
   const { artworkUrl, artworkType } = useCreateState();
   const [collectiveArtwork, setCollectiveArtwork] = useState({
     _artworkType: NFTMediaType.IMAGE,
@@ -37,14 +41,15 @@ const CreateCollectiveSuccess: FC = () => {
         widthClass="w-full"
         floatingIcon={collectiveArtwork._artworkUrl}
         numberOfParticles={40}
+        customId={'particles-js-4'}
       />
     </div>
   );
 };
 
-export default CreateCollectiveSuccess;
-
-export const SuccessRightPanel: React.FC = () => {
+export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
+  extraClasses
+}) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -85,7 +90,9 @@ export const SuccessRightPanel: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full items-center justify-center">
+    <div
+      className={`flex w-full h-full items-center justify-center ${extraClasses}`}
+    >
       <CollectivesCreateSuccess
         name={collectiveName}
         loading={!collectiveIndexed}

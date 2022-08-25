@@ -49,7 +49,6 @@ Artwork.args = {
     <CollectivesGeneratedArtwork
       label="Alpha Beta Punks"
       backgroundColorClass="bg-blue"
-      isForDisplay={true}
     />
   )
 };

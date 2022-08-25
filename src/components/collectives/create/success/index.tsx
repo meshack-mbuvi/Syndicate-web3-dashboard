@@ -23,7 +23,7 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
 }) => {
   const [showCopiedState, setShowCopiedState] = useState(false);
   return (
-    <div className="text-center max-w-112">
+    <div className="text-center max-w-112 w-full">
       <img
         src="/images/checkmark-circle-large.svg"
         alt="Success"
@@ -44,7 +44,7 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         copyButtonText="Copy invite link"
       />
       {loading ? (
-        <button className="primary-CTA-disabled mt-12 mb-6 w-full flex justify-center content-center space-x-3">
+        <button className="primary-CTA-disabled mt-12 mb-6 w-full flex items-center justify-center content-center space-x-3">
           <span className="">Preparing dashboard</span>
           <Spinner
             margin="my-0 items-center"

@@ -1,4 +1,4 @@
-import FadeBetweenChildren from '@/components/fadeBetweenChildren';
+import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
 
@@ -51,9 +51,9 @@ export const AddressWithENS: React.FC<Props> = ({
       >
         {/* Top line */}
         <B2 extraClasses="mb-0">
-          <FadeBetweenChildren
+          <TransitionBetweenChildren
             visibleChildIndex={name ? 0 : address ? 1 : -1}
-            transitionClassesOverride="duration-300"
+            transitionDurationClassOverride="duration-300"
           >
             <div>{name}</div>
             <div>
@@ -66,7 +66,7 @@ export const AddressWithENS: React.FC<Props> = ({
                 </span>
               )}
             </div>
-          </FadeBetweenChildren>
+          </TransitionBetweenChildren>
         </B2>
 
         {/* Bottom line */}

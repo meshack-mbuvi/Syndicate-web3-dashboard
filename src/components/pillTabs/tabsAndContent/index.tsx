@@ -1,4 +1,4 @@
-import FadeBetweenChildren from '@/components/fadeBetweenChildren';
+import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { FC } from 'react';
 import PillTabs from '../tabs';
 
@@ -29,12 +29,12 @@ const PillTabsAndContent: FC<Props> = ({
         handleTabChange={handleTabChange}
       />
 
-      <FadeBetweenChildren
+      <TransitionBetweenChildren
         visibleChildIndex={activeIndex}
         extraClasses="mt-4 w-full flex-grow"
       >
         {children}
-      </FadeBetweenChildren>
+      </TransitionBetweenChildren>
     </div>
   );
 };
