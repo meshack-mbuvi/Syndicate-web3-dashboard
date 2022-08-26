@@ -1,8 +1,10 @@
-import { GetAdminCollectives } from '@/graphql/queries';
+import { GetAdminCollectives, GetERC721MemberEvents } from '@/graphql/queries';
 import { AppState } from '@/state';
 import {
   setCollectiveDetails,
-  setCollectiveLoadingState
+  setCollectiveLoadingState,
+  setMemberJoinedEvents,
+  setLoadingMemberJoinedEvents
 } from '@/state/collectiveDetails';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
@@ -12,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { CollectiveCardType } from '@/state/collectiveDetails/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
+import { CollectiveActivityType } from '@/components/collectives/activity';
 
 const useFetchCollectiveDetails = (
   skipQuery?: boolean
@@ -31,6 +34,7 @@ const useFetchCollectiveDetails = (
 
   const [collectiveNotFound, setCollectiveNotFound] = useState(false);
 
+  // get collective details
   const { loading, data, refetch } = useQuery(GetAdminCollectives, {
     variables: {
       where: {
@@ -46,12 +50,59 @@ const useFetchCollectiveDetails = (
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
+  // get collective member joined events
+  const {
+    loading: loadingEvents,
+    data: eventsData,
+    refetch: refetchMemberEvents
+  } = useQuery(GetERC721MemberEvents, {
+    variables: {
+      where: {
+        collective_contains_nocase: collectiveAddress
+      }
+    },
+    skip:
+      !collectiveAddress ||
+      !account ||
+      !activeNetwork.chainId ||
+      skipQuery ||
+      isDemoMode,
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+  });
+
   useEffect(() => {
     if (account && collectiveAddress && activeNetwork.chainId) {
       refetch();
+      refetchMemberEvents();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, collectiveAddress, activeNetwork.chainId]);
 
+  // process member joined events
+  useEffect(() => {
+    if (loadingEvents) {
+      dispatch(setLoadingMemberJoinedEvents(true));
+      return;
+    }
+
+    if (eventsData && eventsData.mintERC721S.length) {
+      const memberJoinedEvents = eventsData.mintERC721S.map((event) => {
+        const { to, createdAt } = event;
+        return {
+          activityType: CollectiveActivityType.RECEIVED,
+          profile: {
+            address: to
+          },
+          timeStamp: createdAt
+        };
+      });
+      dispatch(setMemberJoinedEvents(memberJoinedEvents));
+      dispatch(setLoadingMemberJoinedEvents(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(eventsData), loadingEvents]);
+
+  // process collective details
   useEffect(() => {
     if (loading) {
       dispatch(

@@ -1,3 +1,4 @@
+import { CollectiveActivityType } from '@/components/collectives/activity';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 
 export enum EditRowIndex {
@@ -13,6 +14,14 @@ export enum CollectiveCardType {
   TIME_WINDOW = 'TIME_WINDOW',
   MAX_TOTAL_SUPPLY = 'MAX_TOTAL_SUPPLY',
   OPEN_UNTIL_CLOSED = 'OPEN_UNTIL_CLOSED'
+}
+
+export interface Event {
+  activityType: CollectiveActivityType;
+  profile: {
+    address: string;
+  };
+  timeStamp: string;
 }
 
 export interface ICollectiveDetails {
@@ -57,6 +66,10 @@ export interface IState {
   updateEnded: boolean;
   activeRow: EditRowIndex;
   loadingState: ICollectiveLoadingState;
+  events: {
+    loadingEvents: boolean;
+    memberJoined: Event[];
+  };
 }
 
 export const initialState: IState = {
@@ -96,5 +109,9 @@ export const initialState: IState = {
   loadingState: {
     isFetchingCollective: false,
     collectiveNotFound: false
+  },
+  events: {
+    loadingEvents: false,
+    memberJoined: []
   }
 };

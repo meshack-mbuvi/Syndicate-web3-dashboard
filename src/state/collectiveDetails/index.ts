@@ -4,7 +4,8 @@ import {
   ICollectiveDetails,
   initialState,
   EditRowIndex,
-  ICollectiveLoadingState
+  ICollectiveLoadingState,
+  Event
 } from './types';
 
 export const collectiveDetails = createSlice({
@@ -59,6 +60,12 @@ export const collectiveDetails = createSlice({
       action: PayloadAction<ICollectiveLoadingState>
     ) {
       state.loadingState = action.payload;
+    },
+    setMemberJoinedEvents(state, action: PayloadAction<Event[]>) {
+      state.events.memberJoined = action.payload;
+    },
+    setLoadingMemberJoinedEvents(state, action: PayloadAction<boolean>) {
+      state.events.loadingEvents = action.payload;
     }
   }
 });
@@ -76,7 +83,9 @@ export const {
   setUpdateEnded,
   setOpenUntil,
   setActiveRowIdx,
-  setCollectiveLoadingState
+  setCollectiveLoadingState,
+  setMemberJoinedEvents,
+  setLoadingMemberJoinedEvents
 } = collectiveDetails.actions;
 
 export default collectiveDetails.reducer;

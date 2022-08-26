@@ -12,6 +12,7 @@ import CollectivesContainer from '@/containers/collectives/CollectivesContainer'
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
+import { setMemberJoinedEvents } from '@/state/collectiveDetails';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import moment from 'moment';
@@ -64,12 +65,28 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
   const {
     web3Reducer: {
       web3: { account }
+    },
+    collectiveDetailsReducer: {
+      details: { createdAt, ownerAddress },
+      events: { memberJoined }
     }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
 
-  const activities = [];
+  // creation activity
+  const creationActivity = [
+    {
+      activityType: CollectiveActivityType.CREATED,
+      profile: {
+        address: ownerAddress
+      },
+      timeStamp: createdAt
+    }
+  ];
+
+  // add member join activities
+  const activities = [...memberJoined];
 
   const handleConnectWallet = () => {
     dispatch(showWalletModal());
@@ -82,6 +99,13 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
     },
     timeStamp: '3h ago'
   };
+
+  useEffect(() => {
+    // clear member joined data from redux
+    return () => {
+      dispatch(setMemberJoinedEvents([]));
+    };
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col mt-16">
@@ -96,10 +120,17 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
           }`}
         >
           {permissionType !== PermissionType.NON_MEMBER ? (
-            activities.length ? (
-              activities.map((activity, index) => (
-                <CollectiveActivity {...activity} key={index} />
-              ))
+            activities.length || creationActivity.length ? (
+              <div className="space-y-5">
+                {creationActivity.map((activity, index) => (
+                  <CollectiveActivity {...activity} key={index} />
+                ))}
+                {activities.length
+                  ? activities.map((activity, index) => (
+                      <CollectiveActivity {...activity} key={index} />
+                    ))
+                  : null}
+              </div>
             ) : (
               <div className="flex flex-col m-auto h-full min-h-10 align-middle justify-center">
                 <B2 extraClasses="mx-auto tracking-0.1px">No activity yet</B2>

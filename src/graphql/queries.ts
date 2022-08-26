@@ -283,3 +283,12 @@ export const GetMemberCollectives = gql`
     }
   }
 `;
+
+export const GetERC721MemberEvents = gql`
+  query GetEvents($where: MintERC721_filter) {
+    mintERC721S(where: $where) {
+      to
+      createdAt
+    }
+  }
+`;

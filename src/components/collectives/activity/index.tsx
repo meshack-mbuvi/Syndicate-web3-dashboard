@@ -1,7 +1,9 @@
 import { B2, B3 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
+import moment from 'moment';
 
 export enum CollectiveActivityType {
+  CREATED = 'CREATED',
   RECEIVED = 'RECEIVED',
   TRANSFER = 'TRANSFER',
   SALE = 'SALE',
@@ -60,7 +62,8 @@ export const CollectiveActivity: React.FC<Props> = ({
   return (
     <a href={externalLink} className="flex justify-between items-center">
       <div>
-        {activityType === CollectiveActivityType.RECEIVED && (
+        {activityType === CollectiveActivityType.RECEIVED ||
+        activityType === CollectiveActivityType.CREATED ? (
           <div className="flex space-x-2 items-center">
             <img
               src={profile.picture || '/images/user.svg'}
@@ -81,10 +84,14 @@ export const CollectiveActivity: React.FC<Props> = ({
               ) : (
                 ''
               )}{' '}
-              <span className="text-gray-syn4">joined the collective</span>
+              <span className="text-gray-syn4">
+                {activityType === CollectiveActivityType.CREATED
+                  ? 'created the collective'
+                  : 'joined the collective'}
+              </span>
             </B2>
           </div>
-        )}
+        ) : null}
         {activityType === CollectiveActivityType.TRANSFER && (
           <div className="flex space-x-2 items-center">
             <div className="w-6 h-6 rounded-full bg-gray-syn3 flex-shrink-0">
@@ -211,7 +218,9 @@ export const CollectiveActivity: React.FC<Props> = ({
           className="flex-shrink-0"
         />
       ) : timeStamp ? (
-        <B3 extraClasses="text-gray-syn4 flex-shrink-0 ml-2">{timeStamp}</B3>
+        <B3 extraClasses="text-gray-syn4 flex-shrink-0 ml-2">
+          {moment(+timeStamp * 1000).fromNow()}
+        </B3>
       ) : null}
     </a>
   );
