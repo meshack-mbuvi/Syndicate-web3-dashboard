@@ -58,7 +58,7 @@ module.exports = {
       '-45': '-45deg'
     },
     screens: {
-      xs: '480px',
+      // xs: '480px', // requires styles refactor
       sm: '640px',
       md: '868px',
       lg: '1024px',

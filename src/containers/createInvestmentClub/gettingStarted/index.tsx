@@ -42,7 +42,7 @@ const GettingStarted: React.FC = () => {
   }, [width]);
 
   return (
-    <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100 mt-8 sm:mt-18">
+    <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 sm:w-100 mt-8 sm:mt-18">
       <div>
         <div className="mx-5">
           <h4 className="mb-8">Create an investment club</h4>

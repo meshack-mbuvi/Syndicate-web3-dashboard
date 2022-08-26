@@ -97,7 +97,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const bottomBar = (
     <div
-      className="w-full sm:w-auto mx-auto justify-center bg-black flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0"
+      className="flex w-full justify-center items-center bg-black"
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}
@@ -508,7 +508,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
       </div>
 
       <div
-        className={`transition-opacity fixed animate-move-in z-30 bottom-0 md:left-1/4 md:right-1/4 transparent`}
+        className={`transition-opacity fixed w-full animate-move-in left-0 z-30 bottom-0 transparent`}
         style={{
           borderRadius: '40px 40px 0px 0px'
         }}

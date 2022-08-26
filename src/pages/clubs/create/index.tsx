@@ -135,7 +135,7 @@ const CreateInvestmentClub: React.FC = () => {
       nextBtnDisabled={nextBtnDisabled}
     >
       <Head title="Create Investment Club" />
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         {!isFirstStep && (
           <h4 className={`text-center pb-16 pt-8`}>
             {isCreatingInvestmentClub
@@ -144,13 +144,10 @@ const CreateInvestmentClub: React.FC = () => {
           </h4>
         )}
         <div className="container mx-auto w-full h-full">
-          <div className="w-full" ref={parentRef}>
-            <div className="w-full max-w-520">
-              <ReviewDetails />
-
-              <div className="w-full sm:px-5">
-                {CreateFlowSteps(steps[currentStep].step)}
-              </div>
+          <div className="w-full mx-auto max-w-520" ref={parentRef}>
+            <ReviewDetails />
+            <div className="w-full sm:px-5">
+              {CreateFlowSteps(steps[currentStep].step)}
             </div>
             {!hideInvestmentClubCTAs ? (
               <div className="w-full">

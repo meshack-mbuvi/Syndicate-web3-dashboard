@@ -48,7 +48,7 @@ const SharedItem: React.FC<IProps> = ({
 
   return (
     <div
-      className={`flex justify-between xs:flex-col xs:space-y-2 align-middle`}
+      className={`flex sm:flex-col justify-between flex-row space-y-2 sm:space-y-0 items-center align-middle`}
       onMouseEnter={toggleDropdown}
       onMouseLeave={toggleDropdown}
     >
@@ -65,7 +65,7 @@ const SharedItem: React.FC<IProps> = ({
         onKeyPress={onClick}
       >
         {icon ? (
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 ml-2">
             {typeof icon === 'string' ? (
               <img
                 src={icon}
@@ -138,14 +138,12 @@ const NetworkComponent: React.FC<NetworkType> = ({
 
   return (
     <div
-      className="flex flex-col w-full sm:w-auto md:w-730 sm:space-x-6 sm:flex-row justify-between space-y-4 sm:space-y-0 md:justify-between pl-6 p-4 bg-black border border-b-0 border-gray-syn7 rounded-3xl"
+      className="flex flex-col sm:flex-row w-full md:w-730 justify-between items-center p-4 bg-black border border-b-0 border-gray-syn7 rounded-3xl"
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}
     >
-      <div
-        className={`flex flex-col xs:flex-row xs:space-y-0 space-y-5 justify-between w-full sm:space-y-0 md:space-x-6`}
-      >
+      <div className={`flex flex-col sm:flex-row justify-between w-full`}>
         {account ? (
           <>
             <SharedItem
@@ -189,7 +187,7 @@ const NetworkComponent: React.FC<NetworkType> = ({
           isClickable={false}
         />
       </div>
-      <div className="flex-shrink-1 w-full sm:max-w-44 sm:w-auto">
+      <div className="flex-shrink-1 pt-2 sm:pt-0 w-full sm:max-w-44 sm:w-auto">
         <CtaButton
           extraClasses="rounded-full"
           disabled={account ? disabled : false}

@@ -112,7 +112,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
             </ReviewSection>
           ))}
       </div>
-      <div className="w-full mb-36 max-w-520 sm:px-5">
+      <div className="w-full mb-30 sm:mb-36 max-w-520 sm:px-5">
         <div className="flex items-center space-between ">
           <input
             className="self-start bg-transparent rounded focus:ring-offset-0 cursor-pointer"
