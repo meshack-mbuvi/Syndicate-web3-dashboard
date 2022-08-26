@@ -142,9 +142,8 @@ const PortfolioAndDiscover: React.FC = () => {
       >
         <CreateClubOrCollective
           {...{
-            emptyStateType: isPolygon
-              ? EmptyStateType.CLUBS
-              : EmptyStateType.ALL
+            emptyStateType:
+              isPolygon || !account ? EmptyStateType.CLUBS : EmptyStateType.ALL
           }}
         />
       </div>
