@@ -25,8 +25,8 @@ const NftClaimAndInfoCard: React.FC = () => {
       web3: {
         account,
         web3,
-        chainId,
         activeNetwork: {
+          chainId,
           nativeCurrency: { symbol },
           blockExplorer: { baseUrl }
         }

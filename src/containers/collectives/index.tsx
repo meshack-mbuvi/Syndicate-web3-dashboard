@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
+import { getOpenSeaLink } from '@/utils/api/nfts';
 
 interface IProps {
   showModifySettings: boolean;
@@ -33,12 +34,31 @@ interface ICollectiveDetails {
 const HeaderComponent: React.FC<IProps> = (args) => {
   const {
     collectiveDetailsReducer: {
-      details: { collectiveName }
+      details: { collectiveName, collectiveAddress },
+      loadingState: { isFetchingCollective }
+    },
+    web3Reducer: {
+      web3: {
+        activeNetwork: { chainId }
+      }
     }
   } = useSelector((state: AppState) => state);
+
+  const [openSeaLink, setOpenSeaLink] = useState<string>();
+
+  useEffect(() => {
+    if (isFetchingCollective) return;
+    async function getLink() {
+      await getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
+        setOpenSeaLink(link);
+      });
+    }
+    getLink();
+  }, [isFetchingCollective, collectiveAddress, chainId]);
+
   const links = {
     externalLink: '/',
-    openSea: '/'
+    openSea: openSeaLink
   };
 
   return (
