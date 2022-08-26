@@ -63,7 +63,6 @@ const TwoColumnLayout: FC<{
           showCloseButton={showCloseButton}
           activeIndex={activeIndex}
           navItems={[]}
-          customClasses="h-screen "
           showNavButton={showNavButton}
           showSideNav={showSideNav}
           showDotIndicatorLabels={showDotIndicatorLabels}

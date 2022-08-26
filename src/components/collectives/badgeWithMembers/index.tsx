@@ -71,7 +71,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
   return (
     <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
       {permissionType == PermissionType.ADMIN && isOpen ? (
-        <>
+        <div className="space-y-4">
           <H4>Invite to join</H4>
           <div className="rounded-2.5xl bg-gray-syn8">
             <div className="p-1">
@@ -103,7 +103,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
               </div>
             </div>
           </div>
-        </>
+        </div>
       ) : null}
 
       {permissionType == PermissionType.NON_MEMBER && isOpen ? (
