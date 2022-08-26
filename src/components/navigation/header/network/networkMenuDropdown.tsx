@@ -8,17 +8,16 @@ import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { setShowNetworkDropdownMenu } from '@/state/wallet/actions';
-import { Status } from '@/state/wallet/types';
 import { isDev } from '@/utils/environment';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Popover, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
   const {
     web3Reducer: {
-      web3: { web3: web3Instance, account, activeNetwork, status },
+      web3: { web3: web3Instance, account, activeNetwork },
       showNetworkDropdown
     }
   } = useSelector((state: AppState) => state);
@@ -116,14 +115,13 @@ const NetworkMenuDropDown: FC = () => {
     dispatch(setShowNetworkDropdownMenu(!showNetworkDropdown));
   };
 
-  const wrapperRef = useRef(null);
   return (
     <>
-      <Menu as="div" className="relative">
-        {() => {
+      <Popover as="div" className="relative">
+        {({ open }) => {
           return (
             <>
-              <button
+              <Popover.Button
                 className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-3 py-2 sm:py-1 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
@@ -150,9 +148,9 @@ const NetworkMenuDropDown: FC = () => {
                     alt="down-arrow"
                   />
                 </div>
-              </button>
+              </Popover.Button>
               <Transition
-                show={showNetworkDropdown}
+                show={showNetworkDropdown || open}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
@@ -161,9 +159,9 @@ const NetworkMenuDropDown: FC = () => {
                 leaveTo="transform opacity-0 scale-95"
                 className="relative"
               >
-                <Menu.Items
+                <Popover.Panel
                   as="ul"
-                  className="absolute right-0 w-64 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
+                  className="absolute sm:right-0 w-64 mt-10 sm:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
                 >
                   {Object.entries(NETWORKS).map(([key, value]) =>
                     value.testNetwork && !isDev ? (
@@ -261,23 +259,12 @@ const NetworkMenuDropDown: FC = () => {
                       </a>
                     </div>
                   )}
-                </Menu.Items>
+                </Popover.Panel>
               </Transition>
             </>
           );
         }}
-      </Menu>
-      <Dialog
-        initialFocus={wrapperRef}
-        as="div"
-        static
-        open={showNetworkDropdown}
-        onClose={() => {
-          if (status === Status.CONNECTED) {
-            dispatch(setShowNetworkDropdownMenu(false));
-          }
-        }}
-      ></Dialog>
+      </Popover>
     </>
   );
 };

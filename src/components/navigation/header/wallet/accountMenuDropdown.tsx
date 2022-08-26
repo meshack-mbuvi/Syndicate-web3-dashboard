@@ -11,8 +11,8 @@ import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useWindowSize from '@/hooks/useWindowSize';
 import { setShowWalletDropdownMenu } from '@/state/wallet/actions';
 import { formatAddress } from '@/utils/formatAddress';
-import { Dialog, Menu, Transition } from '@headlessui/react';
-import { FC, useEffect, useRef, useState } from 'react';
+import { Popover, Transition } from '@headlessui/react';
+import { FC, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 
@@ -54,20 +54,17 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
   };
 
-  const wrapperRef = useRef(null);
-
   return (
     <>
-      <Menu as="div" className="relative" id="accountButton">
-        {() => {
+      <Popover as="div" className="relative">
+        {({ open }) => {
           return (
             <>
-              <button
+              <Popover.Button
                 className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 md:pl-3 pr-4 py-3 sm:py-1 items-center ${
                   showWalletDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
-                id="accountButton"
               >
                 <img
                   width={24}
@@ -95,9 +92,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     alt="down-arrow"
                   />
                 </div>
-              </button>
+              </Popover.Button>
               <Transition
-                show={showWalletDropdown}
+                show={showWalletDropdown || open}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
@@ -106,10 +103,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                 leaveTo="transform opacity-0 scale-95"
                 className="relative"
               >
-                <Menu.Items
-                  static
+                <Popover.Panel
                   as="ul"
-                  className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
+                  className="absolute sm:right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
                 >
                   <div style={{ borderRadius: '0.625rem' }}>
                     <div className="bg-gray-syn8 p-4 rounded-t-1.5lg rounded-b-none">
@@ -181,19 +177,12 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       <WalletConnectDemoButton buttonText="Switch to demo mode" />
                     </div>
                   </div>
-                </Menu.Items>
+                </Popover.Panel>
               </Transition>
             </>
           );
         }}
-      </Menu>
-      <Dialog
-        initialFocus={wrapperRef}
-        as="div"
-        static
-        open={showWalletDropdown}
-        onClose={() => dispatch(setShowWalletDropdownMenu(false))}
-      ></Dialog>
+      </Popover>
     </>
   );
 };

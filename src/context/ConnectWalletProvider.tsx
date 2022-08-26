@@ -19,6 +19,7 @@ import {
   setConnecting,
   setDisConnected,
   setLibrary,
+  setShowNetworkDropdownMenu,
   showErrorModal,
   showWalletModal,
   storeCurrentEthNetwork,
@@ -254,6 +255,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(setConnected());
         setWalletConnecting(false);
         setShowSuccessModal(true);
+        dispatch(setShowNetworkDropdownMenu(false));
       });
     } else if (!loading && activeNetwork && !account) {
       initializeWeb3();
