@@ -1,8 +1,8 @@
+import { TextField } from '@/components/inputs';
 import PillDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown';
 import { investmentRounds } from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetailsConstants';
 import React, { useEffect, useRef, useState } from 'react';
 import { useController } from 'react-hook-form';
-import { TextField } from '@/components/inputs';
 
 /**
  * RoundDropDown component is used as a drop-down select for investment rounds.
@@ -18,6 +18,7 @@ interface IRoundDropDown {
   control: any;
   borderStyles?: string;
   disabled?: boolean;
+  defaultValue?: string;
   resetRound: () => void;
 }
 
@@ -26,6 +27,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   name,
   label,
   control,
+  defaultValue,
   borderStyles = 'border-none',
   disabled = false,
   resetRound
@@ -41,7 +43,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   } = useController({
     name,
     control,
-    defaultValue: ''
+    defaultValue
   });
 
   const [selectedCategory, setSelectedCategory] = useState(
@@ -53,7 +55,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
         }
       : value
       ? investmentRounds.find((round) => round.text === value)
-        ? investmentRounds.find((round) => round.text === value)
+        ? investmentRounds.find((round) => round.text === defaultValue)
         : { text: value, value }
       : investmentRounds[0]
   );
@@ -103,7 +105,6 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   };
 
   const customTextStyles = 'text-white text-base';
-
   return (
     <div
       className={`relative flex justify-between items-center ${borderStyles} ${
@@ -153,6 +154,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
           placeholder="Enter custom round"
           paddingStyles="p-4 pr-0"
           disabled={disabled}
+          defaultValue={defaultValue}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={true}
         />

@@ -1,4 +1,3 @@
-import { AppState } from '@/state';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -49,7 +48,6 @@ const ActivityDatePicker: React.FC<Props> = ({
     <button
       className="flex mr-0 my-auto py-4 items-center font-whyte text-base text-white"
       onClick={(e) => {
-        e.preventDefault();
         onClick();
       }}
       value={value}

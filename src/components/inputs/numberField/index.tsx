@@ -100,6 +100,7 @@ export const NumberField: React.FC<IProps> = ({
           placeholder={placeholder}
           onChange={(event) => {
             const { value } = event.target;
+
             onChange(value.replaceAll(',', ''));
           }}
           decimalScale={2}

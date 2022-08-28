@@ -1,4 +1,5 @@
-import Modal, { ModalStyle } from '@/components/modal';
+import { DistributionMembersTable } from '@/components/distributions/membersTable';
+import { SimpleTable } from '@/components/simpleTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
 import {
@@ -14,12 +15,11 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
-import { DistributionMembersTable } from '@/components/distributions/membersTable';
-import { SimpleTable } from '@/components/simpleTable';
 
+import Modal, { ModalStyle } from '@/components/modal';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
 
 interface IActivityModal {
   showModal: boolean;

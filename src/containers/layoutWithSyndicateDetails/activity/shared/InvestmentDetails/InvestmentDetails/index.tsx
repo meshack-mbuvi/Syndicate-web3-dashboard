@@ -78,7 +78,6 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     mode: 'onChange',
     defaultValues: storedInvestmentDetails
   });
-
   useEffect(() => {
     if (!isDirty && !isEmpty(dirtyFields) && !editMode) {
       // Reset if form has not been touched
@@ -94,7 +93,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 
   // Annotation
-  const [annotationMutation] = useMutation(ANNOTATE_TRANSACTIONS);
+  const [annotationMutation, { data }] = useMutation(ANNOTATE_TRANSACTIONS);
 
   const formValues = getValues();
   const {
@@ -107,6 +106,12 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     numberShares,
     numberTokens
   } = formValues;
+
+  useEffect(() => {
+    if (data?.Financial_annotateTransactions) {
+      onSuccessfulAnnotation();
+    }
+  }, [data?.Financial_annotateTransactions]);
 
   const onSubmit = (values) => {
     // fields without values will be sent to the backend as an empty string
@@ -173,8 +178,8 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
               </div>
             ) : null}
           </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {showModal ? (
+          {showModal ? (
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="w-full flex flex-col divide-gray-syn6 divider">
                 {editMode || companyName ? (
                   <TextField
@@ -200,9 +205,10 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     control={control}
                     borderStyles={borderStyles}
                     disabled={disabled}
-                    resetRound={() =>
-                      setValue('investmentRound', '', { shouldDirty: true })
-                    }
+                    defaultValue={investmentRound}
+                    resetRound={() => {
+                      setValue('investmentRound', '', { shouldDirty: true });
+                    }}
                   />
                 ) : null}
 
@@ -289,21 +295,22 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                   />
                 ) : null}
               </div>
-            ) : null}
-            {editMode ? (
-              <div>
-                <PiiWarning />
-                <div className="w-full pt-6 bg-black">
-                  <button
-                    className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
-                    type="submit"
-                  >
-                    Done
-                  </button>
+
+              {editMode ? (
+                <div>
+                  <PiiWarning />
+                  <div className="w-full pt-6 bg-black">
+                    <button
+                      className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
+                      type="submit"
+                    >
+                      Done
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : null}
-          </form>
+              ) : null}
+            </form>
+          ) : null}
         </div>
       ) : null}
     </>

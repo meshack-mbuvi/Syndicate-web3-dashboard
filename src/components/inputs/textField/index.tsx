@@ -27,6 +27,7 @@ interface IProps {
   showWarning?: boolean;
   warningText?: string;
   showClearIcon?: boolean;
+  defaultValue?: string;
 }
 /**
  * An input component with label and icon at the right end
@@ -52,7 +53,8 @@ export const TextField: React.FC<IProps> = ({
   autoFocus = false,
   showWarning = false,
   warningText = '',
-  showClearIcon = false
+  showClearIcon = false,
+  defaultValue = ''
 }) => {
   const {
     field: { value, ...fieldAttributes },
@@ -61,7 +63,7 @@ export const TextField: React.FC<IProps> = ({
     name,
     control,
     rules: { required },
-    defaultValue: ''
+    defaultValue
   });
 
   const [showValidation, setShowValidation] = useState(false);
@@ -80,7 +82,7 @@ export const TextField: React.FC<IProps> = ({
 
   useEffect(() => {
     return () => {
-      fieldAttributes.onChange('');
+      fieldAttributes.onChange(defaultValue);
     };
   }, []);
 

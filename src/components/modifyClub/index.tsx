@@ -1,10 +1,14 @@
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import AddToCalendar from '@/components/addToCalendar';
+import EstimateGas from '@/components/EstimateGas';
 import { ProgressModal } from '@/components/progressModal';
 import { Switch, SwitchType } from '@/components/switch';
-import EstimateGas from '@/components/EstimateGas';
+import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { setClubCreationReceipt } from '@/state/createInvestmentClub/slice';
 import {
@@ -15,12 +19,14 @@ import {
   setExistingOpenToDepositsUntil
 } from '@/state/modifyClubSettings/slice';
 import { Status } from '@/state/wallet/types';
+import { DAY_IN_SECONDS } from '@/utils/constants';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
   numberInputRemoveCommas,
   numberStringInputRemoveCommas
 } from '@/utils/formattedNumbers';
+import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,14 +40,8 @@ import {
   InputFieldWithToken,
   SymbolDisplay
 } from '../inputs/inputFieldWithToken';
-import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
-import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
-import moment from 'moment';
-import AddToCalendar from '@/components/addToCalendar';
-import { DAY_IN_SECONDS } from '@/utils/constants';
 import { ProgressState } from '../progressCard';
-import { ContractMapper } from '@/hooks/useGasDetails';
 
 const progressModalStates = {
   confirm: {
@@ -384,7 +384,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           buttonOnClick:
             progressModalStates[progressState].buttonLabel == 'Try again'
               ? () => setProgressState('')
-              : handleExit,
+              : () => handleExit(),
           explorerLinkText: 'View on ',
           iconcolor: ExternalLinkColor.BLUE,
           transactionType: 'transaction'
