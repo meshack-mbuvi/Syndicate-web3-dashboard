@@ -169,8 +169,6 @@ const useFetchCollectiveDetails = (
               mintEndTime = String(Math.ceil(currentTime / 1000));
               maxSupply = maxTotalSupply;
               return;
-            } else {
-              collectiveCardType = CollectiveCardType.OPEN_UNTIL_CLOSED;
             }
           });
 
