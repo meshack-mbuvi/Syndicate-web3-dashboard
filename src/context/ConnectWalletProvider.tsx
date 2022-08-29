@@ -125,7 +125,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const dispatch = useDispatch();
 
   // Initiates current client for feature flags
-  const currentClient = useClient(account, 'user');
+  const currentClient = useClient(account ? account : 'user', 'user');
 
   // When Split SDK is ready, set attributes to current client and mark it as ready
   useEffect(() => {
