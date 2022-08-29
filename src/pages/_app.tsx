@@ -35,14 +35,6 @@ import React from 'react';
 import { BACKEND_LINKS } from '@/Networks/backendLinks';
 import { SplitFactory } from '@splitsoftware/splitio-react';
 
-/**
- * datepicker component requires these in-built styles, so we import them
- * from here to make them available globally
- */
-import 'react-datepicker/dist/react-datepicker.css';
-import '../styles/animation.css';
-import '../styles/custom-datepicker.css';
-import '../styles/global.css';
 //Binding events.
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
