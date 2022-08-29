@@ -68,6 +68,12 @@
         "internalType": "string",
         "name": "symbol",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
       }
     ],
     "name": "ERC721CollectiveCreated",
@@ -154,6 +160,10 @@
     ],
     "name": "Unpaused",
     "type": "event"
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "fallback"
   },
   {
     "inputs": [],

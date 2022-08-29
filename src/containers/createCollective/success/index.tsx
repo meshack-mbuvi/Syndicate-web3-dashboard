@@ -4,7 +4,7 @@ import { CollectivesCreateSuccess } from '@/components/collectives/create/succes
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
-import { resetCollectiveCreationState } from '@/state/createCollective/slice';
+import { partialCollectiveCreationStateReset } from '@/state/createCollective/slice';
 
 interface SuccessRightPanelProps {
   extraClasses?: string;
@@ -14,32 +14,15 @@ import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCol
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 
 export const CreateCollectiveSuccess: FC = () => {
-  const { artworkUrl, artworkType } = useCreateState();
-  const [collectiveArtwork, setCollectiveArtwork] = useState({
-    _artworkType: NFTMediaType.IMAGE,
-    _artworkUrl: ''
-  });
-
-  const onCollectiveCreated = async (artworkUrl, artworkType) => {
-    setCollectiveArtwork({
-      _artworkType: artworkType,
-      _artworkUrl: artworkUrl
-    });
-  };
-
-  useEffect(() => {
-    if (artworkUrl && artworkType) {
-      onCollectiveCreated(artworkUrl, artworkType);
-    }
-  }, [artworkUrl, artworkType]);
+  const { creationReceipt } = useCreateState();
 
   return (
     <div className="bg-black w-full h-full pb-38">
       <CollectivesInteractiveBackground
         heightClass="h-full"
-        mediaType={collectiveArtwork._artworkType}
+        mediaType={creationReceipt.artworkType}
         widthClass="w-full"
-        floatingIcon={collectiveArtwork._artworkUrl}
+        floatingIcon={creationReceipt.artworkUrl}
         numberOfParticles={40}
         customId={'particles-js-4'}
       />
@@ -60,24 +43,25 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
       web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-  const { name, creationStatus } = useCreateState();
+
+  const { creationReceipt } = useCreateState();
   const [collectiveAddress, setCollectiveAddress] = useState<string | null>(
     null
   );
   const [collectiveName, setCollectiveName] = useState<string | null>('');
 
-  const onCollectiveCreated = async (address: string) => {
-    await setCollectiveAddress(address);
-    await setCollectiveName(name);
-    verifyCreation(address);
-    dispatch(resetCollectiveCreationState());
+  const onCollectiveCreated = async () => {
+    await setCollectiveAddress(creationReceipt.collective);
+    await setCollectiveName(creationReceipt.name);
+    verifyCreation(creationReceipt.collective);
+    dispatch(partialCollectiveCreationStateReset());
   };
 
   useEffect(() => {
-    if (creationStatus.creationReceipt.collective) {
-      onCollectiveCreated(creationStatus.creationReceipt.collective);
+    if (creationReceipt.collective) {
+      onCollectiveCreated();
     }
-  }, [creationStatus.creationReceipt.collective]);
+  }, [creationReceipt.collective]);
 
   const collectiveURL = useMemo(() => {
     return `${window.location.origin}/collectives/${collectiveAddress}?chain=${activeNetwork.network}`;

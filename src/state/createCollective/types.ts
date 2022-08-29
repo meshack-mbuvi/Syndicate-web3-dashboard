@@ -32,11 +32,13 @@ export interface CollectiveCreation {
     transactionError: boolean;
     transactionHash: string;
     ipfsHash: string;
-    creationReceipt: {
-      collective: string;
-      name: string;
-      symbol: string;
-    };
+  };
+  creationReceipt: {
+    collective: string;
+    name: string;
+    symbol: string;
+    artworkType: NFTMediaType;
+    artworkUrl: string;
   };
 }
 
@@ -71,11 +73,13 @@ export const initialState: CollectiveCreation = {
     transactionSuccess: false,
     transactionError: false,
     transactionHash: '',
-    ipfsHash: '',
-    creationReceipt: {
-      collective: '',
-      name: '',
-      symbol: ''
-    }
+    ipfsHash: ''
+  },
+  creationReceipt: {
+    collective: '',
+    name: '',
+    symbol: '',
+    artworkType: NFTMediaType.IMAGE,
+    artworkUrl: ''
   }
 };
