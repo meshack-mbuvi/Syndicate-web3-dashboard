@@ -930,7 +930,7 @@ const ModifyCollectiveSettings: React.FC = () => {
               title: 'Price per NFT',
               value: (
                 <div className="flex space-x-2">
-                  <img src="/images/chains/ethereum.svg" alt="" />
+                  <img src={activeNetwork.nativeCurrency.logo} alt="" />
                   <span>
                     {settingsMintPrice}&nbsp;
                     {activeNetwork.nativeCurrency.symbol}

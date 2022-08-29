@@ -115,6 +115,7 @@ const useCollectives = (): { loading: boolean } => {
   const processCollectives = useCallback(
     async (collectives) => {
       if (!collectives || !collectives?.length) {
+        dispatch(setAdminCollectives([]));
         return [];
       }
 
@@ -213,8 +214,10 @@ const useCollectives = (): { loading: boolean } => {
       isEmpty(web3) ||
       status == Status.DISCONNECTED ||
       !walletAddress
-    )
+    ) {
+      dispatch(setMemberCollectives([]));
       return;
+    }
 
     const processedMemberCollectives = memberCollectiveNfts?.nfts
       .map(async ({ collective }) => {

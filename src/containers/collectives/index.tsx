@@ -196,6 +196,12 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
 
 const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
   const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
+  const {
     collectiveDetailsReducer: {
       details: {
         mintPrice,
@@ -226,8 +232,8 @@ const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
           }}
           price={{
             tokenAmount: floatedNumberWithCommas(mintPrice),
-            tokenSymbol: 'ETH',
-            tokenIcon: '/images/chains/ethereum.svg'
+            tokenSymbol: activeNetwork.nativeCurrency.symbol,
+            tokenIcon: activeNetwork.nativeCurrency.logo
           }}
         />
       </div>

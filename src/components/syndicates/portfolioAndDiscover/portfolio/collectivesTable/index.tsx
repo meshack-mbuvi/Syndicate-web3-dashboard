@@ -170,7 +170,7 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                     <div className="flex text-base items-center">
                       <div className="flex items-center mr-2 flex-shrink-0">
                         <Image
-                          src={'/images/ethereum-logo.svg'}
+                          src={activeNetwork.nativeCurrency.logo}
                           width={20}
                           height={20}
                           objectFit="contain"
