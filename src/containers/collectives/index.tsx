@@ -5,7 +5,6 @@ import {
 import { BadgeWithMembers } from '@/components/collectives/badgeWithMembers';
 import { CollectiveCard } from '@/components/collectives/card';
 import { PermissionType } from '@/components/collectives/shared/types';
-import { LockIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B2, B3, H4 } from '@/components/typography';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
@@ -13,7 +12,6 @@ import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMe
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
 import { setMemberJoinedEvents } from '@/state/collectiveDetails';
-import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -22,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
 import { getOpenSeaLink } from '@/utils/api/nfts';
+import MembersOnly from '@/components/collectives/membersOnly';
 
 interface IProps {
   showModifySettings: boolean;
@@ -108,10 +107,6 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
   // add member join activities
   const activities = [...memberJoined];
 
-  const handleConnectWallet = () => {
-    dispatch(showWalletModal());
-  };
-
   const activityPlaceholder = {
     activityType: CollectiveActivityType.RECEIVED,
     profile: {
@@ -169,24 +164,7 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
 
         {permissionType === PermissionType.NON_MEMBER || !account ? (
           <div className="absolute top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
-            <div className="flex text-center">
-              <div className="flex-grow-1 mr-1 pt-0.5">
-                <LockIcon color={`text-white`} />
-              </div>
-              <p className="w-full text-center text-white">Members only</p>
-            </div>
-            {account ? (
-              <B3 extraClasses="text-gray-syn4 font-light mt-2">
-                Only holders of the NFT can view private data
-              </B3>
-            ) : (
-              <B3
-                extraClasses="text-blue font-light mt-2 cursor-pointer"
-                onClick={handleConnectWallet}
-              >
-                Connect wallet
-              </B3>
-            )}
+            <MembersOnly />
           </div>
         ) : null}
       </div>

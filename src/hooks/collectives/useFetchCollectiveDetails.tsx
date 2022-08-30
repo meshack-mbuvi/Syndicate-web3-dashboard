@@ -42,11 +42,7 @@ const useFetchCollectiveDetails = (
       }
     },
     skip:
-      !collectiveAddress ||
-      !account ||
-      !activeNetwork.chainId ||
-      skipQuery ||
-      isDemoMode,
+      !collectiveAddress || !activeNetwork.chainId || skipQuery || isDemoMode,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
