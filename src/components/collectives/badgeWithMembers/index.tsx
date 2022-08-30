@@ -7,12 +7,13 @@ import { B2, B3, H4 } from '@/components/typography';
 import { AppState } from '@/state';
 import Image from 'next/image';
 import router from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { JoinCollectiveCTA } from '../joinCollectiveButton';
 import { CollectiveMember, CollectiveMemberProps } from '../member';
 import { PermissionType } from '../shared/types';
 import MembersOnly from '@/components/collectives/membersOnly';
+import { getCollectiveBalance } from '@/utils/contracts/collective';
 
 interface Props {
   inviteLink?: string;
@@ -29,15 +30,16 @@ export const BadgeWithMembers: React.FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     collectiveDetailsReducer: {
-      details: { isOpen }
+      details: { isOpen, maxPerWallet }
     }
   } = useSelector((state: AppState) => state);
   const { collectiveAddress } = router.query;
 
   const [copyState, setCopyState] = useState(false);
+  const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
 
   const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -60,6 +62,17 @@ export const BadgeWithMembers: React.FC<Props> = ({
       setCopyState(false);
     }, 1000);
   };
+
+  useEffect(() => {
+    if (!collectiveAddress) {
+      return;
+    }
+    getCollectiveBalance(collectiveAddress.toString(), account, web3).then(
+      (balance) => {
+        setCollectiveBalance(balance);
+      }
+    );
+  }, [account, collectiveAddress, web3]);
 
   return (
     <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
@@ -99,8 +112,13 @@ export const BadgeWithMembers: React.FC<Props> = ({
         </div>
       ) : null}
 
-      {permissionType == PermissionType.NON_MEMBER && isOpen ? (
-        <JoinCollectiveCTA label="Join this collection" onClick={goToClaim} />
+      {(permissionType == PermissionType.NON_MEMBER ||
+        collectiveBalance < +maxPerWallet) &&
+      isOpen ? (
+        <JoinCollectiveCTA
+          alreadyMember={collectiveBalance > 0}
+          onClick={goToClaim}
+        />
       ) : null}
 
       {admins.length > 0 ? (

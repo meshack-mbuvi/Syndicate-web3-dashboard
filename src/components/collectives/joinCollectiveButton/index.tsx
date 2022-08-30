@@ -2,12 +2,12 @@ import { B4 } from '@/components/typography';
 import { useState } from 'react';
 
 interface IProps {
-  label: string;
+  alreadyMember: boolean;
   onClick: (e?: React.MouseEvent<HTMLInputElement>) => void;
 }
 
 export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
-  const { label, onClick } = args;
+  const { alreadyMember, onClick } = args;
   const [showMoreContent, setShowMoreContent] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
                 showMoreContent ? '-translate-x-3' : ''
               } `}
             >
-              {label}
+              {alreadyMember ? 'Claim additional NFT' : 'Join this collection'}
             </span>
             <img
               src={'/images/chevron-right-black.svg'}
@@ -45,7 +45,7 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
             } `}
           >
             <B4 extraClasses="text-gray-syn4 mx-auto w-fit-content">
-              Claim NFT to join
+              {alreadyMember ? 'Claim NFT' : 'Claim NFT to join'}
             </B4>
           </div>
         </button>
