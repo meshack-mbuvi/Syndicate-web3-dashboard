@@ -41,17 +41,17 @@ export const NFTPreviewer: React.FC<Props> = ({
   handleEdit,
   loadingMediaSource,
   maxHeight = 'max-h-474',
-  maxWidth = 'max-w-355'
+  maxWidth = 'max-w-88'
 }) => {
   const descriptionText = (
     <>
       {/* Desktop */}
       <div className="hidden sm:block">
-        <B2 extraClasses="text-gray-syn4">{description}</B2>
+        <B2 extraClasses="text-gray-syn4 break-words">{description}</B2>
       </div>
       {/* Mobile */}
       <div className="sm:hidden">
-        <B3 extraClasses="text-gray-syn4">{description}</B3>
+        <B3 extraClasses="text-gray-syn4 break-words">{description}</B3>
       </div>
     </>
   );
@@ -66,14 +66,15 @@ export const NFTPreviewer: React.FC<Props> = ({
     <>
       {!mediaSource && !name && !description ? (
         <div
-          className={`flex ${maxHeight} ${maxWidth} flex-col md:ml-0 mx-auto my-auto text-gray-syn4 w-full h-full items-center justify-center`}
+          className={`flex h-120 ${maxHeight} ${maxWidth} flex-col md:ml-0 mx-auto my-auto text-gray-syn4 w-full items-center justify-center`}
         >
           <div className="border w-2 h-2 border-gray-syn4 mb-2"></div>
           <L2 weightClassOverride={'font-normal'}>{'Waiting...'}</L2>
         </div>
       ) : (
         <div
-          className={`${maxHeight} ${maxWidth} mx-auto md:ml-0 border border-gray-syn6 rounded-2.5xl overflow-hidden ${customClasses}`}
+          className={`${maxWidth} h-full mx-auto md:ml-0 border border-gray-syn6 rounded-2.5xl overflow-hidden
+           ${customClasses}`}
         >
           {/* Media */}
           <div
@@ -301,7 +302,7 @@ export const NFTPreviewer: React.FC<Props> = ({
                     loading?.description !== true
                       ? 'opacity-100 max-h-screen duration-500'
                       : 'opacity-0 max-h-0'
-                  } overflow-hidden transition-all`}
+                  } transition-all`}
                 >
                   {descriptionText}
                 </div>

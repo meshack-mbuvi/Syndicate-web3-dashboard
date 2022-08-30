@@ -128,7 +128,7 @@ export const DesignRightPanel: FC<{ customId?: string }> = ({ customId }) => {
       name={name}
       symbol={'✺' + symbol}
       customClasses={
-        'w-full bg-black relative transform left-1/2 -translate-x-1/2 mt-16'
+        'w-full bg-black relative transform left-1/2 -translate-x-1/2 mt-16 w-355 max-w-355'
       }
     />
   );

@@ -203,6 +203,7 @@ module.exports = {
       minHeight: {
         38.25: '9.5625rem',
         250: '15.625rem',
+        355: '22.188rem',
         363: '22.688rem'
       },
       backgroundOpacity: {

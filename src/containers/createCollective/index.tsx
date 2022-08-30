@@ -1,4 +1,7 @@
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transitionBetweenChildren';
 import {
   useCreateState,
   useUpdateState
@@ -13,9 +16,6 @@ import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
 import CreateCollectiveDesign, { DesignRightPanel } from './design';
 import CreateCollectiveReview, { ReviewRightPanel } from './review';
 import { CreateCollectiveSuccess, SuccessRightPanel } from './success';
-import TransitionBetweenChildren, {
-  TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -157,7 +157,7 @@ const CreateCollectiveContainer: FC = () => {
                 }`}
               >
                 <div
-                  className={`transition-all w-full h-120 duration-500 relative ${
+                  className={`transition-all w-full min-h-120 duration-500 relative ${
                     activeIndex === 0 ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
