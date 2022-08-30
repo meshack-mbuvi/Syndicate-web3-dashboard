@@ -128,7 +128,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             <DesignRightPanel customId={'design-left-panel'} />
           </div>
         </div>
-        <div className="md:mt-10">
+        <div className="md:mt-10 pb-20">
           <button
             className={`${
               isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'

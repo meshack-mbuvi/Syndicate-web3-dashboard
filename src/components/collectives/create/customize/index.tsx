@@ -323,7 +323,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
       </div>
 
       {/* Continue button */}
-      <div className="mt-10">
+      <div className="mt-10 pb-20">
         <button
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
@@ -333,7 +333,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           Continue
         </button>
         <B3 extraClasses="text-gray-syn4 my-2">
-          All field are modifiable later via an on-chain transaction with gas.
+          All fields are modifiable later via an on-chain transaction with gas.
         </B3>
       </div>
     </div>
