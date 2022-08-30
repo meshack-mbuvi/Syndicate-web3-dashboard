@@ -139,7 +139,7 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
         closeModal={handleCloseErrorModal}
         showCloseButton={false}
         outsideOnClick={true}
-        customWidth="w-11/12 md:w-1/2 lg:w-1/3"
+        customWidth="w-11/12 md:w-1/2 xl:w-1/3"
         customClassName="p-0"
         showHeader={false}
       >
