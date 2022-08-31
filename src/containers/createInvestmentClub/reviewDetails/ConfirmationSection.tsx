@@ -55,7 +55,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
               onClick={handleEditMembership}
             >
               <div className="mt-2 text-base text-white w-full">
-                {tokenGateOption === TokenGateOption.UNRESTRICTED ? (
+                {tokenGateOption === TokenGateOption.RESTRICTED ? (
                   <p>{'Anyone with the link'}</p>
                 ) : (
                   <>
