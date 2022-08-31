@@ -48,11 +48,11 @@ const SharedItem: React.FC<IProps> = ({
 
   return (
     <div
-      className={`flex sm:flex-col justify-between flex-row space-y-2 sm:space-y-0 items-center align-middle`}
+      className={`flex sm:flex-col justify-between flex-row -space-x-2 py-1 items-left align-middle`}
       onMouseEnter={toggleDropdown}
       onMouseLeave={toggleDropdown}
     >
-      <div className="flex align-middle">
+      <div className="flex align-middle ml-4 sm:ml-0">
         <B4 extraClasses="text-gray-syn4 align-middle">{title}</B4>
       </div>
       <div
