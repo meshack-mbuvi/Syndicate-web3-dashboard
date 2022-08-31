@@ -51,18 +51,13 @@ const useClubTokenMembers = () => {
     }
 
     const clubMembers = members.map(
-      ({
-        depositAmount,
-        ownershipShare,
-        tokens,
-        member: { memberAddress }
-      }) => {
+      ({ depositAmount, tokens, member: { memberAddress } }) => {
+        const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
         return {
           memberAddress,
-          // this is a percentage conversion with a base of 10000, 1% == 10000
-          ownershipShare: parseInt(ownershipShare) / 10000,
+          ownershipShare: (100 * clubTokens) / totalSupply,
           symbol,
-          clubTokens: getWeiAmount(web3, tokens, tokenDecimals, false),
+          clubTokens,
           totalSupply: totalSupply,
           depositAmount: getWeiAmount(
             web3,

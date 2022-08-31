@@ -101,16 +101,23 @@ export function useAccountTokens(): {
         if (clubMemberData) {
           const {
             depositAmount = 0,
-            ownershipShare = 0,
-            tokens = 0
+            tokens = 0,
+            syndicateDAO: { totalSupply = 0 }
           } = clubMemberData;
 
-          setAccountTokens(getWeiAmount(web3, tokens, tokenDecimals, false));
+          const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
+          const clubTotalSupply = getWeiAmount(
+            web3,
+            totalSupply,
+            tokenDecimals,
+            false
+          );
+
+          setAccountTokens(clubTokens);
           setMemberDeposits(
             getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
           );
-          // this is a percentage conversion with a base of 10000, 1% == 10000
-          setMemberOwnership(`${+ownershipShare / 10000}`);
+          setMemberOwnership(`${(100 * clubTokens) / clubTotalSupply}`);
         } else {
           resetMemberStats();
         }
