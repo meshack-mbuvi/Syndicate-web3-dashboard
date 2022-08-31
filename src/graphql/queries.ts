@@ -26,12 +26,10 @@ export const CLUBS_HAVE_INVESTED = gql`
     members(where: $where) {
       memberAddress
       syndicateDAOs {
-        ownershipShare
         depositAmount
         syndicateDAO {
           ownerAddress
           members {
-            ownershipShare
             depositAmount
             tokens
             member {
@@ -55,7 +53,6 @@ export const CLUB_TOKEN_MEMBERS = gql`
   query getClubMembers($where: SyndicateDAO_filter) {
     syndicateDAOs(where: $where) {
       members {
-        ownershipShare
         depositAmount
         tokens
         member {
@@ -189,7 +186,9 @@ export const CLUB_MEMBER_QUERY = gql`
       syndicateDAOs(where: $syndicateDaOsWhere2) {
         tokens
         depositAmount
-        ownershipShare
+        syndicateDAO {
+          totalSupply
+        }
       }
     }
   }
