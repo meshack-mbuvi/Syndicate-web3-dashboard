@@ -45,17 +45,23 @@ const useClubTokenMembers = () => {
     skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 
-  const processMembers = (members) => {
-    if (!members || !members.length) {
+  const processMembers = (syndicate) => {
+    if (!syndicate || !syndicate?.members || !syndicate.members.length) {
       return;
     }
+    const clubTotalSupply = getWeiAmount(
+      web3,
+      syndicate.totalSupply,
+      tokenDecimals,
+      false
+    );
 
-    const clubMembers = members.map(
+    const clubMembers = syndicate.members.map(
       ({ depositAmount, tokens, member: { memberAddress } }) => {
         const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
         return {
           memberAddress,
-          ownershipShare: (100 * clubTokens) / totalSupply,
+          ownershipShare: (100 * clubTokens) / clubTotalSupply,
           symbol,
           clubTokens,
           totalSupply: totalSupply,
@@ -93,11 +99,11 @@ const useClubTokenMembers = () => {
       // remove mock data from the redux store
       dispatch(clearClubMembers());
 
-      processMembers(data?.syndicateDAOs?.[0]?.members);
+      processMembers(data?.syndicateDAOs?.[0]);
       dispatch(setLoadingClubMembers(false));
     }
   }, [
-    JSON.stringify(data?.syndicateDAOs?.[0]?.members),
+    JSON.stringify(data?.syndicateDAOs?.[0]),
     loadingClubMembers,
     clubAddress,
     account,
