@@ -3,7 +3,6 @@ import IconInfo from '@/components/icons/info';
 import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useOutsideAlerter } from '@/hooks/utils/useOutsideAlerter';
 import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
@@ -15,14 +14,16 @@ import {
 import { isDev } from '@/utils/environment';
 import { Popover, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
   const {
     web3Reducer: {
       web3: { web3: web3Instance, account, activeNetwork },
-      showNetworkDropdown
+      showNetworkDropdown,
+      showWalletDropdown
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -120,30 +121,29 @@ const NetworkMenuDropDown: FC = () => {
     dispatch(setShowWalletDropdownMenu(false));
   };
 
-  const ref = useRef(null);
-
   const refId = 'networkButton';
-  useOutsideAlerter(ref, (event) => {
-    /// workaround for connect button not being clickable
-    if (event.target?.id == 'connectWallet' || !account) {
-      // dispatch(setShowNetworkDropdownMenu(false));
 
-      return event;
-    }
-
+  const closeDropdown = (event) => {
     if (
-      event.target?.offsetParent?.id !== refId ||
-      event.target?.offsetParent?.id !== ''
+      event.target?.id == '' &&
+      event.target?.offsetParent?.id !== 'accountButton'
     ) {
       dispatch(setShowNetworkDropdownMenu(false));
-      return event;
-    } else if (event.target?.offsetParent?.id == refId) {
-      toggleDropdown();
+      if (showWalletDropdown) {
+        dispatch(setShowWalletDropdownMenu(false));
+      }
       return event;
     }
 
+    if (event.target?.id !== refId) {
+      dispatch(setShowNetworkDropdownMenu(false));
+    } else if (event.target?.offsetParent?.id == 'accountButton') {
+      dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+    }
     return event;
-  });
+  };
+
+  const ref = useDetectClickOutside({ onTriggered: closeDropdown });
 
   return (
     <>
@@ -192,6 +192,7 @@ const NetworkMenuDropDown: FC = () => {
                 className="relative"
               >
                 <Popover.Panel
+                  static
                   as="ul"
                   className="absolute sm:right-0 w-64 mt-10 sm:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
                 >

@@ -9,16 +9,17 @@ import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/dem
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useOutsideAlerter } from '@/hooks/utils/useOutsideAlerter';
 import {
   setShowNetworkDropdownMenu,
   setShowWalletDropdownMenu
 } from '@/state/wallet/actions';
 import { formatAddress } from '@/utils/formatAddress';
 import { Popover, Transition } from '@headlessui/react';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
+
+import { useDetectClickOutside } from 'react-detect-click-outside';
 
 interface IAddressMenuDropDown {
   Web3: any;
@@ -31,8 +32,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
   const { width } = useWindowSize();
-
-  const ref = useRef(null);
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [nativeBalance, setNativeBalance] = useState('');
@@ -62,20 +61,23 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   };
 
   const refId = 'accountButton';
-  useOutsideAlerter(ref, (event) => {
-    if (!account) return event;
 
+  const closeDropdown = (event) => {
     if (
-      event.target.offsetParent.id !== refId ||
-      event.target.offsetParent.id !== ''
-    ) {
+      !account ||
+      event.target?.id == refId ||
+      event.target?.offsetParent?.id == refId
+    )
+      return event;
+    if (event.target?.id !== refId || event.target?.id == '') {
       dispatch(setShowWalletDropdownMenu(false));
       return event;
-    } else if (event.target.offsetParent.id == refId) {
-      toggleDropdown();
-      return event;
     }
-  });
+
+    return event;
+  };
+
+  const ref = useDetectClickOutside({ onTriggered: closeDropdown });
 
   return (
     <>
@@ -108,6 +110,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     name={data?.name}
                     image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
                     layout={AddressLayout.ONE_LINE}
+                    id={refId}
                   />
                 </div>
                 <div className="flex items-center ml-3">

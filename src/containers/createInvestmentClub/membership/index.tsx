@@ -1,19 +1,18 @@
 import { Callout, CalloutType } from '@/components/callout';
 import Fade from '@/components/Fade';
+import IconLink from '@/components/icons/link';
+import IconToken from '@/components/icons/token';
 import PillTabsAndContent from '@/components/pillTabs/tabsAndContent';
+import { B3, B4 } from '@/components/typography';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { AppState } from '@/state';
+import { TokenGateOption } from '@/state/createInvestmentClub/types';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import AllowedMembers from './allowedMembers';
 import InviteMembers from './inviteMembers';
-import { TokenGateOption } from '@/state/createInvestmentClub/types';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
-import IconShield from '@/components/icons/shield';
-import { B3, B4 } from '@/components/typography';
-import IconToken from '@/components/icons/token';
-import IconLink from '@/components/icons/link';
 
 const Membership: React.FC<{ className }> = ({ className }) => {
   const {
