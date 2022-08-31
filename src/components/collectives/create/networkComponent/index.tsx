@@ -80,8 +80,10 @@ const SharedItem: React.FC<IProps> = ({
           </div>
         ) : null}
 
-        <div className="flex space-x-2 text-right">
-          <B3 extraClasses="flex text-gray-syn2 wordwrap">{label}</B3>
+        <div className="flex space-x-2 text-right" id={id}>
+          <B3 extraClasses="flex text-gray-syn2 wordwrap" id={id}>
+            {label}
+          </B3>
           <div
             className={`flex items-center w-4 ${
               isClickable ? 'cursor-pointer' : ''
@@ -130,10 +132,12 @@ const NetworkComponent: React.FC<NetworkType> = ({
 
   const handleShowNetworkDropdown = () => {
     dispatch(setShowNetworkDropdownMenu(!showNetworkDropdown));
+    dispatch(setShowWalletDropdownMenu(false));
   };
 
   const handleShowWalletDropdown = () => {
     dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+    dispatch(setShowNetworkDropdownMenu(false));
   };
 
   return (

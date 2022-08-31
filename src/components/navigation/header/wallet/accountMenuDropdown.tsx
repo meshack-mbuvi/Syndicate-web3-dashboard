@@ -9,10 +9,14 @@ import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/dem
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useWindowSize from '@/hooks/useWindowSize';
-import { setShowWalletDropdownMenu } from '@/state/wallet/actions';
+import { useOutsideAlerter } from '@/hooks/utils/useOutsideAlerter';
+import {
+  setShowNetworkDropdownMenu,
+  setShowWalletDropdownMenu
+} from '@/state/wallet/actions';
 import { formatAddress } from '@/utils/formatAddress';
 import { Popover, Transition } from '@headlessui/react';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 
@@ -27,6 +31,8 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
   const { width } = useWindowSize();
+
+  const ref = useRef(null);
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [nativeBalance, setNativeBalance] = useState('');
@@ -52,19 +58,38 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 
   const toggleDropdown = () => {
     dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+    dispatch(setShowNetworkDropdownMenu(false));
   };
+
+  const refId = 'accountButton';
+  useOutsideAlerter(ref, (event) => {
+    if (!account) return event;
+
+    if (
+      event.target.offsetParent.id !== refId ||
+      event.target.offsetParent.id !== ''
+    ) {
+      dispatch(setShowWalletDropdownMenu(false));
+      return event;
+    } else if (event.target.offsetParent.id == refId) {
+      toggleDropdown();
+      return event;
+    }
+  });
 
   return (
     <>
       <Popover as="div" className="relative">
-        {({ open }) => {
+        {() => {
           return (
             <>
-              <Popover.Button
+              <button
                 className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 md:pl-3 pr-4 py-3 sm:py-1 items-center ${
                   showWalletDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
+                ref={ref}
+                id={refId}
               >
                 <img
                   width={24}
@@ -92,9 +117,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     alt="down-arrow"
                   />
                 </div>
-              </Popover.Button>
+              </button>
               <Transition
-                show={showWalletDropdown || open}
+                show={showWalletDropdown}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
@@ -104,6 +129,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                 className="relative"
               >
                 <Popover.Panel
+                  static
                   as="ul"
                   className="absolute sm:right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
                 >

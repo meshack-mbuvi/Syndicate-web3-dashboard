@@ -3,15 +3,19 @@ import IconInfo from '@/components/icons/info';
 import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useWindowSize from '@/hooks/useWindowSize';
+import { useOutsideAlerter } from '@/hooks/utils/useOutsideAlerter';
 import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
-import { setShowNetworkDropdownMenu } from '@/state/wallet/actions';
+import {
+  setShowNetworkDropdownMenu,
+  setShowWalletDropdownMenu
+} from '@/state/wallet/actions';
 import { isDev } from '@/utils/environment';
 import { Popover, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
@@ -113,19 +117,47 @@ const NetworkMenuDropDown: FC = () => {
 
   const toggleDropdown = () => {
     dispatch(setShowNetworkDropdownMenu(!showNetworkDropdown));
+    dispatch(setShowWalletDropdownMenu(false));
   };
+
+  const ref = useRef(null);
+
+  const refId = 'networkButton';
+  useOutsideAlerter(ref, (event) => {
+    /// workaround for connect button not being clickable
+    if (event.target?.id == 'connectWallet' || !account) {
+      // dispatch(setShowNetworkDropdownMenu(false));
+
+      return event;
+    }
+
+    if (
+      event.target?.offsetParent?.id !== refId ||
+      event.target?.offsetParent?.id !== ''
+    ) {
+      dispatch(setShowNetworkDropdownMenu(false));
+      return event;
+    } else if (event.target?.offsetParent?.id == refId) {
+      toggleDropdown();
+      return event;
+    }
+
+    return event;
+  });
 
   return (
     <>
       <Popover as="div" className="relative">
-        {({ open }) => {
+        {() => {
           return (
             <>
-              <Popover.Button
+              <button
                 className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-3 py-2 sm:py-1 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
+                id={refId}
+                ref={ref}
               >
                 <img
                   width={24}
@@ -148,9 +180,9 @@ const NetworkMenuDropDown: FC = () => {
                     alt="down-arrow"
                   />
                 </div>
-              </Popover.Button>
+              </button>
               <Transition
-                show={showNetworkDropdown || open}
+                show={showNetworkDropdown}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
