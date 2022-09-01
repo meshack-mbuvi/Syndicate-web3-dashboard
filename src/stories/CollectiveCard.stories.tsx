@@ -1,8 +1,25 @@
 import { CollectiveCard } from '@/components/collectives/card';
 import { CollectiveCardType } from '@/state/collectiveDetails/types';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// react-query
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5000 } }
+});
 
 export default {
-  title: '3. Molecules/Collectives/Card'
+  title: '3. Molecules/Collectives/Card',
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      </QueryClientProvider>
+    )
+  ]
 };
 
 const Template = (args) => {

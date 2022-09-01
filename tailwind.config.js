@@ -201,6 +201,7 @@ module.exports = {
         '2screen': '200vh'
       },
       minHeight: {
+        29: '7.25rem',
         38.25: '9.5625rem',
         250: '15.625rem',
         355: '22.188rem',

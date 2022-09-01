@@ -130,7 +130,7 @@ const CreateCollectiveContainer: FC = () => {
                 <SuccessRightPanel
                   extraClasses={`${
                     activeIndex === 3
-                      ? 'opacity-100 animate-move-in-brief'
+                      ? 'opacity-100 md:animate-move-in-brief'
                       : 'opacity-0'
                   } transition-all delay-1000 duration-800`}
                 />
@@ -139,7 +139,7 @@ const CreateCollectiveContainer: FC = () => {
           </div>
         }
         rightColumnComponent={
-          <div className="w-full relative pt-4 h-full">
+          <div className="w-full relative pt-4 h-80 md:h-full">
             {/* Shrinking square */}
             <div
               className={`absolute z-10 top-0 bg-opacity-50 w-full border perfect-square transition-all duration-800 transform left-1/2 -translate-x-1/2 ${

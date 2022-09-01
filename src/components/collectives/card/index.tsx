@@ -75,6 +75,7 @@ export const CollectiveCard: React.FC<Props> = ({
           height="24"
           borderRadius="rounded-xl"
           margin="my-0"
+          customClass="flex-shrink-0"
         />
       )}
       {nftMetadata?.animation_url && (
@@ -84,7 +85,7 @@ export const CollectiveCard: React.FC<Props> = ({
           playsInline={true}
           loop
           muted={true}
-          className={`${'object-cover'} rounded-xl w-24 h-24 bg-gray-syn6`}
+          className={`${'object-cover'} rounded-xl flex-shrink-0 w-24 h-24 bg-gray-syn6`}
         >
           <source
             src={`${ipfsGateway}/${nftMetadata?.animation_url.replace(
@@ -97,7 +98,7 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
       {nftMetadata?.image && (
         <div
-          className="rounded-xl w-24 h-24 bg-gray-syn6"
+          className="rounded-xl w-24 h-24 flex-shrink-0 bg-gray-syn6"
           style={{
             backgroundImage: `url(${ipfsGateway}/${nftMetadata?.image.replace(
               'ipfs://',
