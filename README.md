@@ -2,6 +2,16 @@
 
 This is Syndicate Protocol's official web3 dashboard.
 
+## Netlify Status
+
+Prod
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c29f01b4-2e04-4e73-9026-03ed3b4d9355/deploy-status)](https://app.netlify.com/sites/app-syndicate-io/deploys)
+
+Staging
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f521541e-bc47-48ea-bfa0-18db794f417f/deploy-status)](https://app.netlify.com/sites/staging-app-syndicate-io/deploys)
+
 ## Get started
 
 Clone this repository
