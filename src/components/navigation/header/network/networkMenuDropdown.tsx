@@ -126,7 +126,8 @@ const NetworkMenuDropDown: FC = () => {
   const closeDropdown = (event) => {
     if (
       event.target?.id == '' &&
-      event.target?.offsetParent?.id !== 'accountButton'
+      event.target?.offsetParent?.id !== 'accountButton' &&
+      event.target?.parentElement?.id !== 'accountButton'
     ) {
       dispatch(setShowNetworkDropdownMenu(false));
       if (showWalletDropdown) {
@@ -137,7 +138,10 @@ const NetworkMenuDropDown: FC = () => {
 
     if (event.target?.id !== refId) {
       dispatch(setShowNetworkDropdownMenu(false));
-    } else if (event.target?.offsetParent?.id == 'accountButton') {
+    } else if (
+      event.target?.offsetParent?.id == 'accountButton' ||
+      event.target?.parentElement?.id == 'accountButton'
+    ) {
       dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
     }
     return event;
