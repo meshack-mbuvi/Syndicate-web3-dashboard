@@ -28,10 +28,9 @@ const ClaimPass: React.FC = () => {
         handleScrolledToBottom();
       }
     };
-    scrollAgreementRef.current.addEventListener('scroll', onScroll);
+    scrollAgreementRef?.current?.addEventListener('scroll', onScroll);
     return () =>
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      scrollAgreementRef.current.removeEventListener('scroll', onScroll);
+      scrollAgreementRef?.current?.removeEventListener('scroll', onScroll);
   }, [scrollAgreementRef.current]);
 
   return (
