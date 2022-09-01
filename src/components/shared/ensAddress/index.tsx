@@ -53,13 +53,13 @@ export const AddressWithENS: React.FC<Props> = ({
         }}
       >
         {/* Top line */}
-        <B2 extraClasses="mb-0">
+        <B2 extraClasses="mb-0" {...rest}>
           <TransitionBetweenChildren
             visibleChildIndex={name ? 0 : address ? 1 : -1}
             transitionDurationClassOverride="duration-300"
           >
             <div>{name}</div>
-            <div>
+            <div {...rest}>
               <span className="text-gray-syn4">0x</span>
               {address && (
                 <span {...rest}>
