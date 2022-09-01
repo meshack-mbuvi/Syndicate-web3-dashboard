@@ -33,5 +33,6 @@ const Template = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   isInErrorState: false,
-  helperText: 'Lorum ipsum dolor'
+  helperText: 'Lorum ipsum dolor',
+  ruleErrors: []
 };

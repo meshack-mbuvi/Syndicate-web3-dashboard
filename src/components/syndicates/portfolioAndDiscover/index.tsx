@@ -131,8 +131,7 @@ const PortfolioAndDiscover: React.FC = () => {
       !memberCollectives.length &&
       !adminCollectives.length &&
       !invalidEthereumNetwork &&
-      !isLoading &&
-      collectivesIsReady) ||
+      !isLoading) ||
     !account
   ) {
     return (
@@ -143,7 +142,9 @@ const PortfolioAndDiscover: React.FC = () => {
         <CreateClubOrCollective
           {...{
             emptyStateType:
-              isPolygon || !account ? EmptyStateType.CLUBS : EmptyStateType.ALL
+              isPolygon || !collectivesIsReady
+                ? EmptyStateType.CLUBS
+                : EmptyStateType.ALL
           }}
         />
       </div>

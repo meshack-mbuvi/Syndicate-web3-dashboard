@@ -35,6 +35,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
       <div
         className={`relative ${heightClass} ${widthClass} overflow-hidden select-none`}
       >
+        {/* tsParticles: Copyright 2020 Matteo Bruni, released under MIT License | https://github.com/matteobruni/tsparticles/blob/main/LICENSE */}
         <Particles
           id={
             customId
@@ -109,8 +110,8 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
                 bounce: false,
                 attract: {
                   enable: isArtwork ? false : true,
-                  rotateX: 1763.753266952075,
-                  rotateY: 1603.4120608655228
+                  rotateX: isArtwork ? 1763.753266952075 : 17630.753266952075,
+                  rotateY: isArtwork ? 1603.4120608655228 : 16030.4120608655228
                 }
               }
             },

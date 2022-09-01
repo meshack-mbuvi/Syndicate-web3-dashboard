@@ -133,15 +133,15 @@ const createCollectiveSlice = createSlice({
       };
     },
     setCollectiveCreationReceipt(state, action: PayloadAction<any>) {
-      state.creationStatus = {
-        ...initialState.creationStatus,
-        creationReceipt: action.payload
-      };
+      state.creationReceipt = action.payload;
     },
 
     // reset
     partialCollectiveCreationStateReset(state) {
-      return { ...initialState, creationStatus: state.creationStatus };
+      return {
+        ...initialState,
+        creationReceipt: state.creationReceipt
+      };
     },
     resetCollectiveCreationState(state) {
       Object.assign(state, initialState);

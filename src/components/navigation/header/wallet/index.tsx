@@ -34,6 +34,7 @@ export const Wallet: React.FC = () => {
     <button
       onClick={connectWallet}
       className={`bg-white text-black flex relative rounded-full px-5 py-1 items-center h-10 primary-CTA`}
+      id="connectWallet"
     >
       Connect
     </button>

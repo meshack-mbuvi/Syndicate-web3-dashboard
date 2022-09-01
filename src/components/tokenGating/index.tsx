@@ -32,7 +32,7 @@ export const TokenLogicBuilder: React.FC<Props> = ({
   ruleErrors
 }) => {
   return (
-    <div className={`${customClasses} space-y-4`} style={{ minWidth: '30rem' }}>
+    <div className={`${customClasses} space-y-4`}>
       <div className="text-gray-syn4 text-sm">
         To deposit into this club, members must hold
       </div>

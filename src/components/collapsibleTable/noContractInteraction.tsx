@@ -71,7 +71,7 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
   const dispatch = useDispatch();
 
   const updateMaxHeight = () => {
-    if (rowsRef) {
+    if (isNotInteractableExpanded && rowsRef) {
       const rowsHeight = rowsRef.current
         ? rowsRef.current.getBoundingClientRect().height
         : 0;

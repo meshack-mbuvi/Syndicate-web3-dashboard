@@ -2,6 +2,8 @@ import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import { FinalStateModal } from '@/components/shared/transactionStates';
 import Head from '@/components/syndicates/shared/HeaderTitle';
+import { useTailwindScreenWidth } from '@/helpers/layout';
+import useWindowSize from '@/hooks/useWindowSize';
 import { FC } from 'react';
 
 export enum TwoColumnLayoutType {
@@ -50,6 +52,9 @@ const TwoColumnLayout: FC<{
   const leftColumnStyles = `${baseColumnStyles}`;
   const rightColumnStyles = `${baseColumnStyles} align-middle justify-center md:justify-start content-center`;
   const spaceBetweenAmount = 18;
+  const tailwindScreenWidthMd = useTailwindScreenWidth('md').width;
+  const windowWidth = useWindowSize().width;
+  const displayMobileLayout = windowWidth < tailwindScreenWidthMd;
   return (
     <>
       {type === TwoColumnLayoutType.DEFAULT && (
@@ -125,16 +130,26 @@ const TwoColumnLayout: FC<{
                 <div className="md:flex justify-around space-y-24 md:space-y-0 md:space-x-18 h-full items-center">
                   <div
                     className={`${
-                      flipColumns ? rightColumnStyles : leftColumnStyles
-                    } ${flipColumns ? 'push-left-column-18' : 'translate-x-0'}`}
+                      flipColumns && !displayMobileLayout
+                        ? rightColumnStyles
+                        : leftColumnStyles
+                    } ${
+                      flipColumns && !displayMobileLayout
+                        ? `push-left-column-${spaceBetweenAmount}`
+                        : 'translate-x-0'
+                    }`}
                   >
                     {leftColumnComponent}
                   </div>
                   <div
                     className={`${
-                      flipColumns ? leftColumnStyles : rightColumnStyles
+                      flipColumns && !displayMobileLayout
+                        ? leftColumnStyles
+                        : rightColumnStyles
                     } ${
-                      flipColumns ? 'push-right-column-18' : 'translate-x-0'
+                      flipColumns && !displayMobileLayout
+                        ? `push-right-column-${spaceBetweenAmount}`
+                        : 'translate-x-0'
                     }`}
                   >
                     {rightColumnComponent}

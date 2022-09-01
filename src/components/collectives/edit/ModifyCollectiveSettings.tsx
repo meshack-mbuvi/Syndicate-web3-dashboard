@@ -186,11 +186,17 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   useEffect(() => {
     if (!nftMetadata) return;
-    setArtworkUrlState(
-      `${
-        process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
-      }/${nftMetadata?.image.replace('ipfs://', '')}`
-    );
+    nftMetadata?.image == null
+      ? setArtworkUrlState(
+          `${
+            process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+          }/${nftMetadata?.animation_url.replace('ipfs://', '')}`
+        )
+      : setArtworkUrlState(
+          `${
+            process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+          }/${nftMetadata?.image.replace('ipfs://', '')}`
+        );
     setDescription(nftMetadata?.description);
   }, [nftMetadata]);
 
@@ -848,6 +854,13 @@ const ModifyCollectiveSettings: React.FC = () => {
                         mediaSource={
                           artworkUrlState && artworkUrlState !== ''
                             ? artworkUrlState
+                            : nftMetadata?.image === null
+                            ? `${
+                                process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                              }/${nftMetadata?.animation_url.replace(
+                                'ipfs://',
+                                ''
+                              )}`
                             : `${
                                 process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
                               }/${nftMetadata?.image.replace('ipfs://', '')}`
@@ -930,7 +943,7 @@ const ModifyCollectiveSettings: React.FC = () => {
               title: 'Price per NFT',
               value: (
                 <div className="flex space-x-2">
-                  <img src="/images/chains/ethereum.svg" alt="" />
+                  <img src={activeNetwork.nativeCurrency.logo} alt="" />
                   <span>
                     {settingsMintPrice}&nbsp;
                     {activeNetwork.nativeCurrency.symbol}

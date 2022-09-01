@@ -7,18 +7,23 @@ import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
-import { setShowNetworkDropdownMenu } from '@/state/wallet/actions';
+import {
+  setShowNetworkDropdownMenu,
+  setShowWalletDropdownMenu
+} from '@/state/wallet/actions';
 import { isDev } from '@/utils/environment';
 import { Popover, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
   const {
     web3Reducer: {
       web3: { web3: web3Instance, account, activeNetwork },
-      showNetworkDropdown
+      showNetworkDropdown,
+      showWalletDropdown
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -113,19 +118,50 @@ const NetworkMenuDropDown: FC = () => {
 
   const toggleDropdown = () => {
     dispatch(setShowNetworkDropdownMenu(!showNetworkDropdown));
+    dispatch(setShowWalletDropdownMenu(false));
   };
+
+  const refId = 'networkButton';
+
+  const closeDropdown = (event) => {
+    if (
+      event.target?.id == '' &&
+      event.target?.offsetParent?.id !== 'accountButton' &&
+      event.target?.parentElement?.id !== 'accountButton'
+    ) {
+      dispatch(setShowNetworkDropdownMenu(false));
+      if (showWalletDropdown) {
+        dispatch(setShowWalletDropdownMenu(false));
+      }
+      return event;
+    }
+
+    if (event.target?.id !== refId) {
+      dispatch(setShowNetworkDropdownMenu(false));
+    } else if (
+      event.target?.offsetParent?.id == 'accountButton' ||
+      event.target?.parentElement?.id == 'accountButton'
+    ) {
+      dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+    }
+    return event;
+  };
+
+  const ref = useDetectClickOutside({ onTriggered: closeDropdown });
 
   return (
     <>
       <Popover as="div" className="relative">
-        {({ open }) => {
+        {() => {
           return (
             <>
-              <Popover.Button
+              <button
                 className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-3 py-2 sm:py-1 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
+                id={refId}
+                ref={ref}
               >
                 <img
                   width={24}
@@ -148,9 +184,9 @@ const NetworkMenuDropDown: FC = () => {
                     alt="down-arrow"
                   />
                 </div>
-              </Popover.Button>
+              </button>
               <Transition
-                show={showNetworkDropdown || open}
+                show={showNetworkDropdown}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
@@ -160,6 +196,7 @@ const NetworkMenuDropDown: FC = () => {
                 className="relative"
               >
                 <Popover.Panel
+                  static
                   as="ul"
                   className="absolute sm:right-0 w-64 mt-10 sm:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
                 >

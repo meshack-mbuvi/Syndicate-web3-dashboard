@@ -37,7 +37,9 @@ const useSubmitToContracts = () => {
     EpochCloseTime,
     maxSupply,
     transferrable,
-    creationStatus
+    creationStatus,
+    artworkType,
+    artworkUrl
   } = useCreateState();
 
   const collectiveParams = useMemo<ICollectiveParams>(() => {
@@ -88,18 +90,19 @@ const useSubmitToContracts = () => {
   };
 
   const onTxReceipt = (receipt: any) => {
-    dispatch(setCollectiveTransactionSuccess(true));
-
     if (receipt?.events?.ERC721CollectiveCreated?.returnValues?.collective) {
       dispatch(
         setCollectiveCreationReceipt({
           collective:
             receipt.events.ERC721CollectiveCreated.returnValues.collective,
           name: receipt.events.ERC721CollectiveCreated.returnValues.name,
-          symbol: receipt.events.ERC721CollectiveCreated.returnValues.symbol
+          symbol: receipt.events.ERC721CollectiveCreated.returnValues.symbol,
+          artworkType,
+          artworkUrl
         })
       );
     }
+    dispatch(setCollectiveTransactionSuccess(true));
   };
 
   return {

@@ -22,6 +22,7 @@ import TokenSelectModal, {
   TokenModalVariant
 } from '@/components/tokenSelect/TokenSelectModal';
 import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
+import { B2, B3, B4 } from '@/components/typography';
 
 const AllowedMembers: React.FC = () => {
   const {
@@ -81,22 +82,61 @@ const AllowedMembers: React.FC = () => {
         Into investment clubs, in exchange for ✺{investmentClubSymbol} community
         tokens
       </div>
-      <DetailedTile
-        activeIndex={active}
-        onClick={setActive}
-        options={[
-          {
-            icon: '/images/collectibles-gray.svg',
-            subTitle: 'Token-gated',
-            title: 'Holders of certain NFTs/tokens'
-          },
-          {
-            icon: '/images/link-chain-gray.svg',
-            subTitle: 'Unrestricted',
-            title: 'Anyone with the link'
-          }
-        ]}
-      />
+
+      {/* Select who is allowed to deposit? */}
+      {/* TODO: replace with fixed DetailedTile component */}
+      <div className="flex text-center border border-gray-syn6 rounded-md min-h-32 min-h-29">
+        <button
+          className={`w-1/2 p-4 rounded-md transition-all ${
+            active === TokenGateOption.RESTRICTED
+              ? 'ring-blue ring-1'
+              : 'ring-transparent ring-0'
+          }`}
+          onClick={() => {
+            setActive(TokenGateOption.RESTRICTED);
+          }}
+        >
+          <div className="h-full space-y-3">
+            <div className="flex-grow h-8">
+              <img
+                src="/images/collectibles-gray.svg"
+                alt="Holders of NFTs/tokens"
+                className="h-full mx-auto"
+              />
+            </div>
+            <div>
+              <B3 extraClasses="mb-0.5">Holders of certain NFTs/tokens</B3>
+              <B4 extraClasses="text-gray-syn4">
+                Holders of certain NFTs/tokens
+              </B4>
+            </div>
+          </div>
+        </button>
+        <button
+          className={`w-1/2 p-4 rounded-md transition-all ${
+            active === TokenGateOption.UNRESTRICTED
+              ? 'ring-blue ring-1'
+              : 'ring-transparent ring-0'
+          }`}
+          onClick={() => {
+            setActive(TokenGateOption.UNRESTRICTED);
+          }}
+        >
+          <div className="h-full space-y-3">
+            <div className="flex-grow h-8">
+              <img
+                src="/images/link-chain-gray.svg"
+                alt="Anyone"
+                className="h-full mx-auto"
+              />
+            </div>
+            <div>
+              <B3 extraClasses="mb-0.5">Anyone with the link</B3>
+              <B4 extraClasses="text-gray-syn4">Anyone with the link</B4>
+            </div>
+          </div>
+        </button>
+      </div>
 
       {active === TokenGateOption.RESTRICTED && (
         <div className="pt-8 pb-2">

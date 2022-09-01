@@ -54,11 +54,11 @@ export const CONTRACT_ADDRESSES = Object.freeze({
 
     // Collectives
     ERC721Collective: '0xc11960ebf2f6a894f728e40ce47ae2ec04a4cf0b',
-    ERC721CollectiveFactory: '0xe16d032f1cf5974cf8d1985278b464ed91220733',
+    ERC721CollectiveFactory: '0x3140faab174f880703d75c3fca538c2f190cc58e',
     FixedRenderer: '0x6c4f220416751503e81e38deee9899082a803275',
     GuardMixinManager: '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
     EthPriceMintModule: '0x89583ad6aba72c7c6de70ee9a290884abc4000c3',
-    TimeRequirements: '0xea9608d3437802aed0cec410c6d96c53b541945a',
+    TimeRequirements: '0x07ccfbb36468cec5d64c1e3582546a6b5b52732d',
     MaxPerMemberERC721: '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
     MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f',
     GuardAlwaysAllow: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057',

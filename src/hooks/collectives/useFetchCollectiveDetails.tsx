@@ -42,11 +42,7 @@ const useFetchCollectiveDetails = (
       }
     },
     skip:
-      !collectiveAddress ||
-      !account ||
-      !activeNetwork.chainId ||
-      skipQuery ||
-      isDemoMode,
+      !collectiveAddress || !activeNetwork.chainId || skipQuery || isDemoMode,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
@@ -169,8 +165,6 @@ const useFetchCollectiveDetails = (
               mintEndTime = String(Math.ceil(currentTime / 1000));
               maxSupply = maxTotalSupply;
               return;
-            } else {
-              collectiveCardType = CollectiveCardType.OPEN_UNTIL_CLOSED;
             }
           });
 

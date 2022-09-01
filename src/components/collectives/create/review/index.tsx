@@ -76,7 +76,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
   isSubmitButtonActive
 }) => {
   const spaceBetweenTitleAndSubtitleStyles =
-    'px-5 py-4 -my-4 -mx-5 mt-4 hover:bg-gray-syn8 rounded-2xl flex justify-between items-center visibility-container transition-all ease-out';
+    'px-5 py-4 -my-4 mt-4 w-full hover:bg-gray-syn8 rounded-2xl flex justify-between items-center visibility-container transition-all ease-out';
   const taglineStyles = 'text-sm text-gray-syn4';
   const editButtonStyles = 'text-blue-neptune visibility-hover invisible';
   const transitionStyles = 'transition-all duration-500';

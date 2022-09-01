@@ -61,7 +61,7 @@ const TokenEmptyState: React.FC<{
             className={`mt-5 flex justify-center flex-col w-full rounded-1.5lg p-6 bg-${activeNetwork.metadata.colors.background} bg-opacity-15`}
           >
             <div className="text-lg text-center mb-3">
-              This {tokenTitle} exists on {activeNetwork.name}
+              This {tokenTitle} exists on {urlNetwork.name}
             </div>
             <div className="flex justify-center mb-3">
               <img width={40} height={40} src={urlNetwork.logo} alt="" />

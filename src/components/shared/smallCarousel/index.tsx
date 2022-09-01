@@ -121,7 +121,7 @@ export const SmallCarousel: React.FC<Props> = ({
 
 export const collectiveSlides = [
   <a
-    href="/collectives/create"
+    href="/clubs/create"
     key={0}
     className="hover-parent visibility-container"
     target="_blank"

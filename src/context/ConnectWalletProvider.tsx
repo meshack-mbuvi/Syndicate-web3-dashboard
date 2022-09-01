@@ -105,7 +105,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { currentEthereumNetwork, status }
+      web3: { currentEthereumNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -125,7 +125,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const dispatch = useDispatch();
 
   // Initiates current client for feature flags
-  const currentClient = useClient(account, 'user');
+  const currentClient = useClient(account ? account : 'user', 'user');
 
   // When Split SDK is ready, set attributes to current client and mark it as ready
   useEffect(() => {
@@ -141,7 +141,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   const detachedWeb3 = useMemo(() => {
     if (chainId) {
-      return new Web3(`${NETWORKS[chainId].rpcUrl}`);
+      const rpcUrl = NETWORKS[chainId]?.rpcUrl;
+      if (rpcUrl) return new Web3(`${rpcUrl}`);
+
+      return;
     }
     return new Web3(`${NETWORKS[1].rpcUrl}`);
   }, [chainId]);
@@ -154,7 +157,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   /*
    * Allows running as a gnosis safe app
-   * This checks and connects automatially in gnosis safe.
+   * This checks and connects automatically in gnosis safe.
    * Needs `public/manifest.json` to work.
    */
   useEffect(() => {

@@ -146,7 +146,7 @@ export const CustomizeRightPanel: React.FC = () => {
         heightClass="h-full"
         widthClass="w-full"
         mediaType={artworkType}
-        numberOfParticles={40}
+        numberOfParticles={95}
         customId="particles-js-3"
       />
     </div>

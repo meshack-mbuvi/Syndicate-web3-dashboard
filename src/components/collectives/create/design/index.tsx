@@ -128,7 +128,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             <DesignRightPanel customId={'design-left-panel'} />
           </div>
         </div>
-        <div className="md:mt-10">
+        <div className="md:mt-10 pb-20">
           <button
             className={`${
               isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
@@ -147,8 +147,8 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             )}
           </button>
           <div className="mt-2 text-sm text-gray-syn4">
-            All fields (except token symbol) are modifiable later via an
-            on-chain transaction with gas.
+            All fields (except token name and symbol) are modifiable later via
+            an on-chain transaction with gas.
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { LockIcon } from '@/components/iconWrappers';
 import CopyLink from '@/components/shared/CopyLink';
 import {
   SmallCarousel,
@@ -6,14 +5,15 @@ import {
 } from '@/components/shared/smallCarousel';
 import { B2, B3, H4 } from '@/components/typography';
 import { AppState } from '@/state';
-import { showWalletModal } from '@/state/wallet/actions';
 import Image from 'next/image';
 import router from 'next/router';
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { JoinCollectiveCTA } from '../joinCollectiveButton';
 import { CollectiveMember, CollectiveMemberProps } from '../member';
 import { PermissionType } from '../shared/types';
+import MembersOnly from '@/components/collectives/membersOnly';
+import { getCollectiveBalance } from '@/utils/contracts/collective';
 
 interface Props {
   inviteLink?: string;
@@ -30,15 +30,16 @@ export const BadgeWithMembers: React.FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     collectiveDetailsReducer: {
-      details: { isOpen }
+      details: { isOpen, maxPerWallet }
     }
   } = useSelector((state: AppState) => state);
   const { collectiveAddress } = router.query;
 
   const [copyState, setCopyState] = useState(false);
+  const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
 
   const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -47,12 +48,6 @@ export const BadgeWithMembers: React.FC<Props> = ({
       pathname: `/collectives/${collectiveAddress}/claim`,
       query: { chain: activeNetwork.network }
     });
-  };
-
-  const dispatch = useDispatch();
-
-  const handleConnectWallet = () => {
-    dispatch(showWalletModal());
   };
 
   const emptyMemberState: CollectiveMemberProps = {
@@ -67,6 +62,17 @@ export const BadgeWithMembers: React.FC<Props> = ({
       setCopyState(false);
     }, 1000);
   };
+
+  useEffect(() => {
+    if (!collectiveAddress) {
+      return;
+    }
+    getCollectiveBalance(collectiveAddress.toString(), account, web3).then(
+      (balance) => {
+        setCollectiveBalance(balance);
+      }
+    );
+  }, [account, collectiveAddress, web3]);
 
   return (
     <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
@@ -106,17 +112,28 @@ export const BadgeWithMembers: React.FC<Props> = ({
         </div>
       ) : null}
 
-      {permissionType == PermissionType.NON_MEMBER && isOpen ? (
-        <JoinCollectiveCTA label="Join this collection" onClick={goToClaim} />
+      {(permissionType == PermissionType.NON_MEMBER ||
+        collectiveBalance < +maxPerWallet) &&
+      isOpen ? (
+        <JoinCollectiveCTA
+          alreadyMember={collectiveBalance > 0}
+          onClick={goToClaim}
+        />
       ) : null}
 
       {admins.length > 0 ? (
         <div>
           <H4 extraClasses="mb-4">Admin</H4>
           <div className="space-y-4 border rounded-2xl p-6 border-gray-syn7">
-            {admins.map((admin, index) => {
-              return <CollectiveMember {...admin} key={index} />;
-            })}
+            {account ? (
+              admins.map((admin, index) => {
+                return <CollectiveMember {...admin} key={index} />;
+              })
+            ) : (
+              <div className="border-gray-syn7 top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
+                <MembersOnly />
+              </div>
+            )}
           </div>
         </div>
       ) : null}
@@ -140,7 +157,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
                 : ''
             } h-full rounded-2xl p-6 border border-gray-syn7`}
           >
-            {members.length ? (
+            {members.length && account ? (
               members?.map((member, index) => {
                 return <CollectiveMember {...member} key={index} />;
               })
@@ -161,7 +178,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
                   members
                 </B3>
               </div>
-            ) : (
+            ) : account ? (
               [...Array(8).keys()].map((_, index) => (
                 <CollectiveMember
                   {...{
@@ -171,29 +188,12 @@ export const BadgeWithMembers: React.FC<Props> = ({
                   key={index}
                 />
               ))
-            )}
+            ) : null}
           </div>
 
-          {permissionType === PermissionType.NON_MEMBER ? (
+          {permissionType === PermissionType.NON_MEMBER || !account ? (
             <div className="absolute border border-gray-syn7 top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
-              <div className="flex text-center">
-                <div className="flex-grow-1 mr-1 pt-0.5">
-                  <LockIcon color={`text-white`} />
-                </div>
-                <p className="w-full text-center text-white">Members only</p>
-              </div>
-              {account ? (
-                <B3 extraClasses="text-gray-syn4 font-light mt-2">
-                  Only holders of the NFT can view private data
-                </B3>
-              ) : (
-                <B3
-                  extraClasses="text-blue font-light mt-2 cursor-pointer"
-                  onClick={handleConnectWallet}
-                >
-                  Connect wallet
-                </B3>
-              )}
+              <MembersOnly />
             </div>
           ) : null}
         </div>

@@ -18,19 +18,22 @@ interface Props {
   name?: string;
   address?: { label: string; abbreviated?: boolean };
   layout?: AddressLayout;
+  id?: string;
 }
 
 export const AddressWithENS: React.FC<Props> = ({
   image,
   name,
   address,
-  layout = AddressLayout.TWO_LINES
+  layout = AddressLayout.TWO_LINES,
+  ...rest
 }) => {
   return (
     <div
       className={`flex items-center space-x-${
         layout === AddressLayout.TWO_LINES ? '4' : '3'
       }`}
+      {...rest}
     >
       {image && (
         <img
@@ -50,16 +53,16 @@ export const AddressWithENS: React.FC<Props> = ({
         }}
       >
         {/* Top line */}
-        <B2 extraClasses="mb-0">
+        <B2 extraClasses="mb-0" {...rest}>
           <TransitionBetweenChildren
             visibleChildIndex={name ? 0 : address ? 1 : -1}
             transitionDurationClassOverride="duration-300"
           >
             <div>{name}</div>
-            <div>
+            <div {...rest}>
               <span className="text-gray-syn4">0x</span>
               {address && (
-                <span>
+                <span {...rest}>
                   {address?.abbreviated !== undefined && address?.abbreviated
                     ? formatAddress(address.label.substring(2), 4, 4)
                     : address.label.substring(2)}
