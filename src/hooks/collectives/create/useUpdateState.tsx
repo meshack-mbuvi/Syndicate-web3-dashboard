@@ -51,13 +51,14 @@ const useUpdateState = () => {
     return { mediaType, mediaSource };
   };
 
-  const debouncedSymbol = useDebounce(name, 500);
+  // TODO: Fix acronymGenerator to not overwrite user input symbol
 
-  useEffect(() => {
-    if (debouncedSymbol) {
-      dispatch(setCollectiveSymbol(acronymGenerator(debouncedSymbol)));
-    }
-  }, [debouncedSymbol]);
+  // const debouncedSymbol = useDebounce(name, 500);
+  // useEffect(() => {
+  //   if (debouncedSymbol && ) {
+  //     dispatch(setCollectiveSymbol(acronymGenerator(debouncedSymbol)));
+  //   }
+  // }, [debouncedSymbol]);
 
   // State update handlers
   // ==============================================================
