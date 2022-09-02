@@ -27,7 +27,7 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
                 showMoreContent ? '-translate-x-3' : ''
               } `}
             >
-              {alreadyMember ? 'Claim additional NFT' : 'Join this collection'}
+              {alreadyMember ? 'Claim additional NFT' : 'Join this collective'}
             </span>
             <img
               src={'/images/chevron-right-black.svg'}
