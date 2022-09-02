@@ -192,7 +192,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
               tokenDetails={tokenDetails}
               extraClasses="mt-2"
             />
-            {priceToJoin === 0 && (
+            {+priceToJoin === 0 && (
               <B3 extraClasses="text-gray-syn4 pt-2">
                 Members will only need to pay gas
               </B3>
