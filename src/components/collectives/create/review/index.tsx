@@ -3,7 +3,10 @@ import { InputField } from '@/components/inputs/inputField';
 import { Switch, SwitchType } from '@/components/switch';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
 import { ContractMapper } from '@/hooks/useGasDetails';
-import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
+import {
+  floatedNumberWithCommas,
+  stringNumberRemoveCommas
+} from '@/utils/formattedNumbers';
 import React, { useRef, useState } from 'react';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
@@ -398,7 +401,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
         {openUntil === OpenUntil.MAX_MEMBERS && (
           <div className={spaceBetweenTitleAndSubtitleStyles}>
             <div className="space-y-2">
-              <div className={taglineStyles}>Max supply of passes</div>
+              <div className={taglineStyles}>Max supply of NFTs</div>
               <div>
                 <div
                   className={`${
@@ -434,7 +437,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                       : 'max-h-0 opacity-0'
                   } overflow-hidden ${transitionStyles}`}
                 >
-                  {maxSupply}
+                  {floatedNumberWithCommas(maxSupply)}
                 </div>
               </div>
             </div>
