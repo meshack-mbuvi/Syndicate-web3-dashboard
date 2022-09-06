@@ -167,14 +167,14 @@ const CreateCollectiveContainer: FC = () => {
             >
               {/* NFT previewer */}
               <div
-                className={`absolute z-10 transform w-full transition-all duration-500 ${
+                className={`absolute z-10 transform w-full transition-all duration-500 hidden md:block ${
                   activeIndex === 0
                     ? 'top-0 left-0 translate-x-0 translate-y-0 scale-100'
                     : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-50'
                 }`}
               >
                 <div
-                  className={`transition-all w-full min-h-120 duration-500 relative ${
+                  className={`transition-all w-full min-h-120 duration-500 relative  ${
                     activeIndex === 0 ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
