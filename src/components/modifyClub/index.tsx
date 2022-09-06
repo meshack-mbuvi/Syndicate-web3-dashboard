@@ -42,6 +42,8 @@ import {
 } from '../inputs/inputFieldWithToken';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import { ProgressState } from '../progressCard';
+import { amplitudeLogger, Flow } from '../amplitude';
+import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 
 const progressModalStates = {
   confirm: {
@@ -363,8 +365,16 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       dispatch(setExistingMaxAmountRaising(maxAmountRaising));
       dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers));
       setProgressState('success');
+      amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+        flow: Flow.CLUB_MANAGE,
+        transaction_status: 'Success'
+      });
     } catch (error) {
       setProgressState('failure');
+      amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+        flow: Flow.CLUB_MANAGE,
+        transaction_status: 'Failure'
+      });
     }
   };
 

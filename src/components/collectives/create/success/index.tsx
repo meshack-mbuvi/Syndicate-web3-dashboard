@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
 import { Spinner } from '@/components/shared/spinner';
@@ -39,6 +41,9 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         link={inviteLink}
         updateCopyState={() => {
           setShowCopiedState(!showCopiedState);
+          amplitudeLogger(INVITE_LINK_COPY, {
+            flow: Flow.COLLECTIVE_CREATE
+          });
         }}
         showCopiedState={showCopiedState}
         copyButtonText="Copy invite link"

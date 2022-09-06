@@ -94,7 +94,6 @@ const ClaimUtilityNFT: React.FC = () => {
     setSelectedNFTCards(
       selectedNFTCards.filter((item) => !tokenIDs.includes(item))
     );
-
     setClaimList([]);
     setSubmitting(false);
     setSuccessfulClaim(true);

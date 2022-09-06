@@ -1,5 +1,5 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { MGR_SIGN_LEGAL_DOC } from '@/components/amplitude/eventNames';
+import { MGR_LEGAL_DOC_SIGN } from '@/components/amplitude/eventNames';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -256,8 +256,8 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
       };
       localStorage.setItem('legal', JSON.stringify(legal));
     }
-    amplitudeLogger(MGR_SIGN_LEGAL_DOC, {
-      flow: Flow.LEGAL_ENTITY_FLOW
+    amplitudeLogger(MGR_LEGAL_DOC_SIGN, {
+      flow: Flow.CLUB_LEGAL
     });
   };
 

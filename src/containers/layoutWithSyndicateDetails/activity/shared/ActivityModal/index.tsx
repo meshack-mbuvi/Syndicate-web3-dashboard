@@ -15,11 +15,12 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
-
 import Modal, { ModalStyle } from '@/components/modal';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 
 interface IActivityModal {
   showModal: boolean;
@@ -117,6 +118,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const handleAddDetails = () => {
     setShowDetailSection(true);
     setEditMode(true);
+    amplitudeLogger(TRANSACTION_DETAIL_ADD, {
+      flow: Flow.CLUB_MANAGE,
+      transaction_note: note
+    });
   };
 
   useEffect(() => {

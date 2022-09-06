@@ -25,6 +25,8 @@ import {
   setColectiveTokenDetails,
   setIpfsHash
 } from '@/state/createCollective/slice';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ARTWORK_UPLOAD } from '@/components/amplitude/eventNames';
 
 const useUpdateState = () => {
   const dispatch = useDispatch();
@@ -134,6 +136,9 @@ const useUpdateState = () => {
       );
       setProgressPercent(100);
     }
+    amplitudeLogger(ARTWORK_UPLOAD, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   const handleCancelUpload = () => {

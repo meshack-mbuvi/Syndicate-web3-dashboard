@@ -1,11 +1,4 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  APPROVE_DEPOSIT_ALLOWANCE,
-  ERROR_APPROVE_ALLOWANCE,
-  ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT
-} from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import ArrowDown from '@/components/icons/arrowDown';
@@ -54,6 +47,9 @@ import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
 import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
+
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -442,10 +438,11 @@ const DepositSyndicate: React.FC = () => {
         refetchMemberData();
       }
 
-      // Amplitude logger: Deposit funds
-      amplitudeLogger(SUCCESSFUL_DEPOSIT, {
-        flow: Flow.MBR_DEP,
-        amount
+      amplitudeLogger(CLUB_DEPOSIT, {
+        flow: Flow.CLUB_DEPOSIT,
+        transaction_status: 'Success',
+        deposit_amount: amount,
+        deposit_token: depositTokenSymbol
       });
     } catch (error) {
       const { code, message } = error;
@@ -465,11 +462,11 @@ const DepositSyndicate: React.FC = () => {
       }
       setMetamaskConfirmPending(false);
 
-      // Amplitude logger: Deposit funds Error
-      amplitudeLogger(ERROR_DEPOSIT, {
-        flow: Flow.MBR_DEP,
-        amount,
-        error
+      amplitudeLogger(CLUB_DEPOSIT, {
+        flow: Flow.CLUB_DEPOSIT,
+        transaction_status: 'Failure',
+        deposit_amount: amount,
+        deposit_token: depositTokenSymbol
       });
     }
   };
@@ -760,12 +757,6 @@ const DepositSyndicate: React.FC = () => {
             // was approved successfully or not.
             await checkCurrentMemberAllowance();
             setSubmittingAllowanceApproval(false);
-
-            // Amplitude logger: Approve Allowance
-            amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
-              flow: Flow.MBR_DEP,
-              amount: amountToApprove
-            });
             resolve(receipt);
 
             // update current transaction step
@@ -786,13 +777,6 @@ const DepositSyndicate: React.FC = () => {
               setSubmittingAllowanceApproval(false);
               setMetamaskConfirmPending(false);
             }
-
-            // Amplitude logger: Error Approve Allowance
-            amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-              flow: Flow.MBR_DEP,
-              amount: amountToApprove,
-              error
-            });
             reject(error);
           });
       });
@@ -802,24 +786,11 @@ const DepositSyndicate: React.FC = () => {
         // await getGnosisTxnInfo(gnosisTxHash, this.activeNetwork);
         await checkCurrentMemberAllowance();
         setSubmittingAllowanceApproval(false);
-
-        // Amplitude logger: Approve Allowance
-        amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
-          flow: Flow.MBR_DEP,
-          amount: amountToApprove
-        });
       }
     } catch (error) {
       setMetamaskConfirmPending(false);
       setSubmittingAllowanceApproval(false);
       setMetamaskConfirmPending(false);
-
-      // Amplitude logger: Error Approve Allowance
-      amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-        flow: Flow.MBR_DEP,
-        amount: amountToApprove,
-        error
-      });
     }
   };
 

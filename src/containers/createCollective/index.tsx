@@ -1,7 +1,4 @@
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import TransitionBetweenChildren, {
-  TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
 import {
   useCreateState,
   useUpdateState
@@ -16,6 +13,14 @@ import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
 import CreateCollectiveDesign, { DesignRightPanel } from './design';
 import CreateCollectiveReview, { ReviewRightPanel } from './review';
 import { CreateCollectiveSuccess, SuccessRightPanel } from './success';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transitionBetweenChildren';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  DESIGN_CONTINUE_CLICK,
+  CUSTOMIZE_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -62,7 +67,19 @@ const CreateCollectiveContainer: FC = () => {
   };
 
   const handleNext = () => {
-    // We are not subtracting 1 from dotIndicatorOptions.length because the last step is the success screen.
+    switch (activeIndex) {
+      case 0:
+        amplitudeLogger(DESIGN_CONTINUE_CLICK, {
+          flow: Flow.COLLECTIVE_CREATE
+        });
+        break;
+      case 1:
+        amplitudeLogger(CUSTOMIZE_CONTINUE_CLICK, {
+          flow: Flow.COLLECTIVE_CREATE
+        });
+        break;
+      default:
+    }
     if (activeIndex < dotIndicatorOptions.length) {
       setActiveIndex(activeIndex + 1);
     }

@@ -69,7 +69,7 @@ export const CollectivesCreateOutline: React.FC<Props> = ({ gasEstimate }) => {
           support@syndicate.io
         </a>{' '}
         or on{' '}
-        <a href="https://discord.gg/aB89kn7bvV" className="text-gray-syn3">
+        <a href="https://discord.gg/syndicatedao" className="text-gray-syn3">
           Discord
         </a>
       </div>

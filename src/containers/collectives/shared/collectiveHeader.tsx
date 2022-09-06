@@ -12,6 +12,8 @@ import {
   OpenSeaIcon,
   SettingsIcon
 } from 'src/components/iconWrappers';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_MODIFY_SETTINGS_CLICK } from '@/components/amplitude/eventNames';
 
 export const CollectiveHeader: React.FC<{
   collectiveName: string;
@@ -45,7 +47,14 @@ export const CollectiveHeader: React.FC<{
   } = router;
 
   return (
-    <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
+    <div
+      className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4"
+      onClick={() => {
+        amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
+          flow: Flow.COLLECTIVE_MANAGE
+        });
+      }}
+    >
       {title}
       {!isEmpty(links) && (
         <div className="flex items-center space-x-4">

@@ -16,6 +16,8 @@ import DateCard from './DateCard';
 import { H4 } from '@/components/typography';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import { DetailsSteps } from '@/context/CreateInvestmentClubContext/steps';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DEPOSIT_WINDOW_CLICK } from '@/components/amplitude/eventNames';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
@@ -231,6 +233,10 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   handleSetMintTime(index, { mintTime, value });
+                  amplitudeLogger(DEPOSIT_WINDOW_CLICK, {
+                    flow: Flow.CLUB_CREATE,
+                    deposit_window: mintTime
+                  });
                 }}
                 disabled={disableButtons}
               >

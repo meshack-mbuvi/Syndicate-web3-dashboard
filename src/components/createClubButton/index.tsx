@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import React from 'react';
+import { amplitudeLogger, Flow } from '../amplitude';
+import {
+  CREATE_INVESTMENT_CLUB_CLICK,
+  CREATE_COLLECTIVE_CLICK
+} from '../amplitude/eventNames';
 
 /**
  * Component to render button that navigates user to the club/DAO creation page
@@ -24,6 +30,14 @@ const CreateClubButton: React.FC<ICreateClubButton> = ({
     <button
       className="primary-CTA flex justify-center items-center w-full sm:w-auto"
       onClick={() => {
+        creatingClub
+          ? amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
+              flow: Flow.CLUB_CREATE
+            })
+          : amplitudeLogger(CREATE_COLLECTIVE_CLICK, {
+              flow: Flow.COLLECTIVE_CREATE
+            });
+
         creatingClub
           ? router.push(`/clubs/create`)
           : router.push(`/collectives/create`);

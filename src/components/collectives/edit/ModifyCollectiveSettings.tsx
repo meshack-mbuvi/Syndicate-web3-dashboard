@@ -56,6 +56,11 @@ import {
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
 import { CtaButton } from '@/components/CTAButton';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  COLLECTIVE_SUBMIT_SETTINGS,
+  MANAGE_TRY_AGAIN_CLICK
+} from '@/components/amplitude/eventNames';
 
 type step = {
   title: string;
@@ -495,7 +500,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             artworkTypeState,
             artworkUrlState
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -516,7 +529,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -537,7 +558,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -556,7 +585,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onSwitchTxReceipt,
                 onSwitchTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           } else {
@@ -570,7 +607,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onTxReceipt,
                 onTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           }
@@ -588,7 +633,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onSwitchTxReceipt,
                 onSwitchTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           } else {
@@ -601,7 +654,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onTxReceipt,
                 onTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           }
@@ -618,7 +679,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -628,6 +697,9 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    amplitudeLogger(MANAGE_TRY_AGAIN_CLICK, {
+      flow: Flow.COLLECTIVE_MANAGE
+    });
     setProgressState('');
   };
 

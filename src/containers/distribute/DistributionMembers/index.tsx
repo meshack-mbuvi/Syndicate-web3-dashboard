@@ -2,8 +2,6 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
-  APPROVE_DISTRIBUTION_ALLOWANCE,
-  ERROR_APPROVE_ALLOWANCE,
   ERROR_MGR_DISTRIBUTION,
   MGR_MAKE_DISTRIBUTE_EVENT
 } from '@/components/amplitude/eventNames';
@@ -367,10 +365,9 @@ const ReviewDistribution: React.FC = () => {
 
             incrementActiveIndex();
 
-            // Amplitude logger: Approve Allowance
             amplitudeLogger(MGR_MAKE_DISTRIBUTE_EVENT, {
               flow: Flow.MGR_DISTRIBUTION,
-              amount: amountToApprove
+              distribution_amount: amountToApprove
             });
             resolve(receipt);
             setIsTransactionPending(false);
@@ -382,11 +379,9 @@ const ReviewDistribution: React.FC = () => {
               // break here
             }
 
-            // Amplitude logger: Error Approve Allowance
             amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
               flow: Flow.MGR_DISTRIBUTION,
-              amount: amountToApprove,
-              error
+              distribution_amount: amountToApprove
             });
             reject(error);
           });
@@ -395,12 +390,6 @@ const ReviewDistribution: React.FC = () => {
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
         await checkTokenAllowance(token);
-
-        // Amplitude logger: Approve Allowance
-        amplitudeLogger(APPROVE_DISTRIBUTION_ALLOWANCE, {
-          flow: Flow.MGR_DISTRIBUTION,
-          amount: amountToApprove
-        });
         setIsTransactionPending(false);
       }
     } catch (error) {
@@ -410,13 +399,6 @@ const ReviewDistribution: React.FC = () => {
       setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
       setProgressDescriptorTitle(`Error Approving ${token.symbol}`);
       setProgressDescriptorDescription('');
-
-      // Amplitude logger: Error Approve Allowance
-      amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-        flow: Flow.MGR_DISTRIBUTION,
-        amount: amountToApprove,
-        error
-      });
       setIsTransactionPending(false);
     }
   };

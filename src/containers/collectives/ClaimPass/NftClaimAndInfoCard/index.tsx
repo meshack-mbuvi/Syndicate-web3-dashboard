@@ -17,6 +17,12 @@ import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
 import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  COLLECTIVE_CLAIM,
+  VIEW_COLLECTIVE_CLICK,
+  CLAIM_TRY_AGAIN_CLICK
+} from '@/components/amplitude/eventNames';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -108,9 +114,17 @@ const NftClaimAndInfoCard: React.FC = () => {
         onTxReceipt,
         onTxFail
       );
+      amplitudeLogger(COLLECTIVE_CLAIM, {
+        flow: Flow.COLLECTIVE_CLAIM,
+        transaction_status: 'Success'
+      });
     } catch (error) {
       console.log({ error });
       setProgressState(ProgressState.FAILURE);
+      amplitudeLogger(COLLECTIVE_CLAIM, {
+        flow: Flow.COLLECTIVE_CLAIM,
+        transaction_status: 'Failure'
+      });
     }
   };
 
@@ -163,6 +177,9 @@ const NftClaimAndInfoCard: React.FC = () => {
   // open the collective details page
   const handleClick = () => {
     window.location.pathname = `/collectives/${collectiveAddress}`;
+    amplitudeLogger(VIEW_COLLECTIVE_CLICK, {
+      flow: Flow.COLLECTIVE_CLAIM
+    });
   };
 
   // Close modal on outside click
@@ -248,6 +265,9 @@ const NftClaimAndInfoCard: React.FC = () => {
             claimCollective={claimCollective}
             tryAgain={() => {
               setProgressState(null);
+              amplitudeLogger(CLAIM_TRY_AGAIN_CLICK, {
+                flow: Flow.COLLECTIVE_CLAIM
+              });
             }}
           />
         )}

@@ -1,9 +1,4 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  APPROVE_DEPOSIT_ALLOWANCE,
-  ERROR_APPROVE_ALLOWANCE
-} from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import ArrowDown from '@/components/icons/arrowDown';
 import AutoGrowInputField from '@/components/inputs/autoGrowInput';
@@ -253,12 +248,6 @@ const RedeemRug: React.FC = () => {
           .on('receipt', async (receipt) => {
             await checkCurrentAllowance();
             setSubmittingAllowanceApproval(false);
-
-            // Amplitude logger: Approve Allowance
-            amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
-              flow: Flow.MBR_DEP,
-              amount: amountToApprove
-            });
             resolve(receipt);
 
             // update current transaction step
@@ -275,13 +264,6 @@ const RedeemRug: React.FC = () => {
               setSubmittingAllowanceApproval(false);
               setMetamaskConfirmPending(false);
             }
-
-            // Amplitude logger: Error Approve Allowance
-            amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-              flow: Flow.MBR_DEP,
-              amount: amountToApprove,
-              error
-            });
             reject(error);
           });
       });
@@ -291,24 +273,11 @@ const RedeemRug: React.FC = () => {
         // await getGnosisTxnInfo(gnosisTxHash, this.activeNetwork);
         // await checkCurrentMemberAllowance();
         setSubmittingAllowanceApproval(false);
-
-        // Amplitude logger: Approve Allowance
-        amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
-          flow: Flow.MBR_DEP,
-          amount: amountToApprove
-        });
       }
     } catch (error) {
       setMetamaskConfirmPending(false);
       setSubmittingAllowanceApproval(false);
       setMetamaskConfirmPending(false);
-
-      // Amplitude logger: Error Approve Allowance
-      amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-        flow: Flow.MBR_DEP,
-        amount: amountToApprove,
-        error
-      });
     }
   };
 

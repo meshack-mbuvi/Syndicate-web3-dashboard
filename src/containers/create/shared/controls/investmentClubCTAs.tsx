@@ -9,6 +9,8 @@ import { useProvider } from '@/hooks/web3/useProvider';
 import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
 import EstimateGas from '@/components/EstimateGas';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CONFIRM_WALLET_CLICK } from '@/components/amplitude/eventNames';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -67,6 +69,9 @@ const InvestmentClubCTAs: React.FC = () => {
       ...prev,
       warningModal: true
     }));
+    amplitudeLogger(CONFIRM_WALLET_CLICK, {
+      flow: Flow.CLUB_CREATE
+    });
   };
 
   const styles = useSpring({

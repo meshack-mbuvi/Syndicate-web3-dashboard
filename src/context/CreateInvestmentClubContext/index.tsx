@@ -1,8 +1,3 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CREATE_INVESTMENT_CLUB,
-  ERROR_INVESTMENT_CLUB_CREATION
-} from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
 // import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
@@ -30,6 +25,14 @@ import {
   CreateSteps,
   investmentClubSteps
 } from './steps';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CREATE_ON_CHAIN_CLUB_CLICK,
+  NAME_SYMBOL_NEXT_CLICK,
+  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
+  REVIEW_CLICK,
+  CLUB_CREATION
+} from '@/components/amplitude/eventNames';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -164,6 +167,35 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   }, []);
 
   const handleNext = () => {
+    if (!editingStep) {
+      switch (currentStep) {
+        case 0:
+          amplitudeLogger(CREATE_ON_CHAIN_CLUB_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 1:
+          amplitudeLogger(NAME_SYMBOL_NEXT_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 2:
+          amplitudeLogger(DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          amplitudeLogger(REVIEW_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        default:
+      }
+    }
     if (editingStep && mintTime !== 'Custom') {
       setShowNextButton(false);
     } else {
@@ -268,8 +300,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
           onTxReceipt
         );
       }
-      amplitudeLogger(CREATE_INVESTMENT_CLUB, {
-        flow: Flow.CLUB_CREATION
+      amplitudeLogger(CLUB_CREATION, {
+        flow: Flow.CLUB_CREATE,
+        transaction_status: 'Success'
       });
     } catch (error) {
       const { code } = error;
@@ -286,9 +319,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       });
-      amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
-        flow: Flow.CLUB_CREATION,
-        error
+      amplitudeLogger(CLUB_CREATION, {
+        flow: Flow.CLUB_CREATE,
+        transaction_status: 'Failure'
       });
     }
   };

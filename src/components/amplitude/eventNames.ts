@@ -1,21 +1,72 @@
-// DEPOSIT EVENTS
-export const APPROVE_DEPOSIT_ALLOWANCE = 'Approve Deposit Allowance';
-export const DEPOSIT_MORE = 'Deposit More';
-export const SUCCESSFUL_DEPOSIT = 'Successful deposit';
-export const DISMISS_TRANSACTION_REJECTED =
-  'Dismiss Transaction Rejected Widget';
-export const ERROR_DEPOSIT = 'Error depositing into Syndicate';
+//// Web App ////
 
-// CREATE SYN EVENTS
-export const CLICK_USE_SYNDICATE = 'Clicked Use Syndicate';
-export const CLICK_CREATE_A_SYNDICATE = 'Clicked Create a Syndicate button';
-export const CREATE_SYNDICATE = 'Create Syndicate';
-export const CLOSE_CREATE_SYNDICATE_FORM = 'Closed Create Syndicate Form';
-export const CLICK_COPY_LINK_TO_SHARE = 'Clicked Copy link to share';
-export const ERROR_APPROVE_ALLOWANCE = 'Error Approve Allowance';
-export const ERROR_CREATING_SYNDICATE = 'Error Creating Syndicate';
+export const WEB_APP_LANDING = 'WEB_APP_LANDING';
+export const WALLET_CONNECTION = 'WALLET_CONNECTION';
 
-// SET DISTRIBUTIONS EVENTS
+//// Investment Clubs ////
+
+// CLUB_CREATE
+export const CREATE_INVESTMENT_CLUB_CLICK = 'CREATE_INVESTMENT_CLUB_CLICK';
+export const CREATE_ON_CHAIN_CLUB_CLICK = 'CREATE_ON_CHAIN_CLUB_CLICK';
+export const RANDOMIZE_NAME_CLICK = 'RANDOMIZE_NAME_CLICK';
+export const NAME_SYMBOL_NEXT_CLICK = 'NAME_SYMBOL_NEXT_CLICK';
+export const DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK =
+  'DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK';
+export const DEPOSIT_WINDOW_CLICK = 'DEPOSIT_WINDOW_CLICK';
+export const TOKEN_GATING_CLICK = 'TOKEN_GATING_CLICK';
+export const REVIEW_CLICK = 'REVIEW_CLICK';
+export const CLUB_CREATION_DISCLAIMER_AGREE = 'CLUB_CREATION_DISCLAIMER_AGREE';
+export const CONFIRM_WALLET_CLICK = 'CONFIRM_WALLET_CLICK';
+export const CONTINUE_WALLET_CLICK = 'CONTINUE_WALLET_CLICK';
+export const CLUB_CREATION = 'CLUB_CREATION';
+export const DEPOSIT_LINK_COPY = 'DEPOSIT_LINK_COPY';
+// CLUB_MANAGE
+export const CLUB_MODIFY_SETTINGS_CLICK = 'CLUB_MODIFY_SETTINGS_CLICK';
+export const CLUB_SUBMIT_SETTINGS = 'CLUB_SUBMIT_SETTINGS';
+export const TRANSACTION_CATEGORIZE = 'TRANSACTION_CATEGORIZE';
+export const TRANSACTION_NOTE_ADD = 'TRANSACTION_NOTE_ADD';
+export const TRANSACTION_DETAIL_ADD = 'TRANSACTION_DETAIL_ADD';
+// CLUB_DEPOSIT
+export const CLUB_DEPOSIT = 'CLUB_DEPOSIT';
+// CLUB_LEGAL
+export const CREATE_LEGAL_ENTITY_CLICK = 'CREATE_LEGAL_ENTITY_CLICK';
+export const SEND_FOR_SIGNATURES_CLICK = 'SEND_FOR_SIGNATURES_CLICK';
+export const SEND_FOR_SIGNATURES_LINK_COPY = 'SEND_FOR_SIGNATURES_LINK_COPY';
+export const MGR_LEGAL_DOC_SIGN = 'MGR_LEGAL_DOC_SIGN';
+
+//// Collectives ////
+
+// COLLECTIVE_CREATE
+export const CREATE_COLLECTIVE_CLICK = 'CREATE_COLLECTIVE_CLICK';
+export const ARTWORK_UPLOAD = 'ARTWORK_UPLOAD';
+export const DESIGN_CONTINUE_CLICK = 'DESIGN_CONTINUE_CLICK';
+export const CUSTOMIZE_CONTINUE_CLICK = 'CUSTOMIZE_CONTINUE_CLICK';
+export const COLLECTIVE_CREATION_DISCLAIMER_AGREE =
+  'COLLECTIVE_CREATION_DISCLAIMER_AGREE';
+export const LAUNCH_CLICK = 'LAUNCH_CLICK';
+export const COLLECTIVE_CREATION = 'COLLECTIVE_CREATION';
+export const INVITE_LINK_COPY = 'INVITE_LINK_COPY';
+export const MANAGE_DASHBOARD_CLICK = 'MANAGE_DASHBOARD_CLICK';
+// COLLECTIVE_MANAGE
+export const COLLECTIVE_MODIFY_SETTINGS_CLICK =
+  'COLLECTIVE_MODIFY_SETTINGS_CLICK';
+export const MEMBER_TOGGLE_CLICK = 'MEMBER_TOGGLE_CLICK';
+export const TRANSFER_TOGGLE_CLICK = 'TRANSFER_TOGGLE_CLICK';
+export const NFT_PRICE_INPUT = 'NFT_PRICE_INPUT';
+export const COLLECTIVE_SUBMIT_SETTINGS = 'COLLECTIVE_SUBMIT_SETTINGS';
+export const MANAGE_TRY_AGAIN_CLICK = 'MANAGE_TRY_AGAIN_CLICK';
+// COLLECTIVE_CLAIM
+export const JOIN_COLLECTIVE_CLICK = 'JOIN_COLLECTIVE_CLICK';
+export const CLAIM_CLICK = 'CLAIM_CLICK';
+export const COLLECTIVE_CLAIM_DISCLAIMER_AGREE =
+  'COLLECTIVE_CLAIM_DISCLAIMER_AGREE';
+export const COLLECTIVE_CLAIM = 'COLLECTIVE_CLAIM';
+export const CLAIM_TRY_AGAIN_CLICK = 'CLAIM_TRY_AGAIN_CLICK';
+export const VIEW_COLLECTIVE_CLICK = 'VIEW_COLLECTIVE_CLICK';
+
+//// DEPRECATED ////
+
+// CLUB_DISTRIBUTE
 export const OPEN_DISTRIBUTE_TOKEN_MODAL = 'Open Distribute Token Modal';
 export const CLICK_APPROVE_DISTRIBUTION_TOKEN =
   'Click Approve Distribution Token Button';
@@ -28,48 +79,8 @@ export const CLICK_CHOOSE_ANOTHER_DISTRIBUTION_TOKEN_BUTTON =
   'Click Choose Another Token Button';
 export const CLICK_REMOVE_DISTRIBUTION_TOKEN_BUTTON =
   'Click Delete Distribution Token Button';
-export const CLICK_ADD_MANAGER_FEE_ADDRESS = 'Click Add Manager Fee Address';
-export const SUCCESS_ADD_MANAGER_FEE_ADDRESS =
-  'Success Add Manager Fee Address';
-export const ERROR_ADD_MANAGER_FEE_ADDRESS = 'Error Add Manager Fee Address';
+export const MGR_MAKE_DISTRIBUTE_EVENT = 'Manager make distribution';
+export const ERROR_MGR_DISTRIBUTION = 'Error in distribution';
 export const CLICK_DISTRIBUTE_TOKENS_BUTTON = 'Click Distribute Tokens Button';
 export const SUCCESS_DISTRIBUTE_TOKENS = 'Success Distribute Token';
 export const ERROR_SETTING_DISTRIBUTIONS = 'Error Setting Distributions';
-
-// MAKING WITHDRAWAL EVENTS
-export const SUCCESSFUL_WITHDRAWAL = 'Successful Withdrawal';
-export const CLICK_WITHDRAW_MORE = 'Click Withdraw More widget';
-export const CHANGE_DISTRIBUTION_TOKEN = 'Change Distribution Token';
-export const ERROR_WITHDRAWING = 'Error withdrawing';
-
-// CREATE CLUBS EVENTS
-export const CLICK_I_AGREE = 'Clicked I Agree on the disclaimer';
-export const CREATE_INVESTMENT_CLUB =
-  'Clicked create an investment club button';
-export const ERROR_INVESTMENT_CLUB_CREATION = 'Error in club creation';
-
-// WALLET CONNECT
-export const SUCCESSFUL_WALLET_CONNECT = 'Successful wallet connection';
-export const ERROR_WALLET_CONNECTION = 'Error connecting to a wallet';
-
-// POST CLUB CREATION EVENTS
-export const CLICK_COPY_DEPOSIT_LINK_TO_SHARE =
-  'Clicked copy deposit link to share';
-export const CLICK_GENERATE_LINK_TO_INVITE_MEMBERS =
-  'Clicked on link to invite members';
-
-// LEGAL EVENTS
-export const CLICKED_HELP_FORM_LEGAL_ENTITY =
-  'Clicked on the help create legal entity';
-export const SEND_FOR_SIGNATURES = 'Clicked on send for signatures';
-export const COPY_SEND_FOR_SIGNATURES_LINK =
-  'Clicked on copy link to send for signatures';
-export const MGR_SIGN_LEGAL_DOC = 'Manager signs legal documents';
-
-// Distribution events
-export const MGR_MAKE_DISTRIBUTE_EVENT = 'Manager make distribution';
-export const ERROR_MGR_DISTRIBUTION = 'Error in distribution';
-export const APPROVE_DISTRIBUTION_ALLOWANCE = 'Approve distribution allowance';
-
-export const CLICK_COPY_COLLECTIVE_LINK_TO_SHARE =
-  'Clicked copy collective link to share';

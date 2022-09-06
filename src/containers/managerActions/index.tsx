@@ -1,5 +1,3 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import CreateEntityCard from '@/components/shared/createEntityCard';
@@ -26,6 +24,8 @@ import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
 import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DEPOSIT_LINK_COPY } from '@/components/amplitude/eventNames';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -167,8 +167,8 @@ const ManagerActions = (): JSX.Element => {
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
-    amplitudeLogger(CLICK_COPY_DEPOSIT_LINK_TO_SHARE, {
-      flow: Flow.POST_CLUB_CREATION
+    amplitudeLogger(DEPOSIT_LINK_COPY, {
+      flow: Flow.CLUB_CREATE
     });
   };
 

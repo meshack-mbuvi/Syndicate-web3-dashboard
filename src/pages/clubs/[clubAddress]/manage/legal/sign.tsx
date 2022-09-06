@@ -8,7 +8,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { SEND_FOR_SIGNATURES } from '@/components/amplitude/eventNames';
+import { SEND_FOR_SIGNATURES_CLICK } from '@/components/amplitude/eventNames';
 import { Flow, amplitudeLogger } from '@/components/amplitude';
 
 const ManagerAgreementPage: NextPage = () => {
@@ -38,8 +38,8 @@ const ManagerAgreementPage: NextPage = () => {
 
   const handleSendForSignature = () => {
     setShowSendForSignaturesModal(true);
-    amplitudeLogger(SEND_FOR_SIGNATURES, {
-      flow: Flow.LEGAL_ENTITY_FLOW
+    amplitudeLogger(SEND_FOR_SIGNATURES_CLICK, {
+      flow: Flow.CLUB_LEGAL
     });
   };
 

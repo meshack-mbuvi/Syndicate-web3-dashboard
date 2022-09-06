@@ -1,5 +1,7 @@
 import { useDemoMode } from '@/hooks/useDemoMode';
 import React from 'react';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CREATE_LEGAL_ENTITY_CLICK } from '@/components/amplitude/eventNames';
 
 const CreateEntityCard: React.FC = () => {
   const isDemoMode = useDemoMode();
@@ -9,6 +11,9 @@ const CreateEntityCard: React.FC = () => {
       href={isDemoMode ? undefined : 'https://doolahq.typeform.com/syndicate'}
       target="_blank"
       rel="noreferrer"
+      onClick={() => {
+        amplitudeLogger(CREATE_LEGAL_ENTITY_CLICK, { flow: Flow.CLUB_LEGAL });
+      }}
     >
       <div className="rounded-t-2xl space-x-4 flex items-stretch">
         <div className="flex-shrink-0">

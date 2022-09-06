@@ -12,6 +12,8 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector } from 'react-redux';
 import { TokenMediaType } from '@/state/collectives/types';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
 
 interface Props {
   columns: string[];
@@ -37,6 +39,9 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
   const updateInviteLinkCopyState = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 500);
+    amplitudeLogger(INVITE_LINK_COPY, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   function goToNextPage() {

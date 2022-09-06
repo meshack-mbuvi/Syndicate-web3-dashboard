@@ -237,7 +237,6 @@ const ClaimCard: React.FC<{
           setTransactionHash
         );
       }
-
       setTransactionHash(transactionHash);
     } catch (error) {
       setSuccessfulClaim(false);

@@ -9,6 +9,8 @@ import { useMyClubs } from '@/hooks/useMyClubs';
 import { useEffect } from 'react';
 import { L2 } from '@/components/typography';
 import { AppState } from '@/state';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CONTINUE_WALLET_CLICK } from '@/components/amplitude/eventNames';
 
 const WalletWarnings: React.FC = () => {
   const dispatch = useDispatch();
@@ -122,7 +124,12 @@ const WalletWarnings: React.FC = () => {
             className={`${
               hasExistingClubs ? 'orange-CTA' : 'green-CTA'
             } w-full flex items-center justify-center space-x-2`}
-            onClick={handleCreateInvestmentClub}
+            onClick={() => {
+              handleCreateInvestmentClub();
+              amplitudeLogger(CONTINUE_WALLET_CLICK, {
+                flow: Flow.CLUB_CREATE
+              });
+            }}
           >
             <span>
               {hasExistingClubs ? 'C' : 'Yes, c'}ontinue with this wallet

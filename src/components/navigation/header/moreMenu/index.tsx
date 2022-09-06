@@ -38,7 +38,7 @@ export const MoreMenu: React.FC = () => {
               </div>
               <div>
                 <a
-                  href="https://syndicatedao.gitbook.io/syndicate-guide/"
+                  href="https://guide.syndicate.io/en/"
                   target="_blank"
                   rel="noreferrer"
                   className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"
@@ -48,7 +48,7 @@ export const MoreMenu: React.FC = () => {
               </div>
               <div>
                 <a
-                  href="https://discord.gg/aB89kn7bvV"
+                  href="https://discord.gg/syndicatedao"
                   target="_blank"
                   rel="noreferrer"
                   className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"

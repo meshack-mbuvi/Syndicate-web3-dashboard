@@ -13,6 +13,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useOnClickOutside from '../shared/useOnClickOutside';
 import { H4 } from '@/components/typography';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { RANDOMIZE_NAME_CLICK } from '@/components/amplitude/eventNames';
 
 const ClubNameSelector: React.FC<{
   className?: string;
@@ -88,6 +90,9 @@ const ClubNameSelector: React.FC<{
   };
 
   const handleRandomizer = (e) => {
+    amplitudeLogger(RANDOMIZE_NAME_CLICK, {
+      flow: Flow.CLUB_CREATE
+    });
     e.preventDefault();
     setIsButtonActive(true);
     const slug = generateSlug(2, {

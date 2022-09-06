@@ -15,6 +15,8 @@ import {
   getCountDownDays,
   getFormattedDateTimeWithTZ
 } from '@/utils/dateUtils';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLUB_CREATION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 const ReviewDetails: React.FC = () => {
   const {
@@ -106,6 +108,9 @@ const ReviewDetails: React.FC = () => {
   };
 
   const handleCheckedAgreement = () => {
+    amplitudeLogger(CLUB_CREATION_DISCLAIMER_AGREE, {
+      flow: Flow.CLUB_CREATE
+    });
     setCheckedAgreement(!hasCheckedAgreement);
   };
 

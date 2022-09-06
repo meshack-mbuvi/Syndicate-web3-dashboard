@@ -4,6 +4,8 @@ import CollectivesContainer from '@/containers/collectives/CollectivesContainer'
 import { useState, useEffect, useRef } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { L2 } from '@/components/typography';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_CLAIM_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
@@ -17,6 +19,9 @@ const ClaimPass: React.FC = () => {
 
   const handleDisclaimerClick = () => {
     setShowDisclaimer(false);
+    amplitudeLogger(COLLECTIVE_CLAIM_DISCLAIMER_AGREE, {
+      flow: Flow.COLLECTIVE_CLAIM
+    });
   };
 
   useEffect(() => {
@@ -91,3 +96,6 @@ const ClaimPass: React.FC = () => {
 };
 
 export default ClaimPass;
+function setShowDisclaimer(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}

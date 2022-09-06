@@ -1,5 +1,3 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import { Checkbox } from '@/components/inputs/checkbox';
 import { TextArea } from '@/components/inputs/textArea';
@@ -127,15 +125,10 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{
                     text: (
                       <a
-                        href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
+                        href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
                         target="_blank"
                         rel="noreferrer"
                         style={{ float: 'right' }}
-                        onClick={() => {
-                          amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
-                            flow: Flow.LEGAL_ENTITY_FLOW
-                          });
-                        }}
                       >
                         Help me form one first
                       </a>
