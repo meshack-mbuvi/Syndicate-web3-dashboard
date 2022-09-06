@@ -921,7 +921,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                   showCallout: true,
                   rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
-                    <div className="w-full flex flex-col space-y-6">
+                    <div className="space-y-6">
                       <NFTPreviewer
                         mediaSource={
                           artworkUrlState && artworkUrlState !== ''
@@ -945,6 +945,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                         mediaOnly={true}
                         isEditable={false}
                         description={description}
+                        maxWidth="w-full"
                       />
                       <FileUploader
                         progressPercent={progressPercent}
