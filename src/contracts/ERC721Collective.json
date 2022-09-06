@@ -55,11 +55,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "batchForwarder",
+        "name": "batcher",
         "type": "address"
       }
     ],
-    "name": "BatchForwarderUpdated",
+    "name": "BatcherUpdated",
     "type": "event"
   },
   {
@@ -408,7 +408,7 @@
   },
   {
     "inputs": [],
-    "name": "batchForwarder",
+    "name": "batcher",
     "outputs": [
       {
         "internalType": "address",
@@ -1130,7 +1130,7 @@
         "type": "address"
       }
     ],
-    "name": "updateBatchForwarder",
+    "name": "updateBatcher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
