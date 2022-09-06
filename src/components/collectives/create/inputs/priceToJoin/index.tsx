@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 interface Props {
   priceToJoin: number;
-  handlePriceToJoinChange: (newPriceToJoin: number) => void;
+  handlePriceToJoinChange: (newPriceToJoin: number | string) => void;
   tokenDetails?: { symbol: string; icon: string };
   handleClickToChangeToken: () => void;
   extraClasses?: string;
@@ -56,6 +56,8 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
             handlePriceToJoinChange(amount);
           } else if (amount === '') {
             handlePriceToJoinChange(null);
+          } else if (amount === '.') {
+            handlePriceToJoinChange('0.');
           }
           setTemporaryInputFieldValues({
             maxPerWallet: null,
