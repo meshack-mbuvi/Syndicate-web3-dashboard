@@ -37,7 +37,7 @@ export const CollectivesFileUploader: React.FC<Props> = ({
       fileName={isUsingGeneratedArtwork ? 'Generated artwork' : fileName}
       successText={successText}
       promptTitle="Upload artwork"
-      promptSubtitle="PNG, JPG, GIF or MP4 allowed"
+      promptSubtitle="PNG, JPG, or GIF allowed"
       progressDisplayType={UploaderProgressType.SPINNER}
       handleUpload={handleUpload}
       handleCancelUpload={() => {
