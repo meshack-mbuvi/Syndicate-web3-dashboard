@@ -5,12 +5,9 @@ import amplitude from 'amplitude-js';
 import { useEffect } from 'react';
 import { isDev } from '@/utils/environment';
 
-let AMPLITUDE_API_KEY;
-if (isDev) {
-  AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_DEVELOPMENT;
-} else {
-  AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_PRODUCTION;
-}
+const AMPLITUDE_API_KEY = isDev
+  ? process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_DEVELOPMENT
+  : process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_PRODUCTION;
 
 const initializeAmplitude = () => {
   // Initialize AmplitudeJS

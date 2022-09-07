@@ -113,15 +113,14 @@ const ActivityModal: React.FC<IActivityModal> = ({
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
     setEditMode(!editMode);
+    amplitudeLogger(TRANSACTION_DETAIL_ADD, {
+      flow: Flow.CLUB_MANAGE
+    });
   };
 
   const handleAddDetails = () => {
     setShowDetailSection(true);
     setEditMode(true);
-    amplitudeLogger(TRANSACTION_DETAIL_ADD, {
-      flow: Flow.CLUB_MANAGE,
-      transaction_note: note
-    });
   };
 
   useEffect(() => {
