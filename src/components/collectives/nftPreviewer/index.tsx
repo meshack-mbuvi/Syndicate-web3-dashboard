@@ -61,7 +61,6 @@ export const NFTPreviewer: React.FC<Props> = ({
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
 
   //TODO: align waiting copy with design after create header updated
-
   return (
     <>
       {!mediaSource && !name && !description ? (
@@ -253,23 +252,11 @@ export const NFTPreviewer: React.FC<Props> = ({
           </div>
 
           {/* Name and description */}
-          {!mediaOnly && (
-            <div className="pb-8 p-6 space-y-4">
+          {!mediaOnly && (description || name) && (
+            <div
+              className={`pb-8 p-6 ${description && name ? 'space-y-4' : ''}`}
+            >
               <div>
-                <div
-                  className={`${
-                    loading?.name === true
-                      ? 'opacity-100 max-h-32 duration-500'
-                      : 'opacity-0 max-h-0'
-                  } overflow-hidden transition-all`}
-                >
-                  <SkeletonLoader
-                    height="6"
-                    width="1/2"
-                    borderRadius="rounded-md"
-                    margin="mb-1"
-                  />
-                </div>
                 <div
                   className={`${
                     loading?.name !== true
@@ -282,30 +269,14 @@ export const NFTPreviewer: React.FC<Props> = ({
                   </B2>
                 </div>
               </div>
-              <div>
-                <div
-                  className={`${
-                    loading?.description === true
-                      ? 'opacity-100 max-h-32 duration-500 '
-                      : 'opacity-0 max-h-0'
-                  } overflow-hidden transition-all`}
-                >
-                  <SkeletonLoader
-                    height="6"
-                    width="full"
-                    borderRadius="rounded-md"
-                    margin=""
-                  />
-                </div>
-                <div
-                  className={`${
-                    loading?.description !== true
-                      ? 'opacity-100 max-h-screen duration-500'
-                      : 'opacity-0 max-h-0'
-                  } transition-all`}
-                >
-                  {descriptionText}
-                </div>
+              <div
+                className={`${
+                  loading?.description !== true
+                    ? 'opacity-100 max-h-screen duration-500'
+                    : 'opacity-0 max-h-0'
+                } transition-all`}
+              >
+                {descriptionText}
               </div>
             </div>
           )}
