@@ -126,7 +126,8 @@ const useFetchCollectiveDetails = (
         maxPerMember: maxPerWallet,
         totalSupply,
         maxTotalSupply,
-        areNftsTransferable: isTransferable,
+        // areNftsTransferable: isTransferable,
+        transferGuardAddress,
         nftMetadata: { description, metadataCid, mediaCid },
         activeModules
       } = collective;
@@ -184,7 +185,11 @@ const useFetchCollectiveDetails = (
           numOwners,
           createdAt,
           owners,
-          isTransferable,
+          isTransferable:
+            transferGuardAddress.toString().toLocaleLowerCase() ==
+            CONTRACT_ADDRESSES[
+              activeNetwork.chainId
+            ]?.GuardAlwaysAllow.toString().toLocaleLowerCase(),
           collectiveAddress: address,
           mintPrice: getWeiAmount(web3, mintPrice, 18, false),
           isOpen,

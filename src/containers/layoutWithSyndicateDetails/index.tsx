@@ -8,10 +8,7 @@ import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import {
-  ERC20TokenDefaultState,
-  setERC20Token
-} from '@/helpers/erc20TokenDetails';
+import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
@@ -34,8 +31,7 @@ import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
   setERC20TokenContract,
-  setERC20TokenDepositDetails,
-  setERC20TokenDetails
+  setERC20TokenDepositDetails
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
@@ -68,6 +64,7 @@ const LayoutWithSyndicateDetails: FC<{
     erc20TokenSliceReducer: {
       erc20Token,
       depositDetails: { nativeDepositToken },
+      activeModuleDetails,
       depositTokenPriceInUSD
     },
     assetsSliceReducer: { collectiblesResult }
@@ -158,8 +155,7 @@ const LayoutWithSyndicateDetails: FC<{
 
       // also clearing token details when switching between clubs
       dispatch(setDepositTokenUSDPrice(0));
-
-      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+      resetClubState(dispatch);
       dispatch(
         setERC20TokenDepositDetails({
           mintModule: '',
@@ -282,6 +278,7 @@ const LayoutWithSyndicateDetails: FC<{
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.DepositTokenMintModule
     ) {
+      //assumes that ERC20ClubFactory uses same ClubERC20 contract
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -297,9 +294,16 @@ const LayoutWithSyndicateDetails: FC<{
       };
     } else if (isDemoMode) {
       // using "Active" as the default view.
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      resetClubState(dispatch, mockActiveERC20Token);
     }
-  }, [web3?._provider, clubAddress, account, status, pageLoading]);
+  }, [
+    web3?._provider,
+    clubAddress,
+    account,
+    status,
+    activeModuleDetails?.hasActiveModules,
+    pageLoading
+  ]);
 
   const showOnboardingIfNeeded =
     router.pathname.endsWith('[clubAddress]') && !isDemoMode;
@@ -425,18 +429,20 @@ const LayoutWithSyndicateDetails: FC<{
                         }`}
                       >
                         {/* Club header */}
-                        <ClubHeader
-                          {...{
-                            loading,
-                            name,
-                            symbol,
-                            owner,
-                            loadingClubDeposits,
-                            totalDeposits,
-                            managerSettingsOpen,
-                            clubAddress
-                          }}
-                        />
+                        {!managerSettingsOpen && (
+                          <ClubHeader
+                            {...{
+                              loading,
+                              name,
+                              symbol,
+                              owner,
+                              loadingClubDeposits,
+                              totalDeposits,
+                              managerSettingsOpen,
+                              clubAddress
+                            }}
+                          />
+                        )}
                       </div>
 
                       <SyndicateDetails

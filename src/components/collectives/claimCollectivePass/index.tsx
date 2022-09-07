@@ -6,6 +6,8 @@ import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useDispatch, useSelector } from 'react-redux';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -250,6 +252,9 @@ export const ClaimCollectivePass: React.FC<Props> = ({
                     dispatch(showWalletModal());
                   } else if (walletState === WalletState.CONNECTED) {
                     claimCollective();
+                    amplitudeLogger(CLAIM_CLICK, {
+                      flow: Flow.COLLECTIVE_CLAIM
+                    });
                   }
                 }}
               >

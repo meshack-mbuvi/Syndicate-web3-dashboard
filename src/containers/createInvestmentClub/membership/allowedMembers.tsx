@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DetailedTile } from '@/components/tile/detailedTile';
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 import { TokenLogicBuilder } from '@/components/tokenGating';
 import { AppState } from '@/state';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ICurrentSelectedToken,
+  LogicalOperator,
   TokenGateOption,
   TokenGateRule
 } from '@/state/createInvestmentClub/types';
@@ -14,6 +14,7 @@ import {
   setDuplicateRulesError,
   setCurrentSelectedToken,
   setNullRulesError,
+  setMoreThanFiveRules,
   setShowTokenGateModal,
   setTokenRules,
   setLogicalOperator
@@ -22,6 +23,10 @@ import TokenSelectModal, {
   TokenModalVariant
 } from '@/components/tokenSelect/TokenSelectModal';
 import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { RULES_LESS_THAN } from '@/utils/mixins/mixinHelpers';
+
+const CREATE_COLLECTIVE_TEXT = ' To create membership passes for the club, ';
 import { B2, B3, B4 } from '@/components/typography';
 
 const AllowedMembers: React.FC = () => {
@@ -31,7 +36,7 @@ const AllowedMembers: React.FC = () => {
       tokenGateOption: active,
       tokenRules,
       showTokenGateModal,
-      errors: { duplicateRules, nullRules },
+      errors: { duplicateRules, nullRules, hasMoreThanFiveRules },
       logicalOperator
     },
     web3Reducer: {
@@ -39,7 +44,24 @@ const AllowedMembers: React.FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
+  const { setNextBtnDisabled } = useCreateInvestmentClubContext();
+
   const dispatch = useDispatch();
+  const [hasErrors, setHasErrors] = useState(false);
+
+  useEffect(() => {
+    if (
+      duplicateRules?.length < 1 &&
+      nullRules?.length < 1 &&
+      !hasMoreThanFiveRules
+    ) {
+      setNextBtnDisabled(false);
+      setHasErrors(false);
+    } else {
+      setHasErrors(true);
+      setNextBtnDisabled(true);
+    }
+  }, [duplicateRules, nullRules, hasMoreThanFiveRules]);
 
   const setTokenGateRules = (rules: TokenGateRule[]) => {
     dispatch(setTokenRules(rules));
@@ -51,6 +73,12 @@ const AllowedMembers: React.FC = () => {
     // Handle null rules validation
     const _nullRules = validateNullRules(rules);
     dispatch(setNullRulesError(_nullRules));
+
+    // Handle more than 5 rules validation
+    const _moreThanFive = rules.length > 5;
+    dispatch(
+      _moreThanFive ? setMoreThanFiveRules(true) : setMoreThanFiveRules(false)
+    );
   };
 
   const setActive = (option: TokenGateOption) => {
@@ -79,8 +107,14 @@ const AllowedMembers: React.FC = () => {
         Who is allowed to deposit and become a member?
       </div>
       <div className="text-sm text-gray-syn4 pb-4">
-        Into investment clubs, in exchange for ✺{investmentClubSymbol} community
-        tokens
+        {CREATE_COLLECTIVE_TEXT}
+        <a
+          href="/collectives/create"
+          target="_blank"
+          className="text-orange-utopia"
+        >
+          launch a Collective →
+        </a>
       </div>
 
       {/* Select who is allowed to deposit? */}
@@ -146,9 +180,11 @@ const AllowedMembers: React.FC = () => {
             logicalOperator={logicalOperator}
             tokenRules={tokenRules}
             ruleErrors={Array.from(new Set([...duplicateRules, ...nullRules]))}
+            isInErrorState={hasErrors}
             handleShowTokenSelector={(placeholder) =>
               showTokenSelectModal(true, placeholder)
             }
+            maxNumberRules={RULES_LESS_THAN}
           />
         </div>
       )}

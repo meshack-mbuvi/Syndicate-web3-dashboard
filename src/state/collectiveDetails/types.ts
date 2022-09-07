@@ -7,7 +7,16 @@ export enum EditRowIndex {
   MintPrice,
   MaxPerWallet,
   OpenUntil,
-  Transfer
+  Transfer,
+
+  /* Club Settings */
+  TotalSupply,
+  MaxMembers,
+  TokenGate,
+
+  /* Shared */
+  Time,
+  CloseTimeWindow
 }
 
 export enum CollectiveCardType {

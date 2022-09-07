@@ -3,8 +3,8 @@ import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, H3 } from '@/components/typography';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 enum HoverState {
   HOVERING = 1,

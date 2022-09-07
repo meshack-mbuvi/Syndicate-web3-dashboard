@@ -56,6 +56,11 @@ import {
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
 import { CtaButton } from '@/components/CTAButton';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  COLLECTIVE_SUBMIT_SETTINGS,
+  MANAGE_TRY_AGAIN_CLICK
+} from '@/components/amplitude/eventNames';
 
 type step = {
   title: string;
@@ -455,6 +460,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             artworkUrl: ''
           })
         );
+        setExceededUploadLimit('');
         break;
       case EditRowIndex.MintPrice:
         dispatch(setMintPrice(mintPrice));
@@ -495,7 +501,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             artworkTypeState,
             artworkUrlState
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -516,7 +530,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -537,7 +559,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -556,7 +586,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onSwitchTxReceipt,
                 onSwitchTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           } else {
@@ -570,7 +608,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onTxReceipt,
                 onTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           }
@@ -588,7 +634,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onSwitchTxReceipt,
                 onSwitchTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           } else {
@@ -601,7 +655,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                 onTxReceipt,
                 onTxFail
               );
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Success'
+              });
             } catch (error) {
+              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+                flow: Flow.COLLECTIVE_MANAGE,
+                transaction_status: 'Failure'
+              });
               console.log(error);
             }
           }
@@ -618,7 +680,15 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Success'
+          });
         } catch (error) {
+          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+            flow: Flow.COLLECTIVE_MANAGE,
+            transaction_status: 'Failure'
+          });
           console.log(error);
         }
         break;
@@ -628,6 +698,9 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    amplitudeLogger(MANAGE_TRY_AGAIN_CLICK, {
+      flow: Flow.COLLECTIVE_MANAGE
+    });
     setProgressState('');
   };
 
@@ -747,6 +820,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             setEditGroupFieldClicked={setEditGroupFieldClicked}
             handleDisclaimerConfirmation={handleDisclaimerConfirmation}
             cancelEdit={handleCancelEdit}
+            errorUploadText={exceededUploadLimit}
             rows={[
               {
                 title: 'Name',
@@ -849,7 +923,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                   showCallout: true,
                   rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
-                    <div className="w-full flex flex-col space-y-6">
+                    <div className="space-y-6">
                       <NFTPreviewer
                         mediaSource={
                           artworkUrlState && artworkUrlState !== ''
@@ -873,6 +947,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                         mediaOnly={true}
                         isEditable={false}
                         description={description}
+                        maxWidth="w-full"
                       />
                       <FileUploader
                         progressPercent={progressPercent}
@@ -943,7 +1018,11 @@ const ModifyCollectiveSettings: React.FC = () => {
               title: 'Price per NFT',
               value: (
                 <div className="flex space-x-2">
-                  <img src={activeNetwork.nativeCurrency.logo} alt="" />
+                  <img
+                    src={activeNetwork.nativeCurrency.logo}
+                    className="h-5 w-5 mr-1"
+                    alt=""
+                  />
                   <span>
                     {settingsMintPrice}&nbsp;
                     {activeNetwork.nativeCurrency.symbol}

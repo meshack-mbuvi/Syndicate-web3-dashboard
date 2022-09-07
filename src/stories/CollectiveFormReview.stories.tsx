@@ -35,7 +35,9 @@ const Template = (args) => {
   const [maxSupply, setMaxSupply] = useState(123);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
 
-  const handleAgreedToTerms = () => setHasAgreedToTerms(!hasAgreedToTerms);
+  const handleAgreedToTerms = () => {
+    setHasAgreedToTerms(!hasAgreedToTerms);
+  };
 
   return (
     <CollectiveFormReview

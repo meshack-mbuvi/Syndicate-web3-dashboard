@@ -12,6 +12,8 @@ interface SuccessRightPanelProps {
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCollectiveCreation';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { MANAGE_DASHBOARD_CLICK } from '@/components/amplitude/eventNames';
 
 export const CreateCollectiveSuccess: FC = () => {
   const { creationReceipt } = useCreateState();
@@ -71,6 +73,9 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
     router.push(
       `/collectives/${collectiveAddress}${'?chain=' + activeNetwork.network}`
     );
+    amplitudeLogger(MANAGE_DASHBOARD_CLICK, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   return (

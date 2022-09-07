@@ -10,6 +10,11 @@ import {
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import EstimateGas from '@/components/EstimateGas';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { mockERC20Token } from '@/utils/mockdata';
+import {
+  LogicalOperator,
+  TokenGateOption
+} from '@/state/createInvestmentClub/types';
 
 const GettingStarted: React.FC = () => {
   const { handleNext } = useCreateInvestmentClubContext();
@@ -79,7 +84,33 @@ const GettingStarted: React.FC = () => {
                       enable the on-chain cap table
                     </p>
                     <div className="text-blue text-xs mt-3 font-whyte">
-                      <EstimateGas contract={ContractMapper.ClubERC20Factory} />
+                      <EstimateGas
+                        contract={ContractMapper.ERC20ClubFactory}
+                        args={{
+                          clubParams: {
+                            clubTokenName: 'Estimate',
+                            clubTokenSymbol: 'EST',
+                            isNativeDeposit: true,
+                            depositToken: mockERC20Token.depositToken,
+                            tokenCap: mockERC20Token.maxTotalDeposits,
+                            startTime: mockERC20Token.startTime,
+                            endTime: mockERC20Token.endTime,
+                            membersCount: 99,
+                            tokenRules: [
+                              {
+                                name: 'Token Name',
+                                symbol: 'TOKN',
+                                quantity: 1,
+                                icon: null,
+                                chainId: 4,
+                                contractAddress: ''
+                              }
+                            ],
+                            tokenGateOption: TokenGateOption.RESTRICTED,
+                            logicalOperator: LogicalOperator.OR
+                          }
+                        }}
+                      />
                     </div>
                     <div className="mt-2 text-gray-syn4 text-xs font-whyte font-normal">
                       Create <AnimatedText text={'unlimited clubs for free'} />{' '}

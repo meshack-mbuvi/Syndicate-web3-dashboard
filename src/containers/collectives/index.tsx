@@ -104,8 +104,10 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
     }
   ];
 
-  // add member join activities
-  const activities = [...memberJoined];
+  // add member join activities and sort by timestamp
+  const activities = [...memberJoined].sort((a, b) => {
+    return +b.timeStamp - +a.timeStamp;
+  });
 
   const activityPlaceholder = {
     activityType: CollectiveActivityType.RECEIVED,
@@ -137,14 +139,14 @@ const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
           {permissionType !== PermissionType.NON_MEMBER ? (
             activities.length || creationActivity.length ? (
               <div className="space-y-5">
-                {creationActivity.map((activity, index) => (
-                  <CollectiveActivity {...activity} key={index} />
-                ))}
                 {activities.length
                   ? activities.map((activity, index) => (
                       <CollectiveActivity {...activity} key={index} />
                     ))
                   : null}
+                {creationActivity.map((activity, index) => (
+                  <CollectiveActivity {...activity} key={index} />
+                ))}
               </div>
             ) : (
               <div className="flex flex-col m-auto h-full min-h-10 align-middle justify-center">

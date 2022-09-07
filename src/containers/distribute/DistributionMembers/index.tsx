@@ -2,8 +2,6 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
-  APPROVE_DISTRIBUTION_ALLOWANCE,
-  ERROR_APPROVE_ALLOWANCE,
   ERROR_MGR_DISTRIBUTION,
   MGR_MAKE_DISTRIBUTE_EVENT
 } from '@/components/amplitude/eventNames';
@@ -18,7 +16,7 @@ import {
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
-import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -26,10 +24,7 @@ import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import { setDistributionMembers } from '@/state/distributions';
-import {
-  setERC20TokenContract,
-  setERC20TokenDetails
-} from '@/state/erc20token/slice';
+import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
 import { getWeiAmount } from '@/utils/conversions';
@@ -128,7 +123,7 @@ const ReviewDistribution: React.FC = () => {
       };
     } else if (isDemoMode) {
       // using "Active" as the default view.
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      resetClubState(dispatch, mockActiveERC20Token);
     }
   }, [
     clubAddress,
@@ -367,10 +362,9 @@ const ReviewDistribution: React.FC = () => {
 
             incrementActiveIndex();
 
-            // Amplitude logger: Approve Allowance
             amplitudeLogger(MGR_MAKE_DISTRIBUTE_EVENT, {
               flow: Flow.MGR_DISTRIBUTION,
-              amount: amountToApprove
+              distribution_amount: amountToApprove
             });
             resolve(receipt);
             setIsTransactionPending(false);
@@ -382,11 +376,9 @@ const ReviewDistribution: React.FC = () => {
               // break here
             }
 
-            // Amplitude logger: Error Approve Allowance
             amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
               flow: Flow.MGR_DISTRIBUTION,
-              amount: amountToApprove,
-              error
+              distribution_amount: amountToApprove
             });
             reject(error);
           });
@@ -395,12 +387,6 @@ const ReviewDistribution: React.FC = () => {
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
         await checkTokenAllowance(token);
-
-        // Amplitude logger: Approve Allowance
-        amplitudeLogger(APPROVE_DISTRIBUTION_ALLOWANCE, {
-          flow: Flow.MGR_DISTRIBUTION,
-          amount: amountToApprove
-        });
         setIsTransactionPending(false);
       }
     } catch (error) {
@@ -410,13 +396,6 @@ const ReviewDistribution: React.FC = () => {
       setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
       setProgressDescriptorTitle(`Error Approving ${token.symbol}`);
       setProgressDescriptorDescription('');
-
-      // Amplitude logger: Error Approve Allowance
-      amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-        flow: Flow.MGR_DISTRIBUTION,
-        amount: amountToApprove,
-        error
-      });
       setIsTransactionPending(false);
     }
   };

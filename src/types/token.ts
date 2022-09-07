@@ -8,6 +8,7 @@ export interface Token {
   default?: boolean;
   price?: number;
   collectionCount?: number;
+  collectionMediaType?: string;
 }
 
 /**

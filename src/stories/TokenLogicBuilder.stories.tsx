@@ -1,5 +1,8 @@
 import { TokenLogicBuilder } from '@/components/tokenGating';
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
+import {
+  LogicalOperator,
+  TokenGateRule
+} from '@/state/createInvestmentClub/types';
 import { useState } from 'react';
 
 export default {
@@ -7,10 +10,31 @@ export default {
 };
 
 const Template = (args) => {
-  const [tokenRules, setTokenRules] = useState([
-    { name: 'Token Name', symbol: 'TOKN', quantity: 1, icon: null },
-    { name: 'Token Name', symbol: 'TOKN', quantity: 30, icon: null },
-    { name: 'Token Name', symbol: 'TOKN', quantity: 100, icon: null }
+  const [tokenRules, setTokenRules] = useState<TokenGateRule[]>([
+    {
+      name: 'Token Name',
+      symbol: 'TOKN',
+      quantity: 1,
+      icon: null,
+      chainId: 4,
+      contractAddress: ''
+    },
+    {
+      name: 'Token Name',
+      symbol: 'TOKN',
+      quantity: 30,
+      icon: null,
+      chainId: 4,
+      contractAddress: ''
+    },
+    {
+      name: 'Token Name',
+      symbol: 'TOKN',
+      quantity: 100,
+      icon: null,
+      chainId: 4,
+      contractAddress: ''
+    }
   ]);
   const [logicalOperator, setLogicalOperator] = useState(LogicalOperator.OR);
 

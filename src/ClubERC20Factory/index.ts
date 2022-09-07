@@ -29,6 +29,10 @@ import { FixedRenderer } from './FixedRenderer';
 import { GuardMixinManager } from './GuardMixinManager';
 import { MaxPerMemberERC721 } from './MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from './MaxTotalSupplyERC721';
+import { ERC20ClubFactory } from './ERC20ClubFactory';
+import { MaxMemberCountMixin } from './maxMemberMixin';
+import { MaxTotalSupplyMixin } from './maxTotalSupplyMixin';
+import { TokenGatedMixin } from './tokenGatingMixin';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -82,6 +86,13 @@ export const getSyndicateContracts = async (
     web3,
     activeNetwork
   );
+
+  const erc20ClubFactory = new ERC20ClubFactory(
+    addresses.erc20ClubFactory,
+    web3,
+    activeNetwork
+  );
+
   const mintPolicy = new MintPolicyContract(
     addresses.mintPolicy,
     web3,
@@ -226,6 +237,23 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  const maxMemberCountMixin = new MaxMemberCountMixin(
+    addresses.maxMemberMixin,
+    web3,
+    activeNetwork
+  );
+
+  const maxTotalSupplyMixin = new MaxTotalSupplyMixin(
+    addresses.maxTotalSupplyMixin,
+    web3,
+    activeNetwork
+  );
+  const tokenGatedMixin = new TokenGatedMixin(
+    addresses.tokenGatingMixin,
+    web3,
+    activeNetwork
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -233,6 +261,7 @@ export const getSyndicateContracts = async (
     distributionsETH,
     policyMintERC20,
     clubERC20FactoryNative,
+    erc20ClubFactory,
     mintPolicy,
     DepositTokenMintModule,
     SingleTokenMintModule,
@@ -257,6 +286,9 @@ export const getSyndicateContracts = async (
     guardMixinManager,
     maxPerMemberERC721,
     maxTotalSupplyERC721,
-    timeRequirements
+    timeRequirements,
+    maxMemberCountMixin,
+    maxTotalSupplyMixin,
+    tokenGatedMixin
   };
 };

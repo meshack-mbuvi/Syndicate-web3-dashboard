@@ -48,7 +48,6 @@ const Template = (args) => {
               elementToImage(printRef, 2, (imageURI) => {
                 setArtworkURL(imageURI);
                 setShowModal(true);
-                console.log(imageURI);
               });
             }}
           >

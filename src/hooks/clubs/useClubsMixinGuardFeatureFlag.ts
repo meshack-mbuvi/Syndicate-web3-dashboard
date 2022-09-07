@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { SplitContext } from '@splitsoftware/splitio-react';
 import { clubsMixinGuarded_feature } from '@/pages/_app';
 import SplitIO from '@splitsoftware/splitio-react/types/splitio/splitio';
-import { isDev } from '@/utils/environment';
+import useIsDeployPreview from '@/hooks/utils/useIsDeployPreview';
 
 const useClubMixinGuardFeatureFlag = (): {
   isReady: boolean;
@@ -22,14 +22,17 @@ const useClubMixinGuardFeatureFlag = (): {
   const [isClubMixinGuardTreatmentOn, setTreatmentStatus] =
     useState<boolean>(false);
 
+  const { isDeployPreview: isBeta } = useIsDeployPreview();
+
   useEffect(() => {
     if (!featureFlagClient || !isReady) return;
     const clubMixinGuardFeatureBoolean =
       featureFlagClient.getTreatmentWithConfig(clubsMixinGuarded_feature, {
-        clubsMixinGuardedAllowlisted: isDev ? true : false
+        clubsMixinGuardedAllowlisted: true,
+        isBeta
       });
     setReadyClubMixinsConfig(clubMixinGuardFeatureBoolean);
-  }, [featureFlagClient, isReady]);
+  }, [featureFlagClient, isReady, isBeta]);
 
   useEffect(() => {
     if (readyClubMixinsConfig && readyClubMixinsConfig.treatment) {

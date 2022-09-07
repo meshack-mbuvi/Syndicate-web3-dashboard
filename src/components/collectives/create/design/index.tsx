@@ -110,6 +110,12 @@ export const CollectiveFormDesign: React.FC<Props> = ({
                 always be in your control.
               </div>
             </div>
+
+            <div className="md:hidden mt-8 mb-10">
+              <div className="flex justify-center md:justify-start w-full flex-grow">
+                <DesignRightPanel customId={'design-left-panel'} />
+              </div>
+            </div>
           </div>
 
           <div>
@@ -123,12 +129,8 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             />
           </div>
         </div>
-        <div className="md:hidden mt-8 mb-10">
-          <div className="flex justify-center md:justify-start w-full flex-grow">
-            <DesignRightPanel customId={'design-left-panel'} />
-          </div>
-        </div>
-        <div className="md:mt-10 pb-20">
+
+        <div className="mt-8 md:mt-10 pb-20">
           <button
             className={`${
               isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'

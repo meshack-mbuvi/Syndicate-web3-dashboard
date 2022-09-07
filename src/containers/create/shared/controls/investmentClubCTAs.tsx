@@ -9,6 +9,9 @@ import { useProvider } from '@/hooks/web3/useProvider';
 import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
 import EstimateGas from '@/components/EstimateGas';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CONFIRM_WALLET_CLICK } from '@/components/amplitude/eventNames';
+import { getWeiAmount } from '@/utils/conversions';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -30,10 +33,21 @@ const InvestmentClubCTAs: React.FC = () => {
   const { switchNetworks } = useConnectWalletContext();
 
   const {
-    web3Reducer: { web3 }
+    web3Reducer: { web3: web3Wallet },
+    createInvestmentClubSliceReducer: {
+      investmentClubName,
+      investmentClubSymbol,
+      mintEndTime: { value: endMintTime },
+      membersCount,
+      tokenDetails: { depositToken },
+      tokenCap,
+      tokenRules,
+      tokenGateOption,
+      logicalOperator
+    }
   } = useSelector((state: AppState) => state);
 
-  const { account, activeNetwork } = web3;
+  const { account, activeNetwork, web3 } = web3Wallet;
 
   const dispatch = useDispatch();
   const { providerName } = useProvider();
@@ -67,6 +81,9 @@ const InvestmentClubCTAs: React.FC = () => {
       ...prev,
       warningModal: true
     }));
+    amplitudeLogger(CONFIRM_WALLET_CLICK, {
+      flow: Flow.CLUB_CREATE
+    });
   };
 
   const styles = useSpring({
@@ -97,7 +114,31 @@ const InvestmentClubCTAs: React.FC = () => {
       >
         {isReviewStep && (
           <div className="pt-6">
-            <EstimateGas contract={ContractMapper.ClubERC20Factory} />
+            <EstimateGas
+              contract={ContractMapper.ERC20ClubFactory}
+              args={{
+                clubParams: {
+                  clubTokenName: investmentClubName,
+                  clubTokenSymbol: investmentClubSymbol,
+                  isNativeDeposit: true,
+                  depositToken: depositToken,
+                  tokenCap: getWeiAmount(
+                    web3,
+                    (
+                      +tokenCap * activeNetwork.nativeCurrency.exchangeRate
+                    ).toString(),
+                    18,
+                    true
+                  ),
+                  startTime: (~~(new Date().getTime() / 1000)).toString(),
+                  endTime: endMintTime.toString(),
+                  membersCount: membersCount,
+                  tokenRules: tokenRules,
+                  tokenGateOption: tokenGateOption,
+                  logicalOperator: logicalOperator
+                }
+              }}
+            />
           </div>
         )}
 

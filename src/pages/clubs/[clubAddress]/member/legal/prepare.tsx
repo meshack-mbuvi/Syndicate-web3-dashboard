@@ -27,7 +27,8 @@ const SignMemberLegalAgreement: NextPage = () => {
     erc20TokenSliceReducer: {
       erc20TokenContract,
       erc20Token: { loading },
-      depositDetails: { loading: loadingDepositSymbol }
+      depositDetails: { loading: loadingDepositSymbol },
+      activeModuleDetails
     }
   } = useSelector((state: AppState) => state);
   const router = useRouter();
@@ -93,6 +94,7 @@ const SignMemberLegalAgreement: NextPage = () => {
           erc20TokenContract,
           DepositTokenMintModule,
           SingleTokenMintModule,
+          activeModuleDetails?.mintModule,
           activeNetwork
         );
       }
@@ -117,7 +119,8 @@ const SignMemberLegalAgreement: NextPage = () => {
     router.isReady,
     queryLoading,
     networkStatus,
-    totalDeposits
+    totalDeposits,
+    activeModuleDetails?.mintModule
   ]);
 
   const navItems = [

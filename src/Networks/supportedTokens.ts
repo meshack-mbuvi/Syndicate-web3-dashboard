@@ -74,14 +74,6 @@ export const SUPPORTED_TOKENS = Object.freeze({
       logoURI: '/images/prodTokenLogos/tether.svg'
     },
     {
-      name: 'USDCoin',
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      symbol: 'USDC',
-      decimals: 6,
-      default: false,
-      logoURI: '/images/prodTokenLogos/USDCoin.svg'
-    },
-    {
       name: 'Orchid',
       address: '0x4575f41308EC1483f3d399aa9a2826d74Da13Deb',
       symbol: 'OXT',
@@ -354,8 +346,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
       decimals: 6,
       default: false,
-      logoURI: '/images/TestnetTokenLogos/usdcIcon.svg',
-      price: 1.0
+      logoURI: '/images/TestnetTokenLogos/usdcIcon.svg'
     },
     {
       symbol: 'ETH',
@@ -363,8 +354,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       address: '',
       logoURI: '/images/chains/rinkeby.svg',
       decimals: 18,
-      default: true,
-      price: 3200
+      default: true
     },
     {
       name: 'Wrapped Ether',
@@ -380,8 +370,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'DAI',
       decimals: 18,
       default: false,
-      logoURI: '/images/TestnetTokenLogos/daiIcon.svg',
-      price: 1.0
+      logoURI: '/images/TestnetTokenLogos/daiIcon.svg'
     },
     {
       name: 'Maker',

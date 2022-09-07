@@ -1,20 +1,30 @@
+import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
+import { ModuleReqs } from '@/types/modules';
+
 export const getSyndicateValues = async (
   address: string,
   policyMintERC20,
-  mintPolicy
+  mintPolicy,
+  guardMixinManager: GuardMixinManager,
+  activeMintReqs: ModuleReqs,
+  mintModule: string
 ): Promise<any> => {
-  let currentMintPolicyAddress = policyMintERC20.address;
-
-  let {
-    endTime,
+  let currentMintPolicyAddress;
+  let endTime,
     maxMemberCount,
     maxTotalSupply,
     requiredToken,
     requiredTokenMinBalance,
-    startTime
-  } = await policyMintERC20?.getSyndicateValues(address);
+    startTime;
+  if (mintModule && activeMintReqs) {
+    currentMintPolicyAddress = guardMixinManager.address;
+    startTime = activeMintReqs.startTime;
+    endTime = activeMintReqs.endTime;
+    maxMemberCount = activeMintReqs.maxMemberCount;
+    maxTotalSupply = activeMintReqs.maxTotalSupply;
+  } else {
+    currentMintPolicyAddress = policyMintERC20.address;
 
-  if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
     ({
       endTime,
       maxMemberCount,
@@ -22,10 +32,21 @@ export const getSyndicateValues = async (
       requiredToken,
       requiredTokenMinBalance,
       startTime
-    } = await mintPolicy?.getSyndicateValues(address));
+    } = await policyMintERC20?.getSyndicateValues(address));
 
-    // Change current mint policy
-    currentMintPolicyAddress = mintPolicy.address;
+    if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
+      ({
+        endTime,
+        maxMemberCount,
+        maxTotalSupply,
+        requiredToken,
+        requiredTokenMinBalance,
+        startTime
+      } = await mintPolicy?.getSyndicateValues(address));
+
+      // Change current mint policy
+      currentMintPolicyAddress = mintPolicy.address;
+    }
   }
 
   return {

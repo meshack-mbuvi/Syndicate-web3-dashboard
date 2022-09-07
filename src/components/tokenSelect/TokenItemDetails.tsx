@@ -6,6 +6,7 @@ import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 import ExternalLinkIcon from '../icons/externalLink';
 import { ImportButton } from './ImportToken';
+import { CollectiveIcon } from '@/components/collectives/collectiveIcon';
 
 export interface TokenDetailsProps {
   symbol: string;
@@ -19,6 +20,7 @@ export interface TokenDetailsProps {
   showImportBtn?: boolean;
   collectionCount?: number;
   decimals?: number;
+  collectionMediaType?: string;
 }
 
 // render each token item inside the token select drop-down
@@ -26,6 +28,7 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
   symbol,
   name,
   logoURI,
+  collectionMediaType,
   price,
   collectionCount,
   decimals,
@@ -63,12 +66,19 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
         disabled={showImportBtn}
       >
         <div className="flex justify-start items-center pl-8">
-          <Image
-            src={logoURI || '/images/token-gray-5.svg'}
-            width={30}
-            height={30}
-            alt={`${name} logo`}
-          />
+          {logoURI && collectionMediaType ? (
+            <CollectiveIcon
+              tokenMedia={logoURI}
+              tokenMediaType={collectionMediaType}
+            />
+          ) : (
+            <Image
+              src={logoURI || '/images/token-gray-5.svg'}
+              width={30}
+              height={30}
+              alt={`${name} logo`}
+            />
+          )}
 
           <div className="flex flex-col ml-3">
             <div className="flex">
@@ -154,9 +164,10 @@ export interface TokenItemsSectionProps {
   tokenList: Token[];
   depositTokenSymbol: string;
   handleItemClick: (token: Token) => void;
+  allActiveTokens: Token[];
   loading?: boolean;
   activeItemIndex?: number;
-  listShift?: number;
+  // listShift?: number;
   showImportBtn?: boolean;
 }
 
@@ -164,18 +175,23 @@ export const TokenItemsSection: React.FC<TokenItemsSectionProps> = ({
   tokenList,
   depositTokenSymbol,
   handleItemClick,
+  allActiveTokens,
   activeItemIndex,
-  showImportBtn,
-  listShift = 0
+  showImportBtn
 }) => {
   return (
     <ul>
       {tokenList.map((token, index) => {
         const { symbol } = token;
 
-        const isNavHighlighted = index + listShift === activeItemIndex;
+        let currentToken;
+        if (allActiveTokens?.length) {
+          currentToken = allActiveTokens[activeItemIndex];
+        }
+        const isNavHighlighted = token == currentToken;
+
         return (
-          <li key={`${index + listShift}-${symbol}`}>
+          <li key={`${index + currentToken}-${symbol}`}>
             <TokenItemDetails
               {...token}
               showCheckMark={symbol === depositTokenSymbol}

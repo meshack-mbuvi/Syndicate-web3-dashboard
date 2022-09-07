@@ -13,6 +13,8 @@ import {
   setIpfsError
 } from '@/state/createCollective/slice';
 import { useDispatch } from 'react-redux';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_CREATION } from '@/components/amplitude/eventNames';
 
 interface Props {
   handleReSubmit: () => void;
@@ -54,6 +56,10 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
     }
     if (creationStatus.transactionSuccess) {
       setShowModal(false);
+      amplitudeLogger(COLLECTIVE_CREATION, {
+        flow: Flow.COLLECTIVE_CREATE,
+        transaction_status: 'Success'
+      });
     }
   }, [
     creationStatus.waitingForConfirmation,
@@ -67,12 +73,20 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
       setErrorModalDescription('');
       setShowErrorModal(true);
       setShowModal(false);
+      amplitudeLogger(COLLECTIVE_CREATION, {
+        flow: Flow.COLLECTIVE_CREATE,
+        transaction_status: 'Failure'
+      });
     }
     if (creationStatus.transactionError) {
       setErrorModalTitle('Collective Creation Failed');
       setErrorModalDescription('');
       setShowErrorModal(true);
       setShowModal(false);
+      amplitudeLogger(COLLECTIVE_CREATION, {
+        flow: Flow.COLLECTIVE_CREATE,
+        transaction_status: 'Failure'
+      });
     }
   }, [creationStatus.ipfsError, creationStatus.transactionError]);
 

@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import CreateCollectiveModals from '../shared/createCollectiveModals';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_CREATION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 interface Props {
   handleNext?: (e) => void;
@@ -100,6 +102,9 @@ const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
       }
 
       setSubmitButtonActive(proceed);
+      amplitudeLogger(COLLECTIVE_CREATION_DISCLAIMER_AGREE, {
+        flow: Flow.COLLECTIVE_CREATE
+      });
       return;
     }
     setSubmitButtonActive(false);

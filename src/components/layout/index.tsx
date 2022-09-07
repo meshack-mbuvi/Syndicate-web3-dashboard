@@ -4,7 +4,11 @@ import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
-import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
+import {
+  getDepositDetails,
+  resetClubState,
+  setERC20Token
+} from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
@@ -15,8 +19,7 @@ import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import {
   setERC20TokenContract,
-  setERC20TokenDepositDetails,
-  setERC20TokenDetails
+  setERC20TokenDepositDetails
 } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
@@ -68,7 +71,7 @@ const Layout: FC<Props> = ({
   handlePrevious,
   navItems = [
     {
-      url: '/clubs',
+      url: '/',
       navItemText: 'Portfolio'
     }
   ],
@@ -85,7 +88,8 @@ const Layout: FC<Props> = ({
     erc20TokenSliceReducer: {
       erc20TokenContract,
       depositDetails: { nativeDepositToken },
-      erc20Token: { owner, address, loading: loadingClubDetails }
+      erc20Token: { owner, address, loading: loadingClubDetails },
+      activeModuleDetails
     }
   } = useSelector((state: AppState) => state);
 
@@ -224,6 +228,7 @@ const Layout: FC<Props> = ({
           erc20TokenContract,
           DepositTokenMintModule,
           SingleTokenMintModule,
+          activeModuleDetails?.mintModule,
           activeNetwork
         );
       }
@@ -256,8 +261,7 @@ const Layout: FC<Props> = ({
     if (
       clubAddress &&
       !isZeroAddress(clubAddress as string) &&
-      web3.utils.isAddress(clubAddress as string) &&
-      DepositTokenMintModule
+      web3.utils.isAddress(clubAddress as string)
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
@@ -274,7 +278,7 @@ const Layout: FC<Props> = ({
       };
     } else if (isDemoMode) {
       // using "Active" as the default view.
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      resetClubState(dispatch, mockActiveERC20Token);
     }
   }, [
     clubAddress,
@@ -282,7 +286,8 @@ const Layout: FC<Props> = ({
     nativeDepositToken,
     status,
     DepositTokenMintModule,
-    activeNetwork.chainId
+    activeNetwork.chainId,
+    activeModuleDetails?.hasActiveModules
   ]);
 
   return (

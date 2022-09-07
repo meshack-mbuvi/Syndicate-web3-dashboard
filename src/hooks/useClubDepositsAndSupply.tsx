@@ -1,5 +1,8 @@
 import { SINGLE_CLUB_DETAILS } from '@/graphql/queries';
+import { SingleClubData } from '@/graphql/types';
 import { AppState } from '@/state';
+import { setActiveModuleDetails, setIsNewClub } from '@/state/erc20token/slice';
+import { ModuleReqs, ModuleType } from '@/types/modules';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   MOCK_END_TIME,
@@ -10,10 +13,13 @@ import {
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import getModuleByType from '@/utils/modules/getModuleByType';
 import { useAccountTokens } from './useAccountTokens';
 import { useDemoMode } from './useDemoMode';
+import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
 
+// TODO: [REFACTOR] rename to useSingleClubGraphDetails for readability
 /**
  * Retrieves club total deposits and total supply from the thegraph.
  * NOTE: More fields like owner address can also be retrieved if needed.
@@ -26,7 +32,12 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   totalSupply;
   startTime;
   endTime;
-  loadingClubDeposits;
+  hasActiveModules: boolean;
+  mintModule: string;
+  activeMintModuleReqs: ModuleReqs;
+  ownerModule: string;
+  activeOwnerModuleReqs: ModuleReqs;
+  loadingClubDeposits: boolean;
 } {
   const {
     erc20TokenSliceReducer: {
@@ -45,21 +56,30 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [loadingClubDeposits, setLoadingClubDeposits] = useState(true);
+  const [hasActiveModules, setHasActiveModules] = useState<boolean>(false);
+  const [ownerModule, setOwnerModule] = useState<string>('');
+  const [mintModule, setMintModule] = useState<string>('');
+  const [activeOwnerReqs, setActiveOwnerReqs] = useState<ModuleReqs>({});
+  const [activeMintReqs, setActiveMintReqs] = useState<ModuleReqs>({});
 
   const { isReady } = useRouter();
   const isDemoMode = useDemoMode();
+  const dispatch = useDispatch();
 
   // SINGLE_CLUB_DETAILS
-  const { loading, data, refetch } = useQuery(SINGLE_CLUB_DETAILS, {
-    variables: {
-      where: {
-        contractAddress: contractAddress?.toLocaleLowerCase()
-      }
-    },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
-    // Avoid unnecessary calls when contractAddress is not defined or in demo mode
-    skip: !contractAddress || !activeNetwork.chainId || isDemoMode
-  });
+  const { loading, data, refetch } = useQuery<SingleClubData>(
+    SINGLE_CLUB_DETAILS,
+    {
+      variables: {
+        where: {
+          contractAddress: contractAddress?.toLocaleLowerCase()
+        }
+      },
+      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+      // Avoid unnecessary calls when contractAddress is not defined or in demo mode
+      skip: !contractAddress || !activeNetwork.chainId || isDemoMode
+    }
+  );
 
   const { memberDeposits, accountTokens } = useAccountTokens();
 
@@ -90,15 +110,78 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       syndicateDAOs: [syndicateDAO]
     } = data || {};
 
-    const { totalDeposits, totalSupply, startTime, endTime } =
-      syndicateDAO || {};
+    let { startTime, endTime } = syndicateDAO || {};
 
-    setTotalSupply(getWeiAmount(web3, totalSupply, tokenDecimals || 18, false));
+    const activeModules = syndicateDAO.activeModules;
+
+    if (activeModules.length > 0) {
+      const mintModule = getModuleByType(
+        ModuleType.MINT,
+        activeModules,
+        activeNetwork
+      );
+      let activeMintReqs: ModuleReqs;
+
+      if (mintModule) {
+        activeMintReqs = getReqsByModuleType(
+          ModuleType.MINT,
+          activeModules,
+          activeNetwork,
+          mintModule
+        );
+        setMintModule(web3.utils.toChecksumAddress(mintModule.contractAddress));
+        setActiveMintReqs(activeMintReqs);
+      }
+
+      const ownerModule = getModuleByType(
+        ModuleType.OWNER,
+        activeModules,
+        activeNetwork
+      );
+      let activeOwnerReqs: ModuleReqs;
+
+      if (ownerModule) {
+        activeOwnerReqs = getReqsByModuleType(
+          ModuleType.OWNER,
+          activeModules,
+          activeNetwork,
+          ownerModule
+        );
+        setOwnerModule(ownerModule.contractAddress);
+        setActiveOwnerReqs(activeOwnerReqs);
+      }
+
+      startTime = `${activeMintReqs?.startTime}`;
+      endTime = `${activeMintReqs?.endTime}`;
+      dispatch(
+        setActiveModuleDetails({
+          hasActiveModules: activeModules.length > 0,
+          activeModules: activeModules,
+          mintModule:
+            web3.utils.toChecksumAddress(mintModule?.contractAddress) ?? '',
+          activeMintModuleReqs: activeMintReqs,
+          ownerModule:
+            web3.utils.toChecksumAddress(ownerModule?.contractAddress) ?? '',
+          activeOwnerModuleReqs: activeOwnerReqs
+        })
+      );
+      dispatch(setIsNewClub(activeModules.length > 0));
+    }
+
+    setTotalSupply(
+      getWeiAmount(web3, syndicateDAO.totalSupply, tokenDecimals || 18, false)
+    );
     setTotalDeposits(
-      getWeiAmount(web3, totalDeposits, depositTokenDecimals, false)
+      getWeiAmount(
+        web3,
+        syndicateDAO.totalDeposits,
+        depositTokenDecimals,
+        false
+      )
     );
     setStartTime(+startTime * 1000);
     setEndTime(+endTime * 1000);
+    setHasActiveModules(activeModules.length > 0);
     setLoadingClubDeposits(false);
   }, [
     data,
@@ -116,6 +199,11 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     totalSupply,
     startTime,
     endTime,
+    hasActiveModules,
+    mintModule,
+    activeMintModuleReqs: activeMintReqs,
+    ownerModule,
+    activeOwnerModuleReqs: activeOwnerReqs,
     loadingClubDeposits: loading || loadingClubDeposits,
     refetch
   };

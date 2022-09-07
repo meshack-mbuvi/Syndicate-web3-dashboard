@@ -1,17 +1,31 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { WEB_APP_LANDING } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import PortfolioAndDiscover from '@/components/syndicates/portfolioAndDiscover';
 import useWindowSize from '@/hooks/useWindowSize';
-import React, { FC } from 'react';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect } from 'react';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 
 /**
  * Displays all clubs.
- 
  *
  */
+
 const SyndicatesComponent: FC = () => {
   const { width } = useWindowSize();
+  const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() => {
+      router.push('/');
+      amplitudeLogger(WEB_APP_LANDING, {
+        flow: Flow.WEB_APP
+      });
+    }, 500);
+  }, []);
+
   return (
     <Layout>
       <Head title="My Investment Clubs" />
@@ -43,3 +57,9 @@ const SyndicatesComponent: FC = () => {
 };
 
 export default SyndicatesComponent;
+function MARKETING_WEBSITE_LANDING(
+  MARKETING_WEBSITE_LANDING: any,
+  arg1: { flow: any }
+) {
+  throw new Error('Function not implemented.');
+}

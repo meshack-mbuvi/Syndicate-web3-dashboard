@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { SplitContext } from '@splitsoftware/splitio-react';
 import { collectives_feature } from '@/pages/_app';
+import useIsDeployPreview from '@/hooks/utils/useIsDeployPreview';
 
 const useCollectivesFeatureFlag = (): {
   isReady: boolean;
@@ -17,16 +18,19 @@ const useCollectivesFeatureFlag = (): {
 
   const [readyCollectivesClient, setReadyCollectivesClient] = useState(null);
 
+  const { isDeployPreview: isBeta } = useIsDeployPreview();
+
   useEffect(() => {
     if (!featureFlagClient || !isReady) return;
     const collectivesFeatureBoolean = featureFlagClient.getTreatmentWithConfig(
       collectives_feature,
       {
-        collectivesAllowlisted: true
+        collectivesAllowlisted: true,
+        isBeta
       }
     );
     setReadyCollectivesClient(collectivesFeatureBoolean);
-  }, [featureFlagClient, isReady]);
+  }, [featureFlagClient, isReady, isBeta]);
 
   return { isReady, readyCollectivesClient };
 };

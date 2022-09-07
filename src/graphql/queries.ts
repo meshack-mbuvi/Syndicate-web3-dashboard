@@ -202,8 +202,28 @@ export const SINGLE_CLUB_DETAILS = gql`
       totalSupply
       createdAt
       totalDeposits
-      startTime
+      maxTotalSupply
       endTime
+      startTime
+      maxMemberCount
+      activeModules {
+        contractAddress
+        activeRequirements {
+          id
+          requirement {
+            contractAddress
+            eventType
+            requirementType
+            maxMemberCount
+            maxTotalSupply
+            startTime
+            endTime
+            requiredTokensLogicalOperator
+            requiredTokens
+            requiredTokenBalances
+          }
+        }
+      }
     }
   }
 `;
@@ -247,6 +267,7 @@ export const GetAdminCollectives = gql`
         metadataCid
         mediaCid
       }
+      transferGuardAddress
       areNftsTransferable
       activeModules {
         activeRequirements {
@@ -288,6 +309,49 @@ export const GetERC721MemberEvents = gql`
     mintERC721S(where: $where) {
       to
       createdAt
+    }
+  }
+`;
+
+export const TOKEN_HOLDINGS_AND_DETAILS = gql`
+  query Query(
+    $chainId: Int!
+    $walletAddress: String!
+    $filter: TokenHoldingsFilter
+  ) {
+    tokenHoldings(
+      chainId: $chainId
+      walletAddress: $walletAddress
+      filter: $filter
+    ) {
+      balance
+      token {
+        address
+        name
+        symbol
+        decimals
+        logo
+      }
+    }
+  }
+`;
+
+export const COLLECTIVES_DETAILS = gql`
+  query SyndicateCollectives(
+    $where: SyndicateCollective_filter
+    $ownersWhere2: CollectiveOwnership_filter
+  ) {
+    syndicateCollectives(where: $where) {
+      contractAddress
+      ownerAddress
+      name
+      symbol
+      owners(where: $ownersWhere2) {
+        owner {
+          walletAddress
+        }
+        numOwned
+      }
     }
   }
 `;

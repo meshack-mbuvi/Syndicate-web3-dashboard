@@ -1,5 +1,4 @@
 import { Token } from '@/types/token';
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 
 export type mintEndTime = {
   mintTime: string;
@@ -19,12 +18,18 @@ export enum TokenGateOption {
   UNRESTRICTED
 }
 
+export enum LogicalOperator {
+  AND = 'AND',
+  OR = 'OR'
+}
+
 export type TokenGateRule = {
   name: string;
   quantity: number;
   symbol: string;
+  chainId?: number;
+  contractAddress: string;
   icon?: string | null;
-  contractAddress?: string;
   decimals?: number;
 };
 
@@ -56,6 +61,7 @@ export interface InitialState {
     memberAddresses: string;
     duplicateRules: number[];
     nullRules: number[];
+    hasMoreThanFiveRules: boolean;
   };
   tokenGateOption: TokenGateOption;
   amountToMintPerAddress: number;
@@ -83,7 +89,7 @@ export const initialState: InitialState = {
   clubCreationStatus: {
     transactionHash: '',
     creationReceipt: {
-      token: ''
+      tokenAddress: ''
     }
   },
   tokenDetails: {
@@ -96,7 +102,8 @@ export const initialState: InitialState = {
   errors: {
     memberAddresses: '',
     duplicateRules: [],
-    nullRules: []
+    nullRules: [],
+    hasMoreThanFiveRules: false
   },
   tokenGateOption: TokenGateOption.RESTRICTED,
   amountToMintPerAddress: 0,
@@ -108,10 +115,13 @@ export const initialState: InitialState = {
   },
   tokenRules: [
     {
-      icon: null,
       name: '',
       quantity: 1,
-      symbol: ''
+      symbol: '',
+      chainId: 1,
+      contractAddress: '',
+      icon: null,
+      decimals: 18
     }
   ],
   logicalOperator: LogicalOperator.OR

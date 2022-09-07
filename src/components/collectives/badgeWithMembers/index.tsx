@@ -12,6 +12,11 @@ import { useSelector } from 'react-redux';
 import { JoinCollectiveCTA } from '../joinCollectiveButton';
 import { CollectiveMember, CollectiveMemberProps } from '../member';
 import { PermissionType } from '../shared/types';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  INVITE_LINK_COPY,
+  JOIN_COLLECTIVE_CLICK
+} from '@/components/amplitude/eventNames';
 import MembersOnly from '@/components/collectives/membersOnly';
 import { getCollectiveBalance } from '@/utils/contracts/collective';
 
@@ -48,6 +53,10 @@ export const BadgeWithMembers: React.FC<Props> = ({
       pathname: `/collectives/${collectiveAddress}/claim`,
       query: { chain: activeNetwork.network }
     });
+
+    amplitudeLogger(JOIN_COLLECTIVE_CLICK, {
+      flow: Flow.COLLECTIVE_CLAIM
+    });
   };
 
   const emptyMemberState: CollectiveMemberProps = {
@@ -57,6 +66,10 @@ export const BadgeWithMembers: React.FC<Props> = ({
 
   const handleUpdateCopyState = () => {
     setCopyState(true);
+
+    amplitudeLogger(INVITE_LINK_COPY, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
 
     setTimeout(() => {
       setCopyState(false);

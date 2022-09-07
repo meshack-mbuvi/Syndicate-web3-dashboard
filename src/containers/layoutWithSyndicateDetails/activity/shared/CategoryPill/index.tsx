@@ -15,6 +15,8 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -234,6 +236,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   const [annotationMutation] = useMutation(ANNOTATE_TRANSACTIONS);
 
   const handleSelect = (value: TransactionCategory) => {
+    amplitudeLogger(TRANSACTION_CATEGORIZE, {
+      flow: Flow.CLUB_MANAGE,
+      transaction_category: value
+    });
     if (Object.keys(currentTransaction).length) {
       dispatch(
         setCurrentTransaction({ ...currentTransaction, category: value })

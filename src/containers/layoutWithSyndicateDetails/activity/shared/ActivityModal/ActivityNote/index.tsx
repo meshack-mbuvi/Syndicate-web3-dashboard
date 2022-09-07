@@ -13,6 +13,8 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TextArea } from './textArea';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_NOTE_ADD } from '@/components/amplitude/eventNames';
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
@@ -58,6 +60,10 @@ const ActivityNote: React.FC<IActivityNote> = ({
       setShowNote(false);
     }
     dispatch(setCurrentTransaction({ ...currentTransaction, note: noteValue }));
+    amplitudeLogger(TRANSACTION_NOTE_ADD, {
+      flow: Flow.CLUB_MANAGE,
+      transaction_note: noteValue
+    });
   };
 
   const cancelNote = () => {

@@ -5,8 +5,8 @@ import useCreateState from './useCreateState';
 import { useDispatch } from 'react-redux';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { useState, useEffect } from 'react';
-import { acronymGenerator } from '@/utils/acronymGenerator';
-import { useDebounce } from '@/hooks/useDebounce';
+// import { acronymGenerator } from '@/utils/acronymGenerator';
+// import { useDebounce } from '@/hooks/useDebounce';
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import {
@@ -25,6 +25,8 @@ import {
   setColectiveTokenDetails,
   setIpfsHash
 } from '@/state/createCollective/slice';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ARTWORK_UPLOAD } from '@/components/amplitude/eventNames';
 
 const useUpdateState = () => {
   const dispatch = useDispatch();
@@ -51,13 +53,14 @@ const useUpdateState = () => {
     return { mediaType, mediaSource };
   };
 
-  const debouncedSymbol = useDebounce(name, 500);
+  // TODO: Fix acronymGenerator to not overwrite user input symbol
 
-  useEffect(() => {
-    if (debouncedSymbol) {
-      dispatch(setCollectiveSymbol(acronymGenerator(debouncedSymbol)));
-    }
-  }, [debouncedSymbol]);
+  // const debouncedSymbol = useDebounce(name, 500);
+  // useEffect(() => {
+  //   if (debouncedSymbol && ) {
+  //     dispatch(setCollectiveSymbol(acronymGenerator(debouncedSymbol)));
+  //   }
+  // }, [debouncedSymbol]);
 
   // State update handlers
   // ==============================================================
@@ -133,6 +136,9 @@ const useUpdateState = () => {
       );
       setProgressPercent(100);
     }
+    amplitudeLogger(ARTWORK_UPLOAD, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   const handleCancelUpload = () => {

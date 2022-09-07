@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
-import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
 import { ProgressModal } from '@/components/progressModal';
 import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
 import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
@@ -19,6 +18,7 @@ import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareToke
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { ProgressState } from '@/components/progressCard';
+import { useRouter } from 'next/router';
 
 interface Props {
   show: boolean;
@@ -44,7 +44,11 @@ export const MintAndShareTokens: React.FC<Props> = ({
         startTime,
         currentMintPolicyAddress
       },
-      erc20TokenContract
+      erc20TokenContract,
+      isNewClub
+    },
+    initializeContractsReducer: {
+      syndicateContracts: { timeRequirements }
     },
     web3Reducer: {
       web3: { web3, account, activeNetwork }
@@ -52,6 +56,11 @@ export const MintAndShareTokens: React.FC<Props> = ({
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+
+  const router = useRouter();
+  const {
+    query: { clubAddress }
+  } = router;
 
   const [confirm, setConfirm] = useState(false);
   const [minting, setMinting] = useState(false);
@@ -246,30 +255,69 @@ export const MintAndShareTokens: React.FC<Props> = ({
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
       const _tokenCap = getWeiAmount(web3, String(totalSupply), 18, true);
-      const mintPolicy = new MintPolicyContract(
-        currentMintPolicyAddress,
-        web3,
-        activeNetwork
-      );
 
-      // using the endMint function on the mint policy
-      // will lock club settings and prevent subsequent changes to club settings.
-      await mintPolicy.modifyERC20(
-        account,
-        address,
-        startTime / 1000,
-        parseInt((newEndTime / 1000).toString()),
-        +maxMemberCount,
-        _tokenCap,
-        onCloseTxConfirm,
-        onCloseTxReceipt
-      );
+      if (isNewClub) {
+        await timeRequirements.closeTimeWindow(
+          account,
+          clubAddress as string,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail
+        );
+      } else if (
+        currentMintPolicyAddress.toLowerCase() ==
+        CONTRACT_ADDRESSES[
+          activeNetwork.chainId
+        ]?.guardMixinManager.toLowerCase()
+      ) {
+        // txn 1/(2 eventually)
+        await timeRequirements.updateTimeRequirements(
+          account,
+          address,
+          startTime,
+          ~~(newEndTime / 1000),
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail
+        );
+        // TODO: [TOKEN-GATING] update the tokenCap txn (2/2) after token-gating branches merged with updateTotalSupply
+      } else if (
+        currentMintPolicyAddress.toLowerCase() ==
+          CONTRACT_ADDRESSES[activeNetwork.chainId]?.mintPolicy.toLowerCase() ||
+        currentMintPolicyAddress.toLowerCase() ==
+          CONTRACT_ADDRESSES[
+            activeNetwork.chainId
+          ]?.policyMintERC20.toLowerCase()
+      ) {
+        const mintPolicy = new MintPolicyContract(
+          currentMintPolicyAddress,
+          web3,
+          activeNetwork
+        );
+
+        // using the endMint function on the mint policy
+        // will lock club settings and prevent subsequent changes to club settings.
+        await mintPolicy.modifyERC20(
+          account,
+          address,
+          startTime / 1000,
+          parseInt((newEndTime / 1000).toString()),
+          +maxMemberCount,
+          _tokenCap,
+          onCloseTxConfirm,
+          onCloseTxReceipt
+        );
+      } else {
+        // TODO: [AMPLITUDE] add amplitude error specific to mint policy case
+        throw new Error('No matching mint policy');
+      }
 
       setClubSuccessfullyClosed(true);
     } catch (error) {
       setCloseClubFailed(true);
       setConfirmCloseClub(false);
       setClosingClub(false);
+      // TODO: [AMPLITUDE] add amplitude error for closing club
       const { code } = error;
       if (code == 4001) {
         setCloseClubRejected(true);
@@ -434,34 +482,25 @@ export const MintAndShareTokens: React.FC<Props> = ({
   const handleMinting = async () => {
     setConfirm(true);
 
-    // OwnerMintModule for policyMintERC20
-    const OWNER_MINT_MODULE =
-      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
-    // OwnerMintModule for mintPolicy
-    const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
-
-    const policyMintERC20MintModule =
-      await syndicateContracts.policyMintERC20.isModuleAllowed(
-        erc20TokenContract.address,
-        OWNER_MINT_MODULE
-      );
-
-    // Both ETH and USDC clubs should work with OwnerMintModule
-    const useOwnerMintModule =
-      policyMintERC20MintModule ||
-      (await syndicateContracts.mintPolicy.isModuleAllowed(
-        erc20TokenContract.address,
-        OWNER_MINT_MODULE_2
-      ));
+    // Simulate call from owner mint module and then execute it if it succeeds
+    let useOwnerMintModule;
+    try {
+      useOwnerMintModule =
+        !!(await syndicateContracts.OwnerMintModule.OwnerMintModuleContract.methods
+          .ownerMint(
+            erc20TokenContract.address,
+            memberAddress,
+            getWeiAmount(web3, amountToMint, tokenDecimals, true)
+          )
+          .estimateGas({
+            from: owner
+          }));
+    } catch (err) {
+      useOwnerMintModule = false;
+    }
 
     if (useOwnerMintModule) {
-      // Use either OwnerMintModule for policyMintERC20 or one for mintPolicy
-      // respectively
-      const OwnerMintModule = policyMintERC20MintModule
-        ? syndicateContracts.OwnerMintModule
-        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3, activeNetwork);
-
-      await OwnerMintModule.ownerMint(
+      await syndicateContracts.OwnerMintModule.ownerMint(
         getWeiAmount(web3, amountToMint, tokenDecimals, true),
         erc20TokenContract.address,
         memberAddress,
@@ -472,6 +511,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
         setTransactionHash
       );
     } else {
+      // If owner mint module simulated call fails, try to fall back to calling club directly
       if (isDev) {
         await erc20TokenContract.mintTo(
           memberAddress,

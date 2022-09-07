@@ -106,14 +106,14 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
           customId={customId}
         />
         <div
-          className="absolute top-0 left-0"
+          className="absolute top-0 left-0 right-0"
           style={{
             padding: `${containerPaddingRem}rem`
           }}
         >
           <div
             ref={titleRef}
-            className="relative uppercase text-white font-black-extended"
+            className="relative uppercase text-white font-black-extended break-words"
             style={{
               fontSize: `${fontSize}rem`,
               lineHeight: '120%'

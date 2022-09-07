@@ -11,7 +11,9 @@ import Link from 'next/link';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector } from 'react-redux';
-import { TokenMediaType } from '@/state/collectives/types';
+import { CollectiveIcon } from '@/components/collectives/collectiveIcon';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
 
 interface Props {
   columns: string[];
@@ -37,6 +39,9 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
   const updateInviteLinkCopyState = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 500);
+    amplitudeLogger(INVITE_LINK_COPY, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   function goToNextPage() {
@@ -119,33 +124,10 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                   >
                     <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-2">
                       <div className="flex flex-shrink-0">
-                        <div className="hidden sm:block sm:mr-4 w-10 h-10 rounded-xl">
-                          {tokenMediaType === TokenMediaType.ANIMATION && (
-                            // eslint-disable-next-line jsx-a11y/media-has-caption
-                            <video
-                              autoPlay
-                              playsInline={true}
-                              loop
-                              muted={true}
-                              className={`${'object-cover'} rounded-xl w-full h-full bg-gray-syn6 flex-shrink-0`}
-                            >
-                              <source
-                                src={tokenMedia}
-                                type="video/mp4"
-                              ></source>
-                            </video>
-                          )}
-                          {tokenMediaType === TokenMediaType.IMAGE && (
-                            <div
-                              className="rounded-xl w-full h-full bg-gray-syn6 flex-shrink-0"
-                              style={{
-                                backgroundImage: `url(${tokenMedia})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center'
-                              }}
-                            ></div>
-                          )}
-                        </div>
+                        <CollectiveIcon
+                          tokenMedia={tokenMedia}
+                          tokenMediaType={tokenMediaType}
+                        />
                       </div>
                       <div className="flex text-base items-center">
                         <B2 extraClasses="mr-2">{tokenName}</B2>

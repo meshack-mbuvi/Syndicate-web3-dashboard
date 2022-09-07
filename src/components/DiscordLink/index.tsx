@@ -4,7 +4,7 @@ export const DiscordLink = () => (
   <>
     <a
       className="text-gray-syn3"
-      href="https://discord.gg/gfh9wmeDMC"
+      href="https://discord.gg/syndicatedao"
       target="_blank"
       rel="noreferrer"
     >

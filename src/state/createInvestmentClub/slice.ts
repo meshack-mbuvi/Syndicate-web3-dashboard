@@ -1,9 +1,9 @@
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   initialState,
   mintEndTime,
   ICurrentSelectedToken,
+  LogicalOperator,
   tokenDetails,
   TokenGateOption,
   TokenGateRule
@@ -38,27 +38,7 @@ const createInvestmentClubSlice = createSlice({
     setClubCreationReceipt(state, action) {
       state.clubCreationStatus.creationReceipt = action.payload;
     },
-    resetClubCreationReduxState(state) {
-      state.investmentClubName = '';
-      state.investmentClubSymbolPlaceHolder = '';
-      state.investmentClubSymbol = '';
-      state.membersCount = '';
-      state.tokenCap = '';
-      state.mintEndTime = {
-        mintTime: '',
-        value: parseInt(
-          (
-            new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000
-          ).toString()
-        )
-      };
-      state.clubCreationStatus = {
-        transactionHash: '',
-        creationReceipt: {
-          token: ''
-        }
-      };
-    },
+    resetClubCreationReduxState: () => initialState,
     setDepositTokenDetails(state, action: PayloadAction<tokenDetails>) {
       state.tokenDetails = action.payload;
     },
@@ -98,6 +78,9 @@ const createInvestmentClubSlice = createSlice({
     setNullRulesError(state, action: PayloadAction<number[]>) {
       state.errors.nullRules = action.payload;
     },
+    setMoreThanFiveRules(state, action: PayloadAction<boolean>) {
+      state.errors.hasMoreThanFiveRules = action.payload;
+    },
     setLogicalOperator(state, action: PayloadAction<LogicalOperator>) {
       state.logicalOperator = action.payload;
     }
@@ -125,6 +108,7 @@ export const {
   setTokenRules,
   setDuplicateRulesError,
   setNullRulesError,
+  setMoreThanFiveRules,
   setLogicalOperator
 } = createInvestmentClubSlice.actions;
 export default createInvestmentClubSlice.reducer;

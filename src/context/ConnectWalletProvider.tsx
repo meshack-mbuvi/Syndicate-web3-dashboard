@@ -1,10 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  ERROR_WALLET_CONNECTION,
-  SUCCESSFUL_WALLET_CONNECT
-} from '@/components/amplitude/eventNames';
 import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -44,6 +39,9 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
+import amplitude from 'amplitude-js';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -168,6 +166,28 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
     });
   }, [web3Modal]);
+
+  useEffect(() => {
+    if (account) {
+      amplitudeLogger(WALLET_CONNECTION, {
+        flow: Flow.WEB_APP,
+        transaction_status: 'Success',
+        wallet_address: account,
+        wallet_network: activeNetwork.displayName
+      });
+
+      var wallet_address = new amplitude.Identify().set(
+        'wallet_address',
+        account
+      );
+      var wallet_network = new amplitude.Identify().set(
+        'wallet_network',
+        activeNetwork.displayName
+      );
+      amplitude.getInstance().identify(wallet_address);
+      amplitude.getInstance().identify(wallet_network);
+    }
+  }, [account]);
 
   /**
    * Instantiates contract, and adds it together with web3 provider details to
@@ -495,11 +515,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
-      if (router.pathname === '/clubs/create/clubprivatebetainvite') {
-        amplitudeLogger(SUCCESSFUL_WALLET_CONNECT, {
-          flow: Flow.WALLET_CONNECT
-        });
-      }
     } catch (error) {
       if (
         error.code === -32002 ||
@@ -515,9 +530,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setWalletConnecting(false);
         setShowSuccessModal(false);
         dispatch(showErrorModal(customError));
-        amplitudeLogger(ERROR_WALLET_CONNECTION, {
-          flow: Flow.WALLET_CONNECT,
-          error
+        amplitudeLogger(WALLET_CONNECTION, {
+          flow: Flow.WEB_APP,
+          transaction_status: 'Failure'
         });
       }
     } finally {

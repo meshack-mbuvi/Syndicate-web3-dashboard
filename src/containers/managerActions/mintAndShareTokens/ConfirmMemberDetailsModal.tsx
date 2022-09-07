@@ -143,7 +143,7 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
                 memberAddress,
                 amountToMint
               }}
-              customClasses="bg-opacity-30 w-full flex cursor-default items-center bg-green"
+              customClasses="bg-opacity-30 w-full flex cursor-default items-center"
             />
           </Callout>
           <div className="bg-blue bg-opacity-20 rounded-b-lg">

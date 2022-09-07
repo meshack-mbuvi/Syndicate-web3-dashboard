@@ -1,10 +1,16 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
+import { MaxTotalSupplyMixin } from '@/ClubERC20Factory/maxTotalSupplyMixin';
+import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { ISyndicateContracts } from '@/state/contracts';
+import { ModuleReqs } from '@/types/modules';
 import { getSyndicateValues } from '@/utils/contracts/getSyndicateValues';
 import { getTokenDetails } from '../api';
 import { divideIfNotByZero, getWeiAmount } from '../conversions';
 import { isZeroAddress } from '../isZeroAddress';
 import { getDepositToken } from './depositToken';
+import { getModuleRequirementValues } from './getRequirementValues';
 
 type clubFromContract = {
   tokenAddress;
@@ -15,6 +21,8 @@ type clubFromContract = {
     account: string;
     syndicateContracts: ISyndicateContracts;
     web3;
+    activeMintModuleReqs: ModuleReqs;
+    mintModule: string;
   };
 };
 
@@ -22,7 +30,14 @@ export const getClubDataFromContract = async ({
   tokenAddress,
   name,
   symbol,
-  state: { activeNetwork, account, syndicateContracts, web3 }
+  state: {
+    activeNetwork,
+    account,
+    syndicateContracts,
+    web3,
+    activeMintModuleReqs,
+    mintModule
+  }
 }: clubFromContract): Promise<any> => {
   const clubERC20 = new ClubERC20Contract(tokenAddress, web3, activeNetwork);
 
@@ -35,12 +50,53 @@ export const getClubDataFromContract = async ({
       await clubERC20.balanceOf(account)
     ]);
 
-  const { endTime, maxTotalSupply, startTime, currentMintPolicyAddress } =
+  let { endTime, maxTotalSupply, startTime, currentMintPolicyAddress } =
     await getSyndicateValues(
       tokenAddress,
       syndicateContracts?.policyMintERC20,
-      syndicateContracts?.mintPolicy
+      syndicateContracts?.mintPolicy,
+      syndicateContracts?.guardMixinManager,
+      activeMintModuleReqs,
+      mintModule
     );
+
+  // guardMixinCheck
+  if (!endTime || !maxTotalSupply || !startTime || !currentMintPolicyAddress) {
+    const guardMixinManager = new GuardMixinManager(
+      CONTRACT_ADDRESSES[activeNetwork.chainId].GuardMixinManager,
+      web3,
+      activeNetwork
+    );
+    const timeWindowMixin = new TimeRequirements(
+      CONTRACT_ADDRESSES[activeNetwork.chainId].TimeRequirements,
+      web3,
+      activeNetwork
+    );
+    const maxTotalSupplyMixin = new MaxTotalSupplyMixin(
+      CONTRACT_ADDRESSES[activeNetwork.chainId].maxTotalSupplyMixin,
+      web3,
+      activeNetwork
+    );
+    currentMintPolicyAddress = guardMixinManager.address;
+    ({ endTime, startTime, maxTotalSupply } = await getModuleRequirementValues(
+      tokenAddress,
+      guardMixinManager,
+      syndicateContracts.NativeMintModule.address,
+      timeWindowMixin,
+      maxTotalSupplyMixin
+    ));
+
+    if (!endTime || !maxTotalSupply || !startTime) {
+      ({ endTime, startTime, maxTotalSupply } =
+        await getModuleRequirementValues(
+          tokenAddress,
+          guardMixinManager,
+          syndicateContracts.DepositTokenMintModule.address,
+          timeWindowMixin,
+          maxTotalSupplyMixin
+        ));
+    }
+  }
 
   const status = 'Open to deposits';
 

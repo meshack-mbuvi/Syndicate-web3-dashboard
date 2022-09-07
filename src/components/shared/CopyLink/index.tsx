@@ -7,6 +7,8 @@ import {
 } from 'src/components/iconWrappers';
 import TokenGateBanner from '@/containers/managerActions/clubTokenMembers/tokenGateBanner';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 
 interface Props {
   link: string;
@@ -15,7 +17,6 @@ interface Props {
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
   showConfettiSuccess?: boolean;
-  hasTokenGating?: boolean;
   borderColor?: string;
   accentColor?: string;
   copyButtonText?: string;
@@ -31,7 +32,6 @@ const CopyLink: FC<Props> = ({
   showCopiedState,
   creatingSyndicate = false,
   syndicateSuccessfullyCreated = false,
-  hasTokenGating = false,
   showConfettiSuccess = false,
   borderColor = 'border-gray-syn6',
   accentColor = 'green',
@@ -42,8 +42,14 @@ const CopyLink: FC<Props> = ({
   borderRadius = 'rounded',
   copyBorderRadius = 'rounded'
 }) => {
+  const {
+    erc20TokenSliceReducer: { activeModuleDetails }
+  } = useSelector((state: AppState) => state);
+
   const { isReady, isClubMixinGuardTreatmentOn } =
     useClubMixinGuardFeatureFlag();
+
+  const isTokenGated = activeModuleDetails?.activeMintModuleReqs?.isTokenGated;
 
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
@@ -68,10 +74,9 @@ const CopyLink: FC<Props> = ({
     </div>
   );
 
-  // token-gated banner.
-  // TODO: replace this line with a check for if club is token-gated
+  // token-gated banner
   const showTokenGatedBanner =
-    hasTokenGating && isReady && isClubMixinGuardTreatmentOn;
+    isTokenGated && isReady && isClubMixinGuardTreatmentOn;
 
   // content to display after completion of the syndicate creation process.
   const defaultContent = (

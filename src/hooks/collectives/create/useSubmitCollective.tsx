@@ -10,6 +10,8 @@ import {
 import { useDispatch } from 'react-redux';
 import useCreateState from './useCreateState';
 import { useEffect } from 'react';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { LAUNCH_CLICK } from '@/components/amplitude/eventNames';
 
 const useSubmitCollective = () => {
   const dispatch = useDispatch();
@@ -52,6 +54,9 @@ const useSubmitCollective = () => {
   // Create collective
   const handleSubmit = () => {
     submitMetadata(name, symbol, description, artwork, artworkType, artworkUrl);
+    amplitudeLogger(LAUNCH_CLICK, {
+      flow: Flow.COLLECTIVE_CREATE
+    });
   };
 
   return {

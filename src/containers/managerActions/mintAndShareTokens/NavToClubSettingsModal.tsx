@@ -42,7 +42,7 @@ const NavToClubSettingsModal: React.FC<INavToClubSettingsModal> = ({
           </p>
           <div className="w-full flex justify-center items-center">
             <a
-              href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/modifying-club-settings"
+              href="https://guide.syndicate.io/en/web3-investment-clubs/modify-club-settings"
               className="flex items-center justify-center"
               target="_blank"
               rel="noreferrer"

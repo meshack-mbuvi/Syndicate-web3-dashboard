@@ -1,5 +1,3 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -297,7 +295,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             <div className="text-sm text-gray-syn4 mt-4 mb-6">
               To adapt these legal documents to your needs,{' '}
               <a
-                href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
+                href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity/legal-document-examples"
                 className="text-blue cursor-pointer"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -354,14 +352,9 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             Help me{' '}
             <a
               className="text-blue cursor-pointer"
-              href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
+              href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => {
-                amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
-                  flow: Flow.LEGAL_ENTITY_FLOW
-                });
-              }}
             >
               form a legal entity
             </a>{' '}
@@ -392,7 +385,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             <div className="text-sm flex text-gray-syn4 mt-2 mb-6">
               Takes ~5 mins and requires an
               <a
-                href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
+                href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
                 className="text-gray-syn4 cursor-pointer ml-1 flex align-middle p-0 space-x-2"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -438,7 +431,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               <div className="text-sm text-gray-syn4 mt-4 mb-6">
                 To adapt these documents to your needs,{' '}
                 <a
-                  href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
+                  href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity/legal-document-examples"
                   className="text-blue cursor-pointer"
                   target="_blank"
                   rel="noopener noreferrer"

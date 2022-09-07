@@ -1,11 +1,5 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CREATE_INVESTMENT_CLUB,
-  ERROR_INVESTMENT_CLUB_CREATION
-} from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
-// import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
@@ -13,7 +7,6 @@ import {
   setClubCreationReceipt,
   setTransactionHash
 } from '@/state/createInvestmentClub/slice';
-import { getWeiAmount } from '@/utils/conversions';
 import { useRouter } from 'next/router';
 import React, {
   createContext,
@@ -30,6 +23,15 @@ import {
   CreateSteps,
   investmentClubSteps
 } from './steps';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CREATE_ON_CHAIN_CLUB_CLICK,
+  NAME_SYMBOL_NEXT_CLICK,
+  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
+  REVIEW_CLICK,
+  CLUB_CREATION
+} from '@/components/amplitude/eventNames';
+import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -83,27 +85,16 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { account, web3, activeNetwork }
-    },
-    initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory, clubERC20FactoryNative }
+      web3: { activeNetwork }
     },
     createInvestmentClubSliceReducer: {
-      investmentClubName,
-      investmentClubSymbol,
-      tokenCap,
-      mintEndTime: { value: endMintTime, mintTime },
-      membersCount,
-      tokenDetails: { depositToken, depositTokenSymbol }
+      mintEndTime: { mintTime }
     }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
 
   const dispatch = useDispatch();
-
-  // TODO: use for determining which contract to create club with
-  // const { isReady, isClubMixinGuardTreatmentOn  } = useClubMixinGuardFeatureFlag();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [editingStep, setEditingStep] = useState<number>(null);
@@ -163,7 +154,41 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setStepNames(investmentClubSteps.map((s) => s.step));
   }, []);
 
+  useEffect(() => {
+    resetClubCreationReduxState();
+    setCurrentStep(0);
+  }, [activeNetwork]);
+
   const handleNext = () => {
+    if (!editingStep) {
+      switch (currentStep) {
+        case 0:
+          amplitudeLogger(CREATE_ON_CHAIN_CLUB_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 1:
+          amplitudeLogger(NAME_SYMBOL_NEXT_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 2:
+          amplitudeLogger(DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          amplitudeLogger(REVIEW_CLICK, {
+            flow: Flow.CLUB_CREATE
+          });
+          break;
+        default:
+      }
+    }
     if (editingStep && mintTime !== 'Custom') {
       setShowNextButton(false);
     } else {
@@ -217,6 +242,21 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setConfirmWallet(false);
   };
 
+  const onTxFail = (err) => {
+    setShowModal(() => ({
+      waitingConfirmationModal: false,
+      transactionModal: false,
+      errorModal: true,
+      warningModal: false
+    }));
+  };
+
+  const { submitCreateClub } = useSubmitReqsToFactory(
+    onTxConfirm,
+    onTxReceipt,
+    onTxFail
+  );
+
   const handleCreateInvestmentClub = async () => {
     try {
       setProcessingTitle('Confirm in wallet');
@@ -229,48 +269,12 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       }));
-      const isNativeDeposit =
-        depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
-      const _tokenCap = isNativeDeposit
-        ? getWeiAmount(
-            web3,
-            (+tokenCap * activeNetwork.nativeCurrency.exchangeRate).toString(),
-            18,
-            true
-          )
-        : getWeiAmount(web3, tokenCap, 18, true);
 
-      const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-
-      if (isNativeDeposit) {
-        await clubERC20FactoryNative.createERC20(
-          account,
-          investmentClubName,
-          investmentClubSymbol,
-          startTime,
-          endMintTime,
-          _tokenCap,
-          +membersCount,
-          onTxConfirm,
-          onTxReceipt
-        );
-      } else {
-        await clubERC20Factory.createERC20(
-          account,
-          investmentClubName,
-          investmentClubSymbol,
-          depositToken,
-          startTime,
-          endMintTime,
-          _tokenCap,
-          +membersCount,
-          onTxConfirm,
-          onTxReceipt
-        );
-      }
-      amplitudeLogger(CREATE_INVESTMENT_CLUB, {
-        flow: Flow.CLUB_CREATION
+      amplitudeLogger(CLUB_CREATION, {
+        flow: Flow.CLUB_CREATE,
+        transaction_status: 'Success'
       });
+      return await submitCreateClub();
     } catch (error) {
       const { code } = error;
       if (code) {
@@ -286,9 +290,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       });
-      amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
-        flow: Flow.CLUB_CREATION,
-        error
+      amplitudeLogger(CLUB_CREATION, {
+        flow: Flow.CLUB_CREATE,
+        transaction_status: 'Failure'
       });
     }
   };

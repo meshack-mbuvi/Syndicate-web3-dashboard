@@ -1,7 +1,4 @@
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import TransitionBetweenChildren, {
-  TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
 import {
   useCreateState,
   useUpdateState
@@ -16,6 +13,14 @@ import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
 import CreateCollectiveDesign, { DesignRightPanel } from './design';
 import CreateCollectiveReview, { ReviewRightPanel } from './review';
 import { CreateCollectiveSuccess, SuccessRightPanel } from './success';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transitionBetweenChildren';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  DESIGN_CONTINUE_CLICK,
+  CUSTOMIZE_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -62,7 +67,19 @@ const CreateCollectiveContainer: FC = () => {
   };
 
   const handleNext = () => {
-    // We are not subtracting 1 from dotIndicatorOptions.length because the last step is the success screen.
+    switch (activeIndex) {
+      case 0:
+        amplitudeLogger(DESIGN_CONTINUE_CLICK, {
+          flow: Flow.COLLECTIVE_CREATE
+        });
+        break;
+      case 1:
+        amplitudeLogger(CUSTOMIZE_CONTINUE_CLICK, {
+          flow: Flow.COLLECTIVE_CREATE
+        });
+        break;
+      default:
+    }
     if (activeIndex < dotIndicatorOptions.length) {
       setActiveIndex(activeIndex + 1);
     }
@@ -150,14 +167,14 @@ const CreateCollectiveContainer: FC = () => {
             >
               {/* NFT previewer */}
               <div
-                className={`absolute z-10 transform w-full transition-all duration-500 ${
+                className={`absolute z-10 transform w-full transition-all duration-500 hidden md:block ${
                   activeIndex === 0
                     ? 'top-0 left-0 translate-x-0 translate-y-0 scale-100'
                     : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-50'
                 }`}
               >
                 <div
-                  className={`transition-all w-full min-h-120 duration-500 relative ${
+                  className={`transition-all w-full min-h-120 duration-500 relative  ${
                     activeIndex === 0 ? 'opacity-100' : 'opacity-0'
                   }`}
                 >

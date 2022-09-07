@@ -116,4 +116,28 @@ export class DepositTokenMintModuleContract {
       }
     }
   }
+
+  public encodeSetDepositToken(club: string, depositToken: string): string {
+    return this.web3.eth.abi.encodeFunctionCall(
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'club',
+            type: 'address'
+          },
+          {
+            internalType: 'address',
+            name: 'depositToken_',
+            type: 'address'
+          }
+        ],
+        name: 'setDepositToken',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function'
+      },
+      [club, depositToken]
+    );
+  }
 }
