@@ -156,21 +156,31 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
       {/* Mobile */}
       <div className="sm:flex sm:justify-between sm:hidden space-y-4 sm:space-y-0 sm:space-x-5">
-        <div className="space-y-2">
-          <B3 extraClasses="text-gray-syn4">Remaining NFTs</B3>
-          <H4 regular>
-            {remainingPasses}{' '}
-            <span className="text-gray-syn4">of {maxTotalPasses}</span>
-          </H4>
-        </div>
+        {+maxTotalPasses > 0 && (
+          <div className="space-y-2">
+            <B3 extraClasses="text-gray-syn4">Remaining NFTs</B3>
+            <H4 regular>
+              {remainingPasses.toLocaleString('en-US')}{' '}
+              <span className="text-gray-syn4">
+                of {maxTotalPasses.toLocaleString('en-US')}
+              </span>
+            </H4>
+          </div>
+        )}
         <div className="space-y-2">
           <B3 extraClasses="text-gray-syn4">Price per NFT</B3>
           <H4 regular>
-            {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
-            {priceToJoin.tokenSymbol}{' '}
-            <span className="text-gray-syn4">
-              {floatedNumberWithCommas(priceToJoin.fiatAmount)}
-            </span>
+            {+priceToJoin.tokenAmount > 0 ? (
+              <>
+                {floatedNumberWithCommas(priceToJoin.tokenAmount)}{' '}
+                {priceToJoin.tokenSymbol}{' '}
+                <span className="text-gray-syn4">
+                  ${floatedNumberWithCommas(priceToJoin.fiatAmount)}
+                </span>
+              </>
+            ) : (
+              <span>Free to mint</span>
+            )}
           </H4>
         </div>
       </div>
