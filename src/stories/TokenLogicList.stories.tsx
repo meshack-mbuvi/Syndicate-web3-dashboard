@@ -1,7 +1,5 @@
-import {
-  LogicalOperator,
-  TokenLogicList
-} from '@/components/tokenGating/tokenLogic';
+import { TokenLogicList } from '@/components/tokenGating/tokenLogic';
+import { LogicalOperator } from '@/state/createInvestmentClub/types';
 import { useState } from 'react';
 
 export default {

@@ -1,18 +1,20 @@
-// import { Callout, CalloutType } from '@/components/callout';
+import { Callout, CalloutType } from '@/components/callout';
 import Fade from '@/components/Fade';
 import IconLink from '@/components/icons/link';
 import IconToken from '@/components/icons/token';
 import PillTabsAndContent from '@/components/pillTabs/tabsAndContent';
 import { B3, B4 } from '@/components/typography';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-// import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { AppState } from '@/state';
 import { TokenGateOption } from '@/state/createInvestmentClub/types';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-// import AllowedMembers from './allowedMembers';
-// import InviteMembers from './inviteMembers';
+import { useDispatch, useSelector } from 'react-redux';
+import AllowedMembers from './allowedMembers';
+import InviteMembers from './inviteMembers';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { setActiveTokenGateOption } from '@/state/createInvestmentClub/slice';
 
 const Membership: React.FC<{ className }> = ({ className }) => {
   const {
@@ -24,21 +26,25 @@ const Membership: React.FC<{ className }> = ({ className }) => {
       tokenRules
     }
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState(0);
   const { setNextBtnDisabled, isCreatingInvestmentClub } =
     useCreateInvestmentClubContext();
-  /* const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag(); */
+  const { isReady, isClubMixinGuardTreatmentOn } =
+    useClubMixinGuardFeatureFlag();
+
+  const { isPolygon } = useIsPolygon();
 
   useEffect(() => {
-    if (
-      isCreatingInvestmentClub /* && isReady && isClubMixinGuardTreatmentOn */
-    ) {
+    if (isCreatingInvestmentClub && isReady && isClubMixinGuardTreatmentOn) {
       const excludeNullRules = tokenRules.filter((token) => token.name);
-      if (
+      if (isPolygon) {
+        setNextBtnDisabled(false);
+        dispatch(setActiveTokenGateOption(TokenGateOption.UNRESTRICTED));
+      } else if (
         (excludeNullRules.length && !errors.duplicateRules.length) ||
-        tokenGateOption === TokenGateOption.RESTRICTED
+        tokenGateOption === TokenGateOption.UNRESTRICTED
       ) {
         setNextBtnDisabled(false);
       } else {
@@ -46,9 +52,8 @@ const Membership: React.FC<{ className }> = ({ className }) => {
       }
     } else {
       if (
-        /* (isReady && !isClubMixinGuardTreatmentOn) || */
-        membershipAddresses.length &&
-        !errors.memberAddresses
+        (isReady && !isClubMixinGuardTreatmentOn) ||
+        (membershipAddresses.length && !errors.memberAddresses)
       ) {
         setNextBtnDisabled(false);
       } else {
@@ -62,8 +67,8 @@ const Membership: React.FC<{ className }> = ({ className }) => {
     tokenRules,
     errors.duplicateRules,
     JSON.stringify(tokenRules),
-    JSON.stringify(errors) /* ,
-    isClubMixinGuardTreatmentOn */
+    JSON.stringify(errors),
+    isClubMixinGuardTreatmentOn
   ]);
 
   return (
@@ -108,7 +113,7 @@ const Membership: React.FC<{ className }> = ({ className }) => {
             </PillTabsAndContent>
           </div>
         </div>
-        {/* {isReady && isClubMixinGuardTreatmentOn ? (
+        {isReady && isClubMixinGuardTreatmentOn && !isPolygon ? (
           <>
             <div className="pt-4 pb-11.5">
               <Callout type={CalloutType.WARNING}>
@@ -118,24 +123,36 @@ const Membership: React.FC<{ className }> = ({ className }) => {
             </div>
             {isCreatingInvestmentClub ? <AllowedMembers /> : <InviteMembers />}
           </>
-        ) : ( */}
-        <div className="pt-4 flex">
-          <div className="flex flex-1 items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
-            <IconToken width={28} height={28} extraClasses="flex-shrink-0" />
-            <div className="space-y-0.5">
-              <B3 extraClasses="text-gray-syn5">Owners of certain tokens</B3>
-              <B4 extraClasses="text-gray-syn4">Token-gating coming soon</B4>
+        ) : (
+          <>
+            <div className="pt-4 flex">
+              {!isPolygon && (
+                <div className="flex flex-1 items-center space-x-6 border border-gray-syn6 p-4 pl-6 rounded-md cursor-not-allowed">
+                  <IconToken
+                    width={28}
+                    height={28}
+                    extraClasses="flex-shrink-0"
+                  />
+                  <div className="space-y-0.5">
+                    <B3 extraClasses="text-gray-syn5">
+                      Owners of certain tokens
+                    </B3>
+                    <B4 extraClasses="text-gray-syn4">
+                      Token-gating coming soon
+                    </B4>
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-1 items-center space-x-6 border border-blue-neptune p-4 pl-6 rounded-md">
+                <IconLink width={28} height={28} extraClasses="flex-shrink-0" />
+                <div className="space-y-0.5">
+                  <B3>Anyone with the link</B3>
+                  <B4 extraClasses="text-gray-syn3">Unrestricted</B4>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-1 items-center space-x-6 border border-blue-neptune p-4 pl-6 rounded-md">
-            <IconLink width={28} height={28} extraClasses="flex-shrink-0" />
-            <div className="space-y-0.5">
-              <B3>Anyone with the link</B3>
-              <B4 extraClasses="text-gray-syn3">Unrestricted</B4>
-            </div>
-          </div>
-        </div>
-        {/* )} */}
+          </>
+        )}
       </div>
     </Fade>
   );

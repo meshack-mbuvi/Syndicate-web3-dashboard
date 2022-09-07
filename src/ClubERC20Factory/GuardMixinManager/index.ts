@@ -39,4 +39,35 @@ export class GuardMixinManager extends ContractBase {
       [token, module, true] as string[]
     );
   }
+
+  public async isModuleAllowed(
+    token: string,
+    moduleAddress: string
+  ): Promise<boolean> {
+    const reqs = await this.contract.methods
+      .moduleRequirements(token, moduleAddress)
+      .call();
+    return reqs.length > 0;
+  }
+
+  // set custom mixins
+  public setModuleMixins(
+    token: string,
+    module: string,
+    mixins: string[]
+  ): string {
+    return this.web3.eth.abi.encodeFunctionCall(
+      this.getAbiObject('updateModuleMixins'),
+      [token, module, mixins] as string[]
+    );
+  }
+
+  public async getModuleRequirements(
+    token: string,
+    moduleAddress: string
+  ): Promise<string[]> {
+    return await this.contract.methods
+      .moduleRequirements(token, moduleAddress)
+      .call();
+  }
 }

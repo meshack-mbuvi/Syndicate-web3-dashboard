@@ -32,13 +32,20 @@ export const SubmitContent: React.FC<{
       activeRow,
       details: { mintPrice, metadataCid, numMinted, mintEndTime, maxPerWallet },
       settings: { isTransferable }
+    },
+    modifyClubSettingsReducer: { maxNumberOfMembers, maxAmountRaising },
+    erc20TokenSliceReducer: {
+      erc20Token: { endTime },
+      activeModuleDetails: {
+        activeMintModuleReqs: { requiredTokens, requiredTokenBalances }
+      }
     }
   } = useSelector((state: AppState) => state);
 
   const { openUntil } = useCreateState();
 
   const router = useRouter();
-  const { collectiveAddress } = router.query;
+  const { collectiveAddress, clubAddress } = router.query;
 
   const activeContract = useMemo(() => {
     switch (activeRow) {
@@ -56,6 +63,18 @@ export const SubmitContent: React.FC<{
         }
       case EditRowIndex.Transfer:
         return ContractMapper.ERC721Collective;
+
+      /* Club Setting */
+      case EditRowIndex.TotalSupply:
+        return ContractMapper.MaxTotalSupplyMixin;
+      case EditRowIndex.TokenGate:
+        return ContractMapper.TokenGatedMixin;
+      case EditRowIndex.MaxMembers:
+        return ContractMapper.MaxMemberCountMixin;
+      case EditRowIndex.Time:
+        return ContractMapper.TimeRequirements;
+      case EditRowIndex.CloseTimeWindow:
+        return ContractMapper.TimeRequirements;
 
       default:
         return null;
@@ -84,12 +103,22 @@ export const SubmitContent: React.FC<{
             <EstimateGas
               contract={activeContract}
               args={{
+                /* Collective Settings */
                 collectiveAddress,
                 mintPrice,
                 metadataCid,
-                mintEndTime,
+                collectiveMintEndTime: mintEndTime,
                 maxPerWallet,
-                isTransferable
+                isTransferable,
+
+                /* Club Settings */
+                clubAddress,
+                maxNumberOfMembers,
+                totalSupply: maxAmountRaising,
+                logicOperator: 1,
+                tokens: requiredTokens,
+                balances: requiredTokenBalances,
+                clubMintEndTime: endTime
               }}
               customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
             />

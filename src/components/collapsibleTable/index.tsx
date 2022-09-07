@@ -41,6 +41,8 @@ interface Props {
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
   switchRowIndex?: number;
+  isSubmitDisabled?: boolean;
+  disableHeightUpdate?: boolean;
 }
 
 export const CollapsibleTable: React.FC<Props> = ({
@@ -59,7 +61,9 @@ export const CollapsibleTable: React.FC<Props> = ({
     showSubmitCTA
   },
   cancelEdit,
-  switchRowIndex
+  switchRowIndex,
+  isSubmitDisabled,
+  disableHeightUpdate = false
 }) => {
   const rowsRef = useRef<HTMLInputElement>();
   const editRef = useRef<HTMLInputElement>();
@@ -86,8 +90,9 @@ export const CollapsibleTable: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    if (disableHeightUpdate) return;
     updateMaxHeight();
-  }, [windowWidth, activeRow]);
+  }, [windowWidth, activeRow, disableHeightUpdate]);
 
   return (
     <div className="space-y-8">
@@ -106,15 +111,10 @@ export const CollapsibleTable: React.FC<Props> = ({
             isOn={isExpanded}
             type={SwitchType.EXPLICIT}
             onClick={() => {
-              if (isExpanded) {
-                setActiveRow(0);
-                dispatch(setActiveRowIdx(0));
-              } else {
-                setActiveRow(switchRowIndex);
-                dispatch(setActiveRowIdx(switchRowIndex));
-              }
+              setActiveRow(switchRowIndex);
+              dispatch(setActiveRowIdx(switchRowIndex));
               setIsExpanded(!isExpanded);
-              setEditGroupFieldClicked(false);
+              setEditGroupFieldClicked && setEditGroupFieldClicked(false);
             }}
           />
         )}
@@ -138,7 +138,9 @@ export const CollapsibleTable: React.FC<Props> = ({
         ref={rowsRef}
         className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
         style={{
-          maxHeight: `${isExpanded ? maxHeight : '0px'}`,
+          maxHeight: `${
+            disableHeightUpdate ? '100%' : isExpanded ? maxHeight : '0px'
+          }`,
           opacity: `${isExpanded ? '100' : '0'}`
         }}
       >
@@ -177,6 +179,7 @@ export const CollapsibleTable: React.FC<Props> = ({
                   {inputField}
                   <SubmitContent
                     showCallout={showCallout}
+                    isSubmitDisabled={isSubmitDisabled}
                     handleEdit={handleDisclaimerConfirmation}
                     cancelEdit={() => {
                       cancelEdit();
@@ -198,7 +201,8 @@ export const CollapsibleTable: React.FC<Props> = ({
                       <EditButton
                         handleClick={() => {
                           setActiveRow(rowIndex);
-                          setEditGroupFieldClicked(false);
+                          setEditGroupFieldClicked &&
+                            setEditGroupFieldClicked(false);
                           dispatch(setActiveRowIdx(rowIndex));
                         }}
                       />

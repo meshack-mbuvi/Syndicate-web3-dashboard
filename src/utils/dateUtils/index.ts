@@ -84,9 +84,12 @@ export const getCountDownDays = (date: string): string => {
  * Method uses moment timezone https://momentjs.com/timezone/
  */
 
-export const getFormattedDateTimeWithTZ = (date: number): string => {
+export const getFormattedDateTimeWithTZ = (
+  date: number,
+  format = 'dddd, MMM D [at] h:mma zz'
+): string => {
   const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  return _moment(date).tz(timeZoneString).format('dddd, MMM D [at] h:mma zz');
+  return _moment(date).tz(timeZoneString).format(format);
 };
 
 export const formatUnix = (date: number, dateFormat: string): string => {

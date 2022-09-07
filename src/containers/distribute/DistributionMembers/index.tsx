@@ -16,7 +16,7 @@ import {
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
-import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -24,10 +24,7 @@ import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import { setDistributionMembers } from '@/state/distributions';
-import {
-  setERC20TokenContract,
-  setERC20TokenDetails
-} from '@/state/erc20token/slice';
+import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
 import { getWeiAmount } from '@/utils/conversions';
@@ -126,7 +123,7 @@ const ReviewDistribution: React.FC = () => {
       };
     } else if (isDemoMode) {
       // using "Active" as the default view.
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      resetClubState(dispatch, mockActiveERC20Token);
     }
   }, [
     clubAddress,

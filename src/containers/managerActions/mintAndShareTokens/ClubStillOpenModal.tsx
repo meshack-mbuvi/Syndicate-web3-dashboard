@@ -3,6 +3,9 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { Callout } from '@/components/callout';
 import EstimateGas from '@/components/EstimateGas';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { useRouter } from 'next/router';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 interface IClubStillOpenModal {
   showClubStillOpenModal: boolean;
@@ -18,6 +21,19 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
   setShowClubStillOpenModal,
   handleCloseClubPostMint
 }) => {
+  const {
+    erc20TokenSliceReducer: {
+      erc20Token: { endTime, maxMemberCount, maxTotalSupply },
+      isNewClub
+    }
+  } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
+
+  const {
+    query: { clubAddress }
+  } = router;
+
   return (
     <Modal
       {...{
@@ -68,7 +84,17 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
           <div className="mx-5 rounded-custom overflow-hidden">
             <Callout extraClasses="p-4 text-sm">
               <EstimateGas
-                contract={ContractMapper.MintPolicy}
+                contract={
+                  isNewClub
+                    ? ContractMapper.CloseClubPostMint
+                    : ContractMapper.MintPolicy
+                }
+                args={{
+                  clubAddress,
+                  openToDepositsUntil: new Date(endTime),
+                  maxMemberCount,
+                  maxTotalSupply
+                }}
                 customClasses="bg-opacity-30 w-full flex cursor-default items-center"
               />
             </Callout>

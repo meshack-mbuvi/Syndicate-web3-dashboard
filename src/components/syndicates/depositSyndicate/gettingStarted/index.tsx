@@ -2,13 +2,9 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
 import { Spinner } from '@/components/shared/spinner';
-import {
-  ERC20TokenDefaultState,
-  setERC20Token
-} from '@/helpers/erc20TokenDetails';
+import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
-import { setERC20TokenDetails } from '@/state/erc20token/slice';
 import { CheckIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -51,7 +47,7 @@ const GettingStarted: React.FC = () => {
       dispatch(setERC20Token(clubERC20tokenContract));
 
       return () => {
-        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+        resetClubState(dispatch);
         dispatch(setClubMembers([]));
       };
     }

@@ -346,8 +346,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
       decimals: 6,
       default: false,
-      logoURI: '/images/TestnetTokenLogos/usdcIcon.svg',
-      price: 1.0
+      logoURI: '/images/TestnetTokenLogos/usdcIcon.svg'
     },
     {
       symbol: 'ETH',
@@ -355,8 +354,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       address: '',
       logoURI: '/images/chains/rinkeby.svg',
       decimals: 18,
-      default: true,
-      price: 3200
+      default: true
     },
     {
       name: 'Wrapped Ether',
@@ -372,8 +370,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'DAI',
       decimals: 18,
       default: false,
-      logoURI: '/images/TestnetTokenLogos/daiIcon.svg',
-      price: 1.0
+      logoURI: '/images/TestnetTokenLogos/daiIcon.svg'
     },
     {
       name: 'Maker',

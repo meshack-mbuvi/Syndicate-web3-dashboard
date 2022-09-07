@@ -57,4 +57,38 @@ export class TimeRequirements extends ContractBase {
       onResponse
     );
   }
+
+  public async getTimeRequirements(
+    token: string
+  ): Promise<{ startTime: number; endTime: number }> {
+    return await this.contract.methods.timeWindow(token).call();
+  }
+
+  public async closeTimeWindow(
+    account: string,
+    token: string,
+    onTxConfirm: (transactionHash) => void,
+    onTxReceipt: (receipt) => void,
+    onTxFail: (err) => void
+  ): Promise<void> {
+    await this.send(
+      account,
+      () => this.contract.methods.closeTimeWindow(token),
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
+  }
+
+  public async getEstimateGasCloseTimeWindow(
+    account: string,
+    token: string,
+    onResponse: (gas?: number) => void
+  ): Promise<void> {
+    this.estimateGas(
+      account,
+      () => this.contract.methods.closeTimeWindow(token),
+      onResponse
+    );
+  }
 }

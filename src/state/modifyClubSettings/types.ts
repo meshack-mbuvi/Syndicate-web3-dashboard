@@ -5,6 +5,9 @@ export interface InitialState {
   existingMaxAmountRaising: number;
   existingMaxNumberOfMembers: number;
   existingNumberOfMembers: number;
+  maxNumberOfMembers: number;
+  maxAmountRaising: number;
+  openToDepositsUntil: Date;
 }
 
 export const initialState = {
@@ -14,5 +17,8 @@ export const initialState = {
   existingAmountRaised: 0,
   existingMaxAmountRaising: 0,
   existingMaxNumberOfMembers: 0,
-  existingNumberOfMembers: 0
+  existingNumberOfMembers: 0,
+  maxNumberOfMembers: 0,
+  maxAmountRaising: 0,
+  openToDepositsUntil: new Date(0)
 };

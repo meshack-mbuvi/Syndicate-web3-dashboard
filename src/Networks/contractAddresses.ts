@@ -3,6 +3,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
   1: {
     clubERC20Factory: '0x99116a5641DC89A7cb43a9A82694177538aa0391',
     clubERC20FactoryNative: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3', // clubERC20FactoryETH
+    erc20ClubFactory: '0x2da762e665fe9c220f7011d4ee9c2d15aaa27f9d',
     DepositTokenMintModule: '0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8',
     distributionsERC20: '0x493742eb36d12bb0ff5a146782af6dd69de7b7c3',
     distributionsETH: '0x3bbf7d441db87968ab891b724ee3cc00de3d850b',
@@ -17,10 +18,12 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OnePerAddressMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OwnerMintModule: '0xA7c2400CBbeafFFaF77d3080bF8Ca50f51c8afC6',
-    OwnerMintModule2: '0x06507C449B1E8EBB8247f44b715F9Fe4E51B365A',
+    maxMemberMixin: '0xd2bab9d2bcce7e7358dd9aab21ca96b53739ee2c',
+    maxTotalSupplyMixin: '0xf0ddd6634ead57c4216a1f5d3011bf78994617bb',
+    tokenGatingMixin: '0x7a1bba6fa076ed5c9092ecf2e454a483db0e6b45',
 
     // Collectives
-    ERC721Collective: '0x4d66954dc81b13314c90a5e87464248813b77422',
+    ERC721Collective: '0x85a3cd3c350a0c7369F59E16d1c61D328E036Cfb',
     ERC721CollectiveFactory: '0xc1d628b9170ad61ed12f317f2146f099eb4e4727',
     FixedRenderer: '0xf90D2d41b769C2d45e3904c35fD107e7F3c89d3C',
     GuardMixinManager: '0x19cf03a6f1190062eeafd70c42cbc5f7ecff05a8',
@@ -36,6 +39,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
   4: {
     clubERC20Factory: '0xBaE7eaA8317B3652dad3886caF454Da0706F53Ca',
     clubERC20FactoryNative: '0x04A8A99C80cC19E7a56342Fef2d8DAC6cd5f8dD4', // clubERC20FactoryETH
+    erc20ClubFactory: '0x6df4d8c0e0cdba7862fd36fd438c5184c7b57826',
     DepositTokenMintModule: '0x9cAf7337F9fe05469FaaA3b388C479C6E8393276',
     distributionsERC20: '0x1f4c8eaee6dd0bfb71ff8e7bc8f52c1007025144',
     distributionsETH: '0xc8b57ba4baee9242fa583284480b6ca555b0b01b',
@@ -50,7 +54,9 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '0xD193Cfbc267f23127E024A025233A8483b29C66e',
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
-    OwnerMintModule2: '',
+    maxMemberMixin: '0x3aed52ea820c42e84a2c3ad5f6d183ed550773f8',
+    maxTotalSupplyMixin: '0x4ec1a2eda3b36a06783ed44f2e3e6046b6de530d',
+    tokenGatingMixin: '0xf9a4b9d1cee93451f32f6d36aace26721e33848b',
 
     // Collectives
     ERC721Collective: '0xc11960ebf2f6a894f728e40ce47ae2ec04a4cf0b',
@@ -69,6 +75,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
   137: {
     clubERC20Factory: '0x3902AB762a94b8088b71eE5c84bC3C7d2075646B',
     clubERC20FactoryNative: '0xae6328C067bddFbA4963e2A1F52BaaF11a2e2588', // clubERC20FactoryETH
+    erc20ClubFactory: '0xc08bc955da8968327405642d65a7513ce5eb31ed',
     DepositTokenMintModule: '0xa052E325e112A5a6DfF7F4115B2f6DAA15eDa2F3',
     distributionsERC20: '',
     distributionsETH: '',
@@ -83,18 +90,20 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '',
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x4dd964Bb38828789de447787B3435D519E4E7282',
-    OwnerMintModule2: '',
+    maxMemberMixin: '0x0efa30750e655f20c6e16248eb283b972e370c28',
+    maxTotalSupplyMixin: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3',
+    tokenGatingMixin: '0x22a3d80299d4f2437611e1ca0b7c8d50f4816c6e',
 
     // Collectives
     ERC721Collective: '', // TODO
     ERC721CollectiveFactory: '', // TODO
     FixedRenderer: '', // TODO
-    GuardMixinManager: '', // TODO
+    GuardMixinManager: '0x4ad52d81ad5fb141fabfd2846525af10f45fb295',
     EthPriceMintModule: '', // AllowModules // TODO
-    TimeRequirements: '', // TODO
+    TimeRequirements: '0xd81d0cae5d4ac81b7aca5db7a76ec7d82260ca75',
     MaxPerMemberERC721: '', // TODO
     MaxTotalSupplyERC721: '', // TODO
-    GuardAlwaysAllow: '', // TODO
-    GuardNeverAllow: '' // TODO
+    GuardAlwaysAllow: '0x5eF43cd77a929A48E0B6fCEf614a460336e3070a',
+    GuardNeverAllow: '0xb47FaFc19659Ada3B12c3D072Dd6768429aC2272'
   }
 });

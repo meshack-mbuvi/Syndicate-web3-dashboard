@@ -182,43 +182,35 @@ const ModifyClubTokens: React.FC<{
     setConfirm(true);
     setPreview();
 
-    // OwnerMintModule for policyMintERC20
-    const OWNER_MINT_MODULE =
-      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
-    // OwnerMintModule for mintPolicy
-    const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
-
-    const policyMintERC20MintModule =
-      await syndicateContracts.policyMintERC20.isModuleAllowed(
-        erc20TokenContract.address,
-        OWNER_MINT_MODULE
-      );
-
-    // Both ETH and USDC clubs should work with OwnerMintModule
-    const useOwnerMintModule =
-      policyMintERC20MintModule ||
-      (await syndicateContracts.mintPolicy.isModuleAllowed(
-        erc20TokenContract.address,
-        OWNER_MINT_MODULE_2
-      ));
-
     try {
       /**
        * At this point, we either burn or mint tokens for the selected wallet address
        */
       if (mintClubTokens) {
-        if (useOwnerMintModule) {
-          // Use either OwnerMintModule for policyMintERC20 or one for mintPolicy
-          // respectively
-          const OwnerMintModule = policyMintERC20MintModule
-            ? syndicateContracts.OwnerMintModule
-            : new OwnerMintModuleContract(
-                OWNER_MINT_MODULE_2,
-                web3,
-                activeNetwork
-              );
+        // Simulate call from owner mint module and then execute it if it succeeds
+        let useOwnerMintModule;
+        try {
+          useOwnerMintModule =
+            !!(await syndicateContracts.OwnerMintModule.OwnerMintModuleContract.methods
+              .ownerMint(
+                erc20TokenContract.address,
+                memberToUpdate.memberAddress,
+                getWeiAmount(
+                  web3,
+                  tokensToMintOrBurn.toString(),
+                  tokenDecimals,
+                  true
+                )
+              )
+              .estimateGas({
+                from: account
+              }));
+        } catch (err) {
+          useOwnerMintModule = false;
+        }
 
-          await OwnerMintModule.ownerMint(
+        if (useOwnerMintModule) {
+          await syndicateContracts.OwnerMintModule.ownerMint(
             getWeiAmount(
               web3,
               tokensToMintOrBurn.toString(),
@@ -234,6 +226,7 @@ const ModifyClubTokens: React.FC<{
             setTransactionHash
           );
         } else {
+          // If owner mint module simulated call fails, try to fall back to calling club directly
           if (isDev) {
             await erc20TokenContract.mintTo(
               memberToUpdate.memberAddress,

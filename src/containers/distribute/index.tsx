@@ -2,7 +2,7 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import Layout from '@/components/layout';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
-import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
@@ -22,10 +22,7 @@ import {
   setDistributionMembers,
   setEth
 } from '@/state/distributions';
-import {
-  setERC20TokenContract,
-  setERC20TokenDetails
-} from '@/state/erc20token/slice';
+import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { getSynToken } from '@/utils/api';
 import {
@@ -421,7 +418,7 @@ const Distribute: FC = () => {
       };
     } else if (isDemoMode) {
       // using "Active" as the default view.
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      resetClubState(dispatch, mockActiveERC20Token);
     }
   }, [
     clubAddress,

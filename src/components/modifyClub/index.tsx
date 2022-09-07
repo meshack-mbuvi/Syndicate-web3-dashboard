@@ -99,7 +99,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositTokenLogo, depositTokenSymbol }
+      depositDetails: { depositTokenLogo, depositTokenSymbol },
+      isNewClub
     },
     web3Reducer: {
       web3: { account, status, web3, activeNetwork }
@@ -884,7 +885,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       !clubAddress ||
                       status === Status.CONNECTING ||
                       !owner ||
-                      !isReady
+                      !isReady ||
+                      isNewClub
                     }
                     customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
                   />

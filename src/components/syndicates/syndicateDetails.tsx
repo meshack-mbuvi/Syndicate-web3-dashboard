@@ -42,7 +42,9 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       erc20Token,
       depositDetails,
       depositTokenPriceInUSD,
-      erc20TokenContract
+      erc20TokenContract,
+      activeModuleDetails,
+      isNewClub
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
@@ -147,6 +149,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           erc20TokenContract,
           DepositTokenMintModule,
           SingleTokenMintModule,
+          activeModuleDetails?.mintModule,
           activeNetwork
         );
       }
@@ -452,6 +455,9 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     setShowDuplicateClubWarning(false);
   };
 
+  const { pathname } = router;
+  const isSettingPage = pathname === '/clubs/[clubAddress]/modify';
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -459,7 +465,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           !isDemoMode &&
           !isOwner &&
           !loading &&
-          status !== Status.DISCONNECTED && (
+          status !== Status.DISCONNECTED &&
+          !(isSettingPage && !isNewClub) && (
             <div className="mt-6">
               <DuplicateClubWarning
                 dismissDuplicateClubWarning={dismissDuplicateClubWarning}

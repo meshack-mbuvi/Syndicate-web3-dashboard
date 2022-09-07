@@ -1,5 +1,7 @@
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
-import { TokenGateRule } from '@/state/createInvestmentClub/types';
+import {
+  LogicalOperator,
+  TokenGateRule
+} from '@/state/createInvestmentClub/types';
 import { NON_WORD_CHAR_REGEX, SYM_MAX_LENGTH } from '../constants';
 
 export const validateEmail = (email: string): boolean => {
@@ -63,19 +65,10 @@ export const validateDuplicateRules = (
 };
 
 export const validateNullRules = (rules: TokenGateRule[]): number[] => {
-  const nullRules = rules.filter((rule) => !rule.name && rule.quantity > 1);
-
-  const indices: number[] = [];
-
-  nullRules.map((_rule) => {
-    const index = rules.reduce(
-      (acc, rule, idx) =>
-        rule.name === _rule.name && rule.quantity > 1 ? [...acc, idx] : acc,
-      []
-    );
-    indices.push(...index);
-  });
-
+  const indices = rules.reduce(
+    (acc, rule, idx) => (!rule.name ? [...acc, idx] : acc),
+    []
+  );
   return Array.from(new Set(indices));
 };
 

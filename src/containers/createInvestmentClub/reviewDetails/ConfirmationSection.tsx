@@ -1,12 +1,14 @@
 import Image from 'next/image';
-import { TokenGateOption } from '@/state/createInvestmentClub/types';
+import {
+  LogicalOperator,
+  TokenGateOption
+} from '@/state/createInvestmentClub/types';
 import { animated } from 'react-spring';
 import ReviewSection, { ReviewSectionVariant } from './ReviewSection';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
-import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 
 interface ConfirmationSectionProps {
@@ -31,7 +33,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
     setEditingStep
   } = useCreateInvestmentClubContext();
 
-  // TODO: after branches merged get amountToMintPerAddress
+  // TODO: [DAO DASHBOARD] after branches merged get amountToMintPerAddress
   // and remove temp values below:
   const amountToMintPerAddress = 10;
 
@@ -55,7 +57,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
               onClick={handleEditMembership}
             >
               <div className="mt-2 text-base text-white w-full">
-                {tokenGateOption === TokenGateOption.RESTRICTED ? (
+                {tokenGateOption === TokenGateOption.UNRESTRICTED ? (
                   <p>{'Anyone with the link'}</p>
                 ) : (
                   <>

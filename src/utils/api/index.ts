@@ -84,3 +84,118 @@ export const getEthGasPrice = async (
     return;
   }
 };
+
+export const getCollectivesDetails = async (
+  tokenAddresses: string[],
+  chainId: number
+): Promise<
+  AxiosResponse<{
+    data: {
+      syndicateCollectives: {
+        contractAddress: string;
+        ownerAddress: string;
+        createdAt: string;
+        name: string;
+        symbol: string;
+        nftMetadata: {
+          description: string;
+          metadataCid: string;
+          mediaCid: string;
+        };
+      }[];
+    };
+  }>
+> => {
+  const query = `query SyndicateCollectives($where: SyndicateCollective_filter) {
+    syndicateCollectives(where: $where) {
+      contractAddress
+      ownerAddress
+      createdAt
+      name
+      symbol
+      nftMetadata {
+        description
+        metadataCid
+        mediaCid
+      }
+    }
+  }`;
+
+  try {
+    return await axios({
+      url: BACKEND_LINKS[chainId].graphs.theGraph,
+      method: 'POST',
+      data: JSON.stringify({
+        query,
+        variables: {
+          where: {
+            contractAddress_in: tokenAddresses
+          }
+        }
+      })
+    });
+  } catch (error) {
+    return;
+  }
+};
+
+export const getAccountHoldings = async (
+  includeAddresses: string[],
+  chainId: number,
+  walletAddress: string
+): Promise<
+  AxiosResponse<{
+    data: {
+      tokenHoldings: {
+        balance: number;
+        token: {
+          address: string;
+          name: string;
+          symbol: string;
+          decimals: number | null;
+          logo: string | null;
+        };
+      }[];
+    };
+  }>
+> => {
+  const query = `query Query(
+    $chainId: Int!
+    $walletAddress: String!
+    $filter: TokenHoldingsFilter
+  ) {
+    tokenHoldings(
+      chainId: $chainId
+      walletAddress: $walletAddress
+      filter: $filter
+    ) {
+      balance
+      token {
+        address
+        name
+        symbol
+        decimals
+        logo
+      }
+    }
+  }
+  `;
+
+  return await axios({
+    url: BACKEND_LINKS[chainId].graphs.backend,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: JSON.stringify({
+      query,
+      variables: {
+        chainId,
+        walletAddress,
+        filter: {
+          includeAddresses
+        }
+      }
+    })
+  });
+};

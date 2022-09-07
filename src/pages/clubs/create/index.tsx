@@ -8,6 +8,7 @@ import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentCl
 import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { resetClubCreationReduxState } from '@/state/createInvestmentClub/slice';
 import {
   CreateActiveSteps,
   CreateFlowSteps,
@@ -22,6 +23,7 @@ import router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
+import useCollectives from '@/hooks/collectives/useGetCollectives';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -45,6 +47,9 @@ const CreateInvestmentClub: React.FC = () => {
     nextBtnDisabled,
     resetCreationStates
   } = useCreateInvestmentClubContext();
+
+  // Fetch account collectives to show in token gating step
+  useCollectives();
 
   const parentRef = useRef(null);
 
@@ -117,6 +122,12 @@ const CreateInvestmentClub: React.FC = () => {
     const index = uniqueCategories.indexOf(currCategory);
     setCategoryIndex(index);
   }, [stepsCategories, currCategory, uniqueCategories]);
+
+  useEffect(() => {
+    if (currentStep == 0) {
+      dispatch(resetClubCreationReduxState());
+    }
+  }, [currentStep]);
 
   const handleExit = () => {
     router.replace('/');

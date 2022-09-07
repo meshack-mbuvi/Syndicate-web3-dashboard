@@ -4,6 +4,7 @@ import { ClubERC20FactoryNative } from '@/ClubERC20Factory/clubERC20FactoryNativ
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
 import { DistributionsERC20 } from '@/ClubERC20Factory/distributionsERC20';
 import { DistributionsETH } from '@/ClubERC20Factory/distributionsETH';
+import { ERC20ClubFactory } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from '@/ClubERC20Factory/merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from '@/ClubERC20Factory/mintPolicyERC721';
@@ -17,6 +18,9 @@ import { RugBonusTokenModule } from '@/ClubERC20Factory/RugRadio/RugBonusTokenMo
 import { RugERC20ClaimModule } from '@/ClubERC20Factory/RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
+import { MaxMemberCountMixin } from '@/ClubERC20Factory/maxMemberMixin';
+import { MaxTotalSupplyMixin } from '@/ClubERC20Factory/maxTotalSupplyMixin';
+import { TokenGatedMixin } from '@/ClubERC20Factory/tokenGatingMixin';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { EthPriceMintModule } from '@/ClubERC20Factory/EthPriceMintModule';
@@ -32,6 +36,7 @@ export interface ISyndicateContracts {
   clubERC20FactoryNative: ClubERC20FactoryNative;
   distributionsERC20: DistributionsERC20;
   distributionsETH: DistributionsETH;
+  erc20ClubFactory: ERC20ClubFactory;
   policyMintERC20: MintPolicyContract;
   mintPolicy: MintPolicyContract;
   DepositTokenMintModule: DepositTokenMintModuleContract;
@@ -58,6 +63,9 @@ export interface ISyndicateContracts {
   maxPerMemberERC721: MaxPerMemberERC721;
   maxTotalSupplyERC721: MaxTotalSupplyERC721;
   timeRequirements: TimeRequirements;
+  maxMemberCountMixin: MaxMemberCountMixin;
+  maxTotalSupplyMixin: MaxTotalSupplyMixin;
+  tokenGatedMixin: TokenGatedMixin;
 }
 
 interface InitialState {
@@ -71,6 +79,7 @@ const initialState: InitialState = {
     clubERC20FactoryNative: null,
     distributionsERC20: null,
     distributionsETH: null,
+    erc20ClubFactory: null,
     mintPolicy: null,
     DepositTokenMintModule: null,
     SingleTokenMintModule: null,
@@ -95,7 +104,10 @@ const initialState: InitialState = {
     guardMixinManager: null,
     maxPerMemberERC721: null,
     maxTotalSupplyERC721: null,
-    timeRequirements: null
+    timeRequirements: null,
+    maxMemberCountMixin: null,
+    maxTotalSupplyMixin: null,
+    tokenGatedMixin: null
   }
 };
 

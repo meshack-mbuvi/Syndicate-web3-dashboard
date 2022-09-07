@@ -1,45 +1,30 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showWalletModal } from '@/state/wallet/actions';
-
+import Image from 'next/image';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import { CtaButton } from '@/components/CTAButton';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
 
 const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
   gatingRequirementsMet
 }): React.ReactElement => {
+  const {
+    web3Reducer: {
+      web3: { web3 }
+    },
+    erc20TokenSliceReducer: { activeModuleDetails, tokenGatingDetails }
+  } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const connectWallet = () => {
     dispatch(showWalletModal());
   };
-  enum TokenRequirementLogic {
-    AND = 'AND',
-    OR = 'OR'
-  }
-  // flip this to 'AND' to test AND requirement
-  const tokenRequirementLogic = TokenRequirementLogic.OR;
 
-  // placeholder requirements
-  // TODO: replace these with actual requirements data
-  const requiredTokens = [
-    {
-      name: 'Rug Radio - Genesis NFT',
-      symbol: '',
-      logo: '/images/tokenGating/tgPlaceholder1.svg',
-      requirementMet: false
-    },
-    {
-      name: 'Gitcoin',
-      symbol: 'GTC',
-      logo: '/images/tokenGating/tgPlaceholder2.svg',
-      requirementMet: false
-    }
-  ];
-
-  const requiredTokenBalances = [1, 100];
-  // using type assertion here to solve an overlap issue since we're hardcoding
-  // the value of tokenRequirementLogic.
-  const logic = tokenRequirementLogic as TokenRequirementLogic;
+  const requiredTokens =
+    activeModuleDetails?.activeMintModuleReqs?.requiredTokens ?? [];
+  const requiredLogic =
+    activeModuleDetails?.activeMintModuleReqs.requiredTokensLogicalOperator;
 
   return (
     <FadeIn>
@@ -51,53 +36,61 @@ const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
         <p className="h4 uppercase text-sm">membership requirements</p>
         <div
           className={`flex flex-col ${
-            logic === TokenRequirementLogic.OR ? 'space-y-4' : 'space-y-6'
+            !requiredLogic ? 'space-y-4' : 'space-y-6'
           }`}
         >
-          {requiredTokens.map((token, index) => {
-            const { name, symbol, logo, requirementMet } = token;
+          {tokenGatingDetails?.requiredTokenDetails.map((token, index) => {
+            const {
+              name,
+              symbol,
+              logo,
+              requirementMet,
+              decimals,
+              requiredBalance
+            } = token;
 
             const requirementBullet = requirementMet
               ? 'requirementMetRadio.svg'
               : 'requirementNotMetRadio.svg';
 
-            // in case we are on the OR logic and gating requirement is met, we only need
+            // in case we are on the OR requiredLogic and gating requirement is met, we only need
             // to display the token with the requirement met.
             // otherwise we display all tokens.
 
-            if (
-              (requirementMet &&
-                logic === TokenRequirementLogic.OR &&
-                gatingRequirementsMet) ||
-              logic === TokenRequirementLogic.AND ||
-              (logic === TokenRequirementLogic.OR && !gatingRequirementsMet)
-            ) {
-              return (
-                <div key={index} className="flex flex-col space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <span>
-                      <img
-                        src={`/images/tokenGating/${requirementBullet}`}
-                        alt=""
-                        className="inline"
-                      />
-                    </span>
-                    <span>{`Own ${requiredTokenBalances[index]} `}</span>{' '}
-                    <span>
-                      <img src={logo} alt="logo" className="inline" />
-                    </span>
-                    <span>{name}</span>
-                    {symbol && <span className="text-gray-syn5">{symbol}</span>}
+            return (
+              <div key={index} className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-2">
+                  <span>
+                    <img
+                      src={`/images/tokenGating/${requirementBullet}`}
+                      alt=""
+                      className="inline"
+                    />
+                  </span>
+                  <span className="pr-2">{`Own ${
+                    decimals == null || decimals === 0
+                      ? requiredBalance
+                      : getWeiAmount(web3, requiredBalance, decimals, false)
+                  } `}</span>{' '}
+                  <div className="flex items-center shrink-0">
+                    <Image
+                      src={logo || '/images/token-gray-4.svg'}
+                      alt={name}
+                      width={30}
+                      height={30}
+                    />
                   </div>
-                  {logic === TokenRequirementLogic.OR &&
-                  requiredTokens.length > 1 &&
-                  index !== requiredTokens.length - 1 &&
-                  !gatingRequirementsMet ? (
-                    <p className="h4 uppercase text-sm">or</p>
-                  ) : null}
+                  <span>{name}</span>
+                  {symbol && <span className="text-gray-syn5">{symbol}</span>}
                 </div>
-              );
-            }
+                {!requiredLogic &&
+                requiredTokens.length > 1 &&
+                index !== requiredTokens.length - 1 &&
+                !gatingRequirementsMet ? (
+                  <p className="h4 uppercase text-sm">or</p>
+                ) : null}
+              </div>
+            );
           })}
         </div>
         {!gatingRequirementsMet && (

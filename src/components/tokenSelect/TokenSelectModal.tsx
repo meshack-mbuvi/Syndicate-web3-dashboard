@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { TokenSelectSearch } from '@/components/tokenSelect/TokenSelectSearch';
 import { Token } from '@/types/token';
-import { SUPPORTED_TOKENS } from '@/Networks';
 
 export interface ITokenModal {
   showModal: boolean;
@@ -105,11 +104,6 @@ const TokenSelectModal: React.FC<ITokenModal> = ({
   chainId,
   variant = TokenModalVariant.Default
 }) => {
-  const coinList = useMemo(
-    () => SUPPORTED_TOKENS[chainId] ?? SUPPORTED_TOKENS[1],
-    [chainId]
-  );
-
   const RecentlyUsed = withRecently(TokenSelectSearch, chainId);
 
   return (
@@ -129,17 +123,9 @@ const TokenSelectModal: React.FC<ITokenModal> = ({
       margin="mt-48"
     >
       {variant === TokenModalVariant.RecentlyUsed ? (
-        <RecentlyUsed
-          toggleTokenSelect={closeModal}
-          defaultTokenList={coinList}
-          variant={variant}
-        />
+        <RecentlyUsed toggleTokenSelect={closeModal} variant={variant} />
       ) : (
-        <TokenSelectSearch
-          toggleTokenSelect={closeModal}
-          defaultTokenList={coinList}
-          variant={variant}
-        />
+        <TokenSelectSearch toggleTokenSelect={closeModal} variant={variant} />
       )}
     </Modal>
   );

@@ -57,7 +57,7 @@ export const CollectiveCard: React.FC<Props> = ({
       'Free to mint'
     ) : (
       <div className="flex items-center space-x-2 justify-end">
-        <img src={price.tokenIcon} alt="Price" className="" />
+        <img src={price.tokenIcon} alt="Price" className="h-5 w-5 mr-1" />
         <div>
           {price.tokenAmount} {price.tokenSymbol}
         </div>

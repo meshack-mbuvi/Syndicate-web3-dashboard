@@ -50,6 +50,9 @@ import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatur
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
 
+import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
+import { setTokenGatingDetails } from '@/state/erc20token/slice';
+import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -72,6 +75,9 @@ const DepositSyndicate: React.FC = () => {
         depositTokenLogo,
         depositTokenSymbol
       },
+      isNewClub,
+      activeModuleDetails,
+      tokenGatingDetails,
       depositTokenPriceInUSD,
       erc20TokenContract
     }
@@ -90,7 +96,8 @@ const DepositSyndicate: React.FC = () => {
     maxMemberCount
   } = erc20Token;
 
-  const { totalDeposits } = useClubDepositsAndSupply(address);
+  const { loadingClubDeposits, totalDeposits } =
+    useClubDepositsAndSupply(address);
 
   const { loading: merkleLoading } = useFetchMerkleProof();
   const { loading: claimLoading } = useFetchTokenClaim();
@@ -140,6 +147,12 @@ const DepositSyndicate: React.FC = () => {
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
   const [checkSuccess, setCheckSuccess] = useState(false);
   const [newClubTokensSupply, setNewClubTokensSupply] = useState(0);
+  const [loadingTokenGatingRequirements, setLoadingTokenGating] =
+    useState(true);
+  const [meetsNewClubRequirements, setMeetsNewClubRequirements] =
+    useState(false);
+  const isNewTokenGatedClub =
+    isNewClub && activeModuleDetails?.activeMintModuleReqs?.isTokenGated;
 
   // Checks if Deposit Token/USD is switched in the deposit card
   const [depositTokenSwitched, setDepositTokenSwitched] = useState(false);
@@ -157,6 +170,10 @@ const DepositSyndicate: React.FC = () => {
     startPolling,
     stopPolling
   } = useAccountTokens();
+
+  const { loading: loadingTokenHoldings, data: tokenBalanceHoldings } =
+    useFetchAccountHoldingsAndDetails();
+  const { getTokenReqDetails } = useMeetsTokenGatedRequirements();
 
   const { isReady, isClubMixinGuardTreatmentOn } =
     useClubMixinGuardFeatureFlag();
@@ -370,7 +387,7 @@ const DepositSyndicate: React.FC = () => {
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.SingleTokenMintModule;
   const NATIVE_MINT_MODULE =
-    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
   const DEPOSIT_TOKEN_MINT_MODULE =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.DepositTokenMintModule;
 
@@ -388,7 +405,7 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
 
     try {
-      if (mintModule === NATIVE_MINT_MODULE) {
+      if (mintModule?.toLowerCase() === NATIVE_MINT_MODULE?.toLowerCase()) {
         await syndicateContracts.NativeMintModule?.deposit(
           getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
@@ -398,7 +415,10 @@ const DepositSyndicate: React.FC = () => {
           onTxFail,
           setTransactionHash
         );
-      } else if (mintModule === SINGLE_TOKEN_MINT_MODULE_ADDR) {
+      } else if (
+        mintModule?.toLowerCase() ===
+        SINGLE_TOKEN_MINT_MODULE_ADDR?.toLowerCase()
+      ) {
         await syndicateContracts.SingleTokenMintModule?.deposit(
           getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
@@ -408,7 +428,9 @@ const DepositSyndicate: React.FC = () => {
           onTxFail,
           setTransactionHash
         );
-      } else if (mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
+      } else if (
+        mintModule?.toLowerCase() === DEPOSIT_TOKEN_MINT_MODULE?.toLowerCase()
+      ) {
         await syndicateContracts.DepositTokenMintModule?.deposit(
           getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
@@ -470,6 +492,24 @@ const DepositSyndicate: React.FC = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (!isNewTokenGatedClub) {
+      setLoadingTokenGating(false);
+    } else {
+      if (loadingTokenHoldings || !tokenBalanceHoldings) return;
+      const details = getTokenReqDetails(tokenBalanceHoldings.tokenHoldings);
+      dispatch(setTokenGatingDetails(details));
+      setLoadingTokenGating(false);
+      setMeetsNewClubRequirements(details?.meetsRequirements);
+    }
+  }, [
+    isNewClub,
+    isNewTokenGatedClub,
+    loadingTokenHoldings,
+    tokenBalanceHoldings,
+    activeModuleDetails?.hasActiveModules
+  ]);
 
   /**
    *
@@ -1014,17 +1054,10 @@ const DepositSyndicate: React.FC = () => {
     depositButtonText = 'Continue';
   }
 
-  // token gating.
-  // TODO: add check for requirements met here
-  // Toggle this to true to test.
-  const gatingRequirementsMet = true;
-
-  //TODO: fetch this from subgraph/contract
-  const isClubTokenGated = false;
-
   const isOpenWithRequirementsMet =
-    !loading && depositsEnabled && gatingRequirementsMet && isClubTokenGated;
-
+    !loading &&
+    depositsEnabled &&
+    (isNewClub ? meetsNewClubRequirements : true);
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44">
@@ -1038,7 +1071,13 @@ const DepositSyndicate: React.FC = () => {
 
           {status !== Status.DISCONNECTED &&
           !checkSuccess &&
-          (loading || merkleLoading || claimLoading || airdropInfoLoading) ? (
+          (loading ||
+            merkleLoading ||
+            claimLoading ||
+            airdropInfoLoading ||
+            loadingClubDeposits ||
+            loadingTokenHoldings ||
+            loadingTokenGatingRequirements) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
                 width="1/3"
@@ -1085,9 +1124,13 @@ const DepositSyndicate: React.FC = () => {
           ) : status !== Status.DISCONNECTED &&
             isReady &&
             isClubMixinGuardTreatmentOn &&
-            !gatingRequirementsMet ? (
+            isNewTokenGatedClub &&
+            !meetsNewClubRequirements &&
+            depositsEnabled ? (
             <div>
-              <TokenGatingRequirements {...{ gatingRequirementsMet }} />
+              <TokenGatingRequirements
+                gatingRequirementsMet={tokenGatingDetails?.meetsRequirements}
+              />
             </div>
           ) : depositsEnabled ? (
             <FadeIn>
@@ -1594,10 +1637,7 @@ const DepositSyndicate: React.FC = () => {
         (+memberDeposits > 0 || +accountTokens > 0) &&
         !loading &&
         account) ||
-        isDemoMode ||
-        (isReady &&
-          isClubMixinGuardTreatmentOn &&
-          isOpenWithRequirementsMet)) && (
+        isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <L2 extraClasses="pb-5">Your Holdings</L2>
           {loading ? (
@@ -1640,9 +1680,12 @@ const DepositSyndicate: React.FC = () => {
         (+memberDeposits === 0 || +accountTokens === 0) &&
         isReady &&
         isClubMixinGuardTreatmentOn &&
-        isOpenWithRequirementsMet && (
+        isOpenWithRequirementsMet &&
+        isNewTokenGatedClub && (
           <div className="mt-6">
-            <TokenGatingRequirements {...{ gatingRequirementsMet }} />
+            <TokenGatingRequirements
+              gatingRequirementsMet={tokenGatingDetails?.meetsRequirements}
+            />
           </div>
         )}
 
@@ -1658,360 +1701,363 @@ const DepositSyndicate: React.FC = () => {
           showHeader: false
         }}
       >
-        {successfulDeposit ? (
-          <div className="flex flex-col items-center">
-            <img
-              className="h-16 w-16"
-              src="/images/syndicateStatusIcons/checkCircleGreen.svg"
-              alt="checkmark"
-            />
-            <div className="pt-8">
-              <span className="text-2xl">
-                Deposited{' '}
-                {floatedNumberWithCommas(
-                  parseFloat(depositAmountFinalized),
-                  nativeDepositToken ?? false
-                )}{' '}
-                {depositTokenSymbol}
-              </span>
-            </div>
-            <div className="pt-4 px-3 text-center">
-              <span className="text-base text-gray-syn4">
-                You now have {floatedNumberWithCommas(accountTokens)} {symbol}{' '}
-                which represents a {floatedNumberWithCommas(memberOwnership)}%
-                ownership share of this club.
-              </span>
-            </div>
-            <CopyToClipboard
-              text={`${activeNetwork.blockExplorer.baseUrl}/${activeNetwork.blockExplorer.resources.transaction}/${transactionHash}`}
-              onCopy={handleOnCopy}
-            >
-              <div className="relative py-8 w-fit-content">
-                <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
-                  <div className="mr-2">
-                    <Image
-                      src="/images/actionIcons/copy-clipboard-white.svg"
-                      height={12}
-                      width={12}
-                    />
-                  </div>
-                  <div>
-                    <span className="text-base">Copy transaction link</span>
-                  </div>
-                </div>
-                {copied && (
-                  <div className=" absolute w-full flex justify-center items-center">
-                    <span className="text-xs font-whyte-light">
-                      Link copied
-                    </span>
-                  </div>
-                )}
-              </div>
-            </CopyToClipboard>
-
-            <div className="px-5 w-full pb-5">
-              <button
-                className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
-                onClick={() => {
-                  closeSuccessModal();
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <p className="uppercase h4 pl-5">confirm deposit</p>
-            <div className="mt-8 rounded-lg border-gray-syn6 border relative">
-              <div className="py-4 px-5 border-gray-syn6 border-b">
-                <p className="text-base text-gray-syn4">Deposit amount</p>
-                <div className="flex items-center justify-between mt-1">
-                  <div className="text-2xl">
-                    <p>
-                      {addGrayToDecimalInput(
-                        floatedNumberWithCommas(
-                          depositAmountFinalized.toString(),
-                          nativeDepositToken ?? false
-                        )
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <div className="flex items-center p-0 h-6">
-                      <Image
-                        src={depositTokenLogo || '/images/token-gray-4.svg'}
-                        height={24}
-                        width={24}
-                      />
-                      <p className="ml-2 text-base">{depositTokenSymbol}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className={`absolute p-2 bg-gray-syn8 border-gray-syn6 border rounded-lg`}
-                style={{ top: 'calc(50% - 24px)', left: 'calc(50% - 12px)' }}
-              >
-                <ArrowDown />
-              </div>
-              <div className="py-4 px-5">
-                <div className="flex justify-between">
-                  <p className="text-base text-gray-syn4">
-                    Receiving club tokens
-                  </p>
-                  <Tooltip
-                    content={
-                      <div className="text-sm">
-                        When you deposit into this club, you <br />
-                        receive club tokens in return that
-                        <br /> represent your ownership share of the
-                        <br /> club.
-                      </div>
-                    }
-                    arrow={false}
-                    tipContentClassName="actionsTooltip"
-                    background="#232529"
-                    padding="12px 16px"
-                    distance={13}
-                  >
-                    <InfoIcon
-                      src={'/images/deposit/info.svg'}
-                      iconSize="h-3.5"
-                    />
-                  </Tooltip>
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <div className="text-2xl">
-                    <p>{floatedNumberWithCommas(memberTokens)}</p>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <div className="flex items-center p-0 h-6">
-                      <Image
-                        src={syndicateClubLogo as string}
-                        height={24}
-                        width={24}
-                      />
-                      <p className="ml-2 text-base">{symbol.slice(1)}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-start mt-1">
-                  <p className="text-sm text-gray-syn4">
-                    {floatedNumberWithCommas(ownershipShare) === '< 0.01'
-                      ? null
-                      : '= '}
-                    {floatedNumberWithCommas(ownershipShare)}% ownership share (
-                    {floatedNumberWithCommas(fullyDilutedShare)}% fully diluted)
-                  </p>
-                  <Tooltip
-                    content={
-                      <div className="flex flex-col space-y-2 text-sm">
-                        <span>
-                          Currently, this deposit would represent a <br />
-                          {floatedNumberWithCommas(ownershipShare)}% ownership
-                          share in this club.
-                        </span>
-
-                        <span>
-                          Fully diluted (all available club tokens have
-                          <br /> been minted), this deposit will represent a
-                          <br />
-                          {floatedNumberWithCommas(fullyDilutedShare)}%
-                          ownership share in this club.
-                        </span>
-                      </div>
-                    }
-                    arrow={false}
-                    tipContentClassName="actionsTooltip"
-                    background="#232529"
-                    padding="12px 16px"
-                    distance={13}
-                  >
-                    <InfoIcon
-                      src={'/images/deposit/info.svg'}
-                      iconSize="h-3.5"
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-            </div>
-
-            {/* Show transaction steps if this is user's first deposit */}
-            <div className="mt-8 px-5">
-              {!(+memberDeposits > 0) &&
-                !nativeDepositToken &&
-                depositSteps.map((step, stepIdx) => {
-                  const completedStep = currentTransaction > stepIdx + 1;
-                  const inactiveStep = currentTransaction < stepIdx + 1;
-                  return (
-                    <div
-                      className="flex flex-col mb-5 relative"
-                      key={step.title}
-                    >
-                      {stepIdx !== depositSteps?.length - 1 ? (
-                        <div
-                          className={`-ml-px absolute mt-0.5 top-5 left-2.5 w-0.5 h-18  ${
-                            completedStep ? 'bg-blue' : 'bg-gray-syn6'
-                          }`}
-                          aria-hidden="true"
-                        />
-                      ) : null}
-                      <div className="relative flex group items-center">
-                        <span
-                          className="h-5 flex items-center"
-                          aria-hidden="true"
-                        >
-                          {completedStep ? (
-                            <span className="w-5 h-5 bg-blue rounded-full flex justify-center items-center">
-                              <CheckIcon className="w-3 h-3 text-white" />
-                            </span>
-                          ) : (
-                            <span
-                              className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full ${
-                                inactiveStep
-                                  ? 'border-gray-syn6'
-                                  : 'border-blue'
-                              }`}
-                            />
-                          )}
-                        </span>
-                        <span className="ml-4 min-w-0 flex flex-col">
-                          <span
-                            className={`text-base font-normal ${
-                              inactiveStep ? 'text-gray-syn5' : 'text-white'
-                            } leading-7 font-light transition-all`}
-                          >
-                            {step.title}
-                          </span>
-                        </span>
-                      </div>
-                      {step.info ? (
-                        <div className="ml-9 text-gray-syn4 text-sm">
-                          <p>{step.info}</p>
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-            </div>
-            {(metamaskConfirmPending ||
-              submitting ||
-              submittingAllowanceApproval) &&
-            !successfulDeposit ? (
-              <div
-                className={`mt-6 rounded-custom flex flex-col items-center ${
-                  metamaskConfirmPending
-                    ? 'bg-blue-midnightExpress'
-                    : 'bg-gray-syn7'
-                }`}
-              >
-                {metamaskConfirmPending ||
-                submitting ||
-                submittingAllowanceApproval ? (
-                  <div className="py-6">
-                    <Spinner width="w-10" height="h-10" margin="m-0" />
-                  </div>
-                ) : null}
-                <span className="font-whyte leading-normal pb-2">
-                  {metamaskConfirmPending && !sufficientAllowanceSet
-                    ? `Approve ${depositTokenSymbol} from your wallet`
-                    : null}
-
-                  {metamaskConfirmPending && sufficientAllowanceSet
-                    ? 'Confirm deposit from your wallet'
-                    : null}
-                  {submittingAllowanceApproval
-                    ? `Approving ${depositTokenSymbol}`
-                    : submitting
-                    ? `Depositing ${floatedNumberWithCommas(
-                        depositAmountFinalized,
-                        nativeDepositToken ?? false
-                      )} ${depositTokenSymbol}`
-                    : null}
+        <>
+          {successfulDeposit ? (
+            <div className="flex flex-col items-center">
+              <img
+                className="h-16 w-16"
+                src="/images/syndicateStatusIcons/checkCircleGreen.svg"
+                alt="checkmark"
+              />
+              <div className="pt-8">
+                <span className="text-2xl">
+                  Deposited{' '}
+                  {floatedNumberWithCommas(
+                    parseFloat(depositAmountFinalized),
+                    nativeDepositToken ?? false
+                  )}{' '}
+                  {depositTokenSymbol}
                 </span>
-                <span
-                  className={`leading-snug font-whyte text-sm ${
-                    transactionTooLong
-                      ? 'text-yellow-semantic'
-                      : 'text-gray-syn4'
-                  } px-5 text-center pb-5`}
-                >
-                  {(submittingAllowanceApproval || submitting) &&
-                  !transactionTooLong
-                    ? 'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
-                    : null}
-                  {(submitting || submittingAllowanceApproval) &&
-                    transactionTooLong &&
-                    TRANSACTION_TOO_LONG_MSG}
-                  {metamaskConfirmPending && sufficientAllowanceSet
-                    ? 'Deposits are irreversible.'
-                    : null}
-                </span>
-                {submitting && transactionHash ? (
-                  <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-                    <BlockExplorerLink
-                      resourceId={transactionHash}
-                      resource="transaction"
-                    />
-                  </div>
-                ) : null}
               </div>
-            ) : (
-              <div
-                className={`${
-                  depositFailed || transactionFailed || transactionRejected
-                    ? 'bg-red-error'
-                    : ''
-                }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
+              <div className="pt-4 px-3 text-center">
+                <span className="text-base text-gray-syn4">
+                  You now have {floatedNumberWithCommas(accountTokens)} {symbol}{' '}
+                  which represents a {floatedNumberWithCommas(memberOwnership)}%
+                  ownership share of this club.
+                </span>
+              </div>
+              <CopyToClipboard
+                text={`${activeNetwork.blockExplorer.baseUrl}/${activeNetwork.blockExplorer.resources.transaction}/${transactionHash}`}
+                onCopy={handleOnCopy}
               >
-                {(depositFailed ||
-                  transactionRejected ||
-                  transactionFailed) && (
-                  <>
-                    <div className="flex justify-center items-center w-full">
+                <div className="relative py-8 w-fit-content">
+                  <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
+                    <div className="mr-2">
                       <Image
-                        width={48}
-                        height={48}
-                        src={
-                          '/images/syndicateStatusIcons/transactionFailed.svg'
-                        }
-                        alt="failed"
+                        src="/images/actionIcons/copy-clipboard-white.svg"
+                        height={12}
+                        width={12}
                       />
                     </div>
-                    <div className={`mt-4 mb-6 text-center`}>
-                      <span className="text-base">{`${
-                        depositFailed
-                          ? 'Deposit failed'
-                          : `Transaction ${
-                              transactionRejected ? 'rejected' : 'failed'
-                            }`
-                      }`}</span>
+                    <div>
+                      <span className="text-base">Copy transaction link</span>
                     </div>
-                  </>
-                )}
+                  </div>
+                  {copied && (
+                    <div className=" absolute w-full flex justify-center items-center">
+                      <span className="text-xs font-whyte-light">
+                        Link copied
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </CopyToClipboard>
+
+              <div className="px-5 w-full pb-5">
                 <button
-                  className="w-full rounded-lg text-base py-4 bg-white text-black"
-                  onClick={(e) => {
-                    if (sufficientAllowanceSet) {
-                      investInSyndicate(depositAmountFinalized);
-                    } else {
-                      handleAllowanceApproval(e);
-                    }
-                    setTransactionRejected(false);
-                    setTransactionFailed(false);
+                  className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
+                  onClick={() => {
+                    closeSuccessModal();
                   }}
                 >
-                  {depositFailed || transactionFailed || transactionRejected
-                    ? 'Try again'
-                    : sufficientAllowanceSet
-                    ? 'Complete deposit'
-                    : 'Continue'}
+                  Close
                 </button>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div>
+              <p className="uppercase h4 pl-5">confirm deposit</p>
+              <div className="mt-8 rounded-lg border-gray-syn6 border relative">
+                <div className="py-4 px-5 border-gray-syn6 border-b">
+                  <p className="text-base text-gray-syn4">Deposit amount</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="text-2xl">
+                      <p>
+                        {addGrayToDecimalInput(
+                          floatedNumberWithCommas(
+                            depositAmountFinalized.toString(),
+                            nativeDepositToken ?? false
+                          )
+                        )}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center p-0 h-6">
+                        <Image
+                          src={depositTokenLogo || '/images/token-gray-4.svg'}
+                          height={24}
+                          width={24}
+                        />
+                        <p className="ml-2 text-base">{depositTokenSymbol}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={`absolute p-2 bg-gray-syn8 border-gray-syn6 border rounded-lg`}
+                  style={{ top: 'calc(50% - 24px)', left: 'calc(50% - 12px)' }}
+                >
+                  <ArrowDown />
+                </div>
+                <div className="py-4 px-5">
+                  <div className="flex justify-between">
+                    <p className="text-base text-gray-syn4">
+                      Receiving club tokens
+                    </p>
+                    <Tooltip
+                      content={
+                        <div className="text-sm">
+                          When you deposit into this club, you <br />
+                          receive club tokens in return that
+                          <br /> represent your ownership share of the
+                          <br /> club.
+                        </div>
+                      }
+                      arrow={false}
+                      tipContentClassName="actionsTooltip"
+                      background="#232529"
+                      padding="12px 16px"
+                      distance={13}
+                    >
+                      <InfoIcon
+                        src={'/images/deposit/info.svg'}
+                        iconSize="h-3.5"
+                      />
+                    </Tooltip>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="text-2xl">
+                      <p>{floatedNumberWithCommas(memberTokens)}</p>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center p-0 h-6">
+                        <Image
+                          src={syndicateClubLogo as string}
+                          height={24}
+                          width={24}
+                        />
+                        <p className="ml-2 text-base">{symbol.slice(1)}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-start mt-1">
+                    <p className="text-sm text-gray-syn4">
+                      {floatedNumberWithCommas(ownershipShare) === '< 0.01'
+                        ? null
+                        : '= '}
+                      {floatedNumberWithCommas(ownershipShare)}% ownership share
+                      ({floatedNumberWithCommas(fullyDilutedShare)}% fully
+                      diluted)
+                    </p>
+                    <Tooltip
+                      content={
+                        <div className="flex flex-col space-y-2 text-sm">
+                          <span>
+                            Currently, this deposit would represent a <br />
+                            {floatedNumberWithCommas(ownershipShare)}% ownership
+                            share in this club.
+                          </span>
+
+                          <span>
+                            Fully diluted (all available club tokens have
+                            <br /> been minted), this deposit will represent a
+                            <br />
+                            {floatedNumberWithCommas(fullyDilutedShare)}%
+                            ownership share in this club.
+                          </span>
+                        </div>
+                      }
+                      arrow={false}
+                      tipContentClassName="actionsTooltip"
+                      background="#232529"
+                      padding="12px 16px"
+                      distance={13}
+                    >
+                      <InfoIcon
+                        src={'/images/deposit/info.svg'}
+                        iconSize="h-3.5"
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+
+              {/* Show transaction steps if this is user's first deposit */}
+              <div className="mt-8 px-5">
+                {!(+memberDeposits > 0) &&
+                  !nativeDepositToken &&
+                  depositSteps.map((step, stepIdx) => {
+                    const completedStep = currentTransaction > stepIdx + 1;
+                    const inactiveStep = currentTransaction < stepIdx + 1;
+                    return (
+                      <div
+                        className="flex flex-col mb-5 relative"
+                        key={step.title}
+                      >
+                        {stepIdx !== depositSteps?.length - 1 ? (
+                          <div
+                            className={`-ml-px absolute mt-0.5 top-5 left-2.5 w-0.5 h-18  ${
+                              completedStep ? 'bg-blue' : 'bg-gray-syn6'
+                            }`}
+                            aria-hidden="true"
+                          />
+                        ) : null}
+                        <div className="relative flex group items-center">
+                          <span
+                            className="h-5 flex items-center"
+                            aria-hidden="true"
+                          >
+                            {completedStep ? (
+                              <span className="w-5 h-5 bg-blue rounded-full flex justify-center items-center">
+                                <CheckIcon className="w-3 h-3 text-white" />
+                              </span>
+                            ) : (
+                              <span
+                                className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full ${
+                                  inactiveStep
+                                    ? 'border-gray-syn6'
+                                    : 'border-blue'
+                                }`}
+                              />
+                            )}
+                          </span>
+                          <span className="ml-4 min-w-0 flex flex-col">
+                            <span
+                              className={`text-base font-normal ${
+                                inactiveStep ? 'text-gray-syn5' : 'text-white'
+                              } leading-7 font-light transition-all`}
+                            >
+                              {step.title}
+                            </span>
+                          </span>
+                        </div>
+                        {step.info ? (
+                          <div className="ml-9 text-gray-syn4 text-sm">
+                            <p>{step.info}</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+              </div>
+              {(metamaskConfirmPending ||
+                submitting ||
+                submittingAllowanceApproval) &&
+              !successfulDeposit ? (
+                <div
+                  className={`mt-6 rounded-custom flex flex-col items-center ${
+                    metamaskConfirmPending
+                      ? 'bg-blue-midnightExpress'
+                      : 'bg-gray-syn7'
+                  }`}
+                >
+                  {metamaskConfirmPending ||
+                  submitting ||
+                  submittingAllowanceApproval ? (
+                    <div className="py-6">
+                      <Spinner width="w-10" height="h-10" margin="m-0" />
+                    </div>
+                  ) : null}
+                  <span className="font-whyte leading-normal pb-2">
+                    {metamaskConfirmPending && !sufficientAllowanceSet
+                      ? `Approve ${depositTokenSymbol} from your wallet`
+                      : null}
+
+                    {metamaskConfirmPending && sufficientAllowanceSet
+                      ? 'Confirm deposit from your wallet'
+                      : null}
+                    {submittingAllowanceApproval
+                      ? `Approving ${depositTokenSymbol}`
+                      : submitting
+                      ? `Depositing ${floatedNumberWithCommas(
+                          depositAmountFinalized,
+                          nativeDepositToken ?? false
+                        )} ${depositTokenSymbol}`
+                      : null}
+                  </span>
+                  <span
+                    className={`leading-snug font-whyte text-sm ${
+                      transactionTooLong
+                        ? 'text-yellow-semantic'
+                        : 'text-gray-syn4'
+                    } px-5 text-center pb-5`}
+                  >
+                    {(submittingAllowanceApproval || submitting) &&
+                    !transactionTooLong
+                      ? 'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
+                      : null}
+                    {(submitting || submittingAllowanceApproval) &&
+                      transactionTooLong &&
+                      TRANSACTION_TOO_LONG_MSG}
+                    {metamaskConfirmPending && sufficientAllowanceSet
+                      ? 'Deposits are irreversible.'
+                      : null}
+                  </span>
+                  {submitting && transactionHash ? (
+                    <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
+                      <BlockExplorerLink
+                        resourceId={transactionHash}
+                        resource="transaction"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <div
+                  className={`${
+                    depositFailed || transactionFailed || transactionRejected
+                      ? 'bg-red-error'
+                      : ''
+                  }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
+                >
+                  {(depositFailed ||
+                    transactionRejected ||
+                    transactionFailed) && (
+                    <>
+                      <div className="flex justify-center items-center w-full">
+                        <Image
+                          width={48}
+                          height={48}
+                          src={
+                            '/images/syndicateStatusIcons/transactionFailed.svg'
+                          }
+                          alt="failed"
+                        />
+                      </div>
+                      <div className={`mt-4 mb-6 text-center`}>
+                        <span className="text-base">{`${
+                          depositFailed
+                            ? 'Deposit failed'
+                            : `Transaction ${
+                                transactionRejected ? 'rejected' : 'failed'
+                              }`
+                        }`}</span>
+                      </div>
+                    </>
+                  )}
+                  <button
+                    className="w-full rounded-lg text-base py-4 bg-white text-black"
+                    onClick={(e) => {
+                      if (sufficientAllowanceSet) {
+                        investInSyndicate(depositAmountFinalized);
+                      } else {
+                        handleAllowanceApproval(e);
+                      }
+                      setTransactionRejected(false);
+                      setTransactionFailed(false);
+                    }}
+                  >
+                    {depositFailed || transactionFailed || transactionRejected
+                      ? 'Try again'
+                      : sufficientAllowanceSet
+                      ? 'Complete deposit'
+                      : 'Continue'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       </Modal>
 
       <BeforeGettingStarted />

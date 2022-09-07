@@ -2,13 +2,17 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
 import { getEthGasPrice } from '@/utils/api';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
+import BigNumber from 'bignumber.js';
 
 export enum ContractMapper {
   ClubERC20Factory,
+  ERC20ClubFactory,
   ERC721CollectiveFactory,
   MintPolicy,
   OwnerMintModule,
@@ -18,7 +22,11 @@ export enum ContractMapper {
   TimeRequirements,
   MaxTotalSupplyERC721,
   ERC721Collective,
-  EthPriceMintModuleMint
+  EthPriceMintModuleMint,
+  MaxMemberCountMixin,
+  MaxTotalSupplyMixin,
+  TokenGatedMixin,
+  CloseClubPostMint
 }
 
 interface IProps {
@@ -40,6 +48,7 @@ const useGasDetails: (props: IProps) => {
     initializeContractsReducer: {
       syndicateContracts: {
         clubERC20Factory,
+        erc20ClubFactory,
         erc721CollectiveFactory,
         policyMintERC20,
         OwnerMintModule,
@@ -48,9 +57,13 @@ const useGasDetails: (props: IProps) => {
         maxPerMemberERC721,
         timeRequirements,
         maxTotalSupplyERC721,
-        erc721Collective
+        erc721Collective,
+        maxMemberCountMixin,
+        maxTotalSupplyMixin,
+        tokenGatedMixin
       }
-    }
+    },
+    collectiveDetailsReducer: { activeRow }
   } = useSelector((state: AppState) => state);
 
   const [gas, setGas] = useState(0);
@@ -67,6 +80,17 @@ const useGasDetails: (props: IProps) => {
       estimateGas: () => {
         if (!clubERC20Factory) return;
         clubERC20Factory.getEstimateGas(account, setGasUnits);
+      }
+    },
+    [ContractMapper.ERC20ClubFactory]: {
+      syndicateContract: erc20ClubFactory,
+      estimateGas: () => {
+        if (!erc20ClubFactory) return;
+        erc20ClubFactory.getEstimateGas(
+          account,
+          args.clubParams as ClubMixinParams,
+          setGasUnits
+        );
       }
     },
     [ContractMapper.ERC721CollectiveFactory]: {
@@ -88,7 +112,13 @@ const useGasDetails: (props: IProps) => {
     [ContractMapper.MintPolicy]: {
       syndicateContract: policyMintERC20,
       estimateGas: () => {
-        if (!policyMintERC20) return;
+        if (
+          !policyMintERC20 ||
+          !args.clubAddress ||
+          !args.maxTotalSupply ||
+          !+args.maxMemberCount
+        )
+          return;
 
         const now = new Date();
         const startTime = moment(now).valueOf();
@@ -108,7 +138,13 @@ const useGasDetails: (props: IProps) => {
     [ContractMapper.OwnerMintModule]: {
       syndicateContract: OwnerMintModule,
       estimateGas: () => {
-        if (!OwnerMintModule) return;
+        if (
+          !OwnerMintModule ||
+          !args.clubAddress ||
+          !args.memberAddress ||
+          !args.amountToMint
+        )
+          return;
         OwnerMintModule.getEstimateGas(
           account,
           args.clubAddress,
@@ -166,15 +202,29 @@ const useGasDetails: (props: IProps) => {
     [ContractMapper.TimeRequirements]: {
       syndicateContract: timeRequirements,
       estimateGas: () => {
-        if (!timeRequirements || !args.collectiveAddress || !args.mintEndTime)
-          return;
-        timeRequirements.getEstimateGas(
-          account,
-          args.collectiveAddress,
-          0,
-          args.mintEndTime,
-          setGasUnits
-        );
+        if (!timeRequirements) return;
+        if (!args.collectiveAddress && !args.clubAddress) return;
+
+        const token = args.collectiveAddress || args.clubAddress;
+        if (activeRow === EditRowIndex.CloseTimeWindow) {
+          timeRequirements.getEstimateGasCloseTimeWindow(
+            account,
+            token,
+            setGasUnits
+          );
+        } else {
+          if (!args.collectiveMintEndTime && !args.clubMintEndTime) return;
+          const mintEndTime = args.collectiveAddress
+            ? args.collectiveMintEndTime
+            : args.clubMintEndTime;
+          timeRequirements.getEstimateGas(
+            account,
+            token,
+            0,
+            mintEndTime,
+            setGasUnits
+          );
+        }
       }
     },
     [ContractMapper.MaxTotalSupplyERC721]: {
@@ -216,6 +266,73 @@ const useGasDetails: (props: IProps) => {
           args.contractAddress,
           '1', // Hardcode to mint a single token
           account,
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.MaxMemberCountMixin]: {
+      syndicateContract: maxMemberCountMixin,
+      estimateGas: () => {
+        if (
+          !maxMemberCountMixin ||
+          !args.clubAddress ||
+          !args.maxNumberOfMembers
+        )
+          return;
+        maxMemberCountMixin.getEstimateGas(
+          account,
+          args.clubAddress,
+          args.maxNumberOfMembers,
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.MaxTotalSupplyMixin]: {
+      syndicateContract: maxTotalSupplyMixin,
+      estimateGas: () => {
+        if (!maxTotalSupplyMixin || !args.clubAddress || !args.totalSupply)
+          return;
+        maxTotalSupplyMixin.getEstimateGas(
+          account,
+          args.clubAddress,
+          getWeiAmount(
+            web3,
+            new BigNumber(args.totalSupply).toFixed(),
+            18,
+            true
+          ),
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.TokenGatedMixin]: {
+      syndicateContract: tokenGatedMixin,
+      estimateGas: () => {
+        if (
+          !tokenGatedMixin ||
+          !args.clubAddress ||
+          !args.logicOperator ||
+          !args.tokens.length ||
+          !args.balances.length
+        )
+          return;
+        tokenGatedMixin.getEstimateGas(
+          account,
+          args.clubAddress,
+          args.logicOperator,
+          args.tokens,
+          args.balances,
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.CloseClubPostMint]: {
+      syndicateContract: erc721Collective,
+      estimateGas: () => {
+        if (!timeRequirements || !args.clubAddress) return;
+        timeRequirements.getEstimateGasCloseTimeWindow(
+          account,
+          args.clubAddress,
           setGasUnits
         );
       }

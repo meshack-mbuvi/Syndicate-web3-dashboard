@@ -19,6 +19,7 @@ interface ITokenSection {
   activeOptions: IndexReducerState;
   noTokenFound: boolean;
   hasTokenError: boolean;
+  allActiveTokens: Token[];
   handleTokenClick: (token: Token) => void;
   showImportBtn?: boolean;
 }
@@ -31,6 +32,7 @@ const TokenSection: React.FC<ITokenSection> = ({
   variant,
   noTokenFound,
   hasTokenError,
+  allActiveTokens,
   activeOptions,
   handleTokenClick,
   showImportBtn
@@ -65,9 +67,9 @@ const TokenSection: React.FC<ITokenSection> = ({
               <TokenItemsSection
                 tokenList={tokenList}
                 handleItemClick={handleTokenClick}
+                allActiveTokens={allActiveTokens}
                 depositTokenSymbol={tokenDetails.depositTokenSymbol}
                 activeItemIndex={activeOptions.index}
-                listShift={activeOptions.shift}
                 showImportBtn={showImportBtn}
               />
             </div>

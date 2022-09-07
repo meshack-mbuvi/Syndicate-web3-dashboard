@@ -1,17 +1,28 @@
 import { useDemoMode } from '@/hooks/useDemoMode';
 import React from 'react';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CLUB_MODIFY_SETTINGS_CLICK } from '@/components/amplitude/eventNames';
 
 const ModifyClubSettingsCard: React.FC = () => {
   const isDemoMode = useDemoMode();
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
 
   const router = useRouter();
   const { clubAddress } = router.query;
   return (
     <a
-      href={isDemoMode ? undefined : `/clubs/${clubAddress}/modify`}
+      href={
+        isDemoMode
+          ? undefined
+          : `/clubs/${clubAddress}/modify?chain=${activeNetwork.network}`
+      }
       onClick={() => {
         amplitudeLogger(CLUB_MODIFY_SETTINGS_CLICK, {
           flow: Flow.CLUB_MANAGE

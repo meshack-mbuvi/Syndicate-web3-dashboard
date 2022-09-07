@@ -5,8 +5,8 @@ import useCreateState from './useCreateState';
 import { useDispatch } from 'react-redux';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { useState, useEffect } from 'react';
-import { acronymGenerator } from '@/utils/acronymGenerator';
-import { useDebounce } from '@/hooks/useDebounce';
+// import { acronymGenerator } from '@/utils/acronymGenerator';
+// import { useDebounce } from '@/hooks/useDebounce';
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import {

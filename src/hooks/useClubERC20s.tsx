@@ -24,20 +24,15 @@ const useClubERC20s = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3: web3Instance }
+    web3Reducer: { web3: web3Instance },
+    erc20TokenSliceReducer: { activeModuleDetails }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
 
   const router = useRouter();
 
-  const {
-    account,
-    activeNetwork,
-    ethereumNetwork: { invalidEthereumNetwork },
-    web3,
-    status
-  } = web3Instance;
+  const { account, activeNetwork, web3, status } = web3Instance;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -229,7 +224,11 @@ const useClubERC20s = () => {
             activeNetwork,
             account: accountAddress,
             syndicateContracts,
-            web3
+            web3,
+            activeModuleDetails: {
+              mintModule: activeModuleDetails?.mintModule,
+              activeMintModuleReqs: activeModuleDetails?.activeMintModuleReqs
+            }
           }
         }).then((club) => {
           // add new club at the top and filter incase the club has been loaded
@@ -315,6 +314,7 @@ const useClubERC20s = () => {
             let clubSymbol = '';
 
             try {
+              // assumes ClubERC20 same for all factories
               clubERC20Contract = new ClubERC20Contract(
                 contractAddress,
                 web3,
@@ -359,6 +359,8 @@ const useClubERC20s = () => {
               activeNetwork.nativeCurrency.exchangeRate;
             if (!isZeroAddress(depositToken) && depositToken) {
               try {
+                // assumes that only ClubERC20Contract and ERC20ClubFactory are possible
+                // both have same calls for symbol, tokenDetails etc.
                 const depositERC20Token = new ClubERC20Contract(
                   depositToken,
                   web3,

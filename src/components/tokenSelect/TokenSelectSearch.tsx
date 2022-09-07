@@ -23,18 +23,25 @@ import { TokenModalVariant } from './TokenSelectModal';
 import { ImportTokenModal } from './ImportToken';
 import TokenSection from './TokenSection';
 import { getNftCollection } from '@/utils/api/nfts';
+import { SUPPORTED_TOKENS } from '@/Networks';
+
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
-  defaultTokenList: Token[];
   suggestionList?: Token[];
   suggestionListTitle?: string;
   updateSuggestionList?: (token: Token) => void;
   variant?: TokenModalVariant;
 }
 
+const dedupTokens = (tokensList_, recentTokens) => {
+  return tokensList_.filter(
+    (tokens) =>
+      !(recentTokens || []).some((rec) => rec.address === tokens.address)
+  );
+};
+
 export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   toggleTokenSelect,
-  defaultTokenList,
   suggestionList,
   suggestionListTitle,
   updateSuggestionList,
@@ -50,11 +57,12 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       tokenRules,
       currentSelectedToken,
       logicalOperator
-    }
+    },
+    collectivesSlice: { adminCollectives, memberCollectives }
   } = useSelector((state: AppState) => state);
 
   const [tokensList, setTokenList] = useState<Token[]>([]);
-  const [nftList, setNftList] = useState<Token[]>([]);
+  // const [nftList, setNftList] = useState<Token[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [noTokenFound, setNoTokenFound] = useState(false);
   const [showCryptoAssetModal, setShowCryptoAssetModal] = useState(false);
@@ -64,13 +72,34 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
 
   const [activeOptions, reducerDispatch] = useReducer(indexReducer, {
     index: -1,
-    shift: suggestionList ? suggestionList.length : 0
+    shift: 0
   });
 
   const dispatch = useDispatch();
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
+
+  const defaultTokenList = showTokenGateModal
+    ? [...adminCollectives, ...memberCollectives]
+        .slice(0, 6)
+        .map((collective) => {
+          return {
+            name: collective.tokenName,
+            address: collective.address,
+            symbol: collective.tokenSymbol,
+            logoURI: collective.tokenMedia,
+            collectionMediaType: collective.tokenMediaType
+          };
+        }) || SUPPORTED_TOKENS[activeNetwork.chainId]
+    : SUPPORTED_TOKENS[activeNetwork.chainId];
+
+  const _tokens = debouncedSearchTerm
+    ? tokensList
+    : [
+        ...(suggestionList || []),
+        ...dedupTokens(defaultTokenList, suggestionList)
+      ];
 
   useEffect(() => {
     if (searchInputRef.current) {
@@ -148,9 +177,10 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       // token contractAddress
       if (web3.utils && web3.utils.isAddress(debouncedSearchTerm)) {
         const _token = [
+          // ...searchRe
           ...defaultTokenList,
           ...(suggestionList || []),
-          ...(showTokenGateModal ? nftList : [])
+          ...(showTokenGateModal ? SUPPORTED_TOKENS[activeNetwork.chainId] : [])
         ].find((token) => token.address === debouncedSearchTerm);
 
         // Avoid fetching API if token exists in tokensList or suggestionList
@@ -176,19 +206,20 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             });
         }
       } else {
-        [...defaultTokenList, ...(showTokenGateModal ? nftList : [])].map(
-          (defaultToken) => {
-            if (
-              defaultToken.name
-                .toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase()) ||
-              defaultToken.symbol.includes(debouncedSearchTerm.toUpperCase()) ||
-              defaultToken.address === debouncedSearchTerm
-            ) {
-              matchedTokens.push(defaultToken);
-            }
+        [
+          ...defaultTokenList,
+          ...(showTokenGateModal ? SUPPORTED_TOKENS[activeNetwork.chainId] : [])
+        ].map((defaultToken) => {
+          if (
+            defaultToken.name
+              .toLowerCase()
+              .includes(debouncedSearchTerm.toLowerCase()) ||
+            defaultToken.symbol.includes(debouncedSearchTerm.toUpperCase()) ||
+            defaultToken.address === debouncedSearchTerm
+          ) {
+            matchedTokens.push(defaultToken);
           }
-        );
+        });
         if (matchedTokens.length == 0) {
           setTokenList([]);
           setNoTokenFound(true);
@@ -206,28 +237,21 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       setTokenList(defaultTokens);
       setNoTokenFound(false);
     }
-  }, [debouncedSearchTerm, defaultTokenList]);
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
-    if (!searchTerm) {
-      reducerDispatch({
-        type: IndexReducerActionType.SHIFT,
-        payload: suggestionList?.length ?? 0
-      });
-    } else {
-      reducerDispatch({ type: IndexReducerActionType.SHIFT, payload: 0 });
-    }
-  }, [tokensList, suggestionList, searchTerm]);
+    reducerDispatch({ type: IndexReducerActionType.SHIFT, payload: 0 });
+  }, [tokensList, suggestionList, debouncedSearchTerm]);
 
-  useEffect(() => {
-    // Get NFTs from recently searched tokens
-    if (showTokenGateModal && suggestionList.length) {
-      const recentlyUsedNFTs = suggestionList.filter(
-        (token) => !token.decimals
-      );
-      setNftList(recentlyUsedNFTs);
-    }
-  }, [showTokenGateModal, suggestionList]);
+  // useEffect(() => {
+  //   // Get NFTs from recently searched tokens
+  //   if (showTokenGateModal && suggestionList && suggestionList.length) {
+  //     const recentlyUsedNFTs = suggestionList.filter(
+  //       (token) => !token.decimals
+  //     );
+  //     setNftList(recentlyUsedNFTs);
+  //   }
+  // }, [showTokenGateModal, suggestionList]);
 
   const handleTokenClick = (token: Token): void => {
     dispatchTokenDetails(token);
@@ -247,10 +271,11 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         ...tokenRules.slice(0, idx),
         {
           name: token.name,
-          symbol: token.symbol,
           quantity,
-          icon: token.logoURI,
+          symbol: token.symbol,
+          chainId: token.chainId,
           contractAddress: token.address,
+          icon: token.logoURI,
           decimals: token.decimals
         },
         ...tokenRules.slice(idx + 1)
@@ -282,25 +307,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    // TODO: does not work as expected
-    const _tokens = [
-      ...(suggestionList || []),
-      ...(showTokenGateModal ? nftList : []),
-      ...defaultTokenList
-    ];
     if (e.key === 'Enter') {
       e.preventDefault();
-      let selectedToken = activeOptions.index;
-      if (activeOptions.shift > 0) {
-        if (activeOptions.index < activeOptions.shift && suggestionList) {
-          return handleTokenClick(suggestionList[selectedToken]);
-        }
-        selectedToken = activeOptions.index - activeOptions.shift;
-      }
-      handleTokenClick(_tokens[selectedToken]);
+      const tokenIndex = activeOptions.index;
+      handleTokenClick(_tokens[tokenIndex]);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (_tokens?.length + activeOptions.shift - 1 > activeOptions.index) {
+      if (_tokens?.length - 1 > activeOptions.index) {
         reducerDispatch({ type: IndexReducerActionType.INCREMENT });
       } else {
         reducerDispatch({ type: IndexReducerActionType.FIRST });
@@ -310,7 +323,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       if (activeOptions.index <= 0) {
         reducerDispatch({
           type: IndexReducerActionType.LAST,
-          payload: tokensList?.length + activeOptions.shift - 1
+          payload: _tokens?.length - 1
         });
       } else {
         reducerDispatch({ type: IndexReducerActionType.DECREMENT });
@@ -323,7 +336,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const tokenSectionDefaultProps = {
     handleTokenClick,
     activeOptions,
-    searchTerm,
+    searchTerm: debouncedSearchTerm,
     loading,
     variant,
     noTokenFound,
@@ -354,7 +367,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       </div>
 
       {/* Search field */}
-      <div className={`px-8 ${searchTerm ? '' : 'mb-4'}`}>
+      <div className={`px-8 ${debouncedSearchTerm ? '' : 'mb-4'}`}>
         <InputField
           placeholderLabel="Search name or contract address"
           icon="/images/search-gray.svg"
@@ -365,8 +378,9 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         />
       </div>
       <div className="overflow-auto flex flex-col flex-grow no-scroll-bar">
-        {searchTerm ? (
+        {debouncedSearchTerm ? (
           <TokenSection
+            allActiveTokens={_tokens}
             tokenList={tokensList}
             showImportBtn={showImportBtn}
             {...tokenSectionDefaultProps}
@@ -376,27 +390,32 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             {variant === TokenModalVariant.RecentlyUsed &&
             suggestionList?.length ? (
               <TokenSection
+                allActiveTokens={_tokens}
                 header={suggestionListTitle}
                 tokenList={suggestionList}
                 {...tokenSectionDefaultProps}
               />
             ) : null}
-            {showTokenGateModal && nftList.length ? (
+            {/* {showTokenGateModal && nftList.length ? (
               <TokenSection
+                allActiveTokens={_tokens}
                 header="NFTs"
                 tokenList={nftList}
                 {...tokenSectionDefaultProps}
               />
+            ) : null} */}
+            {dedupTokens(tokensList, suggestionList).length ? (
+              <TokenSection
+                allActiveTokens={_tokens}
+                header={
+                  showTokenGateModal
+                    ? 'Community or social tokens'
+                    : 'Common Tokens'
+                }
+                tokenList={dedupTokens(tokensList, suggestionList || [])}
+                {...tokenSectionDefaultProps}
+              />
             ) : null}
-            <TokenSection
-              header={
-                showTokenGateModal
-                  ? 'Community or social tokens'
-                  : 'Common Tokens'
-              }
-              tokenList={tokensList}
-              {...tokenSectionDefaultProps}
-            />
           </>
         )}
       </div>

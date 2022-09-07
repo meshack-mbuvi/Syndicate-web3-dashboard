@@ -1,17 +1,29 @@
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
+import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import {
+  setActiveModuleDetails,
   setERC20TokenContract,
   setERC20TokenDetails,
-  setLoadingClub
+  setLoadingClub,
+  setTokenGatingDetails,
+  setIsNewClub
 } from '@/state/erc20token/slice';
 import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
+import { IActiveNetwork } from '@/state/wallet/types';
+import {
+  ActiveModuleDetails,
+  ModuleReqs,
+  TokenGatedRequirementsDetails
+} from '@/types/modules';
 import { isZeroAddress } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
+import { getSyndicateValues } from '@/utils/contracts/getSyndicateValues';
 import { getWeiAmount } from '@/utils/conversions';
+import { Dispatch } from 'redux';
 
 export const ERC20TokenDefaultState = {
   isValidClub: false,
@@ -19,7 +31,7 @@ export const ERC20TokenDefaultState = {
   owner: '',
   address: '',
   depositToken: '',
-  mintModule: '',
+  mintModule: '', //TODO: [REFACTOR] does not appear to be used anywhere
   nativeDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
@@ -35,9 +47,25 @@ export const ERC20TokenDefaultState = {
   loading: false,
   maxMemberCount: 0,
   maxTotalSupply: 0,
-  requiredToken: '',
-  requiredTokenMinBalance: '',
-  currentMintPolicyAddress: undefined
+  requiredToken: '', //TODO: [GRAPH_COORD] remove from queries / contract calls + deprecate on the graph
+  requiredTokenMinBalance: '', //TODO: [GRAPH_COORD] remove from queries / contract calls + deprecate on the graph
+  currentMintPolicyAddress: ''
+};
+
+export const initialActiveModuleDetailsState: ActiveModuleDetails = {
+  hasActiveModules: false,
+  activeModules: [],
+  mintModule: '', // TODO: [REFACTOR] curr updated in addtion to DepositDetails.mintModule
+  activeMintModuleReqs: {
+    isTokenGated: false
+  },
+  ownerModule: '',
+  activeOwnerModuleReqs: {}
+};
+
+export const initialTokenGatingDetailsState: TokenGatedRequirementsDetails = {
+  meetsRequirements: false,
+  requiredTokenDetails: []
 };
 
 /**
@@ -49,6 +77,9 @@ export const getERC20TokenDetails = async (
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
   MerkleDistributorModule: MerkleDistributorModuleContract,
+  guardMixinManager: GuardMixinManager,
+  mintModule: string,
+  activeMintReqs: ModuleReqs,
   web3: any
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
@@ -56,30 +87,22 @@ export const getERC20TokenDetails = async (
       // ERC20tokenContract is initialized with the contract address
       const { address } = ERC20tokenContract;
 
-      let currentMintPolicyAddress = policyMintERC20.address;
-
-      let {
+      const {
+        currentMintPolicyAddress,
         endTime,
         maxMemberCount,
         maxTotalSupply,
         requiredToken,
         requiredTokenMinBalance,
         startTime
-      } = await policyMintERC20?.getSyndicateValues(address);
-
-      if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
-        ({
-          endTime,
-          maxMemberCount,
-          maxTotalSupply,
-          requiredToken,
-          requiredTokenMinBalance,
-          startTime
-        } = await mintPolicy?.getSyndicateValues(address));
-
-        // Change current mint policy
-        currentMintPolicyAddress = mintPolicy.address;
-      }
+      } = await getSyndicateValues(
+        address,
+        policyMintERC20,
+        mintPolicy,
+        guardMixinManager,
+        activeMintReqs,
+        mintModule
+      );
 
       const [name, owner, tokenDecimals, symbol, memberCount] =
         await Promise.all([
@@ -93,6 +116,19 @@ export const getERC20TokenDetails = async (
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(web3, wei, tokenDecimals, false)
       );
+
+      //TODO: [TOKEN-GATING] confirm MerkleDistributorModule / contracts that enable claims
+      let hasGuardMixinManagerEnabledClaim;
+      if (
+        currentMintPolicyAddress.toLowerCase() ==
+        guardMixinManager.address.toLowerCase()
+      ) {
+        hasGuardMixinManagerEnabledClaim =
+          await guardMixinManager.isModuleAllowed(
+            address,
+            MerkleDistributorModule.contract._address
+          );
+      }
 
       // Check both mint policies
       const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
@@ -110,7 +146,9 @@ export const getERC20TokenDetails = async (
       }
 
       const claimEnabled =
-        claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
+        claimEnabledPolicyMintERC20 ||
+        claimEnabledMintPolicy ||
+        hasGuardMixinManagerEnabledClaim;
 
       let depositsEnabled = false;
       if (!claimEnabled) {
@@ -163,25 +201,39 @@ export const getDepositDetails = async (
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract,
-  activeNetwork
+  mintModuleAddress: string,
+  activeNetwork: IActiveNetwork
 ): Promise<DepositDetails> => {
-  let mintModule = DepositTokenMintModule.address;
+  let mintModule = mintModuleAddress; // TODO: [REFACTOR] get depositToken if mintModule avail from graph
+  if (!mintModule) {
+    mintModule = DepositTokenMintModule.address;
+  }
   let nativeDepositToken = false;
 
   const NATIVE_MINT_MODULE =
-    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
 
   if (!depositToken && ERC20tokenContract) {
-    depositToken = await SingleTokenMintModule?.depositToken(
+    depositToken = await DepositTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
-
-    if (!depositToken || isZeroAddress(depositToken)) {
+    if (isZeroAddress(depositToken)) {
       depositToken = '';
       mintModule = NATIVE_MINT_MODULE;
       nativeDepositToken = true;
+    } else if (!depositToken) {
+      depositToken = await SingleTokenMintModule?.depositToken(
+        ERC20tokenContract.clubERC20Contract._address
+      );
+      if (!depositToken || isZeroAddress(depositToken)) {
+        depositToken = '';
+        mintModule = NATIVE_MINT_MODULE;
+        nativeDepositToken = true;
+      } else {
+        mintModule = SingleTokenMintModule.address;
+      }
     } else {
-      mintModule = SingleTokenMintModule.address;
+      mintModule = DepositTokenMintModule.address;
     }
   }
 
@@ -249,6 +301,7 @@ export const setERC20Token =
         syndicateContracts: {
           policyMintERC20,
           mintPolicy,
+          guardMixinManager,
           SingleTokenMintModule,
           DepositTokenMintModule,
           MerkleDistributorModule
@@ -256,7 +309,8 @@ export const setERC20Token =
       },
       web3Reducer: {
         web3: { activeNetwork, web3 }
-      }
+      },
+      erc20TokenSliceReducer: { activeModuleDetails }
     } = getState();
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
@@ -267,6 +321,9 @@ export const setERC20Token =
         policyMintERC20,
         mintPolicy,
         MerkleDistributorModule,
+        guardMixinManager,
+        activeModuleDetails?.mintModule,
+        activeModuleDetails?.activeMintModuleReqs,
         web3
       );
 
@@ -294,6 +351,14 @@ export const setERC20Token =
       dispatch(setLoadingClub(false));
     } catch (error) {
       console.log({ error });
-      return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+      resetClubState(dispatch);
+      return;
     }
   };
+
+export const resetClubState = (dispatch: Dispatch, mockData?: any): void => {
+  dispatch(setERC20TokenDetails(mockData ? mockData : ERC20TokenDefaultState));
+  dispatch(setIsNewClub(false));
+  dispatch(setActiveModuleDetails(initialActiveModuleDetailsState));
+  dispatch(setTokenGatingDetails(initialTokenGatingDetailsState));
+};

@@ -1,6 +1,7 @@
 import { InputField } from '@/components/inputs/inputField';
 import {
   ICurrentSelectedToken,
+  LogicalOperator,
   TokenGateRule
 } from '@/state/createInvestmentClub/types';
 import {
@@ -8,11 +9,6 @@ import {
   numberInputRemoveCommas
 } from '@/utils/formattedNumbers';
 import React from 'react';
-
-export enum LogicalOperator {
-  AND = 'AND',
-  OR = 'OR'
-}
 
 interface Props {
   tokenRules: TokenGateRule[];
@@ -29,6 +25,7 @@ interface Props {
 export const TokenLogicList: React.FC<Props> = ({
   tokenRules,
   logicalOperator = LogicalOperator.OR,
+  isInErrorState,
   helperText,
   handleTokenSelection,
   handleLogicalOperatorChange,
@@ -100,7 +97,7 @@ export const TokenLogicList: React.FC<Props> = ({
       {index > 1 && (
         <div className="border-none">
           <div className="flex space-x-3 inline py-2.5 px-5 border border-gray-syn6 bg-black absolute left-6 text-sm text-gray-syn3 rounded-full transform -translate-y-1/2">
-            <div>or</div>
+            <div>{logicalOperator === LogicalOperator.AND ? 'and' : 'or'}</div>
           </div>
         </div>
       )}
@@ -124,9 +121,12 @@ export const TokenLogicList: React.FC<Props> = ({
                   ...tokenRules.slice(0, index),
                   {
                     name: rule.name,
-                    symbol: rule.symbol,
                     quantity: quantity,
-                    icon: rule.icon
+                    symbol: rule.symbol,
+                    chainId: rule.chainId,
+                    contractAddress: rule.contractAddress,
+                    icon: rule?.icon,
+                    decimals: rule?.decimals
                   },
                   ...tokenRules.slice(index + 1)
                 ]);
@@ -237,7 +237,7 @@ export const TokenLogicList: React.FC<Props> = ({
       {helperText && (
         <div
           className={`text-sm ${
-            ruleErrors.length ? 'text-red-error' : 'text-gray-syn4'
+            isInErrorState ? 'text-red-error' : 'text-gray-syn4'
           } transition-all`}
         >
           {helperText}
