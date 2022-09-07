@@ -110,7 +110,7 @@ export const FileUploader: React.FC<Props> = ({
         }`}
       >
         {/* File name */}
-        <div className="flex justify-between">
+        <div className="flex -mt-4">
           <div>
             <div className="flex space-x-2 items-center mr-4">
               <div className="flex space-x-2 items-center">

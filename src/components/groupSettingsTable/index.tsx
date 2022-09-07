@@ -29,6 +29,7 @@ interface Props {
   setEditGroupFieldClicked?: Dispatch<SetStateAction<boolean>>;
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
+  errorUploadText?: string;
 }
 
 export const GroupSettingsTable: React.FC<Props> = ({
@@ -41,7 +42,8 @@ export const GroupSettingsTable: React.FC<Props> = ({
   editGroupFieldClicked,
   setEditGroupFieldClicked,
   handleDisclaimerConfirmation,
-  cancelEdit
+  cancelEdit,
+  errorUploadText
 }) => {
   const rowsRef = useRef<HTMLInputElement>();
   const editRef = useRef<HTMLInputElement>();
@@ -130,6 +132,7 @@ export const GroupSettingsTable: React.FC<Props> = ({
               <div className="sm:col-span-4 text-gray-syn4 flex-shrink-0" />
               <div className="sm:col-span-8 xl:mr-0 flex">
                 <SubmitContent
+                  isSubmitDisabled={errorUploadText !== ''}
                   handleEdit={handleDisclaimerConfirmation}
                   cancelEdit={() => {
                     setActiveRow(0);

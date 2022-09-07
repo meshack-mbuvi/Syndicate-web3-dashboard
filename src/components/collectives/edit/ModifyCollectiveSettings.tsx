@@ -460,6 +460,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             artworkUrl: ''
           })
         );
+        setExceededUploadLimit('');
         break;
       case EditRowIndex.MintPrice:
         dispatch(setMintPrice(mintPrice));
@@ -819,6 +820,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             setEditGroupFieldClicked={setEditGroupFieldClicked}
             handleDisclaimerConfirmation={handleDisclaimerConfirmation}
             cancelEdit={handleCancelEdit}
+            errorUploadText={exceededUploadLimit}
             rows={[
               {
                 title: 'Name',
