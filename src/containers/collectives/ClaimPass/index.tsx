@@ -71,15 +71,11 @@ const ClaimPass: React.FC = () => {
               applicable laws in relevant jurisdictions.
             </div>
             <button
-              className={`w-full ${
-                !hasAgreedToTerms
-                  ? 'primary-CTA-disabled text-gray-lightManatee'
-                  : 'primary-CTA transition-all'
-              }`}
+              className={`w-full primary-CTA transition-all`}
               onClick={handleDisclaimerClick}
-              disabled={!hasAgreedToTerms}
+              disabled={false}
             >
-              {!hasAgreedToTerms ? 'Scroll to end' : 'I agree'}
+              {'I agree'}
             </button>
           </div>
         </Modal>
