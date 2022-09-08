@@ -2,11 +2,15 @@ import { PermissionType } from '@/components/collectives/shared/types';
 import { AppState } from '@/state';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  getCollectiveOwner,
+  getCollectiveBalance
+} from '@/utils/contracts/collective';
 
 export const usePermissionType = (): PermissionType => {
   const {
     collectiveDetailsReducer: {
-      details: { ownerAddress, owners }
+      details: { collectiveAddress }
     },
     web3Reducer: {
       web3: { account, web3 }
@@ -14,33 +18,35 @@ export const usePermissionType = (): PermissionType => {
   } = useSelector((state: AppState) => state);
 
   const [permissionType, setPermissionType] = useState<PermissionType>(null);
+  const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
+  const [collectiveOwner, setCollectiveOwner] = useState<string>('');
 
-  // set permission type based on members list and owner address.
   useEffect(() => {
-    if (account && ownerAddress && web3.utils) {
-      const isAdmin =
-        web3.utils.toChecksumAddress(account) ===
-        web3.utils.toChecksumAddress(ownerAddress);
+    if (!collectiveAddress) {
+      return;
+    }
+    getCollectiveBalance(collectiveAddress.toString(), account, web3).then(
+      (balance) => {
+        setCollectiveBalance(balance);
+      }
+    );
+    getCollectiveOwner(collectiveAddress.toString(), web3).then((owner) => {
+      setCollectiveOwner(owner);
+    });
+  }, [account, collectiveAddress, web3]);
 
-      const isMember =
-        !isAdmin &&
-        owners.find((member) => {
-          const { id } = member;
-          const memberAddress = id.split('-')[0];
-          return (
-            web3.utils.toChecksumAddress(memberAddress) ===
-            web3.utils.toChecksumAddress(account)
-          );
-        });
-      if (isAdmin) {
+  // set permission type based on contract owner and balance.
+  useEffect(() => {
+    if (account && web3.utils && collectiveOwner) {
+      if (collectiveOwner === account) {
         setPermissionType(PermissionType.ADMIN);
-      } else if (isMember) {
+      } else if (collectiveBalance > 0) {
         setPermissionType(PermissionType.MEMBER);
       } else {
         setPermissionType(PermissionType.NON_MEMBER);
       }
     }
-  }, [account, ownerAddress, web3?.utils, owners]);
+  }, [account, web3?.utils, collectiveOwner, collectiveBalance]);
 
   return permissionType;
 };

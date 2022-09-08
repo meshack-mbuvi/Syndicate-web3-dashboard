@@ -9,7 +9,6 @@ import { partialCollectiveCreationStateReset } from '@/state/createCollective/sl
 interface SuccessRightPanelProps {
   extraClasses?: string;
 }
-import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCollectiveCreation';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { amplitudeLogger, Flow } from '@/components/amplitude';

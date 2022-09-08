@@ -9,3 +9,12 @@ export const getCollectiveBalance = async (
 
   return parseInt(await collective.balanceOf(account));
 };
+
+export const getCollectiveOwner = async (
+  collectiveAddress: string,
+  web3: any
+): Promise<string> => {
+  const collective = new ERC721Contract(collectiveAddress, web3);
+
+  return await collective.owner();
+};
