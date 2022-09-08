@@ -30,6 +30,7 @@ export interface CollectiveCreation {
     confirmed: boolean;
     transactionSuccess: boolean;
     transactionError: boolean;
+    transactionTakingTooLong: boolean;
     transactionHash: string;
     ipfsHash: string;
   };
@@ -73,7 +74,8 @@ export const initialState: CollectiveCreation = {
     transactionSuccess: false,
     transactionError: false,
     transactionHash: '',
-    ipfsHash: ''
+    ipfsHash: '',
+    transactionTakingTooLong: false
   },
   creationReceipt: {
     collective: '',

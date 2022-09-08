@@ -51,6 +51,7 @@ export abstract class ContractBase {
         .send({ from: account, gasPrice: gasEstimate, ...(value && { value }) })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
+
           if (
             (this.web3 as any)._provider.wc?._peerMeta.name ===
             'Gnosis Safe Multisig'

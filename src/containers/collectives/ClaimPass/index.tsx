@@ -8,7 +8,9 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { COLLECTIVE_CLAIM_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 const ClaimPass: React.FC = () => {
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [claimDisclaimerCookieExists, setClaimDisclaimerCookieExists] =
+    useState(false);
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
 
   const scrollAgreementRef = useRef<HTMLInputElement>();
@@ -22,7 +24,28 @@ const ClaimPass: React.FC = () => {
     amplitudeLogger(COLLECTIVE_CLAIM_DISCLAIMER_AGREE, {
       flow: Flow.COLLECTIVE_CLAIM
     });
+
+    // set cookie to not show TOS disclaimer
+    if (!claimDisclaimerCookieExists) {
+      document.cookie =
+        'showedClaimDisclaimer=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure';
+    }
   };
+
+  // check if cookie to not show TOS disclaimer exists
+  useEffect(() => {
+    const claimDisclaimerCookieSet = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('showedClaimDisclaimer'));
+
+    setClaimDisclaimerCookieExists(Boolean(claimDisclaimerCookieSet));
+
+    if (claimDisclaimerCookieSet) {
+      setShowDisclaimer(false);
+    } else if (!claimDisclaimerCookieSet) {
+      setShowDisclaimer(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!scrollAgreementRef.current) return;

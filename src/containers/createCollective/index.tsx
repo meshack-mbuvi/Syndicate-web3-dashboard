@@ -1,4 +1,12 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CUSTOMIZE_CONTINUE_CLICK,
+  DESIGN_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transitionBetweenChildren';
 import {
   useCreateState,
   useUpdateState
@@ -13,14 +21,6 @@ import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
 import CreateCollectiveDesign, { DesignRightPanel } from './design';
 import CreateCollectiveReview, { ReviewRightPanel } from './review';
 import { CreateCollectiveSuccess, SuccessRightPanel } from './success';
-import TransitionBetweenChildren, {
-  TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  DESIGN_CONTINUE_CLICK,
-  CUSTOMIZE_CONTINUE_CLICK
-} from '@/components/amplitude/eventNames';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();

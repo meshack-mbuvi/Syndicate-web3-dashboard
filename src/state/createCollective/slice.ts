@@ -101,6 +101,7 @@ const createCollectiveSlice = createSlice({
     setCollectiveConfirmed(state, action: PayloadAction<boolean>) {
       state.creationStatus = {
         ...initialState.creationStatus,
+        transactionHash: state.creationStatus.transactionHash,
         ipfsHash: state.creationStatus.ipfsHash,
         confirmed: action.payload
       };
@@ -134,6 +135,17 @@ const createCollectiveSlice = createSlice({
     },
     setCollectiveCreationReceipt(state, action: PayloadAction<any>) {
       state.creationReceipt = action.payload;
+    },
+    setCollectiveTransactionTakingTooLong(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.creationStatus = {
+        ...initialState.creationStatus,
+        confirmed: false,
+        transactionHash: state.creationStatus.transactionHash,
+        transactionTakingTooLong: action.payload
+      };
     },
 
     // reset
@@ -178,6 +190,7 @@ export const {
   setIpfsHash,
   setCollectiveCreationReceipt,
   partialCollectiveCreationStateReset,
-  resetCollectiveCreationState
+  resetCollectiveCreationState,
+  setCollectiveTransactionTakingTooLong
 } = createCollectiveSlice.actions;
 export default createCollectiveSlice.reducer;
