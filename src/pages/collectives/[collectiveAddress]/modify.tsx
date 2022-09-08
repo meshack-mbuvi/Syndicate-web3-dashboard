@@ -51,7 +51,8 @@ const ModifyCollectives: React.FC = () => {
   }, [readyCollectivesClient, web3, isReady]);
 
   useEffect(() => {
-    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
+    if (!readyCollectivesClient || isEmpty(web3) || !isReady || !permissionType)
+      return;
 
     if (permissionType !== PermissionType.ADMIN) {
       router.replace(`/collectives/${collectiveAddress}?chain=${network}`);
