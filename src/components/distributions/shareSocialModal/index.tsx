@@ -67,13 +67,24 @@ export const ShareSocialModal: React.FC<Props> = ({
             {buttonLabel}
           </button>
           {transactionHash ? (
-            <div className="flex justify-center mt-6 mb-8">
-              <div className="w-fit-content">
-                <BlockExplorerLink
-                  resourceId={transactionHash}
-                  resource="transaction"
-                  iconcolor={ExternalLinkColor.WHITE}
-                />
+            <div>
+              <div className="flex justify-center mt-6 mb-3">
+                <div>
+                  <BlockExplorerLink
+                    resourceId={transactionHash}
+                    resource="transaction"
+                    iconcolor={ExternalLinkColor.WHITE}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-center mb-6">
+                <a
+                  href="/collectives/create"
+                  target="_blank"
+                  className="text-orange-utopia"
+                >
+                  Launch your Collective →
+                </a>
               </div>
             </div>
           ) : null}
