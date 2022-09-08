@@ -3,7 +3,7 @@ import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
 import { Spinner } from '@/components/shared/spinner';
-import { B2, H3 } from '@/components/typography';
+import { B2, H3, B3 } from '@/components/typography';
 import { useState } from 'react';
 
 interface Props {
@@ -24,6 +24,7 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
   blockExplorerName
 }) => {
   const [showCopiedState, setShowCopiedState] = useState(false);
+
   return (
     <div className="text-center max-w-112 w-full">
       <img
@@ -55,7 +56,7 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
 
       {loading ? (
         <div className="w-full flex sm:block justify-center">
-          <button className="primary-CTA-disabled mt-12 mb-6 w-full flex items-center justify-center content-center space-x-3 ">
+          <button className="primary-CTA-disabled mt-12 mb-2 w-full flex items-center justify-center content-center space-x-3 ">
             <span className="">Preparing dashboard</span>
             <Spinner
               margin="my-0 items-center"
@@ -64,6 +65,9 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
               width="w-4"
             />
           </button>
+          <B3 extraClasses="text-gray-syn5 mb-6">
+            This could take up anywhere from 1 to 30 minutes.
+          </B3>
         </div>
       ) : (
         <div className="w-full flex sm:block justify-center">
