@@ -2,12 +2,13 @@ import { GetAdminCollectives, GetERC721MemberEvents } from '@/graphql/queries';
 import { AppState } from '@/state';
 import {
   setCollectiveDetails,
+  setCollectiveNameAndAddress,
   setCollectiveLoadingState,
   setMemberJoinedEvents,
   setLoadingMemberJoinedEvents
 } from '@/state/collectiveDetails';
 import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +16,7 @@ import { useDemoMode } from '../useDemoMode';
 import { CollectiveCardType } from '@/state/collectiveDetails/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { CollectiveActivityType } from '@/components/collectives/activity';
+import useFetchCollectiveFromContract from '@/hooks/collectives/useFetchCollectiveFromContract';
 
 const useFetchCollectiveDetails = (
   skipQuery?: boolean
@@ -32,19 +34,22 @@ const useFetchCollectiveDetails = (
   const MINT_MODULE =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.EthPriceMintModule;
 
+  const { getCollectiveFromContract } = useFetchCollectiveFromContract();
+
   const [collectiveNotFound, setCollectiveNotFound] = useState(false);
 
   // get collective details
-  const { loading, data, refetch } = useQuery(GetAdminCollectives, {
-    variables: {
-      where: {
-        contractAddress_contains_nocase: collectiveAddress
-      }
-    },
-    skip:
-      !collectiveAddress || !activeNetwork.chainId || skipQuery || isDemoMode,
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
-  });
+  const { loading, data, refetch, startPolling, stopPolling, networkStatus } =
+    useQuery(GetAdminCollectives, {
+      variables: {
+        where: {
+          contractAddress_contains_nocase: collectiveAddress
+        }
+      },
+      skip:
+        !collectiveAddress || !activeNetwork.chainId || skipQuery || isDemoMode,
+      context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+    });
 
   // get collective member joined events
   const {
@@ -111,6 +116,8 @@ const useFetchCollectiveDetails = (
       return;
     }
     if (data && data.syndicateCollectives.length) {
+      stopPolling();
+
       const collective =
         data.syndicateCollectives[data.syndicateCollectives.length - 1];
       const {
@@ -209,6 +216,15 @@ const useFetchCollectiveDetails = (
         })
       );
     } else {
+      verifyNotFound();
+    }
+  }, [loading, JSON.stringify(data)]);
+
+  const verifyNotFound = async () => {
+    let collectiveName = await getCollectiveFromContract(collectiveAddress);
+
+    if (!collectiveName) {
+      stopPolling();
       setCollectiveNotFound(true);
       dispatch(
         setCollectiveLoadingState({
@@ -216,8 +232,15 @@ const useFetchCollectiveDetails = (
           collectiveNotFound: true
         })
       );
+    } else {
+      if (networkStatus === NetworkStatus.ready) {
+        startPolling(1000);
+      }
+      dispatch(
+        setCollectiveNameAndAddress({ collectiveName, collectiveAddress })
+      );
     }
-  }, [loading, JSON.stringify(data)]);
+  };
 
   return { loading, collectiveNotFound, refetch };
 };

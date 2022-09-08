@@ -9,7 +9,6 @@ import { partialCollectiveCreationStateReset } from '@/state/createCollective/sl
 interface SuccessRightPanelProps {
   extraClasses?: string;
 }
-import useVerifyCollectiveCreation from '@/hooks/collectives/create/useVerifyCollectiveCreation';
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { MANAGE_DASHBOARD_CLICK } from '@/components/amplitude/eventNames';
@@ -37,8 +36,6 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { verifyCreation, collectiveIndexed } = useVerifyCollectiveCreation();
-
   const {
     web3Reducer: {
       web3: { activeNetwork }
@@ -54,7 +51,6 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
   const onCollectiveCreated = async () => {
     await setCollectiveAddress(creationReceipt.collective);
     await setCollectiveName(creationReceipt.name);
-    verifyCreation(creationReceipt.collective);
     dispatch(partialCollectiveCreationStateReset());
   };
 
@@ -83,7 +79,6 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
     >
       <CollectivesCreateSuccess
         name={collectiveName}
-        loading={!collectiveIndexed}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}
         blockExplorerLink={
