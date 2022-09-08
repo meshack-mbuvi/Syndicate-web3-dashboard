@@ -1,20 +1,21 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import Modal, { ModalStyle } from '@/components/modal';
-import Image from 'next/image';
-import {
-  useCreateState,
-  useSubmitCollective,
-  useSubmitToContracts
-} from '@/hooks/collectives/useCreateCollective';
-import { Spinner } from '@/components/shared/spinner';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import {
-  setCollectiveTransactionError,
-  setIpfsError
-} from '@/state/createCollective/slice';
-import { useDispatch } from 'react-redux';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { COLLECTIVE_CREATION } from '@/components/amplitude/eventNames';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { B2, H4 } from '@/components/typography';
+import {
+  useCreateState,
+  useSubmitToContracts
+} from '@/hooks/collectives/useCreateCollective';
+import {
+  setCollectiveTransactionError,
+  setCollectiveTransactionTakingTooLong,
+  setIpfsError
+} from '@/state/createCollective/slice';
+import Image from 'next/image';
+import { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   handleReSubmit: () => void;
@@ -32,7 +33,6 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalTitle, setErrorModalTitle] = useState('');
-  const [errorModalDescription, setErrorModalDescription] = useState('');
 
   useEffect(() => {
     if (creationStatus.submittingToIPFS) {
@@ -54,6 +54,13 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
       );
       setShowModal(true);
     }
+    if (creationStatus.transactionTakingTooLong) {
+      setProcessingModalTitle('Transaction is taking a while');
+      setProcessingModalDescription(
+        'Hold tight, this may take a while. You can speed up the transaction by increasing the gas amount in your wallet'
+      );
+      setShowModal(true);
+    }
     if (creationStatus.transactionSuccess) {
       setShowModal(false);
       amplitudeLogger(COLLECTIVE_CREATION, {
@@ -70,7 +77,6 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
   useEffect(() => {
     if (creationStatus.ipfsError) {
       setErrorModalTitle('Media Upload Failed');
-      setErrorModalDescription('');
       setShowErrorModal(true);
       setShowModal(false);
       amplitudeLogger(COLLECTIVE_CREATION, {
@@ -80,7 +86,6 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
     }
     if (creationStatus.transactionError) {
       setErrorModalTitle('Collective Creation Failed');
-      setErrorModalDescription('');
       setShowErrorModal(true);
       setShowModal(false);
       amplitudeLogger(COLLECTIVE_CREATION, {
@@ -119,21 +124,26 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
       <Modal
         show={showModal}
         modalStyle={ModalStyle.DARK}
-        showCloseButton={false}
-        customWidth="w-11/12 md:w-1/2 lg:w-1/3"
+        showCloseButton={creationStatus.transactionTakingTooLong}
+        customWidth="w-11/12 md:w-1/2 lg:w-1/3 max-w-120"
         // passing empty string to remove default classes
         customClassName=""
+        closeModal={() => {
+          setShowModal(false);
+          dispatch(setCollectiveTransactionTakingTooLong(false));
+        }}
       >
         {/* -mx-4 is used to revert the mx-4 set on parent div on the modal */}
         <div className="flex flex-col justify-center py-10 -mx-4 px-8">
           {/* passing empty margin to remove the default margin set on spinner */}
           <Spinner height="h-16" width="w-16" margin="" />
-          <p className="text-xl text-center mt-10 mb-4 leading-4 text-white font-whyte">
+          {/* <p className="text-xl text-center mt-10 mb-4 leading-4 text-white font-whyte"></p> */}
+          <H4 extraClasses="text-center mt-10 mb-4 leading-4 text-white">
             {processingModalTitle}
-          </p>
-          <div className="font-whyte text-center leading-5 text-base text-gray-lightManatee">
+          </H4>
+          <B2 extraClasses="text-center font-Slussen leading-5 text-gray-lightManatee">
             {processingModalDescription}
-          </div>
+          </B2>
 
           {creationStatus.transactionHash ? (
             <div className="flex justify-center mt-4">
@@ -153,7 +163,7 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
         closeModal={handleCloseErrorModal}
         showCloseButton={false}
         outsideOnClick={true}
-        customWidth="w-11/12 md:w-1/2 xl:w-1/3"
+        customWidth="w-11/12 md:w-1/2 xl:w-1/3 max-w-120"
         customClassName="p-0"
         showHeader={false}
       >

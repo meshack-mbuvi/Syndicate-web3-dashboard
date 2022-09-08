@@ -9,6 +9,7 @@ import {
   setCollectiveTransactionError,
   setCollectiveTransactionHash,
   setCollectiveTransactionSuccess,
+  setCollectiveTransactionTakingTooLong,
   setCollectiveWaitingForConfirmation
 } from '@/state/createCollective/slice';
 import { getWeiAmount } from '@/utils/conversions';
@@ -70,14 +71,20 @@ const useSubmitToContracts = () => {
   ]);
 
   const submit = async () => {
+    dispatch(setCollectiveTransactionTakingTooLong(false));
+
     dispatch(setCollectiveWaitingForConfirmation(true));
-    await erc721CollectiveFactory.createERC721Collective(
-      account,
-      collectiveParams,
-      onTxConfirm,
-      onTxReceipt,
-      onTxFail
-    );
+    try {
+      await erc721CollectiveFactory.createERC721Collective(
+        account,
+        collectiveParams,
+        onTxConfirm,
+        onTxReceipt,
+        onTxFail
+      );
+    } catch (error) {
+      onTxFail(error);
+    }
   };
 
   const onTxConfirm = (_txn: string) => {
@@ -85,8 +92,17 @@ const useSubmitToContracts = () => {
     dispatch(setCollectiveConfirmed(true));
   };
 
-  const onTxFail = () => {
-    dispatch(setCollectiveTransactionError(true));
+  const onTxFail = (error) => {
+    try {
+      if (error?.message.includes('Be aware that it might still be mined')) {
+        return dispatch(setCollectiveTransactionTakingTooLong(true));
+      }
+
+      dispatch(setCollectiveTransactionTakingTooLong(false));
+      dispatch(setCollectiveTransactionError(true));
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const onTxReceipt = (receipt: any) => {

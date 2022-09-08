@@ -225,6 +225,7 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
+        Slussen: ['Slussen', 'Helvetica', 'Arial', 'sans-serif'],
         'medium-extended': ['Slussen Extended Medium'],
         'black-extended': ['Slussen Extended Black'],
         light: ['Slussen', 'Helvetica', 'Arial', 'sans-serif'],
