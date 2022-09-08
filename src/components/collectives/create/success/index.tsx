@@ -2,14 +2,12 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
-import { Spinner } from '@/components/shared/spinner';
-import { B2, H3, B3 } from '@/components/typography';
+import { B2, H3 } from '@/components/typography';
 import { useState } from 'react';
 
 interface Props {
   name: string;
   inviteLink: string;
-  loading: boolean;
   CTAonClick: (e) => void;
   blockExplorerLink: string;
   blockExplorerName: string;
@@ -17,7 +15,6 @@ interface Props {
 
 export const CollectivesCreateSuccess: React.FC<Props> = ({
   name,
-  loading,
   inviteLink,
   CTAonClick,
   blockExplorerLink,
@@ -53,32 +50,11 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
           />
         </div>
       </div>
-
-      {loading ? (
-        <div className="w-full flex sm:block justify-center">
-          <button className="primary-CTA-disabled mt-12 mb-2 w-full flex items-center justify-center content-center space-x-3 ">
-            <span className="">Preparing dashboard</span>
-            <Spinner
-              margin="my-0 items-center"
-              color="text-gray-syn4"
-              height="h-4"
-              width="w-4"
-            />
-          </button>
-          <B3 extraClasses="text-gray-syn5 mb-6">
-            This could take up anywhere from 1 to 30 minutes.
-          </B3>
-        </div>
-      ) : (
-        <div className="w-full flex sm:block justify-center">
-          <CtaButton
-            extraClasses="mt-12 mb-6 px-6 md:px-0"
-            onClick={CTAonClick}
-          >
-            Manage on dashboard
-          </CtaButton>
-        </div>
-      )}
+      <div className="w-full flex sm:block justify-center">
+        <CtaButton extraClasses="mt-12 mb-6 px-6 md:px-0" onClick={CTAonClick}>
+          Manage on dashboard
+        </CtaButton>
+      </div>
       <a
         href={blockExplorerLink}
         rel="noreferrer"

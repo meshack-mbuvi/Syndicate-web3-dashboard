@@ -68,4 +68,16 @@ export class ERC721Collective extends ContractBase {
       );
     });
   }
+
+  public async name(collectiveAddress: string): Promise<string> {
+    const collectiveContract = new this.web3.eth.Contract(
+      ERC721_COLLECTIVE_ABI as AbiItem[],
+      collectiveAddress
+    );
+    try {
+      return collectiveContract.methods.name().call();
+    } catch (error) {
+      return '';
+    }
+  }
 }

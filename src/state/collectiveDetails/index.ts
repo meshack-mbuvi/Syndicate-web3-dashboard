@@ -21,6 +21,10 @@ export const collectiveDetails = createSlice({
       state.settings.mintEndTime = action.payload.mintEndTime;
       state.settings.maxSupply = action.payload.maxSupply;
     },
+    setCollectiveNameAndAddress(state, action: PayloadAction<any>) {
+      state.details.collectiveName = action.payload.collectiveName;
+      state.details.collectiveAddress = action.payload.collectiveAddress;
+    },
     setMetadataCid(state, action: PayloadAction<string>) {
       state.details.metadataCid = action.payload;
     },
@@ -72,6 +76,7 @@ export const collectiveDetails = createSlice({
 
 export const {
   setCollectiveDetails,
+  setCollectiveNameAndAddress,
   setMetadataCid,
   setDescription,
   setMintPrice,
