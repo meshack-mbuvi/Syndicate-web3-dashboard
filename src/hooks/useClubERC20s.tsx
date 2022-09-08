@@ -343,10 +343,16 @@ const useClubERC20s = () => {
               false
             );
 
-            const depositToken = await getDepositToken(
-              contractAddress,
-              syndicateContracts
-            );
+            let depositToken;
+            try {
+              depositToken = await getDepositToken(
+                contractAddress,
+                syndicateContracts
+              );
+            } catch (error) {
+              console.log({ error });
+              return;
+            }
 
             let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
             let depositERC20TokenDecimals =
