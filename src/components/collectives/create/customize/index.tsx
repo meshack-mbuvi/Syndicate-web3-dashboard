@@ -92,9 +92,10 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
               <div className="flex flex-col space-y-1">
                 <B3>Anyone with the link can join</B3>
                 <B4 extraClasses="text-gray-syn4 text-xs">
-                  Members join by claiming your collective’s NFT. If you’d like
+                  Members join by claiming your Collective’s NFT. If you’d like
                   to keep invitations private, only share the link with people
-                  you trust.
+                  you trust. Note that your Collective will still be available
+                  on-chain and could be minted directly without being sent the link.
                 </B4>
               </div>
             </div>
