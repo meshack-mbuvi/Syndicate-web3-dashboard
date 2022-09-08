@@ -78,7 +78,7 @@ export class ERC721Contract {
 
   async balanceOf(address): Promise<string> {
     try {
-      return this.erc721Contract.methods.balanceOf(address).call();
+      return await this.erc721Contract.methods.balanceOf(address).call();
     } catch (error) {
       return '';
     }
