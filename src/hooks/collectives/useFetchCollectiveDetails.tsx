@@ -221,7 +221,7 @@ const useFetchCollectiveDetails = (
   }, [loading, JSON.stringify(data)]);
 
   const verifyNotFound = async () => {
-    let collectiveName = await getCollectiveFromContract(collectiveAddress);
+    const collectiveName = await getCollectiveFromContract(collectiveAddress);
 
     if (!collectiveName) {
       stopPolling();

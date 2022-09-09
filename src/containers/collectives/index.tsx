@@ -236,12 +236,12 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
 
   const members =
     owners &&
-    owners.map((owner) => {
-      const { id } = owner;
+    owners.map((member) => {
+      const { owner } = member;
 
       return {
         profilePicture: '/images/collectives/collectiveMemberAvatar.svg',
-        accountAddress: id.split('-')[0]
+        accountAddress: owner?.walletAddress
       };
     });
 
