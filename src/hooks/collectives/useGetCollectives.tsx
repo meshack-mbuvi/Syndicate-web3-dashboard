@@ -1,4 +1,5 @@
 import { GetAdminCollectives, GetMemberCollectives } from '@/graphql/queries';
+import { getJson } from '@/hooks/collectives/create/useFetchNftMetadata';
 import { AppState } from '@/state';
 import {
   setAdminCollectives,
@@ -12,7 +13,6 @@ import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getJson } from '@/hooks/collectives/create/useFetchNftMetadata';
 
 const useCollectives = (): { loading: boolean } => {
   const dispatch = useDispatch();
@@ -273,7 +273,12 @@ const useCollectives = (): { loading: boolean } => {
 
     Promise.all<Collective>(processedMemberCollectives).then(
       (collectives: Collective[]) => {
-        dispatch(setMemberCollectives(collectives));
+        const uniqueMemberCollectives = [
+          ...new Map(
+            collectives.map((collective) => [collective.address, collective])
+          ).values()
+        ];
+        dispatch(setMemberCollectives(uniqueMemberCollectives));
       }
     );
   }, [
