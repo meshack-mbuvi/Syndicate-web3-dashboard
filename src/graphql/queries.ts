@@ -260,7 +260,9 @@ export const GetAdminCollectives = gql`
       maxPerMember
       numOwners
       owners {
-        id
+        owner {
+          walletAddress
+        }
       }
       nftMetadata {
         description
@@ -268,7 +270,6 @@ export const GetAdminCollectives = gql`
         mediaCid
       }
       transferGuardAddress
-      areNftsTransferable
       activeModules {
         activeRequirements {
           requirement {

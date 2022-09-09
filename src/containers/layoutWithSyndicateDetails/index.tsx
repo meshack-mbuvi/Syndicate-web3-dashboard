@@ -8,7 +8,12 @@ import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
+import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import {
+  getDepositDetails,
+  resetClubState,
+  setERC20Token
+} from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
@@ -38,9 +43,11 @@ import { Status } from '@/state/wallet/types';
 import { getTextWidth } from '@/utils/getTextWidth';
 import {
   mockActiveERC20Token,
+  mockDepositERC20Token,
   mockDepositModeTokens,
   mockTokensResult
 } from '@/utils/mockdata';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import window from 'global';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
@@ -56,12 +63,15 @@ const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
 }> = ({ managerSettingsOpen, children }) => {
   const {
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: {
+      syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
+    },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status, activeNetwork }
     },
     erc20TokenSliceReducer: {
+      erc20TokenContract,
       erc20Token,
       depositDetails: { nativeDepositToken },
       activeModuleDetails,
@@ -77,7 +87,6 @@ const LayoutWithSyndicateDetails: FC<{
     name,
     depositsEnabled,
     maxTotalDeposits,
-    address,
     symbol,
     memberCount
   } = erc20Token;
@@ -116,8 +125,11 @@ const LayoutWithSyndicateDetails: FC<{
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
 
-  const { loadingClubDeposits, totalDeposits } =
-    useClubDepositsAndSupply(address);
+  const {
+    loadingClubDeposits,
+    totalDeposits,
+    refetch: refetchSingleClubDetails
+  } = useClubDepositsAndSupply(clubAddress);
 
   // fetch club transactions
   useTransactions();
@@ -144,6 +156,21 @@ const LayoutWithSyndicateDetails: FC<{
     const network = useGetNetwork(name);
     setUrlNetwork(network);
   };
+
+  const {
+    loading: queryLoading,
+    data,
+    networkStatus,
+    stopPolling
+  } = useQuery(CLUB_TOKEN_QUERY, {
+    variables: {
+      syndicateDaoId: clubAddress?.toLocaleLowerCase()
+    },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    notifyOnNetworkStatusChange: true,
+    skip: !clubAddress || loading || !activeNetwork.chainId,
+    fetchPolicy: 'no-cache'
+  });
 
   useEffect(() => {
     return () => {
@@ -261,6 +288,64 @@ const LayoutWithSyndicateDetails: FC<{
     }
   }, [account, clubAddress, dispatch, isDemoMode, maxTotalDeposits]);
 
+  useEffect(() => {
+    // check for demo mode to make sure correct things render
+    if (!isDemoMode) {
+      // check for network status as ready after query is over
+      if (networkStatus !== NetworkStatus.ready) {
+        return;
+      }
+      // check for query loading and data being non-null
+      if (!data?.syndicateDAO && !queryLoading) {
+        return;
+      }
+      stopPolling();
+      // fallback for if single club details query doesn't initially work
+      if (!totalDeposits) {
+        refetchSingleClubDetails();
+        return;
+      }
+    } else {
+      if (!data) {
+        return;
+      }
+    }
+
+    const { depositToken } = data.syndicateDAO || {};
+    async function fetchDepositDetails() {
+      let depositDetails;
+
+      if (isDemoMode) {
+        depositDetails = mockDepositERC20Token;
+      } else {
+        depositDetails = await getDepositDetails(
+          depositToken,
+          erc20TokenContract,
+          DepositTokenMintModule,
+          SingleTokenMintModule,
+          activeModuleDetails?.mintModule,
+          activeNetwork
+        );
+      }
+
+      dispatch(
+        setERC20TokenDepositDetails({
+          ...depositDetails,
+          loading: false
+        })
+      );
+    }
+    fetchDepositDetails();
+  }, [
+    data,
+    data?.syndicateDAO,
+    loading,
+    router.isReady,
+    queryLoading,
+    networkStatus,
+    totalDeposits
+  ]);
+
   /**
    * Fetch club details
    */
@@ -276,7 +361,7 @@ const LayoutWithSyndicateDetails: FC<{
     if (
       clubAddress !== zeroAddress &&
       web3.utils.isAddress(clubAddress) &&
-      syndicateContracts?.DepositTokenMintModule
+      DepositTokenMintModule
     ) {
       //assumes that ERC20ClubFactory uses same ClubERC20 contract
       const clubERC20tokenContract = new ClubERC20Contract(
@@ -300,7 +385,9 @@ const LayoutWithSyndicateDetails: FC<{
     web3?._provider,
     clubAddress,
     account,
+    nativeDepositToken,
     status,
+    activeNetwork.chainId,
     activeModuleDetails?.hasActiveModules,
     pageLoading
   ]);

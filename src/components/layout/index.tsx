@@ -1,33 +1,16 @@
-import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
-import {
-  getDepositDetails,
-  resetClubState,
-  setERC20Token
-} from '@/helpers/erc20TokenDetails';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
-import { setClubMembers } from '@/state/clubMembers';
-import {
-  setERC20TokenContract,
-  setERC20TokenDepositDetails
-} from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
-import { isZeroAddress } from '@/utils';
-import { mockActiveERC20Token, mockDepositERC20Token } from '@/utils/mockdata';
-import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
@@ -79,17 +62,11 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status, web3, activeNetwork }
-    },
-    initializeContractsReducer: {
-      syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
+      web3: { account, status, activeNetwork }
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
-      erc20TokenContract,
-      depositDetails: { nativeDepositToken },
-      erc20Token: { owner, address, loading: loadingClubDetails },
-      activeModuleDetails
+      erc20Token: { owner, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
 
@@ -105,9 +82,6 @@ const Layout: FC<Props> = ({
     isReady,
     query: { clubAddress }
   } = router;
-
-  // fetch member account tokens
-  useAccountTokens();
 
   const isOwner = useIsClubOwner();
 
@@ -170,124 +144,6 @@ const Layout: FC<Props> = ({
     isReady,
     isOwner,
     isDemoMode
-  ]);
-
-  // Load club details if we are on the club page
-  const dispatch = useDispatch();
-
-  const { totalDeposits, refetch: refetchSingleClubDetails } =
-    useClubDepositsAndSupply(address);
-
-  const {
-    loading: queryLoading,
-    data,
-    networkStatus,
-    stopPolling
-  } = useQuery(CLUB_TOKEN_QUERY, {
-    variables: {
-      syndicateDaoId: address.toLocaleLowerCase()
-    },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
-    notifyOnNetworkStatusChange: true,
-    skip: !address || loading || !activeNetwork.chainId,
-    fetchPolicy: 'no-cache'
-  });
-
-  useEffect(() => {
-    // check for demo mode to make sure correct things render
-    if (!isDemoMode) {
-      // check for network status as ready after query is over
-      if (networkStatus !== NetworkStatus.ready) {
-        return;
-      }
-      // check for query loading and data being non-null
-      if (!data?.syndicateDAO && !queryLoading) {
-        return;
-      }
-      stopPolling();
-      // fallback for if single club details query doesn't initially work
-      if (!totalDeposits) {
-        refetchSingleClubDetails();
-        return;
-      }
-    } else {
-      if (!data) {
-        return;
-      }
-    }
-
-    const { depositToken } = data.syndicateDAO || {};
-    async function fetchDepositDetails() {
-      let depositDetails;
-
-      if (isDemoMode) {
-        depositDetails = mockDepositERC20Token;
-      } else {
-        depositDetails = await getDepositDetails(
-          depositToken,
-          erc20TokenContract,
-          DepositTokenMintModule,
-          SingleTokenMintModule,
-          activeModuleDetails?.mintModule,
-          activeNetwork
-        );
-      }
-
-      dispatch(
-        setERC20TokenDepositDetails({
-          ...depositDetails,
-          loading: false
-        })
-      );
-    }
-    fetchDepositDetails();
-  }, [
-    data,
-    data?.syndicateDAO,
-    loading,
-    router.isReady,
-    queryLoading,
-    networkStatus,
-    totalDeposits
-  ]);
-
-  /**
-   * Fetch club details
-   */
-  useEffect(() => {
-    if (!activeNetwork.chainId || !clubAddress || status == Status.CONNECTING)
-      return;
-
-    if (
-      clubAddress &&
-      !isZeroAddress(clubAddress as string) &&
-      web3.utils.isAddress(clubAddress as string)
-    ) {
-      const clubERC20tokenContract = new ClubERC20Contract(
-        clubAddress as string,
-        web3,
-        activeNetwork
-      );
-
-      dispatch(setERC20TokenContract(clubERC20tokenContract));
-
-      dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
-    } else if (isDemoMode) {
-      // using "Active" as the default view.
-      resetClubState(dispatch, mockActiveERC20Token);
-    }
-  }, [
-    clubAddress,
-    account,
-    nativeDepositToken,
-    status,
-    DepositTokenMintModule,
-    activeNetwork.chainId,
-    activeModuleDetails?.hasActiveModules
   ]);
 
   return (
