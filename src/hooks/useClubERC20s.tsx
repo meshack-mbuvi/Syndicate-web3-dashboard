@@ -217,7 +217,12 @@ const useClubERC20s = () => {
     processClubERC20Tokens(data?.syndicateDAOs).then((data) => {
       const clubsIAdmin = data;
 
-      if (newlyCreatedClub && web3) {
+      if (
+        newlyCreatedClub &&
+        web3 &&
+        account == newlyCreatedClub &&
+        activeNetwork.chainId == newlyCreatedClub?.activeNetwork?.chainId
+      ) {
         getClubDataFromContract({
           ...newlyCreatedClub,
           state: {
