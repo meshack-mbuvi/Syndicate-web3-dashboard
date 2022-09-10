@@ -85,7 +85,7 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, account }
     },
     createInvestmentClubSliceReducer: {
       mintEndTime: { mintTime }
@@ -227,7 +227,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       receipt.events.ERC20ClubCreated.returnValues;
 
     // save to local storage
-    saveNewClub({ tokenAddress, name, symbol });
+    saveNewClub({ tokenAddress, name, symbol, account, activeNetwork });
 
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
