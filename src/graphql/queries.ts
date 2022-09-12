@@ -255,7 +255,6 @@ export const GetAdminCollectives = gql`
       symbol
       maxTotalSupply
       mintPrice
-      numMinted
       totalSupply
       maxPerMember
       numOwners
@@ -296,7 +295,6 @@ export const GetMemberCollectives = gql`
         maxTotalSupply
         mintPrice
         totalSupply
-        numMinted
         nftMetadata {
           metadataCid
         }
