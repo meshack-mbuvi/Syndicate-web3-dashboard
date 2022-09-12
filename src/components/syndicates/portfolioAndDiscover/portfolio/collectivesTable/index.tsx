@@ -1,5 +1,5 @@
 import { CopiedLinkIcon, CopyLinkIcon } from '@/components/iconWrappers';
-import { B2 } from '@/components/typography';
+import { B2, B3 } from '@/components/typography';
 import { AppState } from '@/state';
 import {
   floatedNumberWithCommas,
@@ -73,12 +73,12 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
   return (
     <div className="overflow-x-scroll no-scroll-bar">
       {tableData.length ? (
-        <div className="w-max sm:w-full">
+        <div className="w-full">
           <div className="flex flex-col">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={collectivesTableRef} />
             <div
-              className={`grid grid-cols-6 md:grid-cols-6 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
+              className={`hidden md:grid grid-cols-6 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
             >
               {columns?.map((col, idx) => (
                 <div
@@ -118,23 +118,49 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                   }`}
                 >
                   <div
-                    className={`grid sm:gap-2 ${
-                      isOwner ? 'grid-cols-4' : 'grid-cols-6'
-                    } auto-cols-fr md:grid-cols-6 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto group`}
+                    className={`grid gap-2 grid-cols-5 auto-cols-fr md:grid-cols-6 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto group`}
                   >
-                    <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-2">
-                      <div className="flex flex-shrink-0">
+                    {/* Collective artwork and name */}
+                    <div className="flex flex-shrink-0 space-x-4 flex-nowrap flex-row items-center col-span-3 md:col-span-2">
+                      <div className="flex flex-shrink-0 justify-center items-start">
                         <CollectiveIcon
                           tokenMedia={tokenMedia}
                           tokenMediaType={tokenMediaType}
+                          customClasses="sm:mr-4 w-10 h-10 rounded"
                         />
                       </div>
-                      <div className="flex text-base items-center">
-                        <B2 extraClasses="mr-2">{tokenName}</B2>
-                        <B2 extraClasses="text-gray-syn4">{tokenSymbol}</B2>
+                      <div className="flex flex-col md:flex-row text-base items-start md:items-center space-y-2 md:space-y-0">
+                        <B2 extraClasses="md:mr-2 line-clamp-1">{tokenName}</B2>
+
+                        <div className="flex md:hidden text-base items-center space-x-2">
+                          <B3>{formatAmount(totalClaimed)} claimed</B3>
+                        </div>
+
+                        {/* move symbol to a different column on mobile devices  */}
+                        <B2 extraClasses="hidden md:inline text-gray-syn4">
+                          {tokenSymbol}
+                        </B2>
                       </div>
                     </div>
-                    <div className="flex text-base items-center space-x-2">
+
+                    {/* right-most column with available NFTs and symbol - only on mobile  */}
+                    <div className="flex md:hidden flex-col items-end space-y-2 col-span-2">
+                      <B2 extraClasses="text-gray-syn4 line-clamp-1">
+                        {tokenSymbol.length > 6
+                          ? `${tokenSymbol.slice(0, 6)}...`
+                          : tokenSymbol}
+                      </B2>
+                      <B3 extraClasses="text-gray-syn4 flex-shrink-0 line-clamp-1">
+                        {`${
+                          +maxTotalSupply > 0
+                            ? `${formatAmount(totalUnclaimed)} available`
+                            : '--'
+                        }`}
+                      </B3>
+                    </div>
+
+                    {/* Available NFTs  */}
+                    <div className="hidden md:flex text-base items-center space-x-2">
                       {+maxTotalSupply > 0 ? (
                         <>
                           <B2>{formatAmount(totalUnclaimed)}</B2>
@@ -146,10 +172,14 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                         <B2>-</B2>
                       )}
                     </div>
-                    <div className="flex text-base items-center space-x-2">
+
+                    {/* Total claimed NFTs  */}
+                    <div className="hidden md:flex text-base items-center space-x-2">
                       <B2>{formatAmount(totalClaimed)}</B2>
                     </div>
-                    <div className="flex text-base items-center">
+
+                    {/* Price per NFT  */}
+                    <div className="hidden md:flex text-base items-center">
                       <div className="flex items-center mr-2 flex-shrink-0">
                         <Image
                           src={activeNetwork.nativeCurrency.logo}
@@ -164,7 +194,8 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
                       </div>
                     </div>
 
-                    <div className="flex text-base items-center justify-end opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {/* Copy links  */}
+                    <div className="hidden md:flex text-base items-center justify-end opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <CopyToClipboard
                         text={inviteLink}
                         onCopy={updateInviteLinkCopyState}

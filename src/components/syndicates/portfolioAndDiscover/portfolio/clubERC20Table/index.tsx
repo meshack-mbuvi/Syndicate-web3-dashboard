@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import GradientAvatar from '../GradientAvatar';
+import { B2, B3 } from '@/components/typography';
 
 interface Props {
   columns: string[];
@@ -62,12 +63,12 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   return (
     <div className="overflow-x-scroll h-full no-scroll-bar">
       {tableData.length ? (
-        <div className="w-max sm:w-full">
+        <div className="w-full">
           <div className="flex flex-col">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={scrollRef} />
             <div
-              className={`grid ${
+              className={`hidden md:grid ${
                 columns.length > 4 ? 'grid-cols-7' : 'grid-cols-4'
               } md:grid-cols-7 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
             >
@@ -109,25 +110,52 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   }`}
                 >
                   <div
-                    className={`grid sm:gap-2 ${
-                      isOwner ? 'grid-cols-4' : 'grid-cols-7'
-                    } auto-cols-fr md:grid-cols-7 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
+                    className={`grid gap-2 grid-cols-5 auto-cols-fr md:grid-cols-7 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
                   >
-                    <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-2">
+                    {/* Gradient avatar, club name, and symbol  */}
+                    <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-3 md:col-span-2 space-x-4 md:space-x-0">
                       <div className="flex flex-shrink-0">
-                        <div className="hidden sm:block sm:mr-4">
+                        <div className="sm:mr-4">
                           <GradientAvatar name={clubName} size="h-8 w-8" />
                         </div>
                       </div>
-                      <div className="flex text-base items-center mr-2">
-                        {clubName}
-                      </div>
-                      <div className="flex text-base items-center text-gray-syn4">
-                        {clubSymbol}
+                      <div className="flex flex-col md:flex-row text-base items-start md:items-center space-y-2 md:space-y-0">
+                        <B2 extraClasses="flex text-base items-center mr-2 line-clamp-1">
+                          {clubName}
+                        </B2>
+                        <div className="flex md:hidden text-base items-center">
+                          <div className="flex items-center mr-2 flex-shrink-0">
+                            <Image
+                              src={
+                                depositTokenLogo || '/images/token-gray-4.svg'
+                              }
+                              width={20}
+                              height={20}
+                              objectFit="contain"
+                            />
+                          </div>
+                          <B3 extraClasses="line-clamp-1">
+                            {processTotalDeposits(
+                              totalDeposits,
+                              depositERC20TokenSymbol
+                            )}{' '}
+                            {depositERC20TokenSymbol}
+                          </B3>
+                        </div>
+
+                        <div className="hidden md:flex text-base items-center text-gray-syn4">
+                          {clubSymbol}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex text-base items-center">{status}</div>
-                    <div className="flex text-base items-center">
+
+                    {/* Club status  */}
+                    <div className="hidden md:flex text-base items-center">
+                      {status}
+                    </div>
+
+                    {/* Club total deposits  */}
+                    <div className="hidden md:flex text-base items-center">
                       <div className="flex items-center mr-2 flex-shrink-0">
                         <Image
                           src={depositTokenLogo || '/images/token-gray-4.svg'}
@@ -144,13 +172,28 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                         {depositERC20TokenSymbol}
                       </div>
                     </div>
-                    <div className={`flex text-base items-center`}>
+
+                    {/* right-most column with club status and symbol - only on mobile  */}
+                    <div className="flex md:hidden flex-col items-end space-y-2 col-span-2">
+                      <B2 extraClasses="text-gray-syn4 line-clamp-1">
+                        {clubSymbol.length > 6
+                          ? `${clubSymbol.slice(0, 6)}...`
+                          : clubSymbol}
+                      </B2>
+                      <B3 extraClasses="text-gray-syn4 flex-shrink-0">
+                        {status}
+                      </B3>
+                    </div>
+
+                    {/* Member count  */}
+                    <div className={`hidden md:flex text-base items-center`}>
                       {membersCount}
                     </div>
 
+                    {/* Columns to show to members only  */}
                     {!isOwner && (
                       <>
-                        <div className="flex text-base items-center justify-end">
+                        <div className="hidden md:flex text-base items-center justify-end">
                           <div className="flex items-center mr-2">
                             <Image
                               src={
@@ -169,7 +212,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                           )}{' '}
                           {depositERC20TokenSymbol}
                         </div>
-                        <div className="flex text-base items-center justify-end">
+                        <div className="hidden md:flex text-base items-center justify-end">
                           {`${
                             hasDecimals(ownershipShare)
                               ? ownershipShare.toFixed(2)
