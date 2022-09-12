@@ -3,7 +3,6 @@ import Layout from '@/components/layout';
 import { Spinner } from '@/components/shared/spinner';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
-import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
@@ -24,7 +23,7 @@ const CreateCollectivePage: React.FC = () => {
   const { isPolygon } = useIsPolygon();
 
   useEffect(() => {
-    if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
+    if (!readyCollectivesClient || !isReady) return;
 
     setPageIsLoading(false);
     return () => {
