@@ -1,66 +1,66 @@
-import BackButton from '@/components/buttons/BackButton';
-import { CollapsibleTable } from '@/components/collapsibleTable/index';
-import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
-import { GroupSettingsTable } from '@/components/groupSettingsTable';
-import { T5, H4 } from '@/components/typography';
-import ReactTooltip from 'react-tooltip';
-import { NFTPreviewer, NFTMediaType } from '../nftPreviewer';
-import { CopyText } from './editables';
-import { InputField } from '@/components/inputs/inputField';
-import { TextArea } from '@/components/inputs/simpleTextArea';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { useRouter } from 'next/router';
-import {
-  setMintPrice,
-  setMaxPerWallet,
-  setIsTransferable,
-  setIsCollectiveOpen,
-  setMetadataCid,
-  setUpdateEnded,
-  setOpenUntil,
-  setMaxSupply,
-  setMintEndTime
-} from '@/state/collectiveDetails';
-import EditCollectiveMintTime from './EditCollectiveMintTime';
-import EditMaxSupply from './EditMaxSupply';
-import { useState, useEffect } from 'react';
-import {
-  FileUploader,
-  UploaderProgressType
-} from '@/components/uploaders/fileUploader';
-import { ChangeSettingsDisclaimerModal } from '@/components/collectives/changeSettingsDisclaimerModal/index';
-import { ProgressState } from '@/components/progressCard';
-import { ProgressModal } from '@/components/progressModal';
-import { ExternalLinkColor } from '@/components/iconWrappers';
-import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
-import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import {
-  setCollectiveSubmittingToIPFS,
-  setIpfsError,
-  setCollectiveArtwork
-} from '@/state/createCollective/slice';
-import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
-import {
-  OpenUntil,
-  RadioButtonsOpenUntil
-} from '@/components/collectives/create/inputs/openUntil/radio';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
-import { numberWithCommas } from '@/utils/formattedNumbers';
-import { OpenUntilStepModal } from '@/components/collectives/confirmOpenUntilStepModal';
-import {
-  ProgressDescriptor,
-  ProgressDescriptorState
-} from '@/components/progressDescriptor';
-import { CtaButton } from '@/components/CTAButton';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   COLLECTIVE_SUBMIT_SETTINGS,
   MANAGE_TRY_AGAIN_CLICK
 } from '@/components/amplitude/eventNames';
+import BackButton from '@/components/buttons/BackButton';
+import { CollapsibleTable } from '@/components/collapsibleTable/index';
+import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
+import { ChangeSettingsDisclaimerModal } from '@/components/collectives/changeSettingsDisclaimerModal/index';
+import { OpenUntilStepModal } from '@/components/collectives/confirmOpenUntilStepModal';
+import {
+  OpenUntil,
+  RadioButtonsOpenUntil
+} from '@/components/collectives/create/inputs/openUntil/radio';
+import { CtaButton } from '@/components/CTAButton';
+import { GroupSettingsTable } from '@/components/groupSettingsTable';
+import { ExternalLinkColor } from '@/components/iconWrappers';
+import { InputField } from '@/components/inputs/inputField';
+import { TextArea } from '@/components/inputs/simpleTextArea';
+import { ProgressState } from '@/components/progressCard';
+import {
+  ProgressDescriptor,
+  ProgressDescriptorState
+} from '@/components/progressDescriptor';
+import { ProgressModal } from '@/components/progressModal';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { H4, T5 } from '@/components/typography';
+import {
+  FileUploader,
+  UploaderProgressType
+} from '@/components/uploaders/fileUploader';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
+import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
+import { AppState } from '@/state';
+import {
+  setIsCollectiveOpen,
+  setIsTransferable,
+  setMaxPerWallet,
+  setMaxSupply,
+  setMetadataCid,
+  setMintEndTime,
+  setMintPrice,
+  setOpenUntil,
+  setUpdateEnded
+} from '@/state/collectiveDetails';
+import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
+import {
+  setCollectiveArtwork,
+  setCollectiveSubmittingToIPFS,
+  setIpfsError
+} from '@/state/createCollective/slice';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
+import { NFTMediaType, NFTPreviewer } from '../nftPreviewer';
+import { CopyText } from './editables';
+import EditCollectiveMintTime from './EditCollectiveMintTime';
+import EditMaxSupply from './EditMaxSupply';
 
 type step = {
   title: string;
@@ -690,6 +690,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             transaction_status: 'Failure'
           });
           console.log(error);
+          onTxFail();
         }
         break;
       default:
@@ -716,9 +717,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       description: (
         <a
           href={
-            activeNetwork?.blockExplorer?.baseUrl +
-            '/address/' +
-            collectiveAddress
+            activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
           }
           rel="noreferrer"
           target="_blank"
@@ -744,9 +743,7 @@ const ModifyCollectiveSettings: React.FC = () => {
           wait.
           <a
             href={
-              activeNetwork?.blockExplorer?.baseUrl +
-              '/address/' +
-              collectiveAddress
+              activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
             }
             rel="noreferrer"
             target="_blank"
@@ -766,12 +763,10 @@ const ModifyCollectiveSettings: React.FC = () => {
     },
     failure: {
       title: 'Settings were not updated',
-      description: (
+      description: transactionHash ? (
         <a
           href={
-            activeNetwork?.blockExplorer?.baseUrl +
-            '/address/' +
-            collectiveAddress
+            activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
           }
           rel="noreferrer"
           target="_blank"
@@ -784,6 +779,8 @@ const ModifyCollectiveSettings: React.FC = () => {
             className={`w-4 h-4`}
           />
         </a>
+      ) : (
+        ''
       ),
       state: ProgressState.FAILURE,
       buttonLabel: 'Try again'
