@@ -42,7 +42,6 @@ export interface ICollectiveDetails {
   maxTotalSupply: string;
   totalSupply: string;
   createdAt: any;
-  numMinted: string;
   numOwners: string;
   owners: any;
   mintPrice: string;
@@ -91,7 +90,6 @@ export const initialState: IState = {
     maxTotalSupply: '',
     totalSupply: '',
     createdAt: '',
-    numMinted: '',
     numOwners: '',
     owners: [],
     mintPrice: '',

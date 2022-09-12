@@ -128,7 +128,6 @@ const useCollectives = (): { loading: boolean } => {
             name,
             symbol,
             mintPrice,
-            numMinted,
             maxTotalSupply,
             totalSupply,
             nftMetadata: { metadataCid }
@@ -142,7 +141,9 @@ const useCollectives = (): { loading: boolean } => {
             const totalUnclaimed = +maxTotalSupply
               ? +maxTotalSupply - +totalSupply
               : +maxTotalSupply;
-            +maxTotalSupply ? +maxTotalSupply - +numMinted : +maxTotalSupply;
+            // TODO: What's going on with this line? Is it necessary?
+            // Can numMinted be replaced with totalSupply?
+            // +maxTotalSupply ? +maxTotalSupply - +totalSupply : +maxTotalSupply;
             return {
               totalUnclaimed,
               maxTotalSupply,
