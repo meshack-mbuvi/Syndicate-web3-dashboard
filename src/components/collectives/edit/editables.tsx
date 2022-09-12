@@ -30,7 +30,7 @@ export const SubmitContent: React.FC<{
   const {
     collectiveDetailsReducer: {
       activeRow,
-      details: { mintPrice, metadataCid, numMinted, mintEndTime, maxPerWallet },
+      details: { mintPrice, metadataCid, mintEndTime, maxPerWallet },
       settings: { isTransferable }
     },
     modifyClubSettingsReducer: { maxNumberOfMembers, maxAmountRaising },
@@ -94,8 +94,7 @@ export const SubmitContent: React.FC<{
         >
           {showCallout && (
             <Callout type={CalloutType.WARNING} showIcon={false}>
-              This change will impact the {numMinted} NFTs that have already
-              been claimed.
+              This change will impact the NFTs that have already been claimed.
             </Callout>
           )}
 
