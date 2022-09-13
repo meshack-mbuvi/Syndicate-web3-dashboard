@@ -389,6 +389,58 @@ export const SUPPORTED_TOKENS = Object.freeze({
       logoURI: '/images/prodTokenLogos/uniswap.svg'
     }
   ],
+  // Goerli
+  5: [
+    {
+      symbol: 'USDC',
+      name: 'Testnet USDC',
+      address: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      decimals: 6,
+      default: false,
+      logoURI: '/images/TestnetTokenLogos/usdcIcon.svg'
+    },
+    {
+      symbol: 'ETH',
+      name: 'Ethereum',
+      address: '',
+      logoURI: '/images/chains/goerli.svg',
+      decimals: 18,
+      default: true
+    },
+    {
+      name: 'Wrapped Ether',
+      address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
+      symbol: 'WETH',
+      decimals: 18,
+      default: false,
+      logoURI: '/images/prodTokenLogos/wEth.svg'
+    },
+    {
+      name: 'Dai Stablecoin',
+      address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
+      symbol: 'DAI',
+      decimals: 18,
+      default: false,
+      logoURI: '/images/TestnetTokenLogos/daiIcon.svg',
+      price: 1.0
+    },
+    {
+      name: 'Maker',
+      address: '0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7',
+      symbol: 'MKR',
+      decimals: 18,
+      default: false,
+      logoURI: '/images/prodTokenLogos/maker.svg'
+    },
+    {
+      name: 'Uniswap',
+      address: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+      symbol: 'UNI',
+      decimals: 18,
+      default: false,
+      logoURI: '/images/prodTokenLogos/uniswap.svg'
+    }
+  ],
   // Matic
   137: [
     {

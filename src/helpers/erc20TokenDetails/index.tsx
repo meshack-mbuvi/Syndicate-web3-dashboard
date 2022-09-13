@@ -131,13 +131,15 @@ export const getERC20TokenDetails = async (
       }
 
       // Check both mint policies
-      const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
-        address,
-        MerkleDistributorModule.contract._address
-      );
+      let claimEnabledPolicyMintERC20;
+      if (policyMintERC20.address) {
+        claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
+          address,
+          MerkleDistributorModule.contract._address
+        );
+      }
 
       let claimEnabledMintPolicy;
-
       if (mintPolicy.address) {
         claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
           address,
@@ -191,6 +193,7 @@ export const getERC20TokenDetails = async (
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
     } catch (error) {
+      console.log(error);
       return ERC20TokenDefaultState;
     }
   }

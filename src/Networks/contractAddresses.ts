@@ -71,6 +71,42 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     GuardNeverAllow: '0x701EAE459BF3E501852E11499117b2eC333EBdF9'
   },
 
+  // Goerli
+  5: {
+    clubERC20Factory: '',
+    clubERC20FactoryNative: '',
+    erc20ClubFactory: '0xed582132c33de5b5a661de3d2dce5fb8f2d8f33d',
+    DepositTokenMintModule: '0x56b21198b67ffa1d2882463401bcdd810b11bb1c',
+    distributionsERC20: '0x07a93cb58de13d594e42748827fcb8ca89aa3815',
+    distributionsETH: '0xeb1081b1bc69bbc5f39c7ae4a2d26618ff8fa998',
+    ERC721MintPolicy: '',
+    NativeMintModule: '0xc6984ed3b22f212e0c8a3dc80454478b58f5c176', // EthMintModule-
+    MerkleDistributorModule: '0x19cf03a6f1190062eeafd70c42cbc5f7ecff05a8',
+    MerkleDistributorModuleERC721: '0x4d66954dc81b13314c90a5e87464248813b77422',
+    mintPolicy: '',
+    policyMintERC20: '',
+    PublicOnePerAddress: '',
+    SingleTokenMintModule: '',
+    UtilityMintModule: '',
+    OnePerAddressMintModule: '',
+    OwnerMintModule: '0x5a25d511b8ccf2894950243d1c57ca9f1447caba',
+    maxMemberMixin: '0x638d445d126053f071a834df6ca919dc4852a468',
+    maxTotalSupplyMixin: '0x0efa30750e655f20c6e16248eb283b972e370c28',
+    tokenGatingMixin: '0xf8ca1551b6878779e4f4e60ffff07ef74ac6051e',
+
+    // Collectives
+    ERC721Collective: '0x71847a69033cab33cdf266e0ee15452e4ff0e7f3',
+    ERC721CollectiveFactory: '0x45a70092aa014a03b1412aa898859a83d286ff4e',
+    FixedRenderer: '0x1b9ab6847667bdf00434eaa4e508bb565f1b3b61',
+    GuardMixinManager: '0x4ad52d81ad5fb141fabfd2846525af10f45fb295',
+    EthPriceMintModule: '0x09cf30f32ba0f0a5af9b32a5b6bad625e1698678', // AllowModules
+    TimeRequirements: '0xc08bc955da8968327405642d65a7513ce5eb31ed',
+    MaxPerMemberERC721: '0x960fd5cfa6c36e9db131824ddf07df6322a053de',
+    MaxTotalSupplyERC721: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3',
+    GuardAlwaysAllow: '0xd81d0cae5d4ac81b7aca5db7a76ec7d82260ca75',
+    GuardNeverAllow: '0xab5390d3708c78e84b82de12d3e07d94145a3c0b'
+  },
+
   // Matic
   137: {
     clubERC20Factory: '0x3902AB762a94b8088b71eE5c84bC3C7d2075646B',
