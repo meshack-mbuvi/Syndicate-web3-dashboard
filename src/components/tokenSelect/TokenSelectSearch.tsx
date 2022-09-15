@@ -81,7 +81,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   const defaultTokenList = showTokenGateModal
-    ? [...adminCollectives, ...memberCollectives]
+    ? [...(adminCollectives || []), ...(memberCollectives || [])]
         .slice(0, 6)
         .map((collective) => {
           return {
@@ -91,14 +91,16 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             logoURI: collective.tokenMedia,
             collectionMediaType: collective.tokenMediaType
           };
-        }) || SUPPORTED_TOKENS[activeNetwork.chainId]
-    : SUPPORTED_TOKENS[activeNetwork.chainId];
+        }) ||
+      SUPPORTED_TOKENS[activeNetwork.chainId] ||
+      []
+    : SUPPORTED_TOKENS[activeNetwork.chainId] || [];
 
   const _tokens = debouncedSearchTerm
     ? tokensList
     : [
         ...(suggestionList || []),
-        ...dedupTokens(defaultTokenList, suggestionList)
+        ...(dedupTokens(defaultTokenList, suggestionList) || [])
       ];
 
   useEffect(() => {
@@ -177,10 +179,11 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       // token contractAddress
       if (web3.utils && web3.utils.isAddress(debouncedSearchTerm)) {
         const _token = [
-          // ...searchRe
-          ...defaultTokenList,
+          ...(defaultTokenList || []),
           ...(suggestionList || []),
-          ...(showTokenGateModal ? SUPPORTED_TOKENS[activeNetwork.chainId] : [])
+          ...(showTokenGateModal
+            ? SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            : [])
         ].find((token) => token.address === debouncedSearchTerm);
 
         // Avoid fetching API if token exists in tokensList or suggestionList
@@ -207,8 +210,10 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         }
       } else {
         [
-          ...defaultTokenList,
-          ...(showTokenGateModal ? SUPPORTED_TOKENS[activeNetwork.chainId] : [])
+          ...(defaultTokenList || []),
+          ...(showTokenGateModal
+            ? SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            : [])
         ].map((defaultToken) => {
           if (
             defaultToken.name
@@ -237,7 +242,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       setTokenList(defaultTokens);
       setNoTokenFound(false);
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, activeNetwork]);
 
   useEffect(() => {
     reducerDispatch({ type: IndexReducerActionType.SHIFT, payload: 0 });
