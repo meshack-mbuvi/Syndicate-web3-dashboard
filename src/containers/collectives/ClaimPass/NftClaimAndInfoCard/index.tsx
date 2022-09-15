@@ -1,3 +1,9 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLAIM_TRY_AGAIN_CLICK,
+  COLLECTIVE_CLAIM,
+  VIEW_COLLECTIVE_CLICK
+} from '@/components/amplitude/eventNames';
 import {
   ClaimCollectivePass,
   WalletState
@@ -7,6 +13,8 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
@@ -15,14 +23,6 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
-import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
-import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  COLLECTIVE_CLAIM,
-  VIEW_COLLECTIVE_CLICK,
-  CLAIM_TRY_AGAIN_CLICK
-} from '@/components/amplitude/eventNames';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -73,6 +73,9 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
+  const [accountBalance, setAccountBalance] = useState<number>();
+  const [accountNewBalance, setAccountNewBalance] = useState<number>();
+  const [interval, setIntervalId] = useState(null);
 
   const { refetch } = useFetchCollectiveDetails();
   const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
@@ -86,6 +89,16 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [progressState, setProgressState] = useState<ProgressState>();
   const [openSeaLink, setOpenSeaLink] = useState<string>();
 
+  useEffect(() => {
+    if (progressState == ProgressState.TAKING_LONG || !interval) return;
+
+    clearInterval(interval);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [progressState, interval]);
+
   const onTxConfirm = (hash: string) => {
     setProgressState(ProgressState.PENDING);
     setTransactionHash(hash);
@@ -97,8 +110,35 @@ const NftClaimAndInfoCard: React.FC = () => {
     refetch();
   };
 
-  const onTxFail = () => {
-    setProgressState(ProgressState.FAILURE);
+  const onTxFail = (error) => {
+    if (error?.message.includes('Be aware that it might still be mined')) {
+      // Pool for account nft balance
+      const interval = setInterval(() => {
+        web3.eth.getTransactionReceipt(transactionHash).then((transaction) => {
+          if (!transaction) return;
+
+          if (transaction.status) {
+            setProgressState(ProgressState.SUCCESS);
+          } else {
+            setProgressState(ProgressState.FAILURE);
+          }
+        });
+      }, 2000);
+
+      setIntervalId(interval);
+
+      setProgressState(ProgressState.TAKING_LONG);
+      amplitudeLogger(COLLECTIVE_CLAIM, {
+        flow: Flow.COLLECTIVE_CLAIM,
+        transaction_status: 'Transaction taking longer than expected'
+      });
+    } else {
+      setProgressState(ProgressState.FAILURE);
+      amplitudeLogger(COLLECTIVE_CLAIM, {
+        flow: Flow.COLLECTIVE_CLAIM,
+        transaction_status: 'Failure'
+      });
+    }
   };
 
   const claimCollective = async () => {
@@ -119,14 +159,15 @@ const NftClaimAndInfoCard: React.FC = () => {
         transaction_status: 'Success'
       });
     } catch (error) {
-      console.log({ error });
-      setProgressState(ProgressState.FAILURE);
-      amplitudeLogger(COLLECTIVE_CLAIM, {
-        flow: Flow.COLLECTIVE_CLAIM,
-        transaction_status: 'Failure'
-      });
+      onTxFail(error);
     }
   };
+
+  useEffect(() => {
+    getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
+      setAccountBalance(balance);
+    });
+  });
 
   useEffect(() => {
     getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {

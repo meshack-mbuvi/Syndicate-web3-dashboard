@@ -1,11 +1,11 @@
-import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
-import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
-import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
-import { useState, useEffect, useRef } from 'react';
-import Modal, { ModalStyle } from '@/components/modal';
-import { L2 } from '@/components/typography';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { COLLECTIVE_CLAIM_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
+import Modal, { ModalStyle } from '@/components/modal';
+import { L2 } from '@/components/typography';
+import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
+import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
+import { useEffect, useRef, useState } from 'react';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -115,6 +115,3 @@ const ClaimPass: React.FC = () => {
 };
 
 export default ClaimPass;
-function setShowDisclaimer(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
@@ -6,8 +8,6 @@ import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useDispatch, useSelector } from 'react-redux';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -238,6 +238,22 @@ export const ClaimCollectivePass: React.FC<Props> = ({
             buttonOnClick={tryAgain}
             buttonFullWidth={true}
             transactionType={transactionType}
+          />
+        </div>
+      ) : progressState &&
+        progressState === ProgressState.TAKING_LONG &&
+        walletState === WalletState.CONNECTED ? (
+        <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
+          <ProgressCard
+            title="Transaction is taking a while"
+            state={progressState}
+            transactionHash={transactionHash}
+            buttonOnClick={tryAgain}
+            buttonFullWidth={true}
+            transactionType={transactionType}
+            description={
+              'Hold tight, this may take a while. You can speed up the transaction by increasing the gas fee in your wallet'
+            }
           />
         </div>
       ) : (
