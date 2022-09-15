@@ -47,9 +47,6 @@ export const DetailedTile: React.FC<Props> = ({
   const responsivelyCalculatedButtonPadding = `${
     width <= mobileBreakpoint && 'pt-4'
   }`;
-  const responsivelyCalculatedSpaceBetween = `${
-    width <= mobileBreakpoint && 'space-y-4'
-  }`;
   const responsivelyCalculatedFlex = `${
     width <= mobileBreakpoint && 'flex-col'
   }`;
@@ -85,7 +82,7 @@ export const DetailedTile: React.FC<Props> = ({
       <button
         className={`h-full transition-opacity border-gray-syn6 inline-block text-center ${
           disabledIndices?.includes(index) && 'cursor-not-allowed'
-        } ${responsivelyCalculatedButtonPadding}`}
+        } ${responsivelyCalculatedButtonPadding} ${responsivelyCalculatedContainerPadding}`}
         style={{ width: responsivelyCalculatedWidth }}
         // Add each button in a list of refs
         ref={(ref) => {
@@ -131,7 +128,7 @@ export const DetailedTile: React.FC<Props> = ({
     >
       {/* Options */}
       <div
-        className={`h-full border-gray-syn6 relative transform ${responsivelyCalculatedSpaceBetween} ${responsivelyCalculatedDividers} ${responsivelyCalculatedContainerPadding}`}
+        className={`h-full border-gray-syn6 relative transform ${responsivelyCalculatedDividers}`}
       >
         {renderedButtons}
       </div>
@@ -149,14 +146,12 @@ export const DetailedTile: React.FC<Props> = ({
           style={{
             width: responsivelyCalculatedWidth,
             borderRadius: '0.3125rem',
-            left: `calc(${highlightDimensions.x}px - ${
-              width > mobileBreakpoint ? '0rem' : '1rem'
-            })`,
+            left: `calc(${highlightDimensions.x}px)`,
             top: `calc(${highlightDimensions.y}px - ${
-              width > mobileBreakpoint ? `${1 + 0.125}rem` : '0rem'
+              width > mobileBreakpoint ? `0.125rem` : '0rem'
             })`,
             height: `calc(${highlightDimensions.height}px + ${
-              width > mobileBreakpoint ? `${2 + 0.2}rem` : '1rem'
+              width > mobileBreakpoint ? `0.2rem` : '0.125rem'
             })`,
             pointerEvents: 'none'
           }}
