@@ -102,18 +102,17 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                   src={data?.avatar || '/images/jazzicon.png'}
                   alt=""
                 />
-                <div
-                  className={`${width <= 425 ? 'flex' : 'hidden md:flex ml-3'}`}
-                >
+                <div className={`${width <= 425 ? 'flex' : 'hidden md:flex'}`}>
                   <AddressWithENS
                     address={{ label: formattedAddress }}
                     name={data?.name}
                     image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
                     layout={AddressLayout.ONE_LINE}
                     id={refId}
+                    extraClasses={`${!data?.avatar && 'ml-1'}`}
                   />
                 </div>
-                <div className="flex items-center ml-3">
+                <div className="flex items-center ml-2">
                   <img
                     src="/images/chevron-down.svg"
                     width="9"

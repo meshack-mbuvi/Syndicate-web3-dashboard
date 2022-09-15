@@ -156,7 +156,7 @@ const NetworkMenuDropDown: FC = () => {
           return (
             <>
               <button
-                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-3 py-2 sm:py-1 items-center ${
+                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-4 py-2 sm:py-1 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
@@ -173,7 +173,7 @@ const NetworkMenuDropDown: FC = () => {
                 <span
                   className={`${
                     width <= 425 ? 'flex' : 'hidden md:block'
-                  } focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular`}
+                  } focus:outline-none mr-4 sm:mr-0 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular`}
                 >
                   {activeNetwork.displayName}
                 </span>

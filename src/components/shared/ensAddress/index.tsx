@@ -19,6 +19,7 @@ interface Props {
   address?: { label: string; abbreviated?: boolean };
   layout?: AddressLayout;
   id?: string;
+  extraClasses?: string;
 }
 
 export const AddressWithENS: React.FC<Props> = ({
@@ -26,18 +27,47 @@ export const AddressWithENS: React.FC<Props> = ({
   name,
   address,
   layout = AddressLayout.TWO_LINES,
+  extraClasses,
   ...rest
 }) => {
+  const TopLineName = () => {
+    return <div>{name}</div>;
+  };
+  const TopLineAddress = () => {
+    return (
+      <div {...rest}>
+        <span className="text-gray-syn4">0x</span>
+        {address && (
+          <span {...rest}>
+            {address?.abbreviated !== undefined && address?.abbreviated
+              ? formatAddress(address.label.substring(2), 4, 4)
+              : address.label.substring(2)}
+          </span>
+        )}
+      </div>
+    );
+  };
+  const TopLine = () => {
+    return (
+      <TransitionBetweenChildren
+        visibleChildIndex={name ? 0 : address ? 1 : -1}
+        transitionDurationClassOverride="duration-300"
+      >
+        <TopLineName />
+        <TopLineAddress />
+      </TransitionBetweenChildren>
+    );
+  };
   return (
     <div
       className={`flex items-center space-x-${
         layout === AddressLayout.TWO_LINES ? '4' : '3'
-      }`}
+      } ${extraClasses}`}
       {...rest}
     >
-      {image && (
+      {image && image.src && (
         <img
-          src={image.src ? `${image.src}` : '/images/jazzicon.png'}
+          src={image.src}
           alt="Address icon"
           className={`${
             image.size ? image.size : 'w-8 h-8'
@@ -53,24 +83,15 @@ export const AddressWithENS: React.FC<Props> = ({
         }}
       >
         {/* Top line */}
-        <B2 extraClasses="mb-0" {...rest}>
-          <TransitionBetweenChildren
-            visibleChildIndex={name ? 0 : address ? 1 : -1}
-            transitionDurationClassOverride="duration-300"
-          >
-            <div>{name}</div>
-            <div {...rest}>
-              <span className="text-gray-syn4">0x</span>
-              {address && (
-                <span {...rest}>
-                  {address?.abbreviated !== undefined && address?.abbreviated
-                    ? formatAddress(address.label.substring(2), 4, 4)
-                    : address.label.substring(2)}
-                </span>
-              )}
-            </div>
-          </TransitionBetweenChildren>
-        </B2>
+        {image && image.size === AddressImageSize.SMALL ? (
+          <B3 extraClasses="mb-0" {...rest}>
+            <TopLine />
+          </B3>
+        ) : (
+          <B2 extraClasses="mb-0" {...rest}>
+            <TopLine />
+          </B2>
+        )}
 
         {/* Bottom line */}
         <div

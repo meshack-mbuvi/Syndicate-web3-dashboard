@@ -240,7 +240,7 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
       const { owner } = member;
 
       return {
-        profilePicture: '/images/collectives/collectiveMemberAvatar.svg',
+        profilePicture: '/images/user.svg',
         accountAddress: owner?.walletAddress
       };
     });
@@ -248,7 +248,7 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
   const admins = [
     {
       accountAddress: ownerAddress,
-      profilePicture: '/images/collectives/collectiveMemberAvatar.svg'
+      profilePicture: '/images/user.svg'
     }
   ];
 

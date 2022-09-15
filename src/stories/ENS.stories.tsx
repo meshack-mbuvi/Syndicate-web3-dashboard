@@ -18,8 +18,8 @@ export default {
 const Template = (args) => {
   return (
     <AddressWithENS
-      image={{ src: '/images/jazzicon.png', size: args.imageSize }}
       {...args}
+      image={{ src: args.image, size: args.imageSize }}
     />
   );
 };
@@ -28,25 +28,43 @@ export const NameAndAddress = Template.bind({});
 NameAndAddress.args = {
   name: 'janedoe.eth',
   address: { label: '0x32432423423', abbreviated: true },
+  image: '/images/jazzicon.png',
+  imageSize: AddressImageSize.LARGE
+};
+
+export const NoImage = Template.bind({});
+NoImage.args = {
+  name: 'janedoe.eth',
+  address: { label: '0x32432423423', abbreviated: true }
+};
+
+export const DefaultMemberImage = Template.bind({});
+DefaultMemberImage.args = {
+  name: 'janedoe.eth',
+  address: { label: '0x32432423423', abbreviated: true },
+  image: '/images/user.svg',
   imageSize: AddressImageSize.LARGE
 };
 
 export const Address = Template.bind({});
 Address.args = {
   address: { label: '0x32432423423', abbreviated: true },
-  imageSize: AddressImageSize.SMALL
+  image: '/images/jazzicon.png',
+  imageSize: AddressImageSize.LARGE
 };
 
 export const Name = Template.bind({});
 Name.args = {
   name: 'janedoe.eth',
+  image: '/images/jazzicon.png',
   imageSize: AddressImageSize.SMALL
 };
 
-export const ShortHeight = Template.bind({});
-ShortHeight.args = {
+export const OneLine = Template.bind({});
+OneLine.args = {
   name: 'janedoe.eth',
   address: { label: '0x32432423423', abbreviated: true },
-  imageSize: AddressImageSize.LARGE,
+  image: '/images/jazzicon.png',
+  imageSize: AddressImageSize.SMALL,
   layout: AddressLayout.ONE_LINE
 };
