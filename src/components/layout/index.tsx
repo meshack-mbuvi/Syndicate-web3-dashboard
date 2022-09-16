@@ -209,7 +209,7 @@ const Layout: FC<Props> = ({
         ) : null}
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
+            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-33'
           } z-20 justify-center items-start my-0 mx-auto ${customClasses}`}
         >
           {children}
