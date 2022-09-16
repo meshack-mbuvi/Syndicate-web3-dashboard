@@ -106,7 +106,19 @@ const ConnectWallet: React.FC = () => {
     {
       name: 'Metamask',
       icon: '/images/metamaskIcon.svg',
-      providerToActivate: () => activateInjected(),
+      providerToActivate: () => {
+        // check whether coinbase extension is installed
+        const [metamaskWallet] =
+          window.ethereum?.providers?.filter((provider) =>
+            Object.prototype.hasOwnProperty.call(provider, 'isMetaMask')
+          ) || [];
+
+        if (!metamaskWallet) {
+          return window.open('https://metamask.io/download/', '_blank');
+        }
+
+        activateInjected('Metamask');
+      },
       hidden: loadedAsSafeApp
     },
     {
@@ -124,7 +136,22 @@ const ConnectWallet: React.FC = () => {
     {
       name: 'Coinbase Wallet',
       icon: '/images/coinbase-wallet.svg',
-      providerToActivate: () => activateInjected(),
+      providerToActivate: () => {
+        // check whether coinbase extension is installed
+        const [coinbaseWallet] =
+          window?.ethereum?.providers?.filter(
+            (provider) => provider.isCoinbaseWallet
+          ) || [];
+
+        if (!coinbaseWallet) {
+          return window.open(
+            'https://www.coinbase.com/wallet/getting-started-extension',
+            '_blank'
+          );
+        }
+
+        activateInjected('Coinbase Wallet');
+      },
       hidden: loadedAsSafeApp
     }
   ];
@@ -133,8 +160,8 @@ const ConnectWallet: React.FC = () => {
    * This function is triggered when user clicks metamask button
    * The provider for metamask is named injected
    */
-  const activateInjected = async () => {
-    await connectWallet('Injected');
+  const activateInjected = async (walletName?: string) => {
+    await connectWallet('Injected', walletName);
   };
 
   /**
@@ -142,14 +169,13 @@ const ConnectWallet: React.FC = () => {
    * It calls activateProvider passing WalletConnect as the parameters.
    */
   const activateWalletConnect = async () => {
-    await connectWallet('WalletConnect');
+    await connectWallet('WalletConnect', 'WalletConnect');
   };
 
   /**
    * This method is triggered when user clicks Gnosis Safe connect button.
    * It calls activateProvider passing gnosisSafeConnect as the parameters.
    *
-   * Ticket reference: SYN-49
    */
   const activateGnosisSafe = async () => {
     await connectWallet('GnosisSafe');

@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
 import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -25,10 +27,10 @@ import { isSSR } from '@/utils/environment';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import { useClient } from '@splitsoftware/splitio-react';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import amplitude from 'amplitude-js';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
 import { isEmpty } from 'lodash';
-import router from 'next/router';
 import React, {
   createContext,
   ReactNode,
@@ -39,12 +41,9 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
-import amplitude from 'amplitude-js';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
 
 type AuthProviderProps = {
-  connectWallet: (providerName: string) => void;
+  connectWallet: (providerName: string, walletName?: string) => void;
   activeNetwork: any;
   chainToken: string;
   showSuccessModal: boolean;
@@ -176,11 +175,11 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         wallet_network: activeNetwork.displayName
       });
 
-      var wallet_address = new amplitude.Identify().set(
+      const wallet_address = new amplitude.Identify().set(
         'wallet_address',
         account
       );
-      var wallet_network = new amplitude.Identify().set(
+      const wallet_network = new amplitude.Identify().set(
         'wallet_network',
         activeNetwork.displayName
       );
@@ -496,7 +495,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [chainId, supportedNetworks]);
 
   // This handles the connect for a wallet
-  const connectWallet = async (providerName: string) => {
+  const connectWallet = async (providerName: string, walletName?: string) => {
     closeWalletModal();
     setWalletConnecting(true);
 
@@ -545,13 +544,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setWalletConnecting(false);
         dispatch(showWalletModal());
 
-        switch (providerName) {
+        switch (walletName) {
           case 'WalletConnect':
             window.open('https://metamask.io/download/', '_blank');
             break;
 
           case 'Coinbase Wallet':
-            window.open('https://www.coinbase.com/wallet', '_blank');
+            window.open(
+              'https://www.coinbase.com/wallet/getting-started-extension',
+              '_blank'
+            );
             break;
 
           default:
