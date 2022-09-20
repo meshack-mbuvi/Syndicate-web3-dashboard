@@ -108,10 +108,11 @@ const ConnectWallet: React.FC = () => {
       icon: '/images/metamaskIcon.svg',
       providerToActivate: () => {
         // check whether coinbase extension is installed
-        const [metamaskWallet] =
-          window.ethereum?.providers?.filter((provider) =>
-            Object.prototype.hasOwnProperty.call(provider, 'isMetaMask')
-          ) || [];
+        const metamaskWallet =
+          // providers exists when you have more than one extensions installed.
+          window?.ethereum?.providers?.filter(
+            (provider) => provider?.isMetaMask
+          )[0] || window?.ethereum?.isMetaMask;
 
         if (!metamaskWallet) {
           return window.open('https://metamask.io/download/', '_blank');
@@ -138,10 +139,10 @@ const ConnectWallet: React.FC = () => {
       icon: '/images/coinbase-wallet.svg',
       providerToActivate: () => {
         // check whether coinbase extension is installed
-        const [coinbaseWallet] =
+        const coinbaseWallet =
           window?.ethereum?.providers?.filter(
-            (provider) => provider.isCoinbaseWallet
-          ) || [];
+            (provider) => provider?.isCoinbaseWallet
+          )[0] || window?.ethereum?.isCoinbaseWallet;
 
         if (!coinbaseWallet) {
           return window.open(
