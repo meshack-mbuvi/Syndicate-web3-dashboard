@@ -61,8 +61,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
     }
     dispatch(setCurrentTransaction({ ...currentTransaction, note: noteValue }));
     amplitudeLogger(TRANSACTION_NOTE_ADD, {
-      flow: Flow.CLUB_MANAGE,
-      transaction_note: noteValue
+      flow: Flow.CLUB_MANAGE
     });
   };
 

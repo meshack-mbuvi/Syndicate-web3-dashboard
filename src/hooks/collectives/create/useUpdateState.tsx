@@ -137,7 +137,9 @@ const useUpdateState = () => {
       setProgressPercent(100);
     }
     amplitudeLogger(ARTWORK_UPLOAD, {
-      flow: Flow.COLLECTIVE_CREATE
+      flow: Flow.COLLECTIVE_CREATE,
+      file_type: fileObject.type,
+      file_size: fileObject.size + ' MB'
     });
   };
 

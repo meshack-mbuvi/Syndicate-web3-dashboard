@@ -47,14 +47,7 @@ export const CollectiveHeader: React.FC<{
   } = router;
 
   return (
-    <div
-      className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4"
-      onClick={() => {
-        amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
-          flow: Flow.COLLECTIVE_MANAGE
-        });
-      }}
-    >
+    <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
       {title}
       {!isEmpty(links) && (
         <div className="flex items-center space-x-4">
@@ -66,6 +59,11 @@ export const CollectiveHeader: React.FC<{
                 className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
                 data-tip
                 data-for="customize"
+                onClick={() => {
+                  amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
+                    flow: Flow.COLLECTIVE_MANAGE
+                  });
+                }}
               >
                 <div className="flex justify-center items-center vertically-center">
                   <SettingsIcon />

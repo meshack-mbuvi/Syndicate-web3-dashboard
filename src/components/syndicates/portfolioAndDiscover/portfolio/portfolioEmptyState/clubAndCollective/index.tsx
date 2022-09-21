@@ -5,6 +5,8 @@ import { AppState } from '@/state';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CREATE_INVESTMENT_CLUB_CLICK, CREATE_COLLECTIVE_CLICK } from '@/components/amplitude/eventNames';
 
 enum HoverState {
   HOVERING = 1,
@@ -40,6 +42,13 @@ export const CreateClubOrCollective: React.FC<Props> = ({
   const router = useRouter();
 
   const goToCreateFlow = (isCreatingClub: boolean) => {
+    isCreatingClub
+       ? amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
+           flow: Flow.CLUB_CREATE
+         })
+       : amplitudeLogger(CREATE_COLLECTIVE_CLICK, {
+           flow: Flow.COLLECTIVE_CREATE
+         });
     router.push({
       pathname: `/${isCreatingClub ? 'clubs' : 'collectives'}/create`,
       query: { chain: activeNetwork.network }

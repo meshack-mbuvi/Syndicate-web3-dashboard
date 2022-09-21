@@ -2,6 +2,8 @@ import { PillButton } from '@/components/pillButtons';
 import { FileUploader } from '@/components/uploaders/fileUploader';
 import React from 'react';
 import { GeneratedArtworkDarkBGColors } from '../generatedArtwork';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ARTWORK_GENERATE } from '@/components/amplitude/eventNames';
 
 export enum UploaderProgressType {
   LOADING_BAR = 'LOADING_BAR',
@@ -49,6 +51,9 @@ export const CollectivesFileUploader: React.FC<Props> = ({
       addOn={
         <PillButton
           onClick={() => {
+            amplitudeLogger(ARTWORK_GENERATE, {
+              flow: Flow.COLLECTIVE_CREATE
+            })
             handleCreateGenerateArtwork(
               GeneratedArtworkDarkBGColors[
                 Math.floor(

@@ -18,6 +18,7 @@ const initializeAmplitude = () => {
     includeUtm: true
   });
 };
+// hello
 
 export function useAmplitude(): void {
   // Initialize Amplitude
@@ -28,14 +29,15 @@ export function useAmplitude(): void {
 type EventProperty = {
   flow: Flow;
   transaction_status?: string;
-  wallet_network?: any;
-  wallet_address?: any;
-  deposit_token?: any;
-  deposit_window?: any;
+  wallet_network?: string;
+  wallet_address?: string;
+  deposit_window?: string;
+  deposit_token?: string;
   deposit_amount?: string | number;
   transaction_category?: string;
-  transaction_note?: string;
   distribution_amount?: string | number;
+  file_type?: string;
+  file_size?: string;
 };
 
 // User Properties

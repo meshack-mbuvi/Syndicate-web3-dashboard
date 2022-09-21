@@ -1,11 +1,14 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { COLLECTIVE_CLAIM_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 import Modal, { ModalStyle } from '@/components/modal';
 import { L2 } from '@/components/typography';
 import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
 import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import { useEffect, useRef, useState } from 'react';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLAIM_PAGE_LANDING,
+  COLLECTIVE_CLAIM_DISCLAIMER_AGREE
+} from '@/components/amplitude/eventNames';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -45,6 +48,14 @@ const ClaimPass: React.FC = () => {
     } else if (!claimDisclaimerCookieSet) {
       setShowDisclaimer(true);
     }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      amplitudeLogger(CLAIM_PAGE_LANDING, {
+        flow: Flow.COLLECTIVE_CLAIM
+      });
+    }, 500);
   }, []);
 
   useEffect(() => {

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { CopiedLinkIcon, CopyToClipboardIcon } from '@/components/iconWrappers';
+import {
+  TELEGRAM_SHARE_CLICK,
+  TWITTER_SHARE_CLICK
+} from '../amplitude/eventNames';
+import { amplitudeLogger, Flow } from '../amplitude';
 
 interface Props {
   description: string | any;
@@ -66,6 +71,11 @@ export const ShareCard: React.FC<Props> = ({
               href={`https://t.me/share/url?url=${URL}&text=${description}`}
               target="_blank"
               rel="noreferrer"
+              onClick={() => {
+                amplitudeLogger(TELEGRAM_SHARE_CLICK, {
+                  flow: Flow.COLLECTIVE_CLAIM
+                });
+              }}
             >
               <img
                 src="/images/social/telegram-gray3.svg"
@@ -79,6 +89,11 @@ export const ShareCard: React.FC<Props> = ({
               href={`https://twitter.com/intent/tweet?text=${`${description} ${URL}`}`}
               target="_blank"
               rel="noreferrer"
+              onClick={() => {
+                amplitudeLogger(TWITTER_SHARE_CLICK, {
+                  flow: Flow.COLLECTIVE_CLAIM
+                });
+              }}
             >
               <img
                 src="/images/social/twitter-gray3.svg"
