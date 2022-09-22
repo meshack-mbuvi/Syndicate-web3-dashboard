@@ -264,44 +264,51 @@ export const ClaimCollectivePass: React.FC<Props> = ({
               : ''
           }text-center sm:rounded-2.5xl`}
         >
-          {walletLabel}
-          <div className="space-y-4">
-            {walletState !== WalletState.MAX_PASSES_REACHED && (
-              <CtaButton
-                greenCta={walletState === WalletState.CONNECTED}
-                disabled={!isOpen}
-                onClick={() => {
-                  if (
-                    walletState === WalletState.NOT_CONNECTED ||
-                    walletState === WalletState.WRONG_WALLET
-                  ) {
-                    dispatch(showWalletModal());
-                  } else if (walletState === WalletState.CONNECTED) {
-                    claimCollective();
-                    amplitudeLogger(CLAIM_CLICK, {
-                      flow: Flow.COLLECTIVE_CLAIM
-                    });
-                  }
-                }}
-              >
-                {walletButtonText}
-              </CtaButton>
-            )}
-            {walletState === WalletState.CONNECTED && gasEstimate && (
-              // Positioned absolutely so it doesn't take up space
-              <div className="relative">
-                <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
-                  Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
-                  {gasEstimate.tokenSymbol}{' '}
-                  {Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  }).format(gasEstimate.fiatAmount)}{' '}
-                  USD
-                </B3>
-              </div>
-            )}
-          </div>
+          {isOpen ? (
+            walletLabel
+          ) : (
+            <H4 regular extraClasses="text-center">
+              This Collective is no longer open to new members.
+            </H4>
+          )}
+          {isOpen ? (
+            <div className="space-y-4">
+              {walletState !== WalletState.MAX_PASSES_REACHED && (
+                <CtaButton
+                  greenCta={walletState === WalletState.CONNECTED}
+                  onClick={() => {
+                    if (
+                      walletState === WalletState.NOT_CONNECTED ||
+                      walletState === WalletState.WRONG_WALLET
+                    ) {
+                      dispatch(showWalletModal());
+                    } else if (walletState === WalletState.CONNECTED) {
+                      claimCollective();
+                      amplitudeLogger(CLAIM_CLICK, {
+                        flow: Flow.COLLECTIVE_CLAIM
+                      });
+                    }
+                  }}
+                >
+                  {walletButtonText}
+                </CtaButton>
+              )}
+              {walletState === WalletState.CONNECTED && gasEstimate && (
+                // Positioned absolutely so it doesn't take up space
+                <div className="relative">
+                  <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
+                    Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
+                    {gasEstimate.tokenSymbol}{' '}
+                    {Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    }).format(gasEstimate.fiatAmount)}{' '}
+                    USD
+                  </B3>
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
       )}
     </div>
