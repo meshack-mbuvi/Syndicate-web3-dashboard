@@ -9,7 +9,7 @@ export const getSyndicateValues = async (
   activeMintReqs: ModuleReqs,
   mintModule: string
 ): Promise<any> => {
-  let currentMintPolicyAddress;
+  let currentMintPolicyAddress = '';
   let endTime,
     maxMemberCount,
     maxTotalSupply,
@@ -17,24 +17,31 @@ export const getSyndicateValues = async (
     requiredTokenMinBalance,
     startTime;
   if (mintModule && activeMintReqs) {
-    currentMintPolicyAddress = guardMixinManager.address;
+    currentMintPolicyAddress = guardMixinManager.address || '';
     startTime = activeMintReqs.startTime;
     endTime = activeMintReqs.endTime;
     maxMemberCount = activeMintReqs.maxMemberCount;
     maxTotalSupply = activeMintReqs.maxTotalSupply;
   } else {
-    currentMintPolicyAddress = policyMintERC20.address;
+    if (policyMintERC20) {
+      currentMintPolicyAddress = policyMintERC20?.address || '';
+      ({
+        endTime,
+        maxMemberCount,
+        maxTotalSupply,
+        requiredToken,
+        requiredTokenMinBalance,
+        startTime
+      } = await policyMintERC20?.getSyndicateValues(address));
+    }
 
-    ({
-      endTime,
-      maxMemberCount,
-      maxTotalSupply,
-      requiredToken,
-      requiredTokenMinBalance,
-      startTime
-    } = await policyMintERC20?.getSyndicateValues(address));
-
-    if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
+    if (
+      !+endTime &&
+      !+maxMemberCount &&
+      !+maxTotalSupply &&
+      !+startTime &&
+      mintPolicy
+    ) {
       ({
         endTime,
         maxMemberCount,
@@ -45,7 +52,7 @@ export const getSyndicateValues = async (
       } = await mintPolicy?.getSyndicateValues(address));
 
       // Change current mint policy
-      currentMintPolicyAddress = mintPolicy.address;
+      currentMintPolicyAddress = mintPolicy?.address;
     }
   }
 

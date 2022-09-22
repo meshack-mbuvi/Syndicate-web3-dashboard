@@ -173,7 +173,6 @@ const ModifyTokenGatedClub: React.FC = () => {
     activeNetwork,
     account
   );
-  console.log({ isDemoMode });
 
   useEffect(() => {
     if (

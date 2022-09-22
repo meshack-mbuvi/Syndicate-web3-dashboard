@@ -611,6 +611,7 @@ const Distribute: FC = () => {
             <Layout
               managerSettingsOpen={false}
               showNav={true}
+              showNavButton={true}
               showBackButton={true}
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
@@ -632,6 +633,3 @@ const Distribute: FC = () => {
 };
 
 export default Distribute;
-function EstimateDistributionsGas() {
-  throw new Error('Function not implemented.');
-}

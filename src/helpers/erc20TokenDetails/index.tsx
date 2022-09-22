@@ -8,9 +8,9 @@ import {
   setActiveModuleDetails,
   setERC20TokenContract,
   setERC20TokenDetails,
+  setIsNewClub,
   setLoadingClub,
-  setTokenGatingDetails,
-  setIsNewClub
+  setTokenGatingDetails
 } from '@/state/erc20token/slice';
 import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
 import { IActiveNetwork } from '@/state/wallet/types';
@@ -132,7 +132,7 @@ export const getERC20TokenDetails = async (
 
       // Check both mint policies
       let claimEnabledPolicyMintERC20;
-      if (policyMintERC20.address) {
+      if (policyMintERC20?.address) {
         claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
           address,
           MerkleDistributorModule.contract._address
@@ -140,7 +140,7 @@ export const getERC20TokenDetails = async (
       }
 
       let claimEnabledMintPolicy;
-      if (mintPolicy.address) {
+      if (mintPolicy?.address) {
         claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
           address,
           MerkleDistributorModule.contract._address
