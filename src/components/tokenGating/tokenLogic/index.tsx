@@ -149,9 +149,9 @@ export const TokenLogicList: React.FC<Props> = ({
         {/* Token name / button */}
         <button
           className="w-8/12 relative flex-grow flex space-x-3 items-center"
-          onClick={() =>
-            handleTokenSelection({ idx: index, quantity: rule.quantity })
-          }
+          onClick={() => {
+            handleTokenSelection({ idx: index, quantity: rule.quantity });
+          }}
         >
           {/* Icon */}
           {!rule.name ? (

@@ -36,8 +36,8 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
-import { EstimateDistributionsGas } from './estimateDistributionsGas';
 import TokenSelector from './TokenSelector';
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 
 enum Steps {
   selectTokens = 'select tokens',
@@ -70,9 +70,6 @@ const Distribute: FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
-  // calls the estimate gas function which changes the redux state of gasEstimate
-  EstimateDistributionsGas();
-
   // fetch club members
   useClubTokenMembers();
 
@@ -85,6 +82,7 @@ const Distribute: FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [isClubFound, setIsClubFound] = useState(false);
+  const [hasError, setHasError] = useState(true);
 
   const {
     owner,
@@ -95,6 +93,20 @@ const Distribute: FC = () => {
     address,
     symbol
   } = erc20Token;
+
+  const { gas: gasPrice, fiatAmount } = useGasDetails({
+    contract: ContractMapper.DistributionsERC20,
+    withFiatCurrency: true,
+    args: {
+      numSelectedTokens: distributionTokens.length,
+      clubAddress: '0xb02a13a268339bedd892a00ff132da4352ed9df5',
+      distributionERC20Address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+      totalDistributionAmount: 0,
+      members: ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0'],
+      batchIdentifier: 'batch137'
+    },
+    skipQuery: !distributionTokens.length
+  });
 
   // Prepare distributions tokens for overview badge
   const router = useRouter();
@@ -180,7 +192,6 @@ const Distribute: FC = () => {
 
   useEffect(() => {
     if (loadingClubMembers) return;
-
     dispatch(setDistributionMembers(clubMembers));
   }, [JSON.stringify(clubMembers), loadingClubMembers]);
 
@@ -297,7 +308,6 @@ const Distribute: FC = () => {
       const selectedTokens = _options.filter((_, index) => {
         return activeIndices.includes(index);
       });
-
       dispatch(setDistributeTokens(selectedTokens));
     } else {
       dispatch(setDistributeTokens([]));
@@ -497,7 +507,6 @@ const Distribute: FC = () => {
     loadingAssets
   ]);
 
-  const [hasError, setHasError] = useState(true);
   useEffect(() => {
     const _hasError = _options.some((option) => option.error);
     setHasError(_hasError);
@@ -513,9 +522,15 @@ const Distribute: FC = () => {
     <div className="space-y-8">
       <BadgeWithOverview
         tokensDetails={tokensDetails}
-        gasEstimate={gasEstimate}
-        isLoading={isLoading}
-        numSelectedTokens={distributionTokens.length}
+        gasEstimate={
+          gasPrice
+            ? {
+                tokenSymbol: 'ETH',
+                tokenAmount: String(gasPrice),
+                fiatAmount: fiatAmount
+              }
+            : null
+        }
         isCTADisabled={ctaButtonDisabled || !sufficientGas || hasError}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'

@@ -1,9 +1,9 @@
-import { Callout } from '@/components/callout';
 import { CtaButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import React, { useState } from 'react';
+import { Callout } from '@/components/callout';
 
 interface Props {
   tokensDetails?: {
@@ -18,8 +18,6 @@ interface Props {
     tokenAmount?: string;
     fiatAmount?: string;
   };
-  isLoading: boolean;
-  numSelectedTokens?: number;
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
@@ -29,8 +27,6 @@ interface Props {
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
-  isLoading,
-  numSelectedTokens,
   CTALabel,
   isCTADisabled,
   ctaOnclickHandler,
@@ -46,8 +42,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
     return total + tokenDetails.fiatAmount;
   }, 0);
 
-  const totalFiatAmount =
-    fiatAmount + +gasEstimate.fiatAmount * numSelectedTokens;
+  const totalFiatAmount = fiatAmount + +gasEstimate?.fiatAmount;
 
   const renderedTokenRows = tokensDetails?.map((tokenDetails, index) => {
     return (
@@ -160,22 +155,17 @@ export const BadgeWithOverview: React.FC<Props> = ({
                       />
                     </div>
                     <div className="pl-1">
-                      {isLoading
+                      {!gasEstimate
                         ? '-'
-                        : (
-                            parseFloat(gasEstimate.tokenAmount) *
-                            numSelectedTokens
-                          ).toFixed(6)}
+                        : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
                     </div>
-                    <div>{gasEstimate.tokenSymbol}</div>
+                    <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
                   <div>
                     $
-                    {isLoading
+                    {!gasEstimate
                       ? ' -'
-                      : (
-                          parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
-                        ).toFixed(2)}
+                      : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                   </div>
                 </div>
               </Callout>
@@ -232,7 +222,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
               </div>
             </div>
             {/* Gas estimate */}
-            <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
+            <Callout extraClasses="rounded-xl px-4 py-3 text-sm mx-4">
               <div className="flex justify-between">
                 <div className="flex space-x-1">
                   <div>Estimated gas</div>
@@ -243,23 +233,18 @@ export const BadgeWithOverview: React.FC<Props> = ({
                       alt="Gas icon"
                     />
                   </div>
-                  <div>
-                    {isLoading
+                  <div className="pl-1">
+                    {!gasEstimate
                       ? '-'
-                      : (
-                          parseFloat(gasEstimate.tokenAmount) *
-                          numSelectedTokens
-                        ).toFixed(6)}
+                      : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
                   </div>
-                  <div>{gasEstimate.tokenSymbol}</div>
+                  <div>{gasEstimate?.tokenSymbol}</div>
                 </div>
-                <div className="">
+                <div>
                   $
-                  {isLoading
+                  {!gasEstimate
                     ? ' -'
-                    : (
-                        parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
-                      ).toFixed(2)}
+                    : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                 </div>
               </div>
             </Callout>

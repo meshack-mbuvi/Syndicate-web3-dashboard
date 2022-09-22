@@ -53,7 +53,7 @@ export const CollectivesFileUploader: React.FC<Props> = ({
           onClick={() => {
             amplitudeLogger(ARTWORK_GENERATE, {
               flow: Flow.COLLECTIVE_CREATE
-            })
+            });
             handleCreateGenerateArtwork(
               GeneratedArtworkDarkBGColors[
                 Math.floor(

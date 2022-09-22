@@ -26,7 +26,8 @@ export enum ContractMapper {
   MaxMemberCountMixin,
   MaxTotalSupplyMixin,
   TokenGatedMixin,
-  CloseClubPostMint
+  CloseClubPostMint,
+  DistributionsERC20
 }
 
 interface IProps {
@@ -60,7 +61,8 @@ const useGasDetails: (props: IProps) => {
         erc721Collective,
         maxMemberCountMixin,
         maxTotalSupplyMixin,
-        tokenGatedMixin
+        tokenGatedMixin,
+        distributionsERC20
       }
     },
     collectiveDetailsReducer: { activeRow }
@@ -336,6 +338,29 @@ const useGasDetails: (props: IProps) => {
           setGasUnits
         );
       }
+    },
+    [ContractMapper.DistributionsERC20]: {
+      syndicateContract: distributionsERC20,
+      estimateGas: () => {
+        if (
+          !distributionsERC20 ||
+          !args.clubAddress ||
+          !args.distributionERC20Address ||
+          !args.members ||
+          !args.numSelectedTokens
+        )
+          return;
+        distributionsERC20.getEstimateGasDistributeERC20(
+          account,
+          args.numSelectedTokens,
+          args.clubAddress,
+          args.distributionERC20Address,
+          args.totalDistributionAmount,
+          args.members,
+          args.batchIdentifier,
+          setGasUnits
+        );
+      }
     }
   };
 
@@ -364,7 +389,7 @@ const useGasDetails: (props: IProps) => {
     if (activeNetwork.chainId) {
       void fetchGasUnitAndBaseFee();
     }
-  }, [activeNetwork.chainId, skipQuery]);
+  }, [activeNetwork.chainId, skipQuery, args]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
