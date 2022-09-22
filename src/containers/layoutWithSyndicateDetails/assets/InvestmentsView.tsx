@@ -1,5 +1,5 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { useIsClubMember, useIsClubOwner } from '@/hooks/useClubOwner';
+import { H4 } from '@/components/typography';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
@@ -10,30 +10,33 @@ import {
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { ArrowRightIcon } from '@heroicons/react/outline';
 import moment from 'moment';
 import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ActivityModal from '../activity/shared/ActivityModal';
-import { ArrowRightIcon } from '@heroicons/react/outline';
-import { H4 } from '@/components/typography';
 
 interface InvestmentsViewProps {
   pageOffset: number;
   setPageOffset: Dispatch<SetStateAction<number>>;
   canNextPage: boolean;
+  isMember: boolean;
   transactionsLoading: boolean;
   dataLimit: number;
   refetchTransactions: () => void;
+  isOwner: boolean;
 }
 
 const InvestmentsView: FC<InvestmentsViewProps> = ({
+  isOwner,
   pageOffset,
   setPageOffset,
   canNextPage,
   transactionsLoading,
   dataLimit,
-  refetchTransactions
+  refetchTransactions,
+  isMember
 }) => {
   const {
     transactionsReducer: {
@@ -55,8 +58,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const investmentsTableRef = useRef(null);
 
   const dispatch = useDispatch();
-  const isOwner = useIsClubOwner();
-  const isMember = useIsClubMember();
+
   // pagination functions
   function goToNextPage() {
     investmentsTableRef.current.focus();
@@ -303,6 +305,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                   isMember || isOwner ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => viewInvestmentDetails(investmentData)}
+                onKeyDown={() => viewInvestmentDetails(investmentData)}
+                tabIndex={index}
+                role="button"
               >
                 <div className="flex flex-row col-span-3 items-center">
                   <div className="text-base flex items-center">
@@ -434,6 +439,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
         )}
       </div>
       <ActivityModal
+        isOwner={isOwner}
         showModal={showOffChainInvestmentsModal}
         closeModal={() => {
           setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.

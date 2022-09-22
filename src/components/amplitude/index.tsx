@@ -1,9 +1,9 @@
 /**
 https://developers.amplitude.com/docs/how-amplitude-works
  */
+import { isDev } from '@/utils/environment';
 import amplitude from 'amplitude-js';
 import { useEffect } from 'react';
-import { isDev } from '@/utils/environment';
 
 const AMPLITUDE_API_KEY = isDev
   ? process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_DEVELOPMENT

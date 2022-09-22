@@ -121,6 +121,9 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
           className="flex items-center cursor-pointer"
           onClick={() => toggleDropdown()}
           onMouseLeave={() => closeDropDown()}
+          onKeyDown={() => null}
+          role="button"
+          tabIndex={0}
         >
           <div className="flex flex-shrink ml-4 justify-start items-center">
             <div className={`whitespace-nowrap py-4`}>

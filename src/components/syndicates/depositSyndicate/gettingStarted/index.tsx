@@ -4,7 +4,6 @@ import { EmailSupport } from '@/components/emailSupport';
 import { Spinner } from '@/components/shared/spinner';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { AppState } from '@/state';
-import { setClubMembers } from '@/state/clubMembers';
 import { CheckIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -48,7 +47,6 @@ const GettingStarted: React.FC = () => {
 
       return () => {
         resetClubState(dispatch);
-        dispatch(setClubMembers([]));
       };
     }
   }, [clubAddress, account, router.isReady, activeNetwork]);

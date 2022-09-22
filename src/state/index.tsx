@@ -4,12 +4,12 @@ import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
 import clubERC20sReducer from '@/state/clubERC20';
-import clubMembersSliceReducer from '@/state/clubMembers';
+import collectiveDetailsReducer from '@/state/collectiveDetails';
 import collectivesSlice from '@/state/collectives/slice';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
-import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
+import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
 import distributeTokensReducer from '@/state/distributions';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
 import transactionsReducer from '@/state/erc20transactions/index';
@@ -17,14 +17,13 @@ import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
 import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
 import featureFlagClientSliceReducer from '@/state/featureFlagClient/slice';
+import gasDetailsSlice from '@/state/gasDetails';
 import legalInfoReducer from '@/state/legalInfo';
 import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
-import gasDetailsSlice from '@/state/gasDetails';
 import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
-import collectiveDetailsReducer from '@/state/collectiveDetails';
 import web3Reducer from '@/state/wallet/reducer';
 import { isDev } from '@/utils/environment';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -33,7 +32,6 @@ import { createWrapper } from 'next-redux-wrapper';
 export const store = configureStore({
   reducer: {
     clubERC20sReducer,
-    clubMembersSliceReducer,
     createInvestmentClubSliceReducer,
     createCollectiveSliceReducer,
     erc20TokenSliceReducer,

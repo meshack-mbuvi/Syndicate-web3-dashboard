@@ -1,6 +1,7 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
@@ -15,8 +16,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -32,6 +31,7 @@ interface ICategoryPill {
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
   uncategorisedIcon?: string;
   disableDropDown?: boolean;
+  isOwner: boolean;
 }
 
 /**
@@ -56,7 +56,8 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   showLoader = false,
   setActiveTransactionHash,
   uncategorisedIcon,
-  disableDropDown
+  disableDropDown,
+  isOwner
 }) => {
   const dispatch = useDispatch();
   const {
@@ -67,7 +68,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
 
-  const isManager = useIsClubOwner();
   const categorySelect = useRef(null);
   const [pillIcon, setPillIcon] = useState<string>('');
   const [pillText, setPillText] = useState<string>('');
@@ -292,12 +292,15 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   return (
     <div
       className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 ${
-        !readonly && isManager ? 'cursor-pointer' : 'cursor-default'
+        !readonly && isOwner ? 'cursor-pointer' : 'cursor-default'
       }`}
       onClick={() => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
       onMouseEnter={() => setPillActiveRowState(true)}
       onMouseLeave={() => setPillActiveRowState(false)}
+      onKeyDown={() => null}
+      tabIndex={0}
+      role="button"
     >
       <div className="flex justify-start items-center">
         {!showLoader ? (
@@ -327,12 +330,12 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 
       {!(readonly || showLoader) ? (
         <div className="ml-2 mr-3">
-          {isManager && (
+          {isOwner && (
             <img src="/images/activity/chevron-down.svg" alt="chevron-down" />
           )}
         </div>
       ) : null}
-      {showDropdown && isManager && !showLoader ? (
+      {showDropdown && isOwner && !showLoader ? (
         <div
           className="mt-2 absolute top-10 -left-2 transition-all duration-500 ease-in-out z-10"
           onMouseLeave={() => closeDropDown()}

@@ -1,4 +1,5 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { H4 } from '@/components/typography';
 import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -12,9 +13,11 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { FC, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
-import { H4 } from '@/components/typography';
 
-const Collectibles: FC = () => {
+interface Props {
+  isOwner: boolean;
+}
+const Collectibles: FC<Props> = ({ isOwner }) => {
   const {
     assetsSliceReducer: {
       collectiblesResult,
@@ -318,7 +321,7 @@ const Collectibles: FC = () => {
           </InfiniteScroll>
         </div>
       )}
-      <CollectibleDetailsModal />
+      <CollectibleDetailsModal isOwner={isOwner} />
     </div>
   );
 };

@@ -2,12 +2,11 @@ import { SearchInput } from '@/components/inputs';
 import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
-  useFetchRecentTransactions,
-  getInput
+  getInput,
+  useFetchRecentTransactions
 } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import {
@@ -28,7 +27,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FilterPill from '../shared/FilterPill';
 
-const ActivityTable: React.FC = () => {
+const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   const dispatch = useDispatch();
   const {
     transactionsReducer: { totalTransactionsCount },
@@ -42,7 +41,6 @@ const ActivityTable: React.FC = () => {
       web3: { activeNetwork, account }
     }
   } = useSelector((state: AppState) => state);
-  const isManager = useIsClubOwner();
   const router = useRouter();
   const {
     query: { clubAddress }
@@ -405,7 +403,7 @@ const ActivityTable: React.FC = () => {
     checkboxIndex: number,
     checkboxVisible: boolean
   ) => {
-    if (!isManager) return;
+    if (!isOwner) return;
     const data = transactionsData?.Financial_recentTransactions?.edges?.map(
       (item, index) => {
         return {
@@ -478,6 +476,7 @@ const ActivityTable: React.FC = () => {
               outgoing={groupTransactionsDestination}
               bulkCategoriseTransactions={bulkCategoriseTransactions}
               uncategorisedIcon={uncategorisedIcon}
+              isOwner={isOwner}
             />
             <div
               className="flex justify-start cursor-pointer"
@@ -499,6 +498,7 @@ const ActivityTable: React.FC = () => {
       Feel free to re-introduce if a better fix is found. */}
       <TransactionsTable
         canNextPage={canNextPage}
+        isOwner={isOwner}
         dataLimit={DATA_LIMIT}
         pageOffset={pageOffset}
         refetchTransactions={refetchTransactions}

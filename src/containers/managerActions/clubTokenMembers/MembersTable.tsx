@@ -4,7 +4,6 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { SET_MEMBER_SIGN_STATUS } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { formatAddress } from '@/utils/formatAddress';
@@ -13,7 +12,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { ExclamationCircleIcon } from '@heroicons/react/solid';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePagination, useTable } from 'react-table';
 
@@ -30,7 +29,8 @@ const MembersTable = ({
   setSelectedMember,
   toggleAddMemberModal,
   setShowMemberOptions,
-  setShowMintNavToClubSettings
+  setShowMintNavToClubSettings,
+  isOwner
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
@@ -41,8 +41,6 @@ const MembersTable = ({
       web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-
-  const isOwner = useIsClubOwner();
 
   const {
     getTableProps,

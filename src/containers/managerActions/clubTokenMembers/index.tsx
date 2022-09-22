@@ -2,7 +2,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
 import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
@@ -11,7 +11,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink from '../GenerateDepositLink';
@@ -20,10 +20,11 @@ import { MemberAddressComponent } from './memberAddress';
 import MembersTable from './MembersTable';
 import MoreOptions from './moreOptions';
 
-const ClubTokenMembers = (): JSX.Element => {
+const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
+  isOwner
+}): JSX.Element => {
   // retrieve state variables
   const {
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
       depositDetails: { depositTokenSymbol, nativeDepositToken },
       erc20Token: { depositsEnabled }
@@ -37,9 +38,10 @@ const ClubTokenMembers = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
-  const isOwner = useIsClubOwner();
   const router = useRouter();
-  const { clubAddress } = router.query;
+  const {
+    query: { clubAddress }
+  } = router;
 
   const [filteredAddress, setFilteredAddress] = useState('');
 
@@ -52,6 +54,9 @@ const ClubTokenMembers = (): JSX.Element => {
   const [showMintTokensModal, toggleMintTokensModal] = useState(false);
   const [showMintNavToClubSettings, setShowMintNavToClubSettings] =
     useState(false);
+
+  // fetch club members
+  const { clubMembers, isFetchingMembers } = useClubTokenMembers();
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -228,7 +233,7 @@ const ClubTokenMembers = (): JSX.Element => {
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12 overflow-x-scroll no-scroll-bar sm:overflow-x-auto -mr-6 sm:mr-auto">
-        {loadingClubMembers ? (
+        {isFetchingMembers ? (
           <>
             <div className="mb-8 mt-10">
               <SkeletonLoader width="36" height="6" borderRadius="rounded-md" />
@@ -276,6 +281,7 @@ const ClubTokenMembers = (): JSX.Element => {
         ) : tableData.length || filteredAddress ? (
           <div className="w-max sm:w-auto mb-12">
             <MembersTable
+              isOwner={isOwner}
               columns={columns}
               data={tableData}
               filterAddressOnChangeHandler={filterAddressOnChangeHandler}

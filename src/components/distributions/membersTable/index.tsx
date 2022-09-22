@@ -506,7 +506,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
     <div
       className={`relative overflow-scroll no-scroll-bar w-full ${extraClasses}`}
     >
-      {!hideSearch && (
+      {!hideSearch && _membersDetails.length !== 0 && (
         <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
           <SearchInput
             {...{
@@ -541,7 +541,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
             Double check the wallet address or try another search
           </B2>
         </div>
-      ) : (
+      ) : _membersDetails.length ? (
         <>
           <div className="mb-2 w-full">{renderedHeader}</div>
           <div className="w-full">{renderedTable}</div>
@@ -549,6 +549,16 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
           <div className="w-full">{renderedFooter}</div>
         </>
+      ) : (
+        <div className="flex flex-col justify-center space-y-4 my-11">
+          <H4 className="text-xl text-center">
+            This club does not have members.
+          </H4>
+
+          <B2 className="text-gray-syn4 text-center">
+            Distributions can only be made for a club with members.
+          </B2>
+        </div>
       )}
     </div>
   );

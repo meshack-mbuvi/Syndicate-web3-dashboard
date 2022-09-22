@@ -1,21 +1,16 @@
 // component to show syndicate deposits progress
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import NumberTreatment from '@/components/NumberTreatment';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
+import { AppState } from '@/state';
+import { IActiveNetwork } from '@/state/wallet/types';
 import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { SkeletonLoader } from 'src/components/skeletonLoader';
-import NumberTreatment from '@/components/NumberTreatment';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { AppState } from '@/state';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { ProgressIndicatorTooltip } from '../progressIndicatorTooltip';
-import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
-import { IActiveNetwork } from '@/state/wallet/types';
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;
@@ -54,9 +49,10 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
 
   // states
   const {
-    erc20TokenSliceReducer: { erc20Token },
-    clubMembersSliceReducer: { clubMembers }
+    erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
+
+  const { clubMembers } = useClubTokenMembers();
 
   const { maxTotalSupply, address, symbol } = erc20Token;
   const { totalSupply } = useClubDepositsAndSupply(address);

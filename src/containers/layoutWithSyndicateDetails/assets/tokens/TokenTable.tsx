@@ -15,9 +15,10 @@ interface Props {
   columns: string[];
   tableData: any[];
   activeAssetTab: string;
+  isOwner: boolean;
 }
 
-const TokenTable: FC<Props> = ({ columns, tableData }) => {
+const TokenTable: FC<Props> = ({ columns, tableData, isOwner }) => {
   const {
     assetsSliceReducer: { loading },
     erc20TokenSliceReducer: {
@@ -292,6 +293,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             showModal={showTokenModal}
             closeModal={() => setShowTokenModal()}
             tokenDetails={tokenDetails}
+            isOwner={isOwner}
           />
         </div>
       </div>

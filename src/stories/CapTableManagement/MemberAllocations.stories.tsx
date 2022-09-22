@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Provider } from 'react-redux';
-import { store } from '@/state/index';
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
-import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
 import { ProgressState } from '@/components/progressCard';
+import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
+import { store } from '@/state/index';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { useState } from 'react';
+import { Provider } from 'react-redux';
 
 const client = new ApolloClient({
   uri: '#',
@@ -100,7 +100,6 @@ const Template = (args) => {
   return (
     <ModifyMemberClubTokens
       {...args}
-      clubMembers={data}
       showModifyCapTable={showModifyCapTable}
       setShowModifyCapTable={setShowModifyCapTable}
       member={member}

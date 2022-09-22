@@ -1,10 +1,11 @@
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
-import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
+import { ProgressState } from '@/components/progressCard';
 import { ProgressModal } from '@/components/progressModal';
 import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
 import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
@@ -17,8 +18,6 @@ import {
 } from '@/utils/formattedNumbers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CONTRACT_ADDRESSES } from '@/Networks';
-import { ProgressState } from '@/components/progressCard';
 
 const ModifyClubTokens: React.FC<{
   showModifyCapTable;
@@ -28,7 +27,6 @@ const ModifyClubTokens: React.FC<{
   const dispatch = useDispatch();
 
   const {
-    clubMembersSliceReducer: { clubMembers },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, maxTotalSupply, address },
       erc20TokenContract
@@ -39,6 +37,8 @@ const ModifyClubTokens: React.FC<{
     },
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
+
+  const { clubMembers } = useClubTokenMembers();
 
   const { totalSupply } = useClubDepositsAndSupply(address);
   const [preview, setPreview] = useModal();

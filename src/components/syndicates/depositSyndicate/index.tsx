@@ -1,4 +1,6 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import ArrowDown from '@/components/icons/arrowDown';
@@ -8,14 +10,15 @@ import { Spinner } from '@/components/shared/spinner';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
+import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubMember } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
@@ -45,14 +48,11 @@ import ERC20ABI from 'src/utils/abi/erc20';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
 
+import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
-import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
+import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -315,7 +315,19 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const [, setpreviousAccountTokens] = useState(accountTokens);
-  const isMember = useIsClubMember();
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    if (!account || !address || isEmpty(web3)) return;
+
+    getMemberBalance(address, account, web3, activeNetwork).then((balance) => {
+      if (balance) {
+        setIsMember(true);
+      } else {
+        setIsMember(false);
+      }
+    });
+  }, [account, address]);
 
   // since the subgraph might give us old data on refetch,
   // we need to compare old and new data as we continue to poll.

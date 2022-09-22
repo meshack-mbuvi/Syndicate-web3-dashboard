@@ -1,9 +1,9 @@
-import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
-import { Provider } from 'react-redux';
-import { store } from '@/state/index';
-import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
+import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import { store } from '@/state/index';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { Provider } from 'react-redux';
 
 const client = new ApolloClient({
   uri: '#',
@@ -39,7 +39,8 @@ Investment.args = {
   isTransactionAnnotated: true,
   addresses: ['0x2d368d6a84b791d634e6f9f81908d884849fd43d'],
   category: 'INVESTMENT',
-  onModal: true
+  onModal: true,
+  contractAddress: ''
 };
 
 export const Distribution = Template.bind({});

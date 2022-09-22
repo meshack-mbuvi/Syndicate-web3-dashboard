@@ -1,3 +1,53 @@
+import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
+import { TimeInputField } from '@/components/inputs/timeInputField';
+import Modal, { ModalStyle } from '@/components/modal';
+import { B2 } from '@/components/typography';
+import AllowedMembers from '@/containers/createInvestmentClub/membership/allowedMembers';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { SUPPORTED_TOKENS } from '@/Networks';
+import { AppState } from '@/state';
+import { setActiveRowIdx } from '@/state/collectiveDetails';
+import { EditRowIndex } from '@/state/collectiveDetails/types';
+import {
+  resetClubCreationReduxState,
+  setActiveTokenGateOption,
+  setLogicalOperator,
+  setTokenRules
+} from '@/state/createInvestmentClub/slice';
+import {
+  LogicalOperator,
+  TokenGateOption
+} from '@/state/createInvestmentClub/types';
+import {
+  setExistingAmountRaised,
+  setExistingIsOpenToDeposits,
+  setExistingMaxAmountRaising,
+  setExistingMaxNumberOfMembers,
+  setExistingNumberOfMembers,
+  setExistingOpenToDepositsUntil,
+  setMaxAmountRaising,
+  setMaxNumberOfMembers
+} from '@/state/modifyClubSettings/slice';
+import { Status } from '@/state/wallet/types';
+import { IRequiredTokenRules } from '@/types/modules';
+import { isZeroAddress } from '@/utils';
+import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
+import { DAY_IN_SECONDS } from '@/utils/constants';
+
+import { getWeiAmount } from '@/utils/conversions';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import {
+  floatedNumberWithCommas,
+  numberInputRemoveCommas
+} from '@/utils/formattedNumbers';
+import { validateAndOrderTokenRules } from '@/utils/mixins/mixinHelpers';
+import { BigNumber } from 'bignumber.js';
+import moment from 'moment';
+import { default as _moment } from 'moment-timezone';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   SetStateAction,
@@ -5,68 +55,19 @@ import React, {
   useEffect,
   useState
 } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import AddToCalendar from '../addToCalendar';
 import BackButton from '../buttons/BackButton';
 import { CollapsibleTable } from '../collapsibleTable';
-import { SkeletonLoader } from '../skeletonLoader';
-import { T5, H4 } from '../typography';
-import Image from 'next/image';
-import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
-import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { TimeInputField } from '@/components/inputs/timeInputField';
-import { default as _moment } from 'moment-timezone';
-import moment from 'moment';
-import AddToCalendar from '../addToCalendar';
+import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
+import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '../inputs/inputFieldWithToken';
-import {
-  floatedNumberWithCommas,
-  numberInputRemoveCommas
-} from '@/utils/formattedNumbers';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
-import { useRouter } from 'next/router';
-import Modal, { ModalStyle } from '@/components/modal';
-import { B2 } from '@/components/typography';
 import { ProgressCard, ProgressState } from '../progressCard';
-import {
-  LogicalOperator,
-  TokenGateOption
-} from '@/state/createInvestmentClub/types';
-import { getWeiAmount } from '@/utils/conversions';
-import AllowedMembers from '@/containers/createInvestmentClub/membership/allowedMembers';
-import { DAY_IN_SECONDS } from '@/utils/constants';
-import {
-  setExistingOpenToDepositsUntil,
-  setExistingIsOpenToDeposits,
-  setExistingMaxAmountRaising,
-  setExistingAmountRaised,
-  setExistingMaxNumberOfMembers,
-  setExistingNumberOfMembers,
-  setMaxNumberOfMembers,
-  setMaxAmountRaising
-} from '@/state/modifyClubSettings/slice';
-import { setActiveRowIdx } from '@/state/collectiveDetails';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
-import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
-import { BigNumber } from 'bignumber.js';
-import { validateAndOrderTokenRules } from '@/utils/mixins/mixinHelpers';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
-import { SUPPORTED_TOKENS } from '@/Networks';
-import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
-import {
-  resetClubCreationReduxState,
-  setActiveTokenGateOption,
-  setLogicalOperator,
-  setTokenRules
-} from '@/state/createInvestmentClub/slice';
-import { isZeroAddress } from '@/utils';
-import { IRequiredTokenRules } from '@/types/modules';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import { Status } from '@/state/wallet/types';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import { SkeletonLoader } from '../skeletonLoader';
+import { H4, T5 } from '../typography';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -162,10 +163,17 @@ const ModifyTokenGatedClub: React.FC = () => {
     location: ''
   };
 
-  const isOwner = useIsClubOwner();
   const isDemoMode = useDemoMode();
 
   const { pathname, isReady } = router;
+
+  const { isOwner, isLoading } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
+  console.log({ isDemoMode });
 
   useEffect(() => {
     if (
@@ -173,26 +181,20 @@ const ModifyTokenGatedClub: React.FC = () => {
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
-      !isReady
+      !isReady ||
+      isLoading
     )
       return;
 
-    if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
+    if (
+      (pathname.includes('/modify') && !isOwner && !isLoading) ||
+      isDemoMode
+    ) {
       router.replace(
         `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }
-  }, [
-    owner,
-    clubAddress,
-    account,
-    loading,
-    status,
-    isReady,
-    isOwner,
-    pathname,
-    isDemoMode
-  ]);
+  }, [isReady, isLoading]);
 
   const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
     activeNetwork.nativeCurrency;

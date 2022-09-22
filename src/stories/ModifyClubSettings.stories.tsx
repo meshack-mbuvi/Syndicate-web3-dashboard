@@ -1,6 +1,6 @@
 import { ModifyClubSettings } from '@/components/modifyClub';
-import { Provider } from 'react-redux';
 import { store } from '@/state/index';
+import { Provider } from 'react-redux';
 
 export default {
   title: '4. Organisms/Modify Club Settings/Settings Modal',

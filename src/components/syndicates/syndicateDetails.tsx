@@ -1,14 +1,15 @@
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { B1, B3 } from '@/components/typography';
 import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
+import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
@@ -19,8 +20,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NumberTreatment from '../NumberTreatment';
 import { DetailsCard, ProgressIndicator } from './shared';
-import { B1, B3 } from '@/components/typography';
-import { divideIfNotByZero } from '@/utils/conversions';
 
 interface ClubDetails {
   header: string;
@@ -30,10 +29,10 @@ interface ClubDetails {
 }
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
-  managerSettingsOpen,
-  children
-}) => {
+const SyndicateDetails: FC<{
+  managerSettingsOpen: boolean;
+  isOwner: boolean;
+}> = ({ managerSettingsOpen, isOwner, children }) => {
   const {
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -423,15 +422,15 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     depositTokenPriceInUSD
   ]);
 
-  const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
-  const isOwnerOrMember =
-    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   const [showDuplicateClubWarning, setShowDuplicateClubWarning] =
     useState(false);
   const [duplicateClubWarningExists, setDuplicateClubWarningExists] =
     useState(false);
+
+  const isOwnerOrMember =
+    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   useEffect(() => {
     const duplicateWarningCookieSet = document.cookie

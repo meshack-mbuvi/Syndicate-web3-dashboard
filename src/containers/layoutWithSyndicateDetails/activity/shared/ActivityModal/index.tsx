@@ -1,4 +1,7 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
+import Modal, { ModalStyle } from '@/components/modal';
 import { SimpleTable } from '@/components/simpleTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
@@ -7,20 +10,16 @@ import {
   SET_MEMBER_SIGN_STATUS
 } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
-import Modal, { ModalStyle } from '@/components/modal';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 
 interface IActivityModal {
   showModal: boolean;
@@ -28,6 +27,7 @@ interface IActivityModal {
   refetchTransactions: () => void;
   showNote: boolean;
   setShowNote: any;
+  isOwner: boolean;
 }
 
 /**
@@ -42,7 +42,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
   closeModal,
   refetchTransactions,
   showNote,
-  setShowNote
+  setShowNote,
+  isOwner
 }) => {
   const {
     web3Reducer: {
@@ -69,8 +70,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
       erc20Token: { address }
     }
   } = useSelector((state: AppState) => state);
-
-  const isManager = useIsClubOwner();
 
   const isDemoMode = useDemoMode();
 
@@ -286,6 +285,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
             >
               <div className="mb-8">
                 <CategoryPill
+                  isOwner={isOwner}
                   category={category}
                   outgoing={
                     transactionInfo?.isOutgoingTransaction
@@ -305,6 +305,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               {transactionInfo && Object.keys(transactionInfo).length && (
                 // TODO: update this to use multiple token details when PR 3821 is merged
                 <TransactionDetails
+                  contractAddress={address}
                   tokenDetails={[
                     {
                       name: tokenName,
@@ -362,12 +363,12 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
           {/* Show this component only when manager has not marked member signature status 
         
-        Adding essential check for isManager. Members should not see this*/}
+        Adding essential check for isOwner. Members should not see this*/}
 
           {!data?.Financial_memberSigned &&
             !loading &&
             category === 'DEPOSIT' &&
-            isManager && (
+            isOwner && (
               <div className="flex flex-col space-y-6 py-6 px-5">
                 <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
                   <p className="text-gray-syn4 leading-6">
@@ -387,10 +388,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
           {category === 'DEPOSIT' ||
           category === 'UNCATEGORISED' ||
           category === null ||
-          (!isManager && !note && !showDetailSection) ? null : (
+          (!isOwner && !note && !showDetailSection) ? null : (
             <div className="flex flex-col space-y-6 py-6 px-5">
               {/* note */}
-              {!showNote && isManager ? (
+              {!showNote && isOwner ? (
                 <button
                   className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
                   onClick={() => setShowNote(true)}
@@ -404,10 +405,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 </button>
               ) : (
                 <div className="">
-                  {!note && !isManager ? null : (
+                  {!note && !isOwner ? null : (
                     <ActivityNote
                       saveTransactionNote={saveTransactionNote}
                       setShowNote={setShowNote}
+                      isOwner={isOwner}
                     />
                   )}
                 </div>
@@ -418,7 +420,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 category === 'OFF_CHAIN_INVESTMENT') && (
                 <div>
                   {/* Checks if the stored investment details has empty values */}
-                  {!showDetailSection && !editMode && isManager && (
+                  {!showDetailSection && !editMode && isOwner && (
                     <button
                       className="w-full flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
                       onClick={() => handleAddDetails()}
@@ -441,7 +443,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                       storedInvestmentDetails={storedInvestmentDetails}
                       transactionId={hash}
                       setStoredInvestmentDetails={setStoredInvestmentDetails}
-                      isManager={isManager}
+                      isManager={isOwner}
                       onSuccessfulAnnotation={() => {
                         refetchTransactions();
                       }}

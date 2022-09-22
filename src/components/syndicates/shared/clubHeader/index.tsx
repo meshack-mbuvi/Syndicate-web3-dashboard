@@ -5,23 +5,24 @@ import {
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H1 } from '@/components/typography';
 import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import React, { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import GradientAvatar from '../../portfolioAndDiscover/portfolio/GradientAvatar';
 import { BlockExplorerLink } from '../BlockExplorerLink';
 
-export const ClubHeader: React.FC<{
-  name;
-  symbol;
-  owner;
-  loading;
-  clubAddress;
+interface Props {
+  name: string;
+  symbol: string;
+  owner: string;
+  loading: boolean;
+  clubAddress: string;
   totalDeposits;
-  loadingClubDeposits;
+  loadingClubDeposits?;
   managerSettingsOpen;
-}> = (props) => {
+}
+export const ClubHeader: React.FC<Props> = (props) => {
   const {
     name,
     symbol,

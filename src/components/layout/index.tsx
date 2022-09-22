@@ -2,7 +2,7 @@ import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
@@ -62,7 +62,7 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status, activeNetwork }
+      web3: { account, status, activeNetwork, web3 }
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
@@ -83,8 +83,6 @@ const Layout: FC<Props> = ({
     query: { clubAddress }
   } = router;
 
-  const isOwner = useIsClubOwner();
-
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
   // get content to occupy the viewport if we are in these states.
@@ -104,7 +102,16 @@ const Layout: FC<Props> = ({
   const modifyClubPage =
     router.pathname === `/collectives/[collectiveAddress]/modify`;
 
+  const { isOwner, isLoading } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
+
   const handleRouting = () => {
+    if (isLoading) return;
+
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
         `/clubs/${clubAddress}${
@@ -130,7 +137,8 @@ const Layout: FC<Props> = ({
       status === Status.CONNECTING ||
       !owner ||
       !isReady ||
-      isDemoMode
+      isDemoMode ||
+      isLoading
     )
       return;
 
@@ -142,7 +150,6 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner,
     isDemoMode
   ]);
 
@@ -209,7 +216,7 @@ const Layout: FC<Props> = ({
         ) : null}
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-33'
+            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
           } z-20 justify-center items-start my-0 mx-auto ${customClasses}`}
         >
           {children}

@@ -1,10 +1,10 @@
 import React from 'react';
 import ActivityTable from './ActivityTable';
 
-const ActivityView: React.FC = () => {
+const ActivityView: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   return (
     <div className="w-full">
-      <ActivityTable />
+      <ActivityTable isOwner={isOwner} />
     </div>
   );
 };

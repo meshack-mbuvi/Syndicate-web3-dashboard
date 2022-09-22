@@ -1,21 +1,26 @@
 import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
 import { AppState } from '@/state';
-import {
-  clearClubMembers,
-  setClubMembers,
-  setLoadingClubMembers
-} from '@/state/clubMembers';
 import { getWeiAmount } from '@/utils/conversions';
 import { mockClubMembers } from '@/utils/mockdata';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
-const useClubTokenMembers = () => {
-  const dispatch = useDispatch();
+type clubMember = {
+  depositAmount: string;
+  memberAddress: string;
+  clubTokens: string;
+  ownershipShare: number;
+  symbol: string;
+  totalSupply: string;
+};
 
+const useClubTokenMembers = (): {
+  clubMembers: clubMember[];
+  isFetchingMembers: boolean;
+} => {
   const {
     web3Reducer: { web3: web3Instance },
     erc20TokenSliceReducer: {
@@ -24,6 +29,9 @@ const useClubTokenMembers = () => {
     }
   } = useSelector((state: AppState) => state);
 
+  const [clubMembers, setClubMembers] = useState<clubMember[]>([]);
+  const [isFetchingMembers, setIsFetchingMembers] = useState(true);
+
   const router = useRouter();
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
@@ -31,11 +39,7 @@ const useClubTokenMembers = () => {
   const { account, activeNetwork, web3 } = web3Instance;
 
   // Retrieve syndicates that I manage
-  const {
-    loading: loadingClubMembers,
-    refetch,
-    data
-  } = useQuery(CLUB_TOKEN_MEMBERS, {
+  const { loading, refetch, data } = useQuery(CLUB_TOKEN_MEMBERS, {
     variables: {
       where: {
         contractAddress: clubAddress?.toString().toLowerCase()
@@ -49,6 +53,7 @@ const useClubTokenMembers = () => {
     if (!syndicate || !syndicate?.members || !syndicate.members.length) {
       return;
     }
+
     const clubTotalSupply = getWeiAmount(
       web3,
       syndicate.totalSupply,
@@ -56,7 +61,7 @@ const useClubTokenMembers = () => {
       false
     );
 
-    const clubMembers = syndicate.members.map(
+    const _clubMembers = syndicate.members.map(
       ({ depositAmount, tokens, member: { memberAddress } }) => {
         const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
         return {
@@ -75,7 +80,8 @@ const useClubTokenMembers = () => {
       }
     );
 
-    dispatch(setClubMembers(clubMembers));
+    setClubMembers(_clubMembers);
+    setIsFetchingMembers(false);
   };
 
   useEffect(() => {
@@ -91,24 +97,30 @@ const useClubTokenMembers = () => {
   ]);
 
   useEffect(() => {
-    if (loadingClubMembers) {
-      dispatch(setLoadingClubMembers(true));
-    } else if (isDemoMode) {
+    if (isDemoMode) {
       processMembers(mockClubMembers);
-    } else {
-      // remove mock data from the redux store
-      dispatch(clearClubMembers());
+      setIsFetchingMembers(false);
+    }
+
+    if (loading) return;
+
+    if (data?.syndicateDAOs?.[0]?.members?.length) {
+      setClubMembers([]);
 
       processMembers(data?.syndicateDAOs?.[0]);
-      dispatch(setLoadingClubMembers(false));
+    } else {
+      setClubMembers([]);
+      setIsFetchingMembers(false);
     }
   }, [
     JSON.stringify(data?.syndicateDAOs?.[0]),
-    loadingClubMembers,
     clubAddress,
     account,
-    nativeDepositToken
+    nativeDepositToken,
+    loading
   ]);
+
+  return { clubMembers, isFetchingMembers };
 };
 
 export default useClubTokenMembers;

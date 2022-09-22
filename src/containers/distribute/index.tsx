@@ -3,10 +3,10 @@ import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview'
 import Layout from '@/components/layout';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -16,14 +16,9 @@ import {
   setMockCollectiblesResult,
   setMockTokensResult
 } from '@/state/assets/slice';
-import { setClubMembers } from '@/state/clubMembers';
-import {
-  setDistributeTokens,
-  setDistributionMembers,
-  setEth
-} from '@/state/distributions';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
+import { isZeroAddress } from '@/utils';
 import { getSynToken } from '@/utils/api';
 import {
   mockActiveERC20Token,
@@ -37,7 +32,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
 import TokenSelector from './TokenSelector';
-import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 
 enum Steps {
   selectTokens = 'select tokens',
@@ -49,13 +43,7 @@ const Distribute: FC = () => {
     initializeContractsReducer: {
       syndicateContracts: { DepositTokenMintModule }
     },
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
-    distributeTokensReducer: {
-      distributionTokens,
-      gasEstimate,
-      eth,
-      isLoading
-    },
+    distributeTokensReducer: { gasEstimate },
     erc20TokenSliceReducer: {
       erc20Token,
       depositDetails: { nativeDepositToken }
@@ -70,9 +58,6 @@ const Distribute: FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
-  // fetch club members
-  useClubTokenMembers();
-
   const dispatch = useDispatch();
 
   const [tokensDetails, setTokensDetails] = useState([]);
@@ -80,6 +65,21 @@ const Distribute: FC = () => {
   const [sufficientGas, setSufficientGas] = useState(false);
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  /**
+   * Prepare and handle token selection.
+   */
+  const [activeIndices, setActiveIndices] = useState([]);
+  const [_options, setOptions] = useState([]);
+  const [distributionTokens, setDistributionTokens] = useState([]);
+  const [processingTokens, setProcessingTokens] = useState(true);
+  const [currentNativeToken, setCurrentNativeToken] = useState<{
+    available: number;
+    totalToDistribute: number;
+  }>({
+    available: 0,
+    totalToDistribute: 0
+  });
 
   const [isClubFound, setIsClubFound] = useState(false);
   const [hasError, setHasError] = useState(true);
@@ -117,8 +117,14 @@ const Distribute: FC = () => {
     query: { clubAddress }
   } = router;
 
-  const isOwner = useIsClubOwner();
   const isDemoMode = useDemoMode(clubAddress as string);
+
+  const { isOwner } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
 
   useEffect(() => {
     if (!isReady || isEmpty(web3)) return;
@@ -190,18 +196,6 @@ const Distribute: FC = () => {
     };
   }, [JSON.stringify(distributionTokens)]);
 
-  useEffect(() => {
-    if (loadingClubMembers) return;
-    dispatch(setDistributionMembers(clubMembers));
-  }, [JSON.stringify(clubMembers), loadingClubMembers]);
-
-  /**
-   * Prepare and handle token selection.
-   */
-  const [activeIndices, setActiveIndices] = useState([]);
-  const [_options, setOptions] = useState([]);
-  const [processingTokens, setProcessingTokens] = useState(true);
-
   // check whether we have sufficient gas for distribution
   useEffect(() => {
     if (!activeIndices.length) return; // return, there is nothing to distribute
@@ -228,7 +222,7 @@ const Distribute: FC = () => {
       }
     } else {
       // token not selected for distribution
-      if (_loadedNativeToken?.tokenBalance > _totalNativeCurrencyGasEstimate) {
+      if (+_loadedNativeToken?.tokenBalance > _totalNativeCurrencyGasEstimate) {
         // we have enough gas
         setSufficientGas(true);
       } else {
@@ -280,7 +274,9 @@ const Distribute: FC = () => {
                   price: price?.usd ?? 0,
                   fiatAmount: tokenValue,
                   isEditingInFiat: false,
-                  warning: ''
+                  isSelected: false,
+                  warning: '',
+                  error: ''
                 };
               }
             }
@@ -308,13 +304,14 @@ const Distribute: FC = () => {
       const selectedTokens = _options.filter((_, index) => {
         return activeIndices.includes(index);
       });
-      dispatch(setDistributeTokens(selectedTokens));
+
+      setDistributionTokens(selectedTokens);
     } else {
-      dispatch(setDistributeTokens([]));
+      setDistributionTokens([]);
     }
   }, [_options, activeIndices, dispatch]);
 
-  // Whenever the a new token is selected, maximum native token value should be recalculated
+  // Whenever a new token is selected, maximum native token value should be recalculated
   useEffect(() => {
     let _ethIndex = -1;
     const [nativeToken] = _options.filter((token, ethIndex) => {
@@ -328,10 +325,11 @@ const Distribute: FC = () => {
       const { maximumTokenAmount: currentMax } = nativeToken;
 
       // Calculate maximum amount of nativeToken that can be distributed
-      // Note: Added a 0.5 margin for gas estimate inaccuracy
+      // Note: Added a 2% margin for gas estimate inaccuracy
       const _newMaxTokenAmount = activeIndices.length
-        ? +eth.available - +gasEstimate.tokenAmount * activeIndices.length * 1.5
-        : +eth.available - +gasEstimate.tokenAmount * 1.5;
+        ? +currentNativeToken.available -
+          +gasEstimate.tokenAmount * activeIndices.length * 1.2
+        : +currentNativeToken.available - +gasEstimate.tokenAmount * 1.2;
 
       // if maximum value is selected, trigger error message
       let error = '';
@@ -343,7 +341,7 @@ const Distribute: FC = () => {
         setSufficientGas(true);
       }
 
-      // update maximumTokenAmount on ETH token
+      // update maximumTokenAmount on currentNativeToken token
       setOptions([
         ..._options.slice(0, _ethIndex),
         {
@@ -354,19 +352,18 @@ const Distribute: FC = () => {
         ..._options.slice(_ethIndex + 1)
       ]);
     }
-  }, [activeIndices, gasEstimate.tokenAmount]);
+  }, [activeIndices, gasEstimate.tokenAmount, currentNativeToken]);
 
   // dispatch the price of the deposit token for use in other
   // components
   useGetDepositTokenPrice(activeNetwork.chainId);
-  const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
 
   useEffect(() => {
     // Demo mode
-    if (clubAddress === zeroAddress) {
+    if (isZeroAddress(clubAddress as string)) {
       router.push('/clubs/demo/manage');
     }
   });
@@ -409,7 +406,7 @@ const Distribute: FC = () => {
     if (!clubAddress || status == Status.CONNECTING) return;
 
     if (
-      clubAddress !== zeroAddress &&
+      !isZeroAddress(clubAddress as string) &&
       web3.utils?.isAddress(clubAddress as string) &&
       DepositTokenMintModule
     ) {
@@ -422,10 +419,6 @@ const Distribute: FC = () => {
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
       dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
     } else if (isDemoMode) {
       // using "Active" as the default view.
       resetClubState(dispatch, mockActiveERC20Token);
@@ -439,41 +432,28 @@ const Distribute: FC = () => {
   ]);
 
   /**
-   * if max ETH is selected and other tokens are available but not selected,
-   * show warning message asking the admin to reserve some ETH for other token
+   * if max native is selected and other tokens are available but not selected,
+   * show warning message asking the admin to reserve some native for other token
    * distributions.
    */
   useEffect(() => {
     let warning = '';
-    const eth = {
-      available: '0',
-      totalToDistribute: '0'
-    };
 
-    if (tokensResult.length) {
-      const [nativeToken] = tokensResult.filter(
-        (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
-      );
-      eth.available = nativeToken?.tokenBalance || '0';
-    }
-
-    const [nativeToken] = distributionTokens.filter(
+    const [_selectedNativeToken] = distributionTokens.filter(
       (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
-
-    // update total selected amount
-    eth.totalToDistribute = nativeToken?.tokenAmount ?? '0';
 
     if (
       tokensResult.length > 1 &&
       distributionTokens.length < tokensResult.length
     ) {
-      if (nativeToken) {
+      if (_selectedNativeToken) {
         if (
-          nativeToken.tokenAmount > 0 &&
-          nativeToken.tokenAmount == nativeToken.maximumTokenAmount
+          _selectedNativeToken.tokenAmount > 0 &&
+          _selectedNativeToken.tokenAmount ==
+            _selectedNativeToken.maximumTokenAmount
         ) {
-          warning = `Consider reserving ${nativeToken.symbol} to pay gas on future 
+          warning = `Consider reserving ${_selectedNativeToken.symbol} to pay gas on future 
           distributions`;
         } else {
           warning = '';
@@ -482,13 +462,13 @@ const Distribute: FC = () => {
         warning = '';
       }
 
-      // find index of ETH token on _options
+      // find index of native token on _options
       const ethIndex = _options.findIndex(
         (option) => option.symbol == activeNetwork.nativeCurrency.symbol
       );
 
       if (ethIndex > -1) {
-        // update warning on ETH token
+        // update warning on native token
         setOptions([
           ..._options.slice(0, ethIndex),
           {
@@ -500,7 +480,13 @@ const Distribute: FC = () => {
       }
     }
 
-    dispatch(setEth(eth));
+    setCurrentNativeToken({
+      available:
+        +tokensResult.filter(
+          (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+        )[0]?.tokenBalance || 0,
+      totalToDistribute: +_selectedNativeToken?.tokenAmount ?? 0
+    });
   }, [
     JSON.stringify(distributionTokens),
     JSON.stringify(tokensResult),
@@ -547,14 +533,13 @@ const Distribute: FC = () => {
         <div className="flex justify-center items-center">
           <ClubHeader
             {...{
-              loading,
               name,
               symbol,
               owner,
-              loadingClubDeposits,
+              loading: loadingClubDeposits || loading,
               totalDeposits,
               managerSettingsOpen: true,
-              clubAddress
+              clubAddress: clubAddress?.toString() || ''
             }}
           />
         </div>
@@ -594,13 +579,14 @@ const Distribute: FC = () => {
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
               leftColumnComponent={
-                <div>
+                <div className="space-y-16">
                   {headerComponent}
                   <TokenSelector
+                    symbol={symbol}
                     options={_options}
                     activeIndices={activeIndices}
-                    setOptions={setOptions}
-                    setActiveIndices={setActiveIndices}
+                    handleOptionsChange={setOptions}
+                    handleActiveIndicesChange={setActiveIndices}
                     loading={loadingAssets || loading || processingTokens}
                   />
                 </div>
@@ -633,7 +619,10 @@ const Distribute: FC = () => {
               hideWalletAndEllipsis={true}
               showCloseButton={true}
             >
-              <ReviewDistribution />
+              <ReviewDistribution
+                tokens={distributionTokens}
+                handleExitClick={handleExitClick}
+              />
             </Layout>
           ) : null}
         </>
@@ -643,3 +632,6 @@ const Distribute: FC = () => {
 };
 
 export default Distribute;
+function EstimateDistributionsGas() {
+  throw new Error('Function not implemented.');
+}

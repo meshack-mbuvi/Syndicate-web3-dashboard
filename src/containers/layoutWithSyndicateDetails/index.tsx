@@ -14,10 +14,9 @@ import {
   resetClubState,
   setERC20Token
 } from '@/helpers/erc20TokenDetails';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
@@ -32,7 +31,6 @@ import {
   setMockCollectiblesResult,
   setMockTokensResult
 } from '@/state/assets/slice';
-import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
   setERC20TokenContract,
@@ -134,9 +132,6 @@ const LayoutWithSyndicateDetails: FC<{
   // fetch club transactions
   useTransactions();
 
-  // fetch club members
-  useClubTokenMembers();
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -144,7 +139,9 @@ const LayoutWithSyndicateDetails: FC<{
   const { providerName } = useProvider();
   const [urlNetwork, setUrlNetwork] = useState<any>(null);
 
-  const { chain } = router.query;
+  const {
+    query: { chain }
+  } = router;
 
   useEffect(() => {
     if (chain) {
@@ -198,12 +195,18 @@ const LayoutWithSyndicateDetails: FC<{
     };
   }, [dispatch]);
 
-  const isOwner = useIsClubOwner();
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   // const [customTransform, setCustomTransform] = useState(undefined);
   const subNav = useRef(null);
+
+  const { isOwner } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
 
   // Listen to page scrolling
   useEffect(() => {
@@ -373,10 +376,6 @@ const LayoutWithSyndicateDetails: FC<{
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
       dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
     } else if (isDemoMode) {
       // using "Active" as the default view.
       resetClubState(dispatch, mockActiveERC20Token);
@@ -534,6 +533,7 @@ const LayoutWithSyndicateDetails: FC<{
 
                       <SyndicateDetails
                         managerSettingsOpen={managerSettingsOpen}
+                        isOwner={isOwner}
                       >
                         <div className="w-full md:hidden mt-5">{children}</div>
                       </SyndicateDetails>
@@ -593,16 +593,18 @@ const LayoutWithSyndicateDetails: FC<{
 
                         <div className="text-base grid grid-cols-12 gap-y-5">
                           <div className="col-span-12">
-                            {activeTab == 'assets' && <Assets />}
+                            {activeTab == 'assets' && (
+                              <Assets isOwner={isOwner} />
+                            )}
                             {activeTab == 'members' &&
                               (renderOnDisconnect || isDemoMode) && (
                                 <div className="-mr-6 sm:mr-auto">
-                                  <ClubTokenMembers />
+                                  <ClubTokenMembers isOwner={isOwner} />
                                 </div>
                               )}
                             {activeTab == 'activity' &&
                               (renderOnDisconnect || isDemoMode) && (
-                                <ActivityView />
+                                <ActivityView isOwner={isOwner} />
                               )}
                           </div>
                         </div>

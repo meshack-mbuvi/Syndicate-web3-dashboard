@@ -2,6 +2,7 @@ import TabsButton from '@/components/TabsButton';
 import { tokenTableColumns } from '@/containers/layoutWithSyndicateDetails/assets/constants';
 import InvestmentsView from '@/containers/layoutWithSyndicateDetails/assets/InvestmentsView';
 import TokenTable from '@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable';
+import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useFetchRecentTransactions } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
@@ -11,16 +12,17 @@ import {
   setTotalInvestmentTransactionsCount
 } from '@/state/erc20transactions';
 import { mockOffChainTransactionsData } from '@/utils/mockdata';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Collectibles from './collectibles';
 
-const Assets: React.FC = () => {
+const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   const {
     assetsSliceReducer: { tokensResult },
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     transactionsReducer: { totalInvestmentTransactionsCount },
     erc20TokenSliceReducer: {
@@ -40,10 +42,25 @@ const Assets: React.FC = () => {
   const [activeAssetTab, setActiveAssetTab] = useState<string>('all');
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [canNextPage, setCanNextPage] = useState<boolean>(true);
+  const [isMember, setIsMember] = useState(false);
 
   useEffect(() => {
     setActiveAssetTab('all');
   }, [account]);
+
+  useEffect(() => {
+    if (!account || !clubAddress || isEmpty(web3)) return;
+
+    getMemberBalance(clubAddress as string, account, web3, activeNetwork).then(
+      (balance) => {
+        if (balance) {
+          setIsMember(true);
+        } else {
+          setIsMember(false);
+        }
+      }
+    );
+  }, [account, clubAddress, web3, activeNetwork]);
 
   // fetch off-chain investment transactions
   const {
@@ -144,12 +161,13 @@ const Assets: React.FC = () => {
             columns={tokenTableColumns}
             tableData={tokensResult}
             activeAssetTab={activeAssetTab}
+            isOwner={isOwner}
           />
         )}
 
         {activeAssetTab === 'collectibles' && (
           <div className="mt-16">
-            <Collectibles />
+            <Collectibles isOwner={isOwner} />
           </div>
         )}
 
@@ -157,6 +175,8 @@ const Assets: React.FC = () => {
           <div className="mt-16">
             <InvestmentsView
               {...{
+                isOwner,
+                isMember,
                 setPageOffset,
                 pageOffset,
                 canNextPage,
@@ -174,10 +194,14 @@ const Assets: React.FC = () => {
               columns={tokenTableColumns}
               tableData={tokensResult}
               activeAssetTab={activeAssetTab}
+              isOwner={isOwner}
             />
+
             <div className="mt-16">
               <InvestmentsView
                 {...{
+                  isOwner,
+                  isMember,
                   setPageOffset,
                   pageOffset,
                   canNextPage,
@@ -188,7 +212,7 @@ const Assets: React.FC = () => {
               />
             </div>
             <div className="mt-16">
-              <Collectibles />
+              <Collectibles isOwner={isOwner} />
             </div>
           </>
         )}

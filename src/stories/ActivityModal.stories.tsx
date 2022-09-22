@@ -1,10 +1,10 @@
-import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
-import { Provider, useDispatch } from 'react-redux';
-import { store } from '@/state/index';
-import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import { setCurrentTransaction } from '@/state/erc20transactions';
+import { store } from '@/state/index';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { Provider, useDispatch } from 'react-redux';
 
 const client = new ApolloClient({
   uri: '#',
@@ -59,6 +59,7 @@ const Template = () => {
   return (
     <div>
       <ActivityModal
+        isOwner={false}
         showModal={true}
         refetchTransactions={null}
         showNote={true}

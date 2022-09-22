@@ -193,11 +193,11 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * store
    */
   const initializeWeb3 = async () => {
-    // initialize contract now
-    const contracts = await getSyndicateContracts(web3, activeNetwork);
-
-    dispatch(setContracts(contracts));
     try {
+      // initialize contract now
+      const contracts = await getSyndicateContracts(web3, activeNetwork);
+
+      dispatch(setContracts(contracts));
       dispatch(hideErrorModal());
       if (account || activeProvider || chainId) {
         localStorage.removeItem('cache');
@@ -271,16 +271,24 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // provider is connected, this stops the loader modal
   // and sets up connected state
   useEffect(() => {
-    if (!loading && account && activeProvider && activeNetwork) {
-      dispatch(setConnecting());
-      initializeWeb3().then(() => {
-        dispatch(setConnected());
-        setWalletConnecting(false);
-        setShowSuccessModal(true);
-        dispatch(setShowNetworkDropdownMenu(false));
-      });
-    } else if (!loading && activeNetwork && !account) {
-      initializeWeb3();
+    try {
+      if (!loading && account && activeProvider && activeNetwork) {
+        dispatch(setConnecting());
+        initializeWeb3()
+          .then(() => {
+            dispatch(setConnected());
+            setWalletConnecting(false);
+            setShowSuccessModal(true);
+            dispatch(setShowNetworkDropdownMenu(false));
+          })
+          .catch((error) => {
+            console.log({ error });
+          });
+      } else if (!loading && activeNetwork && !account) {
+        initializeWeb3();
+      }
+    } catch (error) {
+      console.log({ error });
     }
   }, [loading, account, activeProvider, activeNetwork]);
 

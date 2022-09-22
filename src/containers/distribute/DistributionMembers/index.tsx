@@ -15,6 +15,7 @@ import {
   ProgressDescriptor,
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
+import { Spinner } from '@/components/shared/spinner';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
@@ -22,8 +23,6 @@ import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
-import { setClubMembers } from '@/state/clubMembers';
-import { setDistributionMembers } from '@/state/distributions';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
@@ -49,7 +48,12 @@ type step = {
   status: string;
 };
 
-const ReviewDistribution: React.FC = () => {
+type Props = {
+  tokens;
+  handleExitClick: () => void;
+};
+
+const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const {
     web3Reducer: {
       web3: { status, account, web3, activeNetwork }
@@ -58,9 +62,7 @@ const ReviewDistribution: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token: { name, symbol, owner, address }
     },
-    assetsSliceReducer: { loading },
-    distributeTokensReducer: { distributionTokens },
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers }
+    assetsSliceReducer: { loading }
   } = useSelector((state: AppState) => state);
 
   const [activeAddresses, setActiveAddresses] = useState([]);
@@ -95,7 +97,7 @@ const ReviewDistribution: React.FC = () => {
   }, [activeNetwork]);
 
   // fetch club members
-  useClubTokenMembers();
+  const { clubMembers, isFetchingMembers } = useClubTokenMembers();
 
   /**
    * Fetch club details
@@ -117,10 +119,6 @@ const ReviewDistribution: React.FC = () => {
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
       dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
     } else if (isDemoMode) {
       // using "Active" as the default view.
       resetClubState(dispatch, mockActiveERC20Token);
@@ -131,16 +129,6 @@ const ReviewDistribution: React.FC = () => {
     status,
     syndicateContracts?.DepositTokenMintModule
   ]);
-
-  useEffect(() => {
-    if (loadingClubMembers) return;
-
-    const distributionMembers = memberDetails.filter((_, index) =>
-      activeAddresses.includes(index)
-    );
-
-    dispatch(setDistributionMembers(distributionMembers));
-  }, [activeAddresses, isEditing]);
 
   /**
    * Get addresses of all club members
@@ -153,7 +141,7 @@ const ReviewDistribution: React.FC = () => {
 
   // prepare member data here
   useEffect(() => {
-    if (clubMembers.length && distributionTokens.length) {
+    if (clubMembers.length && tokens.length) {
       const memberDetails = clubMembers.map(
         ({ ownershipShare, clubTokens, memberAddress }) => {
           return {
@@ -161,7 +149,7 @@ const ReviewDistribution: React.FC = () => {
             memberName: memberAddress,
             clubTokenHolding: clubTokens,
             distributionShare: +ownershipShare,
-            receivingTokens: distributionTokens.map(
+            receivingTokens: tokens.map(
               ({ tokenAmount, symbol, logo, icon }) => {
                 return {
                   amount: +ownershipShare * +tokenAmount,
@@ -184,9 +172,9 @@ const ReviewDistribution: React.FC = () => {
     };
   }, [
     loadingClubDeposits,
-    loadingClubMembers,
+    isFetchingMembers,
     JSON.stringify(clubMembers),
-    JSON.stringify(distributionTokens)
+    JSON.stringify(tokens)
   ]);
 
   const handleSearchChange = (e) => {
@@ -215,10 +203,10 @@ const ReviewDistribution: React.FC = () => {
   const [isTransactionPending, setIsTransactionPending] = useState(false);
 
   useEffect(() => {
-    if (!distributionTokens.length) return;
+    if (!tokens.length) return;
 
     const steps = [];
-    distributionTokens.forEach((token) => {
+    tokens.forEach((token) => {
       if (token.symbol == activeNetwork.nativeCurrency.symbol) {
         steps.push({
           ...token,
@@ -256,7 +244,7 @@ const ReviewDistribution: React.FC = () => {
     });
 
     setSteps(steps);
-  }, [JSON.stringify(distributionTokens)]);
+  }, [JSON.stringify(tokens)]);
 
   const [activeMembersBeforeEditing, setActiveMembersBeforeEditing] =
     useState(activeAddresses);
@@ -535,6 +523,7 @@ const ReviewDistribution: React.FC = () => {
   const makeDistributions = async (token) => {
     try {
       setIsTransactionPending(true);
+      setTransactionHash('');
 
       const amountToDistribute = getWeiAmount(
         web3,
@@ -548,7 +537,7 @@ const ReviewDistribution: React.FC = () => {
           account,
           address,
           amountToDistribute,
-          activeAddresses, // members
+          activeAddresses,
           batchIdentifier,
           onTxConfirm,
           onTxReceipt,
@@ -657,56 +646,66 @@ const ReviewDistribution: React.FC = () => {
         />
       </div>
 
-      <div className="flex mt-16 justify-between">
-        <DistributionHeader
-          titleText={isEditing ? 'Edit Distribution' : 'Review Distribution'}
-          subTitleText={`Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`}
-        />
+      {isFetchingMembers ? (
+        <Spinner />
+      ) : (
+        <>
+          {memberDetails.length ? (
+            <div className="flex mt-16 justify-between">
+              <DistributionHeader
+                titleText={
+                  isEditing ? 'Edit Distribution' : 'Review Distribution'
+                }
+                subTitleText={`Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`}
+              />
 
-        {isEditing ? (
-          <div className="flex space-x-8">
-            <PrimaryButton
-              customClasses="border-none font-Slussen"
-              textColor="text-blue"
-              onClick={handleCancelAction}
-            >
-              Cancel
-            </PrimaryButton>
-            <PrimaryButton
-              customClasses={`border-none font-Slussen ${
-                activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
-              } px-8 py-4`}
-              textColor={`${
-                activeMembersChanged ? 'text-black' : 'text-white'
-              }`}
-              onClick={handleSaveAction}
-            >
-              Save
-            </PrimaryButton>
-          </div>
-        ) : (
-          <CtaButton
-            greenCta={true}
-            fullWidth={false}
-            onClick={showDistributeDisclaimer}
-            disabled={activeAddresses.length == 0}
-          >
-            Submit
-          </CtaButton>
-        )}
-      </div>
+              {isEditing ? (
+                <div className="flex space-x-8">
+                  <PrimaryButton
+                    customClasses="border-none font-Slussen"
+                    textColor="text-blue"
+                    onClick={handleCancelAction}
+                  >
+                    Cancel
+                  </PrimaryButton>
+                  <PrimaryButton
+                    customClasses={`border-none font-Slussen ${
+                      activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
+                    } px-8 py-4`}
+                    textColor={`${
+                      activeMembersChanged ? 'text-black' : 'text-white'
+                    }`}
+                    onClick={handleSaveAction}
+                  >
+                    Save
+                  </PrimaryButton>
+                </div>
+              ) : (
+                <CtaButton
+                  greenCta={true}
+                  fullWidth={false}
+                  onClick={showDistributeDisclaimer}
+                  disabled={activeAddresses.length == 0}
+                >
+                  Submit
+                </CtaButton>
+              )}
+            </div>
+          ) : null}
 
-      <DistributionMembersTable
-        activeAddresses={activeAddresses}
-        membersDetails={memberDetails}
-        tokens={distributionTokens}
-        isEditing={isEditing}
-        searchValue={searchValue}
-        handleIsEditingChange={toggleEditDistribution}
-        handleActiveAddressesChange={setActiveAddresses}
-        handleSearchChange={handleSearchChange}
-        clearSearchValue={clearSearchValue}
-      />
+          <DistributionMembersTable
+            activeAddresses={activeAddresses}
+            membersDetails={memberDetails}
+            tokens={tokens}
+            isEditing={isEditing}
+            searchValue={searchValue}
+            handleIsEditingChange={toggleEditDistribution}
+            handleActiveAddressesChange={setActiveAddresses}
+            handleSearchChange={handleSearchChange}
+            clearSearchValue={clearSearchValue}
+          />
+        </>
+      )}
 
       <DistributionsDisclaimerModal
         {...{
@@ -748,7 +747,10 @@ const ReviewDistribution: React.FC = () => {
 
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
-        handleModalClose={() => setShareDistributionNews(false)}
+        handleModalClose={() => {
+          setShareDistributionNews(false);
+          handleExitClick();
+        }}
         socialURL={socialURL}
         transactionHash={transactionHash}
         description={`Just made an investment distribution for ${name} (${symbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
