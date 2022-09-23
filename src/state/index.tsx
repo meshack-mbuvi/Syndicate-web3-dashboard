@@ -17,7 +17,6 @@ import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
 import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
 import featureFlagClientSliceReducer from '@/state/featureFlagClient/slice';
-import gasDetailsSlice from '@/state/gasDetails';
 import legalInfoReducer from '@/state/legalInfo';
 import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
@@ -56,8 +55,7 @@ export const store = configureStore({
     connectClubMemberReducer,
     distributeTokensReducer,
     collectiveDetailsReducer,
-    collectivesSlice,
-    gasDetailsSlice
+    collectivesSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

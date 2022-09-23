@@ -354,3 +354,17 @@ export const COLLECTIVES_DETAILS = gql`
     }
   }
 `;
+
+export const GAS_RATE = gql`
+  query GasRate($chainId: Int!) {
+    gas(chainId: $chainId) {
+      chainId
+      unitPrice
+      nativeToken {
+        price {
+          usd
+        }
+      }
+    }
+  }
+`;

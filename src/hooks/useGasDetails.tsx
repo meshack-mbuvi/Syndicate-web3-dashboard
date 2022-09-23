@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
-import { getNativeTokenPrice } from '@/utils/api/transactions';
+import { GAS_RATE } from '@/graphql/queries';
+import { useQuery } from '@apollo/client';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { getEthGasPrice } from '@/utils/api';
 import { EditRowIndex } from '@/state/collectiveDetails/types';
 import BigNumber from 'bignumber.js';
 
@@ -364,32 +364,29 @@ const useGasDetails: (props: IProps) => {
     }
   };
 
-  const processBaseFee = async (result) => {
-    if (result.status === '0') return;
-    const baseFee = result.result;
-    const baseFeeInDecimal = parseInt(baseFee, 16);
-    setGasBaseFee(baseFeeInDecimal);
-  };
-
-  const fetchGasUnitAndBaseFee = useCallback(async () => {
-    await Promise.all([
-      !account ? setGasUnits(380000) : contracts[contract]?.estimateGas(),
-      getEthGasPrice(activeNetwork.blockExplorer.api, activeNetwork.chainId)
-        .then((res) => processBaseFee(res.data))
-        .catch(() => 0),
-      withFiatCurrency &&
-        getNativeTokenPrice(activeNetwork.chainId)
-          .then((res) => setNativeTokenPrice(res))
-          .catch(() => 0)
-    ]);
-  }, [account, contracts[contract]?.syndicateContract, activeNetwork, args]);
+  // GET GAS DETAILS
+  const { loading, data } = useQuery(GAS_RATE, {
+    variables: {
+      chainId: activeNetwork.chainId
+    },
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: skipQuery || !activeNetwork.chainId
+  });
 
   useEffect(() => {
     if (skipQuery) return;
-    if (activeNetwork.chainId) {
-      void fetchGasUnitAndBaseFee();
+    if (activeNetwork.chainId && account) {
+      contracts[contract]?.estimateGas();
+    } else {
+      setGasUnits(380000);
     }
-  }, [activeNetwork.chainId, skipQuery, args]);
+  }, [activeNetwork.chainId, skipQuery, account, args]);
+
+  useEffect(() => {
+    if (loading || !data) return;
+    setGasBaseFee(parseInt(data.gas.unitPrice));
+    setNativeTokenPrice(parseFloat(data.gas.nativeToken.price.usd));
+  }, [loading, data]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
@@ -401,13 +398,10 @@ const useGasDetails: (props: IProps) => {
       false
     );
     setGas(+estimatedGas);
-  }, [gasUnits, gasBaseFee]);
-
-  useEffect(() => {
     if (withFiatCurrency && nativeTokenPrice) {
-      setFiatAmount((gas * nativeTokenPrice).toFixed(2));
+      setFiatAmount((+estimatedGas * nativeTokenPrice).toFixed(2));
     }
-  }, [gas, nativeTokenPrice]);
+  }, [gasUnits, gasBaseFee]);
 
   return { gas, fiatAmount, nativeTokenPrice };
 };
