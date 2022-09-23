@@ -374,7 +374,7 @@ const useGasDetails: (props: IProps) => {
   const fetchGasUnitAndBaseFee = useCallback(async () => {
     await Promise.all([
       !account ? setGasUnits(380000) : contracts[contract]?.estimateGas(),
-      getEthGasPrice(activeNetwork.blockExplorer.api)
+      getEthGasPrice(activeNetwork.blockExplorer.api, activeNetwork.chainId)
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       withFiatCurrency &&
@@ -382,7 +382,7 @@ const useGasDetails: (props: IProps) => {
           .then((res) => setNativeTokenPrice(res))
           .catch(() => 0)
     ]);
-  }, [account, contracts[contract]?.syndicateContract, args]);
+  }, [account, contracts[contract]?.syndicateContract, activeNetwork, args]);
 
   useEffect(() => {
     if (skipQuery) return;

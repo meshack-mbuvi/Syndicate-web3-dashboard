@@ -99,11 +99,17 @@ const Distribute: FC = () => {
     withFiatCurrency: true,
     args: {
       numSelectedTokens: distributionTokens.length,
-      clubAddress: '0xb02a13a268339bedd892a00ff132da4352ed9df5',
-      distributionERC20Address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+      clubAddress:
+        activeNetwork.chainId === 137
+          ? '0x979e031fa7b743ce8896b03d4b96a212c3dd8417'
+          : '0xb02a13a268339bedd892a00ff132da4352ed9df5',
+      distributionERC20Address:
+        activeNetwork.chainId === 137
+          ? '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+          : '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
       totalDistributionAmount: 0,
       members: ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0'],
-      batchIdentifier: 'batch137'
+      batchIdentifier: 'batch'
     },
     skipQuery: !distributionTokens.length
   });
@@ -511,7 +517,7 @@ const Distribute: FC = () => {
         gasEstimate={
           gasPrice
             ? {
-                tokenSymbol: 'ETH',
+                tokenSymbol: activeNetwork?.nativeCurrency?.symbol,
                 tokenAmount: String(gasPrice),
                 fiatAmount: fiatAmount
               }

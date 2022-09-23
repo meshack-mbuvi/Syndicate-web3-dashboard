@@ -73,9 +73,13 @@ export const getSynToken = async (
 };
 
 export const getEthGasPrice = async (
-  blockExplorerUrl: string
+  blockExplorerUrl: string,
+  chainId: number
 ): Promise<AxiosResponse> => {
-  const apiKey = process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
+  const apiKey =
+    chainId === 137
+      ? process.env.NEXT_PUBLIC_POLYGONSCAN_KEY
+      : process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
   try {
     return axios.get(
       `${blockExplorerUrl}/api?module=proxy&action=eth_gasPrice&apikey=${apiKey}`
