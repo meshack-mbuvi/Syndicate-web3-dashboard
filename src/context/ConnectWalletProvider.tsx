@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
 import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -27,7 +25,6 @@ import { isSSR } from '@/utils/environment';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import { useClient } from '@splitsoftware/splitio-react';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import amplitude from 'amplitude-js';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
 import { isEmpty } from 'lodash';
@@ -41,6 +38,10 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
+import amplitude from 'amplitude-js';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
+import { Web3Provider } from '@ethersproject/providers';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string, walletName?: string) => void;
@@ -113,7 +114,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [providerName, setProviderName] = useState('');
   const [chainId, setChainId] = useState(null);
   const [activeProvider, setActiveProvider] = useState(null);
-  const [ensResolver, setEnsResolver] = useState(null);
+  const [ethersProvider, setEthersProvider] = useState<Web3Provider>(null);
   const [account, setAccount] = useState('');
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
   const [web3, setWeb3] = useState<Web3>(new Web3(`${NETWORKS[1].rpcUrl}`)); // Default to an Ethereum mainnet
@@ -213,7 +214,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             web3: web3,
             providerName,
             activeNetwork,
-            ensResolver
+            ethersProvider
           })
         );
       } else {
@@ -223,7 +224,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             web3: detachedWeb3,
             providerName,
             activeNetwork,
-            ensResolver
+            ethersProvider
           })
         );
       }
@@ -290,7 +291,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     } catch (error) {
       console.log({ error });
     }
-  }, [loading, account, activeProvider, activeNetwork]);
+  }, [loading, account, activeProvider, ethersProvider, activeNetwork]);
 
   // provider events
   // allows us to listed for account and chain changes
@@ -304,11 +305,11 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       const handleChainChanged = async () => {
         getCurrentEthNetwork();
         await newWeb3Instance(activeProvider);
-        const { network, ensResolver } = await getProviderAccountAndNetwork(
+        const { network, ethersProvider } = await getProviderAccountAndNetwork(
           activeProvider
         );
         setChainId(network.chainId);
-        setEnsResolver(ensResolver);
+        setEthersProvider(ethersProvider);
       };
 
       const handleDisconnect = () => {
@@ -341,22 +342,23 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * and the networkID. This also lets us resolve ens names and avatars.
    */
   const getProviderAccountAndNetwork = async (provider) => {
-    const p = new providers.Web3Provider(provider);
+    const ethersProvider = new providers.Web3Provider(provider);
     const [address, network] = await Promise.all([
-      p.getSigner().getAddress(),
-      p.getNetwork()
+      ethersProvider.getSigner().getAddress(),
+      ethersProvider.getNetwork()
     ]);
-    if (network.chainId == 1) {
-      // ens only works for mainnet
-      const ensName = await p.lookupAddress(address);
-      if (!ensName) {
-        return { address, network, ensResolver: null };
-      }
-      const ensResolver = await p.getResolver(ensName);
-      return { address, network, ensResolver };
-    } else {
-      return { address, network, ensResolver: null };
-    }
+    // if (network.chainId == 1) {
+    //   // ens only works for mainnet
+    //   const ensName = await p.lookupAddress(address);
+    //   if (!ensName) {
+    //     return { address, network, ensResolver: null };
+    //   }
+    //   const ensResolver = await p.getResolver(ensName);
+    //   return { address, network, ensResolver };
+    // } else {
+    //   return { address, network, ensResolver: null };
+    // }
+    return { address, network, ethersProvider };
   };
 
   const newWeb3Instance = async (provider) => {
@@ -391,13 +393,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
 
-    const { address, network, ensResolver } =
+    const { address, network, ethersProvider } =
       await getProviderAccountAndNetwork(provider);
 
     await newWeb3Instance(provider);
 
     setAccount(address);
-    setEnsResolver(ensResolver);
+    setEthersProvider(ethersProvider);
     setActiveProvider(provider);
     setChainId(Number(network.chainId));
     setLoading(false);
@@ -590,7 +592,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setWalletConnecting(false);
     setShowSuccessModal(false);
     setAccount('');
-    setEnsResolver('');
+    setEthersProvider(null);
     dispatch(logout());
     localStorage.removeItem('cache');
     localStorage.removeItem('walletconnect');

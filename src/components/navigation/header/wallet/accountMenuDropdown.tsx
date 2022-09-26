@@ -1,9 +1,5 @@
 import { ExternalLinkColor } from '@/components/iconWrappers';
-import {
-  AddressImageSize,
-  AddressLayout,
-  AddressWithENS
-} from '@/components/shared/ensAddress';
+import { AddressLayout, AddressWithENS } from '@/components/shared/ensAddress';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
@@ -27,7 +23,7 @@ interface IAddressMenuDropDown {
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  Web3: { account, providerName, web3, ensResolver },
+  Web3: { account, providerName, web3, ethersProvider },
   showWalletDropdown
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
@@ -50,9 +46,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     }
   }, [account, nativeBalance]);
 
-  const formattedAddress = formatAddress(account, 6, 4);
-
-  const { data } = useFetchEnsAssets(ensResolver);
+  const { data } = useFetchEnsAssets(account, ethersProvider);
   const dispatch = useDispatch();
 
   const toggleDropdown = () => {
@@ -104,10 +98,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                 />
                 <div className={`${width <= 425 ? 'flex' : 'hidden md:flex'}`}>
                   <AddressWithENS
-                    address={{ label: formattedAddress }}
-                    name={data?.name}
-                    image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
+                    address={account}
                     layout={AddressLayout.ONE_LINE}
+                    ethersProvider={ethersProvider}
                     id={refId}
                     extraClasses={`${!data?.avatar && 'ml-1'}`}
                   />

@@ -112,13 +112,13 @@ const NetworkComponent: React.FC<NetworkType> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork, ensResolver },
+      web3: { activeNetwork, ethersProvider },
       showNetworkDropdown,
       showWalletDropdown
     }
   } = useSelector((state: AppState) => state);
 
-  const { data } = useFetchEnsAssets(ensResolver);
+  const { data } = useFetchEnsAssets(account, ethersProvider);
 
   const formattedAddress = formatAddress(account.toLowerCase(), 6, 4);
   const { gas, fiatAmount } = useGasDetails({

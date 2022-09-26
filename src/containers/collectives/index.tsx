@@ -237,20 +237,10 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
   const members =
     owners &&
     owners.map((member) => {
-      const { owner } = member;
-
-      return {
-        profilePicture: '/images/user.svg',
-        accountAddress: owner?.walletAddress
-      };
+      return member?.owner?.walletAddress;
     });
 
-  const admins = [
-    {
-      accountAddress: ownerAddress,
-      profilePicture: '/images/user.svg'
-    }
-  ];
+  const admins = [ownerAddress];
 
   const [collectiveLink, setCollectiveLink] = useState('');
 

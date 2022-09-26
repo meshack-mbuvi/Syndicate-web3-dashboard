@@ -1,19 +1,39 @@
-import { Resolver } from '@ethersproject/providers';
+import { Web3Provider } from '@ethersproject/providers';
 import { useQuery } from '@tanstack/react-query';
 
-export const getAssets = async (ensResolver: Resolver) => {
-  return ensResolver.getAvatar().then((res) => {
-    return {
-      name: ensResolver.name,
-      avatar: res?.url
-    };
-  });
+export const getAssets = async (
+  account: string,
+  ethersProvider: Web3Provider
+) => {
+  const ensName = await ethersProvider.lookupAddress(account);
+  if (!ensName) {
+    return null;
+  }
+
+  return (await ethersProvider.getResolver(ensName))
+    .getAvatar()
+    .then((res) => {
+      return {
+        name: ensName,
+        avatar: res?.url
+      };
+    })
+    .catch(() => {
+      return {
+        name: ensName,
+        avatar: null
+      };
+    });
 };
 
-const useFetchEnsAssets = (ensResolver: Resolver) => {
-  return useQuery(['ensAssets'], () => getAssets(ensResolver), {
-    enabled: !!ensResolver
-  });
+const useFetchEnsAssets = (account: string, ethersProvider: Web3Provider) => {
+  return useQuery(
+    [account, ethersProvider.network.chainId],
+    () => getAssets(account, ethersProvider),
+    {
+      enabled: !!ethersProvider
+    }
+  );
 };
 
 export default useFetchEnsAssets;

@@ -10,7 +10,10 @@ import router from 'next/router';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { JoinCollectiveCTA } from '../joinCollectiveButton';
-import { CollectiveMember, CollectiveMemberProps } from '../member';
+import {
+  AddressImageSize,
+  AddressWithENS
+} from '@/components/shared/ensAddress';
 import { PermissionType } from '../shared/types';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
@@ -22,8 +25,8 @@ import { getCollectiveBalance } from '@/utils/contracts/collective';
 
 interface Props {
   inviteLink?: string;
-  admins?: CollectiveMemberProps[];
-  members?: CollectiveMemberProps[];
+  admins?: string[];
+  members?: string[];
   permissionType: PermissionType;
 }
 
@@ -35,7 +38,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3 }
+      web3: { account, activeNetwork, web3, ethersProvider }
     },
     collectiveDetailsReducer: {
       details: { isOpen, maxPerWallet }
@@ -57,11 +60,6 @@ export const BadgeWithMembers: React.FC<Props> = ({
     amplitudeLogger(JOIN_COLLECTIVE_CLICK, {
       flow: Flow.COLLECTIVE_CLAIM
     });
-  };
-
-  const emptyMemberState: CollectiveMemberProps = {
-    profilePicture: '/images/user.svg',
-    accountAddress: '0xc8a6282282abcEf834b3bds75e7a1536c1af242af'
   };
 
   const handleUpdateCopyState = () => {
@@ -140,7 +138,15 @@ export const BadgeWithMembers: React.FC<Props> = ({
           <div className="space-y-4 border rounded-2xl p-6 border-gray-syn7">
             {account ? (
               admins.map((admin, index) => {
-                return <CollectiveMember {...admin} key={index} />;
+                return (
+                  <AddressWithENS
+                    ethersProvider={ethersProvider}
+                    userPlaceholderImg={'/images/user.svg'}
+                    address={admin}
+                    key={index}
+                    imageSize={AddressImageSize.LARGE}
+                  />
+                );
               })
             ) : (
               <div className="border-gray-syn7 top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
@@ -172,7 +178,15 @@ export const BadgeWithMembers: React.FC<Props> = ({
           >
             {members.length && account ? (
               members?.map((member, index) => {
-                return <CollectiveMember {...member} key={index} />;
+                return (
+                  <AddressWithENS
+                    ethersProvider={ethersProvider}
+                    address={member}
+                    key={index}
+                    userPlaceholderImg={'/images/user.svg'}
+                    imageSize={AddressImageSize.LARGE}
+                  />
+                );
               })
             ) : permissionType === PermissionType.ADMIN ? (
               <div className="flex flex-col my-8 h-full align-middle justify-center">
@@ -193,12 +207,11 @@ export const BadgeWithMembers: React.FC<Props> = ({
               </div>
             ) : account ? (
               [...Array(8).keys()].map((_, index) => (
-                <CollectiveMember
-                  {...{
-                    accountAddress: emptyMemberState.accountAddress,
-                    profilePicture: emptyMemberState.profilePicture
-                  }}
+                <AddressWithENS
+                  ethersProvider={ethersProvider}
+                  address="0xc8a6282282abcEf834b3bds75e7a1536c1af242af"
                   key={index}
+                  imageSize={AddressImageSize.LARGE}
                 />
               ))
             ) : null}

@@ -1,6 +1,8 @@
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
+import { Web3Provider } from '@ethersproject/providers';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 
 export enum AddressImageSize {
   SMALLER = 'w-5 h-5',
@@ -14,24 +16,38 @@ export enum AddressLayout {
 }
 
 interface Props {
-  image?: { src: string; size?: AddressImageSize };
-  name?: string;
-  address?: { label: string; abbreviated?: boolean };
+  ethersProvider: Web3Provider;
+  address?: string;
+  maxDigits?: number;
+  imageSize?: AddressImageSize;
+  addressAbbreviated?: boolean;
   layout?: AddressLayout;
   id?: string;
   extraClasses?: string;
+  userPlaceholderImg?: string | undefined;
 }
 
 export const AddressWithENS: React.FC<Props> = ({
-  image,
-  name,
+  ethersProvider,
   address,
+  maxDigits = 8,
+  imageSize = AddressImageSize.SMALL,
+  addressAbbreviated = false,
   layout = AddressLayout.TWO_LINES,
   extraClasses,
+  userPlaceholderImg,
   ...rest
 }) => {
+  const formattedAddress = addressAbbreviated
+    ? address
+    : formatAddress(
+        address,
+        2 + maxDigits / 2,
+        maxDigits % 2 ? (maxDigits + 1) / 2 : maxDigits / 2
+      );
+  const { data } = useFetchEnsAssets(address, ethersProvider);
   const TopLineName = () => {
-    return <div>{name}</div>;
+    return <div>{data?.name}</div>;
   };
   const TopLineAddress = () => {
     return (
@@ -39,9 +55,11 @@ export const AddressWithENS: React.FC<Props> = ({
         <span className="text-gray-syn4">0x</span>
         {address && (
           <span {...rest}>
-            {address?.abbreviated !== undefined && address?.abbreviated
-              ? formatAddress(address.label.substring(2), 4, 4)
-              : address.label.substring(2)}
+            {formatAddress(
+              address.substring(2),
+              maxDigits / 2,
+              maxDigits % 2 ? (maxDigits + 1) / 2 : maxDigits / 2
+            )}
           </span>
         )}
       </div>
@@ -50,7 +68,7 @@ export const AddressWithENS: React.FC<Props> = ({
   const TopLine = () => {
     return (
       <TransitionBetweenChildren
-        visibleChildIndex={name ? 0 : address ? 1 : -1}
+        visibleChildIndex={data?.name ? 0 : address ? 1 : -1}
         transitionDurationClassOverride="duration-300"
       >
         <TopLineName />
@@ -65,15 +83,23 @@ export const AddressWithENS: React.FC<Props> = ({
       } ${extraClasses}`}
       {...rest}
     >
-      {image && image.src && (
+      {data?.avatar ? (
         <img
-          src={image.src}
-          alt="Address icon"
+          src={data?.avatar}
+          alt="ens"
           className={`${
-            image.size ? image.size : 'w-8 h-8'
+            imageSize ?? 'w-8 h-8'
           } transition-all rounded-full bg-gray-syn7`}
         />
-      )}
+      ) : userPlaceholderImg ? (
+        <img
+          src={userPlaceholderImg}
+          alt=""
+          className={`${
+            imageSize ?? 'w-8 h-8'
+          } transition-all rounded-full bg-gray-syn7`}
+        />
+      ) : null}
       <div
         className={`${
           layout === AddressLayout.ONE_LINE && 'flex items-center space-x-2'
@@ -83,7 +109,7 @@ export const AddressWithENS: React.FC<Props> = ({
         }}
       >
         {/* Top line */}
-        {image && image.size === AddressImageSize.SMALL ? (
+        {data?.avatar && imageSize === AddressImageSize.SMALL ? (
           <B3 extraClasses="mb-0" {...rest}>
             <TopLine />
           </B3>
@@ -96,7 +122,7 @@ export const AddressWithENS: React.FC<Props> = ({
         {/* Bottom line */}
         <div
           className={`transition-all duration-500 ${
-            !name && address
+            !data?.name && address
               ? `${layout === AddressLayout.TWO_LINES && '-mt-4'} ${
                   layout === AddressLayout.ONE_LINE && 'hidden'
                 } opacity-0` // hidden
@@ -106,17 +132,11 @@ export const AddressWithENS: React.FC<Props> = ({
           }`}
         >
           {address && layout === AddressLayout.TWO_LINES && (
-            <B4 extraClasses={`text-gray-syn4`}>
-              {address?.abbreviated
-                ? formatAddress(address.label, 6, 4)
-                : address.label}
-            </B4>
+            <B4 extraClasses={`text-gray-syn4`}>{formattedAddress}</B4>
           )}
           {address && layout === AddressLayout.ONE_LINE && (
             <B3 extraClasses={`text-gray-syn4 relative top-1`}>
-              {address?.abbreviated
-                ? formatAddress(address.label, 6, 4)
-                : address.label}
+              {formattedAddress}
             </B3>
           )}
         </div>
