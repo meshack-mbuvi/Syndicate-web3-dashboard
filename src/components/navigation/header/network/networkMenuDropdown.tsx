@@ -124,13 +124,17 @@ const NetworkMenuDropDown: FC = () => {
   const refId = 'networkButton';
 
   const closeDropdown = (event) => {
+    // find whether click is coming from any of the component in path
+    const [isClickedInsideRefId] =
+      event?.path?.filter((path) => path?.id === 'accountButton') || [];
+
     if (
       event.target?.id == '' &&
       event.target?.offsetParent?.id !== 'accountButton' &&
       event.target?.parentElement?.id !== 'accountButton'
     ) {
       if (showNetworkDropdown) dispatch(setShowNetworkDropdownMenu(false));
-      if (showWalletDropdown) {
+      if (showWalletDropdown && !isClickedInsideRefId) {
         dispatch(setShowWalletDropdownMenu(false));
       }
       return event;
@@ -140,10 +144,12 @@ const NetworkMenuDropDown: FC = () => {
       dispatch(setShowNetworkDropdownMenu(false));
     } else if (
       (event.target?.offsetParent?.id == 'accountButton' ||
-        event.target?.parentElement?.id == 'accountButton') &&
+        event.target?.parentElement?.id == 'accountButton' ||
+        isClickedInsideRefId) &&
       showWalletDropdown
     ) {
-      dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+      dispatch(setShowWalletDropdownMenu(!showNetworkDropdown));
+      return event;
     }
     return event;
   };

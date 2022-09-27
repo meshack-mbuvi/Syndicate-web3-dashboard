@@ -57,12 +57,18 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   const refId = 'accountButton';
 
   const closeDropdown = (event) => {
+    // find whether click is coming from any of the component in path
+    const [isClickedInsideRefId] =
+      event?.path.filter((path) => path?.id === refId) || [];
+
     if (
       !account ||
       event.target?.id == refId ||
-      event.target?.offsetParent?.id == refId
-    )
+      event.target?.offsetParent?.id == refId ||
+      isClickedInsideRefId
+    ) {
       return event;
+    }
     if (
       showWalletDropdown &&
       (event.target?.id !== refId || event.target?.id == '')
@@ -104,8 +110,8 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     address={account}
                     layout={AddressLayout.ONE_LINE}
                     ethersProvider={ethersProvider}
-                    id={refId}
                     extraClasses={`${!data?.avatar && 'ml-1'}`}
+                    id={refId}
                   />
                 </div>
                 <div className="flex items-center ml-2">
@@ -189,7 +195,10 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       <div className="flex justify-center">
                         <button
                           className="primary-CTA rounded-custom w-full"
-                          onClick={disconnectWallet}
+                          onClick={() => {
+                            dispatch(setShowWalletDropdownMenu(false));
+                            disconnectWallet();
+                          }}
                         >
                           Disconnect
                         </button>

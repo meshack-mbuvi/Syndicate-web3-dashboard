@@ -5,6 +5,8 @@ export const getAssets = async (
   account: string,
   ethersProvider: Web3Provider
 ) => {
+  if (!ethersProvider) return;
+
   const ensName = await ethersProvider.lookupAddress(account);
   if (!ensName) {
     return null;
@@ -28,7 +30,7 @@ export const getAssets = async (
 
 const useFetchEnsAssets = (account: string, ethersProvider: Web3Provider) => {
   return useQuery(
-    [account, ethersProvider.network.chainId],
+    [account, ethersProvider?.network?.chainId],
     () => getAssets(account, ethersProvider),
     {
       enabled: !!ethersProvider

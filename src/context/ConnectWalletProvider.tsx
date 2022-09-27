@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
 import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -15,6 +17,7 @@ import {
   setDisConnected,
   setLibrary,
   setShowNetworkDropdownMenu,
+  setShowWalletDropdownMenu,
   showErrorModal,
   showWalletModal,
   storeCurrentEthNetwork,
@@ -22,9 +25,11 @@ import {
 } from '@/state/wallet/actions';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { isSSR } from '@/utils/environment';
+import { Web3Provider } from '@ethersproject/providers';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import { useClient } from '@splitsoftware/splitio-react';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import amplitude from 'amplitude-js';
 import { providers } from 'ethers';
 import { parse, stringify } from 'flatted';
 import { isEmpty } from 'lodash';
@@ -38,10 +43,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
-import amplitude from 'amplitude-js';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
-import { Web3Provider } from '@ethersproject/providers';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string, walletName?: string) => void;
@@ -281,6 +282,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             setWalletConnecting(false);
             setShowSuccessModal(true);
             dispatch(setShowNetworkDropdownMenu(false));
+            dispatch(setShowWalletDropdownMenu(false));
           })
           .catch((error) => {
             console.log({ error });
