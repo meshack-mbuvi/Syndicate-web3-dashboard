@@ -10,14 +10,14 @@ import {
   MOCK_TOTALDEPOSITS,
   MOCK_TOTALSUPPLY
 } from '@/utils/mockdata';
+import getModuleByType from '@/utils/modules/getModuleByType';
+import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import getModuleByType from '@/utils/modules/getModuleByType';
 import { useAccountTokens } from '../useAccountTokens';
 import { useDemoMode } from '../useDemoMode';
-import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
 
 // TODO: [REFACTOR] rename to useSingleClubGraphDetails for readability
 /**

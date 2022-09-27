@@ -1,9 +1,9 @@
+import { Callout } from '@/components/callout';
 import { CtaButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import React, { useState } from 'react';
-import { Callout } from '@/components/callout';
 
 interface Props {
   tokensDetails?: {
@@ -222,7 +222,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
               </div>
             </div>
             {/* Gas estimate */}
-            <Callout extraClasses="rounded-xl px-4 py-3 text-sm mx-4">
+            <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
               <div className="flex justify-between">
                 <div className="flex space-x-1">
                   <div>Estimated gas</div>

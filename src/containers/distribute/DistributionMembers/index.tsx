@@ -627,7 +627,8 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     );
   };
 
-  const socialURL = window.location.href;
+  // Share member link via social network.
+  const socialURL = window.location.href.replace('/distribute', '');
 
   return (
     <div className="container mx-auto w-full">
@@ -651,44 +652,105 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       ) : (
         <>
           {memberDetails.length ? (
-            <div className="flex mt-16 justify-between">
+            <div className="flex mt-5 md:mt-16 align-middle items-center justify-between">
               <DistributionHeader
                 titleText={
                   isEditing ? 'Edit Distribution' : 'Review Distribution'
                 }
-                subTitleText={`Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`}
+                subTitleText={
+                  isEditing
+                    ? `Exclude member(s) from distributions for investments they did not participate in. Funds are distributed proportionally to remaining members by their ownership share.`
+                    : `Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`
+                }
               />
 
               {isEditing ? (
-                <div className="flex space-x-8">
-                  <PrimaryButton
-                    customClasses="border-none font-Slussen"
-                    textColor="text-blue"
-                    onClick={handleCancelAction}
-                  >
-                    Cancel
-                  </PrimaryButton>
-                  <PrimaryButton
-                    customClasses={`border-none font-Slussen ${
-                      activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
-                    } px-8 py-4`}
-                    textColor={`${
-                      activeMembersChanged ? 'text-black' : 'text-white'
-                    }`}
-                    onClick={handleSaveAction}
-                  >
-                    Save
-                  </PrimaryButton>
-                </div>
+                <>
+                  <div className="md:flex ml-16 max-h-14 hidden space-x-8">
+                    <PrimaryButton
+                      customClasses="border-none font-Slussen"
+                      textColor="text-blue"
+                      onClick={handleCancelAction}
+                    >
+                      Cancel
+                    </PrimaryButton>
+                    <PrimaryButton
+                      customClasses={`border-none font-Slussen ${
+                        activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
+                      } px-8 py-4`}
+                      textColor={`${
+                        activeMembersChanged ? 'text-black' : 'text-white'
+                      }`}
+                      onClick={handleSaveAction}
+                    >
+                      Save
+                    </PrimaryButton>
+                  </div>
+
+                  {/* Mobile positioning */}
+                  <div className="fixed bottom-0 md:hidden z-10 left-0 w-full">
+                    <div className="flex container justify-between bg-black w-full p-5 mx-auto">
+                      <PrimaryButton
+                        customClasses="border-none font-Slussen"
+                        textColor="text-blue"
+                        onClick={handleCancelAction}
+                      >
+                        Cancel
+                      </PrimaryButton>
+                      <PrimaryButton
+                        customClasses={`border-none font-Slussen ${
+                          activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
+                        } px-8 py-4`}
+                        textColor={`${
+                          activeMembersChanged ? 'text-black' : 'text-white'
+                        }`}
+                        onClick={handleSaveAction}
+                      >
+                        Save
+                      </PrimaryButton>
+                    </div>
+                  </div>
+                </>
               ) : (
-                <CtaButton
-                  greenCta={true}
-                  fullWidth={false}
-                  onClick={showDistributeDisclaimer}
-                  disabled={activeAddresses.length == 0}
-                >
-                  Submit
-                </CtaButton>
+                <>
+                  <div className="hidden ml-16 md:block">
+                    <CtaButton
+                      greenCta={true}
+                      fullWidth={false}
+                      onClick={showDistributeDisclaimer}
+                      disabled={activeAddresses.length == 0}
+                    >
+                      Submit
+                    </CtaButton>
+                  </div>
+                  {/* Mobile positioning */}
+                  <div className="fixed bottom-0 md:hidden z-10 left-0 w-full space-y-8">
+                    <div className="flex container sm:hidden justify-center w-full bg-gray-syn8 px-auto py-6 mx-auto">
+                      <CtaButton
+                        greenCta={true}
+                        fullWidth={false}
+                        onClick={showDistributeDisclaimer}
+                        disabled={activeAddresses.length == 0}
+                        extraClasses={'w-full'}
+                      >
+                        Submit
+                      </CtaButton>
+                    </div>
+
+                    {/* This has a different background. */}
+                    <div className="sm:flex container hidden justify-center w-full p-6 pt-5 mx-auto">
+                      <CtaButton
+                        greenCta={true}
+                        fullWidth={false}
+                        onClick={showDistributeDisclaimer}
+                        disabled={activeAddresses.length == 0}
+                        extraClasses={'w-full'}
+                      >
+                        Submit
+                      </CtaButton>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           ) : null}

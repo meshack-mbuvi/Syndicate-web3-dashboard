@@ -504,20 +504,23 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   return (
     <div
-      className={`relative overflow-scroll no-scroll-bar w-full ${extraClasses}`}
+      className={`relative overflow-x-auto w-full mb-32 sm:mb-auto ${
+        extraClasses ?? ''
+      }`}
     >
       {!hideSearch && _membersDetails.length !== 0 && (
-        <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
+        <div className="flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center">
           <SearchInput
             {...{
               onChangeHandler: handleSearchChange,
               searchValue: searchValue || '',
               itemsCount: _membersDetails.length,
-              clearSearchValue: clearSearchValue
+              clearSearchValue: clearSearchValue,
+              padding: ''
             }}
           />
           {!isEditing ? (
-            <div className="flex space-x-8">
+            <div className="flex sm:space-x-8">
               <ActionButton
                 label="Edit distribution"
                 icon="/images/edit-circle-blue.svg"

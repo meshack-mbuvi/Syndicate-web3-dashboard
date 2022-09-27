@@ -97,10 +97,13 @@ const Layout: FC<Props> = ({
     (loading && !managerSettingsOpen) ||
     loadingClubDetails;
 
-  // we don't need to render the footer on the creation page.
+  // we don't need to render the footer on the creation/modification and
+  // distribution pages.
   const createClubPage = router.pathname === '/clubs/create';
   const modifyClubPage =
     router.pathname === `/collectives/[collectiveAddress]/modify`;
+  const distributionPage =
+    router.pathname === `/clubs/[clubAddress]/distribute`;
 
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress as string,
@@ -225,7 +228,10 @@ const Layout: FC<Props> = ({
       </div>
 
       {/* need to add in a check for collectives settings open because it uses Layout component */}
-      {createClubPage || modifyClubPage || managerSettingsOpen ? null : (
+      {createClubPage ||
+      modifyClubPage ||
+      managerSettingsOpen ||
+      distributionPage ? null : (
         <div>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
