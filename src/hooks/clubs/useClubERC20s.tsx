@@ -10,22 +10,20 @@ import { Status } from '@/state/wallet/types';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
 import { getDepositToken } from '@/utils/contracts/depositToken';
-import { getClubDataFromContract } from '@/utils/contracts/getClubDataFromContract';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
-import { isEmpty } from 'lodash';
+import { invertBy, isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocalStorage } from './utils/useLocalStorage';
+import { useLocalStorage } from '../utils/useLocalStorage';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3: web3Instance },
-    erc20TokenSliceReducer: { activeModuleDetails }
+    web3Reducer: { web3: web3Instance }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
@@ -214,51 +212,49 @@ const useClubERC20s = () => {
     )
       return;
 
-    processClubERC20Tokens(data?.syndicateDAOs).then((data) => {
+    processClubERC20Tokens(data?.syndicateDAOs).then(async (data) => {
       const clubsIAdmin = data;
-
       if (
-        newlyCreatedClub &&
+        newlyCreatedClub?.account.toLowerCase() === account.toLowerCase() &&
         web3 &&
-        account == newlyCreatedClub &&
         activeNetwork.chainId == newlyCreatedClub?.activeNetwork?.chainId
       ) {
-        getClubDataFromContract({
-          ...newlyCreatedClub,
-          state: {
-            activeNetwork,
-            account: accountAddress,
-            syndicateContracts,
-            web3,
-            activeModuleDetails: {
-              mintModule: activeModuleDetails?.mintModule,
-              activeMintModuleReqs: activeModuleDetails?.activeMintModuleReqs
-            }
-          }
-        }).then((club) => {
-          // add new club at the top and filter incase the club has been loaded
-          // from the graph
-          // Generate a map entry of [[key, item],...]
-          // Pass the list of entries into map which eliminates duplicate keys
-          const filteredClubs = [
-            ...new Map(
-              [club, ...data]
-                .filter((club) => club != undefined)
-                .map((item) => [
-                  `${item['contractAddress'].toLowerCase()}`,
-                  item
-                ])
-            ).values()
+        const {
+          tokenAddress,
+          name,
+          symbol,
+          depositTokenSymbol,
+          endTime,
+          depositTokenLogo
+        } = newlyCreatedClub;
+
+        const clubsByAddress = invertBy(data, 'address');
+        let clubs = data;
+
+        // Check whether newly created club already exists from the graph query data.
+        // Ignore it if already exists, otherwise add it to the list of existing clubs
+        if (!clubsByAddress[newlyCreatedClub?.clubAddress]) {
+          clubs = [
+            {
+              address: tokenAddress,
+              clubName: name,
+              clubSymbol: symbol,
+              contractAddress: tokenAddress,
+              depositERC20TokenSymbol: depositTokenSymbol,
+              depositTokenLogo,
+              endTime,
+              isOwner: true,
+              membersCount: 0,
+              status: 'Open to deposits',
+              totalDeposits: '0'
+            },
+            ...data
           ];
+          remove();
+        }
 
-          // if club data exist in the graph, delete newly created club from storage
-          if (filteredClubs.length == data.length) {
-            remove();
-          }
-
-          dispatch(setMyClubERC20s(filteredClubs));
-          setIsLoadingAdminClubs(false);
-        });
+        dispatch(setMyClubERC20s(clubs));
+        setIsLoadingAdminClubs(false);
       } else {
         dispatch(setMyClubERC20s(clubsIAdmin));
         setIsLoadingAdminClubs(false);
@@ -356,7 +352,6 @@ const useClubERC20s = () => {
               );
             } catch (error) {
               console.log({ error });
-              return;
             }
 
             let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
@@ -364,7 +359,6 @@ const useClubERC20s = () => {
               activeNetwork.nativeCurrency.decimals;
             let depositTokenLogo = activeNetwork.logo;
 
-            // checks if depositToken is ETH or not
             const maxTotalDeposits =
               +maxTotalSupplyFromWei /
               activeNetwork.nativeCurrency.exchangeRate;
@@ -386,7 +380,7 @@ const useClubERC20s = () => {
                   .then((res) => res.data.logo)
                   .catch(() => null);
               } catch (error) {
-                return;
+                console.log(error);
               }
             }
 

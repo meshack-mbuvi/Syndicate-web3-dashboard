@@ -63,7 +63,10 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
       event.target?.offsetParent?.id == refId
     )
       return event;
-    if (event.target?.id !== refId || event.target?.id == '') {
+    if (
+      showWalletDropdown &&
+      (event.target?.id !== refId || event.target?.id == '')
+    ) {
       dispatch(setShowWalletDropdownMenu(false));
       return event;
     }

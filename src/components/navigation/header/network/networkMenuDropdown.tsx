@@ -129,18 +129,19 @@ const NetworkMenuDropDown: FC = () => {
       event.target?.offsetParent?.id !== 'accountButton' &&
       event.target?.parentElement?.id !== 'accountButton'
     ) {
-      dispatch(setShowNetworkDropdownMenu(false));
+      if (showNetworkDropdown) dispatch(setShowNetworkDropdownMenu(false));
       if (showWalletDropdown) {
         dispatch(setShowWalletDropdownMenu(false));
       }
       return event;
     }
 
-    if (event.target?.id !== refId) {
+    if (event.target?.id !== refId && showNetworkDropdown) {
       dispatch(setShowNetworkDropdownMenu(false));
     } else if (
-      event.target?.offsetParent?.id == 'accountButton' ||
-      event.target?.parentElement?.id == 'accountButton'
+      (event.target?.offsetParent?.id == 'accountButton' ||
+        event.target?.parentElement?.id == 'accountButton') &&
+      showWalletDropdown
     ) {
       dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
     }

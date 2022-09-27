@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useDemoMode } from './useDemoMode';
+import { useDemoMode } from '../useDemoMode';
 
 type clubMember = {
   depositAmount: string;

@@ -5,7 +5,7 @@ import { ArrowRightIcon } from '@heroicons/react/outline';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { showWalletModal } from '@/state/wallet/actions';
-import { useMyClubs } from '@/hooks/useMyClubs';
+import { useMyClubs } from '@/hooks/clubs/useMyClubs';
 import { useEffect } from 'react';
 import { L2 } from '@/components/typography';
 import { AppState } from '@/state';

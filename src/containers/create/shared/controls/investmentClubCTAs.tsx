@@ -1,17 +1,17 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CONFIRM_WALLET_CLICK } from '@/components/amplitude/eventNames';
+import EstimateGas from '@/components/EstimateGas';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { useProvider } from '@/hooks/web3/useProvider';
 import { AppState } from '@/state';
 import { setDispatchCreateFlow, showWalletModal } from '@/state/wallet/actions';
+import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { useProvider } from '@/hooks/web3/useProvider';
-import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
-import EstimateGas from '@/components/EstimateGas';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CONFIRM_WALLET_CLICK } from '@/components/amplitude/eventNames';
-import { getWeiAmount } from '@/utils/conversions';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -65,6 +65,7 @@ const InvestmentClubCTAs: React.FC = () => {
       activeNetwork.chainId &&
       account &&
       providerName &&
+      preSelectednetwork &&
       preSelectednetwork !== activeNetwork.chainId
     ) {
       if (providerName === 'WalletConnect') {

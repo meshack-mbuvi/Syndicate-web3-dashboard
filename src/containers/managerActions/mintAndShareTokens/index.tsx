@@ -5,7 +5,7 @@ import { ProgressModal } from '@/components/progressModal';
 import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
 import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
@@ -264,23 +264,6 @@ export const MintAndShareTokens: React.FC<Props> = ({
           onTxReceipt,
           onTxFail
         );
-      } else if (
-        currentMintPolicyAddress.toLowerCase() ==
-        CONTRACT_ADDRESSES[
-          activeNetwork.chainId
-        ]?.guardMixinManager.toLowerCase()
-      ) {
-        // txn 1/(2 eventually)
-        await timeRequirements.updateTimeRequirements(
-          account,
-          address,
-          startTime,
-          ~~(newEndTime / 1000),
-          onTxConfirm,
-          onTxReceipt,
-          onTxFail
-        );
-        // TODO: [TOKEN-GATING] update the tokenCap txn (2/2) after token-gating branches merged with updateTotalSupply
       } else if (
         currentMintPolicyAddress.toLowerCase() ==
           CONTRACT_ADDRESSES[activeNetwork.chainId]?.mintPolicy.toLowerCase() ||

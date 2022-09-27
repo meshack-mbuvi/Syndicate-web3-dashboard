@@ -18,8 +18,8 @@ import {
 import { Spinner } from '@/components/shared/spinner';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';

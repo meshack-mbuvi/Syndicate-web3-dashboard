@@ -175,7 +175,6 @@ export class ERC20ClubFactory extends ContractBase {
       );
     }
 
-    // TODO: [TOKEN-GATING] confirm if only memberMixin
     // custom mixins event
     contractAddresses.push(this.addresses.GuardMixinManager);
     encodedFunctions.push(

@@ -2,7 +2,7 @@ import CreateClubButton from '@/components/createClubButton';
 import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
 import useCollectives from '@/hooks/collectives/useGetCollectives';
-import useClubERC20s from '@/hooks/useClubERC20s';
+import useClubERC20s from '@/hooks/clubs/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
 import React, { useEffect, useState } from 'react';

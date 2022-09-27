@@ -15,8 +15,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getModuleByType from '@/utils/modules/getModuleByType';
-import { useAccountTokens } from './useAccountTokens';
-import { useDemoMode } from './useDemoMode';
+import { useAccountTokens } from '../useAccountTokens';
+import { useDemoMode } from '../useDemoMode';
 import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
 
 // TODO: [REFACTOR] rename to useSingleClubGraphDetails for readability
@@ -99,6 +99,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     }
 
     if (
+      !web3 ||
       loading ||
       !data ||
       erc20Token?.loading ||

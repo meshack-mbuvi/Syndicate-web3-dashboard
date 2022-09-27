@@ -2,7 +2,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
 import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';

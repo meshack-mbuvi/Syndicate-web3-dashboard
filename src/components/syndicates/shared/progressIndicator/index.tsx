@@ -1,7 +1,7 @@
 // component to show syndicate deposits progress
 import NumberTreatment from '@/components/NumberTreatment';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
 import { AppState } from '@/state';
 import { IActiveNetwork } from '@/state/wallet/types';

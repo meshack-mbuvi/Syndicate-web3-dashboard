@@ -1,5 +1,14 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLUB_CREATION,
+  CREATE_ON_CHAIN_CLUB_CLICK,
+  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
+  NAME_SYMBOL_NEXT_CLICK,
+  REVIEW_CLICK
+} from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
+import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
@@ -23,15 +32,6 @@ import {
   CreateSteps,
   investmentClubSteps
 } from './steps';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CREATE_ON_CHAIN_CLUB_CLICK,
-  NAME_SYMBOL_NEXT_CLICK,
-  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
-  REVIEW_CLICK,
-  CLUB_CREATION
-} from '@/components/amplitude/eventNames';
-import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -88,7 +88,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       web3: { activeNetwork, account }
     },
     createInvestmentClubSliceReducer: {
-      mintEndTime: { mintTime }
+      mintEndTime: { mintTime },
+      tokenDetails: { depositTokenSymbol, depositTokenLogo }
     }
   } = useSelector((state: AppState) => state);
 
@@ -223,11 +224,30 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
   const onTxReceipt = (receipt) => {
-    const { tokenAddress, name, symbol } =
-      receipt.events.ERC20ClubCreated.returnValues;
+    const {
+      tokenAddress,
+      name,
+      symbol,
+      depositToken,
+      endTime,
+      startTime,
+      tokenCap
+    } = receipt.events.ERC20ClubCreated.returnValues;
 
     // save to local storage
-    saveNewClub({ tokenAddress, name, symbol, account, activeNetwork });
+    saveNewClub({
+      tokenAddress,
+      name,
+      symbol,
+      account,
+      depositToken,
+      endTime,
+      startTime,
+      tokenCap,
+      activeNetwork,
+      depositTokenSymbol,
+      depositTokenLogo
+    });
 
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
@@ -242,7 +262,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setConfirmWallet(false);
   };
 
-  const onTxFail = (err) => {
+  const onTxFail = () => {
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: false,

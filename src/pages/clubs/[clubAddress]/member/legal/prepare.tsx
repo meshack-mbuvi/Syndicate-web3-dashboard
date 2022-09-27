@@ -5,7 +5,7 @@ import Head from '@/components/syndicates/shared/HeaderTitle';
 import WalletNotConnected from '@/components/walletNotConnected';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';

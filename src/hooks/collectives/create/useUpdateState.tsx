@@ -1,32 +1,32 @@
 // Update create collective state
 // ==============================================================
 
-import useCreateState from './useCreateState';
-import { useDispatch } from 'react-redux';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useCreateState from './useCreateState';
 // import { acronymGenerator } from '@/utils/acronymGenerator';
 // import { useDebounce } from '@/hooks/useDebounce';
-import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
-import {
-  setCollectiveName,
-  setCollectiveSymbol,
-  setCollectiveArtwork,
-  setCollectiveDescription,
-  setCollectivePricePerNFT,
-  setCollectiveMaxPerWallet,
-  setCollectiveOpenUntil,
-  setCollectiveTimeWindow,
-  setCollectiveCloseDate,
-  setCollectiveCloseTime,
-  setCollectiveMaxSupply,
-  setCollectiveTransferrable,
-  setColectiveTokenDetails,
-  setIpfsHash
-} from '@/state/createCollective/slice';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { ARTWORK_UPLOAD } from '@/components/amplitude/eventNames';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
+import {
+  setColectiveTokenDetails,
+  setCollectiveArtwork,
+  setCollectiveCloseDate,
+  setCollectiveCloseTime,
+  setCollectiveDescription,
+  setCollectiveMaxPerWallet,
+  setCollectiveMaxSupply,
+  setCollectiveName,
+  setCollectiveOpenUntil,
+  setCollectivePricePerNFT,
+  setCollectiveSymbol,
+  setCollectiveTimeWindow,
+  setCollectiveTransferrable,
+  setIpfsHash
+} from '@/state/createCollective/slice';
 
 const useUpdateState = () => {
   const dispatch = useDispatch();

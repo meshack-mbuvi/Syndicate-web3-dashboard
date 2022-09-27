@@ -4,13 +4,13 @@ import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B4 } from '@/components/typography';
 import { useEffect, useState } from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
- import {
-   GUILD_CLICK,
-   LUMA_CLICK,
-   SLIK_CLICK,
-   SNAPSHOT_CLICK,
-   SYNDICATE_CLICK
- } from '@/components/amplitude/eventNames';
+import {
+  GUILD_CLICK,
+  LUMA_CLICK,
+  SLIK_CLICK,
+  SNAPSHOT_CLICK,
+  SYNDICATE_CLICK
+} from '@/components/amplitude/eventNames';
 
 interface Props {
   slides: any[];

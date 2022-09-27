@@ -3,8 +3,8 @@ import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview'
 import Layout from '@/components/layout';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';

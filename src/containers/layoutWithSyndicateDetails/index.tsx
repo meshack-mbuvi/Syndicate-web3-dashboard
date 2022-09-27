@@ -14,9 +14,9 @@ import {
   resetClubState,
   setERC20Token
 } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';

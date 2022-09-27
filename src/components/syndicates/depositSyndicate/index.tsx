@@ -14,11 +14,12 @@ import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/To
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
@@ -52,7 +53,6 @@ import ConnectWalletAction from '../shared/connectWalletAction';
 import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
-import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
