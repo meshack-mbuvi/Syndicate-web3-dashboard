@@ -140,7 +140,7 @@ const useFetchCollectiveDetails = (
 
       let collectiveCardType,
         mintEndTime,
-        isOpen = true,
+        isOpen = false,
         maxSupply = 0;
 
       // set collective card type and check if collective is active
