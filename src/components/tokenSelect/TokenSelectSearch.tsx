@@ -33,10 +33,10 @@ interface TokenSelectSearch {
   variant?: TokenModalVariant;
 }
 
-const dedupTokens = (tokensList_, recentTokens) => {
+const dedupTokens = (tokensList_: any, recentTokens: any) => {
   return tokensList_.filter(
-    (tokens) =>
-      !(recentTokens || []).some((rec) => rec.address === tokens.address)
+    (tokens: any) =>
+      !(recentTokens || []).some((rec: any) => rec.address === tokens.address)
   );
 };
 
@@ -85,16 +85,23 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         .slice(0, 6)
         .map((collective) => {
           return {
+            // @ts-expect-error TS(2339): Property 'tokenName' does not exist on type 'never'.
             name: collective.tokenName,
+            // @ts-expect-error TS(2339): Property 'address' does not exist on type 'never'.
             address: collective.address,
+            // @ts-expect-error TS(2339): Property 'tokenSymbol' does not exist on type 'never'.
             symbol: collective.tokenSymbol,
+            // @ts-expect-error TS(2339): Property 'tokenMedia' does not exist on type 'never'.
             logoURI: collective.tokenMedia,
+            // @ts-expect-error TS(2339): Property 'tokenMediaType' does not exist on type 'never'.
             collectionMediaType: collective.tokenMediaType
           };
         }) ||
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       SUPPORTED_TOKENS[activeNetwork.chainId] ||
       []
-    : SUPPORTED_TOKENS[activeNetwork.chainId] || [];
+    : // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      SUPPORTED_TOKENS[activeNetwork.chainId] || [];
 
   const _tokens = debouncedSearchTerm
     ? tokensList
@@ -117,7 +124,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       if (showTokenGateModal) {
         promises.push(getNftCollection(address, chainId));
       }
-
+      // @ts-expect-error TS(2322): Type '{ address: string; name: string; symbol: string... Remove this comment to see the full error message
       return Promise.allSettled(promises)
         .then((res) => {
           const _res = res.find((r) => r.status === 'fulfilled');
@@ -150,7 +157,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     [debouncedSearchTerm]
   );
 
-  const validateToken = (token) => {
+  const validateToken = (token: any) => {
     /* add tokens by contract address on rinkey without validation since
     rinkeby tokens infrequently have name symbol etc. */
     if (isDev) {
@@ -182,7 +189,8 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           ...(defaultTokenList || []),
           ...(suggestionList || []),
           ...(showTokenGateModal
-            ? SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+              SUPPORTED_TOKENS[activeNetwork.chainId] || []
             : [])
         ].find((token) => token.address === debouncedSearchTerm);
 
@@ -212,7 +220,8 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         [
           ...(defaultTokenList || []),
           ...(showTokenGateModal
-            ? SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+              SUPPORTED_TOKENS[activeNetwork.chainId] || []
             : [])
         ].map((defaultToken) => {
           if (
@@ -283,15 +292,19 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           icon: token.logoURI,
           decimals: token.decimals
         },
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         ...tokenRules.slice(idx + 1)
       ];
+      // @ts-expect-error TS(2345): Argument of type 'Argument of type '(TokenGateRule | { name: string; quantity:... Remove this comment to see the full error message
       dispatch(setTokenRules(rules));
 
       // Handle duplicate validation
+      // @ts-expect-error TS(2345): Argument of type 'Argument of type '(TokenGateRule | { name: string; quantity:... Remove this comment to see the full error message
       const duplicateTokens = validateDuplicateRules(rules, logicalOperator);
       dispatch(setDuplicateRulesError(duplicateTokens));
 
       // Handle null rules validation
+      // @ts-expect-error TS(2345): Argument of type 'Argument of type '(TokenGateRule | { name: string; quantity:... Remove this comment to see the full error message
       const _nullRules = validateNullRules(rules);
       dispatch(setNullRulesError(_nullRules));
     } else {
@@ -301,6 +314,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           depositTokenName: token.name,
           depositTokenSymbol: token.symbol,
           depositTokenLogo: token.logoURI,
+          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
           depositTokenDecimals: token.decimals
         })
       );

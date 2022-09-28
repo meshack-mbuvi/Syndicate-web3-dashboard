@@ -20,10 +20,11 @@ export const useNativeBalance = (account: string): number => {
     if (router.isReady && account && !isEmpty(web3)) {
       web3.eth
         .getBalance(account)
-        .then((balance) => {
+        .then((balance: any) => {
           setNativeBalance(getWeiAmount(web3, balance, 18, false));
         })
         .catch(() => {
+          // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message
           initial ? setNativeBalance(0) : null;
         });
     }
@@ -47,5 +48,6 @@ export const useNativeBalance = (account: string): number => {
     };
   }, [web3?._provider, account, router.isReady]);
 
+  // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
   return useMemo(() => nativeBalance, [nativeBalance]);
 };

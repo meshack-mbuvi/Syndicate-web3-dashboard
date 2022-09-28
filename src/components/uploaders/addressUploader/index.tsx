@@ -10,8 +10,8 @@ import { setMembershipAddresses } from '@/state/createInvestmentClub/slice';
 interface Props {
   title?: string;
   helperText?: string;
-  textInputValue;
-  handleTextInputChange: (e) => void;
+  textInputValue: any;
+  handleTextInputChange: (e: any) => void;
   customClasses?: string;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -48,7 +48,7 @@ export const AddressUploader: React.FC<Props> = ({
   const height = 'h-52'; // 13rem
   const dispatch = useDispatch();
 
-  const handleUploadEvent = (event) => {
+  const handleUploadEvent = (event: any) => {
     switch (event.type) {
       case 'loadstart':
         setProgressPercent(10);
@@ -69,7 +69,7 @@ export const AddressUploader: React.FC<Props> = ({
   };
 
   // adding event listener to file reader to track upload progress
-  const addUploaderListeners = (reader) => {
+  const addUploaderListeners = (reader: any) => {
     reader.addEventListener('loadstart', handleUploadEvent);
     reader.addEventListener('load', handleUploadEvent);
     reader.addEventListener('loadend', handleUploadEvent);
@@ -79,7 +79,7 @@ export const AddressUploader: React.FC<Props> = ({
   };
 
   // removing event listeners
-  const removeUploaderListeners = (reader) => {
+  const removeUploaderListeners = (reader: any) => {
     reader.removeEventListener('loadstart', handleUploadEvent);
     reader.removeEventListener('load', handleUploadEvent);
     reader.removeEventListener('loadend', handleUploadEvent);
@@ -91,12 +91,12 @@ export const AddressUploader: React.FC<Props> = ({
   /* file upload functions */
   const fileReader = new FileReader();
 
-  const csvFileToArray = (string) => {
+  const csvFileToArray = (string: any) => {
     // csv file rows can be separated by carriage return and new line or just a new line.
     // excel files rows are separated by new lines.
     const rows = string.split(/\r\n|\r|\n/);
 
-    const addressesArray = rows?.reduce((accumulator, value) => {
+    const addressesArray = rows?.reduce((accumulator: any, value: any) => {
       // check if address is valid
       // the check for manager account will be done at the review stage
       const firstColumnAddress = value.split(',')[0];
@@ -115,7 +115,7 @@ export const AddressUploader: React.FC<Props> = ({
     setRawMemberAddresses(memberAddresses);
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: any) => {
     const file = e.target.files[0];
 
     if (file) {
@@ -127,7 +127,7 @@ export const AddressUploader: React.FC<Props> = ({
         file.name.endsWith('.xls') || file.name.endsWith('.xlsx');
 
       fileReader.onload = function (event) {
-        const text = event.target.result;
+        const text = event?.target?.result;
 
         // for spreadsheets
         const workbook = XLSX.read(text, { type: 'binary' });

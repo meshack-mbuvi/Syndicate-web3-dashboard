@@ -6,7 +6,7 @@ interface Props {
   tabs: { name: string }[];
   activeIndex: number;
   height?: string;
-  handleTabChange: (index) => void;
+  handleTabChange: (index: any) => void;
   children: React.ReactNode[];
 }
 

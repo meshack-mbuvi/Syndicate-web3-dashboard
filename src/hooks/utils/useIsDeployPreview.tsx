@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'glob... Remove this comment to see the full error message
 import window from 'global';
 
 // Deploy Preview hook

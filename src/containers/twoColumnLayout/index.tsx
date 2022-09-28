@@ -14,9 +14,9 @@ export enum TwoColumnLayoutType {
 const TwoColumnLayout: FC<{
   dotIndicatorOptions: string[];
   managerSettingsOpen: boolean;
-  leftColumnComponent;
-  rightColumnComponent;
-  handleExitClick?;
+  leftColumnComponent: any;
+  rightColumnComponent: any;
+  handleExitClick?: any;
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   headerTitle: string;
@@ -26,8 +26,8 @@ const TwoColumnLayout: FC<{
   flipColumns?: boolean;
   showSideNav?: boolean;
   showDotIndicatorLabels?: boolean;
-  handlePrevious?: (event?) => void;
-  handleNext?: (event?) => void;
+  handlePrevious?: (event?: any) => void;
+  handleNext?: (event?: any) => void;
   nextBtnDisabled?: boolean;
 }> = ({
   managerSettingsOpen,

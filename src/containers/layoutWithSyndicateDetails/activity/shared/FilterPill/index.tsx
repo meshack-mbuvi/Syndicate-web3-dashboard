@@ -25,9 +25,10 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e) => {
+    const onPageClickEvent = (e: any) => {
       if (
         categorySelect.current !== null &&
+        // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
         !categorySelect.current.contains(e.target)
       ) {
         setShowDropdown(!showDropdown);
@@ -43,7 +44,7 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
     };
   }, [showDropdown]);
 
-  const handleSelect = (category) => {
+  const handleSelect = (category: any) => {
     setSelectedCategory(
       DropDownOptions.find((option) => option.value === category)
     );

@@ -84,6 +84,7 @@ const CreateInvestmentClub: React.FC = () => {
 
   useEffect(() => {
     if (dispatchCreateFlow && account) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowModal((prev) => ({
         ...prev,
         warningModal: true
@@ -93,7 +94,7 @@ const CreateInvestmentClub: React.FC = () => {
 
   const hideInvestmentClubCTAs =
     currentStep === 0 ||
-    (currentStep === stepsNames.indexOf(DetailsSteps.DATE) && !isCustomDate);
+    (currentStep === stepsNames?.indexOf(DetailsSteps.DATE) && !isCustomDate);
 
   const [currCategory, setCurrentCategory] = useState<CreateActiveSteps>();
   const [uniqueCategories, setUniqueCategories] = useState<CreateActiveSteps[]>(
@@ -102,6 +103,7 @@ const CreateInvestmentClub: React.FC = () => {
   const [categoryIndex, setCategoryIndex] = useState(0);
 
   useEffect(() => {
+    // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
     const uniqueCategories = stepsCategories.reduce(
       (unique: CreateActiveSteps[], curr) => {
         if (!unique.includes(curr)) {
@@ -113,12 +115,15 @@ const CreateInvestmentClub: React.FC = () => {
     );
 
     setUniqueCategories(uniqueCategories);
+    // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
     if (currCategory !== steps[currentStep].category) {
+      // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
       setCurrentCategory(steps[currentStep].category);
     }
   }, [steps, currentStep, currCategory, stepsCategories]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2345): Argument of type 'CreateActiveSteps | undefined' is not assig... Remove this comment to see the full error message
     const index = uniqueCategories.indexOf(currCategory);
     setCategoryIndex(index);
   }, [stepsCategories, currCategory, uniqueCategories]);
@@ -131,6 +136,7 @@ const CreateInvestmentClub: React.FC = () => {
 
   const handleExit = () => {
     router.replace('/');
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     resetCreationStates();
   };
 
@@ -158,7 +164,10 @@ const CreateInvestmentClub: React.FC = () => {
           <div className="w-full mx-auto max-w-520" ref={parentRef}>
             <ReviewDetails />
             <div className="w-full sm:px-5">
-              {CreateFlowSteps(steps[currentStep].step)}
+              {
+                // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
+                CreateFlowSteps(steps[currentStep].step)
+              }
             </div>
             {!hideInvestmentClubCTAs ? (
               <div className="w-full">
@@ -171,6 +180,7 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Waiting for confirmation Modal */}
       <Modal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={waitingConfirmationModal}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
@@ -202,6 +212,7 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Transaction submitted Modal */}
       <Modal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={transactionModal}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
@@ -246,9 +257,11 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Error modal */}
       <Modal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={errorModal}
         modalStyle={ModalStyle.DARK}
         closeModal={() =>
+          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
           setShowModal(() => ({
             waitingConfirmationModal: false,
             transactionModal: false,
@@ -312,9 +325,11 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Wallet warning modals */}
       <Modal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={warningModal}
         modalStyle={ModalStyle.DARK}
         closeModal={() => {
+          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
           setShowModal(() => ({
             waitingConfirmationModal: false,
             transactionModal: false,

@@ -27,7 +27,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
     isLoadingFloatingIcon,
     customId = ''
   }) => {
-    const particlesInit = async (main) => {
+    const particlesInit = async (main: any) => {
       await loadFull(main);
     };
 

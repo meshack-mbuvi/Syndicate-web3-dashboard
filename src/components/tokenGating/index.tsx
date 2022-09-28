@@ -10,7 +10,7 @@ import { TokenLogicList as TokenLogicList } from './tokenLogic';
 
 interface Props {
   tokenRules: TokenGateRule[];
-  handleRulesChange: (rules) => void;
+  handleRulesChange: (rules: any) => void;
   logicalOperator?: LogicalOperator;
   handleLogicalOperatorChange: (operator: LogicalOperator) => void;
   handleShowTokenSelector: (

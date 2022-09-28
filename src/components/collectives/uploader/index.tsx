@@ -15,7 +15,7 @@ interface Props {
   fileName: string;
   successText?: string;
   errorText?: string;
-  handleUpload: (e) => void;
+  handleUpload: (e: any) => void;
   handleCancelUpload: () => void;
   isUsingGeneratedArtwork?: boolean;
   handleCreateGenerateArtwork: (backgroundColorClass: string) => void;

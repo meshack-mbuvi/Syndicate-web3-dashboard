@@ -12,6 +12,7 @@ const setAirdropInfoSlice = createSlice({
     setLoadingAirdropInfo(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     clearAirdropInfo(state, action: PayloadAction<boolean>) {
       state.airdropInfo = initialState.airdropInfo;
     }

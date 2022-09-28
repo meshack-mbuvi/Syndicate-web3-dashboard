@@ -88,6 +88,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
 
   useEffect(() => {
     if (noteREf.current) {
+      // @ts-expect-error TS(2339): Property 'clientHeight' does not exist on type 'ne... Remove this comment to see the full error message
       const noteHeight = noteREf.current.clientHeight;
       if (noteHeight <= 96) {
         setFixedNote(true);

@@ -207,9 +207,13 @@ const Layout: FC<Props> = ({
             style={{ height: height ? height - 78 : '' }}
           >
             <PortfolioSideNav
+              // @ts-expect-error TS(2322): Type 'CreateSteps[] | string[] | undefined' is not assig ... Remove this comment to see the full error message
               dotIndicatorOptions={dotIndicatorOptions}
+              // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
               handleExitClick={handleExitClick}
+              // @ts-expect-error TS(2322): Type '((index?: number | undefined) => void) | undefined' is not assig ... Remove this comment to see the full error message
               handleBack={handlePrevious}
+              // @ts-expect-error TS(2322): Type '((index?: number | undefined) => void) | undefined' is not assig ... Remove this comment to see the full error message
               handleNext={handleNext}
               activeIndex={activeIndex}
               nextBtnDisabled={nextBtnDisabled}

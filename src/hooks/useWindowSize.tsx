@@ -9,11 +9,14 @@ const useWindowSize = (): { width: number; height: number } => {
 
   function handleResize() {
     setWindowSize({
+      // @ts-expect-error TS(2322): Type 'number' is not assignable to type 'undefined... Remove this comment to see the full error message
       width: window.innerWidth,
+      // @ts-expect-error TS(2322): Type 'number' is not assignable to type 'undefined... Remove this comment to see the full error message
       height: window.innerHeight
     });
   }
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (typeof window !== 'undefined') {
       handleResize();
@@ -23,6 +26,7 @@ const useWindowSize = (): { width: number; height: number } => {
       return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
+  // @ts-expect-error TS(2322): Type '{ width: undefined; height: undefined; }' is... Remove this comment to see the full error message
   return windowSize;
 };
 

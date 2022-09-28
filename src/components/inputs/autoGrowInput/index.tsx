@@ -29,13 +29,16 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
     if (!textWidth) return;
 
     const diff = dynamicFontSize < 37 ? 5 : 10;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     setExtraWidth(span.current.offsetWidth - (textWidth - diff) - 16); // Only God knows whats happening here
   }, [dynamicFontSize, placeholder, setWidth, value, width]);
 
   useEffect(() => {
     // add 16 for 1rem spacing
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const size = 48 - span.current.offsetWidth * 0.1;
     const spaceToAdd = size > 12 ? 16 : 12;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     setWidth(span.current.offsetWidth + spaceToAdd);
     // reset font size if no value
     if (!value) {
@@ -46,6 +49,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   useEffect(() => {
     // Make text grow or shrink based on the current width
     setDynamicFontSize(() => {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       const tempSize = 48 - span.current.offsetWidth * 0.1;
       // set the minimum font to 16
       return tempSize > 12 ? tempSize : 12;

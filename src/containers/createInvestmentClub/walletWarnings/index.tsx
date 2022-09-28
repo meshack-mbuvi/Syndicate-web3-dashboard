@@ -33,8 +33,10 @@ const WalletWarnings: React.FC = () => {
 
   const hasExistingClubs = myClubs.some((club) => club) && totalClubs >= 1;
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const getWarningText = () => {
     const existingClub = totalClubs ? myClubs[0] : null;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const _base = `This wallet is already being used for ${existingClub.clubName} (${existingClub.clubSymbol})`;
     if (totalClubs === 1) {
       return _base;
@@ -45,7 +47,9 @@ const WalletWarnings: React.FC = () => {
   };
 
   const handleDisconnectWallet = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     disconnectWallet();
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setShowModal((prev) => ({
       ...prev,
       warningModal: false
@@ -125,6 +129,7 @@ const WalletWarnings: React.FC = () => {
               hasExistingClubs ? 'orange-CTA' : 'green-CTA'
             } w-full flex items-center justify-center space-x-2`}
             onClick={() => {
+              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               handleCreateInvestmentClub();
               amplitudeLogger(CONTINUE_WALLET_CLICK, {
                 flow: Flow.CLUB_CREATE

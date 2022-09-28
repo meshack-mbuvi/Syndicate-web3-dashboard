@@ -20,7 +20,7 @@ export const InputFieldWithToken = (props: {
   depositTokenLogo?: string;
   depositTokenSymbol?: string;
   extraClasses?: string;
-  onChange: (e) => void;
+  onChange: (e: any) => void;
   handleTokenClick?: () => void;
   symbolDisplayVariant?: SymbolDisplay;
   symbolColor?: string;

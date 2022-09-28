@@ -73,8 +73,8 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
-  const [accountBalance, setAccountBalance] = useState<number>();
-  const [accountNewBalance, setAccountNewBalance] = useState<number>();
+  const [, setAccountBalance] = useState<number>();
+  // const [accountNewBalance, setAccountNewBalance] = useState<number>();
   const [interval, setIntervalId] = useState(null);
 
   const { refetch } = useFetchCollectiveDetails();
@@ -110,21 +110,24 @@ const NftClaimAndInfoCard: React.FC = () => {
     refetch();
   };
 
-  const onTxFail = (error) => {
+  const onTxFail = (error: any) => {
     if (error?.message.includes('Be aware that it might still be mined')) {
       // Pool for account nft balance
       const interval = setInterval(() => {
-        web3.eth.getTransactionReceipt(transactionHash).then((transaction) => {
-          if (!transaction) return;
+        web3.eth
+          .getTransactionReceipt(transactionHash)
+          .then((transaction: any) => {
+            if (!transaction) return;
 
-          if (transaction.status) {
-            setProgressState(ProgressState.SUCCESS);
-          } else {
-            setProgressState(ProgressState.FAILURE);
-          }
-        });
+            if (transaction.status) {
+              setProgressState(ProgressState.SUCCESS);
+            } else {
+              setProgressState(ProgressState.FAILURE);
+            }
+          });
       }, 2000);
 
+      // @ts-expect-error TS(2345): Argument of type 'Timeout' is not assignable to par is not assig... Remove this comment to see the full error message
       setIntervalId(interval);
 
       setProgressState(ProgressState.TAKING_LONG);
@@ -225,6 +228,7 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   // Close modal on outside click
   const handleModalClose = () => {
+    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to par... Remove this comment to see the full error message
     setProgressState(null);
   };
 
@@ -278,6 +282,7 @@ const NftClaimAndInfoCard: React.FC = () => {
             nameOfCreator={shortenOwnerAddress(ownerAddress)}
             links={{
               externalLink: `${baseUrl}/address/${collectiveAddress}`,
+              // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
               openSea: openSeaLink
             }}
             numberOfExistingMembers={+numOwners}
@@ -286,6 +291,7 @@ const NftClaimAndInfoCard: React.FC = () => {
               tokenAmount: +mintPrice,
               tokenSymbol: symbol
             }}
+            //@ts-expect-error TS(2322): Type '{ fiatAmount: number; tokenAmount: number; tokenSymbol: string; } | null' is not
             gasEstimate={
               gasPrice
                 ? {
@@ -305,6 +311,7 @@ const NftClaimAndInfoCard: React.FC = () => {
             transactionType="transaction"
             claimCollective={claimCollective}
             tryAgain={() => {
+              // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to parameter of type
               setProgressState(null);
               amplitudeLogger(CLAIM_TRY_AGAIN_CLICK, {
                 flow: Flow.COLLECTIVE_CLAIM
@@ -339,7 +346,8 @@ const NftClaimAndInfoCard: React.FC = () => {
                       'ipfs://',
                       ''
                     )}`
-                  : `${ipfsGateway}/${nftMetadata?.image.replace(
+                  : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    `${ipfsGateway}/${nftMetadata?.image.replace(
                       'ipfs://',
                       ''
                     )}`

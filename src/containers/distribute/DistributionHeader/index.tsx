@@ -5,7 +5,7 @@ import React from 'react';
  * Displays a component with title and subtitle text
  * @returns
  */
-const DistributionHeader: React.FC<{ titleText; subTitleText }> = ({
+const DistributionHeader: React.FC<{ titleText: any; subTitleText: any }> = ({
   titleText,
   subTitleText
 }) => {

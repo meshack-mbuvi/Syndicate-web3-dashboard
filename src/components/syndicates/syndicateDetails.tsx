@@ -13,6 +13,7 @@ import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'huma... Remove this comment to see the full error message
 import abi from 'human-standard-token-abi';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
@@ -154,6 +155,7 @@ const SyndicateDetails: FC<{
       }
 
       dispatch(
+        // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: st... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
           ...depositDetails,
           loading: false
@@ -242,6 +244,7 @@ const SyndicateDetails: FC<{
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 extraClasses="text-gray-syn3">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * maxTotalDeposits
                         )}{' '}
                         USD
@@ -277,6 +280,7 @@ const SyndicateDetails: FC<{
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 className="text-gray-syn3 text-sm">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * amountRaised
                         )}{' '}
                         USD
@@ -316,6 +320,7 @@ const SyndicateDetails: FC<{
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 extraClasses="text-gray-syn3">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD *
                             (+maxTotalDeposits - +amountRaised)
                         )}{' '}
@@ -374,6 +379,7 @@ const SyndicateDetails: FC<{
                     {!isStableCoin(depositTokenSymbol) ? (
                       <div className="text-gray-syn4 text-sm">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * totalDeposits
                         )}{' '}
                         USD
@@ -484,6 +490,7 @@ const SyndicateDetails: FC<{
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
                 nativeDepositToken={nativeDepositToken}
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 depositTokenPriceInUSD={depositTokenPriceInUSD.toString()}
                 tokenDetails={{
                   symbol: depositTokenSymbol,

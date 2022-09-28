@@ -15,7 +15,7 @@ const client = new ApolloClient({
 export default {
   title: '4. Organisms/Network component',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <ConnectWalletProvider>
@@ -28,7 +28,7 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const {
     name,
     symbol,
@@ -73,30 +73,35 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Default.args = {
   account: '0x93C38105cd425F876Db356068A5aC066c5096A24',
   disabled: false
 };
 
 export const WalletNotConnectedAndEnabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 WalletNotConnectedAndEnabled.args = {
   account: '',
   disabled: false
 };
 
 export const WalletNotConnectedAndDisabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 WalletNotConnectedAndDisabled.args = {
   account: '',
   disabled: true
 };
 
 export const WalletConnectedAndEnabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 WalletConnectedAndEnabled.args = {
   account: '0x93C38105cd425F876Db356068A5aC066c5096A24',
   disabled: false
 };
 
 export const WalletConnectedAndDisabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 WalletConnectedAndDisabled.args = {
   account: '0x93C38105cd425F876Db356068A5aC066c5096A24',
   disabled: true

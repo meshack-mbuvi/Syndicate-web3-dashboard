@@ -37,6 +37,7 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
       value={
         temporaryInputFieldValues.priceToJoin
           ? numberWithCommas(
+              // @ts-expect-error TS(2339): Property 'slice' does not exist on type 'never'.
               Number(temporaryInputFieldValues.priceToJoin.slice(0, -1))
             ) + '.'
           : priceToJoin || priceToJoin === 0
@@ -49,12 +50,14 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
         if (isStringIncompleteDecimalNumber(amount)) {
           setTemporaryInputFieldValues({
             ...temporaryInputFieldValues,
+            // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'null'.
             priceToJoin: amount
           });
         } else {
           if (Number(amount) || Number(amount) === 0) {
             handlePriceToJoinChange(amount);
           } else if (amount === '') {
+            // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
             handlePriceToJoinChange(null);
           } else if (amount === '.') {
             handlePriceToJoinChange('0.');
@@ -68,7 +71,9 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
       placeholderLabel="0"
       extraClasses={extraClasses}
       symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       depositTokenSymbol={tokenDetails.symbol}
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       depositTokenLogo={tokenDetails.icon}
     />
   );

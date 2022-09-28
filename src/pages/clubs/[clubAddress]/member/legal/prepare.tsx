@@ -57,6 +57,7 @@ const SignMemberLegalAgreement: NextPage = () => {
   const dispatch = useDispatch();
 
   const { totalDeposits, refetch: refetchSingleClubDetails } =
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     useClubDepositsAndSupply(clubAddress);
 
   useEffect(() => {
@@ -100,6 +101,7 @@ const SignMemberLegalAgreement: NextPage = () => {
       }
 
       dispatch(
+        // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: st... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
           ...depositDetails,
           loading: false

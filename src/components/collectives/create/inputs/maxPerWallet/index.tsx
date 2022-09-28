@@ -26,6 +26,7 @@ export const InputFieldMaxPerWallet: React.FC<Props> = ({
         if (Number(amount)) {
           handleMaxPerWalletChange(Number(amount));
         } else if (amount === '') {
+          // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
           handleMaxPerWalletChange(null);
         }
       }}

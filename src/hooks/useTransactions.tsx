@@ -32,7 +32,7 @@ const useTransactions = (skip = 0) => {
     }
   }, [router.isReady, account, activeNetwork.chainId]);
 
-  const processERC20Transactions = async (txns) => {
+  const processERC20Transactions = async (txns: any) => {
     dispatch(setLoadingTransactions(true));
     dispatch(setMyTransactions({ txns, skip }));
     dispatch(setLoadingTransactions(false));

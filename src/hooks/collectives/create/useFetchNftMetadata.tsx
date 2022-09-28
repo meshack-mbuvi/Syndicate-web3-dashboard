@@ -25,6 +25,7 @@ export const getJson = async (
 const useFetchCollectiveMetadata = (
   metadataCid?: string
 ): UseQueryResult<CollectiveMetadata> => {
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   return useQuery(['nftMetadata', metadataCid], () => getJson(metadataCid), {
     enabled: metadataCid !== undefined
   });

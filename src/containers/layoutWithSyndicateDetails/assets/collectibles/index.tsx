@@ -126,7 +126,8 @@ const Collectibles: FC<Props> = ({ isOwner }) => {
         offset: pageOffSet.toString(),
         chainId: activeNetwork.chainId,
         maxTotalDeposits: nativeDepositToken
-          ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
+          ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+            parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
           : maxTotalDeposits
       })
     );
@@ -186,137 +187,140 @@ const Collectibles: FC<Props> = ({ isOwner }) => {
             loader={!isDemoMode && <LoaderContent animate={true} />}
           >
             <div className="grid grid-cols-12 gap-5">
-              {collectiblesResult.map((collectible, index) => {
-                const {
-                  id,
-                  image,
-                  name,
-                  animation,
-                  floorPrice,
-                  lastPurchasePrice,
-                  collection,
-                  futureNft
-                } = collectible;
+              {
+                // @ts-expect-error TS(7030): Not all code paths return a value.
+                collectiblesResult.map((collectible: any, index: any) => {
+                  const {
+                    id,
+                    image,
+                    name,
+                    animation,
+                    floorPrice,
+                    lastPurchasePrice,
+                    collection,
+                    futureNft
+                  } = collectible;
 
-                let mediaType;
+                  let mediaType: any;
 
-                if (image && !animation) {
-                  mediaType = 'imageOnlyNFT';
-                } else if (animation) {
-                  // animation could be a .mov or .mp4 video
-                  const movAnimation = animation.match(/\.mov$/) != null;
-                  const mp4Animation = animation.match(/\.mp4$/) != null;
-
-                  if (movAnimation || mp4Animation) {
-                    mediaType = 'videoNFT';
-                  }
-
-                  // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                  // details for the nft with id below are not returned correctly and hence does not render
-                  // The animation link is a .html which is not captured.
-                  // Until we find a better way to handle this, let's have the fix below
-                  if (animation.match(/\.html$/) != null && id == '3216') {
-                    mediaType = 'htmlNFT';
-                  }
-
-                  // animation could be a gif
-                  if (animation.match(/\.gif$/) != null) {
-                    mediaType = 'animatedNFT';
-                  }
-
-                  // add support for .wav and .mp3 files
-                  const wavAnimation = animation.match(/\.wav$/) != null;
-                  const mp3Animation = animation.match(/\.mp3$/) != null;
-                  const soundtrack = wavAnimation || mp3Animation;
-
-                  if (soundtrack) {
-                    mediaType = 'soundtrackNFT';
-                  }
-
-                  // Still media type not set? Default to imageOnlyNFT
-                  if (!mediaType) {
+                  if (image && !animation) {
                     mediaType = 'imageOnlyNFT';
+                  } else if (animation) {
+                    // animation could be a .mov or .mp4 video
+                    const movAnimation = animation.match(/\.mov$/) != null;
+                    const mp4Animation = animation.match(/\.mp4$/) != null;
+
+                    if (movAnimation || mp4Animation) {
+                      mediaType = 'videoNFT';
+                    }
+
+                    // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                    // details for the nft with id below are not returned correctly and hence does not render
+                    // The animation link is a .html which is not captured.
+                    // Until we find a better way to handle this, let's have the fix below
+                    if (animation.match(/\.html$/) != null && id == '3216') {
+                      mediaType = 'htmlNFT';
+                    }
+
+                    // animation could be a gif
+                    if (animation.match(/\.gif$/) != null) {
+                      mediaType = 'animatedNFT';
+                    }
+
+                    // add support for .wav and .mp3 files
+                    const wavAnimation = animation.match(/\.wav$/) != null;
+                    const mp3Animation = animation.match(/\.mp3$/) != null;
+                    const soundtrack = wavAnimation || mp3Animation;
+
+                    if (soundtrack) {
+                      mediaType = 'soundtrackNFT';
+                    }
+
+                    // Still media type not set? Default to imageOnlyNFT
+                    if (!mediaType) {
+                      mediaType = 'imageOnlyNFT';
+                    }
                   }
-                }
-                // sometimes the NFT name is an Ethereum address
-                // we need to break this to fit onto the collectible card
-                const isNameEthereumAddress = web3.utils?.isAddress(name);
+                  // sometimes the NFT name is an Ethereum address
+                  // we need to break this to fit onto the collectible card
+                  const isNameEthereumAddress = web3.utils?.isAddress(name);
 
-                const blankValue = <span className="text-gray-syn4">-</span>;
+                  const blankValue = <span className="text-gray-syn4">-</span>;
 
-                if (mediaType) {
-                  return (
-                    <div
-                      className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
-                      key={index}
-                    >
-                      {!showFullScreen ? (
-                        <CollectibleMedia
-                          {...{
-                            collectible,
-                            mediaType,
-                            setDetailsOfSelectedCollectible,
-                            showCollectibles: true
-                          }}
-                        />
-                      ) : null}
+                  if (mediaType) {
+                    return (
                       <div
-                        className="flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
-                        onClick={() => {
-                          setDetailsOfSelectedCollectible({
-                            collectible,
-                            mediaType,
-                            moreDetails: {
-                              'Token ID': futureNft ? '' : id,
-                              'Token collection': collection.name,
-                              'Floor price': floorPrice,
-                              'Last purchase price': lastPurchasePrice
-                            }
-                          });
-                        }}
-                        onKeyDown={() => ({})}
-                        tabIndex={0}
-                        role="button"
+                        className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
+                        key={index}
                       >
-                        <div className="mx-8 flex flex-col">
-                          <H4
-                            extraClasses={`line-clamp-1 ${
-                              isNameEthereumAddress
-                                ? 'break-all'
-                                : 'break-words'
-                            }`}
-                          >
-                            {name ? name : blankValue}
-                          </H4>
-                          <span className="text-gray-syn4 text-sm pt-4">
-                            Floor price
-                          </span>
-                          <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
-                            <span className="">
-                              {floorPrice
-                                ? `${floorPrice} ${
-                                    isDemoMode
-                                      ? 'ETH'
-                                      : activeNetwork.nativeCurrency.symbol
-                                  }`
-                                : blankValue}
+                        {!showFullScreen ? (
+                          <CollectibleMedia
+                            {...{
+                              collectible,
+                              mediaType,
+                              setDetailsOfSelectedCollectible,
+                              showCollectibles: true
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
+                          onClick={() => {
+                            setDetailsOfSelectedCollectible({
+                              collectible,
+                              mediaType,
+                              moreDetails: {
+                                'Token ID': futureNft ? '' : id,
+                                'Token collection': collection.name,
+                                'Floor price': floorPrice,
+                                'Last purchase price': lastPurchasePrice
+                              }
+                            });
+                          }}
+                          onKeyDown={() => ({})}
+                          tabIndex={0}
+                          role="button"
+                        >
+                          <div className="mx-8 flex flex-col">
+                            <H4
+                              extraClasses={`line-clamp-1 ${
+                                isNameEthereumAddress
+                                  ? 'break-all'
+                                  : 'break-words'
+                              }`}
+                            >
+                              {name ? name : blankValue}
+                            </H4>
+                            <span className="text-gray-syn4 text-sm pt-4">
+                              Floor price
                             </span>
-                            {floorPrice > 0 && (
-                              <span className="text-gray-syn4">
-                                (
-                                {floatedNumberWithCommas(
-                                  floorPrice * nativeTokenPrice
-                                )}{' '}
-                                USD)
+                            <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
+                              <span className="">
+                                {floorPrice
+                                  ? `${floorPrice} ${
+                                      isDemoMode
+                                        ? 'ETH'
+                                        : activeNetwork.nativeCurrency.symbol
+                                    }`
+                                  : blankValue}
                               </span>
-                            )}
+                              {floorPrice > 0 && (
+                                <span className="text-gray-syn4">
+                                  (
+                                  {floatedNumberWithCommas(
+                                    floorPrice * nativeTokenPrice
+                                  )}{' '}
+                                  USD)
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                }
-              })}
+                    );
+                  }
+                })
+              }
             </div>
           </InfiniteScroll>
         </div>

@@ -4,7 +4,6 @@ import Modal, { ModalStyle } from '@/components/modal';
 import CopyLink from '@/components/shared/CopyLink';
 import { AppState } from '@/state';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
-import { chain } from 'lodash';
 import { useRouter } from 'next/router';
 import React, {
   Dispatch,
@@ -18,7 +17,7 @@ import { useSelector } from 'react-redux';
 interface ILinkModal {
   showShareOrChangeDocs: boolean;
   setShowShareOrChangeDocsModal: Dispatch<SetStateAction<boolean>>;
-  handleChangeLegalDocument;
+  handleChangeLegalDocument: any;
 }
 
 const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({

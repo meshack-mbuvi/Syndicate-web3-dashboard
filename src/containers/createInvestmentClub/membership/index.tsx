@@ -16,7 +16,7 @@ import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatur
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import { setActiveTokenGateOption } from '@/state/createInvestmentClub/slice';
 
-const Membership: React.FC<{ className }> = ({ className }) => {
+const Membership: React.FC<{ className: any }> = ({ className }) => {
   const {
     createInvestmentClubSliceReducer: {
       investmentClubSymbol,
@@ -40,14 +40,17 @@ const Membership: React.FC<{ className }> = ({ className }) => {
     if (isCreatingInvestmentClub && isReady && isClubMixinGuardTreatmentOn) {
       const excludeNullRules = tokenRules.filter((token) => token.name);
       if (isPolygon) {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(false);
         dispatch(setActiveTokenGateOption(TokenGateOption.UNRESTRICTED));
       } else if (
         (excludeNullRules.length && !errors.duplicateRules.length) ||
         tokenGateOption === TokenGateOption.UNRESTRICTED
       ) {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(false);
       } else {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(true);
       }
     } else {
@@ -55,8 +58,10 @@ const Membership: React.FC<{ className }> = ({ className }) => {
         (isReady && !isClubMixinGuardTreatmentOn) ||
         (membershipAddresses.length && !errors.memberAddresses)
       ) {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(false);
       } else {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(true);
       }
     }

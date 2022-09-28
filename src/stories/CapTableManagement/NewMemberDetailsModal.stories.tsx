@@ -21,7 +21,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <Story />
@@ -31,16 +31,17 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [amountToMint, setAmountToMint] = useState('0');
   const [memberAddress, setMemberAddress] = useState('');
-  const handleAddressChange = (e) => {
+  const handleAddressChange = (e: any) => {
     const addressValue = e.target.value;
     setMemberAddress(addressValue);
   };
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange = (e: any) => {
     const amount = numberInputRemoveCommas(e);
+    // @ts-expect-error TS(2365): Operator '>=' cannot be applied to types 'string' ... Remove this comment to see the full error message
     setAmountToMint(amount >= 0 ? amount : '');
   };
   return (
@@ -57,6 +58,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   show: true,
   symbol: '✺RACA'

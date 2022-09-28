@@ -42,7 +42,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
   totalSupply,
   memberToUpdate
 }): React.ReactElement => {
-  const DetailContent = ({ label, value, symbol }) => (
+  const DetailContent = ({ label, value, symbol }: any) => (
     <div className="flex justify-between">
       <span className="text-gray-syn4 font-whyte text-base leading-6">
         {label}

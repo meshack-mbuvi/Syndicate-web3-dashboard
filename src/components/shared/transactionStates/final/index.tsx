@@ -66,7 +66,7 @@ export const FinalStateModal: React.FC<Props> = (props) => {
                 buttonClasses ? buttonClasses : 'bg-blue w-40 p-2 rounded-full'
               }
               textColor={buttonClasses}
-              onClick={() => handleCloseModal()}
+              onClick={(): void => handleCloseModal()}
             >
               {buttonText}
             </Button>

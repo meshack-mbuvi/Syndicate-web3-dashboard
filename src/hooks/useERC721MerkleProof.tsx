@@ -38,7 +38,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
-  const processMerkleProofData = async (merkleObj) => {
+  const processMerkleProofData = async (merkleObj: any) => {
     dispatch(setLoadingERC721MerkleProof(true));
     await dispatch(
       setERC721MerkleProof({
@@ -64,6 +64,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     if (merkleData.Financial_getERC721IndexAndProof?.accountIndex >= 0) {
       processMerkleProofData(merkleData.Financial_getERC721IndexAndProof);
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721MerkleProof());
     }
   }, [address, loading, JSON.stringify(merkleData)]);

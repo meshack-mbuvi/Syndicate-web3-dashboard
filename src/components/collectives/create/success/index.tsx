@@ -8,7 +8,7 @@ import { useState } from 'react';
 interface Props {
   name: string;
   inviteLink: string;
-  CTAonClick: (e) => void;
+  CTAonClick: (e: any) => void;
   blockExplorerLink: string;
   blockExplorerName: string;
 }

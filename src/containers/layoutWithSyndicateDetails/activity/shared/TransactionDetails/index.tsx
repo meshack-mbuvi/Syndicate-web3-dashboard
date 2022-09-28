@@ -49,6 +49,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     }
   } = useSelector((state: AppState) => state);
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const getTransactionText = (transactionType: string, onModal: boolean) => {
     if (transactionType === 'outgoing') {
       if (onModal) {
@@ -62,7 +63,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       return category === 'DEPOSIT' ? 'deposited by' : 'received from';
     }
   };
-  const addGrayToDecimalInput = (str) => {
+  const addGrayToDecimalInput = (str: any) => {
     if (typeof str !== 'string') {
       str.toString();
     }
@@ -138,15 +139,18 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 transactionType === 'incoming' &&
                 isTransactionAnnotated ? (
                   <>
-                    {AddressIsMember(addresses[0]) && (
-                      <div className="mx-2 flex items-center">
-                        <Image
-                          src={'/images/User_Icon.svg'}
-                          height={24}
-                          width={24}
-                        />
-                      </div>
-                    )}
+                    {
+                      // @ts-expect-error TS(2801): This condition will always return true since this 'Promise<boolean>' is always defined.
+                      AddressIsMember(addresses[0]) && (
+                        <div className="mx-2 flex items-center">
+                          <Image
+                            src={'/images/User_Icon.svg'}
+                            height={24}
+                            width={24}
+                          />
+                        </div>
+                      )
+                    }
                   </>
                 ) : null}
                 {onModal && category === 'DEPOSIT' ? (

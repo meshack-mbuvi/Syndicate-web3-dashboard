@@ -41,6 +41,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
     field,
     formState: { errors }
   } = useController({
+    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     defaultValue: ''
@@ -57,6 +58,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
       </div>
       <textarea
         id={id}
+        // @ts-expect-error TS(2783): 'name' is specified more than once, so this usage ... Remove this comment to see the full error message
         name={name}
         {...field}
         className={`text-input-placeholder text-white font-whyte border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue bg-transparent ${

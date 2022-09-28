@@ -5,10 +5,10 @@ import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 export class DistributionsERC20 {
   web3;
   address;
-  distributionERC20;
+  distributionERC20: any;
   activeNetwork;
 
-  constructor(distributionERC20Address: string, web3: any, activeNetwork) {
+  constructor(distributionERC20Address: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = distributionERC20Address;
@@ -58,7 +58,7 @@ export class DistributionsERC20 {
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             if (gasAmount) onResponse(gasAmount * numTokensDistributed);
             if (_error) onResponse(_error);
           }
@@ -86,9 +86,9 @@ export class DistributionsERC20 {
     totalDistributionAmount: string,
     members: string[],
     batchIdentifier: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (receipt?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (receipt?: any) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -108,7 +108,7 @@ export class DistributionsERC20 {
           batchIdentifier
         )
         .send({ from: account, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -119,11 +119,11 @@ export class DistributionsERC20 {
             resolve(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });

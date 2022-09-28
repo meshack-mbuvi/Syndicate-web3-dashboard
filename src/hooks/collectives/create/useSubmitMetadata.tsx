@@ -11,12 +11,12 @@ const useSubmitMetadata = (
   onError: () => void
 ): any => {
   const submit = async (
-    name,
-    symbol,
-    description,
-    artwork,
-    artworkType,
-    artworkUrl
+    name: any,
+    symbol: any,
+    description: any,
+    artwork: any,
+    artworkType: any,
+    artworkUrl: any
   ) => {
     let error = false;
     beforeSubmit();

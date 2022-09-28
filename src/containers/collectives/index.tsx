@@ -64,7 +64,12 @@ const HeaderComponent: React.FC<IProps> = (args) => {
   };
 
   return (
-    <CollectiveHeader collectiveName={collectiveName} links={links} {...args} />
+    <CollectiveHeader
+      collectiveName={collectiveName}
+      // @ts-expect-error TS(2322): Type '{ externalLink: string; openSea: string | undefined; } is not assignable ... Remove this comment to see the full error message
+      links={links}
+      {...args}
+    />
   );
 };
 
@@ -83,7 +88,7 @@ const CollectiveDescription = () => {
   );
 };
 
-const Activities: React.FC<{ permissionType }> = ({ permissionType }) => {
+const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
   const {
     web3Reducer: {
       web3: { account }
@@ -225,7 +230,9 @@ const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
   );
 };
 
-const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
+const MemberSidePanel: React.FC<{ permissionType: any }> = ({
+  permissionType
+}) => {
   const {
     collectiveDetailsReducer: {
       details: { ownerAddress, owners }
@@ -236,7 +243,7 @@ const MemberSidePanel: React.FC<{ permissionType }> = ({ permissionType }) => {
 
   const members =
     owners &&
-    owners.map((member) => {
+    owners.map((member: any) => {
       return member?.owner?.walletAddress;
     });
 

@@ -25,12 +25,13 @@ export const useERC20TokenBalance = (
       depositTokenContract.methods
         .balanceOf(account.toString())
         .call({ from: account })
-        .then((balance) => {
+        .then((balance: any) => {
           setErc20Balance(
             getWeiAmount(web3, balance, depositTokenDecimals, false)
           );
         })
         .catch(() => {
+          // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message
           setErc20Balance(0);
         });
     }
@@ -52,5 +53,6 @@ export const useERC20TokenBalance = (
       subscription.unsubscribe();
     };
   }, [web3?._provider, account, depositTokenContract?._address]);
+  // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
   return useMemo(() => erc20Balance, [erc20Balance]);
 };

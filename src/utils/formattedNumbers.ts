@@ -22,7 +22,7 @@ export const numberWithCommas = (number: string | number): string => {
 
 // add two decimal places
 export const floatedNumberWithCommas = (
-  number,
+  number: any,
   nativeValue = false
 ): string => {
   if (!number || number === 'NaN') {

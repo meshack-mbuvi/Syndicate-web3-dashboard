@@ -13,7 +13,7 @@ const client = new ApolloClient({
 export default {
   title: '3. Molecules/Transaction Details',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <ConnectWalletProvider>
@@ -26,11 +26,12 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <TransactionDetails {...args} />;
 };
 
 export const Investment = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Investment.args = {
   tokenDetails: [
     { name: 'Token', symbol: 'TOKN', icon: '/images/token.svg', amount: '123' }
@@ -44,6 +45,7 @@ Investment.args = {
 };
 
 export const Distribution = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Distribution.args = {
   tokenDetails: [
     {
@@ -88,6 +90,7 @@ Distribution.args = {
 };
 
 export const DistributionSingles = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 DistributionSingles.args = {
   tokenDetails: [
     { name: 'Token', symbol: 'TOKN', icon: '/images/token.svg', amount: '123' }

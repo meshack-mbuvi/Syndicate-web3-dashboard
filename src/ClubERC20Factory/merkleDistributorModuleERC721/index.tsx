@@ -8,7 +8,7 @@ export class MerkleDistributorModuleERC721Contract {
   activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -25,10 +25,10 @@ export class MerkleDistributorModuleERC721Contract {
     index: number,
     treeIndex: number,
     merkleProof: string[],
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<void> {
     const gasEstimate = await estimateGas(this.web3);
 
@@ -60,6 +60,7 @@ export class MerkleDistributorModuleERC721Contract {
   }
 
   getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
     if (!distEvent.trim()) return;
     try {
       const events = await this.contract.getPastEvents(distEvent, {

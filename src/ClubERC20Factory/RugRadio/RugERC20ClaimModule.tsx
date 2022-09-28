@@ -13,8 +13,8 @@ export class RugERC20ClaimModule {
     rugToken: string,
     genesisNFT: string,
     properties: string,
-    web3,
-    activeNetwork
+    web3: any,
+    activeNetwork: any
   ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
@@ -56,9 +56,9 @@ export class RugERC20ClaimModule {
   claimTokens = async (
     tokenId: string,
     fromAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<string> => {
     const gasEstimate = estimateGas(this.web3);
@@ -105,9 +105,9 @@ export class RugERC20ClaimModule {
   bulkClaimTokens = async (
     tokenIds: string[],
     fromAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<string> => {
     const gasEstimate = await estimateGas(this.web3);

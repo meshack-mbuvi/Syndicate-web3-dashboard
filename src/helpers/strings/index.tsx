@@ -1,5 +1,5 @@
 // This returns true if the inputted string is a valid number with a period at the end
-export const isStringIncompleteDecimalNumber = (strNumber) => {
+export const isStringIncompleteDecimalNumber = (strNumber: any) => {
   return (
     !isNaN(Number(strNumber) && strNumber.includes('.')) &&
     strNumber[strNumber.length - 1] === '.'

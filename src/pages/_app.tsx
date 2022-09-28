@@ -95,7 +95,7 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
   );
 };
 
-const App = (props) => {
+const App = (props: any) => {
   useAmplitude();
 
   return (
@@ -116,10 +116,13 @@ const constructGraphLinks = () => {
     const graphs = Object.keys(backendInfo.graphs);
     const httplinks = {};
     graphs.forEach((value) => {
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       httplinks[value] = new HttpLink({
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         uri: backendInfo.graphs[value]
       });
     });
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     links[networkId] = httplinks;
   });
 
@@ -128,9 +131,10 @@ const constructGraphLinks = () => {
 
 const httpsLinks = Object.freeze(constructGraphLinks());
 
-const apolloInitializer = ({ initialState }) => {
+const apolloInitializer = ({ initialState }: any) => {
   const graphLink = new ApolloLink((operation) => {
     const { clientName = 'backend', chainId = 1 } = operation.getContext();
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return httpsLinks[chainId][clientName].request(operation);
   });
   return new ApolloClient({

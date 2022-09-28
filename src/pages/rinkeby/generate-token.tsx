@@ -5,15 +5,15 @@ import { showWalletModal } from '@/state/wallet/actions';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Toggle } from 'src/components/inputs';
-import Layout from 'src/components/layout';
-import SEO from 'src/components/seo';
-import Head from 'src/components/syndicates/shared/HeaderTitle';
-import { getWeiAmount } from 'src/utils/conversions';
+import { Toggle } from '@/components/inputs';
+import Layout from '@/components/layout';
+import SEO from '@/components/seo';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import { getWeiAmount } from '@/utils/conversions';
+import erc20ABI from '@/utils/abi/erc20.json';
+import daiABI from '@/utils/abi/rinkeby-dai.json';
 
 const GenerateDai: React.FC = () => {
-  const daiABI = require('src/utils/abi/rinkeby-dai');
-  const erc20ABI = require('src/utils/abi/erc20');
   const daiContractAddress = '0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8';
   const usdcContractAddress = '0xeb8f08a975ab53e34d8a0330e0d34de942c95926';
 
@@ -96,6 +96,7 @@ const GenerateDai: React.FC = () => {
     }
   };
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const mintToken = async () => {
     setIsLoading(true);
 
@@ -138,11 +139,12 @@ const GenerateDai: React.FC = () => {
 
       setIsLoading(false);
       alert(
-        'Minted ' +
-          amount +
-          ' Token. Account balance is now ' +
-          getWeiAmount(web3, balance.toString(), tokenDecimals, false) +
-          '!'
+        `'Minted ${amount} Token. Account balance is now ${getWeiAmount(
+          web3,
+          balance.toString(),
+          tokenDecimals,
+          false
+        )}'!`
       );
     } catch (error) {
       setIsLoading(false);

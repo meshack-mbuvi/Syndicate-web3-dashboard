@@ -4,7 +4,7 @@ export class RugUtilityProperties {
   contract;
   isGnosisSafe: boolean;
 
-  constructor(contractAddress: string, web3) {
+  constructor(contractAddress: string, web3: any) {
     this.contract = new web3.eth.Contract(
       RugUtilityPropertiesABI,
       contractAddress

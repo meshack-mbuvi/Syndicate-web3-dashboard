@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
-const useFetchTokenClaim: any = (skipQuery) => {
+const useFetchTokenClaim: any = (skipQuery: any) => {
   const dispatch = useDispatch();
 
   const {
@@ -65,6 +65,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
       );
       dispatch(setLoadingTokenClaimed(false));
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearTokenClaimed());
     }
   }, [loading, JSON.stringify(claimData)]);

@@ -11,7 +11,7 @@ export const getAssets = async (
   if (!ensName) {
     return null;
   }
-
+  // @ts-expect-error TS(2531): Object is possibly 'null'.
   return (await ethersProvider.getResolver(ensName))
     .getAvatar()
     .then((res) => {

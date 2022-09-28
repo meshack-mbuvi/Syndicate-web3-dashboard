@@ -5,10 +5,10 @@ import React from 'react';
  * Adds more options component to club members table
  */
 const moreOptions: React.FC<{
-  moreOptionItems;
-  handleMenuItemClick;
+  moreOptionItems: any;
+  handleMenuItemClick: any;
 }> = ({ moreOptionItems, handleMenuItemClick }) => {
-  const handleMenuItemSelect = (e) => {
+  const handleMenuItemSelect = (e: any) => {
     // stops click event from opening the member details modal
     e.stopPropagation();
     handleMenuItemClick();
@@ -17,7 +17,7 @@ const moreOptions: React.FC<{
     <Menu
       as="div"
       className="flex justify-end w-fit-content z-50"
-      onClick={(e) => {
+      onClick={(e: any) => {
         // since there is only one menu item
         // use just e.stopPropagation(); here once more menu items are added.
         handleMenuItemSelect(e);

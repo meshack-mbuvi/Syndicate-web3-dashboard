@@ -1,7 +1,7 @@
 import React from 'react';
 import { H2 } from '../typography';
 
-export const ErrorBoundary = ({ children }: { children }): JSX.Element => {
+export const ErrorBoundary = ({ children }: { children: any }): JSX.Element => {
   try {
     // just render children. Everything is fine here
     return children;

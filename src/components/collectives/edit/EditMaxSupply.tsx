@@ -33,6 +33,7 @@ const EditMaxSupply: React.FC = () => {
           if (Number(amount)) {
             dispatch(setMaxSupply(Number(amount)));
           } else if (amount === '') {
+            // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to par... Remove this comment to see the full error message
             dispatch(setMaxSupply(null));
           }
         }}

@@ -7,7 +7,6 @@ import {
 import { IActiveNetwork } from '@/state/wallet/types';
 import getModuleByType from './getModuleByType';
 import { TokenGateOption } from '@/state/createInvestmentClub/types';
-import { isZeroAddress } from '../isZeroAddress';
 
 /**
  * Temporary placeholder for getting active module reqs by module type
@@ -25,19 +24,26 @@ const getReqsByModuleByType = (
 ): ModuleReqs | null => {
   let activeModule = module;
   if (!activeModule) {
+    // @ts-expect-error TS(2322): Type 'ActiveModule | null' is not assignable to type 'ActiveModule | undefined'.
     activeModule = getModuleByType(type, modules, activeNetwork);
   }
 
   if (!activeModule) {
-    return;
+    return null;
   }
 
   const moduleReqs: ModuleReqs = {
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxMemberCount: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxTotalSupply: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxPerMember: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     startTime: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     endTime: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     requiredTokensLogicalOperator: null,
     requiredTokens: [],
     requiredTokenBalances: [],
@@ -68,14 +74,16 @@ const getReqsByModuleByType = (
           req.requiredTokensLogicalOperator;
         moduleReqs.requiredTokens = req.requiredTokens;
         moduleReqs.requiredTokenBalances = req.requiredTokenBalances;
-        moduleReqs.requiredTokenRules = req.requiredTokens.map(
+        moduleReqs.requiredTokenRules = req?.requiredTokens?.map(
           (contractAddress, index) => ({
             contractAddress,
-            quantity: req.requiredTokenBalances[index]
+            quantity: req.requiredTokenBalances
+              ? req.requiredTokenBalances[index]
+              : ''
           })
         );
         moduleReqs.isTokenGated = true;
-        if (req.requiredTokens.length) {
+        if (req?.requiredTokens?.length) {
           moduleReqs.requiredTokenGateOption = TokenGateOption.RESTRICTED;
         } else {
           moduleReqs.requiredTokenGateOption = TokenGateOption.UNRESTRICTED;

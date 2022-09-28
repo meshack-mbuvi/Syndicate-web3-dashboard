@@ -54,13 +54,18 @@ export const DetailedTile: React.FC<Props> = ({
   // Calculate the height + left and right offset for the blue highlight
   const calculateHighlightDimensions = (buttonIndex: number) => {
     // Calculate button dimensions
+    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
     const buttonX = buttonRefs.current[buttonIndex].getBoundingClientRect().x;
+    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
     const buttonY = buttonRefs.current[buttonIndex].getBoundingClientRect().y;
     const buttonHeight =
+      // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
       buttonRefs.current[buttonIndex].getBoundingClientRect().height;
 
     // Calculate button container dimensions
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const containerX = highlightsContainer.current.getBoundingClientRect().x;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const containerY = highlightsContainer.current.getBoundingClientRect().y;
 
     return {
@@ -86,7 +91,9 @@ export const DetailedTile: React.FC<Props> = ({
         style={{ width: responsivelyCalculatedWidth }}
         // Add each button in a list of refs
         ref={(ref) => {
+          // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
           if (ref && !buttonRefs.current.includes(ref)) {
+            // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
             buttonRefs.current.push(ref);
           }
         }}

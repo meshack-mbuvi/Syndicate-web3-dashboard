@@ -41,10 +41,12 @@ export const AddressWithENS: React.FC<Props> = ({
   const formattedAddress = addressAbbreviated
     ? address
     : formatAddress(
+        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         address,
         2 + maxDigits / 2,
         maxDigits % 2 ? (maxDigits + 1) / 2 : maxDigits / 2
       );
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const { data } = useFetchEnsAssets(address, ethersProvider);
   const TopLineName = () => {
     return <div>{data?.name}</div>;

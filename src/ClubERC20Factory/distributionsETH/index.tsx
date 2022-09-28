@@ -5,10 +5,10 @@ import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 export class DistributionsETH {
   web3;
   address;
-  distributionETH;
+  distributionETH: any;
   activeNetwork;
 
-  constructor(distributionETHAddress: string, web3: any, activeNetwork) {
+  constructor(distributionETHAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = distributionETHAddress;
@@ -55,7 +55,7 @@ export class DistributionsETH {
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             gasAmount ? onResponse(gasAmount) : onResponse(_error);
           }
         );
@@ -79,9 +79,9 @@ export class DistributionsETH {
     totalDistributionAmount: string,
     members: string[],
     batchIdentifier: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -99,7 +99,7 @@ export class DistributionsETH {
           value: totalDistributionAmount,
           gasPrice: gasEstimate
         })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -110,11 +110,11 @@ export class DistributionsETH {
             resolve(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });

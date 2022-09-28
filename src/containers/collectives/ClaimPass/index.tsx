@@ -61,6 +61,7 @@ const ClaimPass: React.FC = () => {
   useEffect(() => {
     if (!scrollAgreementRef.current) return;
     const onScroll = () => {
+      // @ts-expect-error TS(2339): Property 'scrollTop' does not exist on type 'HTMLInputElement | undefined'.
       const { scrollTop, scrollHeight, clientHeight } =
         scrollAgreementRef.current;
       if (scrollTop + clientHeight >= scrollHeight) {
@@ -86,6 +87,7 @@ const ClaimPass: React.FC = () => {
           <div className="space-y-3">
             <L2>Accessing Syndicate</L2>
             <div
+              // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
               ref={scrollAgreementRef}
               className="text-base text-gray-syn4 overflow-y-scroll no-scroll-bar h-44"
             >

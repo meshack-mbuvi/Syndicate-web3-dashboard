@@ -12,6 +12,7 @@ import {
 } from '@/utils/api/transactions';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'huma... Remove this comment to see the full error message
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
@@ -44,6 +45,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     // get relevant token values from each transactions
     const tokenValues = erc20TokensResult.reduce((acc, value) => {
       const { contractAddress, tokenDecimal, tokenName, tokenSymbol } = value;
+      // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
       acc.push({ contractAddress, tokenDecimal, tokenName, tokenSymbol });
       return acc;
     }, []);
@@ -97,6 +99,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     // get native details to append to token details
     const nativeBalance = getWeiAmount(
       web3,
+      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
       nativeBalanceResponse,
       activeNetwork.nativeCurrency.decimals,
       false
@@ -110,6 +113,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       tokenSymbol: activeNetwork.nativeCurrency.symbol,
       tokenBalance: nativeBalance,
       tokenName: activeNetwork.nativeCurrency.name,
+      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
       tokenValue: parseFloat(nativePriceResponse) * parseFloat(nativeBalance)
     };
 
@@ -136,6 +140,7 @@ export const fetchCollectibleById = async (
 ): Promise<any> => {
   const { account, offset, contractAddress, tokenId, chainId } = params;
   try {
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     const { assets } = await getNfts(account, contractAddress, chainId, offset);
 
     return assets.filter((asset) => asset.id === tokenId)[0];
@@ -157,6 +162,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     } = params;
 
     const { assets } = await getNfts(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       account,
       contractAddress,
       chainId,
@@ -168,6 +174,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       ...new Set(assets.map((asset) => asset.collection.slug))
     ];
     const floorPrices = await Promise.all(
+      // @ts-expect-error TS(2345): Argument of type '(slug: string) => Promise<NftFlo... Remove this comment to see the full error message
       collections.map(async (slug: string) => getNftFloorPrices(slug, chainId))
     )
       .then((result) => result)
@@ -263,6 +270,7 @@ const shouldDisplayNFT = (
 
   if (
     +maxTotalDeposits >= minTotalDeposit &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     +maxTotalDeposits <= maxTotalDeposit
   ) {
     return true;
@@ -336,6 +344,7 @@ const assetsSlice = createSlice({
             lastPurchasePrice: '',
             display: shouldDisplayNFT(
               detail.displayCriteria,
+              // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
               action.payload.maxTotalDeposits
             ),
             futureNft: true
@@ -355,10 +364,12 @@ const assetsSlice = createSlice({
 
         // unique values only
         const flag = {};
-        const uniqueNfts = [];
+        const uniqueNfts: any = [];
         result.forEach((item) => {
           const { id } = item;
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           if (!flag[id]) {
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             flag[id] = true;
             uniqueNfts.push(item);
           }

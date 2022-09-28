@@ -32,7 +32,8 @@ import { mockActiveERC20Token } from '@/utils/mockdata';
 import router, { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ERC20ABI from 'src/utils/abi/erc20';
+import ERC20ABI from '@/utils/abi/erc20.json';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DistributionHeader from '../DistributionHeader';
 
@@ -49,7 +50,7 @@ type step = {
 };
 
 type Props = {
-  tokens;
+  tokens: any;
   handleExitClick: () => void;
 };
 
@@ -92,6 +93,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     if (!activeNetwork) return;
 
     setDistributionERC20Address(
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId].distributionsERC20
     );
   }, [activeNetwork]);
@@ -134,7 +136,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
    * Get addresses of all club members
    */
   useEffect(() => {
-    const activeAddresses = [];
+    const activeAddresses: any = [];
     clubMembers.forEach((member) => activeAddresses.push(member.memberAddress));
     setActiveAddresses(activeAddresses);
   }, [JSON.stringify(clubMembers)]);
@@ -150,7 +152,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             clubTokenHolding: clubTokens,
             distributionShare: +ownershipShare,
             receivingTokens: tokens.map(
-              ({ tokenAmount, symbol, logo, icon }) => {
+              ({ tokenAmount, symbol, logo, icon }: any) => {
                 return {
                   amount: +ownershipShare * +tokenAmount,
                   tokenSymbol: symbol,
@@ -162,6 +164,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         }
       );
 
+      // @ts-expect-error TS(2345): Argument of type '{ ownershipShare: number; member... Remove this comment to see the full error message
       setMemberDetails(memberDetails);
     } else {
       setMemberDetails([]);
@@ -177,7 +180,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     JSON.stringify(tokens)
   ]);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchValue(e.target.value);
   };
 
@@ -185,7 +188,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsEditing(!isEditing);
   };
 
-  const clearSearchValue = (e) => {
+  const clearSearchValue = (e: any) => {
     e.preventDefault();
     setSearchValue('');
   };
@@ -205,8 +208,8 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   useEffect(() => {
     if (!tokens.length) return;
 
-    const steps = [];
-    tokens.forEach((token) => {
+    const steps: any = [];
+    tokens.forEach((token: any) => {
       if (token.symbol == activeNetwork.nativeCurrency.symbol) {
         steps.push({
           ...token,
@@ -279,7 +282,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     }
   }, [activeIndex]);
 
-  const handleSaveAction = (e) => {
+  const handleSaveAction = (e: any) => {
     e.preventDefault();
     toggleEditDistribution();
   };
@@ -287,7 +290,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   /**
    * This function reverts activeAddresses to the state before editing
    */
-  const handleCancelAction = (e) => {
+  const handleCancelAction = (e: any) => {
     e.preventDefault();
 
     // restore active indices from state
@@ -295,13 +298,15 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     toggleEditDistribution();
   };
 
-  const updateSteps = (key, value) => {
+  const updateSteps = (key: any, value: any) => {
     const updatedSteps = steps;
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
 
   const incrementActiveIndex = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex !== steps.length - 1) {
       setActiveIndex(activeIndex + 1);
     }
@@ -337,7 +342,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         _tokenContract.methods
           .approve(distributionERC20Address, amountToApprove)
           .send({ from: account, gasPrice: gasEstimate })
-          .on('transactionHash', (transactionHash) => {
+          .on('transactionHash', (transactionHash: any) => {
             setProgressDescriptorTitle(`Approving ${token.symbol}`);
             setProgressDescriptorDescription(
               'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. '
@@ -345,7 +350,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
             setTransactionHash(transactionHash);
           })
-          .on('receipt', async (receipt) => {
+          .on('receipt', async (receipt: any) => {
             await checkTokenAllowance(token);
 
             incrementActiveIndex();
@@ -357,7 +362,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             resolve(receipt);
             setIsTransactionPending(false);
           })
-          .on('error', (error) => {
+          .on('error', (error: any) => {
             setIsTransactionPending(false);
             // user clicked reject.
             if (error?.code === 4001) {
@@ -422,6 +427,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   };
 
   const clearErrorStepErrorStates = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const updatedSteps = steps.map((step) => ({
       ...step,
       isInErrorState: false,
@@ -433,7 +439,8 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setProgressDescriptorDescription('');
   };
 
-  const onTxConfirm = (transactionHash) => {
+  const onTxConfirm = (transactionHash: any) => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
     // Update progress state
     setProgressDescriptorTitle(
@@ -450,6 +457,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const onTxReceipt = () => {
     setIsConfirmationModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
 
@@ -465,9 +473,10 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const onTxFail = (error?) => {
+  const onTxFail = (error?: any) => {
     setIsConfirmationModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
 
     updateSteps('isInErrorState', true);
@@ -498,7 +507,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const handleCheckAndApproveAllowance = async (step) => {
+  const handleCheckAndApproveAllowance = async (step: any) => {
     setIsTransactionPending(true);
     setProgressDescriptorDescription(`Approve ${step.symbol} from your wallet`);
 
@@ -520,7 +529,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
    *
    * @param token an erc20 token to be distributed to members
    */
-  const makeDistributions = async (token) => {
+  const makeDistributions = async (token: any) => {
     try {
       setIsTransactionPending(true);
       setTransactionHash('');
@@ -561,12 +570,13 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     }
   };
 
-  const handleDisclaimerConfirmation = (e?) => {
+  const handleDisclaimerConfirmation = (e?: any) => {
     e.preventDefault();
     setIsModalVisible(false);
 
     // handle distributions
     setIsConfirmationModalVisible(true);
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     if (token.action == 'distribute') {
       // no approval stage for ETH
@@ -581,11 +591,12 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       makeDistributions(token);
     } else {
       clearErrorStepErrorStates();
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       handleCheckAndApproveAllowance(steps[activeIndex]);
     }
   };
 
-  const showDistributeDisclaimer = (e) => {
+  const showDistributeDisclaimer = (e: any) => {
     e.preventDefault();
     setBatchIdentifier(uuidv4());
 
@@ -600,9 +611,10 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     clearErrorStepErrorStates();
   };
 
-  const handleClickAction = async (e) => {
+  const handleClickAction = async (e: any) => {
     e.preventDefault();
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     updateSteps('status', ProgressDescriptorState.PENDING);
     updateSteps('isInErrorState', false);
@@ -762,6 +774,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             isEditing={isEditing}
             searchValue={searchValue}
             handleIsEditingChange={toggleEditDistribution}
+            // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assignable... Remove this comment to see the full error message
             handleActiveAddressesChange={setActiveAddresses}
             handleSearchChange={handleSearchChange}
             clearSearchValue={clearSearchValue}
@@ -780,6 +793,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       <ConfirmDistributionsModal
         activeStepIndex={activeIndex}
         isModalVisible={isConfirmationModalVisible}
+        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
         showCloseButton={!isTransactionPending}

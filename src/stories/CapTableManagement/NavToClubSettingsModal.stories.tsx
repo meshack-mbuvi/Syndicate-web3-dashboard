@@ -7,7 +7,7 @@ export default {
   title:
     'Molecules/Cap Table Management/Modals/Add Member/Navigate To Club Settings Modal',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <Story />
       </Provider>
@@ -22,11 +22,12 @@ export default {
   }
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <NavToClubSettingsModal {...args} />;
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   showMintNavToClubSettings: true,
   setShowMintNavToClubSettings: () => {

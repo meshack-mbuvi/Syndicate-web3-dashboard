@@ -40,7 +40,9 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
   const tokens = tokenRules.filter((rule) => rule.name);
 
   const handleEditMembership = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setEditingStep(currentStep);
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setCurrentStep(stepsNames.indexOf(CreateActiveSteps.MEMBERSHIP));
   };
 

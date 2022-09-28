@@ -32,6 +32,7 @@ const useFetchCollectiveDetails = (
   const router = useRouter();
   const { collectiveAddress } = router.query;
   const MINT_MODULE =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.EthPriceMintModule;
 
   const { getCollectiveFromContract } = useFetchCollectiveFromContract();
@@ -87,7 +88,7 @@ const useFetchCollectiveDetails = (
     }
 
     if (eventsData && eventsData.mintERC721S.length) {
-      const memberJoinedEvents = eventsData.mintERC721S.map((event) => {
+      const memberJoinedEvents = eventsData.mintERC721S.map((event: any) => {
         const { to, createdAt } = event;
         return {
           activityType: CollectiveActivityType.RECEIVED,
@@ -144,13 +145,13 @@ const useFetchCollectiveDetails = (
         maxSupply = 0;
 
       // set collective card type and check if collective is active
-      activeModules.map((module) => {
+      activeModules.map((module: any) => {
         const { contractAddress, activeRequirements } = module;
         if (
           web3.utils.toChecksumAddress(contractAddress) ===
           web3.utils.toChecksumAddress(MINT_MODULE)
         ) {
-          activeRequirements.map((activeRequirement) => {
+          activeRequirements.map((activeRequirement: any) => {
             const { requirement } = activeRequirement;
             const { endTime, requirementType } = requirement;
 
@@ -192,17 +193,20 @@ const useFetchCollectiveDetails = (
           owners,
           isTransferable:
             transferGuardAddress.toString().toLocaleLowerCase() ==
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             CONTRACT_ADDRESSES[
               activeNetwork.chainId
             ]?.GuardAlwaysAllow.toString().toLocaleLowerCase(),
           collectiveAddress: address,
           mintPrice: getWeiAmount(web3, mintPrice, 18, false),
           isOpen,
+          // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'string'.
           mintEndTime,
           maxSupply,
           metadataCid,
           description,
           mediaCid,
+          // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'CollectiveCardType'.
           collectiveCardType
         })
       );

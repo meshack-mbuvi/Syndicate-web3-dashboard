@@ -196,9 +196,9 @@ export class ERC721CollectiveFactory extends ContractBase {
   public async createERC721Collective(
     account: string,
     collectiveParams: ICollectiveParams,
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     const { collectiveName, collectiveSymbol } = collectiveParams;
 

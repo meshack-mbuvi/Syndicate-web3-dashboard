@@ -9,6 +9,7 @@ export class EthPriceMintModule extends ContractBase {
 
   public setEthPrice(token: string, price: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
       this.getAbiObject('updateEthPrice'),
       [token, price]
     );
@@ -18,9 +19,9 @@ export class EthPriceMintModule extends ContractBase {
     account: string,
     token: string,
     price: string,
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     await this.send(
       account,
@@ -84,9 +85,9 @@ export class EthPriceMintModule extends ContractBase {
     collective: string,
     numOfTokens: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void
   ): Promise<void> {
     await this.send(
       ownerAddress,

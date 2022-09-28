@@ -18,7 +18,7 @@ export default {
   title: '4. Organisms/Confirm Distributions Modal',
 
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <ConnectWalletProvider>
@@ -31,7 +31,7 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   // Example states for this story
   const progressDescriptors = [
     <ProgressDescriptor
@@ -76,6 +76,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   steps: [
     {

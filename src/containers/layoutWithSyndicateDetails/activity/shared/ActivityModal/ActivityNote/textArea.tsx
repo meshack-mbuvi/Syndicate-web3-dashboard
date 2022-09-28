@@ -33,7 +33,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
     allowResize = false,
     name,
     onChange,
-    error,
+    // error,
     isDisabled,
     value,
     rows,
@@ -47,16 +47,22 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
   // get number of new lines and multiply by line-height(1.5rem)
   // to get initial height of the text area based on current note value.
   // using 60 to represent the number of words on one line.
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const lines = value.split(/\r\n|\r|\n/).length;
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const linesWithoutNewLines = Math.floor(value.trim().length / 60);
   const totalLines =
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     value.trim().length < 60 ? lines : lines + linesWithoutNewLines;
   const calculatedTextAreaHeight =
     totalLines <= 4 ? `${totalLines * 1.5}rem` : '6rem';
 
   const autoGrow = () => {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     noteTextArea.current.style.height = '5px';
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     noteTextArea.current.style.height =
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       noteTextArea.current.scrollHeight + 'px';
   };
 
@@ -67,6 +73,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         name={name}
         ref={noteTextArea}
         onChange={(e) => {
+          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
           onChange(e);
         }}
         onInput={() => !heightoverride && autoGrow()}

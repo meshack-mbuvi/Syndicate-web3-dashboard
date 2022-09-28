@@ -57,6 +57,7 @@ export const CollectiveActivity: React.FC<Props> = ({
   offer,
   externalLink
 }) => {
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const formattedAddress = formatAddress(profile.address, 6, 4);
 
   return (
@@ -66,15 +67,16 @@ export const CollectiveActivity: React.FC<Props> = ({
         activityType === CollectiveActivityType.CREATED ? (
           <div className="flex space-x-2 items-center">
             <img
+              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
               src={profile.picture || '/images/user.svg'}
               alt="Profile"
               className="w-6 h-6 rounded-full"
             />
 
             <B2>
-              {profile.username ? (
+              {profile?.username ? (
                 `@${profile.username}`
-              ) : profile.address ? (
+              ) : profile?.address ? (
                 <>
                   <span className="text-gray-syn4">
                     {formattedAddress.slice(0, 2)}
@@ -105,17 +107,29 @@ export const CollectiveActivity: React.FC<Props> = ({
               <B2>
                 Collective NFT{' '}
                 <span className="text-gray-syn4">transfered from </span>
-                {transfer.fromUsername
-                  ? `@${transfer.fromUsername}`
-                  : transfer.fromAddress
-                  ? transfer.fromAddress
-                  : ''}{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  transfer.fromUsername
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${transfer.fromUsername}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    transfer.fromAddress
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      transfer.fromAddress
+                    : ''
+                }{' '}
                 <span className="text-gray-syn4">to </span>
-                {transfer.toUsername
-                  ? `@${transfer.toUsername}`
-                  : transfer.toAddress
-                  ? transfer.toAddress
-                  : ''}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  transfer.toUsername
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${transfer.toUsername}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    transfer.toAddress
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      transfer.toAddress
+                    : ''
+                }
               </B2>
             </div>
           </div>
@@ -132,24 +146,43 @@ export const CollectiveActivity: React.FC<Props> = ({
             <div className="flex space-x-2 items-center">
               <B2>
                 Collective NFT <span className="text-gray-syn4">sold by </span>
-                {sale.fromUsername
-                  ? `@${sale.fromUsername}`
-                  : sale.fromAddress
-                  ? sale.fromAddress
-                  : ''}{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  sale.fromUsername
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${sale.fromUsername}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    sale.fromAddress
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      sale.fromAddress
+                    : ''
+                }{' '}
                 <span className="text-gray-syn4">to </span>
-                {sale.toUsername
-                  ? `@${sale.toUsername}`
-                  : sale.toAddress
-                  ? sale.toAddress
-                  : ''}{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  sale.toUsername
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${sale.toUsername}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    sale.toAddress
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      sale.toAddress
+                    : ''
+                }{' '}
                 <span className="text-gray-syn4">for </span>
                 <img
                   src="/images/chains/ethereum.svg"
                   alt="Transfer"
                   className="mx-auto relative -top-0.5 px-0.5 flex-shrink-0 inline"
                 />{' '}
-                {sale.tokenAmount} {sale.tokenSymbol}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  sale.tokenAmount
+                }{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  sale.tokenSymbol
+                }
               </B2>
             </div>
           </div>
@@ -165,11 +198,17 @@ export const CollectiveActivity: React.FC<Props> = ({
             </div>
             <div className="flex space-x-2 items-center">
               <B2>
-                {list.username
-                  ? `@${list.username}`
-                  : list.address
-                  ? list.address
-                  : ''}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  list.username
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${list.username}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    list.address
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      list.address
+                    : ''
+                }
                 <span className="text-gray-syn4"> listed </span> Collective NFT{' '}
                 <span className="text-gray-syn4">for </span>
                 <img
@@ -177,7 +216,14 @@ export const CollectiveActivity: React.FC<Props> = ({
                   alt="Transfer"
                   className="mx-auto relative -top-0.5 px-0.5 flex-shrink-0 inline"
                 />{' '}
-                {list.tokenAmount} {list.tokenSymbol}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  list.tokenAmount
+                }{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  list.tokenSymbol
+                }
               </B2>
             </div>
           </div>
@@ -193,11 +239,17 @@ export const CollectiveActivity: React.FC<Props> = ({
             </div>
             <div className="flex space-x-2 items-center">
               <B2>
-                {offer.username
-                  ? `@${offer.username}`
-                  : offer.address
-                  ? offer.address
-                  : ''}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  offer.username
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      `@${offer.username}`
+                    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    offer.address
+                    ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                      offer.address
+                    : ''
+                }
                 <span className="text-gray-syn4"> offered to buy </span>{' '}
                 Collective NFTs <span className="text-gray-syn4">for </span>
                 <img
@@ -205,7 +257,14 @@ export const CollectiveActivity: React.FC<Props> = ({
                   alt="Transfer"
                   className="mx-auto relative -top-0.5 px-0.5 flex-shrink-0 inline"
                 />{' '}
-                {offer.tokenAmount} {offer.tokenSymbol}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  offer.tokenAmount
+                }{' '}
+                {
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  offer.tokenSymbol
+                }
               </B2>
             </div>
           </div>

@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-export const getGnosisTxnInfo = async (txHash, activeNetwork) => {
+export const getGnosisTxnInfo = async (txHash: any, activeNetwork: any) => {
+  // eslint-disable-next-line no-async-promise-executor
   const transactionInfo = await new Promise(async (resolve, reject) => {
     let status;
     let txnInfo;
 
-    function sleep(ms) {
+    function sleep(ms: any) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 

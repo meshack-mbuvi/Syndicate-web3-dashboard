@@ -9,6 +9,7 @@ interface IProps {
 
 export const Checkbox: React.FC<IProps> = ({ control, name, label }) => {
   const { field } = useController({
+    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     defaultValue: false

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { NFTChecker } from './NFTchecker';
 
-export const TabComponent: React.FC<{ tabContents }> = ({ tabContents }) => {
+export const TabComponent: React.FC<{ tabContents: any }> = ({
+  tabContents
+}) => {
   const [activeTab, setActiveTab] = useState('claim');
 
   return (

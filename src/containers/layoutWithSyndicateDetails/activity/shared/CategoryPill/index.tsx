@@ -189,6 +189,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       specificOptions = categoryPillOptions.slice(2);
     }
     setDropdownOptions(
+      // @ts-expect-error TS(2769): No overload matches this call.
       specificOptions.concat(commonPillOptions).filter((option) => {
         if (selectedCategory === 'OFF_CHAIN_INVESTMENT') {
           return option.value !== 'INVESTMENT';
@@ -205,9 +206,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e) => {
+    const onPageClickEvent = (e: any) => {
       if (
         categorySelect.current !== null &&
+        // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
         !categorySelect.current.contains(e.target)
       ) {
         setShowDropdown(!showDropdown);
@@ -228,6 +230,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   // distinguish between when the row is clicked and when the pill is selected
   const setPillActiveRowState = (pillState: boolean) => {
     if (renderedInline) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setInlineCategorising(pillState);
     }
   };
@@ -264,6 +267,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         },
         context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);
       refetchTransactions();
     } else if (bulkCategoriseTransactions) {
@@ -342,6 +346,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         >
           <CategoryPillDropDown
             options={dropDownOptions}
+            // @ts-expect-error TS(2322): Type '(value: TransactionCategory) => void' is not... Remove this comment to see the full error message
             onSelect={handleSelect}
           />
         </div>

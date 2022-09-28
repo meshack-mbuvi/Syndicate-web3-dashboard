@@ -7,7 +7,7 @@ import { useState } from 'react';
 export default {
   title: '4. Organisms/Distribution Members Table',
   decorators: [
-    (Story): React.ReactElement => (
+    (Story: any): React.ReactElement => (
       <div style={{ margin: '0rem' }}>
         <Story />
       </div>
@@ -28,7 +28,7 @@ const tokens = [
   }
 ];
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [activeAddresses, setActiveAddresses] = useState([
     '0x8b94Cbb9a30f5953d93ca9c3dE83FD676D6C0a42',
     'bob.eth',
@@ -41,27 +41,27 @@ const Template = (args) => {
     setIsEditing(!isEditing);
   };
 
-  const handleCancelAction = (e) => {
+  const handleCancelAction = (e: any) => {
     e.preventDefault();
     setIsEditing(false);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchValue(e.target.value);
   };
 
-  const clearSearchValue = (e) => {
+  const clearSearchValue = (e: any) => {
     e.preventDefault();
     setSearchValue('');
   };
 
-  const handleDistribute = (e) => {
+  const handleDistribute = (e: any) => {
     e.preventDefault();
     setIsEditing(false);
     // distribute tokens calls are made at this point
   };
 
-  const handleSaveAction = (e) => {
+  const handleSaveAction = (e: any) => {
     e.preventDefault();
     setIsEditing(!isEditing);
   };
@@ -118,6 +118,7 @@ const Template = (args) => {
 };
 
 export const TwoTokens = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 TwoTokens.args = {
   tokens,
   clubName: 'ABC',
@@ -170,6 +171,7 @@ TwoTokens.args = {
 };
 
 export const ThreeTokens = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ThreeTokens.args = {
   tokens,
   clubName: 'ABC',
@@ -232,6 +234,7 @@ ThreeTokens.args = {
 };
 
 export const NoClubDetails = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 NoClubDetails.args = {
   tokens,
   membersDetails: [

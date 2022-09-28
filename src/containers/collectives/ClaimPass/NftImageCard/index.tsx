@@ -49,7 +49,8 @@ const NftImageCard: React.FC = () => {
                     'ipfs://',
                     ''
                   )}`
-                : `${ipfsGateway}/${nftMetadata?.image.replace('ipfs://', '')}`
+                : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  `${ipfsGateway}/${nftMetadata?.image.replace('ipfs://', '')}`
             }
             numberOfParticles={75}
           />

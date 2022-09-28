@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ');
 }
 
@@ -34,6 +34,7 @@ const GettingStarted: React.FC = () => {
     }
   }, [router.isReady]);
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (!activeNetwork.chainId) return;
     if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
@@ -183,6 +184,7 @@ const GettingStarted: React.FC = () => {
                   <Link
                     href={`/clubs/${clubAddress}/member/legal/prepare?form=${form}`}
                   >
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                     <a className="bg-green rounded-custom w-full flex items-center justify-center py-4">
                       <p className="text-black pr-1 whitespace-nowrap font-semibold">
                         Get started
@@ -228,6 +230,7 @@ const GettingStarted: React.FC = () => {
                 <Link
                   href={`/clubs/${clubAddress}/member/legal/prepare?form=${form}`}
                 >
+                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                   <a className="bg-green rounded-custom w-full flex items-center justify-center py-4">
                     <p className="text-black pr-1 whitespace-nowrap font-semibold">
                       Get started

@@ -44,7 +44,7 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
     resolver: yupResolver(schema())
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: any) => {
     if (values.mintPassID) {
       setMintPasssID(values.mintPassID);
       const response = await RugUtilityMintModule.tokenRedeemed(
@@ -155,6 +155,7 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
                   ? 'bg-gray-syn7 text-white cursor-default'
                   : 'bg-white'
               }`}
+              // @ts-expect-error TS(2322): Type '(() => void) | null' is not assignable to ty... Remove this comment to see the full error message
               onClick={openseaLink ? viewNFT : null}
             >
               {openseaLink ? (

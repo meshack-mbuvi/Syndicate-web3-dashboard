@@ -39,59 +39,60 @@ const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
             !requiredLogic ? 'space-y-4' : 'space-y-6'
           }`}
         >
-          {tokenGatingDetails?.requiredTokenDetails.map((token, index) => {
-            const {
-              name,
-              symbol,
-              logo,
-              requirementMet,
-              decimals,
-              requiredBalance
-            } = token;
+          {tokenGatingDetails &&
+            tokenGatingDetails.requiredTokenDetails?.map((token, index) => {
+              const {
+                name,
+                symbol,
+                logo,
+                requirementMet,
+                decimals,
+                requiredBalance
+              } = token;
 
-            const requirementBullet = requirementMet
-              ? 'requirementMetRadio.svg'
-              : 'requirementNotMetRadio.svg';
+              const requirementBullet = requirementMet
+                ? 'requirementMetRadio.svg'
+                : 'requirementNotMetRadio.svg';
 
-            // in case we are on the OR requiredLogic and gating requirement is met, we only need
-            // to display the token with the requirement met.
-            // otherwise we display all tokens.
+              // in case we are on the OR requiredLogic and gating requirement is met, we only need
+              // to display the token with the requirement met.
+              // otherwise we display all tokens.
 
-            return (
-              <div key={index} className="flex flex-col space-y-4">
-                <div className="flex items-center space-x-2">
-                  <span>
-                    <img
-                      src={`/images/tokenGating/${requirementBullet}`}
-                      alt=""
-                      className="inline"
-                    />
-                  </span>
-                  <span className="pr-2">{`Own ${
-                    decimals == null || decimals === 0
-                      ? requiredBalance
-                      : getWeiAmount(web3, requiredBalance, decimals, false)
-                  } `}</span>{' '}
-                  <div className="flex items-center shrink-0">
-                    <Image
-                      src={logo || '/images/token-gray-4.svg'}
-                      alt={name}
-                      width={30}
-                      height={30}
-                    />
+              return (
+                <div key={index} className="flex flex-col space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <span>
+                      <img
+                        src={`/images/tokenGating/${requirementBullet}`}
+                        alt=""
+                        className="inline"
+                      />
+                    </span>
+                    <span className="pr-2">{`Own ${
+                      decimals == null || decimals === 0
+                        ? requiredBalance
+                        : getWeiAmount(web3, requiredBalance, decimals, false)
+                    } `}</span>{' '}
+                    <div className="flex items-center shrink-0">
+                      <Image
+                        src={logo || '/images/token-gray-4.svg'}
+                        alt={name}
+                        width={30}
+                        height={30}
+                      />
+                    </div>
+                    <span>{name}</span>
+                    {symbol && <span className="text-gray-syn5">{symbol}</span>}
                   </div>
-                  <span>{name}</span>
-                  {symbol && <span className="text-gray-syn5">{symbol}</span>}
+                  {!requiredLogic &&
+                  requiredTokens.length > 1 &&
+                  index !== requiredTokens.length - 1 &&
+                  !gatingRequirementsMet ? (
+                    <p className="h4 uppercase text-sm">or</p>
+                  ) : null}
                 </div>
-                {!requiredLogic &&
-                requiredTokens.length > 1 &&
-                index !== requiredTokens.length - 1 &&
-                !gatingRequirementsMet ? (
-                  <p className="h4 uppercase text-sm">or</p>
-                ) : null}
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
         {!gatingRequirementsMet && (
           <div>

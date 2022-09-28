@@ -37,6 +37,7 @@ interface IProps {
   skipQuery?: boolean;
 }
 
+// @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'number... Remove this comment to see the full error message
 const useGasDetails: (props: IProps) => {
   gas: number;
   fiatAmount: string;
@@ -81,6 +82,7 @@ const useGasDetails: (props: IProps) => {
       syndicateContract: clubERC20Factory,
       estimateGas: () => {
         if (!clubERC20Factory) return;
+        // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
         clubERC20Factory.getEstimateGas(account, setGasUnits);
       }
     },
@@ -91,6 +93,7 @@ const useGasDetails: (props: IProps) => {
         erc20ClubFactory.getEstimateGas(
           account,
           args.clubParams as ClubMixinParams,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -107,6 +110,7 @@ const useGasDetails: (props: IProps) => {
         erc721CollectiveFactory.getEstimateGas(
           account,
           args.collectiveParams as ICollectiveParams,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -133,6 +137,7 @@ const useGasDetails: (props: IProps) => {
           endTime,
           args.maxMemberCount,
           web3.utils.toWei(args.maxTotalSupply),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -152,6 +157,7 @@ const useGasDetails: (props: IProps) => {
           args.clubAddress,
           args.memberAddress,
           web3.utils.toWei(args.amountToMint),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -167,6 +173,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.mintPrice,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -180,6 +187,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.metadataCid,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -197,6 +205,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.maxPerWallet,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -212,6 +221,7 @@ const useGasDetails: (props: IProps) => {
           timeRequirements.getEstimateGasCloseTimeWindow(
             account,
             token,
+            // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
             setGasUnits
           );
         } else {
@@ -224,6 +234,7 @@ const useGasDetails: (props: IProps) => {
             token,
             0,
             mintEndTime,
+            // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
             setGasUnits
           );
         }
@@ -242,6 +253,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.maxTotalSupply,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -254,6 +266,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.isTransferable,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -268,6 +281,7 @@ const useGasDetails: (props: IProps) => {
           args.contractAddress,
           '1', // Hardcode to mint a single token
           account,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -285,6 +299,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.clubAddress,
           args.maxNumberOfMembers,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -303,6 +318,7 @@ const useGasDetails: (props: IProps) => {
             18,
             true
           ),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -324,6 +340,7 @@ const useGasDetails: (props: IProps) => {
           args.logicOperator,
           args.tokens,
           args.balances,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -335,6 +352,7 @@ const useGasDetails: (props: IProps) => {
         timeRequirements.getEstimateGasCloseTimeWindow(
           account,
           args.clubAddress,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }

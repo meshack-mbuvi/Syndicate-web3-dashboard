@@ -58,11 +58,13 @@ const useFetchERC721Claim: any = () => {
     ) {
       const claim = claimData.filter(
         (_claim) =>
+          // @ts-expect-error TS(2339): Property 'returnValues' does not exist on type 'ne... Remove this comment to see the full error message
           _claim.returnValues?.treeIndex ===
           erc721MerkleProof?.treeIndex?.toString()
       );
 
       if (claim.length) {
+        // @ts-expect-error TS(2339): Property 'returnValues' does not exist on type 'ne... Remove this comment to see the full error message
         const { claimant, token, index, treeIndex } = claim[0].returnValues;
         dispatch(
           setERC721Claimed({
@@ -75,11 +77,13 @@ const useFetchERC721Claim: any = () => {
           })
         );
       } else {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         dispatch(clearERC721Claimed());
       }
 
       dispatch(setLoadingERC721Claimed(false));
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
   }, [loading, publicSingleClaimEnabled, publicUtilityClaimEnabled]);

@@ -27,8 +27,8 @@ export interface ERC20Token {
   loading: boolean;
   maxMemberCount: number;
   maxTotalSupply: number;
-  requiredToken;
-  requiredTokenMinBalance;
+  requiredToken: any;
+  requiredTokenMinBalance: any;
   depositToken?: string;
   mintModule?: string;
 }

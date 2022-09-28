@@ -93,6 +93,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
   let clubReopenedForMint = false;
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
+      // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
       localStorage.getItem('mintingForClosedClub')
     );
 
@@ -125,7 +126,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     }
   }, [maxMemberCount, memberCount]);
 
-  const handleAddressChange = (e) => {
+  const handleAddressChange = (e: any) => {
     const addressValue = e.target.value;
 
     setMemberAddress(addressValue);
@@ -140,7 +141,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
     } else if (
       web3.utils.isAddress(addressValue) &&
       existingMembers.filter(
-        (member) => member.memberAddress === addressValue.toLocaleLowerCase()
+        (member: any) =>
+          member.memberAddress === addressValue.toLocaleLowerCase()
       ).length > 0
     ) {
       setMemberAddressError('Address is already a member.');
@@ -149,7 +151,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     }
   };
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange = (e: any) => {
     const amount = numberInputRemoveCommas(e);
     if (+amount > +currentClubTokenSupply) {
       setAmountToMintError(
@@ -171,10 +173,11 @@ export const MintAndShareTokens: React.FC<Props> = ({
     } else {
       setAmountToMintError('');
     }
+    // @ts-expect-error TS(2365): Operator '>=' cannot be applied to types 'string' ... Remove this comment to see the full error message
     setAmountToMint(amount >= 0 ? amount : '');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     setPreview(true);
   };
@@ -265,13 +268,17 @@ export const MintAndShareTokens: React.FC<Props> = ({
           onTxFail
         );
       } else if (
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         currentMintPolicyAddress.toLowerCase() ==
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           CONTRACT_ADDRESSES[activeNetwork.chainId]?.mintPolicy.toLowerCase() ||
-        currentMintPolicyAddress.toLowerCase() ==
+        currentMintPolicyAddress?.toLowerCase() ==
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           CONTRACT_ADDRESSES[
             activeNetwork.chainId
           ]?.policyMintERC20.toLowerCase()
       ) {
+        if (!currentMintPolicyAddress) return;
         const mintPolicy = new MintPolicyContract(
           currentMintPolicyAddress,
           web3,
@@ -301,6 +308,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       setConfirmCloseClub(false);
       setClosingClub(false);
       // TODO: [AMPLITUDE] add amplitude error for closing club
+      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
       const { code } = error;
       if (code == 4001) {
         setCloseClubRejected(true);
@@ -416,19 +424,22 @@ export const MintAndShareTokens: React.FC<Props> = ({
     );
   } else if (mintFailed) {
     return (
-      <ProgressModal
-        {...{
-          isVisible: true,
-          title: 'Member addition failed',
-          description: '',
-          buttonLabel: 'Close',
-          buttonOnClick: handleCloseSuccessModal,
-          buttonFullWidth: true,
-          state: ProgressState.FAILURE,
-          transactionHash: userRejectedMint ? null : transactionHash,
-          transactionType: 'transaction'
-        }}
-      />
+      <>
+        {/* @ts-expect-error TS(2322): Type '{ isVisible: true; title: string; descriptio... Remove this comment to see the full error message */}
+        <ProgressModal
+          {...{
+            isVisible: true,
+            title: 'Member addition failed',
+            description: '',
+            buttonLabel: 'Close',
+            buttonOnClick: handleCloseSuccessModal,
+            buttonFullWidth: true,
+            state: ProgressState.FAILURE,
+            transactionHash: userRejectedMint ? null : transactionHash,
+            transactionType: 'transaction'
+          }}
+        />
+      </>
     );
   }
 
@@ -443,7 +454,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     refreshClubDetails();
   };
 
-  const onTxFail = (error) => {
+  const onTxFail = (error: any) => {
     const { message } = error;
     // this error is triggered on Polygon after transaction success.
     // we don't need to show the failure modal.

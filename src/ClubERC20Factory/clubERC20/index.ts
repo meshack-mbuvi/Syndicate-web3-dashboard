@@ -8,10 +8,10 @@ export class ClubERC20Contract {
   activeNetwork;
 
   // This will be used to call other functions.
-  clubERC20Contract;
+  clubERC20Contract: any;
 
   // initialize an erc20 contract instance
-  constructor(clubERC20ContractAddress: string, web3, activeNetwork) {
+  constructor(clubERC20ContractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = clubERC20ContractAddress;
@@ -104,10 +104,10 @@ export class ClubERC20Contract {
     recipientAddress: string,
     amount: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: (txHas: any) => void
   ): Promise<void> {
     let gnosisTxHash;
     const gasEstimate = await estimateGas(this.web3);
@@ -116,7 +116,7 @@ export class ClubERC20Contract {
       this.clubERC20Contract.methods
         .mintTo(recipientAddress, amount)
         .send({ from: ownerAddress, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -130,11 +130,11 @@ export class ClubERC20Contract {
             setTransactionHash(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });
@@ -159,10 +159,10 @@ export class ClubERC20Contract {
     memberAddress: string,
     amount: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: (txHas: any) => void
   ): Promise<void> {
     let gnosisTxHash;
     const gasEstimate = await estimateGas(this.web3);
@@ -171,7 +171,7 @@ export class ClubERC20Contract {
       this.clubERC20Contract.methods
         .controllerRedeem(memberAddress, amount)
         .send({ from: ownerAddress, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -185,11 +185,11 @@ export class ClubERC20Contract {
             setTransactionHash(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });

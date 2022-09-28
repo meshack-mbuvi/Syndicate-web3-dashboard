@@ -4,11 +4,12 @@ export default {
   title: '3. Molecules/Share Social'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <ShareCard {...args} />;
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   imageOptions: [
     'https://media3.giphy.com/media/nV92wySC3iMGhAmR71/giphy.gif',

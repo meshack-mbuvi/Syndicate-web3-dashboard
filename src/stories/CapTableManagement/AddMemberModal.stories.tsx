@@ -12,7 +12,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <Story />
       </Provider>
@@ -20,9 +20,10 @@ export default {
   ]
 };
 
-const Template = (args) => <AddMemberModal {...args} />;
+const Template = (args: any) => <AddMemberModal {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   showModal: true
 };

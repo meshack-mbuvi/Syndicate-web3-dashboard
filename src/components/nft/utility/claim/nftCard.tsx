@@ -45,6 +45,7 @@ const NFTCard: React.FC<{
     setSubmitting(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const onTxReceipt = async () => {
     setSubmitting(false);
     setSuccessfulClaim(true);
@@ -57,7 +58,7 @@ const NFTCard: React.FC<{
     setClaimFailed(true);
   };
 
-  const handleSelectClick = (e) => {
+  const handleSelectClick = (e: any) => {
     e.preventDefault();
     handeleSelectedCollectibleId(parseInt(collectible.token_id));
   };
@@ -164,6 +165,7 @@ const NFTCard: React.FC<{
                   ? 'bg-green'
                   : 'bg-gray-syn7 text-white cursor-default'
               } align-baseline`}
+              // @ts-expect-error TS(2322): Type '(() => Promise<void>) | null' is not assigna... Remove this comment to see the full error message
               onClick={!submitting ? claimNFT : null}
               disabled={submitting}
             >
@@ -183,6 +185,7 @@ const NFTCard: React.FC<{
           setShowProcessingClaimModal(false);
         }}
         successfulClaim={successfulClaim}
+        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
         transactionHash={transactionHash}
         claimFailed={claimFailed}
         submitting={submitting || claiming}

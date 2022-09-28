@@ -17,6 +17,7 @@ export const usePermissionType = (): PermissionType => {
     }
   } = useSelector((state: AppState) => state);
 
+  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
   const [permissionType, setPermissionType] = useState<PermissionType>(null);
   const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
   const [collectiveOwner, setCollectiveOwner] = useState<string>('');

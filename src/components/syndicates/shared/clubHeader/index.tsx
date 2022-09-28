@@ -18,9 +18,9 @@ interface Props {
   owner: string;
   loading: boolean;
   clubAddress: string;
-  totalDeposits;
-  loadingClubDeposits?;
-  managerSettingsOpen;
+  totalDeposits: any;
+  loadingClubDeposits?: any;
+  managerSettingsOpen: any;
 }
 export const ClubHeader: React.FC<Props> = (props) => {
   const {

@@ -41,7 +41,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
   const [coord, setCoords] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handlePopoverOpen = (event) => {
+  const handlePopoverOpen = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
 

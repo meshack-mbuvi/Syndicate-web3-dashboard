@@ -8,7 +8,7 @@ export class DepositExchangeMintModule {
   activeNetwork;
   web3;
 
-  constructor(contractAddress: string, web3, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -24,9 +24,9 @@ export class DepositExchangeMintModule {
     address: string,
     depositAmount: string,
     account: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<string> => {
     const gasEstimate = await estimateGas(this.web3);

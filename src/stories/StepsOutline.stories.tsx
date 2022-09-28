@@ -4,9 +4,10 @@ export default {
   title: '3. Molecules/Steps Outline'
 };
 
-const Template = (args) => <StepsOutline {...args} />;
+const Template = (args: any) => <StepsOutline {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   activeIndex: 0,
   steps: [

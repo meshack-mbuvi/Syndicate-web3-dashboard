@@ -97,7 +97,7 @@ const LegalAgreement: React.FC = () => {
 
   const { memberName = '' } = watch();
 
-  const onSubmit = (values) => {
+  const onSubmit = (values: any) => {
     dispatch(setMemberLegalInfo(values));
     router.push(`/clubs/${clubAddress}/member/legal/sign`);
   };
@@ -115,6 +115,7 @@ const LegalAgreement: React.FC = () => {
               name="memberName"
               control={control}
               placeholder="Member’s full name"
+              // @ts-expect-error TS(2322): Type 'boolean | ""' is not assignable to type 'boo... Remove this comment to see the full error message
               showWarning={
                 memberName && memberName?.trim().split(' ').length < 2
               }

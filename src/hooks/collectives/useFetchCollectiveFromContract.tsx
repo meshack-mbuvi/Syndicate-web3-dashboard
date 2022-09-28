@@ -1,10 +1,8 @@
 import { AppState } from '@/state';
-import { useEffect } from '@storybook/addons';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const useFetchCollectiveFromContract = (): {
-  getCollectiveFromContract: (string) => Promise<string>;
+  getCollectiveFromContract: (string: any) => Promise<string>;
 } => {
   const {
     initializeContractsReducer: {
@@ -12,8 +10,8 @@ const useFetchCollectiveFromContract = (): {
     }
   } = useSelector((state: AppState) => state);
 
-  const getCollectiveFromContract = async (collectiveAddress) => {
-    let collective = await erc721Collective.name(collectiveAddress);
+  const getCollectiveFromContract = async (collectiveAddress: any) => {
+    const collective = await erc721Collective.name(collectiveAddress);
     return collective;
   };
   return { getCollectiveFromContract };

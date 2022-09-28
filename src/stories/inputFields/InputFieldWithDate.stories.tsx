@@ -2,8 +2,8 @@ import { InputField } from '@/components/inputs/inputField';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
 import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
-import '/node_modules/react-datepicker/dist/react-datepicker.css';
-import '/src/styles/custom-datepicker.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../../styles/custom-datepicker.css';
 
 export default {
   title: '2. Atoms/Input Field/With Date',
@@ -15,8 +15,10 @@ const Template: ComponentStory<typeof InputField> = (args) => {
   return (
     <InputFieldWithDate
       {...args}
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Date | unde... Remove this comment to see the full error message
       selectedDate={currentDate}
       onChange={(date) => {
+        // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assignable t... Remove this comment to see the full error message
         setCurrentDate(date);
       }}
     />

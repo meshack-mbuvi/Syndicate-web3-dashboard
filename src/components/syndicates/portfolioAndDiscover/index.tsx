@@ -273,6 +273,7 @@ const PortfolioAndDiscover: React.FC = () => {
         <>
           <div
             className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14"
+            // @ts-expect-error TS(2322): Type '{ paddingRight: string; } | null' is not ass... Remove this comment to see the full error message
             style={width < 480 ? { paddingRight: '6%' } : null}
           >
             <H3>Clubs</H3>

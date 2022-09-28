@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { NumberField, TextField } from '@/components/inputs';
 import ActivityDatePicker from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityDatePicker';
 import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
@@ -31,7 +33,7 @@ interface IInvestmentDetailsModal {
   onClick: (e: any) => void;
   storedInvestmentDetails: Details | any;
   transactionId: string;
-  setStoredInvestmentDetails: (details) => void;
+  setStoredInvestmentDetails: (details: any) => void;
   isManager: boolean;
   onSuccessfulAnnotation: () => void;
 }
@@ -59,7 +61,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const setHoverState = (over) => {
+  const setHoverState = (over: any) => {
     if (!editMode && over) {
       setHover(true);
     } else {
@@ -113,7 +115,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     }
   }, [data?.Financial_annotateTransactions]);
 
-  const onSubmit = (values) => {
+  const onSubmit = (values: any) => {
     // fields without values will be sent to the backend as an empty string
     // this makes it possible to remove a previously set value.
     const detailsAnnotationData = {

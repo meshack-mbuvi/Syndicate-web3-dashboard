@@ -16,11 +16,17 @@ export const getModuleRequirementValues = async (
   );
 
   const moduleReqs: ModuleReqs = {
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxMemberCount: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxTotalSupply: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxPerMember: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     startTime: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     endTime: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | undefined'.
     requiredTokensLogicalOperator: null,
     requiredTokens: [],
     requiredTokenBalances: []

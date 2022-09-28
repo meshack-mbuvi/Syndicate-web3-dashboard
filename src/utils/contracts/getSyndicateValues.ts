@@ -3,8 +3,8 @@ import { ModuleReqs } from '@/types/modules';
 
 export const getSyndicateValues = async (
   address: string,
-  policyMintERC20,
-  mintPolicy,
+  policyMintERC20: any,
+  mintPolicy: any,
   guardMixinManager: GuardMixinManager,
   activeMintReqs: ModuleReqs,
   mintModule: string

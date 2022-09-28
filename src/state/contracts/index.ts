@@ -51,7 +51,7 @@ export interface ISyndicateContracts {
   RugClaimModule: RugERC20ClaimModule;
   RugUtilityProperty: RugUtilityProperties;
   RugToken: ClubERC20Contract;
-  GenesisNFTContract;
+  GenesisNFTContract: any;
   rugBonusClaimModule: RugBonusTokenModule;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
@@ -74,39 +74,72 @@ interface InitialState {
 
 const initialState: InitialState = {
   syndicateContracts: {
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ClubERC20Fa... Remove this comment to see the full error message
     clubERC20Factory: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MintPolicyC... Remove this comment to see the full error message
     policyMintERC20: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ClubERC20Fa... Remove this comment to see the full error message
     clubERC20FactoryNative: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Distributio... Remove this comment to see the full error message
     distributionsERC20: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Distributio... Remove this comment to see the full error message
     distributionsETH: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC20ClubFa... Remove this comment to see the full error message
     erc20ClubFactory: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MintPolicyC... Remove this comment to see the full error message
     mintPolicy: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'DepositToke... Remove this comment to see the full error message
     DepositTokenMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'DepositToke... Remove this comment to see the full error message
     SingleTokenMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'NativeMintM... Remove this comment to see the full error message
     NativeMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MerkleDistr... Remove this comment to see the full error message
     MerkleDistributorModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MerkleDistr... Remove this comment to see the full error message
     MerkleDistributorModuleERC721: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'PublicOnePe... Remove this comment to see the full error message
     PublicOnePerAddressModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC721MintP... Remove this comment to see the full error message
     mintPolicyERC721: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugUtilityM... Remove this comment to see the full error message
     RugUtilityMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'PublicMintW... Remove this comment to see the full error message
     PublicMintWithFeeModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugERC20Cla... Remove this comment to see the full error message
     RugClaimModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugUtilityP... Remove this comment to see the full error message
     RugUtilityProperty: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ClubERC20Co... Remove this comment to see the full error message
     RugToken: null,
     GenesisNFTContract: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
     rugBonusClaimModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OwnerMintMo... Remove this comment to see the full error message
     OwnerMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'DepositExch... Remove this comment to see the full error message
     depositExchangeMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC721Colle... Remove this comment to see the full error message
     erc721Collective: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC721Colle... Remove this comment to see the full error message
     erc721CollectiveFactory: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'EthPriceMin... Remove this comment to see the full error message
     ethPriceMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'FixedRender... Remove this comment to see the full error message
     fixedRenderer: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'GuardMixinM... Remove this comment to see the full error message
     guardMixinManager: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MaxPerMembe... Remove this comment to see the full error message
     maxPerMemberERC721: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MaxTotalSup... Remove this comment to see the full error message
     maxTotalSupplyERC721: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TimeRequire... Remove this comment to see the full error message
     timeRequirements: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MaxMemberCo... Remove this comment to see the full error message
     maxMemberCountMixin: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MaxTotalSup... Remove this comment to see the full error message
     maxTotalSupplyMixin: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
     tokenGatedMixin: null
   }
 };

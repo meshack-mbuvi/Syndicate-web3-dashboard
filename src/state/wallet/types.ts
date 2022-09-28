@@ -107,6 +107,7 @@ export const initialState: InitialState = {
   web3: {
     status: Status.DISCONNECTED,
     connect: false,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Web3Provider'.
     ethersProvider: null,
     showConnectionModal: false,
     isErrorModalOpen: false,
@@ -127,6 +128,7 @@ export const initialState: InitialState = {
       network: '',
       testnet: false,
       chainId: 0,
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
       networkId: null,
       rpcUrl: '',
       publicRPC: '',

@@ -27,7 +27,7 @@ interface Props {
       showCallout?: boolean;
     };
   }[];
-  expander?: {
+  expander: {
     isExpanded?: boolean;
     isExpandable?: boolean;
     showSubmitCTA?: boolean;
@@ -65,8 +65,8 @@ export const CollapsibleTable: React.FC<Props> = ({
   isSubmitDisabled,
   disableHeightUpdate = false
 }) => {
-  const rowsRef = useRef<HTMLInputElement>();
-  const editRef = useRef<HTMLInputElement>();
+  const rowsRef = useRef<HTMLInputElement>(null);
+  const editRef = useRef<HTMLInputElement>(null);
   const [maxHeight, setMaxHeight] = useState('100vh');
 
   const windowWidth = useWindowSize().width;
@@ -111,8 +111,11 @@ export const CollapsibleTable: React.FC<Props> = ({
             isOn={isExpanded}
             type={SwitchType.EXPLICIT}
             onClick={() => {
+              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setActiveRow(switchRowIndex);
+              // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
               dispatch(setActiveRowIdx(switchRowIndex));
+              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setIsExpanded(!isExpanded);
               setEditGroupFieldClicked && setEditGroupFieldClicked(false);
             }}
@@ -121,9 +124,11 @@ export const CollapsibleTable: React.FC<Props> = ({
       </div>
       {showSubmitCTA && (
         <SubmitContent
+          // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
           handleEdit={handleDisclaimerConfirmation}
           cancelEdit={() => {
             cancelEdit();
+            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
             setActiveRow(0);
             dispatch(setActiveRowIdx(0));
           }}
@@ -180,9 +185,11 @@ export const CollapsibleTable: React.FC<Props> = ({
                   <SubmitContent
                     showCallout={showCallout}
                     isSubmitDisabled={isSubmitDisabled}
+                    // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
                     handleEdit={handleDisclaimerConfirmation}
                     cancelEdit={() => {
                       cancelEdit();
+                      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                       setActiveRow(0);
                     }}
                   />
@@ -200,9 +207,11 @@ export const CollapsibleTable: React.FC<Props> = ({
                     {isEditable && (
                       <EditButton
                         handleClick={() => {
+                          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                           setActiveRow(rowIndex);
                           setEditGroupFieldClicked &&
                             setEditGroupFieldClicked(false);
+                          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
                           dispatch(setActiveRowIdx(rowIndex));
                         }}
                       />

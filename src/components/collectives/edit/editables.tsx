@@ -100,6 +100,7 @@ export const SubmitContent: React.FC<{
 
           <Callout extraClasses="rounded-xl p-4">
             <EstimateGas
+              // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ContractMapper'
               contract={activeContract}
               args={{
                 /* Collective Settings */

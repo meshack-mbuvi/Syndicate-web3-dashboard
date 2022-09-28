@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H4 } from '@/components/typography';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -61,11 +63,13 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
   // pagination functions
   function goToNextPage() {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset + dataLimit);
   }
 
   function goToPreviousPage() {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset - dataLimit);
   }
@@ -187,7 +191,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     );
   }
 
-  const viewInvestmentDetails = (investmentData) => {
+  const viewInvestmentDetails = (investmentData: any) => {
     if (!isMember && !isOwner) return;
     const {
       fromAddress,

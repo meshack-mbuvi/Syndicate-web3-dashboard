@@ -12,7 +12,7 @@ const queryClient = new QueryClient({
 export default {
   title: '3. Molecules/Collectives/Card',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <Story />
@@ -22,11 +22,12 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <CollectiveCard {...args} />;
 };
 
 export const TimeWindow = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 TimeWindow.args = {
   cardType: CollectiveCardType.TIME_WINDOW,
   closeDate: 'Jun 11, 2021',
@@ -39,6 +40,7 @@ TimeWindow.args = {
 };
 
 export const MaxSupply = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 MaxSupply.args = {
   cardType: CollectiveCardType.MAX_TOTAL_SUPPLY,
   closeDate: 'Jun 11, 2021',
@@ -51,6 +53,7 @@ MaxSupply.args = {
 };
 
 export const Free = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Free.args = {
   cardType: CollectiveCardType.OPEN_UNTIL_CLOSED,
   closeDate: 'Jun 11, 2021',

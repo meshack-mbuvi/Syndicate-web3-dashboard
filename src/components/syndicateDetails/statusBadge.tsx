@@ -3,11 +3,13 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { AppState } from '@/state';
-import { getCountDownDays } from '@/utils/dateUtils';
+import {
+  getCountDownDays,
+  getFormattedDateTimeWithTZ
+} from '@/utils/dateUtils';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
-import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
 import { B2, H4 } from '../typography';
 
 interface Props {

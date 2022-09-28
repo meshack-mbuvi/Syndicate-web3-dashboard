@@ -1,11 +1,10 @@
 import { useEffect, useState, SetStateAction, Dispatch } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SearchInput } from '@/containers/managerActions/shared/searchInput';
 import { formatAddress } from 'src/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
 import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 
 export interface IMember {
   clubTokens: string;
@@ -48,6 +47,7 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
         return memberAddress.toLowerCase().includes(searchKeyword);
       });
       if (searchResults.length) {
+        // @ts-expect-error TS(2345): Argument of type 'IMember[]' is not assignable to ... Remove this comment to see the full error message
         setMembersList(searchResults);
         setNoMemberFound(false);
       } else {
@@ -56,13 +56,16 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
       }
     } else {
       // populate the list with all members if there is no search term.
+      // @ts-expect-error TS(2345): Argument of type 'IMember[]' is not assignable to ... Remove this comment to see the full error message
       setMembersList(membersData);
     }
   }, [searchTerm, membersData]);
 
-  const handleMemberClick = (member) => {
+  const handleMemberClick = (member: any) => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setMemberAddress(member.memberAddress);
     dispatch(setMemberToUpdate(member));
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setShowMembersList(false);
   };
 

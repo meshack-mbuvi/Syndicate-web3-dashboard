@@ -27,14 +27,16 @@ export default {
   }
 };
 
-const Template = (args) => <Switch {...args} />;
+const Template = (args: any) => <Switch {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   isOn: true
 };
 
 export const Explicit = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Explicit.args = {
   isOn: true,
   type: SwitchType.EXPLICIT

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { ChevronIcon, ChevronIconDirection } from '@/components/icons/chevron';
 import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
@@ -24,7 +25,7 @@ export const SmallCarousel: React.FC<Props> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [showSlideNavigator, setShowSlideNavigator] = useState(false);
   const duration = 2000;
-  let interval;
+  let interval: any;
   const incrementIndex = () => {
     setActiveIndex((activeIndex + slides.length + 1) % slides.length);
   };

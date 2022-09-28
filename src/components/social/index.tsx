@@ -21,6 +21,7 @@ export const ShareCard: React.FC<Props> = ({
   customVisual
 }) => {
   const [randomImageIndex] = useState(
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     Math.round(Math.random() * (imageOptions.length - 1))
   );
   const [showCopiedState, setShowCopiedState] = useState(false);
@@ -38,6 +39,7 @@ export const ShareCard: React.FC<Props> = ({
         <div
           className="bg-gray-syn5 h-52 w-full"
           style={{
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             backgroundImage: `url('${imageOptions[randomImageIndex]}')`,
             backgroundSize: 'cover'
           }}

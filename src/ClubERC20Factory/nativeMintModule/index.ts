@@ -8,10 +8,14 @@ export class NativeMintModuleContract {
   activeNetwork;
 
   // This will be used to call other functions. eg mint
-  NativeMintModuleContract;
+  NativeMintModuleContract: any;
 
   // initialize a contract instance
-  constructor(NativeMintModuleContractAddress: string, web3, activeNetwork) {
+  constructor(
+    NativeMintModuleContractAddress: string,
+    web3: any,
+    activeNetwork: any
+  ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = NativeMintModuleContractAddress;
@@ -48,10 +52,10 @@ export class NativeMintModuleContract {
     amount: string,
     clubAddress: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<void> {
     if (!this.NativeMintModuleContract) {
       this.init();
@@ -64,7 +68,7 @@ export class NativeMintModuleContract {
       this.NativeMintModuleContract.methods
         .mint(clubAddress)
         .send({ from: ownerAddress, value: amount, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -78,11 +82,11 @@ export class NativeMintModuleContract {
             setTransactionHash(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });

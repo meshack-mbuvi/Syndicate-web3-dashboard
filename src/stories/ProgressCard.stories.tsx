@@ -18,7 +18,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <ConnectWalletProvider>
           <Story />
@@ -29,9 +29,10 @@ export default {
   ]
 };
 
-const Template = (args) => <ProgressCard {...args} />;
+const Template = (args: any) => <ProgressCard {...args} />;
 
 export const ConfirmInWallet = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ConfirmInWallet.args = {
   title: 'Confirm in wallet',
   description: 'Confirm the modification of club settings in your wallet',
@@ -39,6 +40,7 @@ ConfirmInWallet.args = {
 };
 
 export const Pending = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Pending.args = {
   title: 'Pending confirmation',
   description:
@@ -52,6 +54,7 @@ Pending.args = {
 };
 
 export const Success = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Success.args = {
   title: 'Transaction failed',
   description: 'Please try again and let us know if the issue persists.',
@@ -63,6 +66,7 @@ Success.args = {
 };
 
 export const Failure = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Failure.args = {
   title: 'Transaction failed',
   description: 'Please try again and let us know if the issue persists.',

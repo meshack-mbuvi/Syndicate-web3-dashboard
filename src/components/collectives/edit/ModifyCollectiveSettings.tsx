@@ -42,9 +42,9 @@ import {
   setMintEndTime,
   setMintPrice,
   setOpenUntil,
-  setUpdateEnded
+  setUpdateEnded,
+  setActiveRowIdx
 } from '@/state/collectiveDetails';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
 import { EditRowIndex } from '@/state/collectiveDetails/types';
 import {
   setCollectiveArtwork,
@@ -161,8 +161,10 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   useEffect(() => {
     if (maxSupply === 0) {
+      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.FUTURE_DATE' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.FUTURE_DATE);
     } else {
+      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.MAX_MEMBERS' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.MAX_MEMBERS);
     }
   }, [maxSupply]);
@@ -195,6 +197,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       ? setArtworkUrlState(
           `${
             process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           }/${nftMetadata?.animation_url.replace('ipfs://', '')}`
         )
       : setArtworkUrlState(
@@ -251,7 +254,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setProgressState('failure');
   };
 
-  const onSwitchTxConfirm = (transactionHash) => {
+  const onSwitchTxConfirm = (transactionHash: any) => {
     // Update progress state
     setProgressDescriptorTitle(`Updating...`);
     setProgressDescriptorDescription(
@@ -265,6 +268,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const onSwitchTxReceipt = () => {
     setOpenUntilStepModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
       setOpenUntilStepModalVisible(false);
@@ -277,7 +281,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const onSwitchTxFail = (error?) => {
+  const onSwitchTxFail = (error?: any) => {
     setOpenUntilStepModalVisible(true);
     updateSteps('isInErrorState', true);
     updateSteps('status', ProgressDescriptorState.FAILURE);
@@ -305,8 +309,9 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const updateSteps = (key, value) => {
+  const updateSteps = (key: any, value: any) => {
     const updatedSteps = steps;
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
@@ -339,7 +344,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const handleClickAction = async (e) => {
+  const handleClickAction = async (e: any) => {
     e.preventDefault();
 
     updateSteps('status', ProgressDescriptorState.PENDING);
@@ -347,18 +352,19 @@ const ModifyCollectiveSettings: React.FC = () => {
 
     setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
     setProgressDescriptorTitle(`Applying changes...`);
-
+    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
     dispatch(setOpenUntil(currentOpenUntilState));
 
     await updateMixin();
   };
 
-  const handleDisclaimerConfirmation = (e?) => {
+  const handleDisclaimerConfirmation = (e?: any) => {
     e.preventDefault();
     setIsModalVisible(true);
   };
 
   const clearErrorStepErrorStates = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const updatedSteps = steps.map((step) => ({
       ...step,
       isInErrorState: false,
@@ -402,10 +408,11 @@ const ModifyCollectiveSettings: React.FC = () => {
     setArtworkTypeState(NFTMediaType.CUSTOM);
     setArtworkUrlState('');
     setProgressPercent(0);
+    // @ts-expect-error TS(2345): Argument of type '""' is not assignable to par... Remove this comment to see the full error message
     setFileName('');
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: any) => {
     const fileLimit = 50;
     const fileObject = e.target.files[0];
 
@@ -426,6 +433,7 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const currentOpenUntilChange = (openUntil: OpenUntil) => {
     setOpenUntilSettingsChanged(!openUntilSettingsChanged);
+    // @ts-expect-error TS(2345): Argument of type 'OpenUntil' is not assignable to par... Remove this comment to see the full error message
     setCurrentOpenUntilState(openUntil);
   };
 
@@ -485,7 +493,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
   };
 
-  const handleEdit = async (e) => {
+  const handleEdit = async (e: any) => {
     e.preventDefault();
     setIsModalVisible(false);
     setProgressState('confirm');
@@ -928,12 +936,14 @@ const ModifyCollectiveSettings: React.FC = () => {
                             : nftMetadata?.image === null
                             ? `${
                                 process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               }/${nftMetadata?.animation_url.replace(
                                 'ipfs://',
                                 ''
                               )}`
                             : `${
                                 process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               }/${nftMetadata?.image.replace('ipfs://', '')}`
                         }
                         mediaType={
@@ -948,6 +958,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                       />
                       <FileUploader
                         progressPercent={progressPercent}
+                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
                         fileName={fileName}
                         errorText={exceededUploadLimit}
                         promptTitle="Upload artwork"
@@ -971,6 +982,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                   rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
                     <TextArea
+                      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
                       value={description}
                       handleValueChange={(e) => setDescription(e)}
                       placeholderLabel="Description about this NFT collection that will be visible everywhere"
@@ -991,6 +1003,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             isNotInteractableExpanded: isOpen,
             setIsNotInteractableExpanded: handleOpenCollective,
             subfieldEditing: subfieldEditing,
+            // @ts-expect-error TS(2322): Type '(boolean: boolean) => void' is not assig... Remove this comment to see the full error message
             setSubfieldEditing: handleSubfieldEditing
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
@@ -1089,6 +1102,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                 inputField: (
                   <>
                     <RadioButtonsOpenUntil
+                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OpenUntil'.
                       openUntil={currentOpenUntilState}
                       setOpenUntil={currentOpenUntilChange}
                     />
@@ -1150,6 +1164,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       <OpenUntilStepModal
         activeStepIndex={activeIndex}
         isModalVisible={openUntilStepModalVisible}
+        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
         showCloseButton={false}
@@ -1181,10 +1196,12 @@ const ModifyCollectiveSettings: React.FC = () => {
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressModal
             {...{
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               ...progressModalStates[progressState],
               isVisible: true,
               txHash: transactionHash,
               buttonOnClick:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again'
                   ? handleCloseModal
                   : handleExit,
@@ -1192,14 +1209,18 @@ const ModifyCollectiveSettings: React.FC = () => {
               iconColor: ExternalLinkColor.BLUE,
               transactionType: 'transaction',
               showCloseButton:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true
                   : false,
               closeModal: handleCloseModal,
               outsideOnClick:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true

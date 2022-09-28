@@ -6,9 +6,11 @@ const collectivesSlice = createSlice({
   initialState,
   reducers: {
     setAdminCollectives(state, action: PayloadAction<Collective[]>) {
+      // @ts-expect-error TS(2322): Type 'Collective[]' is not assignable to type 'nev... Remove this comment to see the full error message
       state.adminCollectives = action.payload;
     },
     setMemberCollectives(state, action: PayloadAction<Collective[]>) {
+      // @ts-expect-error TS(2322): Type 'Collective[]' is not assignable to type 'nev... Remove this comment to see the full error message
       state.memberCollectives = action.payload;
     }
   }

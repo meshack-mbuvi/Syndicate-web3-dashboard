@@ -67,7 +67,7 @@ export const ClaimComponent: React.FC = () => {
   }, [account]);
 
   // Initiate wallet connection process.
-  const handleConnectWallet = (e) => {
+  const handleConnectWallet = (e: any) => {
     e.preventDefault();
     dispatch(showWalletModal());
   };

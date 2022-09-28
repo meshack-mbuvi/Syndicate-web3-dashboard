@@ -5,7 +5,7 @@ import React from 'react';
 import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 type bonusClaimProps = {
-  handleClaimBonus;
+  handleClaimBonus: any;
   bonusAmount: string;
 };
 
@@ -36,7 +36,6 @@ export const BonusTokenClaim: React.FC<bonusClaimProps> = ({
             separately.
           </p>
         </div>
-
         <CtaButton
           onClick={handleClaimBonus}
           greenCta={!disabled}

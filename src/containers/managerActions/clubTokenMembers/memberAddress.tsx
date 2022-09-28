@@ -12,7 +12,7 @@ import { SignedIcon } from '../shared/signedIcon';
 
 interface IProps {
   memberAddress: string;
-  setSelectedMember;
+  setSelectedMember: any;
 }
 export const MemberAddressComponent: React.FC<IProps> = (props) => {
   const { memberAddress, setSelectedMember, ...rest } = props;

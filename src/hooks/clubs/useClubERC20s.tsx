@@ -287,7 +287,7 @@ const useClubERC20s = () => {
     getAdminClubs();
   }, [data?.syndicateDAOs]);
 
-  const processClubERC20Tokens = async (tokens) => {
+  const processClubERC20Tokens = async (tokens: any) => {
     if (!tokens || !tokens?.length) {
       return [];
     }
@@ -308,7 +308,7 @@ const useClubERC20s = () => {
             requiredTokenMinBalance,
             depositAmount,
             maxTotalSupply
-          }) => {
+          }: any) => {
             let clubERC20Contract;
             let decimals = 0;
             let clubName = '';
@@ -322,6 +322,7 @@ const useClubERC20s = () => {
                 activeNetwork
               );
 
+              // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'number'.
               decimals = await clubERC20Contract.decimals();
               clubName = await clubERC20Contract.name();
               clubSymbol = await clubERC20Contract.symbol();
@@ -362,6 +363,7 @@ const useClubERC20s = () => {
             const maxTotalDeposits =
               +maxTotalSupplyFromWei /
               activeNetwork.nativeCurrency.exchangeRate;
+            // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
             if (!isZeroAddress(depositToken) && depositToken) {
               try {
                 // assumes that only ClubERC20Contract and ERC20ClubFactory are possible
@@ -373,6 +375,7 @@ const useClubERC20s = () => {
                 );
                 depositERC20TokenSymbol = await depositERC20Token.symbol();
                 depositERC20TokenDecimals = await depositERC20Token.decimals();
+                // @ts-expect-error TS(2322): Type 'string | null | undefined' is not assignable... Remove this comment to see the full error message
                 depositTokenLogo = await getTokenDetails(
                   depositToken,
                   activeNetwork.chainId
@@ -410,7 +413,7 @@ const useClubERC20s = () => {
             // this is not ideal.
             // we should be able to get this value straight from the graph, similar to depositAmount.
             const [member] = members?.filter(
-              (currentMember) =>
+              (currentMember: any) =>
                 currentMember?.member?.memberAddress.toLowerCase() ===
                 account.toLowerCase()
             );

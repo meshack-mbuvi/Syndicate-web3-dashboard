@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useDemoMode } from '@/hooks/useDemoMode';
 import React from 'react';
 import { useRouter } from 'next/router';

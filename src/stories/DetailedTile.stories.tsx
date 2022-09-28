@@ -5,7 +5,7 @@ export default {
   title: '2. Atoms/Detailed Tile'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
     <DetailedTile
@@ -17,6 +17,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   options: [
     {
@@ -33,6 +34,7 @@ Default.args = {
 };
 
 export const DisabledOptions = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 DisabledOptions.args = {
   activeIndex: 2,
   disabledIndices: [0, 1],
@@ -56,6 +58,7 @@ DisabledOptions.args = {
 };
 
 export const NoIcon = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 NoIcon.args = {
   options: [
     {
@@ -70,6 +73,7 @@ NoIcon.args = {
 };
 
 export const OnlyTitle = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 OnlyTitle.args = {
   options: [
     {

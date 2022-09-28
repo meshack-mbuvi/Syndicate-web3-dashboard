@@ -46,6 +46,7 @@ import {
   mockTokensResult
 } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'glob... Remove this comment to see the full error message
 import window from 'global';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
@@ -149,7 +150,7 @@ const LayoutWithSyndicateDetails: FC<{
     }
   }, [chain]);
 
-  const GetNetworkByName = (name) => {
+  const GetNetworkByName = (name: any) => {
     const network = useGetNetwork(name);
     setUrlNetwork(network);
   };
@@ -174,6 +175,7 @@ const LayoutWithSyndicateDetails: FC<{
       // clear transactions when component unmounts
       // solves an issue with previous transactions being loaded
       // when a switch is made to another club with a different owner.
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearMyTransactions());
       dispatch(clearCollectiblesTransactions());
 
@@ -210,7 +212,7 @@ const LayoutWithSyndicateDetails: FC<{
 
   // Listen to page scrolling
   useEffect(() => {
-    const onScroll = (e) => {
+    const onScroll = (e: any) => {
       setScrollTop(e.target.documentElement.scrollTop);
     };
     window.addEventListener('scroll', onScroll);
@@ -222,6 +224,7 @@ const LayoutWithSyndicateDetails: FC<{
   useEffect(() => {
     if (
       subNav.current &&
+      // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
       parseInt(subNav.current.getBoundingClientRect().top) <= 0
     ) {
       setIsSubNavStuck(true);
@@ -248,7 +251,8 @@ const LayoutWithSyndicateDetails: FC<{
         offset: '0',
         chainId: activeNetwork.chainId,
         maxTotalDeposits: nativeDepositToken
-          ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
+          ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+            parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
           : maxTotalDeposits
       })
     );
@@ -332,6 +336,7 @@ const LayoutWithSyndicateDetails: FC<{
       }
 
       dispatch(
+        // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: string;  is not assig... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
           ...depositDetails,
           loading: false
@@ -442,6 +447,7 @@ const LayoutWithSyndicateDetails: FC<{
               <button
                 className="primary-CTA"
                 onClick={() => {
+                  // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                   switchNetworks(urlNetwork.chainId);
                 }}
               >

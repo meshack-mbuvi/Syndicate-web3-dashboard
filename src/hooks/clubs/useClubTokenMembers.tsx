@@ -49,7 +49,7 @@ const useClubTokenMembers = (): {
     skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 
-  const processMembers = (syndicate) => {
+  const processMembers = (syndicate: any) => {
     if (!syndicate || !syndicate?.members || !syndicate.members.length) {
       return;
     }
@@ -62,6 +62,7 @@ const useClubTokenMembers = (): {
     );
 
     const _clubMembers = syndicate.members.map(
+      // @ts-expect-error TS(7031): Binding element 'depositAmount' implicitly has an 'any' type.
       ({ depositAmount, tokens, member: { memberAddress } }) => {
         const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
         return {

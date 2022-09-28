@@ -30,7 +30,8 @@ import {
 
 const useUpdateState = () => {
   const dispatch = useDispatch();
-  const { name, artwork, artworkUrl } = useCreateState();
+
+  const { artwork, artworkUrl } = useCreateState();
 
   const [ContinueButtonActive, setContinueButtonActive] = useState(false);
   const [submitButtonActive, setSubmitButtonActive] = useState(false);
@@ -39,7 +40,7 @@ const useUpdateState = () => {
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
   const [exceededUploadLimit, setExceededUploadLimit] = useState('');
 
-  const getArtworkType = (fileObject) => {
+  const getArtworkType = (fileObject: any) => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
     let mediaSource = '';
     if (fileObject?.type) {
@@ -107,7 +108,7 @@ const useUpdateState = () => {
     );
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: any) => {
     dispatch(setIpfsHash(''));
     const fileLimit = 50;
     const fileObject = e.target.files[0];

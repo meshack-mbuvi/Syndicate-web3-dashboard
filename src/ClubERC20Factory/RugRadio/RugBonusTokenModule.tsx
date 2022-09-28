@@ -13,8 +13,8 @@ export class RugBonusTokenModule {
     rugToken: string,
     genesisNFT: string,
     properties: string,
-    web3,
-    activeNetwork
+    web3: any,
+    activeNetwork: any
   ) {
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -48,9 +48,9 @@ export class RugBonusTokenModule {
   async claimTokens(
     tokenId: string,
     fromAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);
@@ -100,9 +100,9 @@ export class RugBonusTokenModule {
   async bulkClaimTokens(
     tokenIds: string[],
     fromAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);

@@ -8,7 +8,7 @@ export const useMeetsTokenGatedRequirements = (): {
   getTokenReqDetails: (tokenHoldings: TokenHoldings[]) => {
     meetsRequirements: boolean;
     requiredTokenDetails: TokenReqDetails[];
-  };
+  } | null;
 } => {
   const {
     web3Reducer: {
@@ -22,7 +22,7 @@ export const useMeetsTokenGatedRequirements = (): {
   ): {
     meetsRequirements: boolean;
     requiredTokenDetails: TokenReqDetails[];
-  } => {
+  } | null => {
     if (
       !web3 ||
       !account ||
@@ -31,7 +31,7 @@ export const useMeetsTokenGatedRequirements = (): {
       !activeModuleDetails?.hasActiveModules ||
       !activeModuleDetails?.activeMintModuleReqs
     ) {
-      return;
+      return null;
     }
     let meetsRequirements = false;
     const operator =
@@ -58,6 +58,7 @@ export const useMeetsTokenGatedRequirements = (): {
         const tokenMetRequirements =
           getWeiAmount(
             web3,
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
             tokenDetails?.balance.toString(),
             token?.decimals ?? 18,
             false
@@ -96,6 +97,7 @@ export const useMeetsTokenGatedRequirements = (): {
       }
       return { meetsRequirements, requiredTokenDetails: tokensMet };
     }
+    return { meetsRequirements: false, requiredTokenDetails: [] };
   };
 
   return { getTokenReqDetails };

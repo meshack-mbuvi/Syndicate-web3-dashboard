@@ -49,6 +49,7 @@ export const getSyndicateContracts = async (
   activeNetwork: IActiveNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
 
   if (!addresses) {
@@ -166,6 +167,7 @@ export const getSyndicateContracts = async (
     : null;
 
   const RugClaimModule = new RugERC20ClaimModule(
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     RUG_CLAIM_MODULE,
     RUG_TOKEN,
     GENESIS_NFT,
@@ -174,13 +176,17 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const RugUtilityProperty = new RugUtilityProperties(RUG_PROPERTIES, web3);
 
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const RugToken = new ClubERC20Contract(RUG_TOKEN, web3, activeNetwork);
 
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const GenesisNFTContract = new ERC721Contract(GENESIS_NFT, web3);
 
   const rugBonusClaimModule = new RugBonusTokenModule(
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     RUG_BONUS_CLAIM_MODULE,
     RUG_TOKEN,
     GENESIS_NFT,
@@ -190,6 +196,7 @@ export const getSyndicateContracts = async (
   );
 
   const depositExchangeMintModule = new DepositExchangeMintModule(
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     DEPOSIT_EXCHANGE_MODULE,
     web3,
     activeNetwork
@@ -253,39 +260,67 @@ export const getSyndicateContracts = async (
 
   // return all initialized contracts
   return {
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     clubERC20Factory,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     distributionsERC20,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     distributionsETH,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     policyMintERC20,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     clubERC20FactoryNative,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     erc20ClubFactory,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     mintPolicy,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     DepositTokenMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     SingleTokenMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     NativeMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     MerkleDistributorModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     MerkleDistributorModuleERC721,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     PublicOnePerAddressModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     mintPolicyERC721,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     RugUtilityMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     PublicMintWithFeeModule,
     RugClaimModule,
     RugUtilityProperty,
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     OwnerMintModule,
     depositExchangeMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     erc721Collective,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     erc721CollectiveFactory,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     ethPriceMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     fixedRenderer,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     guardMixinManager,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxPerMemberERC721,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxTotalSupplyERC721,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     timeRequirements,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxMemberCountMixin,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxTotalSupplyMixin,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     tokenGatedMixin
   };
 };

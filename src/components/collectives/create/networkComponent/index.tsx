@@ -16,7 +16,7 @@ type NetworkType = {
   account: string;
   disabled: boolean;
   contract: ContractMapper;
-  args;
+  args: any;
   handleLaunch: () => void;
   handleConnectWallet: () => void;
 };

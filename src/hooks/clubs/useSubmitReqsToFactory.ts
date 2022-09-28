@@ -54,7 +54,7 @@ const useSubmitReqsToFactory = (
     logicalOperator
   };
 
-  const handleTxReceipt = (receipt) => {
+  const handleTxReceipt = (receipt: any) => {
     onTxReceipt({
       events: {
         ERC20ClubCreated: {

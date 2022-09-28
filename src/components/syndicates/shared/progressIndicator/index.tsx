@@ -57,6 +57,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const { maxTotalSupply, address, symbol } = erc20Token;
   const { totalSupply } = useClubDepositsAndSupply(address);
 
+  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
   const [currentToolTip, setCurrentToolTip] = useState<TooltipState>(null);
   const [tooltipTitle, setToolTipTitle] = useState('');
   const [tooltipTokenAmount, setToolTipTokenAmount] = useState(0);
@@ -209,12 +210,13 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
     remainingSupply
   ]);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: any) => {
     setShowToolTip(true);
 
     const leftOffSet = e.nativeEvent.offsetX;
     const client = e.clientX;
     if (toolTip && toolTip.current && trackMouse) {
+      // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
       const toolTipWidth = toolTip.current.getBoundingClientRect().width / 2;
 
       // if the tooltip is going to overflow the document to the left
@@ -330,6 +332,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   onMouseEnter={() =>
                     setCurrentToolTip(TooltipState.MINTED_VIA_DEPOSITS)
                   }
+                  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                   onMouseLeave={() => setCurrentToolTip(null)}
                   onMouseMove={(e) => handleMouseMove(e)}
                 >
@@ -364,6 +367,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   onMouseEnter={() =>
                     setCurrentToolTip(TooltipState.MANUALLY_MINTED)
                   }
+                  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                   onMouseLeave={() => setCurrentToolTip(null)}
                   onMouseMove={(e) => handleMouseMove(e)}
                 >
@@ -384,6 +388,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                 onMouseEnter={() =>
                   setCurrentToolTip(TooltipState.REMAINING_MINTS)
                 }
+                // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                 onMouseLeave={() => setCurrentToolTip(null)}
                 onMouseMove={(e) => handleMouseMove(e)}
               >

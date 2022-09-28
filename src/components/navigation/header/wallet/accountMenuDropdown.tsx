@@ -41,7 +41,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     if (account && !nativeBalance) {
       web3.eth
         .getBalance(account)
-        .then((balance) => web3.utils.fromWei(balance, 'ether'))
+        .then((balance: any) => web3.utils.fromWei(balance, 'ether'))
         .then(setNativeBalance);
     }
   }, [account, nativeBalance]);
@@ -56,10 +56,10 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 
   const refId = 'accountButton';
 
-  const closeDropdown = (event) => {
+  const closeDropdown = (event: any) => {
     // find whether click is coming from any of the component in path
     const [isClickedInsideRefId] =
-      event?.path.filter((path) => path?.id === refId) || [];
+      event?.path.filter((path: any) => path?.id === refId) || [];
 
     if (
       !account ||
@@ -197,6 +197,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                           className="primary-CTA rounded-custom w-full"
                           onClick={() => {
                             dispatch(setShowWalletDropdownMenu(false));
+                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                             disconnectWallet();
                           }}
                         >

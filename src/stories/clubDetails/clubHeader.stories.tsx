@@ -6,9 +6,10 @@ export default {
   component: ClubHeader
 };
 
-const Template = (args) => <ClubHeader {...args} />;
+const Template = (args: any) => <ClubHeader {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   name: 'Alpha Beta Club',
   symbol: '✺ABC',
@@ -21,6 +22,7 @@ Default.args = {
 };
 
 export const Loading = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Loading.args = {
   name: '',
   symbol: '',

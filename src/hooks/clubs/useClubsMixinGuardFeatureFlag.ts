@@ -3,12 +3,11 @@ import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { SplitContext } from '@splitsoftware/splitio-react';
 import { clubsMixinGuarded_feature } from '@/pages/_app';
-import SplitIO from '@splitsoftware/splitio-react/types/splitio/splitio';
 import useIsDeployPreview from '@/hooks/utils/useIsDeployPreview';
 
 const useClubMixinGuardFeatureFlag = (): {
   isReady: boolean;
-  readyClubMixinsConfig: SplitIO.TreatmentWithConfig;
+  readyClubMixinsConfig: SplitIO.TreatmentWithConfig | null;
   isClubMixinGuardTreatmentOn: boolean;
 } => {
   const {
@@ -18,7 +17,7 @@ const useClubMixinGuardFeatureFlag = (): {
   const { isReady } = useContext(SplitContext);
 
   const [readyClubMixinsConfig, setReadyClubMixinsConfig] =
-    useState<SplitIO.TreatmentWithConfig>(null);
+    useState<SplitIO.TreatmentWithConfig | null>(null);
   const [isClubMixinGuardTreatmentOn, setTreatmentStatus] =
     useState<boolean>(false);
 

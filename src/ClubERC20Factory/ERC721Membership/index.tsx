@@ -5,10 +5,10 @@ export class ERC721Contract {
   address;
 
   // This will be used to call other functions.
-  erc721Contract;
+  erc721Contract: any;
 
   // initialize an erc20 contract instance
-  constructor(erc721MembershipContractAddress: string, web3) {
+  constructor(erc721MembershipContractAddress: string, web3: any) {
     this.web3 = web3;
     this.address = erc721MembershipContractAddress;
     this.init();
@@ -76,7 +76,7 @@ export class ERC721Contract {
     }
   }
 
-  async balanceOf(address): Promise<string> {
+  async balanceOf(address: any): Promise<string> {
     try {
       return await this.erc721Contract.methods.balanceOf(address).call();
     } catch (error) {
@@ -84,7 +84,7 @@ export class ERC721Contract {
     }
   }
 
-  async ownerOf(tokenId): Promise<string> {
+  async ownerOf(tokenId: any): Promise<string> {
     try {
       return this.erc721Contract.methods.ownerOf(tokenId).call();
     } catch (error) {

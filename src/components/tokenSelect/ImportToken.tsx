@@ -40,13 +40,16 @@ export const ImportTokenModal: React.FC<IProps> = ({
 
   const handleBack = () => {
     dispatch(setShowImportTokenModal(false));
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Token | undefined'... Remove this comment to see the full error message
     dispatch(setCurrentSelectedToken({ token: null }));
   };
 
   const handleImport = () => {
+    // @ts-expect-error TS(2345): Argument of type 'Token | undefined'' is not assig... Remove this comment to see the full error message
     handleTokenClick(token);
     dispatch(setShowImportTokenModal(false));
     dispatch(setShowTokenGateModal(false));
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Token | undefined'... Remove this comment to see the full error message
     dispatch(setCurrentSelectedToken({ token: null }));
   };
 

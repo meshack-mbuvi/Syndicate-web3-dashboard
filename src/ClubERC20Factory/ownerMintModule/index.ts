@@ -8,10 +8,14 @@ export class OwnerMintModuleContract {
   activeNetwork;
 
   // This will be used to call other functions.
-  OwnerMintModuleContract;
+  OwnerMintModuleContract: any;
 
   // initialize a contract instance
-  constructor(OwnerMintModuleContractAddress: string, web3, activeNetwork) {
+  constructor(
+    OwnerMintModuleContractAddress: string,
+    web3: any,
+    activeNetwork: any
+  ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = OwnerMintModuleContractAddress;
@@ -49,10 +53,10 @@ export class OwnerMintModuleContract {
     clubAddress: string,
     memberAddress: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: (txHas: any) => void
   ): Promise<void> {
     let gnosisTxHash;
     const gasEstimate = await estimateGas(this.web3);
@@ -61,7 +65,7 @@ export class OwnerMintModuleContract {
       this.OwnerMintModuleContract.methods
         .ownerMint(clubAddress, memberAddress, amount)
         .send({ from: ownerAddress, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -75,11 +79,11 @@ export class OwnerMintModuleContract {
             setTransactionHash(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });
@@ -113,7 +117,7 @@ export class OwnerMintModuleContract {
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             if (gasAmount) onResponse(gasAmount);
             if (_error) console.log('Estimate Gas Error', _error);
           }

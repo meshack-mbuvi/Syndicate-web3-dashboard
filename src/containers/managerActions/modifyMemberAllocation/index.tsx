@@ -20,8 +20,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ModifyClubTokens: React.FC<{
-  showModifyCapTable;
-  setShowModifyCapTable;
+  showModifyCapTable: any;
+  setShowModifyCapTable: any;
 }> = (props) => {
   const { showModifyCapTable, setShowModifyCapTable } = props;
   const dispatch = useDispatch();
@@ -100,6 +100,7 @@ const ModifyClubTokens: React.FC<{
 
     setNewTotalSupply(newTokenSupply);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const ownership = (+memberAllocation * 100) / newTokenSupply;
     setNewOwnership(ownership);
   }, [memberAllocation, totalSupply, tokensToMintOrBurn, mintClubTokens]);
@@ -154,7 +155,7 @@ const ModifyClubTokens: React.FC<{
     refreshClubDetails();
   };
 
-  const onTxFail = (error) => {
+  const onTxFail = (error: any) => {
     const { message } = error;
     // this error is triggered on Polygon after transaction success.
     // we don't need to show the failure modal.
@@ -287,7 +288,7 @@ const ModifyClubTokens: React.FC<{
     }
   };
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange = (e: any) => {
     const amount = numberInputRemoveCommas(e);
 
     // calculate available tokens supply since we override the
@@ -302,6 +303,7 @@ const ModifyClubTokens: React.FC<{
       availableTokenSupply = +maxTotalSupply - +otherClubMembersTokens;
     }
 
+    // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
     if (amount < 0 || !amount) {
       setMemberAllocationError('Amount is required.');
       setContinueButtonDisabled(true);
@@ -341,6 +343,7 @@ const ModifyClubTokens: React.FC<{
       setMemberAllocationError('');
       setContinueButtonDisabled(false);
     }
+    // @ts-expect-error TS(2365): Operator '>=' cannot be applied to types 'string' ... Remove this comment to see the full error message
     setMemberAllocation(amount >= 0 ? amount : '');
   };
 
@@ -395,19 +398,22 @@ const ModifyClubTokens: React.FC<{
     );
   } else if (updateFailed) {
     return (
-      <ProgressModal
-        {...{
-          isVisible: true,
-          title: 'Cap table update failed',
-          description: '',
-          buttonLabel: 'Close',
-          buttonOnClick: handleCloseSuccessModal,
-          buttonFullWidth: true,
-          state: ProgressState.FAILURE,
-          transactionHash: userRejectedUpdate ? null : transactionHash,
-          transactionType: 'transaction'
-        }}
-      />
+      <>
+        {/* @ts-expect-error TS(2322): Type '{ isVisible: true; title: string; descriptio... Remove this comment to see the full error message */}
+        <ProgressModal
+          {...{
+            isVisible: true,
+            title: 'Cap table update failed',
+            description: '',
+            buttonLabel: 'Close',
+            buttonOnClick: handleCloseSuccessModal,
+            buttonFullWidth: true,
+            state: ProgressState.FAILURE,
+            transactionHash: userRejectedUpdate ? null : transactionHash,
+            transactionType: 'transaction'
+          }}
+        />
+      </>
     );
   }
 

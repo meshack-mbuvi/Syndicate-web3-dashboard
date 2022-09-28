@@ -7,9 +7,10 @@ export default {
   title: '3. Molecules/Progress Descriptor'
 };
 
-const Template = (args) => <ProgressDescriptor {...args} />;
+const Template = (args: any) => <ProgressDescriptor {...args} />;
 
 export const Pending = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Pending.args = {
   title: 'Distributing 40.0000 ETH',
   description:
@@ -18,6 +19,7 @@ Pending.args = {
 };
 
 export const Success = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Success.args = {
   title: 'Action successful message',
   description:
@@ -26,6 +28,7 @@ Success.args = {
 };
 
 export const Failure = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Failure.args = {
   title: 'Distributing 40.0000 ETH',
   description:
@@ -34,6 +37,7 @@ Failure.args = {
 };
 
 export const RequiresUserAction = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 RequiresUserAction.args = {
   title: 'Waiting for wallet',
   description:
@@ -43,6 +47,7 @@ RequiresUserAction.args = {
 };
 
 export const ExternalLink = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ExternalLink.args = {
   title: 'Distributing 40.0000 ETH',
   description:

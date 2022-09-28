@@ -13,7 +13,7 @@ interface Props {
   errorText?: string;
   promptTitle?: string;
   promptSubtitle?: string;
-  handleUpload: (e) => void;
+  handleUpload: (e: any) => void;
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
   addOn?: any;
@@ -41,8 +41,9 @@ export const FileUploader: React.FC<Props> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   const isAddOnVisible = addOn && progressPercent === 0;
 
-  const cancelUpload = (e) => {
+  const cancelUpload = (e: any) => {
     e.preventDefault();
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     fileInput.current.value = null;
     handleCancelUpload();
   };

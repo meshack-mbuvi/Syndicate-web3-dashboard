@@ -12,7 +12,7 @@ export default {
   title: 'Testing/Generated Artwork'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [artworkURL, setArtworkURL] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [backgroundColorClass] = useState('bg-red-hal');
@@ -89,6 +89,7 @@ const Template = (args) => {
 };
 
 export const Image = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Image.args = {
   label: 'My label'
 };

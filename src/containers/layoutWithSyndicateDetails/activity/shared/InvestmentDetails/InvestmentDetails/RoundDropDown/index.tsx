@@ -66,9 +66,10 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e) => {
+    const onPageClickEvent = (e: any) => {
       if (
         categorySelect.current !== null &&
+        // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
         !categorySelect.current.contains(e.target)
       ) {
         setShowDropdown(!showDropdown);
@@ -88,7 +89,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
     setShowDropdown(false);
   };
 
-  const handleSelect = (round) => {
+  const handleSelect = (round: any) => {
     if (!round) {
       setShowInputField(true);
       // Remove the previously set round value
@@ -100,6 +101,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
       );
 
       setSelectedCategory(selectedCategory);
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       onChange(selectedCategory.text);
     }
   };
@@ -135,6 +137,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
               <div className="w-50 mt-1 absolute z-20 top-10 transition-all duration-500 ease-in-out">
                 <PillDropDown
                   options={investmentRounds}
+                  // @ts-expect-error TS(2322): Type '(text: string) => void' is not assignable to... Remove this comment to see the full error message
                   onSelect={(text: string) => handleSelect(text)}
                   customTextStyles={customTextStyles}
                 />

@@ -10,6 +10,7 @@ export class ERC721Collective extends ContractBase {
   // Create Allow transfer
   public setTransferGuard(guard: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assignable to parameter of type 'AbiItem'.
       this.getAbiObject('updateTransferGuard'),
       [guard]
     );
@@ -20,9 +21,9 @@ export class ERC721Collective extends ContractBase {
     account: string,
     collectiveAddress: string,
     isAllowed: boolean,
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     const contract = new this.web3.eth.Contract(
       ERC721_COLLECTIVE_ABI as AbiItem[],
@@ -62,7 +63,7 @@ export class ERC721Collective extends ContractBase {
         {
           from: account
         },
-        (_error, gasAmount) => {
+        (_error: any, gasAmount: any) => {
           if (gasAmount) onResponse(gasAmount);
         }
       );

@@ -61,7 +61,7 @@ const useUtilityNFT: any = () => {
     return owner == (await ERC721tokenContract.ownerOf(tokenId));
   };
 
-  const getTokenClaimStatus = async (tokenID) => {
+  const getTokenClaimStatus = async (tokenID: any) => {
     // get claim status
     const response = await RugUtilityMintModule.tokenRedeemed(tokenID);
     return response;
@@ -95,7 +95,7 @@ const useUtilityNFT: any = () => {
       tokenIds.add(el.tokenID);
     });
 
-    let _memberships = [];
+    let _memberships: any = [];
 
     if (tokenIds.size > 0) {
       await Promise.all(

@@ -46,6 +46,7 @@ const SyndicatesComponent: FC = () => {
           {/* show my clubs */}
           <div
             className="container mx-auto"
+            // @ts-expect-error TS(2322): Type '{ paddingRight: string; } | null' is not ass... Remove this comment to see the full error message
             style={width < 480 ? { paddingRight: '0' } : null}
           >
             <PortfolioAndDiscover />
@@ -57,9 +58,3 @@ const SyndicatesComponent: FC = () => {
 };
 
 export default SyndicatesComponent;
-function MARKETING_WEBSITE_LANDING(
-  MARKETING_WEBSITE_LANDING: any,
-  arg1: { flow: any }
-) {
-  throw new Error('Function not implemented.');
-}

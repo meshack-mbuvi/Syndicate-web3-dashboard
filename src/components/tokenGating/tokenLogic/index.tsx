@@ -17,7 +17,7 @@ interface Props {
   helperText?: string;
   handleTokenSelection: (currentSelectedToken: ICurrentSelectedToken) => void;
   handleLogicalOperatorChange: (operator: LogicalOperator) => void;
-  handleRulesChange: (rules) => void;
+  handleRulesChange: (rules: any) => void;
   customClasses?: string;
   ruleErrors?: number[];
 }
@@ -158,14 +158,14 @@ export const TokenLogicList: React.FC<Props> = ({
             // Plus icon
             <div
               className={`flex-shrink-0 rounded-full h-10 w-10 ${
-                ruleErrors.includes(index)
+                ruleErrors?.includes(index)
                   ? 'border-red-error'
                   : 'border-gray-syn4'
               } transition-all border border-dashed`}
             >
               <img
                 src={`/images/plus-${
-                  ruleErrors.includes(index) ? 'red' : 'gray'
+                  ruleErrors?.includes(index) ? 'red' : 'gray'
                 }.svg`}
                 alt="Add"
                 className="w-4 h-4 mx-auto vertically-center transition-all"
@@ -185,7 +185,7 @@ export const TokenLogicList: React.FC<Props> = ({
           {/* Name */}
           <div
             className={`${
-              ruleErrors.includes(index)
+              ruleErrors?.includes(index)
                 ? 'text-red-error'
                 : rule.name
                 ? 'text-white'
@@ -195,7 +195,9 @@ export const TokenLogicList: React.FC<Props> = ({
             {rule.name ? rule.name : 'Select NFT or token'}
             <span
               className={`${
-                ruleErrors.includes(index) ? 'text-red-error' : 'text-gray-syn4'
+                ruleErrors?.includes(index)
+                  ? 'text-red-error'
+                  : 'text-gray-syn4'
               } ml-2`}
             >
               {rule.symbol}
@@ -216,7 +218,7 @@ export const TokenLogicList: React.FC<Props> = ({
           >
             <img
               src={`/images/xmark-${
-                ruleErrors.includes(index) ? 'red' : 'gray'
+                ruleErrors?.includes(index) ? 'red' : 'gray'
               }.svg`}
               alt="Close"
               className="w-4 h-4"

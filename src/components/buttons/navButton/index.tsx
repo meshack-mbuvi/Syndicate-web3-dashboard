@@ -11,9 +11,9 @@ export enum NavButtonType {
 
 interface Props {
   type?: NavButtonType;
-  onClick?: (event?) => void;
-  handlePrevious?: (event?) => void;
-  handleNext?: (event?) => void;
+  onClick?: (event?: any) => void;
+  handlePrevious?: (event?: any) => void;
+  handleNext?: (event?: any) => void;
   currentStep?: number;
   disabled?: boolean;
 }
@@ -57,6 +57,7 @@ export const NavButton: React.FC<Props> = ({
             type === NavButtonType.VERTICAL && 'top-1'
           } text-gray-syn4 hover:text-white ease-out transition-all`}
           onClick={type === NavButtonType.UP ? onClick : handlePrevious}
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           disabled={type === NavButtonType.UP && currentStep <= 1}
         >
           <svg
@@ -96,6 +97,7 @@ export const NavButton: React.FC<Props> = ({
           className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
             !handlePrevious && 'cursor-not-allowed'
           }`}
+          // @ts-expect-error TS(2322): Type '((event?: any) => void) | null' is not assig... Remove this comment to see the full error message
           onClick={handlePrevious ? handlePrevious : null}
         >
           <Image
@@ -112,6 +114,7 @@ export const NavButton: React.FC<Props> = ({
           className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
             (!handleNext || disabled) && 'cursor-not-allowed'
           }`}
+          // @ts-expect-error TS(2322): Type '((event?: any) => void) | null' is not assig... Remove this comment to see the full error message
           onClick={handleNext ? handleNext : null}
           disabled={disabled}
         >

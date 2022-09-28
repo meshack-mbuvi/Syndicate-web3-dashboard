@@ -107,12 +107,13 @@ const useCollectives = (): { loading: boolean } => {
     if (metadataCid && metadataCid !== 'hash') {
       mediaData = await getJson(metadataCid);
     }
-
+    // @ts-expect-error TS(2322): Type 'CollectiveMetadata | null' is not assignable ... Remove this comment to see the full error message
     return mediaData;
   };
 
   // process collectives the connected account is the admin of
   const processCollectives = useCallback(
+    // @ts-expect-error TS(7030): Not all code paths return a value.
     async (collectives) => {
       if (!collectives || !collectives?.length) {
         dispatch(setAdminCollectives([]));
@@ -124,12 +125,19 @@ const useCollectives = (): { loading: boolean } => {
       const processedAdminCollectives = collectives
         .map(
           async ({
+            // @ts-expect-error TS(7031): Binding element 'contractAddress' implicitly has an 'any' type.
             contractAddress,
+            // @ts-expect-error TS(7031): Binding element 'name' implicitly has an 'any' type.
             name,
+            // @ts-expect-error TS(7031): Binding element 'symbol' implicitly has an 'any' type.
             symbol,
+            // @ts-expect-error TS(7031): Binding element 'mintPrice' implicitly has an 'any' type.
             mintPrice,
+            // @ts-expect-error TS(7031): Binding element 'maxTotalSupply' implicitly has an 'any' type.
             maxTotalSupply,
+            // @ts-expect-error TS(7031): Binding element 'totalSupply' implicitly has an 'any' type.
             totalSupply,
+            // @ts-expect-error TS(7031): Binding element 'metadataCid' implicitly has an 'any' type.
             nftMetadata: { metadataCid }
           }) => {
             // get collective image/video
@@ -176,6 +184,7 @@ const useCollectives = (): { loading: boolean } => {
             };
           }
         )
+        // @ts-expect-error TS(7006): Parameter 'collective' implicitly has an 'any' type..
         .filter((collective) => collective !== undefined);
 
       Promise.all<Collective>(processedAdminCollectives).then(
@@ -221,6 +230,7 @@ const useCollectives = (): { loading: boolean } => {
     }
 
     const processedMemberCollectives = memberCollectiveNfts?.nfts
+      // @ts-expect-error TS(7031): Binding element 'collective' implicitly has an 'any' type.
       .map(async ({ collective }) => {
         const {
           contractAddress,
@@ -270,7 +280,7 @@ const useCollectives = (): { loading: boolean } => {
           }/collectives/${contractAddress}${'?chain=' + activeNetwork.network}`
         };
       })
-      .filter((collective) => collective !== undefined);
+      .filter((collective: any) => collective !== undefined);
 
     Promise.all<Collective>(processedMemberCollectives).then(
       (collectives: Collective[]) => {

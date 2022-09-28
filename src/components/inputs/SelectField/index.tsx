@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { SearchInput } from '@/components/inputs';
 // import { SearchForm } from '../searchForm';
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ');
 }
 
@@ -25,12 +25,12 @@ function classNames(...classes) {
  * @returns
  */
 export const SelectField: React.FC<{
-  memberItems;
-  label;
-  handleSelected;
-  selected;
-  searchHandler;
-  searchValue;
+  memberItems: any;
+  label: any;
+  handleSelected: any;
+  selected: any;
+  searchHandler: any;
+  searchValue: any;
 }> = (props) => {
   const {
     memberItems,
@@ -41,7 +41,7 @@ export const SelectField: React.FC<{
     searchValue
   } = props;
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: any) => {
     const { value } = event.target;
     searchHandler(value.trim());
   };
@@ -51,7 +51,7 @@ export const SelectField: React.FC<{
       value={selected}
       onChange={(selected) => {
         const [selectedMember] = memberItems.filter(
-          (member) => member.memberAddress === selected
+          (member: any) => member.memberAddress === selected
         );
         handleSelected(selectedMember);
       }}
@@ -119,7 +119,7 @@ export const SelectField: React.FC<{
                   customClass={'bg-gray-4  rounded-md'}
                   parentBackground="bg-gray-4"
                   padding="py-2 pl-3"
-                  clearSearchValue={() => searchHandler('')}
+                  clearSearchValue={(): void => searchHandler('')}
                 />
 
                 <div className="overflow-scroll space-y-3">
@@ -134,7 +134,7 @@ export const SelectField: React.FC<{
                         <p>Club tokens (share)</p>
                       </div>
                       <div className="space-y-4">
-                        {memberItems.map((member) => (
+                        {memberItems.map((member: any) => (
                           <Listbox.Option
                             key={member.memberAddress}
                             className={() =>

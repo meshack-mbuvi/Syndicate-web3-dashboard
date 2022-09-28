@@ -28,7 +28,9 @@ export const Switch = (props: {
   const containerRef = useRef(null);
   const knobRef = useRef(null);
   useEffect(() => {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const containerWidth = containerRef.current.getBoundingClientRect().width;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const knobWidth = knobRef.current.getBoundingClientRect().width;
     const offset =
       (containerWidth - knobWidth) / pixelsPerRem - containerPaddingRem * 2;

@@ -129,6 +129,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
   }, [JSON.stringify(clubMembers), filteredAddress]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2345): Argument of type '{ depositAmount: string; memberA... Remove this comment to see the full error message
     setTableData(syndicateMembersToShow);
   }, [JSON.stringify(syndicateMembersToShow), JSON.stringify(clubMembers)]);
 
@@ -145,7 +146,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     </div>
   );
 
-  const handleMenuItemClick = (member) => {
+  const handleMenuItemClick = (member: any) => {
     dispatch(setMemberToUpdate(member));
     setShowModifyCapTable();
   };
@@ -168,7 +169,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
         accessor: function depositAmount({
           depositAmount,
           depositSymbol = depositTokenSymbol
-        }) {
+        }: any) {
           return (
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
@@ -185,7 +186,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
           ownershipShare,
           clubTokens,
           symbol
-        }) {
+        }: any) {
           return (
             <p>
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
@@ -198,7 +199,8 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
       },
       {
         Header: ` `,
-        accessor: function distributionShare(club) {
+        // @ts-expect-error TS(7030): Not all code paths return a value.
+        accessor: function distributionShare(club: any) {
           // Only show this option for club owners.
           // and only on hover
           const { memberAddress } = club;

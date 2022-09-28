@@ -4,7 +4,7 @@ import { CtaButton } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
 import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
-import { L1, L2 } from '@/components/typography';
+import { L2 } from '@/components/typography';
 
 interface IMemberDetails {
   show: boolean;
@@ -15,10 +15,10 @@ interface IMemberDetails {
   symbol: string;
   inputFieldsDisabled?: boolean;
   handleShow: (show: boolean) => void;
-  handleSubmit: (e) => void;
+  handleSubmit: (e: any) => void;
   clearFieldErrors: () => void;
-  handleAddressChange: (e) => void;
-  handleAmountChange: (e) => void;
+  handleAddressChange: (e: any) => void;
+  handleAmountChange: (e: any) => void;
   setMaxRemainingSupply: () => void;
 }
 
@@ -99,7 +99,6 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               disabled={inputFieldsDisabled}
             />
           </div>
-
           <CtaButton
             disabled={
               Boolean(amountToMintError) ||
@@ -108,7 +107,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               !amountToMint ||
               +amountToMint <= 0
             }
-            onClick={(e) => {
+            onClick={(e: any) => {
               handleShow(false);
               handleSubmit(e);
             }}

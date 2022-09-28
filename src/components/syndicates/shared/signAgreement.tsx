@@ -18,6 +18,7 @@ import mapValues from 'lodash/mapValues';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'reac... Remove this comment to see the full error message
 import { useIsVisible } from 'react-is-visible';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -147,6 +148,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         "span[data-item='signature']"
       );
 
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       signatureElement.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
@@ -155,10 +157,12 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     }
   }, [signature]);
 
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   const { compiledOp, compiledSub } = getTemplates(fieldInfo['isSeriesLLC']);
 
   useEffect(() => {
     const isFieldInfoEmpty = Object.keys(fieldInfo).some(
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       (key) => !fieldInfo[key] && !optionalFields.has(key)
     );
 
@@ -205,7 +209,9 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     setDocumentFields(fields);
 
     const currentElement = fields[currentField - 1];
+    // @ts-expect-error TS(2339): Property 'classList' does not exist on type 'never... Remove this comment to see the full error message
     currentElement.classList.add('bg-yellow-highlight');
+    // @ts-expect-error TS(2339): Property 'scrollIntoView' does not exist on type '... Remove this comment to see the full error message
     currentElement.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
@@ -265,6 +271,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   const span = useRef(null);
 
   useEffect(() => {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     setInputWidth(span.current.offsetWidth);
   }, [currentField]);
 
@@ -440,7 +447,7 @@ const Stepper = ({
   isSubscriptionAgVisible,
   operatingAgTitleRef,
   subscriptionAgTitleRef
-}) => {
+}: any) => {
   const [activeAgreement, setActiveAgreement] = useState(0);
 
   useEffect(() => {
@@ -454,6 +461,7 @@ const Stepper = ({
   const handleActiveAg = (idx: number) => {
     setActiveAgreement(idx);
     const mapper = { 0: operatingAgTitleRef, 1: subscriptionAgTitleRef };
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     mapper[idx].current.scrollIntoView({
       behavior: 'smooth',
       block: 'center'
@@ -498,7 +506,7 @@ const CTAs = ({
   handleWalletSignature,
   isGnosisSafe,
   setShowManualSignModal
-}) => {
+}: any) => {
   return (
     <div>
       {signature ? (
@@ -545,7 +553,7 @@ const ManualSign = ({
   setShowManualSignModal,
   account,
   handleWalletSignature
-}) => {
+}: any) => {
   return (
     <div>
       <Modal

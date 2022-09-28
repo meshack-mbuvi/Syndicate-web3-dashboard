@@ -18,6 +18,7 @@ export class MintPolicyContract {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.mintPolicyContract = new this.web3.eth.Contract(
+      // @ts-expect-error TS(2345): Argument of type '({ anonymous: boolean; inputs: (... Remove this comment to see the full error message
       MintPolicyABI,
       mintPolicyAddress
     );
@@ -27,10 +28,12 @@ export class MintPolicyContract {
   init(): void {
     try {
       this.mintPolicyContract = new this.web3.eth.Contract(
+        // @ts-expect-error TS(2345): Argument of type '({ anonymous: boolean; inputs: (... Remove this comment to see the full error message
         MintPolicyABI,
         this.address
       );
     } catch (error) {
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Contract'.
       this.mintPolicyContract = null;
     }
   }
@@ -41,12 +44,12 @@ export class MintPolicyContract {
    * @returns
    */
   async getSyndicateValues(address: string): Promise<{
-    endTime;
-    maxMemberCount;
-    maxTotalSupply;
-    requiredToken;
-    requiredTokenMinBalance;
-    startTime;
+    endTime: any;
+    maxMemberCount: any;
+    maxTotalSupply: any;
+    requiredToken: any;
+    requiredTokenMinBalance: any;
+    startTime: any;
   }> {
     return this.mintPolicyContract.methods.configOf(address).call();
   }
@@ -82,8 +85,8 @@ export class MintPolicyContract {
     endTime: number,
     maxMemberCount: number,
     maxTotalSupply: number,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -103,8 +106,9 @@ export class MintPolicyContract {
           0
         ])
         .send({ from: wallet, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           if (
+            // @ts-expect-error TS(2339): Property '_provider' does not exist on type 'Web3'... Remove this comment to see the full error message
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
             gnosisTxHash = transactionHash;
@@ -114,11 +118,11 @@ export class MintPolicyContract {
             onTxConfirm(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           reject(error);
         });
     });
@@ -174,7 +178,7 @@ export class MintPolicyContract {
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             if (gasAmount) onResponse(gasAmount);
             if (_error) console.log('EstimateGasError', _error); // TODO: should be logged to Error monitoring tool (Sentry)
           }

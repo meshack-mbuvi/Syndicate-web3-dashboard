@@ -8,21 +8,16 @@ import React from 'react';
  * @param props
  * @returns ReactChild
  */
-const FadeIn: React.FC<
-  | {
-      duration: number;
-      delay: number;
-    }
-  | any
-> = ({ duration = 300, delay = 0, children, ...delegated }) => {
+const FadeIn: React.FC<{
+  duration?: number;
+  delay?: number;
+}> = ({ duration = 300, delay = 0, children }) => {
   return (
     <div
-      {...delegated}
-      className={`fadein-wrapper ${delegated.className || ''}`}
+      className={`fadein-wrapper`}
       style={{
-        ...(delegated.style || {}),
-        animationDuration: duration + 'ms',
-        animationDelay: delay + 'ms',
+        animationDuration: `${duration}ms`,
+        animationDelay: `${delay}ms`,
         animationName: 'fadein-wrapper'
       }}
     >

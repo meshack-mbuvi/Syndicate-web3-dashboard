@@ -65,9 +65,9 @@ export const validateDuplicateRules = (
 };
 
 export const validateNullRules = (rules: TokenGateRule[]): number[] => {
-  const indices = rules.reduce(
+  const indices: number[] = rules.reduce(
     (acc, rule, idx) => (!rule.name ? [...acc, idx] : acc),
-    []
+    [] as number[]
   );
   return Array.from(new Set(indices));
 };
@@ -76,6 +76,7 @@ const duplicateRules = (
   rules: TokenGateRule[],
   ruleNames: Set<string>
 ): TokenGateRule[] =>
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   rules.filter((rule) => {
     if (ruleNames.has(rule.name)) {
       ruleNames.delete(rule.name);
@@ -90,7 +91,7 @@ const getIndices = (filtered: TokenGateRule[], rules: TokenGateRule[]) => {
   filtered.map((dupRule) => {
     const index = rules.reduce(
       (acc, rule, idx) => (rule.name === dupRule.name ? [...acc, idx] : acc),
-      []
+      [] as number[]
     );
     indices.push(...index);
   });

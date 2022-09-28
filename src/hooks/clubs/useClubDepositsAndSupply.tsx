@@ -27,11 +27,11 @@ import { useDemoMode } from '../useDemoMode';
  * @returns
  */
 export function useClubDepositsAndSupply(contractAddress: string): {
-  refetch;
-  totalDeposits;
-  totalSupply;
-  startTime;
-  endTime;
+  refetch: any;
+  totalDeposits: any;
+  totalSupply: any;
+  startTime: any;
+  endTime: any;
   hasActiveModules: boolean;
   mintModule: string;
   activeMintModuleReqs: ModuleReqs;
@@ -121,17 +121,18 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeMintReqs: ModuleReqs;
+      let activeMintReqsTemp: ModuleReqs;
 
       if (mintModule) {
-        activeMintReqs = getReqsByModuleType(
+        // @ts-expect-error TS(2322): Type 'ModuleReqs | null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
+        activeMintReqsTemp = getReqsByModuleType(
           ModuleType.MINT,
           activeModules,
           activeNetwork,
           mintModule
         );
         setMintModule(web3.utils.toChecksumAddress(mintModule.contractAddress));
-        setActiveMintReqs(activeMintReqs);
+        setActiveMintReqs(activeMintReqsTemp);
       }
 
       const ownerModule = getModuleByType(
@@ -139,17 +140,18 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeOwnerReqs: ModuleReqs;
+      let activeOwnerReqsTemp: ModuleReqs;
 
       if (ownerModule) {
-        activeOwnerReqs = getReqsByModuleType(
+        // @ts-expect-error TS(2322): Type 'ModuleReqs | null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
+        activeOwnerReqsTemp = getReqsByModuleType(
           ModuleType.OWNER,
           activeModules,
           activeNetwork,
           ownerModule
         );
         setOwnerModule(ownerModule.contractAddress);
-        setActiveOwnerReqs(activeOwnerReqs);
+        setActiveOwnerReqs(activeOwnerReqsTemp);
       }
 
       startTime = `${activeMintReqs?.startTime}`;

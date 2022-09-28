@@ -5,7 +5,7 @@ export default {
   title: '3. Molecules/Collectives/Interactive Background'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return (
     <div className="-m-4">
       <CollectivesInteractiveBackground {...args} />
@@ -14,6 +14,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   heightClass: 'h-screen',
   widthClass: 'w-screen',
@@ -21,6 +22,7 @@ Default.args = {
 };
 
 export const HalfScreen = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 HalfScreen.args = {
   heightClass: 'h-screen',
   widthClass: 'w-1/2',
@@ -28,6 +30,7 @@ HalfScreen.args = {
 };
 
 export const FloatingImage = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 FloatingImage.args = {
   heightClass: 'h-screen',
   widthClass: 'w-1/2',
@@ -38,6 +41,7 @@ FloatingImage.args = {
 };
 
 export const FloatingVideo = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 FloatingVideo.args = {
   heightClass: 'h-screen',
   widthClass: 'w-1/2',

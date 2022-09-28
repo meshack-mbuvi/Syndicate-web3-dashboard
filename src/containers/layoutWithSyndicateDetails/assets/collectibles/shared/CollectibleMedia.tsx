@@ -59,6 +59,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
 
   const videoMute = () => {
     if (videoRef.current) {
+      // @ts-expect-error TS(2339): Property 'muted' does not exist on type 'never'.
       videoRef.current.muted = !muteVideo;
       setMuteVideo(!muteVideo);
     }
@@ -66,8 +67,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
 
   const audioMute = () => {
     if (audioRef.current) {
+      // @ts-expect-error TS(2339): Property 'play' does not exist on type 'never'.
       audioRef.current.play();
+      // @ts-expect-error TS(2339): Property 'volume' does not exist on type 'never'.
       audioRef.current.volume = 0.3;
+      // @ts-expect-error TS(2339): Property 'muted' does not exist on type 'never'.
       audioRef.current.muted = !muteAudio;
       setMuteAudio(!muteAudio);
     }
@@ -77,9 +81,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     // mute media that is already playing when the same media is opened
     // inside the modal or full-screen overlay.
     if (mediaType === 'videoNFT') {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       videoRef.current.muted = true;
       setMuteVideo(true);
     } else if (mediaType === 'soundtrackNFT') {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       audioRef.current.muted = true;
       setMuteAudio(true);
     }
@@ -89,11 +95,14 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     dispatch(setShowFullScreen(false));
   };
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (videoRef && videoRef.current) {
       const video = videoRef.current;
+      // @ts-expect-error TS(2339): Property 'addEventListener' does not exist on type... Remove this comment to see the full error message
       video.addEventListener('webkitendfullscreen', handleMobileFullScreenExit);
       return () => {
+        // @ts-expect-error TS(2339): Property 'removeEventListener' does not exist on t... Remove this comment to see the full error message
         video.removeEventListener(
           'webkitendfullscreen',
           handleMobileFullScreenExit
@@ -120,6 +129,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
       'Last purchase price': any;
     };
   }) => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setDetailsOfSelectedCollectible(details);
     muteBackgroundMedia();
   };

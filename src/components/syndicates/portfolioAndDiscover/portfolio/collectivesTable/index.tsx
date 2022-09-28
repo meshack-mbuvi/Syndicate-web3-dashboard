@@ -58,7 +58,7 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
     [tableData.length, currentPage, dataLimit]
   );
 
-  const formatAmount = (amount) => {
+  const formatAmount = (amount: any) => {
     return hasDecimals(amount)
       ? floatedNumberWithCommas(parseFloat(amount))
       : numberWithCommas(amount);

@@ -184,13 +184,16 @@ const Distribute: FC = () => {
       setCtaButtonDisabled(false);
 
       setTokensDetails(
-        distributionTokens.map(({ symbol, tokenAmount, fiatAmount, icon }) => ({
-          tokenAmount,
-          fiatAmount,
-          tokenIcon: icon,
-          tokenSymbol: symbol,
-          isLoading: loadingAssets
-        }))
+        // @ts-expect-error TS(2345): Argument of type '{ tokenAmount: any; fiatAmount: any; tokenIcon: any'..... Remove this comment to see the full error message
+        distributionTokens.map(
+          ({ symbol, tokenAmount, fiatAmount, icon }: any) => ({
+            tokenAmount,
+            fiatAmount,
+            tokenIcon: icon,
+            tokenSymbol: symbol,
+            isLoading: loadingAssets
+          })
+        )
       );
     } else {
       setCtaButtonDisabled(true);
@@ -207,10 +210,10 @@ const Distribute: FC = () => {
     if (!activeIndices.length) return; // return, there is nothing to distribute
 
     const [_loadedNativeToken] = tokensResult.filter(
-      (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+      (token: any) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
     );
     const [_nativeToken] = distributionTokens.filter(
-      (token) => token.symbol === activeNetwork.nativeCurrency.symbol
+      (token: any) => token.symbol === activeNetwork.nativeCurrency.symbol
     );
 
     const _totalNativeCurrencyGasEstimate =
@@ -253,7 +256,7 @@ const Distribute: FC = () => {
               logo,
               tokenValue,
               ...rest
-            }) => {
+            }: any) => {
               const {
                 data: {
                   data: { syndicateDAOs }
@@ -290,6 +293,7 @@ const Distribute: FC = () => {
         ])
       ).filter((token) => (token = token !== undefined));
 
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setOptions(tokens);
       setProcessingTokens(false);
     }
@@ -308,6 +312,7 @@ const Distribute: FC = () => {
   useEffect(() => {
     if (activeIndices.length > 0) {
       const selectedTokens = _options.filter((_, index) => {
+        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
         return activeIndices.includes(index);
       });
 
@@ -320,7 +325,9 @@ const Distribute: FC = () => {
   // Whenever a new token is selected, maximum native token value should be recalculated
   useEffect(() => {
     let _ethIndex = -1;
+    // @ts-expect-error TS(7030): Not all code paths return a value.
     const [nativeToken] = _options.filter((token, ethIndex) => {
+      // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never'.
       if (token.symbol === activeNetwork.nativeCurrency.symbol) {
         _ethIndex = ethIndex;
         return token;
@@ -348,9 +355,11 @@ const Distribute: FC = () => {
       }
 
       // update maximumTokenAmount on currentNativeToken token
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setOptions([
         ..._options.slice(0, _ethIndex),
         {
+          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ..._options[_ethIndex],
           error,
           maximumTokenAmount: _newMaxTokenAmount
@@ -446,6 +455,7 @@ const Distribute: FC = () => {
     let warning = '';
 
     const [_selectedNativeToken] = distributionTokens.filter(
+      // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never.
       (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
 
@@ -455,12 +465,16 @@ const Distribute: FC = () => {
     ) {
       if (_selectedNativeToken) {
         if (
+          // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
           _selectedNativeToken.tokenAmount > 0 &&
+          // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
           _selectedNativeToken.tokenAmount ==
+            // @ts-expect-error TS(2339): Property 'maximumTokenAmount' does not exist on type 'never.
             _selectedNativeToken.maximumTokenAmount
         ) {
+          // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never.
           warning = `Consider reserving ${_selectedNativeToken.symbol} to pay gas on future 
-          distributions`;
+            distributions`;
         } else {
           warning = '';
         }
@@ -470,14 +484,17 @@ const Distribute: FC = () => {
 
       // find index of native token on _options
       const ethIndex = _options.findIndex(
+        // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never'.
         (option) => option.symbol == activeNetwork.nativeCurrency.symbol
       );
 
       if (ethIndex > -1) {
         // update warning on native token
+        // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
         setOptions([
           ..._options.slice(0, ethIndex),
           {
+            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ..._options[ethIndex],
             warning
           },
@@ -489,8 +506,10 @@ const Distribute: FC = () => {
     setCurrentNativeToken({
       available:
         +tokensResult.filter(
-          (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+          (token: any) =>
+            token.tokenSymbol === activeNetwork.nativeCurrency.symbol
         )[0]?.tokenBalance || 0,
+      // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
       totalToDistribute: +_selectedNativeToken?.tokenAmount ?? 0
     });
   }, [
@@ -500,11 +519,12 @@ const Distribute: FC = () => {
   ]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2339): Property 'error' does not exist on type 'never'.
     const _hasError = _options.some((option) => option.error);
     setHasError(_hasError);
   }, [_options]);
 
-  const handleNext = (event) => {
+  const handleNext = (event: any) => {
     event.preventDefault();
     setCurrentStep(Steps.selectMembers);
     setActiveIndex(1);
@@ -514,6 +534,7 @@ const Distribute: FC = () => {
     <div className="space-y-8">
       <BadgeWithOverview
         tokensDetails={tokensDetails}
+        // @ts-expect-error TS(2322): Type '{ tokenSymbol: string; tokenAmount: ' is not assig ... Remove this comment to see the full error message
         gasEstimate={
           gasPrice
             ? {
@@ -561,7 +582,7 @@ const Distribute: FC = () => {
       `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
-  const handlePrevious = (event) => {
+  const handlePrevious = (event: any) => {
     event.preventDefault();
     if (activeIndex === 0) return;
     setActiveIndex(activeIndex - 1);
@@ -591,7 +612,9 @@ const Distribute: FC = () => {
                     symbol={symbol}
                     options={_options}
                     activeIndices={activeIndices}
+                    // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
                     handleOptionsChange={setOptions}
+                    // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
                     handleActiveIndicesChange={setActiveIndices}
                     loading={loadingAssets || loading || processingTokens}
                   />

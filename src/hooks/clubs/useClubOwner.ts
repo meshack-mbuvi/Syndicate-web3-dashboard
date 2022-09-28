@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 export const useTokenOwner = (
   contractAddress: string,
   web3: any,
-  activeNetwork,
+  activeNetwork: any,
   account: string
 ): { isOwner: boolean; isLoading: boolean } => {
   const [isOwner, setIsOwner] = useState(false);

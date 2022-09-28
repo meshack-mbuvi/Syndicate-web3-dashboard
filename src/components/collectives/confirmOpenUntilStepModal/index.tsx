@@ -7,7 +7,7 @@ interface Props {
   activeStepIndex: number;
   children: any;
   isModalVisible: boolean;
-  handleModalClose: (e?) => void;
+  handleModalClose: (e?: any) => void;
   showCloseButton?: boolean;
   outsideOnClick?: boolean;
 }

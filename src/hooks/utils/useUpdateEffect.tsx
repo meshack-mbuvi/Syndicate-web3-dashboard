@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 
-const useUpdateEffect = (callback, dependencies) => {
+const useUpdateEffect = (callback: any, dependencies: any) => {
   const firstRenderRef = useRef(true);
 
   useEffect(() => {

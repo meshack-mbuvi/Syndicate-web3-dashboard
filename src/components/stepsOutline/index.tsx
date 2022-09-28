@@ -16,7 +16,7 @@ export const StepsOutline: React.FC<Props> = ({
   extraClasses
 }) => {
   const transitionStyles = 'transition-all duration-500';
-  const dynamicCircleStyles = (step, index) => {
+  const dynamicCircleStyles = (step: any, index: any) => {
     return `rounded-full h-5 w-5 border-0.5 overflow-hidden ${transitionStyles} ${
       step.isInErrorState && activeIndex >= index
         ? 'border-red-error'
@@ -31,7 +31,7 @@ export const StepsOutline: React.FC<Props> = ({
         : 'bg-transparent'
     }`;
   };
-  const dynamicCheckmarkIconStyles = (step, index) => {
+  const dynamicCheckmarkIconStyles = (step: any, index: any) => {
     return `mx-auto vertically-center ${transitionStyles} ${
       step.isInErrorState
         ? 'opacity-0'
@@ -40,17 +40,17 @@ export const StepsOutline: React.FC<Props> = ({
         : 'opacity-0'
     }`;
   };
-  const dynamicLineStyles = (step, index) => {
+  const dynamicLineStyles = (step: any, index: any) => {
     return `flex-grow mx-auto w-0.5 ${transitionStyles} ${
       activeIndex > index ? 'bg-blue-neptune' : 'bg-gray-syn6'
     }`;
   };
-  const dynamicTitleStyles = (step, index) => {
+  const dynamicTitleStyles = (step: any, index: any) => {
     return `${transitionStyles} ${
       activeIndex >= index ? 'text-white' : 'text-gray-syn5'
     }`;
   };
-  const dynamicDescriptionStyles = (step, index) => {
+  const dynamicDescriptionStyles = (step: any, index: any) => {
     return `text-sm ${
       activeIndex >= index ? 'text-gray-syn4' : 'text-gray-syn6'
     } ${transitionStyles} ${

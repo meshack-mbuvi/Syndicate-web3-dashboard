@@ -43,8 +43,10 @@ const ReviewDetails: React.FC = () => {
 
   useEffect(() => {
     if (isReviewStep && !hasCheckedAgreement) {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       setNextBtnDisabled(true);
     } else {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(false);
     }
 
@@ -57,23 +59,28 @@ const ReviewDetails: React.FC = () => {
   // only showInvestment name & approval at reviewStep
   const showInvestmentName = investmentClubName && isReviewStep;
   const isDetailsCategory =
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     currentStep >= stepsCategories.indexOf(CreateActiveSteps.CLUB_DETAILS) &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     currentStep <= stepsCategories.lastIndexOf(CreateActiveSteps.CLUB_DETAILS);
   const isReviewOrDetails = isDetailsCategory || isReviewStep;
 
   const showTokenCap =
     isCreatingInvestmentClub &&
     tokenCap &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     currentStep > stepsNames.indexOf(DetailsSteps.RAISE) &&
     isReviewOrDetails;
   const showMintDate =
     isCreatingInvestmentClub &&
     mintEndTime &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     currentStep > stepsNames.indexOf(DetailsSteps.DATE) &&
     isReviewOrDetails;
   const showMemberCount =
     isCreatingInvestmentClub &&
     membersCount &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     currentStep > stepsNames.indexOf(DetailsSteps.MEMBERS_COUNT) &&
     isReviewOrDetails;
 
@@ -88,22 +95,30 @@ const ReviewDetails: React.FC = () => {
   });
 
   const handleEditClubName = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setEditingStep(currentStep);
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setCurrentStep(stepsNames.indexOf(CreateActiveSteps.NAME_AND_IDENTITY));
   };
 
   const handleEditTokenCap = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setEditingStep(currentStep);
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setCurrentStep(stepsNames.indexOf(DetailsSteps.RAISE));
   };
 
   const handleEditMintDate = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setEditingStep(currentStep);
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setCurrentStep(stepsNames.indexOf(DetailsSteps.DATE));
   };
 
   const handleEditMembersLimit = () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setEditingStep(currentStep);
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     setCurrentStep(stepsNames.indexOf(DetailsSteps.MEMBERS_COUNT));
   };
 
@@ -119,7 +134,7 @@ const ReviewDetails: React.FC = () => {
       {isReviewOrDetails ? (
         <div className={`w-full ${isReviewStep || noContent ? '' : 'mb-8'}`}>
           <ReviewSection
-            isDisplayingSection={showInvestmentName}
+            isDisplayingSection={showInvestmentName || false}
             sectionTitle="What should we call this investment club?"
             onClick={handleEditClubName}
           >
@@ -131,7 +146,7 @@ const ReviewDetails: React.FC = () => {
             </div>
           </ReviewSection>
           <ReviewSection
-            isDisplayingSection={showTokenCap}
+            isDisplayingSection={showTokenCap || false}
             sectionTitle="What’s the upper limit of the club’s raise?"
             onClick={handleEditTokenCap}
           >
@@ -160,7 +175,7 @@ const ReviewDetails: React.FC = () => {
             </div>
           </ReviewSection>
           <ReviewSection
-            isDisplayingSection={showMintDate}
+            isDisplayingSection={showMintDate || false}
             sectionTitle="When will deposits close?"
             onClick={handleEditMintDate}
           >
@@ -184,7 +199,7 @@ const ReviewDetails: React.FC = () => {
             </div>
           </ReviewSection>
           <ReviewSection
-            isDisplayingSection={showMemberCount}
+            isDisplayingSection={showMemberCount || false}
             sectionTitle="What’s the maximum number of members?"
             onClick={handleEditMembersLimit}
           >

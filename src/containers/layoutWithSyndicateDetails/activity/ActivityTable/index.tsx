@@ -124,6 +124,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
         return transaction.hash;
       });
       // we use these to know where to place in-pill loader state
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setActiveTransactionHashes(transactionHashes);
       if (categories.size > 1) {
         setGroupCategory('SELECT_CATEGORY');
@@ -160,7 +161,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   /**
    * Generates the query object to be sent to the API to fetch the transactions.
    */
-  const generateSearchFilter = (filterValue, searchValue) => {
+  const generateSearchFilter = (filterValue: any, searchValue: any) => {
     let obj = {};
     if (filterValue && filterValue !== 'everything') {
       filter === 'uncategorised'
@@ -194,7 +195,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
    * @param searchValue : string
    * @returns JSX.Element
    */
-  const generateEmptyStates = (filter, searchValue) => {
+  const generateEmptyStates = (filter: any, searchValue: any) => {
     const cleanedFilter = capitalize(filter?.replaceAll('_', ' '));
 
     let title = '';
@@ -280,7 +281,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     totalTransactionsCount
   ]);
 
-  const processERC20Transactions = async (txns) => {
+  const processERC20Transactions = async (txns: any) => {
     const { edges, totalCount } = txns;
     dispatch(setLoadingTransactions(true));
     dispatch(setMyTransactions({ txns: edges, skip: pageOffset }));
@@ -289,7 +290,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   };
 
   // stuff to filter transactions with in the search input
-  const handleSearchOnChange = (e) => {
+  const handleSearchOnChange = (e: any) => {
     setSearchValue(e.target.value);
   };
 
@@ -329,6 +330,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
 
     setMockTransactionsData({
       edges: filteredData,
+      // @ts-expect-error TS(2454): Variable 'filteredData' is used before being assig... Remove this comment to see the full error message
       totalCount: filteredData?.length
     });
 
@@ -374,6 +376,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
       listData = transactionsChecked;
     }
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const txnAnnotationListData = listData.map((transaction) => ({
       transactionId: transaction.hash,
       transactionCategory: selectedCategory
@@ -405,7 +408,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   ) => {
     if (!isOwner) return;
     const data = transactionsData?.Financial_recentTransactions?.edges?.map(
-      (item, index) => {
+      (item: any, index: any) => {
         return {
           ...item,
           checkboxVisible:
@@ -426,12 +429,12 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   };
 
   // checkbox handle check
-  const handleSelect = (e, index: number) => {
+  const handleSelect = (e: any, index: number) => {
     rowCheckboxActiveData[index]['checkboxActive'] = e.target.checked;
 
     // track number of transactions selected.
     setTransactionsChecked(
-      rowCheckboxActiveData.filter((row) => row.checkboxActive)
+      rowCheckboxActiveData.filter((row: any) => row.checkboxActive)
     );
   };
 
@@ -445,24 +448,23 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
       <div className="py-14 flex justify-between items-center">
         <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
-            <FilterPill setFilter={(filter) => setFilter(filter)} />
+            <FilterPill setFilter={(filter): void => setFilter(filter)} />
           </div>
           <div className="mt-4 sm:mt-auto">
             <SearchInput
-              {...{
-                onChangeHandler: handleSearchOnChange,
-                searchValue,
-                searchItem: 'activity',
-                clearSearchValue: () => setSearchValue(''),
-                disabled:
-                  filter &&
-                  !transactionsLoading &&
-                  !transactionsData?.Financial_recentTransactions?.edges
-                    ?.length &&
-                  !searchValue &&
-                  !mockTransactionsData.edges.length,
-                width: searchWidth
-              }}
+              onChangeHandler={handleSearchOnChange}
+              searchValue={searchValue}
+              searchItem={'activity'}
+              clearSearchValue={(): void => setSearchValue('')}
+              disabled={
+                filter !== '' &&
+                !transactionsLoading &&
+                !transactionsData?.Financial_recentTransactions?.edges
+                  ?.length &&
+                !searchValue &&
+                !mockTransactionsData.edges.length
+              }
+              width={searchWidth}
             />
           </div>
         </div>
@@ -512,6 +514,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
         handleCheckboxSelect={handleSelect}
         rowCheckboxActiveData={rowCheckboxActiveData}
         activeTransactionHashes={activeTransactionHashes}
+        // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not as... Remove this comment to see the full error message
         setActiveTransactionHashes={setActiveTransactionHashes}
       />
     </div>

@@ -8,7 +8,7 @@ export class PublicOnePerAddressModuleContract {
   activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -22,10 +22,10 @@ export class PublicOnePerAddressModuleContract {
   async mint(
     forAddress: string,
     tokenAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);
 
@@ -56,7 +56,7 @@ export class PublicOnePerAddressModuleContract {
     );
   }
 
-  async hasMinted(nftAddress, account): Promise<boolean> {
+  async hasMinted(nftAddress: any, account: any): Promise<boolean> {
     try {
       return this.contract.methods.hasMinted(nftAddress, account).call();
     } catch (error) {
@@ -65,6 +65,7 @@ export class PublicOnePerAddressModuleContract {
   }
 
   getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
     if (!distEvent.trim()) return;
     try {
       const events = await this.contract.getPastEvents(distEvent, {

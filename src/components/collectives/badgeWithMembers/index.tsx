@@ -93,6 +93,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
           <div className="rounded-2.5xl bg-gray-syn8">
             <div className="p-1">
               <CopyLink
+                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
                 link={inviteLink}
                 updateCopyState={handleUpdateCopyState}
                 showCopiedState={copyState}
@@ -128,11 +129,12 @@ export const BadgeWithMembers: React.FC<Props> = ({
       isOpen ? (
         <JoinCollectiveCTA
           alreadyMember={collectiveBalance > 0}
+          // @ts-expect-error TS(2322): Type '(e: React.MouseEvent<HTMLInputElement>) => void' is not assig...
           onClick={goToClaim}
         />
       ) : null}
 
-      {admins.length > 0 ? (
+      {admins && admins.length > 0 ? (
         <div>
           <H4 extraClasses="mb-4">Admin</H4>
           <div className="space-y-4 border rounded-2xl p-6 border-gray-syn7">
@@ -176,7 +178,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
                 : ''
             } h-full rounded-2xl p-6 border border-gray-syn7`}
           >
-            {members.length && account ? (
+            {members && members.length && account ? (
               members?.map((member, index) => {
                 return (
                   <AddressWithENS

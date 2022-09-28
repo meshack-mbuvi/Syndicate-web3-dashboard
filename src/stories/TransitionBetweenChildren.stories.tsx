@@ -14,7 +14,7 @@ export default {
   }
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const elementStyles =
     'mx-4 border-dashed border border-gray-syn6 bg-gray-syn8 p-6 text-center uppercase tracking-px font-medium text-sm text-gray-syn5 rounded-lg';
   const [isSwitchOn, setIsSwitchOn] = useState(false);
@@ -42,12 +42,14 @@ const Template = (args) => {
 };
 
 export const Fade = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Fade.args = {
   visibleChildIndex: 0,
   transitionType: TransitionBetweenChildrenType.FADE
 };
 
 export const Move = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Move.args = {
   visibleChildIndex: 0,
   transitionType: TransitionBetweenChildrenType.VERTICAL_MOVE

@@ -21,7 +21,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <Story />
@@ -85,14 +85,14 @@ const data = [
   }
 ];
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [showModifyCapTable, setShowModifyCapTable] = useState(true);
   const [member, setMember] = useState(
     '0x9c6ce69f349430d31a2bfbe5a052fc3e48ad28cf'
   );
   const [memberAllocation, setMemberAllocation] = useState('');
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange = (e: any) => {
     const amount = e.target.value;
     setMemberAllocation(amount);
   };
@@ -111,6 +111,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   memberAddressToUpdate: '0x9c6ce69f349430d31a2bfbe5a052fc3e48ad28cf',
   showModifyCapTable: true,

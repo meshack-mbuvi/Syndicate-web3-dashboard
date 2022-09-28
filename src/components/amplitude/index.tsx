@@ -11,6 +11,7 @@ const AMPLITUDE_API_KEY = isDev
 
 const initializeAmplitude = () => {
   // Initialize AmplitudeJS
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   amplitude.getInstance().init(AMPLITUDE_API_KEY, null, {
     deviceIdFromUrlParam: true,
     includeGclid: true,
@@ -80,6 +81,7 @@ export const amplitudeLogger = (
   return new Promise((resolve, reject) =>
     amplitude
       .getInstance()
+      // @ts-expect-error TS(2345): Argument of type '(value: boolean | PromiseLike... Remove this comment to see the full error message
       .logEvent(eventName, { ...eventProperties }, resolve, reject)
   );
 };

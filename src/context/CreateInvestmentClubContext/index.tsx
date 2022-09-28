@@ -98,6 +98,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch();
 
   const [currentStep, setCurrentStep] = useState(0);
+  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
   const [editingStep, setEditingStep] = useState<number>(null);
   const [backBtnDisabled, setBackBtnDisabled] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
@@ -141,6 +142,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const isReviewStep = currentStep === investmentClubSteps.length - 1;
   const isFirstStep = currentStep === 0;
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (!nextBtnDisabled) {
       document.addEventListener('keypress', keyPressEnter);
@@ -197,6 +199,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
     if (editingStep) {
       setCurrentStep(editingStep);
+      // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
       setEditingStep(null);
       setShowNextButton(true);
     } else if (currentStep < investmentClubSteps.length - 1) {
@@ -223,7 +226,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
-  const onTxReceipt = (receipt) => {
+  const onTxReceipt = (receipt: any) => {
     const {
       tokenAddress,
       name,
@@ -296,6 +299,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       });
       return await submitCreateClub();
     } catch (error) {
+      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
       const { code } = error;
       if (code) {
         const errorMessage = getMetamaskError(code, 'Club creation');
@@ -317,7 +321,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
   };
 
-  const keyPressEnter = (e) => {
+  const keyPressEnter = (e: any) => {
     // This should work only when in create IC(Investment club)
     if (!router.pathname.endsWith('clubprivatebetainvite')) return;
 
@@ -355,6 +359,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal,
         errorModal,
         warningModal,
+        // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<{ waitingConfirmatio... Remove this comment to see the full error message
         setShowModal,
         processingModalTitle,
         processingModalDescription,

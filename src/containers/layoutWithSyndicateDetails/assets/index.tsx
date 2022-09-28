@@ -71,7 +71,7 @@ const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     metadata: { transactionCategory: 'INVESTMENT' }
   });
 
-  const processERC20Transactions = async (txns) => {
+  const processERC20Transactions = async (txns: any) => {
     const { edges, totalCount } = txns;
     dispatch(setLoadingTransactions(true));
     dispatch(setInvestmentTransactions({ txns: edges, skip: pageOffset }));

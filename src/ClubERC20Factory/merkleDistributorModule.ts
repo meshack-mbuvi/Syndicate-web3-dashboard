@@ -10,7 +10,7 @@ export class MerkleDistributorModuleContract {
   web3;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -40,10 +40,10 @@ export class MerkleDistributorModuleContract {
     index: number,
     treeIndex: number,
     merkleProof: string[],
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<string> => {
     const gasEstimate = estimateGas(this.web3);
 

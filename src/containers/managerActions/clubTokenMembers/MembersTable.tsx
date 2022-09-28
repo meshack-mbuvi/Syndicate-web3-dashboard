@@ -31,7 +31,7 @@ const MembersTable = ({
   setShowMemberOptions,
   setShowMintNavToClubSettings,
   isOwner
-}): JSX.Element => {
+}: any): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol, depositsEnabled },
@@ -147,7 +147,7 @@ const MembersTable = ({
 
   const isDemoMode = useDemoMode();
 
-  const handleClick = (memberData) => {
+  const handleClick = (memberData: any) => {
     const { clubTokens, depositAmount, memberAddress, ownershipShare } =
       memberData;
 
@@ -270,7 +270,7 @@ const MembersTable = ({
                     : null
                 }
               >
-                {row.cells.map((cell, cellIndex) => {
+                {row.cells.map((cell: any, cellIndex: any) => {
                   return (
                     <td
                       {...cell.getCellProps()}
@@ -364,7 +364,8 @@ const MembersTable = ({
               />
               <div className="flex flex-grow space-x-4">
                 <p className="text-2xl my-auto align-middle">
-                  {formatAddress(memberInfo?.['Wallet address'], 6, 4)}
+                  {memberInfo?.['Wallet address'] &&
+                    formatAddress(memberInfo?.['Wallet address'], 6, 4)}
                 </p>
                 {hasMemberSigned == true && (
                   <span className="my-auto">

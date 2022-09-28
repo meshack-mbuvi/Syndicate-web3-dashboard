@@ -12,7 +12,7 @@ const client = new ApolloClient({
 export default {
   title: '3. Molecules/Status Badge',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <Story />
@@ -22,39 +22,45 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <StatusBadge {...args} />;
 };
 
 export const Active = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Active.args = {
   depositsEnabled: false
 };
 
 export const FullyDeposited = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 FullyDeposited.args = {
   depositsEnabled: true,
   depositExceedTotal: true
 };
 
 export const DepositsEnabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 DepositsEnabled.args = {
   depositsEnabled: true
 };
 
 export const ClaimClubTokens = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ClaimClubTokens.args = {
   claimEnabled: true,
   isManager: false
 };
 
 export const AirdropEnabled = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 AirdropEnabled.args = {
   claimEnabled: true,
   isManager: true
 };
 
 export const Distributing = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Distributing.args = {
   isDistributing: true
 };

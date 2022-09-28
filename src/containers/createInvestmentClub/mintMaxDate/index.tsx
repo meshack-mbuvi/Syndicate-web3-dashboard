@@ -47,7 +47,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const [closeTimeError, setCloseTimeError] = useState('');
   // hide next button
   useEffect(() => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (currentStep <= 2) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowNextButton(false);
       setDisableButtons(false);
     }
@@ -98,6 +100,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     },
     {
       mintTime: 'Custom',
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
       value: null
     }
   ];
@@ -115,6 +118,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setIsCustomDate(false);
       // push amount to the redux store.
       dispatch(
@@ -124,26 +128,31 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         })
       );
 
-      if (currentStep == stepsNames.indexOf(DetailsSteps.DATE)) {
+      if (currentStep == stepsNames?.indexOf(DetailsSteps.DATE)) {
         setTimeout(() => {
+          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
           handleNext();
+          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
           setShowNextButton(true);
         }, 400);
       }
     } else {
       // Show custom date picker
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(false);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowNextButton(true);
       setShowCustomDatePicker(true);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setIsCustomDate(true);
     }
   };
 
-  const handleDateChange = (targetDate) => {
+  const handleDateChange = (targetDate: any) => {
     setCloseDate(targetDate);
   };
 
-  const handleTimeChange = (time) => {
+  const handleTimeChange = (time: any) => {
     if (time) {
       setCloseTime(time);
       dispatch(setMintSpecificEndTime(time));
@@ -169,11 +178,15 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     if (mintEndTime?.value * 1000 < currentTime) {
       setCloseTimeError('Close date cannot be in the past.');
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowSaveButton(false);
     } else {
       setCloseTimeError('');
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(false);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowSaveButton(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,7 +217,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     if (mintEndTime.mintTime === 'Custom') {
       setShowCustomDatePicker(true);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setIsCustomDate(true);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowNextButton(true);
       setActiveDateCard(3);
     }
@@ -244,6 +259,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                   mintTime={mintTime}
                   isLastItem={mintTime === lastMintTime.mintTime}
                   index={index}
+                  // @ts-expect-error TS(2345): Argument of type 'number | null |  undefined' is not assig... Remove this comment to see the full error message
                   activeIndex={activeDateCard}
                 />
               </button>
@@ -253,6 +269,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
           {showCustomDatePicker && (
             <div>
               <animated.div
+                // @ts-expect-error TS(2322): Type 'SpringValue<number | false>' is not assign... Remove this comment to see the full error message
                 style={styles}
                 className="pb-2 mt-6 flex items-center justify-between"
               >
@@ -267,6 +284,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                       closeOnScroll={(e) => e.target === document}
                       selected={new Date(mintEndTime?.value * 1000)}
                       onChange={(date: Date | null) =>
+                        // @ts-expect-error TS(2531): Object is possibly 'null'.
                         handleDateChange(+date as any)
                       }
                       todayButton="Go to Today"

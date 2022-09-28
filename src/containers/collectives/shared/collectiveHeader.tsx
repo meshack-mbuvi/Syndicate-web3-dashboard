@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B3, H1, H2 } from '@/components/typography';
 import { AppState } from '@/state';
@@ -82,7 +84,7 @@ export const CollectiveHeader: React.FC<{
             </Link>
           ) : null}
 
-          {links.openSea ? (
+          {links && links.openSea ? (
             <a
               href={links.openSea}
               className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
@@ -113,6 +115,7 @@ export const CollectiveHeader: React.FC<{
             data-for="etherscan"
           >
             <BlockExplorerLink
+              // @ts-expect-error TS(2322): Type 'string | string[] | undefined' is not assig... Remove this comment to see the full error message
               resourceId={collectiveAddress}
               iconcolor={ExternalLinkColor.GRAY4}
               iconOnly={true}

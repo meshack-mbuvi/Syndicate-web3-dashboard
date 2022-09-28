@@ -57,13 +57,16 @@ const useFetchERC721PublicClaim: any = () => {
         setERC721Claimed({
           claimant: account,
           token: nftAddress,
+          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
           index: null,
+          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
           treeIndex: null,
           id: '',
           claimed: true
         })
       );
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
 

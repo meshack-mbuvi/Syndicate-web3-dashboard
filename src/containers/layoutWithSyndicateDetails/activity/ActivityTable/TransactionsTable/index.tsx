@@ -105,6 +105,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   // use loading state
   if (
     transactionsLoading &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     !activeTransactionHashes.length &&
     !currentTransaction.hash
   ) {
@@ -199,6 +200,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         metadata,
                         blockTimestamp
                       };
+                      // @ts-expect-error TS(2345): Argument of type '{ category: TransactionCategory;... Remove this comment to see the full error message
                       dispatch(setCurrentTransaction(selectedTransactionData));
                       toggleShowAnnotationsModal();
                       if (metadata?.memo) {

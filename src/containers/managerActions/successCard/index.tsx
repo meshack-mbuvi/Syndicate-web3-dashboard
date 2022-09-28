@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import CopyLink from '@/components/shared/CopyLink';
 import Confetti from 'react-confetti';
 
@@ -34,6 +33,7 @@ export const SuccessCard: React.FC<{
         recycle={false}
         onConfettiComplete={(confetti) => {
           setShowConfettiSuccess(false);
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           confetti.reset();
         }}
       />

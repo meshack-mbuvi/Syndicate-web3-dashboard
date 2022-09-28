@@ -25,9 +25,9 @@ interface Props {
   isEditing: boolean;
   handleIsEditingChange: () => void;
   hideSearch?: boolean;
-  handleSearchChange: (event) => void;
+  handleSearchChange: (event: any) => void;
   searchValue: string;
-  clearSearchValue: (event) => void;
+  clearSearchValue: (event: any) => void;
   extraClasses?: string;
 }
 
@@ -141,7 +141,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   }, [activeAddresses]);
 
   const normalCellHeight = 'h-16';
-  const memberCellStyles = (address) => {
+  const memberCellStyles = (address: any) => {
     return `${
       hoveredRow === address && 'bg-gray-syn7'
     } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
@@ -156,16 +156,18 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   // This iterates through the rows finding all unique
   // tokens to determine the table columns (e.g "Receiving {tokenSymbol}")
+  // @ts-expect-error TS(2739): Type '{ memberName: string; clubTokenHolding?: num... Remove this comment to see the full error message
   const allUniqueReceivingTokens: {
     tokenSymbols: string[];
     tokenIcons: string[];
   } = _membersDetails.reduce(
+    // @ts-expect-error TS(2769): No overload matches this call.
     (
       columns: { tokenSymbols: [string]; tokenIcons: [string] },
       memberDetails
     ) => {
-      const newTokenSymbols = [];
-      const newTokenIcons = [];
+      const newTokenSymbols: any = [];
+      const newTokenIcons: any = [];
       memberDetails.receivingTokens.forEach((receivingToken) => {
         const tokenSymbol = receivingToken.tokenSymbol;
         const tokenIcon = receivingToken.tokenIcon;
@@ -191,6 +193,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
     if (isEditing) return;
 
     setTokenAmountTotals(
+      // @ts-expect-error TS(2345): Argument of type 'number[]' is not assignable to p... Remove this comment to see the full error message
       allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol) => {
         return _membersDetails.reduce((total: number, memberDetails) => {
           let memberTotal = 0;
@@ -229,7 +232,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 ) {
                   handleActiveAddressesChange([]);
                 } else {
-                  const activeAddresses = [];
+                  const activeAddresses: any = [];
                   _membersDetails.forEach((member) =>
                     activeAddresses.push(member.memberName)
                   );
@@ -305,8 +308,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
               memberDetails.memberName
             );
             if (indexToRemove > -1) {
-              const arrayWithoutIndex = (array, index) =>
-                array.filter((_, i) => i !== index);
+              const arrayWithoutIndex = (array: any, index: any) =>
+                array.filter((_: any, i: any) => i !== index);
               newactiveIndices = arrayWithoutIndex(
                 activeAddresses,
                 indexToRemove
@@ -326,11 +329,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
         onMouseOver={() => {
           if (!isEditing) return;
 
+          // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
           setHoveredRow(memberDetails.memberName);
         }}
         onFocus={() => {
           if (!isEditing) return;
 
+          // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
           setHoveredRow(memberDetails.memberName);
         }}
         onMouseLeave={() => {
@@ -432,6 +437,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                     return receivingToken.tokenSymbol === tokenSymbol;
                   }) && isAddressActive(memberDetails.memberName)
                     ? floatedNumberWithCommas(
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         memberDetails.receivingTokens?.find(
                           (receivingToken) => {
                             return receivingToken.tokenSymbol === tokenSymbol;

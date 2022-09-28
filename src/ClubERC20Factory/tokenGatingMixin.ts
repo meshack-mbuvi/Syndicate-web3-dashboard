@@ -14,6 +14,7 @@ export class TokenGatedMixin extends ContractBase {
     balances: number[]
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assig... Remove this comment to see the full error message
       this.getAbiObject('setMixinRequirements'),
       [token, logicOperator, tokens, balances] as string[]
     );
@@ -25,9 +26,9 @@ export class TokenGatedMixin extends ContractBase {
     logicOperator: boolean,
     tokens: string[],
     balances: string[],
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     await this.send(
       account,

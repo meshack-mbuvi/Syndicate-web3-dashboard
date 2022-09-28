@@ -12,9 +12,9 @@ import { FC, useEffect, useState } from 'react';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 
 interface Props {
-  handleNext: (e) => void;
+  handleNext: (e: any) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
-  captureArtworkRef;
+  captureArtworkRef: any;
   activeIndex?: number;
 }
 

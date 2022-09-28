@@ -18,7 +18,7 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { COLLECTIVE_CREATION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 interface Props {
-  handleNext?: (e) => void;
+  handleNext?: (e: any) => void;
   setNextBtnDisabled?: (disabled: boolean) => void;
 }
 const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
@@ -27,6 +27,7 @@ const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
       web3: { account }
     }
   } = useSelector((state: AppState) => state);
+  // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
   setNextBtnDisabled(true);
 
   const {

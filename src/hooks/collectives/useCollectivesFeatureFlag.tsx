@@ -29,6 +29,7 @@ const useCollectivesFeatureFlag = (): {
         isBeta
       }
     );
+    // @ts-expect-error TS(2345): Argument of type 'TreatmentWithConfig' is not assig... Remove this comment to see the full error message
     setReadyCollectivesClient(collectivesFeatureBoolean);
   }, [featureFlagClient, isReady, isBeta]);
 

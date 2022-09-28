@@ -7,8 +7,8 @@ export const InputWithTrailingIcon = (props: {
   placeholder: string;
   value: string;
   name: string;
-  onChangeHandler: (event) => void;
-  handleIconClick: (event) => void;
+  onChangeHandler: (event: any) => void;
+  handleIconClick: (event: any) => void;
 }): JSX.Element => {
   const {
     label,

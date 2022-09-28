@@ -1,4 +1,3 @@
-import { isDev } from '@/utils/environment';
 import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.json';
 import DISTRIBUTION_ERC20_ABI from 'src/contracts/DistributionModuleERC20.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
@@ -8,12 +7,12 @@ import { IActiveNetwork } from '@/state/wallet/types';
 export class ClubERC20Factory {
   web3;
   address;
-  clubERC20Factory;
-  distributionERC20;
+  clubERC20Factory: any;
+  distributionERC20: any;
   activeNetwork: IActiveNetwork;
 
   // initialize new instance of clubERC20FactoryAddress
-  constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork) {
+  constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = clubERC20FactoryAddress;
@@ -61,8 +60,8 @@ export class ClubERC20Factory {
     endTime: number,
     tokenCap: string,
     maxMembers: number,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -85,7 +84,7 @@ export class ClubERC20Factory {
           usdcAddress // USDC
         )
         .send({ from: account, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           if (
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
@@ -96,11 +95,11 @@ export class ClubERC20Factory {
             onTxConfirm(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           reject(error);
         });
     });
@@ -169,13 +168,13 @@ export class ClubERC20Factory {
           tokenCap,
           '0x0000000000000000000000000000000000000000',
           0,
-          usdcAddress[this.activeNetwork.chainId]
+          usdcAddress[this.activeNetwork.chainId as keyof typeof usdcAddress]
         )
         .estimateGas(
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             if (gasAmount) onResponse(gasAmount);
           }
         );
