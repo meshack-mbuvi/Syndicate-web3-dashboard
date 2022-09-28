@@ -23,6 +23,8 @@ import {
 import MembersOnly from '@/components/collectives/membersOnly';
 import { getCollectiveBalance } from '@/utils/contracts/collective';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import { RemixContractsContainer } from '@/containers/remix/RemixContracts';
+import { Switch } from '@/components/switch';
 
 interface Props {
   inviteLink?: string;
@@ -54,6 +56,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
 
   const [copyState, setCopyState] = useState(false);
   const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
+  const [isRemixEnabled, setRemixEnabled] = useState<boolean>(false);
 
   const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -79,6 +82,15 @@ export const BadgeWithMembers: React.FC<Props> = ({
       setCopyState(false);
     }, 1000);
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const { mode } = router.query;
+    if (mode && mode == 'remix') {
+      setRemixEnabled(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!collectiveAddress) {
@@ -135,11 +147,26 @@ export const BadgeWithMembers: React.FC<Props> = ({
       {(permissionType == PermissionType.NON_MEMBER ||
         collectiveBalance < +maxPerWallet) &&
       isOpen ? (
-        <JoinCollectiveCTA
-          alreadyMember={collectiveBalance > 0}
-          // @ts-expect-error TS(2322): Type '(e: React.MouseEvent<HTMLInputElement>) => void' is not assig...
-          onClick={goToClaim}
-        />
+        <>
+          <JoinCollectiveCTA
+            alreadyMember={collectiveBalance > 0}
+            // @ts-expect-error TS(2322): Type '(e: React.MouseEvent<HTMLInputElement>) => void' is not assig...
+            onClick={goToClaim}
+          />
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-syn4">EnableRemix</div>
+            <Switch
+              isOn={isRemixEnabled}
+              onClick={() => setRemixEnabled(!isRemixEnabled)}
+            />
+          </div>
+          {isRemixEnabled && (
+            <RemixContractsContainer
+              collectiveAddress={collectiveAddress?.toString() ?? ''}
+              activeNetwork={activeNetwork}
+            />
+          )}
+        </>
       ) : null}
 
       {admins && admins.length > 0 ? (

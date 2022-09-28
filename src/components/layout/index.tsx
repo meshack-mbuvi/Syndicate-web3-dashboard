@@ -5,7 +5,7 @@ import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { getNetworkByName } from '@/helpers/getNetwork';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { useRouter } from 'next/router';
@@ -97,7 +97,7 @@ const Layout: FC<Props> = ({
 
   const router = useRouter();
   const { chain } = router.query;
-  const urlNetwork = useGetNetwork(chain);
+  const urlNetwork = getNetworkByName(chain);
 
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
@@ -178,7 +178,8 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isDemoMode
+    isDemoMode,
+    activeNetwork
   ]);
 
   return (

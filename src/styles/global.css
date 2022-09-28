@@ -475,6 +475,10 @@
       max-width: 30rem;
     }
 
+    .max-w-568 {
+      max-width: 568px;
+    }
+
     .perfect-square::after {
       content: '';
       display: block;

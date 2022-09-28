@@ -1,7 +1,7 @@
 import { CTAButton } from '@/components/CTAButton';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { getNetworkByName } from '@/helpers/getNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
@@ -32,7 +32,7 @@ const TokenEmptyState: React.FC<{
   }, [chain]);
 
   const GetNetworkByName = (name: any) => {
-    const network = useGetNetwork(name);
+    const network = getNetworkByName(name);
     setUrlNetwork(network);
   };
 
