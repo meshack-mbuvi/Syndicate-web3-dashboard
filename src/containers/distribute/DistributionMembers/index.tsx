@@ -57,7 +57,7 @@ type Props = {
 const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const {
     web3Reducer: {
-      web3: { status, account, web3, activeNetwork }
+      web3: { status, account, web3, activeNetwork, ethersProvider }
     },
     initializeContractsReducer: { syndicateContracts },
     erc20TokenSliceReducer: {
@@ -145,10 +145,11 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   useEffect(() => {
     if (clubMembers.length && tokens.length) {
       const memberDetails = clubMembers.map(
-        ({ ownershipShare, clubTokens, memberAddress }) => {
+        ({ ownershipShare, clubTokens, memberAddress, ...rest }) => {
           return {
+            ...rest,
             ownershipShare,
-            memberName: memberAddress,
+            address: memberAddress,
             clubTokenHolding: clubTokens,
             distributionShare: +ownershipShare,
             receivingTokens: tokens.map(
@@ -778,6 +779,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             handleActiveAddressesChange={setActiveAddresses}
             handleSearchChange={handleSearchChange}
             clearSearchValue={clearSearchValue}
+            ethersProvider={ethersProvider}
           />
         </>
       )}

@@ -1,14 +1,18 @@
 import { ActionButton } from '@/components/actionButton';
 import { SearchInput } from '@/components/inputs';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
+import {
+  AddressImageSize,
+  AddressWithENS
+} from '@/components/shared/ensAddress';
 import { B2, H4 } from '@/components/typography';
-import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   membersDetails: {
-    memberName: string;
+    ensName: string;
+    address: string;
     clubTokenHolding?: number;
     distributionShare: number;
     ownershipShare: number;
@@ -29,6 +33,7 @@ interface Props {
   searchValue: string;
   clearSearchValue: (event: any) => void;
   extraClasses?: string;
+  ethersProvider?: any;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
@@ -42,7 +47,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   searchValue,
   clearSearchValue,
   handleActiveAddressesChange,
-  extraClasses
+  extraClasses,
+  ethersProvider
 }) => {
   const isAddressActive = (address: string) => {
     return activeAddresses.includes(address);
@@ -53,7 +59,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const [hoveredRow, setHoveredRow] = useState(null);
   const [_membersDetails, setMemberDetails] = useState<
     {
-      memberName: string;
+      ensName: string;
+      address: string;
       clubTokenHolding?: number;
       distributionShare: number;
       ownershipShare: number;
@@ -91,7 +98,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   useEffect(() => {
     setMemberDetails(membersDetails.slice(0, dataLimit * currentPage));
-  }, [JSON.stringify(membersDetails), currentPage]);
+  }, [currentPage, membersDetails]);
 
   // We re-calculate the total token distribution for each member when
   // a member is de-selected or selected.
@@ -101,7 +108,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
       const cumulativeActiveMemberOwnership = membersDetails.reduce(
         (acc, curr) => {
           // if member is active
-          if (activeAddresses.includes(curr.memberName)) {
+          if (activeAddresses.includes(curr.address)) {
             return acc + +curr.ownershipShare;
           } else {
             return acc;
@@ -145,7 +152,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
     return `${
       hoveredRow === address && 'bg-gray-syn7'
     } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
-      address === _membersDetails[0].memberName ? 'border-t-0' : 'border-t-1'
+      address === _membersDetails[0].address ? 'border-t-0' : 'border-t-1'
     } ${!isAddressActive(address) && 'text-gray-syn5'}`;
   };
   const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
@@ -200,7 +207,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
           memberDetails.receivingTokens.forEach((receivingToken) => {
             if (
               receivingToken.tokenSymbol === tokenSymbol &&
-              isAddressActive(memberDetails.memberName)
+              isAddressActive(memberDetails.address)
             ) {
               memberTotal += +receivingToken.amount;
             }
@@ -234,7 +241,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 } else {
                   const activeAddresses: any = [];
                   _membersDetails.forEach((member) =>
-                    activeAddresses.push(member.memberName)
+                    activeAddresses.push(member.address)
                   );
 
                   handleActiveAddressesChange(activeAddresses);
@@ -292,8 +299,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
   // The rows with individual member distribution data filtered by search value
   const renderedTable = (
     searchValue
-      ? _membersDetails.filter((member) =>
-          member.memberName.toLowerCase().includes(searchValue.toLowerCase())
+      ? _membersDetails.filter(
+          (member) =>
+            member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
+            member.ensName.toLowerCase().includes(searchValue.toLowerCase())
         )
       : _membersDetails
   ).map((memberDetails) => {
@@ -302,10 +311,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
         onClick={() => {
           if (!isEditing) return;
           // The index was active so make it inactive
-          if (isAddressActive(memberDetails.memberName)) {
+          if (isAddressActive(memberDetails.address)) {
             let newactiveIndices;
             const indexToRemove = activeAddresses.indexOf(
-              memberDetails.memberName
+              memberDetails.address
             );
             if (indexToRemove > -1) {
               const arrayWithoutIndex = (array: any, index: any) =>
@@ -322,7 +331,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
           else {
             handleActiveAddressesChange([
               ...activeAddresses,
-              memberDetails.memberName
+              memberDetails.address
             ]);
           }
         }}
@@ -330,13 +339,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
           if (!isEditing) return;
 
           // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-          setHoveredRow(memberDetails.memberName);
+          setHoveredRow(memberDetails.address);
         }}
         onFocus={() => {
           if (!isEditing) return;
 
           // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-          setHoveredRow(memberDetails.memberName);
+          setHoveredRow(memberDetails.address);
         }}
         onMouseLeave={() => {
           if (!isEditing) return;
@@ -346,7 +355,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         className={`w-full flex justify-between ${
           isEditing ? 'cursor-pointer' : 'cursor-text'
         } transition-all ease-out`}
-        key={memberDetails.memberName}
+        key={memberDetails.address}
       >
         {/* Left columns - member, share */}
         <div className="flex">
@@ -354,11 +363,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
           {isEditing ? (
             <div
               className={`flex items-center ${narrowCellStyles} ${memberCellStyles(
-                memberDetails.memberName
+                memberDetails.address
               )}`}
             >
               <Checkbox
-                isActive={isAddressActive(memberDetails.memberName)}
+                isActive={isAddressActive(memberDetails.address)}
                 extraClasses="mx-auto"
               />
             </div>
@@ -367,44 +376,26 @@ export const DistributionMembersTable: React.FC<Props> = ({
           {/* Member name */}
           <div
             className={`flex items-center space-x-4 ${wideCellStyles} ${memberCellStyles(
-              memberDetails.memberName
-            )}`}
+              memberDetails.address
+            )} ${!isAddressActive(memberDetails.address) && 'opacity-50'}`}
           >
-            <svg
-              className={`${
-                !isAddressActive(memberDetails.memberName) && 'opacity-50'
-              }`}
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M16 32C24.8366 32 32 24.8366 32 16C32 7.16344 24.8366 0 16 0C7.16344 0 0 7.16344 0 16C0 24.8366 7.16344 32 16 32Z"
-                fill="#3F4147"
-              />
-              <path
-                d="M16.0048 15.7597C18.0392 15.7597 19.8075 14.0512 19.8075 11.8265C19.8075 9.62848 18.0392 8 16.0048 8C13.9703 8 12.202 9.66407 12.202 11.8443C12.202 14.0512 13.9608 15.7597 16.0048 15.7597ZM10.025 24H21.9655C23.4676 24 24 23.5996 24 22.8165C24 20.5206 20.9293 17.3526 15.9952 17.3526C11.0707 17.3526 8 20.5206 8 22.8165C8 23.5996 8.53238 24 10.025 24Z"
-                fill="#90949E"
-              />
-            </svg>
-            <div>
-              {memberDetails.memberName?.length > 13
-                ? formatAddress(memberDetails.memberName, 6, 6)
-                : memberDetails.memberName}
-            </div>
+            <AddressWithENS
+              ethersProvider={ethersProvider}
+              userPlaceholderImg={'/images/user.svg'}
+              address={memberDetails.address}
+              imageSize={AddressImageSize.LARGE}
+            />
           </div>
 
           {/* Share of holdings */}
           <div
             className={`flex space-x-3 items-center font-mono ${wideCellStyles} ${memberCellStyles(
-              memberDetails.memberName
+              memberDetails.address
             )}`}
           >
             {/* Percentage */}
             <div>
-              {isAddressActive(memberDetails.memberName)
+              {isAddressActive(memberDetails.address)
                 ? parseFloat(`${memberDetails.distributionShare}`).toFixed(2)
                 : '0'}
               %
@@ -416,7 +407,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         {/* This is needed to continue the borders and hover effect */}
         <div
           className={`flex-grow h-16 ${memberCellStyles(
-            memberDetails.memberName
+            memberDetails.address
           )}`}
         />
 
@@ -428,14 +419,14 @@ export const DistributionMembersTable: React.FC<Props> = ({
               // Individual column
               <div
                 className={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
-                  memberDetails.memberName
+                  memberDetails.address
                 )} ${amountCellStyles}`}
                 key={index}
               >
                 <div className="text-right truncate w-full">
                   {memberDetails.receivingTokens.find((receivingToken) => {
                     return receivingToken.tokenSymbol === tokenSymbol;
-                  }) && isAddressActive(memberDetails.memberName)
+                  }) && isAddressActive(memberDetails.address)
                     ? floatedNumberWithCommas(
                         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         memberDetails.receivingTokens?.find(
@@ -448,7 +439,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 </div>
                 <div
                   className={`flex-shrink-0 ${
-                    !isAddressActive(memberDetails.memberName)
+                    !isAddressActive(memberDetails.address)
                       ? 'text-gray-syn5'
                       : 'text-gray-syn4'
                   }`}
@@ -538,8 +529,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
       )}
 
       {searchValue &&
-      _membersDetails.filter((member) =>
-        member.memberName.toLowerCase().includes(searchValue.toLowerCase())
+      _membersDetails.filter(
+        (member) =>
+          member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
+          member.ensName.toLowerCase().includes(searchValue.toLowerCase())
       ).length === 0 ? (
         <div className="flex flex-col justify-center">
           <H4 className="text-xl text-center">

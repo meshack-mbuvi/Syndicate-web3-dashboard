@@ -121,18 +121,18 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeMintReqsTemp: ModuleReqs;
+      let activeMintReqs: ModuleReqs;
 
       if (mintModule) {
-        // @ts-expect-error TS(2322): Type 'ModuleReqs | null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
-        activeMintReqsTemp = getReqsByModuleType(
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
+        activeMintReqs = getReqsByModuleType(
           ModuleType.MINT,
           activeModules,
           activeNetwork,
           mintModule
         );
         setMintModule(web3.utils.toChecksumAddress(mintModule.contractAddress));
-        setActiveMintReqs(activeMintReqsTemp);
+        setActiveMintReqs(activeMintReqs);
       }
 
       const ownerModule = getModuleByType(
@@ -140,21 +140,23 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeOwnerReqsTemp: ModuleReqs;
+      let activeOwnerReqs: ModuleReqs;
 
       if (ownerModule) {
-        // @ts-expect-error TS(2322): Type 'ModuleReqs | null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
-        activeOwnerReqsTemp = getReqsByModuleType(
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
+        activeOwnerReqs = getReqsByModuleType(
           ModuleType.OWNER,
           activeModules,
           activeNetwork,
           ownerModule
         );
         setOwnerModule(ownerModule.contractAddress);
-        setActiveOwnerReqs(activeOwnerReqsTemp);
+        setActiveOwnerReqs(activeOwnerReqs);
       }
 
+      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
       startTime = `${activeMintReqs?.startTime}`;
+      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
       endTime = `${activeMintReqs?.endTime}`;
       dispatch(
         setActiveModuleDetails({
@@ -162,9 +164,11 @@ export function useClubDepositsAndSupply(contractAddress: string): {
           activeModules: activeModules,
           mintModule:
             web3.utils.toChecksumAddress(mintModule?.contractAddress) ?? '',
+          // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
           activeMintModuleReqs: activeMintReqs,
           ownerModule:
             web3.utils.toChecksumAddress(ownerModule?.contractAddress) ?? '',
+          // @ts-expect-error TS(2454): Variable 'activeOwnerReqs' is used before being assig... Remove this comment to see the full error message
           activeOwnerModuleReqs: activeOwnerReqs
         })
       );

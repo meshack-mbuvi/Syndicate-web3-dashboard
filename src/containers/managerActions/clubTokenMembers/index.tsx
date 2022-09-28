@@ -43,7 +43,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     query: { clubAddress }
   } = router;
 
-  const [filteredAddress, setFilteredAddress] = useState('');
+  const [searchValue, setSearchValue] = useState('');
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -92,13 +92,13 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
   };
 
-  const filterAddressOnChangeHandler = (event: {
+  const searchValueOnChangeHandler = (event: {
     preventDefault: () => void;
     target: { value: string };
   }) => {
     event.preventDefault();
     const { value } = event.target;
-    setFilteredAddress(value.trim());
+    setSearchValue(value.trim());
   };
 
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
@@ -111,13 +111,16 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
   const generateTableData = () => {
     const allMembers = [...clubMembers];
 
-    if (filteredAddress.trim()) {
+    if (searchValue.trim()) {
       // search any text
-      const filteredMembers = allMembers.filter((member) =>
-        member.memberAddress
-          .toLowerCase()
-          .includes(filteredAddress.toLowerCase())
+      const filteredMembers = allMembers.filter(
+        (member) =>
+          member.memberAddress
+            .toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          member.ensName.toLowerCase().includes(searchValue.toLowerCase())
       );
+
       setSynMembersToShow(filteredMembers);
     } else {
       setSynMembersToShow(allMembers);
@@ -126,7 +129,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
 
   useEffect(() => {
     generateTableData();
-  }, [JSON.stringify(clubMembers), filteredAddress]);
+  }, [JSON.stringify(clubMembers), searchValue]);
 
   useEffect(() => {
     // @ts-expect-error TS(2345): Argument of type '{ depositAmount: string; memberA... Remove this comment to see the full error message
@@ -280,14 +283,14 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
               })}
             </>
           </>
-        ) : tableData.length || filteredAddress ? (
+        ) : tableData.length || searchValue ? (
           <div className="w-max sm:w-auto mb-12">
             <MembersTable
               isOwner={isOwner}
               columns={columns}
               data={tableData}
-              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-              searchAddress={filteredAddress}
+              searchValueOnChangeHandler={searchValueOnChangeHandler}
+              searchValue={searchValue}
               selectedMember={selectedMember}
               setSelectedMember={() => setSelectedMember(undefined)}
               toggleAddMemberModal={toggleAddMemberModal}

@@ -136,6 +136,7 @@ const NetworkMenuDropDown: FC = () => {
       event.target?.parentElement?.id !== 'accountButton'
     ) {
       if (showNetworkDropdown) dispatch(setShowNetworkDropdownMenu(false));
+
       if (showWalletDropdown && !isClickedInsideRefId) {
         dispatch(setShowWalletDropdownMenu(false));
       }

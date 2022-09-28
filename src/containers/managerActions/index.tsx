@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DEPOSIT_LINK_COPY } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import CreateEntityCard from '@/components/shared/createEntityCard';
@@ -11,6 +13,7 @@ import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAct
 import { L2 } from '@/components/typography';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
@@ -18,14 +21,11 @@ import { Status } from '@/state/wallet/types';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { XIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
-import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { DEPOSIT_LINK_COPY } from '@/components/amplitude/eventNames';
 
 const useShowShareWarning = () => {
   const router = useRouter();

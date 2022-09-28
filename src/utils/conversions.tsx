@@ -34,12 +34,13 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
  * @returns string amount
  */
 export const getWeiAmount = (
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   web3: any,
   amount: string,
   tokenDecimals: number,
   multiplication: boolean
 ): any => {
-  if (!amount || isEmpty(web3)) return 0;
+  if (!amount || isEmpty(web3) || isNaN(+amount)) return 0;
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;

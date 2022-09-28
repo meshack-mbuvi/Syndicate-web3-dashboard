@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
+import { getAssets } from '../useFetchEnsAssets';
 
 type clubMember = {
   depositAmount: string;
@@ -15,6 +16,8 @@ type clubMember = {
   ownershipShare: number;
   symbol: string;
   totalSupply: string;
+  ensName: string;
+  avatar: string;
 };
 
 const useClubTokenMembers = (): {
@@ -36,7 +39,7 @@ const useClubTokenMembers = (): {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, activeNetwork, web3 } = web3Instance;
+  const { account, activeNetwork, web3, ethersProvider } = web3Instance;
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(CLUB_TOKEN_MEMBERS, {
@@ -49,36 +52,50 @@ const useClubTokenMembers = (): {
     skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 
-  const processMembers = (syndicate: any) => {
+  // @ts-expect-error TS(7031): Binding element 'depositAmount' implicitly has an 'any' type.
+  const processMembers = async (syndicate): Promise<void> => {
     if (!syndicate || !syndicate?.members || !syndicate.members.length) {
       return;
     }
 
-    const clubTotalSupply = getWeiAmount(
+    const clubTotalSupply: number = getWeiAmount(
       web3,
       syndicate.totalSupply,
       tokenDecimals,
       false
     );
 
-    const _clubMembers = syndicate.members.map(
-      // @ts-expect-error TS(7031): Binding element 'depositAmount' implicitly has an 'any' type.
-      ({ depositAmount, tokens, member: { memberAddress } }) => {
-        const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
-        return {
-          memberAddress,
-          ownershipShare: (100 * clubTokens) / clubTotalSupply,
-          symbol,
-          clubTokens,
-          totalSupply: totalSupply,
-          depositAmount: getWeiAmount(
-            web3,
-            depositAmount,
-            depositTokenDecimals,
-            false
-          )
-        };
-      }
+    const _clubMembers = await Promise.all(
+      syndicate.members.map(
+        async ({
+          depositAmount,
+          tokens,
+          member: { memberAddress }
+        }: {
+          depositAmount: string;
+          tokens: string;
+          member: { memberAddress: string };
+        }) => {
+          const clubTokens: number =
+            getWeiAmount(web3, tokens, tokenDecimals, false) || 0;
+          const data = await getAssets(memberAddress, ethersProvider);
+          return {
+            memberAddress,
+            symbol,
+            clubTokens,
+            ensName: data?.name || '',
+            avatar: data?.avatar || '',
+            ownershipShare: (100 * clubTokens) / clubTotalSupply,
+            totalSupply: totalSupply,
+            depositAmount: getWeiAmount(
+              web3,
+              depositAmount,
+              depositTokenDecimals,
+              false
+            )
+          };
+        }
+      )
     );
 
     setClubMembers(_clubMembers);

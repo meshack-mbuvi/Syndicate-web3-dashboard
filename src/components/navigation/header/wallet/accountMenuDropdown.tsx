@@ -59,7 +59,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   const closeDropdown = (event: any) => {
     // find whether click is coming from any of the component in path
     const [isClickedInsideRefId] =
-      event?.path.filter((path: any) => path?.id === refId) || [];
+      event?.path?.filter((path: any) => path?.id === refId) || [];
 
     if (
       !account ||

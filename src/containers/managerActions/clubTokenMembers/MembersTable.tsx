@@ -23,8 +23,8 @@ import SignerMenu from './signerMenu';
 const MembersTable = ({
   columns,
   data,
-  filterAddressOnChangeHandler,
-  searchAddress,
+  searchValueOnChangeHandler,
+  searchValue,
   selectedMember,
   setSelectedMember,
   toggleAddMemberModal,
@@ -180,11 +180,11 @@ const MembersTable = ({
   return (
     <div className="overflow-y-visible">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
-        {page.length > 1 || searchAddress ? (
+        {page.length > 1 || searchValue ? (
           <SearchInput
             {...{
-              onChangeHandler: filterAddressOnChangeHandler,
-              searchValue: searchAddress,
+              onChangeHandler: searchValueOnChangeHandler,
+              searchValue: searchValue,
               itemsCount: data.length
             }}
           />
@@ -284,7 +284,7 @@ const MembersTable = ({
               </tr>
             );
           })}
-          {searchAddress && !page.length && (
+          {searchValue && !page.length && (
             <div className="flex flex-col justify-center w-full h-full items-center">
               <ExclamationCircleIcon className="h-10 w-10 mb-2 text-gray-lightManatee" />
               <p className="text-gray-lightManatee">No member found.</p>
