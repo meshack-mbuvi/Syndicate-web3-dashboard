@@ -26,14 +26,13 @@ import { AppState } from '@/state';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
 import router, { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ERC20ABI from '@/utils/abi/erc20.json';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DistributionHeader from '../DistributionHeader';
 
@@ -66,7 +65,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     assetsSliceReducer: { loading }
   } = useSelector((state: AppState) => state);
 
-  const [activeAddresses, setActiveAddresses] = useState([]);
+  const [activeAddresses, setActiveAddresses] = useState<string[]>([]);
   const [memberDetails, setMemberDetails] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -136,7 +135,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
    * Get addresses of all club members
    */
   useEffect(() => {
-    const activeAddresses: any = [];
+    const activeAddresses: string[] = [];
     clubMembers.forEach((member) => activeAddresses.push(member.memberAddress));
     setActiveAddresses(activeAddresses);
   }, [JSON.stringify(clubMembers)]);
@@ -155,7 +154,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             receivingTokens: tokens.map(
               ({ tokenAmount, symbol, logo, icon }: any) => {
                 return {
-                  amount: +ownershipShare * +tokenAmount,
+                  amount: (+ownershipShare * +tokenAmount) / 100,
                   tokenSymbol: symbol,
                   tokenIcon: logo || icon || '/images/token-gray.svg'
                 };
@@ -775,7 +774,6 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             isEditing={isEditing}
             searchValue={searchValue}
             handleIsEditingChange={toggleEditDistribution}
-            // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assignable... Remove this comment to see the full error message
             handleActiveAddressesChange={setActiveAddresses}
             handleSearchChange={handleSearchChange}
             clearSearchValue={clearSearchValue}

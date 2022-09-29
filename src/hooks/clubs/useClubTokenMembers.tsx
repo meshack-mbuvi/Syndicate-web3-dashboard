@@ -78,7 +78,14 @@ const useClubTokenMembers = (): {
         }) => {
           const clubTokens: number =
             getWeiAmount(web3, tokens, tokenDecimals, false) || 0;
-          const data = await getAssets(memberAddress, ethersProvider);
+
+          let data;
+          try {
+            data = await getAssets(memberAddress, ethersProvider);
+          } catch (error) {
+            data = null;
+          }
+
           return {
             memberAddress,
             symbol,

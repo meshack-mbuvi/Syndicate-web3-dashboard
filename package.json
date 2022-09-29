@@ -26,6 +26,7 @@
     "@tanstack/react-query": "^4.0.10",
     "@truffle/hdwallet-provider": "^2.0.0",
     "@typechain/truffle-v5": "^5.1.0",
+    "@types/uuid": "^8.3.4",
     "@walletconnect/web3-provider": "^1.0.8",
     "alpinejs": "^2.8.2",
     "amplitude-js": "^8.3.1",
