@@ -4,7 +4,6 @@ import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
 import clubERC20sReducer from '@/state/clubERC20';
-import collectiveDetailsReducer from '@/state/collectiveDetails';
 import collectivesSlice from '@/state/collectives/slice';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
@@ -23,6 +22,7 @@ import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
 import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
+import modifyCollectiveSettingsReducer from '@/state/modifyCollectiveSettings';
 import web3Reducer from '@/state/wallet/reducer';
 import { isDev } from '@/utils/environment';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -54,7 +54,7 @@ export const store = configureStore({
     modifyClubSettingsReducer,
     connectClubMemberReducer,
     distributeTokensReducer,
-    collectiveDetailsReducer,
+    modifyCollectiveSettingsReducer,
     collectivesSlice
   },
   middleware: (getDefaultMiddleware) =>

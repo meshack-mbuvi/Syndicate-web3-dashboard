@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 
 const transitionSettings = 'transition-all duration-700';
 
@@ -112,9 +112,9 @@ export const CollapsibleTable: React.FC<Props> = ({
             type={SwitchType.EXPLICIT}
             onClick={() => {
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-              setActiveRow(switchRowIndex);
+              setActiveRow(showSubmitCTA ? 0 : switchRowIndex);
               // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-              dispatch(setActiveRowIdx(switchRowIndex));
+              dispatch(setActiveRowIdx(showSubmitCTA ? 0 : switchRowIndex));
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setIsExpanded(!isExpanded);
               setEditGroupFieldClicked && setEditGroupFieldClicked(false);

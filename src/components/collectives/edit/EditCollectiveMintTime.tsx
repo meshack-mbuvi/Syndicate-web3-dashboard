@@ -5,13 +5,13 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { default as _moment } from 'moment-timezone';
 import moment from 'moment';
-import { setMintEndTime } from '@/state/collectiveDetails';
+import { setMintEndTime } from '@/state/modifyCollectiveSettings';
 import { B2 } from '@/components/typography';
 
 const EditCollectiveMintTime: React.FC = () => {
   const {
-    collectiveDetailsReducer: {
-      details: { mintEndTime }
+    modifyCollectiveSettingsReducer: {
+      settings: { mintEndTime }
     }
   } = useSelector((state: AppState) => state);
 

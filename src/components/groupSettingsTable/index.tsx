@@ -5,7 +5,7 @@ import {
 import { useRef, Dispatch, SetStateAction } from 'react';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 interface Props {
   title: string;
   subtitle?: string;

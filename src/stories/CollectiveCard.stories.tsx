@@ -1,5 +1,5 @@
 import { CollectiveCard } from '@/components/collectives/card';
-import { CollectiveCardType } from '@/state/collectiveDetails/types';
+import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

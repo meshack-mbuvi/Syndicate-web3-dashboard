@@ -1,18 +1,9 @@
-import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import CollectiveNotFound from '@/containers/collectives/shared/collectiveNotFound';
 import Layout from '@/components/layout';
 
 const CollectivesContainer: React.FC = ({ children }) => {
-  const {
-    collectiveDetailsReducer: {
-      loadingState: { collectiveNotFound }
-    }
-  } = useSelector((state: AppState) => state);
-
-  // fetch collective details for both claim and details page
-  useFetchCollectiveDetails();
+  const { collectiveNotFound } = useERC721Collective();
 
   return (
     <div>

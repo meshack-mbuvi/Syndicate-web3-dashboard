@@ -22,6 +22,7 @@ import {
 } from '@/components/amplitude/eventNames';
 import MembersOnly from '@/components/collectives/membersOnly';
 import { getCollectiveBalance } from '@/utils/contracts/collective';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 interface Props {
   inviteLink?: string;
@@ -39,12 +40,11 @@ export const BadgeWithMembers: React.FC<Props> = ({
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3, ethersProvider }
-    },
-    collectiveDetailsReducer: {
-      details: { isOpen, maxPerWallet }
     }
   } = useSelector((state: AppState) => state);
-  const { collectiveAddress } = router.query;
+  const {
+    collectiveDetails: { collectiveAddress, isOpen, maxPerWallet }
+  } = useERC721Collective();
 
   const [copyState, setCopyState] = useState(false);
   const [collectiveBalance, setCollectiveBalance] = useState<number>(0);

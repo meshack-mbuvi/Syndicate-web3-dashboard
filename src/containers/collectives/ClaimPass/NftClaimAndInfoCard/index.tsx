@@ -14,7 +14,7 @@ import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import useFetchCollectiveDetails from '@/hooks/collectives/useFetchCollectiveDetails';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
@@ -37,24 +37,25 @@ const NftClaimAndInfoCard: React.FC = () => {
           blockExplorer: { baseUrl }
         }
       }
-    },
-    collectiveDetailsReducer: {
-      details: {
-        mintPrice,
-        maxTotalSupply,
-        totalSupply,
-        collectiveSymbol,
-        collectiveName,
-        createdAt,
-        ownerAddress,
-        collectiveAddress,
-        numOwners,
-        maxPerWallet,
-        metadataCid
-      },
-      loadingState: { isFetchingCollective }
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    collectiveDetails: {
+      mintPrice,
+      maxTotalSupply,
+      totalSupply,
+      collectiveSymbol,
+      collectiveName,
+      createdAt,
+      ownerAddress,
+      collectiveAddress,
+      numOwners,
+      maxPerWallet,
+      metadataCid
+    },
+    collectiveDetailsLoading
+  } = useERC721Collective();
 
   const {
     gas: gasPrice,
@@ -73,11 +74,8 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
-  const [, setAccountBalance] = useState<number>();
-  // const [accountNewBalance, setAccountNewBalance] = useState<number>();
   const [interval, setIntervalId] = useState(null);
 
-  const { refetch } = useFetchCollectiveDetails();
   const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
 
@@ -106,8 +104,6 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   const onTxReceipt = () => {
     setProgressState(ProgressState.SUCCESS);
-    // update collective details
-    refetch();
   };
 
   const onTxFail = (error: any) => {
@@ -168,12 +164,6 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   useEffect(() => {
     getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
-      setAccountBalance(balance);
-    });
-  });
-
-  useEffect(() => {
-    getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
       setHasAccountReachedMaxPasses(balance >= +maxPerWallet);
     });
   }, [account, collectiveAddress, maxPerWallet, web3, progressState]);
@@ -187,11 +177,11 @@ const NftClaimAndInfoCard: React.FC = () => {
   }, [maxTotalSupply, totalSupply]);
 
   useEffect(() => {
-    if (isFetchingCollective) return;
+    if (collectiveDetailsLoading) return;
     getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
       setOpenSeaLink(link);
     });
-  }, [isFetchingCollective, collectiveAddress, chainId]);
+  }, [collectiveDetailsLoading, collectiveAddress, chainId]);
 
   useEffect(() => {
     let _walletState = WalletState.NOT_CONNECTED;
@@ -212,6 +202,7 @@ const NftClaimAndInfoCard: React.FC = () => {
   }, [account, isAccountEligible, hasAccountReachedMaxPasses]);
 
   const shortenOwnerAddress = (address: string) => {
+    if (!address) return '';
     const addr = address.toLowerCase();
     return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
   };
@@ -235,7 +226,7 @@ const NftClaimAndInfoCard: React.FC = () => {
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
       <div className="w-full">
-        {isFetchingCollective ? (
+        {collectiveDetailsLoading ? (
           <div className="space-y-12">
             <div className="space-y-2">
               <SkeletonLoader width="48" height="4" />

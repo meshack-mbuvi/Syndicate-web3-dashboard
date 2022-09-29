@@ -3,10 +3,12 @@ import gql from 'graphql-tag';
 export const MY_CLUBS_QUERY = gql`
   query getClubERC20($where: SyndicateDAO_filter) {
     syndicateDAOs(where: $where) {
+      id
       createdAt
       contractAddress
       ownerAddress
       members {
+        id
         depositAmount
       }
       totalSupply
@@ -24,15 +26,19 @@ export const MY_CLUBS_QUERY = gql`
 export const CLUBS_HAVE_INVESTED = gql`
   query getClubsHaveInvestedIn($where: Member_filter) {
     members(where: $where) {
+      id
       memberAddress
       syndicateDAOs {
         depositAmount
         syndicateDAO {
+          id
           ownerAddress
           members {
+            id
             depositAmount
             tokens
             member {
+              id
               memberAddress
             }
           }
@@ -52,10 +58,13 @@ export const CLUBS_HAVE_INVESTED = gql`
 export const CLUB_TOKEN_MEMBERS = gql`
   query getClubMembers($where: SyndicateDAO_filter) {
     syndicateDAOs(where: $where) {
+      id
       members {
+        id
         depositAmount
         tokens
         member {
+          id
           memberAddress
         }
       }
@@ -182,8 +191,10 @@ export const CLUB_MEMBER_QUERY = gql`
     $syndicateDaOsWhere2: Membership_filter
   ) {
     members(where: $where) {
+      id
       memberAddress
       syndicateDAOs(where: $syndicateDaOsWhere2) {
+        id
         tokens
         depositAmount
         syndicateDAO {
@@ -197,6 +208,7 @@ export const CLUB_MEMBER_QUERY = gql`
 export const SINGLE_CLUB_DETAILS = gql`
   query SyndicateDAOs($where: SyndicateDAO_filter) {
     syndicateDAOs(where: $where) {
+      id
       contractAddress
       ownerAddress
       totalSupply
@@ -207,10 +219,12 @@ export const SINGLE_CLUB_DETAILS = gql`
       startTime
       maxMemberCount
       activeModules {
+        id
         contractAddress
         activeRequirements {
           id
           requirement {
+            id
             contractAddress
             eventType
             requirementType
@@ -240,6 +254,7 @@ export const CLUB_TOKEN_QUERY = gql`
 export const GetSynToken = gql`
   query GetSynToken($chainId: Int, $where: SyndicateDAO_filter) {
     syndicateDAOs(chainId: $chainId, where: $where) {
+      id
       contractAddress
     }
   }
@@ -248,6 +263,7 @@ export const GetSynToken = gql`
 export const GetAdminCollectives = gql`
   query SyndicateCollectives($where: SyndicateCollective_filter) {
     syndicateCollectives(where: $where) {
+      id
       contractAddress
       ownerAddress
       createdAt
@@ -259,19 +275,25 @@ export const GetAdminCollectives = gql`
       maxPerMember
       numOwners
       owners {
+        id
         owner {
+          id
           walletAddress
         }
       }
       nftMetadata {
+        id
         description
         metadataCid
         mediaCid
       }
       transferGuardAddress
       activeModules {
+        id
         activeRequirements {
+          id
           requirement {
+            id
             endTime
             startTime
             requirementType
@@ -288,6 +310,7 @@ export const GetMemberCollectives = gql`
   query Nfts($where: Nft_filter) {
     nfts(where: $where) {
       collective {
+        id
         contractAddress
         ownerAddress
         name
@@ -330,26 +353,6 @@ export const TOKEN_HOLDINGS_AND_DETAILS = gql`
         symbol
         decimals
         logo
-      }
-    }
-  }
-`;
-
-export const COLLECTIVES_DETAILS = gql`
-  query SyndicateCollectives(
-    $where: SyndicateCollective_filter
-    $ownersWhere2: CollectiveOwnership_filter
-  ) {
-    syndicateCollectives(where: $where) {
-      contractAddress
-      ownerAddress
-      name
-      symbol
-      owners(where: $ownersWhere2) {
-        owner {
-          walletAddress
-        }
-        numOwned
       }
     }
   }

@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 
 const transitionSettings = 'transition-all duration-700';
 

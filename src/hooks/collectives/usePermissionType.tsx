@@ -7,11 +7,10 @@ import {
   getCollectiveBalance
 } from '@/utils/contracts/collective';
 
-export const usePermissionType = (): PermissionType => {
+export const usePermissionType = (
+  collectiveAddress: string
+): PermissionType => {
   const {
-    collectiveDetailsReducer: {
-      details: { collectiveAddress }
-    },
     web3Reducer: {
       web3: { account, web3 }
     }

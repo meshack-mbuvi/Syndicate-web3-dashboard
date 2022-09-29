@@ -4,10 +4,10 @@ import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
-import { AppState } from '@/state';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -63,10 +63,8 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const {
-    collectiveDetailsReducer: {
-      details: { isOpen }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { isOpen }
+  } = useERC721Collective();
 
   const created = (
     <>

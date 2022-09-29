@@ -1,10 +1,9 @@
 import { B2, B3 } from '@/components/typography';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { CollectiveCardType } from '@/state/collectiveDetails/types';
+import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 
 interface Props {
   cardType: CollectiveCardType;
@@ -20,10 +19,8 @@ export const CollectiveCard: React.FC<Props> = ({
   price
 }) => {
   const {
-    collectiveDetailsReducer: {
-      details: { numOwners, metadataCid, mintPrice }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { numOwners, metadataCid, mintPrice }
+  } = useERC721Collective();
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
 
   // intermediate step to fetch the nft details from the metadataCid

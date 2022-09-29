@@ -8,8 +8,8 @@ import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { SUPPORTED_TOKENS } from '@/Networks';
 import { AppState } from '@/state';
-import { setActiveRowIdx } from '@/state/collectiveDetails';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import {
   resetClubCreationReduxState,
   setActiveTokenGateOption,
@@ -107,7 +107,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     web3Reducer: {
       web3: { web3, account, activeNetwork, status }
     },
-    collectiveDetailsReducer: { activeRow },
+    modifyCollectiveSettingsReducer: { activeRow },
     createInvestmentClubSliceReducer: {
       tokenRules,
       logicalOperator,

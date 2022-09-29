@@ -34,18 +34,19 @@ import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
 import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
 import { AppState } from '@/state';
 import {
+  setCollectiveSettings,
   setIsCollectiveOpen,
   setIsTransferable,
   setMaxPerWallet,
   setMaxSupply,
-  setMetadataCid,
   setMintEndTime,
   setMintPrice,
   setOpenUntil,
   setUpdateEnded,
-  setActiveRowIdx
-} from '@/state/collectiveDetails';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+  setActiveRowIdx,
+  setMetadataCid
+} from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import {
   setCollectiveArtwork,
   setCollectiveSubmittingToIPFS,
@@ -61,6 +62,7 @@ import { NFTMediaType, NFTPreviewer } from '../nftPreviewer';
 import { CopyText } from './editables';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
 import EditMaxSupply from './EditMaxSupply';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 type step = {
   title: string;
@@ -85,32 +87,36 @@ const ModifyCollectiveSettings: React.FC = () => {
     web3Reducer: {
       web3: { activeNetwork, account, web3 }
     },
-    collectiveDetailsReducer: {
-      details: {
-        collectiveName,
-        collectiveSymbol,
-        createdAt,
-        mintPrice,
-        maxPerWallet,
-        collectiveAddress,
-        mintEndTime,
-        maxSupply,
-        metadataCid,
-        isTransferable: existingIsTransferable
-      },
-
+    modifyCollectiveSettingsReducer: {
       settings: {
-        isTransferable,
+        isTransferable: settingsIsTransferable,
         isOpen,
         mintPrice: settingsMintPrice,
         maxPerWallet: settingsMaxPerWallet,
         mintEndTime: settingsMintEndTime,
-        maxSupply: settingsMaxSupply
+        maxSupply: settingsMaxSupply,
+        metadataCid: settingsMetadataCid
       },
       activeRow: activeRowRedux,
       updateEnded
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    collectiveDetails: {
+      collectiveName,
+      collectiveSymbol,
+      createdAt,
+      mintPrice,
+      maxPerWallet,
+      collectiveAddress,
+      mintEndTime,
+      maxSupply,
+      metadataCid,
+      isTransferable
+    },
+    collectiveDetailsLoading
+  } = useERC721Collective();
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -158,6 +164,23 @@ const ModifyCollectiveSettings: React.FC = () => {
   const [currentOpenUntilState, setCurrentOpenUntilState] = useState(null);
 
   const [subfieldEditing, setSubfieldEditing] = useState(false);
+
+  useEffect(() => {
+    if (collectiveDetailsLoading) return;
+    dispatch(
+      setCollectiveSettings({
+        isTransferable,
+        isOpen: true,
+        mintPrice,
+        maxPerWallet,
+        mintEndTime,
+        maxSupply,
+        metadataCid,
+        openUntil:
+          maxSupply === 0 ? OpenUntil.FUTURE_DATE : OpenUntil.MAX_MEMBERS
+      })
+    );
+  }, [collectiveDetailsLoading]);
 
   useEffect(() => {
     if (maxSupply === 0) {
@@ -214,7 +237,7 @@ const ModifyCollectiveSettings: React.FC = () => {
         await fixedRenderer.updateTokenURI(
           account,
           collectiveAddress as string,
-          metadataCid,
+          settingsMetadataCid,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -223,12 +246,18 @@ const ModifyCollectiveSettings: React.FC = () => {
         console.log(e);
       }
     }
-    if (metadataCid && !updateEnded) {
+    if (settingsMetadataCid && !updateEnded) {
       updateURI();
       setEditGroupFieldClicked(false);
       dispatch(setUpdateEnded(true));
     }
-  }, [metadataCid, account, collectiveAddress, fixedRenderer, updateEnded]);
+  }, [
+    settingsMetadataCid,
+    account,
+    collectiveAddress,
+    fixedRenderer,
+    updateEnded
+  ]);
 
   const handleModalClose = () => {
     setIsModalVisible(false);
@@ -478,10 +507,10 @@ const ModifyCollectiveSettings: React.FC = () => {
         break;
       case EditRowIndex.OpenUntil:
         if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
-          dispatch(setMintEndTime(settingsMintEndTime));
+          dispatch(setMintEndTime(mintEndTime));
         }
         if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
-          dispatch(setMaxSupply(settingsMaxSupply));
+          dispatch(setMaxSupply(maxSupply));
         }
         break;
       case EditRowIndex.Transfer:
@@ -518,7 +547,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.MintPrice:
@@ -547,7 +575,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.MaxPerWallet:
@@ -576,104 +603,58 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.OpenUntil:
-        if (!collectiveAddress || !mintEndTime || !web3) return;
+        if (!collectiveAddress || !settingsMintEndTime || !web3) return;
         if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
           if (openUntilSettingsChanged) {
             setOpenUntilStepModalVisible(true);
-            try {
-              await timeRequirements.updateTimeRequirements(
-                account,
-                collectiveAddress as string,
-                createdAt,
-                Number(mintEndTime),
-                onSwitchTxConfirm,
-                onSwitchTxReceipt,
-                onSwitchTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
-          } else {
-            try {
-              await timeRequirements.updateTimeRequirements(
-                account,
-                collectiveAddress as string,
-                createdAt,
-                Number(mintEndTime),
-                onTxConfirm,
-                onTxReceipt,
-                onTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
+          }
+          try {
+            await timeRequirements.updateTimeRequirements(
+              account,
+              collectiveAddress as string,
+              createdAt,
+              Number(settingsMintEndTime),
+              onSwitchTxConfirm,
+              onSwitchTxReceipt,
+              onSwitchTxFail
+            );
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Success'
+            });
+          } catch (error) {
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Failure'
+            });
           }
         }
 
         if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
           if (openUntilSettingsChanged) {
             setOpenUntilStepModalVisible(true);
-            try {
-              await maxTotalSupplyERC721.updateTotalSupply(
-                account,
-                collectiveAddress as string,
-                maxSupply,
-                onSwitchTxConfirm,
-                onSwitchTxReceipt,
-                onSwitchTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
-          } else {
-            try {
-              await maxTotalSupplyERC721.updateTotalSupply(
-                account,
-                collectiveAddress as string,
-                maxSupply,
-                onTxConfirm,
-                onTxReceipt,
-                onTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
+          }
+          try {
+            await maxTotalSupplyERC721.updateTotalSupply(
+              account,
+              collectiveAddress as string,
+              settingsMaxSupply,
+              onSwitchTxConfirm,
+              onSwitchTxReceipt,
+              onSwitchTxFail
+            );
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Success'
+            });
+          } catch (error) {
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Failure'
+            });
           }
         }
         break;
@@ -683,7 +664,7 @@ const ModifyCollectiveSettings: React.FC = () => {
           await erc721Collective.updateTransferGuard(
             account,
             collectiveAddress as string,
-            isTransferable,
+            settingsIsTransferable,
             onTxConfirm,
             onTxReceipt,
             onTxFail
@@ -697,7 +678,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
           onTxFail();
         }
         break;
@@ -1140,9 +1120,9 @@ const ModifyCollectiveSettings: React.FC = () => {
           subtitle="Members will be able to transfer the collective NFTs they own"
           rows={[]}
           expander={{
-            isExpanded: isTransferable,
+            isExpanded: settingsIsTransferable,
             setIsExpanded: handleTransferable,
-            showSubmitCTA: isTransferable !== existingIsTransferable
+            showSubmitCTA: settingsIsTransferable !== isTransferable
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
           setEditGroupFieldClicked={setEditGroupFieldClicked}

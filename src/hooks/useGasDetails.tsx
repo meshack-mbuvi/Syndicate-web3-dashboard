@@ -7,7 +7,7 @@ import { GAS_RATE } from '@/graphql/queries';
 import { useQuery } from '@apollo/client';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import BigNumber from 'bignumber.js';
 
 export enum ContractMapper {
@@ -66,7 +66,7 @@ const useGasDetails: (props: IProps) => {
         distributionsERC20
       }
     },
-    collectiveDetailsReducer: { activeRow }
+    modifyCollectiveSettingsReducer: { activeRow }
   } = useSelector((state: AppState) => state);
 
   const [gas, setGas] = useState(0);

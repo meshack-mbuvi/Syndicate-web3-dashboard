@@ -10,13 +10,13 @@ import { B2, B3, H4 } from '@/components/typography';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { AppState } from '@/state';
-import { setMemberJoinedEvents } from '@/state/collectiveDetails';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
 import { getOpenSeaLink } from '@/utils/api/nfts';
@@ -24,6 +24,7 @@ import MembersOnly from '@/components/collectives/membersOnly';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import useERC721CollectiveEvents from '@/hooks/collectives/useERC721CollectiveEvents';
 
 interface IProps {
   showModifySettings: boolean;
@@ -35,10 +36,6 @@ interface ICollectiveDetails {
 
 const HeaderComponent: React.FC<IProps> = (args) => {
   const {
-    collectiveDetailsReducer: {
-      details: { collectiveName, collectiveAddress },
-      loadingState: { isFetchingCollective }
-    },
     web3Reducer: {
       web3: {
         activeNetwork: { chainId }
@@ -46,17 +43,22 @@ const HeaderComponent: React.FC<IProps> = (args) => {
     }
   } = useSelector((state: AppState) => state);
 
+  const {
+    collectiveDetails: { collectiveName, collectiveAddress },
+    collectiveDetailsLoading
+  } = useERC721Collective();
+
   const [openSeaLink, setOpenSeaLink] = useState<string>();
 
   useEffect(() => {
-    if (isFetchingCollective) return;
+    if (collectiveDetailsLoading) return;
     async function getLink() {
       await getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
         setOpenSeaLink(link);
       });
     }
     getLink();
-  }, [isFetchingCollective, collectiveAddress, chainId]);
+  }, [collectiveDetailsLoading, collectiveAddress, chainId]);
 
   const links = {
     externalLink: '/',
@@ -75,10 +77,8 @@ const HeaderComponent: React.FC<IProps> = (args) => {
 
 const CollectiveDescription = () => {
   const {
-    collectiveDetailsReducer: {
-      details: { metadataCid }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { metadataCid }
+  } = useERC721Collective();
 
   const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
   return (
@@ -92,14 +92,14 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
   const {
     web3Reducer: {
       web3: { account }
-    },
-    collectiveDetailsReducer: {
-      details: { createdAt, ownerAddress },
-      events: { memberJoined }
     }
   } = useSelector((state: AppState) => state);
 
-  const dispatch = useDispatch();
+  const {
+    collectiveDetails: { createdAt, ownerAddress }
+  } = useERC721Collective();
+
+  const { collectiveEvents } = useERC721CollectiveEvents();
 
   // creation activity
   const creationActivity = [
@@ -113,7 +113,7 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
   ];
 
   // add member join activities and sort by timestamp
-  const activities = [...memberJoined].sort((a, b) => {
+  const activities = (collectiveEvents || []).sort((a, b) => {
     return +b.timeStamp - +a.timeStamp;
   });
 
@@ -124,13 +124,6 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
     },
     timeStamp: '3h ago'
   };
-
-  useEffect(() => {
-    // clear member joined data from redux
-    return () => {
-      dispatch(setMemberJoinedEvents([]));
-    };
-  }, [dispatch]);
 
   return (
     <div className="flex flex-col mt-16">
@@ -185,21 +178,21 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
 const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: {
+        activeNetwork: { nativeCurrency }
+      }
     }
   } = useSelector((state: AppState) => state);
 
   const {
-    collectiveDetailsReducer: {
-      details: {
-        mintPrice,
-        mintEndTime,
-        maxTotalSupply,
-        totalSupply,
-        collectiveCardType
-      }
+    collectiveDetails: {
+      mintPrice,
+      mintEndTime,
+      maxTotalSupply,
+      totalSupply,
+      collectiveCardType
     }
-  } = useSelector((state: AppState) => state);
+  } = useERC721Collective();
   const { permissionType } = details;
 
   return (
@@ -220,8 +213,8 @@ const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
           }}
           price={{
             tokenAmount: floatedNumberWithCommas(mintPrice),
-            tokenSymbol: activeNetwork.nativeCurrency.symbol,
-            tokenIcon: activeNetwork.nativeCurrency.logo
+            tokenSymbol: nativeCurrency.symbol,
+            tokenIcon: nativeCurrency.logo
           }}
         />
       </div>
@@ -234,18 +227,16 @@ const MemberSidePanel: React.FC<{ permissionType: any }> = ({
   permissionType
 }) => {
   const {
-    collectiveDetailsReducer: {
-      details: { ownerAddress, owners }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { ownerAddress, owners }
+  } = useERC721Collective();
   const router = useRouter();
   const { isReady } = router;
 
-  const members =
-    owners &&
-    owners.map((member: any) => {
-      return member?.owner?.walletAddress;
-    });
+  const members = owners
+    ? owners.map((member: any) => {
+        return member?.owner?.walletAddress;
+      })
+    : [];
 
   const admins = [ownerAddress];
 
@@ -269,18 +260,16 @@ const MemberSidePanel: React.FC<{ permissionType: any }> = ({
 
 const Collective: React.FC = () => {
   const {
-    collectiveDetailsReducer: {
-      details: { collectiveName, collectiveAddress },
-      loadingState: { isFetchingCollective }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { collectiveName, collectiveAddress },
+    collectiveDetailsLoading
+  } = useERC721Collective();
 
-  const permissionType = usePermissionType();
+  const permissionType = usePermissionType(collectiveAddress);
 
   // skeleton loader content for left content
   const leftColumnLoader = (
     <div className="space-y-10">
-      {isFetchingCollective && collectiveName ? (
+      {collectiveDetailsLoading && collectiveName ? (
         <HeaderComponent showModifySettings={false} />
       ) : (
         <div className="flex items-center justify-start space-x-4 w-full">
@@ -305,7 +294,7 @@ const Collective: React.FC = () => {
         </div>
       </div>
       <SkeletonLoader width="full" height="24" borderRadius="rounded-2.5xl" />
-      {isFetchingCollective && collectiveName ? (
+      {collectiveDetailsLoading && collectiveName ? (
         <Modal
           show={true}
           modalStyle={ModalStyle.DARK}
@@ -362,7 +351,7 @@ const Collective: React.FC = () => {
         dotIndicatorOptions={[]}
         leftColumnComponent={
           <div>
-            {isFetchingCollective ? (
+            {collectiveDetailsLoading ? (
               leftColumnLoader
             ) : (
               <CollectiveDetails permissionType={permissionType} />
@@ -370,7 +359,7 @@ const Collective: React.FC = () => {
           </div>
         }
         rightColumnComponent={
-          isFetchingCollective ? (
+          collectiveDetailsLoading ? (
             rightColumnLoader
           ) : (
             <MemberSidePanel {...{ permissionType }} />
