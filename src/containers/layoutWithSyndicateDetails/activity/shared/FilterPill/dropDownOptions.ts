@@ -1,37 +1,62 @@
-export const DropDownOptions = [
+// activity table dropdown options
+export const activityDropDownOptions = [
   {
     text: 'Everything',
     value: 'everything',
-    icon: 'everything.svg'
+    icon: '/images/activity/everything.svg'
   },
   {
     text: 'Uncategorised',
     value: 'uncategorised',
-    icon: 'question.svg'
+    icon: '/images/activity/question.svg'
   },
   {
     text: 'Deposits',
     value: 'deposit',
-    icon: 'deposit-transaction.svg'
+    icon: '/images/activity/deposit-transaction.svg'
   },
   {
     text: 'Investments',
     value: 'investment',
-    icon: 'investment-transaction.svg'
+    icon: '/images/activity/investment-transaction.svg'
   },
   {
     text: 'Investment token',
     value: 'investment_token',
-    icon: 'investment-tokens.svg'
+    icon: '/images/activity/investment-tokens.svg'
   },
   {
     text: 'Expenses',
     value: 'expense',
-    icon: 'expense-transaction.svg'
+    icon: '/images/activity/expense-transaction.svg'
   },
   {
     text: 'Other',
     value: 'other',
-    icon: 'other-transaction.svg'
+    icon: '/images/activity/other-transaction.svg'
+  }
+];
+
+// assets section dropdown options
+export const assetsDropDownOptions = [
+  {
+    text: 'Everything',
+    value: 'everything',
+    icon: '/images/everything.svg'
+  },
+  {
+    text: 'Tokens',
+    value: 'tokens',
+    icon: '/images/token.svg'
+  },
+  {
+    text: 'Off-chain investments',
+    value: 'investments',
+    icon: '/images/investments-title-icon.svg'
+  },
+  {
+    text: 'NFTs',
+    value: 'nfts',
+    icon: '/images/collectibles.svg'
   }
 ];

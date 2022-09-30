@@ -82,7 +82,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     {
       text: 'Other',
       value: 'OTHER',
-      icon: 'other-transaction.svg'
+      icon: '/images/activity/other-transaction.svg'
     },
     {
       text: 'Uncategorised',
@@ -90,26 +90,26 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       icon: uncategorisedIcon
         ? uncategorisedIcon
         : outgoing
-        ? 'outgoing-transaction.svg'
-        : 'incoming-transaction.svg'
+        ? '/images/activity/outgoing-transaction.svg'
+        : '/images/activity/incoming-transaction.svg'
     }
   ];
   const categoryPillOptions = [
     {
       text: 'Investment',
       value: 'INVESTMENT',
-      icon: 'investment-transaction.svg'
+      icon: '/images/activity/investment-transaction.svg'
     },
     {
       text: 'Expense',
       value: 'EXPENSE',
-      icon: 'expense-transaction.svg'
+      icon: '/images/activity/expense-transaction.svg'
     },
 
     {
       text: 'Investment tokens',
       value: 'INVESTMENT_TOKEN',
-      icon: 'investment-tokens.svg'
+      icon: '/images/activity/investment-tokens.svg'
     }
   ];
 

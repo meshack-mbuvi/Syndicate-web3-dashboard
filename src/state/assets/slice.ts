@@ -106,7 +106,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     );
 
     const nativeDetails = {
-      contractAddress: '',
+      contractAddress: 'nativeTokenAddress',
       price: { usd: nativePriceResponse },
       logo: activeNetwork.logo,
       tokenDecimal: activeNetwork.nativeCurrency.decimals,

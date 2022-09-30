@@ -1,9 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PillDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown';
-import { DropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 
 interface FilterPillProps {
   setFilter: (filter: string) => void;
+  filter?: string;
+  dropDownOptions: {
+    text: string;
+    value: string;
+    icon: string;
+  }[];
+  // putting this here because we have 'Show: Everything' under activity but we
+  // show 'Viewing options' under assets
+  showViewingOptionsPlaceholder?: boolean;
+  showHiddenAssetsToggle?: boolean;
+  showHiddenAssets?: boolean;
+  setShowHiddenAssets?: (hidden: boolean) => void;
+  isOwner?: boolean;
 }
 
 /**
@@ -11,12 +23,21 @@ interface FilterPillProps {
  * "Everything" if a category is not provided.
  * @returns
  */
-const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
+const FilterPill: React.FC<FilterPillProps> = ({
+  setFilter,
+  dropDownOptions,
+  showViewingOptionsPlaceholder = false,
+  showHiddenAssetsToggle,
+  showHiddenAssets = false,
+  setShowHiddenAssets,
+  filter,
+  isOwner
+}) => {
   const categorySelect = useRef(null);
   // drop down
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(
-    DropDownOptions[0]
+    dropDownOptions[0]
   );
 
   const toggleDropdown = () => {
@@ -46,14 +67,14 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
 
   const handleSelect = (category: any) => {
     setSelectedCategory(
-      DropDownOptions.find((option) => option.value === category)
+      dropDownOptions.find((option) => option.value === category)
     );
     setFilter(category);
   };
 
   return (
     <div
-      className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 cursor-pointer`}
+      className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 cursor-pointer min-w-40`}
       onClick={() => toggleDropdown()}
       ref={categorySelect}
       aria-hidden={true}
@@ -61,7 +82,9 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
       <div className="flex flex-shrink ml-4 justify-start items-center">
         <div className={`whitespace-nowrap py-2`}>
           <span className="text-base text-gray-syn4">
-            Show: {selectedCategory?.text}
+            {showViewingOptionsPlaceholder && filter === 'all'
+              ? 'Viewing options'
+              : `Show: ${selectedCategory?.text}`}
           </span>
         </div>
       </div>
@@ -69,10 +92,14 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
         <img src="/images/activity/chevron-down.svg" alt="chevron-down" />
       </div>
       {showDropdown && (
-        <div className="mt-2 absolute z-10 top-10 transition-all duration-500 ease-in-out">
+        <div className="mt-2 absolute z-20 top-10 transition-all duration-500 ease-in-out">
           <PillDropDown
-            options={DropDownOptions}
+            options={dropDownOptions}
             onSelect={(e) => handleSelect(e)}
+            showHiddenAssetsToggle={showHiddenAssetsToggle}
+            setShowHiddenAssets={setShowHiddenAssets}
+            showHiddenAssets={showHiddenAssets}
+            isOwner={isOwner}
           />
         </div>
       )}

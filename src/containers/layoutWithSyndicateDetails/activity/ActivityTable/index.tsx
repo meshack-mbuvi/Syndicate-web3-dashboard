@@ -26,6 +26,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FilterPill from '../shared/FilterPill';
+import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 
 const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   const dispatch = useDispatch();
@@ -448,7 +449,10 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
       <div className="py-14 flex justify-between items-center">
         <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
-            <FilterPill setFilter={(filter): void => setFilter(filter)} />
+            <FilterPill
+              setFilter={(filter) => setFilter(filter)}
+              dropDownOptions={activityDropDownOptions}
+            />
           </div>
           <div className="mt-4 sm:mt-auto">
             <SearchInput

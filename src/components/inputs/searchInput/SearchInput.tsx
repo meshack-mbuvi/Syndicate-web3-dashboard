@@ -4,7 +4,7 @@ import React from 'react';
 
 /**
  * An input component with label and icon at the right end
- * If the input is disable, the input field without border, and with grayish
+ * If the input is disabled, the input field without border, and with grayish
  *  small text is rendered.
  * @param {*} props
  */
