@@ -227,6 +227,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
   const onTxReceipt = (receipt: any) => {
+    amplitudeLogger(CLUB_CREATION, {
+      flow: Flow.CLUB_CREATE,
+      transaction_status: 'Success'
+    });
     const {
       tokenAddress,
       name,
@@ -266,6 +270,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const onTxFail = () => {
+    amplitudeLogger(CLUB_CREATION, {
+      flow: Flow.CLUB_CREATE,
+      transaction_status: 'Failure'
+    });
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: false,
@@ -292,11 +300,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       }));
-
-      amplitudeLogger(CLUB_CREATION, {
-        flow: Flow.CLUB_CREATE,
-        transaction_status: 'Success'
-      });
       return await submitCreateClub();
     } catch (error) {
       // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
@@ -313,10 +316,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal: false,
         errorModal: false,
         warningModal: false
-      });
-      amplitudeLogger(CLUB_CREATION, {
-        flow: Flow.CLUB_CREATE,
-        transaction_status: 'Failure'
       });
     }
   };

@@ -1,6 +1,4 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import ArrowDown from '@/components/icons/arrowDown';
@@ -49,6 +47,11 @@ import ERC20ABI from '@/utils/abi/erc20.json';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLUB_DEPOSIT,
+  DEPOSIT_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 
 import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
@@ -1513,6 +1516,9 @@ const DepositSyndicate: React.FC = () => {
                             } else {
                               investInSyndicate(depositAmountFinalized);
                             }
+                            amplitudeLogger(DEPOSIT_CONTINUE_CLICK, {
+                              flow: Flow.CLUB_DEPOSIT
+                            });
                             toggleDepositProcessingModal();
                           }}
                           disabled={
