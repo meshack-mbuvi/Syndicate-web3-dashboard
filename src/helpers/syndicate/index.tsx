@@ -24,5 +24,6 @@ export const showLoader = (count: number): Array<React.FC> => {
       </div>
     );
   }
+  // @ts-expect-error TS(2322): Type 'Element[]' is not assignable to type 'FC<{}>... Remove this comment to see the full error message
   return animations;
 };

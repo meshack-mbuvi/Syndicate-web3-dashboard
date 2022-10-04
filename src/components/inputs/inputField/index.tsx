@@ -15,9 +15,9 @@ interface InputFieldProps {
   type?: string;
   extraClasses?: string;
   classesOverride?: string;
-  onChange?: (e) => void;
-  onKeyDown?: (e) => void;
-  onClick?: (e) => void;
+  onChange?: (e: any) => void;
+  onKeyDown?: (e: any) => void;
+  onClick?: (e: any) => void;
   disabled?: boolean;
 }
 
@@ -80,6 +80,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               // remove leading . for numbers
               if (value?.endsWith('.')) {
                 const newValue = value.slice(0, -1);
+                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 onChange({ target: { value: newValue } });
               }
             }}

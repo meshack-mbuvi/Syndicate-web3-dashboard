@@ -92,7 +92,8 @@ const useSubmitToContracts = () => {
     dispatch(setCollectiveConfirmed(true));
   };
 
-  const onTxFail = (error) => {
+  // @ts-expect-error TS(7030): Not all code paths return a value.
+  const onTxFail = (error: any) => {
     try {
       if (error?.message.includes('Be aware that it might still be mined')) {
         return dispatch(setCollectiveTransactionTakingTooLong(true));

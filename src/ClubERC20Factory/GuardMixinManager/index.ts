@@ -10,6 +10,7 @@ export class GuardMixinManager extends ContractBase {
   // Set Default Mixins
   public setDefaultMixins(token: string, mixins: string[]): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
       this.getAbiObject('updateDefaultMixins'),
       [token, mixins] as string[]
     );
@@ -19,9 +20,9 @@ export class GuardMixinManager extends ContractBase {
     account: string,
     token: string,
     mixins: string[],
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     await this.send(
       account,
@@ -35,6 +36,7 @@ export class GuardMixinManager extends ContractBase {
   // Allow Eth Price module
   public setAllowModule(token: string, module: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
       this.getAbiObject('updateModule'),
       [token, module, true] as string[]
     );
@@ -57,6 +59,7 @@ export class GuardMixinManager extends ContractBase {
     mixins: string[]
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assig... Remove this comment to see the full error message
       this.getAbiObject('updateModuleMixins'),
       [token, module, mixins] as string[]
     );

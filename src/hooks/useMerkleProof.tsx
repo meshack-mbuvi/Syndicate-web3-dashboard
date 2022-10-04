@@ -9,7 +9,7 @@ import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
@@ -44,7 +44,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
-  const processMerkleProofData = async (merkleObj) => {
+  const processMerkleProofData = async (merkleObj: any) => {
     dispatch(setLoadingMerkleProof(true));
     dispatch(
       setMerkleProof({

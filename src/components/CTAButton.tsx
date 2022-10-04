@@ -2,11 +2,11 @@ import React from 'react';
 
 interface Props {
   disabled?: boolean;
-  onClick?;
+  onClick?: any;
   greenCta?: boolean;
   voltCta?: boolean;
   cherenkovCta?: boolean;
-  type?;
+  type?: any;
   fullWidth?: boolean;
   extraClasses?: string;
 }

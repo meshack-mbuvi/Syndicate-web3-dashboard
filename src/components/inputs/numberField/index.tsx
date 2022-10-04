@@ -51,6 +51,7 @@ export const NumberField: React.FC<IProps> = ({
     field: { onChange, ...rest },
     formState: { errors }
   } = useController({
+    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     defaultValue
@@ -98,7 +99,7 @@ export const NumberField: React.FC<IProps> = ({
               : 'pr-4'
           }`}
           placeholder={placeholder}
-          onChange={(event) => {
+          onChange={(event: any) => {
             const { value } = event.target;
 
             onChange(value.replaceAll(',', ''));

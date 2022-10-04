@@ -8,8 +8,10 @@ export abstract class ContractBase {
   web3: Web3;
   address: string;
   activeNetwork: IActiveNetwork;
+  // @ts-expect-error TS(2564): Property 'contract' has no initializer and is not ... Remove this comment to see the full error message
   contract: Contract;
   abiItem: AbiItem[];
+  // @ts-expect-error TS(2564): Property 'isGnosisSafe' has no initializer and is ... Remove this comment to see the full error message
   isGnosisSafe: boolean;
   addresses: typeof CONTRACT_ADDRESSES[1 | 4 | 137];
 
@@ -23,6 +25,7 @@ export abstract class ContractBase {
     this.activeNetwork = activeNetwork;
     this.address = address;
     this.abiItem = CONTRACT_ABI;
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     this.addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
     this.init();
   }
@@ -31,6 +34,7 @@ export abstract class ContractBase {
     try {
       this.contract = new this.web3.eth.Contract(this.abiItem, this.address);
     } catch (error) {
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Contract'.
       this.contract = null;
     }
   }
@@ -49,7 +53,7 @@ export abstract class ContractBase {
     await new Promise((resolve, reject) => {
       contractMethod()
         .send({ from: account, gasPrice: gasEstimate, ...(value && { value }) })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           if (
@@ -61,11 +65,11 @@ export abstract class ContractBase {
             onTxConfirm('');
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (err) => {
+        .on('error', (err: any) => {
           onTxFail(err);
           reject(err);
         });
@@ -97,7 +101,7 @@ export abstract class ContractBase {
           from: account,
           ...(value && { value })
         },
-        (_error, gasAmount) => {
+        (_error: any, gasAmount: any) => {
           if (gasAmount) onResponse(gasAmount);
           if (_error) console.log('EstimateGasError', _error); // TODO: should be logged to Error monitoring tool (Sentry)
         }

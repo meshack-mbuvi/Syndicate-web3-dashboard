@@ -15,7 +15,7 @@ import { H4 } from '@/components/typography';
  */
 const RaiseTokenAmount = (props: {
   title: string;
-  onChange: (e) => void;
+  onChange: (e: any) => void;
   handleButtonClick: () => void;
   placeholder?: string;
   error?: string;

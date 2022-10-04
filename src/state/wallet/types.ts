@@ -1,4 +1,4 @@
-import { Resolver } from '@ethersproject/providers';
+import { Web3Provider } from '@ethersproject/providers';
 import Web3 from 'web3';
 
 const initialWeb3 = {};
@@ -58,7 +58,7 @@ export interface IWeb3Library {
   web3: IWeb3;
   providerName: string;
   activeNetwork: IActiveNetwork;
-  ensResolver: Resolver;
+  ethersProvider: Web3Provider;
 }
 
 export interface IEthereumNetwork {
@@ -95,7 +95,7 @@ export interface InitialState {
       correctEthereumNetwork: string;
       invalidEthereumNetwork: boolean;
     };
-    ensResolver: Resolver;
+    ethersProvider: Web3Provider;
   };
   showWalletModal: boolean;
   dispatchCreateFlow: boolean;
@@ -107,7 +107,8 @@ export const initialState: InitialState = {
   web3: {
     status: Status.DISCONNECTED,
     connect: false,
-    ensResolver: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Web3Provider'.
+    ethersProvider: null,
     showConnectionModal: false,
     isErrorModalOpen: false,
     error: null,
@@ -127,6 +128,7 @@ export const initialState: InitialState = {
       network: '',
       testnet: false,
       chainId: 0,
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
       networkId: null,
       rpcUrl: '',
       publicRPC: '',

@@ -10,7 +10,7 @@ export default {
   }
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [textFieldValue, setTextFieldValue] = useState(
     '0x50B8E0Bd4FAF9E98AFaEB0f0c4a008552f03D3aE, 0x50B8E0Bd4FAF9E98AFaEB0f0c4a008552f03D3aE'
   );
@@ -28,6 +28,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   title: 'Airdrop 1 ✺ABC to',
   helperText:

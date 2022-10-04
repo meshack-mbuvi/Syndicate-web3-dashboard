@@ -78,6 +78,7 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
       className={`flex w-full h-full items-center justify-center ${extraClasses}`}
     >
       <CollectivesCreateSuccess
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'st... Remove this comment to see the full error message
         name={collectiveName}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}

@@ -1,7 +1,9 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_NOTE_ADD } from '@/components/amplitude/eventNames';
 import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
+
 import Linkify from 'linkify-react';
 import Image from 'next/image';
 import React, {
@@ -13,12 +15,11 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TextArea } from './textArea';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { TRANSACTION_NOTE_ADD } from '@/components/amplitude/eventNames';
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
   setShowNote: Dispatch<SetStateAction<boolean>>;
+  isOwner: boolean;
 }
 
 /**
@@ -28,14 +29,14 @@ interface IActivityNote {
  */
 const ActivityNote: React.FC<IActivityNote> = ({
   saveTransactionNote,
-  setShowNote
+  setShowNote,
+  isOwner
 }) => {
   const dispatch = useDispatch();
   const {
     transactionsReducer: { currentTransaction }
   } = useSelector((state: AppState) => state);
   const { note } = currentTransaction;
-  const isManager = useIsClubOwner();
 
   const [hover, setHover] = useState<boolean>(false);
   const [readOnly, setReadOnly] = useState<boolean>(true);
@@ -45,7 +46,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
 
   const noteREf = useRef(null);
   const setHoverState = (showHover: boolean) => {
-    if (!isManager) return;
+    if (!isOwner) return;
     if (readOnly && showHover) {
       setHover(true);
     } else if (!showHover) {
@@ -61,8 +62,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
     }
     dispatch(setCurrentTransaction({ ...currentTransaction, note: noteValue }));
     amplitudeLogger(TRANSACTION_NOTE_ADD, {
-      flow: Flow.CLUB_MANAGE,
-      transaction_note: noteValue
+      flow: Flow.CLUB_MANAGE
     });
   };
 
@@ -88,6 +88,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
 
   useEffect(() => {
     if (noteREf.current) {
+      // @ts-expect-error TS(2339): Property 'clientHeight' does not exist on type 'ne... Remove this comment to see the full error message
       const noteHeight = noteREf.current.clientHeight;
       if (noteHeight <= 96) {
         setFixedNote(true);
@@ -104,16 +105,22 @@ const ActivityNote: React.FC<IActivityNote> = ({
       }`}
       onMouseOver={() => setHoverState(true)}
       onMouseLeave={() => setHoverState(false)}
+      tabIndex={0}
+      role="button"
+      onFocus={() => ({})}
     >
       <div className="flex justify-between mb-4">
         <span className="text-white">Note</span>{' '}
-        {isManager && (
+        {isOwner && (
           <>
             {readOnly && noteValue ? (
               hover && (
                 <div
                   className="flex items-center space-x-2 cursor-pointer text-blue-navy"
                   onClick={() => setReadOnly(false)}
+                  onKeyDown={() => setReadOnly(false)}
+                  tabIndex={0}
+                  role="button"
                 >
                   <Image
                     src={`/images/actionIcons/edit-icon.svg`}
@@ -149,6 +156,9 @@ const ActivityNote: React.FC<IActivityNote> = ({
               <div
                 className="mt-4 flex text-gray-shuttle cursor-pointer"
                 onClick={() => readMore()}
+                tabIndex={0}
+                onKeyDown={() => ''}
+                role="button"
               >
                 Read more
                 <img
@@ -161,6 +171,9 @@ const ActivityNote: React.FC<IActivityNote> = ({
               <div
                 className="mt-4 flex text-gray-shuttle cursor-pointer"
                 onClick={() => readMore()}
+                tabIndex={0}
+                onKeyDown={() => ''}
+                role="button"
               >
                 Read less
                 <img
@@ -173,7 +186,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
           ) : null}
         </div>
       ) : (
-        isManager && (
+        isOwner && (
           <div className="text-white">
             <div className="mb-4 ">
               <TextArea

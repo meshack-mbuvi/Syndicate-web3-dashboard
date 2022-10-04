@@ -47,6 +47,7 @@ const useSubmitCollective = () => {
   const { submit: submitMetadata } = useSubmitMetadata(
     beforeMetadataSubmission,
     onIpfsHash,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     () => {},
     onIpfsError
   );

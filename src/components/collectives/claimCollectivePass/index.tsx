@@ -1,13 +1,13 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
-import { AppState } from '@/state';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { showWalletModal } from '@/state/wallet/actions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { useDispatch, useSelector } from 'react-redux';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
+import { useDispatch } from 'react-redux';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -63,10 +63,8 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const {
-    collectiveDetailsReducer: {
-      details: { isOpen }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { isOpen }
+  } = useERC721Collective();
 
   const created = (
     <>
@@ -240,6 +238,22 @@ export const ClaimCollectivePass: React.FC<Props> = ({
             transactionType={transactionType}
           />
         </div>
+      ) : progressState &&
+        progressState === ProgressState.TAKING_LONG &&
+        walletState === WalletState.CONNECTED ? (
+        <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
+          <ProgressCard
+            title="Transaction is taking a while"
+            state={progressState}
+            transactionHash={transactionHash}
+            buttonOnClick={tryAgain}
+            buttonFullWidth={true}
+            transactionType={transactionType}
+            description={
+              'Hold tight, this may take a while. You can speed up the transaction by increasing the gas fee in your wallet'
+            }
+          />
+        </div>
       ) : (
         <div
           className={`fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:px-8 sm:py-10 bg-gray-syn8 ${
@@ -248,44 +262,51 @@ export const ClaimCollectivePass: React.FC<Props> = ({
               : ''
           }text-center sm:rounded-2.5xl`}
         >
-          {walletLabel}
-          <div className="space-y-4">
-            {walletState !== WalletState.MAX_PASSES_REACHED && (
-              <CtaButton
-                greenCta={walletState === WalletState.CONNECTED}
-                disabled={!isOpen}
-                onClick={() => {
-                  if (
-                    walletState === WalletState.NOT_CONNECTED ||
-                    walletState === WalletState.WRONG_WALLET
-                  ) {
-                    dispatch(showWalletModal());
-                  } else if (walletState === WalletState.CONNECTED) {
-                    claimCollective();
-                    amplitudeLogger(CLAIM_CLICK, {
-                      flow: Flow.COLLECTIVE_CLAIM
-                    });
-                  }
-                }}
-              >
-                {walletButtonText}
-              </CtaButton>
-            )}
-            {walletState === WalletState.CONNECTED && gasEstimate && (
-              // Positioned absolutely so it doesn't take up space
-              <div className="relative">
-                <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
-                  Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
-                  {gasEstimate.tokenSymbol}{' '}
-                  {Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  }).format(gasEstimate.fiatAmount)}{' '}
-                  USD
-                </B3>
-              </div>
-            )}
-          </div>
+          {isOpen ? (
+            walletLabel
+          ) : (
+            <H4 regular extraClasses="text-center">
+              This Collective is no longer open to new members.
+            </H4>
+          )}
+          {isOpen ? (
+            <div className="space-y-4">
+              {walletState !== WalletState.MAX_PASSES_REACHED && (
+                <CtaButton
+                  greenCta={walletState === WalletState.CONNECTED}
+                  onClick={() => {
+                    if (
+                      walletState === WalletState.NOT_CONNECTED ||
+                      walletState === WalletState.WRONG_WALLET
+                    ) {
+                      dispatch(showWalletModal());
+                    } else if (walletState === WalletState.CONNECTED) {
+                      claimCollective();
+                      amplitudeLogger(CLAIM_CLICK, {
+                        flow: Flow.COLLECTIVE_CLAIM
+                      });
+                    }
+                  }}
+                >
+                  {walletButtonText}
+                </CtaButton>
+              )}
+              {walletState === WalletState.CONNECTED && gasEstimate && (
+                // Positioned absolutely so it doesn't take up space
+                <div className="relative">
+                  <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
+                    Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
+                    {gasEstimate.tokenSymbol}{' '}
+                    {Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    }).format(gasEstimate.fiatAmount)}{' '}
+                    USD
+                  </B3>
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
       )}
     </div>

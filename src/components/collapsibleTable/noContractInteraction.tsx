@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 
 const transitionSettings = 'transition-all duration-700';
 
@@ -52,10 +52,15 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
   activeRow,
   setActiveRow,
   expander: {
+    // @ts-expect-error TS(2339): Property 'isExpandable' does not exist on type {... } | undefined .
     isExpandable = true,
+    // @ts-expect-error TS(2339): Property 'isExpandable' does not exist on type {... } | undefined .
     isNotInteractableExpanded = true,
+    // @ts-expect-error TS(2339): Property 'isExpandable' does not exist on type {... } | undefined .
     setIsNotInteractableExpanded,
+    // @ts-expect-error TS(2339): Property 'isExpandable' does not exist on type {... } | undefined .
     subfieldEditing,
+    // @ts-expect-error TS(2339): Property 'isExpandable' does not exist on type {... } | undefined .
     setSubfieldEditing
   },
   cancelEdit,
@@ -109,7 +114,9 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
             type={SwitchType.EXPLICIT}
             onClick={() => {
               setIsNotInteractableExpanded(!isNotInteractableExpanded);
+              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
               setActiveRow(switchRowIndex);
+              // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
               dispatch(setActiveRowIdx(switchRowIndex));
             }}
           />
@@ -121,6 +128,7 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
 
       {/* Rows */}
       <div
+        // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
         ref={rowsRef}
         className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
         style={{
@@ -158,14 +166,17 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
                   className={`xl:mr-0 ${
                     inputWithPreview ? 'sm:col-span-6' : 'sm:col-span-8'
                   }`}
+                  // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
                   ref={editRef}
                 >
                   {inputField}
                   <SubmitContent
                     showCallout={showCallout}
+                    // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
                     handleEdit={handleDisclaimerConfirmation}
                     cancelEdit={() => {
                       cancelEdit();
+                      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                       setActiveRow(0);
                       dispatch(setActiveRowIdx(0));
                       setSubfieldEditing(false);
@@ -185,9 +196,12 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
                     {isEditable && (
                       <EditButton
                         handleClick={() => {
+                          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                           setActiveRow(rowIndex);
+                          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
                           dispatch(setActiveRowIdx(rowIndex));
                           setSubfieldEditing(true);
+                          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                           setEditGroupFieldClicked(false);
                         }}
                       />

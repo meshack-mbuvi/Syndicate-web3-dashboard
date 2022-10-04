@@ -16,7 +16,7 @@ import { CheckIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import ERC20ABI from 'src/utils/abi/erc20';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import RugRadioIcon from '/public/images/rugRadio/rugRadioIcon.svg';
 
 /**
@@ -174,7 +174,7 @@ const RedeemRug: React.FC = () => {
     setAmountToRedeem(maximumWithdrawable.toString());
   };
 
-  const handleOnchange = (value) => {
+  const handleOnchange = (value: any) => {
     setAmountToRedeem(value);
   };
 
@@ -190,7 +190,7 @@ const RedeemRug: React.FC = () => {
     setSufficientAllowanceSet(false);
   };
 
-  const onTxFail = (error?) => {
+  const onTxFail = (error?: any) => {
     const { code } = error;
 
     if (code == 4001) {
@@ -233,7 +233,7 @@ const RedeemRug: React.FC = () => {
         rugRadioContract.methods
           .approve(depositExchangeModuleAddress, amountToApprove)
           .send({ from: account, gasPrice: gasEstimate })
-          .on('transactionHash', (transactionHash) => {
+          .on('transactionHash', (transactionHash: any) => {
             // user clicked on confirm
             // show loading state
             setSubmittingAllowanceApproval(true);
@@ -245,7 +245,7 @@ const RedeemRug: React.FC = () => {
               resolve(transactionHash);
             }
           })
-          .on('receipt', async (receipt) => {
+          .on('receipt', async (receipt: any) => {
             await checkCurrentAllowance();
             setSubmittingAllowanceApproval(false);
             resolve(receipt);
@@ -253,7 +253,7 @@ const RedeemRug: React.FC = () => {
             // update current transaction step
             setCurrentTransaction(2);
           })
-          .on('error', (error) => {
+          .on('error', (error: any) => {
             // user clicked reject.
             if (error?.code === 4001) {
               setTransactionRejected(true);
@@ -284,6 +284,7 @@ const RedeemRug: React.FC = () => {
   const handleRedeem = async () => {
     setMetamaskConfirmPending(true);
     await depositExchangeMintModule.mint(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       rugDaoTokenAddress,
       getWeiAmount(web3, rugTokensToRedeem.toString(), 18, true),
       account,
@@ -390,7 +391,7 @@ const RedeemRug: React.FC = () => {
 
       <div className="mt-6">
         <CtaButton
-          onClick={() => {
+          onClick={(): void => {
             setRedeemSucceeded(false);
             setShowRedeemProcessingModal(true);
           }}

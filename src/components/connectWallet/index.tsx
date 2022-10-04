@@ -62,6 +62,7 @@ const ConnectWallet: React.FC = () => {
 
   // set the correct text for the loading modal
   // After 10 seconds, we switch the wallet connect message, showing a help link.
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (providerName) {
       const name = providerName === 'Injected' ? 'Metamask' : providerName;
@@ -106,7 +107,21 @@ const ConnectWallet: React.FC = () => {
     {
       name: 'Metamask',
       icon: '/images/metamaskIcon.svg',
-      providerToActivate: () => activateInjected(),
+      // @ts-expect-error TS(7030): Not all code paths return a value.
+      providerToActivate: () => {
+        // check whether coinbase extension is installed
+        const metamaskWallet =
+          // providers exists when you have more than one extensions installed.
+          window?.ethereum?.providers?.filter(
+            (provider: any) => provider?.isMetaMask
+          )[0] || window?.ethereum?.isMetaMask;
+
+        if (!metamaskWallet) {
+          return window.open('https://metamask.io/download/', '_blank');
+        }
+
+        activateInjected('Metamask');
+      },
       hidden: loadedAsSafeApp
     },
     {
@@ -124,7 +139,23 @@ const ConnectWallet: React.FC = () => {
     {
       name: 'Coinbase Wallet',
       icon: '/images/coinbase-wallet.svg',
-      providerToActivate: () => activateInjected(),
+      // @ts-expect-error TS(7030): Not all code paths return a value.
+      providerToActivate: () => {
+        // check whether coinbase extension is installed
+        const coinbaseWallet =
+          window?.ethereum?.providers?.filter(
+            (provider: any) => provider?.isCoinbaseWallet
+          )[0] || window?.ethereum?.isCoinbaseWallet;
+
+        if (!coinbaseWallet) {
+          return window.open(
+            'https://www.coinbase.com/wallet/getting-started-extension',
+            '_blank'
+          );
+        }
+
+        activateInjected('Coinbase Wallet');
+      },
       hidden: loadedAsSafeApp
     }
   ];
@@ -133,8 +164,9 @@ const ConnectWallet: React.FC = () => {
    * This function is triggered when user clicks metamask button
    * The provider for metamask is named injected
    */
-  const activateInjected = async () => {
-    await connectWallet('Injected');
+  const activateInjected = async (walletName?: string) => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+    await connectWallet('Injected', walletName);
   };
 
   /**
@@ -142,23 +174,25 @@ const ConnectWallet: React.FC = () => {
    * It calls activateProvider passing WalletConnect as the parameters.
    */
   const activateWalletConnect = async () => {
-    await connectWallet('WalletConnect');
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+    await connectWallet('WalletConnect', 'WalletConnect');
   };
 
   /**
    * This method is triggered when user clicks Gnosis Safe connect button.
    * It calls activateProvider passing gnosisSafeConnect as the parameters.
    *
-   * Ticket reference: SYN-49
    */
   const activateGnosisSafe = async () => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await connectWallet('GnosisSafe');
   };
 
   // showConnectWalletModal
 
   // button for each provider
-  const ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
+  const ProviderButton = ({ name, icon, providerToActivate, hidden }: any) => {
     if (!hidden) {
       return (
         <div className="flex justify-center items-center m-auto">
@@ -300,7 +334,9 @@ const ConnectWallet: React.FC = () => {
 
       {/* Loading modal */}
       <ConnectModal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={walletConnecting}
+        // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
         closeModal={cancelWalletConnection}
         height="h-80"
       >
@@ -336,9 +372,11 @@ const ConnectWallet: React.FC = () => {
 
       {/* success modal */}
       <ConnectModal
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         show={showSuccessModal && !walletConnecting}
         showCloseButton={false}
         height="h-80"
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         closeModal={() => setShowSuccessModal(false)}
       >
         <div className="mt-14">
@@ -395,6 +433,7 @@ const ConnectWallet: React.FC = () => {
                 className="flex justify-center items-center px-6 py-3 text-base font-medium rounded-lg bg-gray-dark w-full"
               >
                 <SpinnerWithImage
+                  // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
                   icon={null}
                   height="h-8"
                   width="w-8"

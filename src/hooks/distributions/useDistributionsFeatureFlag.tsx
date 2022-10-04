@@ -21,6 +21,7 @@ const useDistributionsFeatureFlag = (): {
       featureFlagClient.getTreatmentWithConfig(distributions_feature, {
         distributionsAllowlisted: true
       });
+    // @ts-expect-error TS(2345): Argument of type 'TreatmentWithConfig' is not assignable to param... Remove this comment to see the full error message
     setReadyDistributionsClient(distributionsFeatureBoolean);
   }, [featureFlagClient, isReady]);
 

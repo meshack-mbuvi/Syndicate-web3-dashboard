@@ -2,7 +2,7 @@ import React from 'react';
 
 export const LegalDocumentPreview: React.FC<{
   documentText: string;
-  documentLink;
+  documentLink: any;
 }> = ({ documentText, documentLink }) => {
   return (
     <div className="flex justify-between w-full text-sm">

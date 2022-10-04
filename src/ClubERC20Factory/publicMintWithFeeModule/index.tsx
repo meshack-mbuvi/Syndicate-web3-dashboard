@@ -8,7 +8,7 @@ export class PublicMintWithFeeModuleContract {
   activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
@@ -24,10 +24,10 @@ export class PublicMintWithFeeModuleContract {
     tokenAddress: string,
     value: string,
     amount: number,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);
 
@@ -58,7 +58,7 @@ export class PublicMintWithFeeModuleContract {
     );
   }
 
-  async amountMinted(nftAddress, account): Promise<number> {
+  async amountMinted(nftAddress: any, account: any): Promise<number> {
     try {
       return this.contract.methods.amountMinted(nftAddress, account).call();
     } catch (error) {
@@ -66,7 +66,7 @@ export class PublicMintWithFeeModuleContract {
     }
   }
 
-  async nativePrice(nftAddress): Promise<string> {
+  async nativePrice(nftAddress: any): Promise<string> {
     try {
       return this.contract.methods.ethPrice(nftAddress).call();
     } catch (error) {
@@ -74,7 +74,7 @@ export class PublicMintWithFeeModuleContract {
     }
   }
 
-  async startTime(nftAddress): Promise<string> {
+  async startTime(nftAddress: any): Promise<string> {
     try {
       return this.contract.methods.startTime(nftAddress).call();
     } catch (error) {
@@ -82,7 +82,7 @@ export class PublicMintWithFeeModuleContract {
     }
   }
 
-  async publicSupply(nftAddress): Promise<number> {
+  async publicSupply(nftAddress: any): Promise<number> {
     try {
       return this.contract.methods.publicSupply(nftAddress).call();
     } catch (error) {
@@ -90,7 +90,7 @@ export class PublicMintWithFeeModuleContract {
     }
   }
 
-  async maxPerAddress(nftAddress): Promise<number> {
+  async maxPerAddress(nftAddress: any): Promise<number> {
     try {
       return this.contract.methods.maxPerAddress(nftAddress).call();
     } catch (error) {
@@ -99,6 +99,7 @@ export class PublicMintWithFeeModuleContract {
   }
 
   getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
     if (!distEvent.trim()) return;
     try {
       const events = await this.contract.getPastEvents(distEvent, {

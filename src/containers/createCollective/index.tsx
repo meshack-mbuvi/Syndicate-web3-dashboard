@@ -40,7 +40,7 @@ const CreateCollectiveContainer: FC = () => {
     }
   }, [creationStatus.transactionSuccess]);
 
-  const handleExitClick = (event) => {
+  const handleExitClick = (event: any) => {
     event.preventDefault();
     dispatch(resetCollectiveCreationState());
     router.push('/');

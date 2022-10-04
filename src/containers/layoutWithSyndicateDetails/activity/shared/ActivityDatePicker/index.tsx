@@ -41,13 +41,16 @@ const ActivityDatePicker: React.FC<Props> = ({
     onChange(date);
   };
 
+  // eslint-disable-next-line react/display-name
   const CustomInput = React.forwardRef<
     any,
     { onClick?: () => void; value?: string }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   >(({ value, onClick }, ref) => (
     <button
       className="flex mr-0 my-auto py-4 items-center font-whyte text-base text-white"
-      onClick={(e) => {
+      onClick={() => {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         onClick();
       }}
       value={value}

@@ -15,25 +15,24 @@ import {
   ProgressDescriptor,
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
+import { Spinner } from '@/components/shared/spinner';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
-import { setClubMembers } from '@/state/clubMembers';
-import { setDistributionMembers } from '@/state/distributions';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
 import router, { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ERC20ABI from 'src/utils/abi/erc20';
 import { v4 as uuidv4 } from 'uuid';
 import DistributionHeader from '../DistributionHeader';
 
@@ -49,21 +48,24 @@ type step = {
   status: string;
 };
 
-const ReviewDistribution: React.FC = () => {
+type Props = {
+  tokens: any;
+  handleExitClick: () => void;
+};
+
+const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const {
     web3Reducer: {
-      web3: { status, account, web3, activeNetwork }
+      web3: { status, account, web3, activeNetwork, ethersProvider }
     },
     initializeContractsReducer: { syndicateContracts },
     erc20TokenSliceReducer: {
       erc20Token: { name, symbol, owner, address }
     },
-    assetsSliceReducer: { loading },
-    distributeTokensReducer: { distributionTokens },
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers }
+    assetsSliceReducer: { loading }
   } = useSelector((state: AppState) => state);
 
-  const [activeAddresses, setActiveAddresses] = useState([]);
+  const [activeAddresses, setActiveAddresses] = useState<string[]>([]);
   const [memberDetails, setMemberDetails] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -90,12 +92,13 @@ const ReviewDistribution: React.FC = () => {
     if (!activeNetwork) return;
 
     setDistributionERC20Address(
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId].distributionsERC20
     );
   }, [activeNetwork]);
 
   // fetch club members
-  useClubTokenMembers();
+  const { clubMembers, isFetchingMembers } = useClubTokenMembers();
 
   /**
    * Fetch club details
@@ -117,10 +120,6 @@ const ReviewDistribution: React.FC = () => {
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
       dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
     } else if (isDemoMode) {
       // using "Active" as the default view.
       resetClubState(dispatch, mockActiveERC20Token);
@@ -132,39 +131,30 @@ const ReviewDistribution: React.FC = () => {
     syndicateContracts?.DepositTokenMintModule
   ]);
 
-  useEffect(() => {
-    if (loadingClubMembers) return;
-
-    const distributionMembers = memberDetails.filter((_, index) =>
-      activeAddresses.includes(index)
-    );
-
-    dispatch(setDistributionMembers(distributionMembers));
-  }, [activeAddresses, isEditing]);
-
   /**
    * Get addresses of all club members
    */
   useEffect(() => {
-    const activeAddresses = [];
+    const activeAddresses: string[] = [];
     clubMembers.forEach((member) => activeAddresses.push(member.memberAddress));
     setActiveAddresses(activeAddresses);
   }, [JSON.stringify(clubMembers)]);
 
   // prepare member data here
   useEffect(() => {
-    if (clubMembers.length && distributionTokens.length) {
+    if (clubMembers.length && tokens.length) {
       const memberDetails = clubMembers.map(
-        ({ ownershipShare, clubTokens, memberAddress }) => {
+        ({ ownershipShare, clubTokens, memberAddress, ...rest }) => {
           return {
+            ...rest,
             ownershipShare,
-            memberName: memberAddress,
+            address: memberAddress,
             clubTokenHolding: clubTokens,
             distributionShare: +ownershipShare,
-            receivingTokens: distributionTokens.map(
-              ({ tokenAmount, symbol, logo, icon }) => {
+            receivingTokens: tokens.map(
+              ({ tokenAmount, symbol, logo, icon }: any) => {
                 return {
-                  amount: +ownershipShare * +tokenAmount,
+                  amount: (+ownershipShare * +tokenAmount) / 100,
                   tokenSymbol: symbol,
                   tokenIcon: logo || icon || '/images/token-gray.svg'
                 };
@@ -174,6 +164,7 @@ const ReviewDistribution: React.FC = () => {
         }
       );
 
+      // @ts-expect-error TS(2345): Argument of type '{ ownershipShare: number; member... Remove this comment to see the full error message
       setMemberDetails(memberDetails);
     } else {
       setMemberDetails([]);
@@ -184,12 +175,12 @@ const ReviewDistribution: React.FC = () => {
     };
   }, [
     loadingClubDeposits,
-    loadingClubMembers,
+    isFetchingMembers,
     JSON.stringify(clubMembers),
-    JSON.stringify(distributionTokens)
+    JSON.stringify(tokens)
   ]);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchValue(e.target.value);
   };
 
@@ -197,7 +188,7 @@ const ReviewDistribution: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
-  const clearSearchValue = (e) => {
+  const clearSearchValue = (e: any) => {
     e.preventDefault();
     setSearchValue('');
   };
@@ -215,10 +206,10 @@ const ReviewDistribution: React.FC = () => {
   const [isTransactionPending, setIsTransactionPending] = useState(false);
 
   useEffect(() => {
-    if (!distributionTokens.length) return;
+    if (!tokens.length) return;
 
-    const steps = [];
-    distributionTokens.forEach((token) => {
+    const steps: any = [];
+    tokens.forEach((token: any) => {
       if (token.symbol == activeNetwork.nativeCurrency.symbol) {
         steps.push({
           ...token,
@@ -256,7 +247,7 @@ const ReviewDistribution: React.FC = () => {
     });
 
     setSteps(steps);
-  }, [JSON.stringify(distributionTokens)]);
+  }, [JSON.stringify(tokens)]);
 
   const [activeMembersBeforeEditing, setActiveMembersBeforeEditing] =
     useState(activeAddresses);
@@ -291,7 +282,7 @@ const ReviewDistribution: React.FC = () => {
     }
   }, [activeIndex]);
 
-  const handleSaveAction = (e) => {
+  const handleSaveAction = (e: any) => {
     e.preventDefault();
     toggleEditDistribution();
   };
@@ -299,7 +290,7 @@ const ReviewDistribution: React.FC = () => {
   /**
    * This function reverts activeAddresses to the state before editing
    */
-  const handleCancelAction = (e) => {
+  const handleCancelAction = (e: any) => {
     e.preventDefault();
 
     // restore active indices from state
@@ -307,13 +298,15 @@ const ReviewDistribution: React.FC = () => {
     toggleEditDistribution();
   };
 
-  const updateSteps = (key, value) => {
+  const updateSteps = (key: any, value: any) => {
     const updatedSteps = steps;
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
 
   const incrementActiveIndex = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex !== steps.length - 1) {
       setActiveIndex(activeIndex + 1);
     }
@@ -349,7 +342,7 @@ const ReviewDistribution: React.FC = () => {
         _tokenContract.methods
           .approve(distributionERC20Address, amountToApprove)
           .send({ from: account, gasPrice: gasEstimate })
-          .on('transactionHash', (transactionHash) => {
+          .on('transactionHash', (transactionHash: any) => {
             setProgressDescriptorTitle(`Approving ${token.symbol}`);
             setProgressDescriptorDescription(
               'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. '
@@ -357,7 +350,7 @@ const ReviewDistribution: React.FC = () => {
 
             setTransactionHash(transactionHash);
           })
-          .on('receipt', async (receipt) => {
+          .on('receipt', async (receipt: any) => {
             await checkTokenAllowance(token);
 
             incrementActiveIndex();
@@ -369,7 +362,7 @@ const ReviewDistribution: React.FC = () => {
             resolve(receipt);
             setIsTransactionPending(false);
           })
-          .on('error', (error) => {
+          .on('error', (error: any) => {
             setIsTransactionPending(false);
             // user clicked reject.
             if (error?.code === 4001) {
@@ -434,6 +427,7 @@ const ReviewDistribution: React.FC = () => {
   };
 
   const clearErrorStepErrorStates = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const updatedSteps = steps.map((step) => ({
       ...step,
       isInErrorState: false,
@@ -445,7 +439,8 @@ const ReviewDistribution: React.FC = () => {
     setProgressDescriptorDescription('');
   };
 
-  const onTxConfirm = (transactionHash) => {
+  const onTxConfirm = (transactionHash: any) => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
     // Update progress state
     setProgressDescriptorTitle(
@@ -462,6 +457,7 @@ const ReviewDistribution: React.FC = () => {
   const onTxReceipt = () => {
     setIsConfirmationModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
 
@@ -477,9 +473,10 @@ const ReviewDistribution: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const onTxFail = (error?) => {
+  const onTxFail = (error?: any) => {
     setIsConfirmationModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
 
     updateSteps('isInErrorState', true);
@@ -510,7 +507,7 @@ const ReviewDistribution: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const handleCheckAndApproveAllowance = async (step) => {
+  const handleCheckAndApproveAllowance = async (step: any) => {
     setIsTransactionPending(true);
     setProgressDescriptorDescription(`Approve ${step.symbol} from your wallet`);
 
@@ -532,9 +529,10 @@ const ReviewDistribution: React.FC = () => {
    *
    * @param token an erc20 token to be distributed to members
    */
-  const makeDistributions = async (token) => {
+  const makeDistributions = async (token: any) => {
     try {
       setIsTransactionPending(true);
+      setTransactionHash('');
 
       const amountToDistribute = getWeiAmount(
         web3,
@@ -548,7 +546,7 @@ const ReviewDistribution: React.FC = () => {
           account,
           address,
           amountToDistribute,
-          activeAddresses, // members
+          activeAddresses,
           batchIdentifier,
           onTxConfirm,
           onTxReceipt,
@@ -572,12 +570,13 @@ const ReviewDistribution: React.FC = () => {
     }
   };
 
-  const handleDisclaimerConfirmation = (e?) => {
+  const handleDisclaimerConfirmation = (e?: any) => {
     e.preventDefault();
     setIsModalVisible(false);
 
     // handle distributions
     setIsConfirmationModalVisible(true);
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     if (token.action == 'distribute') {
       // no approval stage for ETH
@@ -592,11 +591,12 @@ const ReviewDistribution: React.FC = () => {
       makeDistributions(token);
     } else {
       clearErrorStepErrorStates();
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       handleCheckAndApproveAllowance(steps[activeIndex]);
     }
   };
 
-  const showDistributeDisclaimer = (e) => {
+  const showDistributeDisclaimer = (e: any) => {
     e.preventDefault();
     setBatchIdentifier(uuidv4());
 
@@ -611,9 +611,10 @@ const ReviewDistribution: React.FC = () => {
     clearErrorStepErrorStates();
   };
 
-  const handleClickAction = async (e) => {
+  const handleClickAction = async (e: any) => {
     e.preventDefault();
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     updateSteps('status', ProgressDescriptorState.PENDING);
     updateSteps('isInErrorState', false);
@@ -638,7 +639,8 @@ const ReviewDistribution: React.FC = () => {
     );
   };
 
-  const socialURL = window.location.href;
+  // Share member link via social network.
+  const socialURL = window.location.href.replace('/distribute', '');
 
   return (
     <div className="container mx-auto w-full">
@@ -657,56 +659,128 @@ const ReviewDistribution: React.FC = () => {
         />
       </div>
 
-      <div className="flex mt-16 justify-between">
-        <DistributionHeader
-          titleText={isEditing ? 'Edit Distribution' : 'Review Distribution'}
-          subTitleText={`Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`}
-        />
+      {isFetchingMembers ? (
+        <Spinner />
+      ) : (
+        <>
+          {memberDetails.length ? (
+            <div className="flex mt-5 md:mt-16 align-middle items-center justify-between">
+              <DistributionHeader
+                titleText={
+                  isEditing ? 'Edit Distribution' : 'Review Distribution'
+                }
+                subTitleText={
+                  isEditing
+                    ? `Exclude member(s) from distributions for investments they did not participate in. Funds are distributed proportionally to remaining members by their ownership share.`
+                    : `Members will automatically receive the asset distributions below, once the transaction is completed on-chain.`
+                }
+              />
 
-        {isEditing ? (
-          <div className="flex space-x-8">
-            <PrimaryButton
-              customClasses="border-none font-Slussen"
-              textColor="text-blue"
-              onClick={handleCancelAction}
-            >
-              Cancel
-            </PrimaryButton>
-            <PrimaryButton
-              customClasses={`border-none font-Slussen ${
-                activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
-              } px-8 py-4`}
-              textColor={`${
-                activeMembersChanged ? 'text-black' : 'text-white'
-              }`}
-              onClick={handleSaveAction}
-            >
-              Save
-            </PrimaryButton>
-          </div>
-        ) : (
-          <CtaButton
-            greenCta={true}
-            fullWidth={false}
-            onClick={showDistributeDisclaimer}
-            disabled={activeAddresses.length == 0}
-          >
-            Submit
-          </CtaButton>
-        )}
-      </div>
+              {isEditing ? (
+                <>
+                  <div className="md:flex ml-16 max-h-14 hidden space-x-8">
+                    <PrimaryButton
+                      customClasses="border-none font-Slussen"
+                      textColor="text-blue"
+                      onClick={handleCancelAction}
+                    >
+                      Cancel
+                    </PrimaryButton>
+                    <PrimaryButton
+                      customClasses={`border-none font-Slussen ${
+                        activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
+                      } px-8 py-4`}
+                      textColor={`${
+                        activeMembersChanged ? 'text-black' : 'text-white'
+                      }`}
+                      onClick={handleSaveAction}
+                    >
+                      Save
+                    </PrimaryButton>
+                  </div>
 
-      <DistributionMembersTable
-        activeAddresses={activeAddresses}
-        membersDetails={memberDetails}
-        tokens={distributionTokens}
-        isEditing={isEditing}
-        searchValue={searchValue}
-        handleIsEditingChange={toggleEditDistribution}
-        handleActiveAddressesChange={setActiveAddresses}
-        handleSearchChange={handleSearchChange}
-        clearSearchValue={clearSearchValue}
-      />
+                  {/* Mobile positioning */}
+                  <div className="fixed bottom-0 md:hidden z-10 left-0 w-full">
+                    <div className="flex container justify-between bg-black w-full p-5 mx-auto">
+                      <PrimaryButton
+                        customClasses="border-none font-Slussen"
+                        textColor="text-blue"
+                        onClick={handleCancelAction}
+                      >
+                        Cancel
+                      </PrimaryButton>
+                      <PrimaryButton
+                        customClasses={`border-none font-Slussen ${
+                          activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
+                        } px-8 py-4`}
+                        textColor={`${
+                          activeMembersChanged ? 'text-black' : 'text-white'
+                        }`}
+                        onClick={handleSaveAction}
+                      >
+                        Save
+                      </PrimaryButton>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="hidden ml-16 md:block">
+                    <CtaButton
+                      greenCta={true}
+                      fullWidth={false}
+                      onClick={showDistributeDisclaimer}
+                      disabled={activeAddresses.length == 0}
+                    >
+                      Submit
+                    </CtaButton>
+                  </div>
+                  {/* Mobile positioning */}
+                  <div className="fixed bottom-0 md:hidden z-10 left-0 w-full space-y-8">
+                    <div className="flex container sm:hidden justify-center w-full bg-gray-syn8 px-auto py-6 mx-auto">
+                      <CtaButton
+                        greenCta={true}
+                        fullWidth={false}
+                        onClick={showDistributeDisclaimer}
+                        disabled={activeAddresses.length == 0}
+                        extraClasses={'w-full'}
+                      >
+                        Submit
+                      </CtaButton>
+                    </div>
+
+                    {/* This has a different background. */}
+                    <div className="sm:flex container hidden justify-center w-full p-6 pt-5 mx-auto">
+                      <CtaButton
+                        greenCta={true}
+                        fullWidth={false}
+                        onClick={showDistributeDisclaimer}
+                        disabled={activeAddresses.length == 0}
+                        extraClasses={'w-full'}
+                      >
+                        Submit
+                      </CtaButton>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : null}
+
+          <DistributionMembersTable
+            activeAddresses={activeAddresses}
+            membersDetails={memberDetails}
+            tokens={tokens}
+            isEditing={isEditing}
+            searchValue={searchValue}
+            handleIsEditingChange={toggleEditDistribution}
+            handleActiveAddressesChange={setActiveAddresses}
+            handleSearchChange={handleSearchChange}
+            clearSearchValue={clearSearchValue}
+            ethersProvider={ethersProvider}
+          />
+        </>
+      )}
 
       <DistributionsDisclaimerModal
         {...{
@@ -719,6 +793,7 @@ const ReviewDistribution: React.FC = () => {
       <ConfirmDistributionsModal
         activeStepIndex={activeIndex}
         isModalVisible={isConfirmationModalVisible}
+        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
         showCloseButton={!isTransactionPending}
@@ -748,7 +823,10 @@ const ReviewDistribution: React.FC = () => {
 
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
-        handleModalClose={() => setShareDistributionNews(false)}
+        handleModalClose={() => {
+          setShareDistributionNews(false);
+          handleExitClick();
+        }}
         socialURL={socialURL}
         transactionHash={transactionHash}
         description={`Just made an investment distribution for ${name} (${symbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}

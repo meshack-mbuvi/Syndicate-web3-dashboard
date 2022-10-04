@@ -1,9 +1,9 @@
 /**
 https://developers.amplitude.com/docs/how-amplitude-works
  */
+import { isDev } from '@/utils/environment';
 import amplitude from 'amplitude-js';
 import { useEffect } from 'react';
-import { isDev } from '@/utils/environment';
 
 const AMPLITUDE_API_KEY = isDev
   ? process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY_DEVELOPMENT
@@ -11,6 +11,7 @@ const AMPLITUDE_API_KEY = isDev
 
 const initializeAmplitude = () => {
   // Initialize AmplitudeJS
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   amplitude.getInstance().init(AMPLITUDE_API_KEY, null, {
     deviceIdFromUrlParam: true,
     includeGclid: true,
@@ -18,6 +19,7 @@ const initializeAmplitude = () => {
     includeUtm: true
   });
 };
+// hello
 
 export function useAmplitude(): void {
   // Initialize Amplitude
@@ -28,14 +30,15 @@ export function useAmplitude(): void {
 type EventProperty = {
   flow: Flow;
   transaction_status?: string;
-  wallet_network?: any;
-  wallet_address?: any;
-  deposit_token?: any;
-  deposit_window?: any;
+  wallet_network?: string;
+  wallet_address?: string;
+  deposit_window?: string;
+  deposit_token?: string;
   deposit_amount?: string | number;
   transaction_category?: string;
-  transaction_note?: string;
   distribution_amount?: string | number;
+  file_type?: string;
+  file_size?: string;
 };
 
 // User Properties
@@ -78,6 +81,7 @@ export const amplitudeLogger = (
   return new Promise((resolve, reject) =>
     amplitude
       .getInstance()
+      // @ts-expect-error TS(2345): Argument of type '(value: boolean | PromiseLike... Remove this comment to see the full error message
       .logEvent(eventName, { ...eventProperties }, resolve, reject)
   );
 };

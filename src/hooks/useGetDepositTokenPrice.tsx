@@ -30,7 +30,8 @@ export const useGetDepositTokenPrice = (chainId: number) => {
       pricePromise
         .then((res) => {
           const price = depositToken
-            ? res[depositToken.toLowerCase()]['usd']
+            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+              res[depositToken.toLowerCase()]['usd']
             : res;
           setTokenPriceInUSDState(price);
           dispatch(setDepositTokenUSDPrice(price));

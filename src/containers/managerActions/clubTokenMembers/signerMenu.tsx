@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react';
 const Dropdown: React.FC<{
   titleIndex: number;
   menuItems: { menuText: string; menuIcon: any }[];
+  // @ts-expect-error TS(7051): Parameter has a name but no type. Did you mean 'ar... Remove this comment to see the full error message
   setSelectedIndex: (number) => void;
 }> = (props) => {
   const { titleIndex = 0, menuItems, setSelectedIndex } = props;

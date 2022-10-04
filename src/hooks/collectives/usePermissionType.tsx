@@ -7,16 +7,16 @@ import {
   getCollectiveBalance
 } from '@/utils/contracts/collective';
 
-export const usePermissionType = (): PermissionType => {
+export const usePermissionType = (
+  collectiveAddress: string
+): PermissionType => {
   const {
-    collectiveDetailsReducer: {
-      details: { collectiveAddress }
-    },
     web3Reducer: {
       web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
 
+  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
   const [permissionType, setPermissionType] = useState<PermissionType>(null);
   const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
   const [collectiveOwner, setCollectiveOwner] = useState<string>('');

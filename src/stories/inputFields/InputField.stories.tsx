@@ -6,9 +6,10 @@ export default {
   component: InputField
 };
 
-const Template = (args) => <InputField {...args} />;
+const Template = (args: any) => <InputField {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   value: null,
   placeholderLabel: 'Placeholder label',
@@ -16,6 +17,7 @@ Default.args = {
 };
 
 export const MoreInfo = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 MoreInfo.args = {
   value: null,
   placeholderLabel: 'Placeholder label',
@@ -25,6 +27,7 @@ MoreInfo.args = {
 };
 
 export const Error = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Error.args = {
   value: null,
   placeholderLabel: 'Placeholder label',

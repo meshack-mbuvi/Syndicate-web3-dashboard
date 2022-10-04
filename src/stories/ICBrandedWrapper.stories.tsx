@@ -5,9 +5,10 @@ export default {
   title: '3. Molecules/IC Branded Wrapper'
 };
 
-const Template = (args) => <ICBrandedWrapper {...args} />;
+const Template = (args: any) => <ICBrandedWrapper {...args} />;
 
 export const BottomTitle = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 BottomTitle.args = {
   bottomTitle: 'When will deposits close?',
   customClasses: 'w-11/12 mx-auto mt-6',
@@ -19,6 +20,7 @@ BottomTitle.args = {
 };
 
 export const Wrapped = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Wrapped.args = {
   customClasses: 'w-11/12 mx-auto mt-6',
   children: (

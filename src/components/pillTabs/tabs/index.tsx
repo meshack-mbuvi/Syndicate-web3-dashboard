@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 interface Props {
   tabs: { name: string }[];
   activeIndex: number;
-  handleTabChange: (index) => void;
+  handleTabChange: (index: any) => void;
 }
 
 const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
@@ -19,12 +19,15 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
 
   const calculateHighlightDimensions = (index: number) => {
     // Calculate position and width of tab
+    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
     const tabX = tabRefs.current[index].getBoundingClientRect().x;
+    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
     const tabWidth = tabRefs.current[index].getBoundingClientRect().width;
 
     // Calculate position of tab container
     const containerX = tabContainer.current
-      ? tabContainer.current.getBoundingClientRect().x
+      ? // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
+        tabContainer.current.getBoundingClientRect().x
       : 0;
     return { x: tabX - containerX, width: tabWidth };
   };
@@ -60,7 +63,9 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
       }}
       // Add each button in a list of refs
       ref={(ref) => {
+        // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
         if (ref && !tabRefs.current.includes(ref)) {
+          // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
           tabRefs.current.push(ref);
         }
       }}

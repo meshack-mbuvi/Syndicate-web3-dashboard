@@ -13,7 +13,7 @@ interface ActiveLinkProp {
   customActive?: string;
 
   // children i.e. <a> tag that this component receives.
-  children;
+  children: any;
 }
 
 import React from 'react';

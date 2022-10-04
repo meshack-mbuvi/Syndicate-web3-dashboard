@@ -2,18 +2,13 @@ import { CollectivesInteractiveBackground } from '@/components/collectives/inter
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 const NftImageCard: React.FC = () => {
-  // TODO: Fetch loading state from redux store
-  const loading = false;
-
   const {
-    collectiveDetailsReducer: {
-      details: { metadataCid }
-    }
-  } = useSelector((state: AppState) => state);
+    collectiveDetails: { metadataCid },
+    collectiveDetailsLoading
+  } = useERC721Collective();
 
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
     useFetchCollectiveMetadata(metadataCid);
@@ -29,7 +24,7 @@ const NftImageCard: React.FC = () => {
       }}
     >
       <div className="flex items-center justify-center w-full h-full border-gray-syn4">
-        {loading ? (
+        {collectiveDetailsLoading ? (
           <SkeletonLoader width="20" height="20" borderRadius="rounded-none" />
         ) : (
           <CollectivesInteractiveBackground
@@ -49,7 +44,8 @@ const NftImageCard: React.FC = () => {
                     'ipfs://',
                     ''
                   )}`
-                : `${ipfsGateway}/${nftMetadata?.image.replace('ipfs://', '')}`
+                : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  `${ipfsGateway}/${nftMetadata?.image.replace('ipfs://', '')}`
             }
             numberOfParticles={75}
           />

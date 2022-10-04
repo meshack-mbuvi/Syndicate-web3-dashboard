@@ -17,7 +17,7 @@ export default {
   }
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <ProgressModal {...args} />;
 };
 
@@ -25,6 +25,7 @@ const dummyTransactionHash =
   '0x73c6d6135a13da9164252200d5052ddb5095a2694e88e38356245063fa65d287';
 
 export const ConfirmInWallet = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ConfirmInWallet.args = {
   isVisible: true,
   title: 'Confirm in wallet',
@@ -33,6 +34,7 @@ ConfirmInWallet.args = {
 };
 
 export const Pending = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Pending.args = {
   isVisible: true,
   title: 'Adding member',
@@ -44,6 +46,7 @@ Pending.args = {
 };
 
 export const Success = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Success.args = {
   isVisible: true,
   title: 'Member added successfully',
@@ -60,6 +63,7 @@ Success.args = {
 };
 
 export const Failure = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Failure.args = {
   isVisible: true,
   title: 'Member addition failed',

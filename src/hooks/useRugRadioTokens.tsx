@@ -3,7 +3,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
+const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
   const {
     web3Reducer: {
       web3: { account, web3 }
@@ -37,7 +37,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
     let totalYieldTokens = 0;
 
     await await Promise.all([
-      ...collectiblesResult.map(async (collectible) => {
+      ...collectiblesResult.map(async (collectible: any) => {
         try {
           const tokenBalance = await RugClaimModule.getClaimAmount(
             collectible.id
@@ -58,7 +58,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
      * Get NFT last claim times in integers
      */
     const lastClaims = await await Promise.all([
-      ...collectiblesResult.map(async (collectible) =>
+      ...collectiblesResult.map(async (collectible: any) =>
         parseInt(await RugClaimModule.getLastClaimTime(collectible.id))
       )
     ]);

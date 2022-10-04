@@ -15,8 +15,8 @@ interface Props {
   descriptionValue: string;
   handleDescriptionChange: (input: string) => void;
   isContinueButtonActive: boolean;
-  handleContinue: (e) => void;
-  handleUpload: (e) => void;
+  handleContinue: (e: any) => void;
+  handleUpload: (e: any) => void;
   uploadSuccessText?: string;
   uploadErrorText?: string;
   handleCancelUpload: () => void;
@@ -30,7 +30,7 @@ interface Props {
     imageURI: string,
     backgroundColorClass: string
   ) => void;
-  captureArtworkRef;
+  captureArtworkRef: any;
 }
 
 export const CollectiveFormDesign: React.FC<Props> = ({
@@ -56,12 +56,14 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   captureArtworkRef
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
-  const handleContinueButton = (e) => {
+  const handleContinueButton = (e: any) => {
     if (isUsingGeneratedArtwork) {
       setIsContinueButtonLoading(true);
       elementToImage(captureArtworkRef, 2, (imageURI) => {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         handleCaptureGeneratedArtwork(
           imageURI,
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           generatedArtworkBackgroundColor
         );
         setIsContinueButtonLoading(false);
@@ -102,6 +104,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
                 handleCancelUpload={handleCancelUpload}
                 accept={acceptFileTypes}
                 isUsingGeneratedArtwork={isUsingGeneratedArtwork}
+                // @ts-expect-error TS(2345): Type ((backgroundColorClass: string) => void) | undefined is not assig... Remove this comment to see the full error message
                 handleCreateGenerateArtwork={handleCreateGeneratedArtwork}
                 errorText={uploadErrorText}
               />
@@ -135,6 +138,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             className={`${
               isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
             } w-full`}
+            // @ts-expect-error TS(2322): Type '((e: any) => void) | null' is not assignable... Remove this comment to see the full error message
             onClick={isContinueButtonActive ? handleContinueButton : null}
           >
             {isContinueButtonLoading ? (

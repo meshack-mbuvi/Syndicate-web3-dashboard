@@ -6,7 +6,7 @@ export default {
   title: '3. Molecules/Token Logic List'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [tokenRules, setTokenRules] = useState([
     { name: 'Token Name', symbol: 'TOKN', quantity: 1, icon: null },
     { name: 'Token Name', symbol: 'TOKN', quantity: 30, icon: null },
@@ -29,6 +29,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   isInErrorState: false,
   helperText: 'Lorum ipsum dolor',

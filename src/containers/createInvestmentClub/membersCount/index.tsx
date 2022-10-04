@@ -30,7 +30,7 @@ const MembersCount: React.FC<{
   } = useSelector((state: AppState) => state);
 
   const [membersNumCount, setMembersNumCount] = useState(membersCount);
-  const [memberCountError, setMemberCountError] = useState(null);
+  const [memberCountError, setMemberCountError] = useState('');
   const [memberCountWarning, setMemberCountWarning] = useState<string>('');
   const [isInputError, setIsInputError] = useState(false);
   const dispatch = useDispatch();
@@ -46,17 +46,22 @@ const MembersCount: React.FC<{
 
   useEffect(() => {
     if (!membersNumCount) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
       setMemberCountError('');
       setIsInputError(false);
     } else if (+membersNumCount < 0 || +membersNumCount === 0) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
+      // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
     } else if (+membersNumCount > 99) {
       // Adding hard cap of 99 for launch
       // setMemberCountWarning(MEMBER_COUNT_WARNING);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
+      // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
     } else {
@@ -64,8 +69,10 @@ const MembersCount: React.FC<{
       setMemberCountWarning('');
       setIsInputError(false);
       if (editButtonClicked) {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(true);
       } else {
+        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
         setNextBtnDisabled(false);
       }
     }
@@ -77,12 +84,14 @@ const MembersCount: React.FC<{
   const handleSetMax = () => {
     setMembersNumCount(MAX_MEMBERS_ALLOWED);
     setTimeout(() => {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       handleNext();
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setShowNextButton(true);
     }, 400);
   };
 
-  const handleSetMembersCount = (event) => {
+  const handleSetMembersCount = (event: any) => {
     setMembersNumCount(event.target.value);
   };
 
@@ -91,33 +100,33 @@ const MembersCount: React.FC<{
       <H4 extraClasses="mr-10">What’s the maximum number of members?</H4>
       <div className="flex pb-6">
         <InputFieldWithMax
-          {...{
-            value: membersNumCount
+          value={
+            membersNumCount
               ? parseInt(membersNumCount.replace(/^0+/, ''))
-              : parseInt(''),
-            addOn: <MaxButton handleClick={() => handleSetMax()} />,
-            onChange: handleSetMembersCount,
-            error: memberCountError,
-            warning: memberCountWarning,
-            hasError: Boolean(isInputError),
-            type: 'number',
-            addSettingDisclaimer: false,
-            moreInfo: (
-              <div>
-                Investment clubs may have up to 99 members{' '}
-                <a
-                  className="cursor-pointer underline"
-                  href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  according to the SEC.
-                </a>{' '}
-                Syndicate encourages all users to consult with their own legal
-                and tax counsel.
-              </div>
-            )
-          }}
+              : parseInt('')
+          }
+          addOn={<MaxButton handleClick={(): void => handleSetMax()} />}
+          onChange={handleSetMembersCount}
+          error={memberCountError}
+          warning={memberCountWarning}
+          hasError={Boolean(isInputError)}
+          type={'number'}
+          addSettingDisclaimer={false}
+          moreInfo={
+            <div>
+              Investment clubs may have up to 99 members{' '}
+              <a
+                className="cursor-pointer underline"
+                href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                according to the SEC.
+              </a>{' '}
+              Syndicate encourages all users to consult with their own legal and
+              tax counsel.
+            </div>
+          }
         />
       </div>
     </Fade>

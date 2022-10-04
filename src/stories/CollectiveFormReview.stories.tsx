@@ -11,7 +11,7 @@ export default {
   title: '4. Organisms/Collectives/Create/Review',
   isFullscreen: true,
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <ConnectWalletProvider>
           <Story />
@@ -22,7 +22,7 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [nameValue, setNameValue] = useState('Alpha Beta Punks');
   const [tokenValue, setTokenValue] = useState('ABP');
   const [priceToJoin, setPriceToJoin] = useState(4);
@@ -71,6 +71,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
   isSubmitButtonActive: true,
@@ -79,6 +80,7 @@ Default.args = {
 };
 
 export const WalletNotConnected = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 WalletNotConnected.args = {
   tokenDetails: { symbol: 'ETH', icon: '/images/chains/ethereum.svg' },
   isSubmitButtonActive: true,

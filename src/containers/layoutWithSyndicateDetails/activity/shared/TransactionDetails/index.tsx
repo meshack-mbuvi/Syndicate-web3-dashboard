@@ -1,16 +1,17 @@
-import React from 'react';
-import Image from 'next/image';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { formatAddress } from '@/utils/formatAddress';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
+import { TokenCollection } from '@/components/distributions/tokenCollection';
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
+import useWindowSize from '@/hooks/useWindowSize';
+import { AppState } from '@/state';
 import {
   RoundCategory,
   TransactionCategory
 } from '@/state/erc20transactions/types';
-import useWindowSize from '@/hooks/useWindowSize';
-import { TokenCollection } from '@/components/distributions/tokenCollection';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 type Transaction = 'outgoing' | 'incoming';
 
@@ -28,6 +29,7 @@ interface ITransactionDetails {
   category: TransactionCategory;
   companyName?: string;
   round: RoundCategory;
+  contractAddress: string;
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
@@ -38,15 +40,16 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   onModal = false,
   category,
   companyName,
-  round
+  round,
+  contractAddress
 }) => {
   const {
     web3Reducer: {
-      web3: { web3 }
-    },
-    clubMembersSliceReducer: { clubMembers }
+      web3: { web3, activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const getTransactionText = (transactionType: string, onModal: boolean) => {
     if (transactionType === 'outgoing') {
       if (onModal) {
@@ -60,7 +63,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       return category === 'DEPOSIT' ? 'deposited by' : 'received from';
     }
   };
-  const addGrayToDecimalInput = (str) => {
+  const addGrayToDecimalInput = (str: any) => {
     if (typeof str !== 'string') {
       str.toString();
     }
@@ -73,13 +76,15 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     );
   };
 
-  const AddressIsMember = (address: string) => {
-    return (
-      clubMembers.filter(
-        (member) => member.memberAddress.toLowerCase() === address.toLowerCase()
-      ).length !== 0
-    );
+  const AddressIsMember = async (address: string) => {
+    return await getMemberBalance(
+      contractAddress,
+      address,
+      web3,
+      activeNetwork
+    ).then((balance) => balance > 0);
   };
+
   const { width } = useWindowSize();
 
   return (
@@ -134,15 +139,18 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 transactionType === 'incoming' &&
                 isTransactionAnnotated ? (
                   <>
-                    {AddressIsMember(addresses[0]) && (
-                      <div className="mx-2 flex items-center">
-                        <Image
-                          src={'/images/User_Icon.svg'}
-                          height={24}
-                          width={24}
-                        />
-                      </div>
-                    )}
+                    {
+                      // @ts-expect-error TS(2801): This condition will always return true since this 'Promise<boolean>' is always defined.
+                      AddressIsMember(addresses[0]) && (
+                        <div className="mx-2 flex items-center">
+                          <Image
+                            src={'/images/User_Icon.svg'}
+                            height={24}
+                            width={24}
+                          />
+                        </div>
+                      )
+                    }
                   </>
                 ) : null}
                 {onModal && category === 'DEPOSIT' ? (

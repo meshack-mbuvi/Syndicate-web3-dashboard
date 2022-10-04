@@ -8,9 +8,9 @@ import {
   setActiveModuleDetails,
   setERC20TokenContract,
   setERC20TokenDetails,
+  setIsNewClub,
   setLoadingClub,
-  setTokenGatingDetails,
-  setIsNewClub
+  setTokenGatingDetails
 } from '@/state/erc20token/slice';
 import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
 import { IActiveNetwork } from '@/state/wallet/types';
@@ -73,7 +73,7 @@ export const initialTokenGatingDetailsState: TokenGatedRequirementsDetails = {
  * tokenAddress(initially called syndicateAddress)
  */
 export const getERC20TokenDetails = async (
-  ERC20tokenContract,
+  ERC20tokenContract: any,
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
   MerkleDistributorModule: MerkleDistributorModuleContract,
@@ -81,6 +81,7 @@ export const getERC20TokenDetails = async (
   mintModule: string,
   activeMintReqs: ModuleReqs,
   web3: any
+  // @ts-expect-error TS(2366): Function lacks ending return statement and return ... Remove this comment to see the full error message
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -113,8 +114,8 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.memberCount()
         ]);
 
-      const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
-        getWeiAmount(web3, wei, tokenDecimals, false)
+      const totalSupply = await ERC20tokenContract.totalSupply().then(
+        (wei: any) => getWeiAmount(web3, wei, tokenDecimals, false)
       );
 
       //TODO: [TOKEN-GATING] confirm MerkleDistributorModule / contracts that enable claims
@@ -131,14 +132,16 @@ export const getERC20TokenDetails = async (
       }
 
       // Check both mint policies
-      const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
-        address,
-        MerkleDistributorModule.contract._address
-      );
+      let claimEnabledPolicyMintERC20;
+      if (policyMintERC20?.address) {
+        claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
+          address,
+          MerkleDistributorModule.contract._address
+        );
+      }
 
       let claimEnabledMintPolicy;
-
-      if (mintPolicy.address) {
+      if (mintPolicy?.address) {
         claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
           address,
           MerkleDistributorModule.contract._address
@@ -179,6 +182,7 @@ export const getERC20TokenDetails = async (
         ),
         requiredToken,
         depositsEnabled,
+        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         claimEnabled,
         requiredTokenMinBalance,
         maxTotalDeposits: getWeiAmount(
@@ -191,14 +195,15 @@ export const getERC20TokenDetails = async (
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
     } catch (error) {
+      console.log(error);
       return ERC20TokenDefaultState;
     }
   }
 };
 
 export const getDepositDetails = async (
-  depositToken,
-  ERC20tokenContract,
+  depositToken: any,
+  ERC20tokenContract: any,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract,
   mintModuleAddress: string,
@@ -211,6 +216,7 @@ export const getDepositDetails = async (
   let nativeDepositToken = false;
 
   const NATIVE_MINT_MODULE =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
 
   if (!depositToken && ERC20tokenContract) {
@@ -245,6 +251,7 @@ export const getDepositDetails = async (
   return {
     mintModule,
     nativeDepositToken,
+    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
     depositTokenLogo: nativeDepositToken
       ? activeNetwork.nativeCurrency.logo
       : tokenDetails.logo,
@@ -257,7 +264,7 @@ export const getDepositDetails = async (
 };
 
 export const isNativeDepositToken = async (
-  ERC20tokenContract,
+  ERC20tokenContract: any,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract
 ) => {
@@ -294,8 +301,8 @@ export const isNativeDepositToken = async (
  * @returns
  */
 export const setERC20Token =
-  (ERC20tokenContract) =>
-  async (dispatch, getState: () => AppState): Promise<void> => {
+  (ERC20tokenContract: any) =>
+  async (dispatch: any, getState: () => AppState): Promise<void> => {
     const {
       initializeContractsReducer: {
         syndicateContracts: {

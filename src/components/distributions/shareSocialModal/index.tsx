@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { ExternalLinkColor } from '@/components/iconWrappers';
 import Modal, { ModalStyle } from '@/components/modal';
 import { ShareCard } from '@/components/social';
@@ -11,7 +12,7 @@ interface Props {
   title?: string;
   socialURL: string;
   description: string;
-  handleClick;
+  handleClick: any;
   buttonLabel: string | any;
   imageOptions?: string[];
   customVisual?: any;

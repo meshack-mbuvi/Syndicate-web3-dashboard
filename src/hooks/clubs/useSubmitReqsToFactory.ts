@@ -1,7 +1,7 @@
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
+import { useSelector } from 'react-redux';
 const useSubmitReqsToFactory = (
   onTxConfirm: (transactionHash: any) => void,
   onTxReceipt: (receipt: any) => void,
@@ -54,12 +54,25 @@ const useSubmitReqsToFactory = (
     logicalOperator
   };
 
+  const handleTxReceipt = (receipt: any) => {
+    onTxReceipt({
+      events: {
+        ERC20ClubCreated: {
+          returnValues: {
+            ...receipt.events.ERC20ClubCreated.returnValues,
+            ...clubParams
+          }
+        }
+      }
+    });
+  };
+
   const submitCreateClub = async () => {
     await erc20ClubFactory.create(
       account,
       clubParams,
       onTxConfirm,
-      onTxReceipt,
+      handleTxReceipt,
       onTxFail
     );
   };

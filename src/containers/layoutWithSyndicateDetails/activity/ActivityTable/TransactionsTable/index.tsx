@@ -1,21 +1,22 @@
-import { FC, useState } from 'react';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
+import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import {
+  clearCurrentTransaction,
+  setCurrentTransaction
+} from '@/state/erc20transactions';
+import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
 import Image from 'next/image';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from '@/state';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
-import useModal from '@/hooks/useModal';
-import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
-import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
-import { getWeiAmount } from '@/utils/conversions';
-import {
-  setCurrentTransaction,
-  clearCurrentTransaction
-} from '@/state/erc20transactions';
+import { FC, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface ITransactionsTableProps {
   canNextPage: boolean;
+  isOwner: boolean;
   dataLimit: number;
   pageOffset: number;
   refetchTransactions: () => void;
@@ -43,7 +44,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   handleCheckboxSelect,
   rowCheckboxActiveData,
   activeTransactionHashes,
-  setActiveTransactionHashes
+  setActiveTransactionHashes,
+  isOwner
 }) => {
   const {
     transactionsReducer: {
@@ -53,12 +55,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     },
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { web3 }
     }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
-  const isManager = account === erc20Token.owner;
 
   const [pillHover, setPillHover] = useState<any>([]);
 
@@ -104,6 +105,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   // use loading state
   if (
     transactionsLoading &&
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     !activeTransactionHashes.length &&
     !currentTransaction.hash
   ) {
@@ -115,7 +117,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     pillIndex: number,
     categoryReadonlyState: boolean
   ) => {
-    if (!isManager) return;
+    if (!isOwner) return;
     const data = myTransactions[pageOffset].map((item) => {
       return {
         ...item,
@@ -198,6 +200,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         metadata,
                         blockTimestamp
                       };
+                      // @ts-expect-error TS(2345): Argument of type '{ category: TransactionCategory;... Remove this comment to see the full error message
                       dispatch(setCurrentTransaction(selectedTransactionData));
                       toggleShowAnnotationsModal();
                       if (metadata?.memo) {
@@ -252,6 +255,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       }
                     >
                       <CategoryPill
+                        isOwner={isOwner}
                         outgoing={isOutgoingTransaction}
                         category={category}
                         renderedInline={true}
@@ -276,6 +280,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
 
                   <div className="text-base col-span-6 flex space-x-3 items-center">
                     <TransactionDetails
+                      contractAddress={erc20Token.address}
                       tokenDetails={[
                         {
                           name: tokenName,
@@ -359,6 +364,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
       )}
       <div>
         <ActivityModal
+          isOwner={isOwner}
           showModal={showAnnotationsModal}
           closeModal={() => {
             setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.

@@ -1,6 +1,7 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
@@ -15,8 +16,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -32,6 +31,7 @@ interface ICategoryPill {
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
   uncategorisedIcon?: string;
   disableDropDown?: boolean;
+  isOwner: boolean;
 }
 
 /**
@@ -56,7 +56,8 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   showLoader = false,
   setActiveTransactionHash,
   uncategorisedIcon,
-  disableDropDown
+  disableDropDown,
+  isOwner
 }) => {
   const dispatch = useDispatch();
   const {
@@ -67,7 +68,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
 
-  const isManager = useIsClubOwner();
   const categorySelect = useRef(null);
   const [pillIcon, setPillIcon] = useState<string>('');
   const [pillText, setPillText] = useState<string>('');
@@ -82,7 +82,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     {
       text: 'Other',
       value: 'OTHER',
-      icon: 'other-transaction.svg'
+      icon: '/images/activity/other-transaction.svg'
     },
     {
       text: 'Uncategorised',
@@ -90,26 +90,26 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       icon: uncategorisedIcon
         ? uncategorisedIcon
         : outgoing
-        ? 'outgoing-transaction.svg'
-        : 'incoming-transaction.svg'
+        ? '/images/activity/outgoing-transaction.svg'
+        : '/images/activity/incoming-transaction.svg'
     }
   ];
   const categoryPillOptions = [
     {
       text: 'Investment',
       value: 'INVESTMENT',
-      icon: 'investment-transaction.svg'
+      icon: '/images/activity/investment-transaction.svg'
     },
     {
       text: 'Expense',
       value: 'EXPENSE',
-      icon: 'expense-transaction.svg'
+      icon: '/images/activity/expense-transaction.svg'
     },
 
     {
       text: 'Investment tokens',
       value: 'INVESTMENT_TOKEN',
-      icon: 'investment-tokens.svg'
+      icon: '/images/activity/investment-tokens.svg'
     }
   ];
 
@@ -189,6 +189,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       specificOptions = categoryPillOptions.slice(2);
     }
     setDropdownOptions(
+      // @ts-expect-error TS(2769): No overload matches this call.
       specificOptions.concat(commonPillOptions).filter((option) => {
         if (selectedCategory === 'OFF_CHAIN_INVESTMENT') {
           return option.value !== 'INVESTMENT';
@@ -205,9 +206,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e) => {
+    const onPageClickEvent = (e: any) => {
       if (
         categorySelect.current !== null &&
+        // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
         !categorySelect.current.contains(e.target)
       ) {
         setShowDropdown(!showDropdown);
@@ -228,6 +230,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   // distinguish between when the row is clicked and when the pill is selected
   const setPillActiveRowState = (pillState: boolean) => {
     if (renderedInline) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setInlineCategorising(pillState);
     }
   };
@@ -264,6 +267,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         },
         context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);
       refetchTransactions();
     } else if (bulkCategoriseTransactions) {
@@ -292,12 +296,15 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   return (
     <div
       className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 ${
-        !readonly && isManager ? 'cursor-pointer' : 'cursor-default'
+        !readonly && isOwner ? 'cursor-pointer' : 'cursor-default'
       }`}
       onClick={() => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
       onMouseEnter={() => setPillActiveRowState(true)}
       onMouseLeave={() => setPillActiveRowState(false)}
+      onKeyDown={() => null}
+      tabIndex={0}
+      role="button"
     >
       <div className="flex justify-start items-center">
         {!showLoader ? (
@@ -327,18 +334,19 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 
       {!(readonly || showLoader) ? (
         <div className="ml-2 mr-3">
-          {isManager && (
+          {isOwner && (
             <img src="/images/activity/chevron-down.svg" alt="chevron-down" />
           )}
         </div>
       ) : null}
-      {showDropdown && isManager && !showLoader ? (
+      {showDropdown && isOwner && !showLoader ? (
         <div
           className="mt-2 absolute top-10 -left-2 transition-all duration-500 ease-in-out z-10"
           onMouseLeave={() => closeDropDown()}
         >
           <CategoryPillDropDown
             options={dropDownOptions}
+            // @ts-expect-error TS(2322): Type '(value: TransactionCategory) => void' is not... Remove this comment to see the full error message
             onSelect={handleSelect}
           />
         </div>

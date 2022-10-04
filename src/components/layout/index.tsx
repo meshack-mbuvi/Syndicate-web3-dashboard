@@ -2,7 +2,7 @@ import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
@@ -62,7 +62,7 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status, activeNetwork }
+      web3: { account, status, activeNetwork, web3 }
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
@@ -83,8 +83,6 @@ const Layout: FC<Props> = ({
     query: { clubAddress }
   } = router;
 
-  const isOwner = useIsClubOwner();
-
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
   // get content to occupy the viewport if we are in these states.
@@ -99,12 +97,24 @@ const Layout: FC<Props> = ({
     (loading && !managerSettingsOpen) ||
     loadingClubDetails;
 
-  // we don't need to render the footer on the creation page.
+  // we don't need to render the footer on the creation/modification and
+  // distribution pages.
   const createClubPage = router.pathname === '/clubs/create';
   const modifyClubPage =
     router.pathname === `/collectives/[collectiveAddress]/modify`;
+  const distributionPage =
+    router.pathname === `/clubs/[clubAddress]/distribute`;
+
+  const { isOwner, isLoading } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
 
   const handleRouting = () => {
+    if (isLoading) return;
+
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
         `/clubs/${clubAddress}${
@@ -130,7 +140,8 @@ const Layout: FC<Props> = ({
       status === Status.CONNECTING ||
       !owner ||
       !isReady ||
-      isDemoMode
+      isDemoMode ||
+      isLoading
     )
       return;
 
@@ -142,7 +153,6 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner,
     isDemoMode
   ]);
 
@@ -197,9 +207,13 @@ const Layout: FC<Props> = ({
             style={{ height: height ? height - 78 : '' }}
           >
             <PortfolioSideNav
+              // @ts-expect-error TS(2322): Type 'CreateSteps[] | string[] | undefined' is not assig ... Remove this comment to see the full error message
               dotIndicatorOptions={dotIndicatorOptions}
+              // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
               handleExitClick={handleExitClick}
+              // @ts-expect-error TS(2322): Type '((index?: number | undefined) => void) | undefined' is not assig ... Remove this comment to see the full error message
               handleBack={handlePrevious}
+              // @ts-expect-error TS(2322): Type '((index?: number | undefined) => void) | undefined' is not assig ... Remove this comment to see the full error message
               handleNext={handleNext}
               activeIndex={activeIndex}
               nextBtnDisabled={nextBtnDisabled}
@@ -218,7 +232,10 @@ const Layout: FC<Props> = ({
       </div>
 
       {/* need to add in a check for collectives settings open because it uses Layout component */}
-      {createClubPage || modifyClubPage || managerSettingsOpen ? null : (
+      {createClubPage ||
+      modifyClubPage ||
+      managerSettingsOpen ||
+      distributionPage ? null : (
         <div>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

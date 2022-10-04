@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ClaimCard: React.FC<{
-  handleMintUpdate?: (amount) => void;
+  handleMintUpdate?: (amount: any) => void;
   openseaLink: string;
   rawNativeBalance: string;
   startTime: number;
@@ -49,6 +49,7 @@ const ClaimCard: React.FC<{
 
   useEffect(() => {
     if (status == Status.DISCONNECTED) {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
   }, [status]);
@@ -65,7 +66,7 @@ const ClaimCard: React.FC<{
     window.open(openseaLink, '_blank');
   };
 
-  const updateClaimAmount = (increase) => {
+  const updateClaimAmount = (increase: any) => {
     if (increase) {
       setClaimAmount((claimAmount) => claimAmount + 1);
     } else if (claimAmount > 1) {
@@ -181,6 +182,7 @@ const ClaimCard: React.FC<{
     setSubmitting(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const onTxReceipt = async () => {
     setSubmitting(false);
     setSuccessfulClaim(true);
@@ -285,6 +287,7 @@ const ClaimCard: React.FC<{
                 ? 'bg-gray-syn7 text-white cursor-default'
                 : 'bg-white'
             }`}
+            // @ts-expect-error TS(2322): Type '(() => void) | null' is not assignable to ty... Remove this comment to see the full error message
             onClick={
               claimFailed ? tryAgain : openseaLink ? viewCollection : null
             }
@@ -389,6 +392,7 @@ const ClaimCard: React.FC<{
                         ? 'bg-gray-syn6 text-gray-syn4 cursor-default'
                         : 'bg-green'
                     }`}
+                    // @ts-expect-error TS(2322): Type '(() => Promise<void>) | null' is not assigna... Remove this comment to see the full error message
                     onClick={claimError ? null : claimNFT}
                     disabled={claimError ? true : false}
                   >
@@ -418,6 +422,7 @@ const ClaimCard: React.FC<{
                         ? 'bg-gray-syn7 text-white cursor-default'
                         : 'bg-green'
                     }`}
+                    // @ts-expect-error TS(2322): Type '(() => void) | null' is not assignable to ty... Remove this comment to see the full error message
                     onClick={
                       status == Status.DISCONNECTED
                         ? connectWallet
@@ -472,6 +477,7 @@ const ClaimCard: React.FC<{
                     ? 'bg-gray-syn7 text-white cursor-default'
                     : 'bg-white'
                 }`}
+                // @ts-expect-error TS(2322): Type '(() => void) | null' is not assignable to ty... Remove this comment to see the full error message
                 onClick={openseaLink ? viewCollection : null}
                 disabled={!openseaLink}
               >

@@ -1,36 +1,37 @@
 // Update create collective state
 // ==============================================================
 
-import useCreateState from './useCreateState';
-import { useDispatch } from 'react-redux';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useCreateState from './useCreateState';
 // import { acronymGenerator } from '@/utils/acronymGenerator';
 // import { useDebounce } from '@/hooks/useDebounce';
-import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
-import {
-  setCollectiveName,
-  setCollectiveSymbol,
-  setCollectiveArtwork,
-  setCollectiveDescription,
-  setCollectivePricePerNFT,
-  setCollectiveMaxPerWallet,
-  setCollectiveOpenUntil,
-  setCollectiveTimeWindow,
-  setCollectiveCloseDate,
-  setCollectiveCloseTime,
-  setCollectiveMaxSupply,
-  setCollectiveTransferrable,
-  setColectiveTokenDetails,
-  setIpfsHash
-} from '@/state/createCollective/slice';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { ARTWORK_UPLOAD } from '@/components/amplitude/eventNames';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
+import {
+  setColectiveTokenDetails,
+  setCollectiveArtwork,
+  setCollectiveCloseDate,
+  setCollectiveCloseTime,
+  setCollectiveDescription,
+  setCollectiveMaxPerWallet,
+  setCollectiveMaxSupply,
+  setCollectiveName,
+  setCollectiveOpenUntil,
+  setCollectivePricePerNFT,
+  setCollectiveSymbol,
+  setCollectiveTimeWindow,
+  setCollectiveTransferrable,
+  setIpfsHash
+} from '@/state/createCollective/slice';
 
 const useUpdateState = () => {
   const dispatch = useDispatch();
-  const { name, artwork, artworkUrl } = useCreateState();
+
+  const { artwork, artworkUrl } = useCreateState();
 
   const [ContinueButtonActive, setContinueButtonActive] = useState(false);
   const [submitButtonActive, setSubmitButtonActive] = useState(false);
@@ -39,7 +40,7 @@ const useUpdateState = () => {
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
   const [exceededUploadLimit, setExceededUploadLimit] = useState('');
 
-  const getArtworkType = (fileObject) => {
+  const getArtworkType = (fileObject: any) => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
     let mediaSource = '';
     if (fileObject?.type) {
@@ -107,7 +108,7 @@ const useUpdateState = () => {
     );
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: any) => {
     dispatch(setIpfsHash(''));
     const fileLimit = 50;
     const fileObject = e.target.files[0];
@@ -137,7 +138,9 @@ const useUpdateState = () => {
       setProgressPercent(100);
     }
     amplitudeLogger(ARTWORK_UPLOAD, {
-      flow: Flow.COLLECTIVE_CREATE
+      flow: Flow.COLLECTIVE_CREATE,
+      file_type: fileObject.type,
+      file_size: fileObject.size + ' MB'
     });
   };
 

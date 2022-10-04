@@ -20,7 +20,7 @@ export const GeneratedArtworkDarkBGColors = [
 ];
 
 interface Props {
-  captureRef?;
+  captureRef?: any;
   label?: string;
   backgroundColorClass?: string;
   numberOfNodes?: number;
@@ -37,9 +37,11 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
     const [baseFontSize] = useState(34 / pxPerRem);
     const [fontSize, setFontSize] = useState(baseFontSize);
     const [previousLabelLength, setPreviousLabelLength] = useState(
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       label.length
     );
     const [previousWindowWidth, setPreviousWindowWidth] = useState(
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       label.length
     );
     const windowWidth = useWindowSize().width;
@@ -52,6 +54,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
         (captureRef ? captureRef : continerRef).current.getBoundingClientRect()
           .height -
         containerPaddingRem * pxPerRem * 3;
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       const heightOfTitle = titleRef.current.getBoundingClientRect().height;
 
       if (shouldLabelShrinkIfNeeded) {
@@ -69,10 +72,13 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
 
     // Determine if the label is getting longer or shorter
     useEffect(() => {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const currentLabelLength = label.length;
       if (currentLabelLength > previousLabelLength) {
+        // @ts-expect-error TS(2345): Argument of type 'true' is not assig... Remove this comment to see the full error message
         setShouldLabelShrinkIfNeeded(true);
       } else {
+        // @ts-expect-error TS(2345): Argument of type 'false' is not assig... Remove this comment to see the full error message
         setShouldLabelShrinkIfNeeded(false);
       }
       setPreviousLabelLength(currentLabelLength);
@@ -82,8 +88,10 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
     useEffect(() => {
       const currentWindowWidth = windowWidth;
       if (currentWindowWidth > previousWindowWidth) {
+        // @ts-expect-error TS(2345): Argument of type 'false' is not assig... Remove this comment to see the full error message
         setShouldLabelShrinkIfNeeded(false);
       } else {
+        // @ts-expect-error TS(2345): Argument of type 'true' is not assig... Remove this comment to see the full error message
         setShouldLabelShrinkIfNeeded(true);
       }
       setPreviousWindowWidth(currentWindowWidth);

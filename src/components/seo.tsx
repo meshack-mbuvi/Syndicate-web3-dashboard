@@ -28,7 +28,7 @@ const SEO: React.FC<IProps> = ({
   image = '/images/social/logoBanner.png'
 }) => {
   const siteTitle = config.title;
-  const imageAbsolutePath = process.env.NEXT_BASE_URL + image;
+  const imageAbsolutePath = `${process.env.NEXT_BASE_URL}${image}`;
 
   return (
     <Head>

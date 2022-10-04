@@ -1,12 +1,13 @@
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import { Spinner } from '../shared/spinner';
 import { ExternalLinkColor } from 'src/components/iconWrappers';
+import { Spinner } from '../shared/spinner';
 
 export enum ProgressState {
   PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
   FAILURE = 'FAILURE',
-  CONFIRM = 'CONFIRM'
+  CONFIRM = 'CONFIRM',
+  TAKING_LONG = 'TAKING_LONG'
 }
 
 export const ProgressCard = (props: {
@@ -40,6 +41,10 @@ export const ProgressCard = (props: {
       break;
 
     case ProgressState.PENDING:
+      icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
+      break;
+
+    case ProgressState.TAKING_LONG:
       icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
       break;
 

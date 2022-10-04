@@ -8,13 +8,13 @@ export class DepositTokenMintModuleContract {
   activeNetwork;
 
   // This will be used to call other functions. eg mint
-  DepositTokenMintModuleContract;
+  DepositTokenMintModuleContract: any;
 
   // initialize a contract instance
   constructor(
     DepositTokenMintModuleContractAddress: string,
-    web3,
-    activeNetwork
+    web3: any,
+    activeNetwork: any
   ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
@@ -62,10 +62,10 @@ export class DepositTokenMintModuleContract {
     amount: string,
     clubAddress: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<void> {
     if (!this.DepositTokenMintModuleContract) {
       this.init();
@@ -78,7 +78,7 @@ export class DepositTokenMintModuleContract {
       this.DepositTokenMintModuleContract.methods
         .mint(clubAddress, amount)
         .send({ from: ownerAddress, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
@@ -92,11 +92,11 @@ export class DepositTokenMintModuleContract {
             setTransactionHash(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           onTxFail(error);
           reject(error);
         });

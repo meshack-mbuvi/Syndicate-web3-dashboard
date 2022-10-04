@@ -23,8 +23,8 @@ interface props {
   activeIndex?: number;
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
-  handlePrevious?: (event?) => void;
-  handleNext?: (event?) => void;
+  handlePrevious?: (event?: any) => void;
+  handleNext?: (event?: any) => void;
   hideWalletAndEllipsis?: boolean;
   showCloseButton?: boolean;
   showNavButton?: boolean;
@@ -75,7 +75,8 @@ const Header: React.FC<props> = ({
   }, [showMobileNav]);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (e: any) => {
+      // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
       if (navRef.current && !navRef.current.contains(e.target)) {
         setShowMobileNav(false);
       }
@@ -208,6 +209,7 @@ const Header: React.FC<props> = ({
           {!showLogo ? null : (
             <div className="flex w-max items-center">
               <Link href="/">
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                 <a href="/">
                   <img src="/images/logo.svg" alt="Syndicate Logo" />
                 </a>
@@ -302,6 +304,7 @@ const Header: React.FC<props> = ({
         </div>
         {showCreateProgressBar && account && (
           <ProgressBar
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             percentageWidth={((currentStep + 1) / steps.length) * 100}
             tailwindColor="bg-green"
           />

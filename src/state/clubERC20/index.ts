@@ -6,9 +6,11 @@ const setClubERC20sSlice = createSlice({
   initialState,
   reducers: {
     setOtherClubERC20s(state, action: PayloadAction<clubERC20[]>) {
+      // @ts-expect-error TS(2322): Type 'clubERC20[]' is not assignable to type 'neve... Remove this comment to see the full error message
       state.otherClubERC20s = action.payload;
     },
     setMyClubERC20s(state, action: PayloadAction<clubERC20[]>) {
+      // @ts-expect-error TS(2322): Type 'clubERC20[]' is not assignable to type 'neve... Remove this comment to see the full error message
       state.myClubERC20s = action.payload;
     },
     setLoadingClubERC20s(state, action: PayloadAction<boolean>) {

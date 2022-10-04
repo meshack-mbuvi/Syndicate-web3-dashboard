@@ -16,6 +16,7 @@ const Portal = (props: Props): JSX.Element => {
     return () => setMounted(false);
   }, []);
 
+  // @ts-expect-error TS(2322): Type 'ReactPortal | null' is not assignable to typ... Remove this comment to see the full error message
   return mounted ? createPortal(children, parentComponent) : null;
 };
 

@@ -1,4 +1,7 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
+import Modal, { ModalStyle } from '@/components/modal';
 import { SimpleTable } from '@/components/simpleTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
@@ -7,20 +10,16 @@ import {
   SET_MEMBER_SIGN_STATUS
 } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
-import Modal, { ModalStyle } from '@/components/modal';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 
 interface IActivityModal {
   showModal: boolean;
@@ -28,6 +27,7 @@ interface IActivityModal {
   refetchTransactions: () => void;
   showNote: boolean;
   setShowNote: any;
+  isOwner: boolean;
 }
 
 /**
@@ -42,7 +42,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
   closeModal,
   refetchTransactions,
   showNote,
-  setShowNote
+  setShowNote,
+  isOwner
 }) => {
   const {
     web3Reducer: {
@@ -69,8 +70,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
       erc20Token: { address }
     }
   } = useSelector((state: AppState) => state);
-
-  const isManager = useIsClubOwner();
 
   const isDemoMode = useDemoMode();
 
@@ -126,15 +125,23 @@ const ActivityModal: React.FC<IActivityModal> = ({
   useEffect(() => {
     // Update with new details as the user selects different transactions
     setStoredInvestmentDetails({
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       companyName: metadata?.companyName,
+      // @ts-expect-error metadata.RoundCategory | undefined' is not assignable to type 'string | number'.
       investmentRound: metadata?.roundCategory,
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       numberShares: metadata?.numberShares,
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       numberTokens: metadata?.numberTokens,
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       fullyDilutedOwnershipStake: metadata?.fullyDilutedOwnershipStake,
+      // @ts-expect-error TS(2322): Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message
       investmentDate: metadata?.acquisitionDate
         ? new Date(metadata?.acquisitionDate).toISOString()
         : null,
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       currentInvestmentValue: metadata?.preMoneyValuation,
+      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       costBasis: metadata?.postMoneyValuation
     });
   }, [metadata, blockTimestamp]);
@@ -232,7 +239,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   };
 
-  const handleSetMemberHasSigned = async (event) => {
+  const handleSetMemberHasSigned = async (event: any) => {
     event.preventDefault();
 
     const { data } = await setMemberHasSigned({
@@ -274,250 +281,264 @@ const ActivityModal: React.FC<IActivityModal> = ({
       overflowXScroll={false}
       maxHeight={false}
     >
-      {showModal && (
-        <div className="relative">
-          {isDemoMode && <div className="absolute inset-0 z-10" />}
-          <div
-            className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
-          >
+      <>
+        {showModal && (
+          <div className="relative">
+            {isDemoMode && <div className="absolute inset-0 z-10" />}
             <div
-              onMouseLeave={() => toggleDropDown(true)}
-              onMouseEnter={() => toggleDropDown(false)}
+              className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
             >
-              <div className="mb-8">
-                <CategoryPill
-                  category={category}
-                  outgoing={
-                    transactionInfo?.isOutgoingTransaction
-                      ? transactionInfo.isOutgoingTransaction
-                      : false
-                  }
-                  readonly={readOnly}
-                  changeAdaptiveBackground={changeAdaptiveBackground}
-                  renderedInModal={true}
-                  refetchTransactions={refetchTransactions}
-                  transactionHash={transactionInfo?.transactionHash}
-                  disableDropDown={disableDropDown}
-                />
+              <div
+                onMouseLeave={() => toggleDropDown(true)}
+                onMouseEnter={() => toggleDropDown(false)}
+              >
+                <div className="mb-8">
+                  <CategoryPill
+                    isOwner={isOwner}
+                    category={category}
+                    outgoing={
+                      transactionInfo?.isOutgoingTransaction
+                        ? transactionInfo.isOutgoingTransaction
+                        : false
+                    }
+                    readonly={readOnly}
+                    changeAdaptiveBackground={changeAdaptiveBackground}
+                    renderedInModal={true}
+                    refetchTransactions={refetchTransactions}
+                    transactionHash={transactionInfo?.transactionHash}
+                    disableDropDown={disableDropDown}
+                  />
+                </div>
+              </div>
+              <div className="items-center flex flex-col">
+                {transactionInfo && Object.keys(transactionInfo).length && (
+                  // TODO: update this to use multiple token details when PR 3821 is merged
+                  <TransactionDetails
+                    contractAddress={address}
+                    tokenDetails={[
+                      {
+                        name: tokenName,
+                        symbol:
+                          category === 'INVESTMENT' ||
+                          category === 'OFF_CHAIN_INVESTMENT'
+                            ? 'USD'
+                            : tokenSymbol,
+                        icon: tokenLogo,
+                        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
+                        amount:
+                          category === 'INVESTMENT' ||
+                          category === 'OFF_CHAIN_INVESTMENT'
+                            ? metadata?.postMoneyValuation
+                            : amount
+                      }
+                    ]}
+                    transactionType={
+                      transactionInfo.isOutgoingTransaction
+                        ? 'outgoing'
+                        : 'incoming'
+                    }
+                    isTransactionAnnotated={false}
+                    addresses={[
+                      transactionInfo.isOutgoingTransaction
+                        ? transactionInfo.to
+                        : transactionInfo.from
+                    ]}
+                    onModal={true}
+                    category={category}
+                    companyName={metadata?.companyName}
+                    // @ts-expect-error TS(2322): Type 'RoundCategory | undefined' is not assignable... Remove this comment to see the full error message
+                    round={metadata?.roundCategory}
+                  />
+                )}
+
+                {category !== 'OFF_CHAIN_INVESTMENT' ? (
+                  <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
+                    <a
+                      className="flex cursor-pointer items-center"
+                      href={`${blockExplorerLink}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        className="pr-2"
+                        src={`/images/actionIcons/checkMark.svg`}
+                        alt=""
+                      />{' '}
+                      Completed on {timestamp}
+                      <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
+                    </a>
+                  </div>
+                ) : null}
               </div>
             </div>
-            <div className="items-center flex flex-col">
-              {transactionInfo && Object.keys(transactionInfo).length && (
-                // TODO: update this to use multiple token details when PR 3821 is merged
-                <TransactionDetails
-                  tokenDetails={[
-                    {
-                      name: tokenName,
-                      symbol:
-                        category === 'INVESTMENT' ||
-                        category === 'OFF_CHAIN_INVESTMENT'
-                          ? 'USD'
-                          : tokenSymbol,
-                      icon: tokenLogo,
-                      amount:
-                        category === 'INVESTMENT' ||
-                        category === 'OFF_CHAIN_INVESTMENT'
-                          ? metadata?.postMoneyValuation
-                          : amount
-                    }
-                  ]}
-                  transactionType={
-                    transactionInfo.isOutgoingTransaction
-                      ? 'outgoing'
-                      : 'incoming'
-                  }
-                  isTransactionAnnotated={false}
-                  addresses={[
-                    transactionInfo.isOutgoingTransaction
-                      ? transactionInfo.to
-                      : transactionInfo.from
-                  ]}
-                  onModal={true}
-                  category={category}
-                  companyName={metadata?.companyName}
-                  round={metadata?.roundCategory}
-                />
+
+            {/* Show this component only when manager has not marked member signature status 
+        
+        Adding essential check for isOwner. Members should not see this*/}
+
+            {!data?.Financial_memberSigned &&
+              !loading &&
+              category === 'DEPOSIT' &&
+              isOwner && (
+                <div className="flex flex-col space-y-6 py-6 px-5">
+                  <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
+                    <p className="text-gray-syn4 leading-6">
+                      Has this member signed the associated legal agreements?
+                    </p>
+                    <button
+                      className="text-blue"
+                      onClick={handleSetMemberHasSigned}
+                    >
+                      Yes, mark as signed
+                    </button>
+                  </div>
+                </div>
               )}
 
-              {category !== 'OFF_CHAIN_INVESTMENT' ? (
-                <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
-                  <a
-                    className="flex cursor-pointer items-center"
-                    href={`${blockExplorerLink}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <img
-                      className="pr-2"
-                      src={`/images/actionIcons/checkMark.svg`}
-                      alt=""
-                    />{' '}
-                    Completed on {timestamp}
-                    <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
-                  </a>
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          {/* Show this component only when manager has not marked member signature status 
-        
-        Adding essential check for isManager. Members should not see this*/}
-
-          {!data?.Financial_memberSigned &&
-            !loading &&
-            category === 'DEPOSIT' &&
-            isManager && (
+            {/* Note and details section */}
+            {category === 'DEPOSIT' ||
+            category === 'UNCATEGORISED' ||
+            category === null ||
+            (!isOwner && !note && !showDetailSection) ? null : (
               <div className="flex flex-col space-y-6 py-6 px-5">
-                <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
-                  <p className="text-gray-syn4 leading-6">
-                    Has this member signed the associated legal agreements?
-                  </p>
+                {/* note */}
+                {!showNote && isOwner ? (
                   <button
-                    className="text-blue"
-                    onClick={handleSetMemberHasSigned}
+                    className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
+                    onClick={() => setShowNote(true)}
                   >
-                    Yes, mark as signed
+                    <Image
+                      src={`/images/actionIcons/plus-sign.svg`}
+                      height={16}
+                      width={16}
+                    />
+                    <span className="ml-2">Add note</span>
                   </button>
-                </div>
+                ) : (
+                  <div className="">
+                    {!note && !isOwner ? null : (
+                      <ActivityNote
+                        saveTransactionNote={saveTransactionNote}
+                        setShowNote={setShowNote}
+                        isOwner={isOwner}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* details */}
+                {(category === 'INVESTMENT' ||
+                  category === 'OFF_CHAIN_INVESTMENT') && (
+                  <div>
+                    {/* Checks if the stored investment details has empty values */}
+                    {!showDetailSection && !editMode && isOwner && (
+                      <button
+                        className="w-full flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
+                        onClick={() => handleAddDetails()}
+                      >
+                        <Image
+                          src={`/images/actionIcons/plus-sign.svg`}
+                          height={16}
+                          width={16}
+                        />
+                        <span className="ml-2">Add details</span>
+                      </button>
+                    )}
+                    {/* implement Details edit and view mode here */}
+                    {showDetailSection || editMode ? (
+                      <InvestmentDetailsModal
+                        showModal={showTransactionDetails}
+                        editMode={editMode}
+                        readonly={true}
+                        onClick={handleClick}
+                        storedInvestmentDetails={storedInvestmentDetails}
+                        transactionId={hash}
+                        setStoredInvestmentDetails={setStoredInvestmentDetails}
+                        isManager={isOwner}
+                        onSuccessfulAnnotation={() => {
+                          refetchTransactions();
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                )}
               </div>
             )}
 
-          {/* Note and details section */}
-          {category === 'DEPOSIT' ||
-          category === 'UNCATEGORISED' ||
-          category === null ||
-          (!isManager && !note && !showDetailSection) ? null : (
-            <div className="flex flex-col space-y-6 py-6 px-5">
-              {/* note */}
-              {!showNote && isManager ? (
-                <button
-                  className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
-                  onClick={() => setShowNote(true)}
-                >
-                  <Image
-                    src={`/images/actionIcons/plus-sign.svg`}
-                    height={16}
-                    width={16}
-                  />
-                  <span className="ml-2">Add note</span>
-                </button>
-              ) : (
-                <div className="">
-                  {!note && !isManager ? null : (
-                    <ActivityNote
-                      saveTransactionNote={saveTransactionNote}
-                      setShowNote={setShowNote}
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* details */}
-              {(category === 'INVESTMENT' ||
-                category === 'OFF_CHAIN_INVESTMENT') && (
-                <div>
-                  {/* Checks if the stored investment details has empty values */}
-                  {!showDetailSection && !editMode && isManager && (
-                    <button
-                      className="w-full flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
-                      onClick={() => handleAddDetails()}
-                    >
-                      <Image
-                        src={`/images/actionIcons/plus-sign.svg`}
-                        height={16}
-                        width={16}
-                      />
-                      <span className="ml-2">Add details</span>
-                    </button>
-                  )}
-                  {/* implement Details edit and view mode here */}
-                  {showDetailSection || editMode ? (
-                    <InvestmentDetailsModal
-                      showModal={showTransactionDetails}
-                      editMode={editMode}
-                      readonly={true}
-                      onClick={handleClick}
-                      storedInvestmentDetails={storedInvestmentDetails}
-                      transactionId={hash}
-                      setStoredInvestmentDetails={setStoredInvestmentDetails}
-                      isManager={isManager}
-                      onSuccessfulAnnotation={() => {
-                        refetchTransactions();
-                      }}
-                    />
-                  ) : null}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TODO: fill table values when PR 3821 is merged */}
-          {category === 'DISTRIBUTION' && (
-            <>
-              <div
-                className={`${
-                  isDistributionTableExpanded
-                    ? 'max-h-screen opacity-100 ease-in'
-                    : 'max-h-0 opacity-0 ease-out'
-                } duration-500 overflow-hidden transition-all`}
-              >
-                <DistributionMembersTable
-                  isEditing={false}
-                  hideSearch={true}
-                  membersDetails={[]}
-                  tokens={[]}
-                  handleIsEditingChange={null}
-                  handleSearchChange={null}
-                  searchValue={null}
-                  clearSearchValue={null}
-                  activeAddresses={[]}
-                  handleActiveAddressesChange={null}
-                  extraClasses={`pl-10 no-scroll-bar`}
-                />
-              </div>
-              <div
-                className={`${
-                  !isDistributionTableExpanded
-                    ? 'max-h-screen opacity-100 ease-in'
-                    : 'max-h-0 opacity-0 ease-out'
-                } duration-500 overflow-hidden transition-all`}
-              >
-                <div className="px-10 mb-2">Tokens distributed</div>
-                <SimpleTable
-                  rows={[
-                    { title: 'Title', value: 'Value', externalLink: '/' },
-                    { title: 'Title', value: 'Value', externalLink: '/' },
-                    { title: 'Title', value: 'Value', externalLink: '/' },
-                    { title: 'Title', value: 'Value', externalLink: '/' }
-                  ]}
-                  extraClasses="mx-10"
-                />
-              </div>
-              <button
-                className="space-x-2 flex justify-center w-full items-center px-10 text-blue-neptune pb-8"
-                onClick={() => {
-                  setIsDistributionTableExpanded(!isDistributionTableExpanded);
-                }}
-              >
-                <img
-                  src={
+            {/* TODO: fill table values when PR 3821 is merged */}
+            {category === 'DISTRIBUTION' && (
+              <>
+                <div
+                  className={`${
                     isDistributionTableExpanded
-                      ? '/images/minimize-blue.svg'
-                      : '/images/maximize-blue.svg'
-                  }
-                  alt="Resize icon"
-                />
-                <div>
-                  {isDistributionTableExpanded
-                    ? 'View summary'
-                    : 'View by members'}
+                      ? 'max-h-screen opacity-100 ease-in'
+                      : 'max-h-0 opacity-0 ease-out'
+                  } duration-500 overflow-hidden transition-all`}
+                >
+                  <DistributionMembersTable
+                    isEditing={false}
+                    hideSearch={true}
+                    membersDetails={[]}
+                    tokens={[]}
+                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '() => void'... Remove this comment to see the full error message
+                    handleIsEditingChange={null}
+                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(event: any... Remove this comment to see the full error message
+                    handleSearchChange={null}
+                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
+                    searchValue={null}
+                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(event: any... Remove this comment to see the full error message
+                    clearSearchValue={null}
+                    activeAddresses={[]}
+                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(addresses:... Remove this comment to see the full error message
+                    handleActiveAddressesChange={null}
+                    extraClasses={`pl-10 no-scroll-bar`}
+                  />
                 </div>
-              </button>
-            </>
-          )}
-        </div>
-      )}
+                <div
+                  className={`${
+                    !isDistributionTableExpanded
+                      ? 'max-h-screen opacity-100 ease-in'
+                      : 'max-h-0 opacity-0 ease-out'
+                  } duration-500 overflow-hidden transition-all`}
+                >
+                  <div className="px-10 mb-2">Tokens distributed</div>
+                  <SimpleTable
+                    rows={[
+                      { title: 'Title', value: 'Value', externalLink: '/' },
+                      { title: 'Title', value: 'Value', externalLink: '/' },
+                      { title: 'Title', value: 'Value', externalLink: '/' },
+                      { title: 'Title', value: 'Value', externalLink: '/' }
+                    ]}
+                    extraClasses="mx-10"
+                  />
+                </div>
+                <button
+                  className="space-x-2 flex justify-center w-full items-center px-10 text-blue-neptune pb-8"
+                  onClick={() => {
+                    setIsDistributionTableExpanded(
+                      !isDistributionTableExpanded
+                    );
+                  }}
+                >
+                  <img
+                    src={
+                      isDistributionTableExpanded
+                        ? '/images/minimize-blue.svg'
+                        : '/images/maximize-blue.svg'
+                    }
+                    alt="Resize icon"
+                  />
+                  <div>
+                    {isDistributionTableExpanded
+                      ? 'View summary'
+                      : 'View by members'}
+                  </div>
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </>
     </Modal>
   );
 };

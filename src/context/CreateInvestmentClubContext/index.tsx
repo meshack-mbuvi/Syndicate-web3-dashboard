@@ -1,5 +1,14 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLUB_CREATION,
+  CREATE_ON_CHAIN_CLUB_CLICK,
+  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
+  NAME_SYMBOL_NEXT_CLICK,
+  REVIEW_CLICK
+} from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
+import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
@@ -23,15 +32,6 @@ import {
   CreateSteps,
   investmentClubSteps
 } from './steps';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CREATE_ON_CHAIN_CLUB_CLICK,
-  NAME_SYMBOL_NEXT_CLICK,
-  DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
-  REVIEW_CLICK,
-  CLUB_CREATION
-} from '@/components/amplitude/eventNames';
-import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -88,7 +88,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       web3: { activeNetwork, account }
     },
     createInvestmentClubSliceReducer: {
-      mintEndTime: { mintTime }
+      mintEndTime: { mintTime },
+      tokenDetails: { depositTokenSymbol, depositTokenLogo }
     }
   } = useSelector((state: AppState) => state);
 
@@ -97,6 +98,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch();
 
   const [currentStep, setCurrentStep] = useState(0);
+  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
   const [editingStep, setEditingStep] = useState<number>(null);
   const [backBtnDisabled, setBackBtnDisabled] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
@@ -140,6 +142,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const isReviewStep = currentStep === investmentClubSteps.length - 1;
   const isFirstStep = currentStep === 0;
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (!nextBtnDisabled) {
       document.addEventListener('keypress', keyPressEnter);
@@ -196,6 +199,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
     if (editingStep) {
       setCurrentStep(editingStep);
+      // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
       setEditingStep(null);
       setShowNextButton(true);
     } else if (currentStep < investmentClubSteps.length - 1) {
@@ -222,12 +226,35 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
-  const onTxReceipt = (receipt) => {
-    const { tokenAddress, name, symbol } =
-      receipt.events.ERC20ClubCreated.returnValues;
+  const onTxReceipt = (receipt: any) => {
+    amplitudeLogger(CLUB_CREATION, {
+      flow: Flow.CLUB_CREATE,
+      transaction_status: 'Success'
+    });
+    const {
+      tokenAddress,
+      name,
+      symbol,
+      depositToken,
+      endTime,
+      startTime,
+      tokenCap
+    } = receipt.events.ERC20ClubCreated.returnValues;
 
     // save to local storage
-    saveNewClub({ tokenAddress, name, symbol, account, activeNetwork });
+    saveNewClub({
+      tokenAddress,
+      name,
+      symbol,
+      account,
+      depositToken,
+      endTime,
+      startTime,
+      tokenCap,
+      activeNetwork,
+      depositTokenSymbol,
+      depositTokenLogo
+    });
 
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
@@ -242,7 +269,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setConfirmWallet(false);
   };
 
-  const onTxFail = (err) => {
+  const onTxFail = () => {
+    amplitudeLogger(CLUB_CREATION, {
+      flow: Flow.CLUB_CREATE,
+      transaction_status: 'Failure'
+    });
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: false,
@@ -269,13 +300,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       }));
-
-      amplitudeLogger(CLUB_CREATION, {
-        flow: Flow.CLUB_CREATE,
-        transaction_status: 'Success'
-      });
       return await submitCreateClub();
     } catch (error) {
+      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
       const { code } = error;
       if (code) {
         const errorMessage = getMetamaskError(code, 'Club creation');
@@ -290,14 +317,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       });
-      amplitudeLogger(CLUB_CREATION, {
-        flow: Flow.CLUB_CREATE,
-        transaction_status: 'Failure'
-      });
     }
   };
 
-  const keyPressEnter = (e) => {
+  const keyPressEnter = (e: any) => {
     // This should work only when in create IC(Investment club)
     if (!router.pathname.endsWith('clubprivatebetainvite')) return;
 
@@ -335,6 +358,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal,
         errorModal,
         warningModal,
+        // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<{ waitingConfirmatio... Remove this comment to see the full error message
         setShowModal,
         processingModalTitle,
         processingModalDescription,

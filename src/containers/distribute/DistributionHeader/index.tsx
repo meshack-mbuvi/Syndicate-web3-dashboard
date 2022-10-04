@@ -5,12 +5,12 @@ import React from 'react';
  * Displays a component with title and subtitle text
  * @returns
  */
-const DistributionHeader: React.FC<{ titleText; subTitleText }> = ({
+const DistributionHeader: React.FC<{ titleText: any; subTitleText: any }> = ({
   titleText,
   subTitleText
 }) => {
   return (
-    <div>
+    <>
       {/* Desktop */}
       <div className="hidden md:block">
         <H4>{titleText}</H4>
@@ -19,9 +19,9 @@ const DistributionHeader: React.FC<{ titleText; subTitleText }> = ({
       {/* Mobile */}
       <div className="md:hidden">
         <H4>{titleText}</H4>
-        <B4 extraClasses="text-gray-syn4 py-2">{subTitleText}</B4>
+        <B4 extraClasses="text-gray-syn4 mt-2">{subTitleText}</B4>
       </div>
-    </div>
+    </>
   );
 };
 

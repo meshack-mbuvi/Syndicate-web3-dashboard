@@ -70,7 +70,7 @@ export const NFTChecker: React.FC = () => {
   useEffect(() => {
     if (!GenesisNFTContract) return;
 
-    GenesisNFTContract.currentSupply().then((supply) =>
+    GenesisNFTContract.currentSupply().then((supply: any) =>
       setCurrentSupply(+supply)
     );
     return () => {
@@ -87,7 +87,7 @@ export const NFTChecker: React.FC = () => {
     };
   }, [genesisNFT_ID]);
 
-  const getTokenProperties = async (tokenId) => {
+  const getTokenProperties = async (tokenId: any) => {
     if (tokenId > +currentSupply || tokenId == 0) {
       setNftFound(false);
     } else {
@@ -115,7 +115,7 @@ export const NFTChecker: React.FC = () => {
     }
   };
 
-  const onSubmit = (values) => {
+  const onSubmit = (values: any) => {
     const { genesisNFT_ID } = values;
 
     if (!genesisNFT_ID) return;

@@ -5,16 +5,21 @@ export const getCollectiveBalance = async (
   account: string,
   web3: any
 ): Promise<number> => {
-  const collective = new ERC721Contract(collectiveAddress, web3);
-
-  return parseInt(await collective.balanceOf(account));
+  return parseInt(
+    await new ERC721Contract(collectiveAddress, web3).balanceOf(account)
+  );
 };
 
 export const getCollectiveOwner = async (
   collectiveAddress: string,
   web3: any
 ): Promise<string> => {
-  const collective = new ERC721Contract(collectiveAddress, web3);
+  return await new ERC721Contract(collectiveAddress, web3).owner();
+};
 
-  return await collective.owner();
+export const getCollectiveName = async (
+  collectiveAddress: string,
+  web3: any
+) => {
+  return await new ERC721Contract(collectiveAddress, web3).name();
 };

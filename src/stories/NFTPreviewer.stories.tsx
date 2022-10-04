@@ -8,11 +8,12 @@ export default {
   title: '3. Molecules/NFT Previewer'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <NFTPreviewer {...args} />;
 };
 
 export const Image = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Image.args = {
   name: 'Alpha Beta Punks',
   symbol: 'ABP',
@@ -25,6 +26,7 @@ Image.args = {
 };
 
 export const Video = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Video.args = {
   name: 'Alpha Beta Punks',
   symbol: 'ABP',
@@ -37,6 +39,7 @@ Video.args = {
 };
 
 export const Artwork = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Artwork.args = {
   name: 'Alpha Beta Punks',
   symbol: 'ABP',

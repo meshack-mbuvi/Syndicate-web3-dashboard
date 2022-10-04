@@ -1,1 +1,1 @@
-export const tokenTableColumns = ['Token', 'Balance', 'Value'];
+export const tokenTableColumns = ['Token', 'Club balance', 'Value', ''];

@@ -21,8 +21,10 @@ export const InfoActionWrapper: React.FC<Props> = ({
   errors,
   validAddressCount
 }) => {
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const handleClick = () => {
     if (!validAddressCount && errors) return null;
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
     handleAction();
   };
 
@@ -30,7 +32,11 @@ export const InfoActionWrapper: React.FC<Props> = ({
     <div className={`${customClasses} space-y-2`}>
       <div className="flex justify-between">
         <div>{title}</div>
-        <button onClick={handleClick} disabled={validAddressCount && !errors}>
+        <button
+          onClick={handleClick}
+          // @ts-expect-error TS(2322): Type 'boolean | 0 | undefined' is not assign... Remove this comment to see the full error message
+          disabled={validAddressCount && !errors}
+        >
           {validAddressCount && !errors ? (
             <span className="flex items-center space-x-2 text-green cursor-default">
               <CheckmarkIcon />

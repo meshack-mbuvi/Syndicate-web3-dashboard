@@ -9,7 +9,7 @@ export default {
   title: '4. Organisms/Token Gated Logic'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [tokenRules, setTokenRules] = useState<TokenGateRule[]>([
     {
       name: 'Token Name',
@@ -53,6 +53,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   isInErrorState: false
 };

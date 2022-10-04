@@ -10,8 +10,8 @@ export const InputFieldWithButton = (props: {
   buttonLabel: string | any;
   isButtonActive?: boolean;
   disabled?: boolean;
-  buttonOnClick?: () => void;
-  onChange: (e) => void;
+  buttonOnClick: () => void;
+  onChange: (e: any) => void;
   symbol?: string;
 }): React.ReactElement => {
   const {

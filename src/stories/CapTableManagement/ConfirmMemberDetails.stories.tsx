@@ -20,7 +20,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <Story />
@@ -30,11 +30,12 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <ConfirmMemberDetailsModal {...args} />;
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   preview: true,
   symbol: '✺RACA',

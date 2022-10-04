@@ -27,6 +27,7 @@ const setTransactionsSlice = createSlice({
     setLoadingTransactions(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     clearMyTransactions(state, action: PayloadAction<boolean>) {
       state.myTransactions = {};
     },

@@ -1,66 +1,68 @@
-import BackButton from '@/components/buttons/BackButton';
-import { CollapsibleTable } from '@/components/collapsibleTable/index';
-import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
-import { GroupSettingsTable } from '@/components/groupSettingsTable';
-import { T5, H4 } from '@/components/typography';
-import ReactTooltip from 'react-tooltip';
-import { NFTPreviewer, NFTMediaType } from '../nftPreviewer';
-import { CopyText } from './editables';
-import { InputField } from '@/components/inputs/inputField';
-import { TextArea } from '@/components/inputs/simpleTextArea';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { useRouter } from 'next/router';
-import {
-  setMintPrice,
-  setMaxPerWallet,
-  setIsTransferable,
-  setIsCollectiveOpen,
-  setMetadataCid,
-  setUpdateEnded,
-  setOpenUntil,
-  setMaxSupply,
-  setMintEndTime
-} from '@/state/collectiveDetails';
-import EditCollectiveMintTime from './EditCollectiveMintTime';
-import EditMaxSupply from './EditMaxSupply';
-import { useState, useEffect } from 'react';
-import {
-  FileUploader,
-  UploaderProgressType
-} from '@/components/uploaders/fileUploader';
-import { ChangeSettingsDisclaimerModal } from '@/components/collectives/changeSettingsDisclaimerModal/index';
-import { ProgressState } from '@/components/progressCard';
-import { ProgressModal } from '@/components/progressModal';
-import { ExternalLinkColor } from '@/components/iconWrappers';
-import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
-import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import {
-  setCollectiveSubmittingToIPFS,
-  setIpfsError,
-  setCollectiveArtwork
-} from '@/state/createCollective/slice';
-import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
-import {
-  OpenUntil,
-  RadioButtonsOpenUntil
-} from '@/components/collectives/create/inputs/openUntil/radio';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
-import { numberWithCommas } from '@/utils/formattedNumbers';
-import { OpenUntilStepModal } from '@/components/collectives/confirmOpenUntilStepModal';
-import {
-  ProgressDescriptor,
-  ProgressDescriptorState
-} from '@/components/progressDescriptor';
-import { CtaButton } from '@/components/CTAButton';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   COLLECTIVE_SUBMIT_SETTINGS,
   MANAGE_TRY_AGAIN_CLICK
 } from '@/components/amplitude/eventNames';
+import BackButton from '@/components/buttons/BackButton';
+import { CollapsibleTable } from '@/components/collapsibleTable/index';
+import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
+import { ChangeSettingsDisclaimerModal } from '@/components/collectives/changeSettingsDisclaimerModal/index';
+import { OpenUntilStepModal } from '@/components/collectives/confirmOpenUntilStepModal';
+import {
+  OpenUntil,
+  RadioButtonsOpenUntil
+} from '@/components/collectives/create/inputs/openUntil/radio';
+import { CtaButton } from '@/components/CTAButton';
+import { GroupSettingsTable } from '@/components/groupSettingsTable';
+import { ExternalLinkColor } from '@/components/iconWrappers';
+import { InputField } from '@/components/inputs/inputField';
+import { TextArea } from '@/components/inputs/simpleTextArea';
+import { ProgressState } from '@/components/progressCard';
+import {
+  ProgressDescriptor,
+  ProgressDescriptorState
+} from '@/components/progressDescriptor';
+import { ProgressModal } from '@/components/progressModal';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { H4, T5 } from '@/components/typography';
+import {
+  FileUploader,
+  UploaderProgressType
+} from '@/components/uploaders/fileUploader';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
+import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
+import { AppState } from '@/state';
+import {
+  setCollectiveSettings,
+  setIsCollectiveOpen,
+  setIsTransferable,
+  setMaxPerWallet,
+  setMaxSupply,
+  setMintEndTime,
+  setMintPrice,
+  setOpenUntil,
+  setUpdateEnded,
+  setActiveRowIdx,
+  setMetadataCid
+} from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
+import {
+  setCollectiveArtwork,
+  setCollectiveSubmittingToIPFS,
+  setIpfsError
+} from '@/state/createCollective/slice';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
+import { NFTMediaType, NFTPreviewer } from '../nftPreviewer';
+import { CopyText } from './editables';
+import EditCollectiveMintTime from './EditCollectiveMintTime';
+import EditMaxSupply from './EditMaxSupply';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 type step = {
   title: string;
@@ -85,32 +87,36 @@ const ModifyCollectiveSettings: React.FC = () => {
     web3Reducer: {
       web3: { activeNetwork, account, web3 }
     },
-    collectiveDetailsReducer: {
-      details: {
-        collectiveName,
-        collectiveSymbol,
-        createdAt,
-        mintPrice,
-        maxPerWallet,
-        collectiveAddress,
-        mintEndTime,
-        maxSupply,
-        metadataCid,
-        isTransferable: existingIsTransferable
-      },
-
+    modifyCollectiveSettingsReducer: {
       settings: {
-        isTransferable,
+        isTransferable: settingsIsTransferable,
         isOpen,
         mintPrice: settingsMintPrice,
         maxPerWallet: settingsMaxPerWallet,
         mintEndTime: settingsMintEndTime,
-        maxSupply: settingsMaxSupply
+        maxSupply: settingsMaxSupply,
+        metadataCid: settingsMetadataCid
       },
       activeRow: activeRowRedux,
       updateEnded
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    collectiveDetails: {
+      collectiveName,
+      collectiveSymbol,
+      createdAt,
+      mintPrice,
+      maxPerWallet,
+      collectiveAddress,
+      mintEndTime,
+      maxSupply,
+      metadataCid,
+      isTransferable
+    },
+    collectiveDetailsLoading
+  } = useERC721Collective();
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -160,9 +166,28 @@ const ModifyCollectiveSettings: React.FC = () => {
   const [subfieldEditing, setSubfieldEditing] = useState(false);
 
   useEffect(() => {
+    if (collectiveDetailsLoading) return;
+    dispatch(
+      setCollectiveSettings({
+        isTransferable,
+        isOpen: true,
+        mintPrice,
+        maxPerWallet,
+        mintEndTime,
+        maxSupply,
+        metadataCid,
+        openUntil:
+          maxSupply === 0 ? OpenUntil.FUTURE_DATE : OpenUntil.MAX_MEMBERS
+      })
+    );
+  }, [collectiveDetailsLoading]);
+
+  useEffect(() => {
     if (maxSupply === 0) {
+      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.FUTURE_DATE' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.FUTURE_DATE);
     } else {
+      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.MAX_MEMBERS' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.MAX_MEMBERS);
     }
   }, [maxSupply]);
@@ -195,6 +220,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       ? setArtworkUrlState(
           `${
             process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           }/${nftMetadata?.animation_url.replace('ipfs://', '')}`
         )
       : setArtworkUrlState(
@@ -211,7 +237,7 @@ const ModifyCollectiveSettings: React.FC = () => {
         await fixedRenderer.updateTokenURI(
           account,
           collectiveAddress as string,
-          metadataCid,
+          settingsMetadataCid,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -220,12 +246,18 @@ const ModifyCollectiveSettings: React.FC = () => {
         console.log(e);
       }
     }
-    if (metadataCid && !updateEnded) {
+    if (settingsMetadataCid && !updateEnded) {
       updateURI();
       setEditGroupFieldClicked(false);
       dispatch(setUpdateEnded(true));
     }
-  }, [metadataCid, account, collectiveAddress, fixedRenderer, updateEnded]);
+  }, [
+    settingsMetadataCid,
+    account,
+    collectiveAddress,
+    fixedRenderer,
+    updateEnded
+  ]);
 
   const handleModalClose = () => {
     setIsModalVisible(false);
@@ -251,7 +283,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setProgressState('failure');
   };
 
-  const onSwitchTxConfirm = (transactionHash) => {
+  const onSwitchTxConfirm = (transactionHash: any) => {
     // Update progress state
     setProgressDescriptorTitle(`Updating...`);
     setProgressDescriptorDescription(
@@ -265,6 +297,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const onSwitchTxReceipt = () => {
     setOpenUntilStepModalVisible(true);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
       setOpenUntilStepModalVisible(false);
@@ -277,7 +310,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const onSwitchTxFail = (error?) => {
+  const onSwitchTxFail = (error?: any) => {
     setOpenUntilStepModalVisible(true);
     updateSteps('isInErrorState', true);
     updateSteps('status', ProgressDescriptorState.FAILURE);
@@ -305,8 +338,9 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const updateSteps = (key, value) => {
+  const updateSteps = (key: any, value: any) => {
     const updatedSteps = steps;
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
@@ -339,7 +373,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const handleClickAction = async (e) => {
+  const handleClickAction = async (e: any) => {
     e.preventDefault();
 
     updateSteps('status', ProgressDescriptorState.PENDING);
@@ -347,18 +381,19 @@ const ModifyCollectiveSettings: React.FC = () => {
 
     setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
     setProgressDescriptorTitle(`Applying changes...`);
-
+    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
     dispatch(setOpenUntil(currentOpenUntilState));
 
     await updateMixin();
   };
 
-  const handleDisclaimerConfirmation = (e?) => {
+  const handleDisclaimerConfirmation = (e?: any) => {
     e.preventDefault();
     setIsModalVisible(true);
   };
 
   const clearErrorStepErrorStates = () => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const updatedSteps = steps.map((step) => ({
       ...step,
       isInErrorState: false,
@@ -402,10 +437,11 @@ const ModifyCollectiveSettings: React.FC = () => {
     setArtworkTypeState(NFTMediaType.CUSTOM);
     setArtworkUrlState('');
     setProgressPercent(0);
+    // @ts-expect-error TS(2345): Argument of type '""' is not assignable to par... Remove this comment to see the full error message
     setFileName('');
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: any) => {
     const fileLimit = 50;
     const fileObject = e.target.files[0];
 
@@ -426,6 +462,7 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const currentOpenUntilChange = (openUntil: OpenUntil) => {
     setOpenUntilSettingsChanged(!openUntilSettingsChanged);
+    // @ts-expect-error TS(2345): Argument of type 'OpenUntil' is not assignable to par... Remove this comment to see the full error message
     setCurrentOpenUntilState(openUntil);
   };
 
@@ -470,10 +507,10 @@ const ModifyCollectiveSettings: React.FC = () => {
         break;
       case EditRowIndex.OpenUntil:
         if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
-          dispatch(setMintEndTime(settingsMintEndTime));
+          dispatch(setMintEndTime(mintEndTime));
         }
         if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
-          dispatch(setMaxSupply(settingsMaxSupply));
+          dispatch(setMaxSupply(maxSupply));
         }
         break;
       case EditRowIndex.Transfer:
@@ -485,7 +522,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
   };
 
-  const handleEdit = async (e) => {
+  const handleEdit = async (e: any) => {
     e.preventDefault();
     setIsModalVisible(false);
     setProgressState('confirm');
@@ -510,7 +547,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.MintPrice:
@@ -539,7 +575,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.MaxPerWallet:
@@ -568,104 +603,58 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
         }
         break;
       case EditRowIndex.OpenUntil:
-        if (!collectiveAddress || !mintEndTime || !web3) return;
+        if (!collectiveAddress || !settingsMintEndTime || !web3) return;
         if (currentOpenUntilState === OpenUntil.FUTURE_DATE) {
           if (openUntilSettingsChanged) {
             setOpenUntilStepModalVisible(true);
-            try {
-              await timeRequirements.updateTimeRequirements(
-                account,
-                collectiveAddress as string,
-                createdAt,
-                Number(mintEndTime),
-                onSwitchTxConfirm,
-                onSwitchTxReceipt,
-                onSwitchTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
-          } else {
-            try {
-              await timeRequirements.updateTimeRequirements(
-                account,
-                collectiveAddress as string,
-                createdAt,
-                Number(mintEndTime),
-                onTxConfirm,
-                onTxReceipt,
-                onTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
+          }
+          try {
+            await timeRequirements.updateTimeRequirements(
+              account,
+              collectiveAddress as string,
+              createdAt,
+              Number(settingsMintEndTime),
+              onSwitchTxConfirm,
+              onSwitchTxReceipt,
+              onSwitchTxFail
+            );
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Success'
+            });
+          } catch (error) {
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Failure'
+            });
           }
         }
 
         if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
           if (openUntilSettingsChanged) {
             setOpenUntilStepModalVisible(true);
-            try {
-              await maxTotalSupplyERC721.updateTotalSupply(
-                account,
-                collectiveAddress as string,
-                maxSupply,
-                onSwitchTxConfirm,
-                onSwitchTxReceipt,
-                onSwitchTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
-          } else {
-            try {
-              await maxTotalSupplyERC721.updateTotalSupply(
-                account,
-                collectiveAddress as string,
-                maxSupply,
-                onTxConfirm,
-                onTxReceipt,
-                onTxFail
-              );
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Success'
-              });
-            } catch (error) {
-              amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-                flow: Flow.COLLECTIVE_MANAGE,
-                transaction_status: 'Failure'
-              });
-              console.log(error);
-            }
+          }
+          try {
+            await maxTotalSupplyERC721.updateTotalSupply(
+              account,
+              collectiveAddress as string,
+              settingsMaxSupply,
+              onSwitchTxConfirm,
+              onSwitchTxReceipt,
+              onSwitchTxFail
+            );
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Success'
+            });
+          } catch (error) {
+            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+              flow: Flow.COLLECTIVE_MANAGE,
+              transaction_status: 'Failure'
+            });
           }
         }
         break;
@@ -675,7 +664,7 @@ const ModifyCollectiveSettings: React.FC = () => {
           await erc721Collective.updateTransferGuard(
             account,
             collectiveAddress as string,
-            isTransferable,
+            settingsIsTransferable,
             onTxConfirm,
             onTxReceipt,
             onTxFail
@@ -689,7 +678,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             flow: Flow.COLLECTIVE_MANAGE,
             transaction_status: 'Failure'
           });
-          console.log(error);
+          onTxFail();
         }
         break;
       default:
@@ -716,9 +705,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       description: (
         <a
           href={
-            activeNetwork?.blockExplorer?.baseUrl +
-            '/address/' +
-            collectiveAddress
+            activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
           }
           rel="noreferrer"
           target="_blank"
@@ -744,9 +731,7 @@ const ModifyCollectiveSettings: React.FC = () => {
           wait.
           <a
             href={
-              activeNetwork?.blockExplorer?.baseUrl +
-              '/address/' +
-              collectiveAddress
+              activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
             }
             rel="noreferrer"
             target="_blank"
@@ -766,12 +751,10 @@ const ModifyCollectiveSettings: React.FC = () => {
     },
     failure: {
       title: 'Settings were not updated',
-      description: (
+      description: transactionHash ? (
         <a
           href={
-            activeNetwork?.blockExplorer?.baseUrl +
-            '/address/' +
-            collectiveAddress
+            activeNetwork?.blockExplorer?.baseUrl + '/tx/' + transactionHash
           }
           rel="noreferrer"
           target="_blank"
@@ -784,6 +767,8 @@ const ModifyCollectiveSettings: React.FC = () => {
             className={`w-4 h-4`}
           />
         </a>
+      ) : (
+        ''
       ),
       state: ProgressState.FAILURE,
       buttonLabel: 'Try again'
@@ -931,12 +916,14 @@ const ModifyCollectiveSettings: React.FC = () => {
                             : nftMetadata?.image === null
                             ? `${
                                 process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               }/${nftMetadata?.animation_url.replace(
                                 'ipfs://',
                                 ''
                               )}`
                             : `${
                                 process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
+                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               }/${nftMetadata?.image.replace('ipfs://', '')}`
                         }
                         mediaType={
@@ -951,6 +938,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                       />
                       <FileUploader
                         progressPercent={progressPercent}
+                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
                         fileName={fileName}
                         errorText={exceededUploadLimit}
                         promptTitle="Upload artwork"
@@ -974,6 +962,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                   rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
                     <TextArea
+                      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
                       value={description}
                       handleValueChange={(e) => setDescription(e)}
                       placeholderLabel="Description about this NFT collection that will be visible everywhere"
@@ -994,6 +983,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             isNotInteractableExpanded: isOpen,
             setIsNotInteractableExpanded: handleOpenCollective,
             subfieldEditing: subfieldEditing,
+            // @ts-expect-error TS(2322): Type '(boolean: boolean) => void' is not assig... Remove this comment to see the full error message
             setSubfieldEditing: handleSubfieldEditing
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
@@ -1092,6 +1082,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                 inputField: (
                   <>
                     <RadioButtonsOpenUntil
+                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OpenUntil'.
                       openUntil={currentOpenUntilState}
                       setOpenUntil={currentOpenUntilChange}
                     />
@@ -1129,9 +1120,9 @@ const ModifyCollectiveSettings: React.FC = () => {
           subtitle="Members will be able to transfer the collective NFTs they own"
           rows={[]}
           expander={{
-            isExpanded: isTransferable,
+            isExpanded: settingsIsTransferable,
             setIsExpanded: handleTransferable,
-            showSubmitCTA: isTransferable !== existingIsTransferable
+            showSubmitCTA: settingsIsTransferable !== isTransferable
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
           setEditGroupFieldClicked={setEditGroupFieldClicked}
@@ -1153,6 +1144,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       <OpenUntilStepModal
         activeStepIndex={activeIndex}
         isModalVisible={openUntilStepModalVisible}
+        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
         showCloseButton={false}
@@ -1184,10 +1176,12 @@ const ModifyCollectiveSettings: React.FC = () => {
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressModal
             {...{
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               ...progressModalStates[progressState],
               isVisible: true,
               txHash: transactionHash,
               buttonOnClick:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again'
                   ? handleCloseModal
                   : handleExit,
@@ -1195,14 +1189,18 @@ const ModifyCollectiveSettings: React.FC = () => {
               iconColor: ExternalLinkColor.BLUE,
               transactionType: 'transaction',
               showCloseButton:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true
                   : false,
               closeModal: handleCloseModal,
               outsideOnClick:
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true

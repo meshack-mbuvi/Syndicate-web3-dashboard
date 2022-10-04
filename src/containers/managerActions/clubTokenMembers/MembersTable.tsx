@@ -4,7 +4,6 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { SET_MEMBER_SIGN_STATUS } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { formatAddress } from '@/utils/formatAddress';
@@ -13,7 +12,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { ExclamationCircleIcon } from '@heroicons/react/solid';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePagination, useTable } from 'react-table';
 
@@ -24,14 +23,15 @@ import SignerMenu from './signerMenu';
 const MembersTable = ({
   columns,
   data,
-  filterAddressOnChangeHandler,
-  searchAddress,
+  searchValueOnChangeHandler,
+  searchValue,
   selectedMember,
   setSelectedMember,
   toggleAddMemberModal,
   setShowMemberOptions,
-  setShowMintNavToClubSettings
-}): JSX.Element => {
+  setShowMintNavToClubSettings,
+  isOwner
+}: any): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol, depositsEnabled },
@@ -41,8 +41,6 @@ const MembersTable = ({
       web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-
-  const isOwner = useIsClubOwner();
 
   const {
     getTableProps,
@@ -149,7 +147,7 @@ const MembersTable = ({
 
   const isDemoMode = useDemoMode();
 
-  const handleClick = (memberData) => {
+  const handleClick = (memberData: any) => {
     const { clubTokens, depositAmount, memberAddress, ownershipShare } =
       memberData;
 
@@ -182,11 +180,11 @@ const MembersTable = ({
   return (
     <div className="overflow-y-visible">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
-        {page.length > 1 || searchAddress ? (
+        {page.length > 1 || searchValue ? (
           <SearchInput
             {...{
-              onChangeHandler: filterAddressOnChangeHandler,
-              searchValue: searchAddress,
+              onChangeHandler: searchValueOnChangeHandler,
+              searchValue: searchValue,
               itemsCount: data.length
             }}
           />
@@ -272,7 +270,7 @@ const MembersTable = ({
                     : null
                 }
               >
-                {row.cells.map((cell, cellIndex) => {
+                {row.cells.map((cell: any, cellIndex: any) => {
                   return (
                     <td
                       {...cell.getCellProps()}
@@ -286,7 +284,7 @@ const MembersTable = ({
               </tr>
             );
           })}
-          {searchAddress && !page.length && (
+          {searchValue && !page.length && (
             <div className="flex flex-col justify-center w-full h-full items-center">
               <ExclamationCircleIcon className="h-10 w-10 mb-2 text-gray-lightManatee" />
               <p className="text-gray-lightManatee">No member found.</p>
@@ -366,7 +364,8 @@ const MembersTable = ({
               />
               <div className="flex flex-grow space-x-4">
                 <p className="text-2xl my-auto align-middle">
-                  {formatAddress(memberInfo?.['Wallet address'], 6, 4)}
+                  {memberInfo?.['Wallet address'] &&
+                    formatAddress(memberInfo?.['Wallet address'], 6, 4)}
                 </p>
                 {hasMemberSigned == true && (
                   <span className="my-auto">

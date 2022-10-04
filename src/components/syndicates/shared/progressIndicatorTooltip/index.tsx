@@ -12,7 +12,7 @@ interface IProgressIndicatorTooltip {
   tooltipTitle: string;
   tooltipTokenAmount: number;
   tooltipTokenPercentage: number;
-  currentToolTip;
+  currentToolTip: any;
   depositTokensAmount: number;
 }
 

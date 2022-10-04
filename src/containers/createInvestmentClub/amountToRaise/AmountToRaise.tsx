@@ -44,7 +44,7 @@ const AmountToRaise: React.FC<{
   const [showTokenSelectModal, setShowTokenSelectModal] = useState(false);
 
   // get input value
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     e.preventDefault();
     const value = numberInputRemoveCommas(e);
     setAmount(value);
@@ -59,9 +59,11 @@ const AmountToRaise: React.FC<{
   // catch input field errors
   useEffect(() => {
     if (!amount || +amount === 0 || editButtonClicked) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
     } else {
       setError('');
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(false);
     }
     amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
@@ -72,7 +74,10 @@ const AmountToRaise: React.FC<{
     if (!activeNetwork.chainId) return;
 
     setdefaultTokenDetails(
-      SUPPORTED_TOKENS[activeNetwork.chainId].filter((coin) => coin.default)[0]
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      SUPPORTED_TOKENS[activeNetwork.chainId].filter(
+        (coin: any) => coin.default
+      )[0]
     );
   }, [activeNetwork.chainId]);
 

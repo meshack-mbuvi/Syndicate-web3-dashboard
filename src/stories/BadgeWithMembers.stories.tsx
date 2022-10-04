@@ -11,7 +11,7 @@ const client = new ApolloClient({
 export default {
   title: '4. Organisms/Badge/With Members',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <Story />
@@ -21,7 +21,7 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return (
     <BadgeWithMembers
       {...{
@@ -86,16 +86,19 @@ const Template = (args) => {
 };
 
 export const Admin = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Admin.args = {
   isAdmin: true
 };
 
 export const Member = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Member.args = {
   isMember: true
 };
 
 export const NonMember = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 NonMember.args = {
   isMember: false
 };

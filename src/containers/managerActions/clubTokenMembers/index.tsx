@@ -2,7 +2,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
 import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
@@ -11,7 +11,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink from '../GenerateDepositLink';
@@ -20,10 +20,11 @@ import { MemberAddressComponent } from './memberAddress';
 import MembersTable from './MembersTable';
 import MoreOptions from './moreOptions';
 
-const ClubTokenMembers = (): JSX.Element => {
+const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
+  isOwner
+}): JSX.Element => {
   // retrieve state variables
   const {
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
       depositDetails: { depositTokenSymbol, nativeDepositToken },
       erc20Token: { depositsEnabled }
@@ -37,11 +38,12 @@ const ClubTokenMembers = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
-  const isOwner = useIsClubOwner();
   const router = useRouter();
-  const { clubAddress } = router.query;
+  const {
+    query: { clubAddress }
+  } = router;
 
-  const [filteredAddress, setFilteredAddress] = useState('');
+  const [searchValue, setSearchValue] = useState('');
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -52,6 +54,9 @@ const ClubTokenMembers = (): JSX.Element => {
   const [showMintTokensModal, toggleMintTokensModal] = useState(false);
   const [showMintNavToClubSettings, setShowMintNavToClubSettings] =
     useState(false);
+
+  // fetch club members
+  const { clubMembers, isFetchingMembers } = useClubTokenMembers();
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -87,13 +92,13 @@ const ClubTokenMembers = (): JSX.Element => {
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
   };
 
-  const filterAddressOnChangeHandler = (event: {
+  const searchValueOnChangeHandler = (event: {
     preventDefault: () => void;
     target: { value: string };
   }) => {
     event.preventDefault();
     const { value } = event.target;
-    setFilteredAddress(value.trim());
+    setSearchValue(value.trim());
   };
 
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
@@ -106,13 +111,16 @@ const ClubTokenMembers = (): JSX.Element => {
   const generateTableData = () => {
     const allMembers = [...clubMembers];
 
-    if (filteredAddress.trim()) {
+    if (searchValue.trim()) {
       // search any text
-      const filteredMembers = allMembers.filter((member) =>
-        member.memberAddress
-          .toLowerCase()
-          .includes(filteredAddress.toLowerCase())
+      const filteredMembers = allMembers.filter(
+        (member) =>
+          member.memberAddress
+            .toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          member.ensName.toLowerCase().includes(searchValue.toLowerCase())
       );
+
       setSynMembersToShow(filteredMembers);
     } else {
       setSynMembersToShow(allMembers);
@@ -121,9 +129,10 @@ const ClubTokenMembers = (): JSX.Element => {
 
   useEffect(() => {
     generateTableData();
-  }, [JSON.stringify(clubMembers), filteredAddress]);
+  }, [JSON.stringify(clubMembers), searchValue]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2345): Argument of type '{ depositAmount: string; memberA... Remove this comment to see the full error message
     setTableData(syndicateMembersToShow);
   }, [JSON.stringify(syndicateMembersToShow), JSON.stringify(clubMembers)]);
 
@@ -140,7 +149,7 @@ const ClubTokenMembers = (): JSX.Element => {
     </div>
   );
 
-  const handleMenuItemClick = (member) => {
+  const handleMenuItemClick = (member: any) => {
     dispatch(setMemberToUpdate(member));
     setShowModifyCapTable();
   };
@@ -163,7 +172,7 @@ const ClubTokenMembers = (): JSX.Element => {
         accessor: function depositAmount({
           depositAmount,
           depositSymbol = depositTokenSymbol
-        }) {
+        }: any) {
           return (
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
@@ -180,7 +189,7 @@ const ClubTokenMembers = (): JSX.Element => {
           ownershipShare,
           clubTokens,
           symbol
-        }) {
+        }: any) {
           return (
             <p>
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
@@ -193,7 +202,8 @@ const ClubTokenMembers = (): JSX.Element => {
       },
       {
         Header: ` `,
-        accessor: function distributionShare(club) {
+        // @ts-expect-error TS(7030): Not all code paths return a value.
+        accessor: function distributionShare(club: any) {
           // Only show this option for club owners.
           // and only on hover
           const { memberAddress } = club;
@@ -228,7 +238,7 @@ const ClubTokenMembers = (): JSX.Element => {
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12 overflow-x-scroll no-scroll-bar sm:overflow-x-auto -mr-6 sm:mr-auto">
-        {loadingClubMembers ? (
+        {isFetchingMembers ? (
           <>
             <div className="mb-8 mt-10">
               <SkeletonLoader width="36" height="6" borderRadius="rounded-md" />
@@ -273,13 +283,14 @@ const ClubTokenMembers = (): JSX.Element => {
               })}
             </>
           </>
-        ) : tableData.length || filteredAddress ? (
+        ) : tableData.length || searchValue ? (
           <div className="w-max sm:w-auto mb-12">
             <MembersTable
+              isOwner={isOwner}
               columns={columns}
               data={tableData}
-              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-              searchAddress={filteredAddress}
+              searchValueOnChangeHandler={searchValueOnChangeHandler}
+              searchValue={searchValue}
               selectedMember={selectedMember}
               setSelectedMember={() => setSelectedMember(undefined)}
               toggleAddMemberModal={toggleAddMemberModal}

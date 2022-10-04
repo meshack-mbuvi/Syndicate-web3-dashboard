@@ -1,14 +1,14 @@
 export interface clubERC20 {
-  createdAt?;
+  createdAt?: any;
   endTime: number;
   maxMemberCount: number;
   maxTotalSupply: string;
-  requiredToken;
-  requiredTokenMinBalance;
-  startTime;
-  contractAddress;
-  address?;
-  ownerAddress;
+  requiredToken: any;
+  requiredTokenMinBalance: any;
+  startTime: any;
+  contractAddress: any;
+  address?: any;
+  ownerAddress: any;
   depositAmount: string;
   totalDeposits: string;
   membersCount: number;

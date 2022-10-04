@@ -21,12 +21,12 @@ interface Props {
   handleShowInputIndex: () => void;
   index: number;
   depositERC20TokenSymbol: string;
-  handler: (value) => void;
+  handler: (value: any) => void;
   address?: boolean;
   type?: string;
   step?: string;
   placeholder?: string;
-  handleChange?: (value) => void;
+  handleChange?: (value: any) => void;
   display: boolean;
 }
 type StringKeys<objType extends Record<string, any>> = Array<
@@ -67,7 +67,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
     return variableWidth;
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: any) => {
     if (isUnlimited(value, web3) || value.toLowerCase() === 'unlimited') {
       return 'Unlimited';
     } else {
@@ -105,7 +105,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
 
   const watchAllFields = watch();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     if (dirtyFields[`${fieldName}`]) {
       handler(data[`${fieldName}`]);
       // force reset to update new default value
@@ -150,8 +150,8 @@ export const EditableInput: FC<Props> = (props: Props) => {
               {index === showInputIndex ? (
                 <div className="flex flex-grow items-center">
                   <Controller
+                    // @ts-expect-error TS(2783): 'name' is specified more than once, so this usage ... Remove this comment to see the full error message
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     name={fieldName}
                     control={control}
                     {...register(fieldName, validations)}

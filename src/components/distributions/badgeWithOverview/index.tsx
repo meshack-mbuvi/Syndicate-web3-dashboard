@@ -18,19 +18,15 @@ interface Props {
     tokenAmount?: string;
     fiatAmount?: string;
   };
-  isLoading: boolean;
-  numSelectedTokens?: number;
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
-  ctaOnclickHandler: (e) => void;
+  ctaOnclickHandler: (e: any) => void;
 }
 
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
-  isLoading,
-  numSelectedTokens,
   CTALabel,
   isCTADisabled,
   ctaOnclickHandler,
@@ -43,11 +39,12 @@ export const BadgeWithOverview: React.FC<Props> = ({
     if (!isTotalLoading && tokenDetails.isLoading) {
       setIsTotalLoading(true);
     }
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     return total + tokenDetails.fiatAmount;
   }, 0);
 
-  const totalFiatAmount =
-    fiatAmount + +gasEstimate.fiatAmount * numSelectedTokens;
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+  const totalFiatAmount = fiatAmount + +gasEstimate?.fiatAmount;
 
   const renderedTokenRows = tokensDetails?.map((tokenDetails, index) => {
     return (
@@ -96,6 +93,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
             {Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD'
+              // @ts-expect-error TS(2769): No overload matches this call.
             }).format(tokenDetails.fiatAmount)}
           </div>
         )}
@@ -160,22 +158,19 @@ export const BadgeWithOverview: React.FC<Props> = ({
                       />
                     </div>
                     <div className="pl-1">
-                      {isLoading
+                      {!gasEstimate
                         ? '-'
-                        : (
-                            parseFloat(gasEstimate.tokenAmount) *
-                            numSelectedTokens
-                          ).toFixed(6)}
+                        : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
+                          parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
                     </div>
-                    <div>{gasEstimate.tokenSymbol}</div>
+                    <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
                   <div>
                     $
-                    {isLoading
+                    {!gasEstimate
                       ? ' -'
-                      : (
-                          parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
-                        ).toFixed(2)}
+                      : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
+                        parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                   </div>
                 </div>
               </Callout>
@@ -219,68 +214,76 @@ export const BadgeWithOverview: React.FC<Props> = ({
 
       {/* Mobile */}
       <div className="w-full md:hidden bg-gray-syn8 py-5 px-8 sm:px-10 space-y-4">
-        {tokensDetails.length > 0 ? (
-          <>
-            {/* Distributing N assets */}
-            <div className="flex justify-between">
-              <div>
-                Distributing {tokensDetails.length} asset
-                {tokensDetails.length > 1 && 's'}
-              </div>
-              <div className="text-gray-syn4 font-mono">
-                {`$${floatedNumberWithCommas(totalFiatAmount)}`}
-              </div>
-            </div>
-            {/* Gas estimate */}
-            <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
+        {
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+          tokensDetails.length > 0 ? (
+            <>
+              {/* Distributing N assets */}
               <div className="flex justify-between">
-                <div className="flex space-x-1">
-                  <div>Estimated gas</div>
-                  <div className="pr-1">
-                    <img
-                      src="/images/fuel-pump-blue.svg"
-                      className="w-3.5 relative top-0.5"
-                      alt="Gas icon"
-                    />
+                <div>
+                  Distributing{' '}
+                  {
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    tokensDetails.length
+                  }{' '}
+                  asset
+                  {
+                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                    tokensDetails.length > 1 && 's'
+                  }
+                </div>
+                <div className="text-gray-syn4 font-mono">
+                  {`$${floatedNumberWithCommas(totalFiatAmount)}`}
+                </div>
+              </div>
+              {/* Gas estimate */}
+              <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
+                <div className="flex justify-between">
+                  <div className="flex space-x-1">
+                    <div>Estimated gas</div>
+                    <div className="pr-1">
+                      <img
+                        src="/images/fuel-pump-blue.svg"
+                        className="w-3.5 relative top-0.5"
+                        alt="Gas icon"
+                      />
+                    </div>
+                    <div className="pl-1">
+                      {!gasEstimate
+                        ? '-'
+                        : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
+                          parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
+                    </div>
+                    <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
                   <div>
-                    {isLoading
-                      ? '-'
-                      : (
-                          parseFloat(gasEstimate.tokenAmount) *
-                          numSelectedTokens
-                        ).toFixed(6)}
+                    $
+                    {!gasEstimate
+                      ? ' -'
+                      : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
+                        parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                   </div>
-                  <div>{gasEstimate.tokenSymbol}</div>
                 </div>
-                <div className="">
-                  $
-                  {isLoading
-                    ? ' -'
-                    : (
-                        parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
-                      ).toFixed(2)}
-                </div>
+              </Callout>
+              <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+                {CTALabel}
+              </CtaButton>
+            </>
+          ) : (
+            <div className="flex items-center justify-between">
+              <SkeletonLoader
+                width="5/12"
+                height="4"
+                margin="0"
+                borderRadius="rounded"
+                customClass="opacity-60"
+              />
+              <div className="text-gray-syn4 text-right">
+                Waiting for selection...
               </div>
-            </Callout>
-            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
-              {CTALabel}
-            </CtaButton>
-          </>
-        ) : (
-          <div className="flex items-center justify-between">
-            <SkeletonLoader
-              width="5/12"
-              height="4"
-              margin="0"
-              borderRadius="rounded"
-              customClass="opacity-60"
-            />
-            <div className="text-gray-syn4 text-right">
-              Waiting for selection...
             </div>
-          </div>
-        )}
+          )
+        }
       </div>
     </>
   );

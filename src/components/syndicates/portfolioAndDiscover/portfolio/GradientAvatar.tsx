@@ -9,7 +9,7 @@ interface Props {
 const GradientAvatar: React.FC<Props> = (props) => {
   const { name = '', size = 'h-7 w-7', customClasses } = props;
 
-  function djb2Hash(str) {
+  function djb2Hash(str: any) {
     const len = str?.length || 0;
 
     let hash = 5381;

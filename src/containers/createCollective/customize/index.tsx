@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 
 interface Props {
-  handleNext: (e) => void;
+  handleNext: (e: any) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
   activeIndex?: number;
 }

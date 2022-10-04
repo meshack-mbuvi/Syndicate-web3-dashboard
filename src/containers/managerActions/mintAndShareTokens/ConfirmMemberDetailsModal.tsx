@@ -37,7 +37,12 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
 }): React.ReactElement => {
   const clubAddress = window?.location?.pathname.split('/')[2];
 
-  const DetailContent = ({ label, value, symbol, showPlusSign = false }) => (
+  const DetailContent = ({
+    label,
+    value,
+    symbol,
+    showPlusSign = false
+  }: any) => (
     <div className="flex justify-between">
       <span className="text-gray-syn4 font-whyte text-base leading-6">
         {label}

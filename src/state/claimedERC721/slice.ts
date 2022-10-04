@@ -12,6 +12,7 @@ const setClaimedERC721Slice = createSlice({
     setLoadingERC721Claimed(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     clearERC721Claimed(state, action: PayloadAction<boolean>) {
       state.erc721Claimed = initialState.erc721Claimed;
     }

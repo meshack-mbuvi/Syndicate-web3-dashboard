@@ -5,6 +5,7 @@ import CopyLink from '@/components/shared/CopyLink';
 import { AppState } from '@/state';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { ArrowNarrowRightIcon } from '@heroicons/react/outline';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'glob... Remove this comment to see the full error message
 import window from 'global';
 import { useRouter } from 'next/router';
 import React, {

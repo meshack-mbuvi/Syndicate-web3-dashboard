@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React, { useEffect, useState } from 'react';
-import { DetailedTile } from '@/components/tile/detailedTile';
 import { TokenLogicBuilder } from '@/components/tokenGating';
 import { AppState } from '@/state';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,12 +27,12 @@ import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubCo
 import { RULES_LESS_THAN } from '@/utils/mixins/mixinHelpers';
 
 const CREATE_COLLECTIVE_TEXT = ' To create membership passes for the club, ';
-import { B2, B3, B4 } from '@/components/typography';
+import { B3, B4 } from '@/components/typography';
 
 const AllowedMembers: React.FC = () => {
   const {
     createInvestmentClubSliceReducer: {
-      investmentClubSymbol,
+      // investmentClubSymbol,
       tokenGateOption: active,
       tokenRules,
       showTokenGateModal,
@@ -55,10 +55,12 @@ const AllowedMembers: React.FC = () => {
       nullRules?.length < 1 &&
       !hasMoreThanFiveRules
     ) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
       setNextBtnDisabled(false);
       setHasErrors(false);
     } else {
       setHasErrors(true);
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
       setNextBtnDisabled(true);
     }
   }, [duplicateRules, nullRules, hasMoreThanFiveRules]);

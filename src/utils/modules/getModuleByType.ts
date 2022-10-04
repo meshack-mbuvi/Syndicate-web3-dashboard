@@ -18,6 +18,7 @@ const getModuleByType = (
   if (modules.length < 1) {
     return null;
   }
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   const activeNetworkAddresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
   const ownerModules: string[] = [
     activeNetworkAddresses.OwnerMintModule.toLowerCase()
@@ -38,6 +39,7 @@ const getModuleByType = (
       return modules[i];
     }
   }
+  return null;
 };
 
 export default getModuleByType;

@@ -6,7 +6,7 @@ export const InputFieldWithTime = (props: {
   infoLabel?: string | React.ReactElement;
   isInErrorState?: boolean;
   extraClasses?: string;
-  onChange: (e) => void;
+  onChange: (e: any) => void;
 }): React.ReactElement => {
   const {
     value,

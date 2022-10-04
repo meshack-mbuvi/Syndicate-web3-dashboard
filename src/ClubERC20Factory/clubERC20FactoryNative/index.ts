@@ -6,13 +6,17 @@ import { estimateGas } from '../shared/getGasEstimate';
 export class ClubERC20FactoryNative {
   web3;
   address;
-  clubERC20FactoryEth;
-  distributionETH;
-  clubERC20FactoryNative;
+  clubERC20FactoryEth: any;
+  distributionETH: any;
+  clubERC20FactoryNative: any;
   activeNetwork;
 
   // initialize new instance of clubERC20FactoryNativeAddress
-  constructor(clubERC20FactoryNativeAddress: string, web3: any, activeNetwork) {
+  constructor(
+    clubERC20FactoryNativeAddress: string,
+    web3: any,
+    activeNetwork: any
+  ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = clubERC20FactoryNativeAddress;
@@ -59,8 +63,8 @@ export class ClubERC20FactoryNative {
     endTime: number,
     tokenCap: string,
     maxMembers: number,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -83,7 +87,7 @@ export class ClubERC20FactoryNative {
           0
         )
         .send({ from: account, gasPrice: gasEstimate })
-        .on('transactionHash', (transactionHash) => {
+        .on('transactionHash', (transactionHash: any) => {
           if (
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
@@ -94,11 +98,11 @@ export class ClubERC20FactoryNative {
             onTxConfirm(transactionHash);
           }
         })
-        .on('receipt', (receipt) => {
+        .on('receipt', (receipt: any) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on('error', (error) => {
+        .on('error', (error: any) => {
           reject(error);
         });
     });
@@ -160,7 +164,7 @@ export class ClubERC20FactoryNative {
           {
             from: account
           },
-          (_error, gasAmount) => {
+          (_error: any, gasAmount: any) => {
             if (gasAmount) onResponse(gasAmount);
           }
         );

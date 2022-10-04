@@ -12,15 +12,17 @@ export default {
   }
 };
 
-const Template = (args) => <LinkButton {...args} />;
+const Template = (args: any) => <LinkButton {...args} />;
 
 export const Primary = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Primary.args = {
   type: LinkType.CALENDAR,
   label: 'Button'
 };
 
 export const AddMember = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 AddMember.args = {
   type: LinkType.MEMBER,
   label: 'Button'

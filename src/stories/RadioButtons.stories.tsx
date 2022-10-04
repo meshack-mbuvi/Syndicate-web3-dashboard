@@ -5,7 +5,7 @@ export default {
   title: '2. Atoms/Radio Buttons'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   const [selectedIndex, setSelectedIndex] = useState();
   return (
     <RadioButtons
@@ -17,6 +17,7 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   options: ['Option 1', 'Option 2', 'Option 3']
 };

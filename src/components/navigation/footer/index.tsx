@@ -12,7 +12,7 @@ const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
           <ul className="mt-8 md:mt-0 text-sm text-gray-syn4 space-y-3 md:space-x-10">
             <li className="md:inline">
               <a
-                href="https://www.notion.so/syndicateprotocol/Syndicate-411691f0a88b4e909b46796965ee11c1"
+                href="https://www.syndicate.io/about"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -30,7 +30,7 @@ const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
             </li>
             <li className="md:inline">
               <a
-                href="https://syndicateprotocol.notion.site/Syndicate-Community-Standards-fb715cbe7e434070bbe7f6c0fcef5a72"
+                href="https://www.syndicate.io/community"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -39,7 +39,7 @@ const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
             </li>
             <li className="md:inline">
               <a
-                href="https://docs.google.com/document/d/1U5D6AtmZXrxmgBeobyvHaXTs7p7_wq6V/"
+                href="https://www.syndicate.io/terms"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -48,7 +48,7 @@ const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
             </li>
             <li className="md:inline">
               <a
-                href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
+                href="https://www.syndicate.io/privacy"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -56,7 +56,7 @@ const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
               </a>
             </li>
             <li className="md:inline mb-3">
-              <a href="mailto:hello@syndicateprotocol.org">Contact</a>
+              <a href="mailto:hello@syndicate.io">Contact</a>
             </li>
           </ul>
         </div>

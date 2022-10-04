@@ -10,14 +10,14 @@ import {
   MOCK_TOTALDEPOSITS,
   MOCK_TOTALSUPPLY
 } from '@/utils/mockdata';
+import getModuleByType from '@/utils/modules/getModuleByType';
+import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import getModuleByType from '@/utils/modules/getModuleByType';
-import { useAccountTokens } from './useAccountTokens';
-import { useDemoMode } from './useDemoMode';
-import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
+import { useAccountTokens } from '../useAccountTokens';
+import { useDemoMode } from '../useDemoMode';
 
 // TODO: [REFACTOR] rename to useSingleClubGraphDetails for readability
 /**
@@ -27,11 +27,11 @@ import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
  * @returns
  */
 export function useClubDepositsAndSupply(contractAddress: string): {
-  refetch;
-  totalDeposits;
-  totalSupply;
-  startTime;
-  endTime;
+  refetch: any;
+  totalDeposits: any;
+  totalSupply: any;
+  startTime: any;
+  endTime: any;
   hasActiveModules: boolean;
   mintModule: string;
   activeMintModuleReqs: ModuleReqs;
@@ -99,6 +99,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     }
 
     if (
+      !web3 ||
       loading ||
       !data ||
       erc20Token?.loading ||
@@ -123,6 +124,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       let activeMintReqs: ModuleReqs;
 
       if (mintModule) {
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
         activeMintReqs = getReqsByModuleType(
           ModuleType.MINT,
           activeModules,
@@ -141,6 +143,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       let activeOwnerReqs: ModuleReqs;
 
       if (ownerModule) {
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
         activeOwnerReqs = getReqsByModuleType(
           ModuleType.OWNER,
           activeModules,
@@ -151,7 +154,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         setActiveOwnerReqs(activeOwnerReqs);
       }
 
+      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
       startTime = `${activeMintReqs?.startTime}`;
+      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
       endTime = `${activeMintReqs?.endTime}`;
       dispatch(
         setActiveModuleDetails({
@@ -159,9 +164,11 @@ export function useClubDepositsAndSupply(contractAddress: string): {
           activeModules: activeModules,
           mintModule:
             web3.utils.toChecksumAddress(mintModule?.contractAddress) ?? '',
+          // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
           activeMintModuleReqs: activeMintReqs,
           ownerModule:
             web3.utils.toChecksumAddress(ownerModule?.contractAddress) ?? '',
+          // @ts-expect-error TS(2454): Variable 'activeOwnerReqs' is used before being assig... Remove this comment to see the full error message
           activeOwnerModuleReqs: activeOwnerReqs
         })
       );

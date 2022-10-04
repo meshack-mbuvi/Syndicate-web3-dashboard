@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B3, H1, H2 } from '@/components/typography';
 import { AppState } from '@/state';
@@ -47,14 +49,7 @@ export const CollectiveHeader: React.FC<{
   } = router;
 
   return (
-    <div
-      className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4"
-      onClick={() => {
-        amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
-          flow: Flow.COLLECTIVE_MANAGE
-        });
-      }}
-    >
+    <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
       {title}
       {!isEmpty(links) && (
         <div className="flex items-center space-x-4">
@@ -66,6 +61,11 @@ export const CollectiveHeader: React.FC<{
                 className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
                 data-tip
                 data-for="customize"
+                onClick={() => {
+                  amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
+                    flow: Flow.COLLECTIVE_MANAGE
+                  });
+                }}
               >
                 <div className="flex justify-center items-center vertically-center">
                   <SettingsIcon />
@@ -84,7 +84,7 @@ export const CollectiveHeader: React.FC<{
             </Link>
           ) : null}
 
-          {links.openSea ? (
+          {links && links.openSea ? (
             <a
               href={links.openSea}
               className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
@@ -115,6 +115,7 @@ export const CollectiveHeader: React.FC<{
             data-for="etherscan"
           >
             <BlockExplorerLink
+              // @ts-expect-error TS(2322): Type 'string | string[] | undefined' is not assig... Remove this comment to see the full error message
               resourceId={collectiveAddress}
               iconcolor={ExternalLinkColor.GRAY4}
               iconOnly={true}

@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import NotFoundPage from '@/pages/404';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import Head from '@/components/syndicates/shared/HeaderTitle';
@@ -22,24 +23,23 @@ const ModifyCollectives: React.FC = () => {
         web3,
         activeNetwork: { network }
       }
-    },
-    collectiveDetailsReducer: {
-      details: { collectiveName }
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    collectiveDetails: { collectiveName, collectiveAddress }
+  } = useERC721Collective();
 
   const router = useRouter();
 
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();
 
-  const { collectiveAddress } = router.query;
-
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
 
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const permissionType = usePermissionType();
+  const permissionType = usePermissionType(collectiveAddress);
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;

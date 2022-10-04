@@ -1,6 +1,6 @@
 import { ModifyClubSettings } from '@/components/modifyClub';
-import { Provider } from 'react-redux';
 import { store } from '@/state/index';
+import { Provider } from 'react-redux';
 
 export default {
   title: '4. Organisms/Modify Club Settings/Settings Modal',
@@ -12,7 +12,7 @@ export default {
     }
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <Story />
       </Provider>
@@ -20,7 +20,7 @@ export default {
   ]
 };
 
-const Template = (args) => (
+const Template = (args: any) => (
   <div className="grid grid-cols-12 gap-5">
     <div className="md:col-start-1 md:col-end-7 col-span-12 text-white">
       <ModifyClubSettings {...args}>Child</ModifyClubSettings>
@@ -29,6 +29,7 @@ const Template = (args) => (
 );
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   isVisible: true
 };

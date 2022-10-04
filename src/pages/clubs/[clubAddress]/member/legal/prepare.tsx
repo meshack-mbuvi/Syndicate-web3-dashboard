@@ -5,7 +5,7 @@ import Head from '@/components/syndicates/shared/HeaderTitle';
 import WalletNotConnected from '@/components/walletNotConnected';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
@@ -57,6 +57,7 @@ const SignMemberLegalAgreement: NextPage = () => {
   const dispatch = useDispatch();
 
   const { totalDeposits, refetch: refetchSingleClubDetails } =
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     useClubDepositsAndSupply(clubAddress);
 
   useEffect(() => {
@@ -100,6 +101,7 @@ const SignMemberLegalAgreement: NextPage = () => {
       }
 
       dispatch(
+        // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: st... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
           ...depositDetails,
           loading: false

@@ -15,7 +15,7 @@ const items = [
   }
 ];
 
-const AddToCalendar: React.FC<{ calEvent }> = ({ calEvent }) => {
+const AddToCalendar: React.FC<{ calEvent: any }> = ({ calEvent }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleDropdownLinkClick = (type: string) => {

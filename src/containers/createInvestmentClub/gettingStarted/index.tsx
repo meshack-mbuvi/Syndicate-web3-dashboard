@@ -31,17 +31,23 @@ const GettingStarted: React.FC = () => {
     const fourthStep = document.getElementById('fourth-step');
 
     // Handle the first line height
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const firstBottomOffset = firstStep.getBoundingClientRect().bottom;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const secondTopOffset = secondStep.getBoundingClientRect().top;
     setFirstLineHeight(secondTopOffset - firstBottomOffset);
 
     // handle the second line height
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const secondBottomOffset = secondStep.getBoundingClientRect().bottom;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const thirdTopOffset = thirdStep.getBoundingClientRect().top;
     setSecondLineHeight(thirdTopOffset - secondBottomOffset);
 
     // handle the third line height
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const thirdBottomOffset = thirdStep.getBoundingClientRect().bottom;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const fourthTopOffset = fourthStep.getBoundingClientRect().top;
     setThirdLineHeight(fourthTopOffset - thirdBottomOffset);
   }, [width]);
@@ -209,7 +215,12 @@ const GettingStarted: React.FC = () => {
               />
             </a>
           </div>
-          <button className="green-CTA w-full" onClick={() => handleNext()}>
+
+          <button
+            className="green-CTA w-full"
+            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+            onClick={() => handleNext()}
+          >
             Create on-chain club
           </button>
         </div>

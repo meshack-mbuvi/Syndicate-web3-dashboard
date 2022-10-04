@@ -8,5 +8,5 @@ export const investmentRounds: {
   { text: 'Series A', value: 'Series A' },
   { text: 'Series B', value: 'Series B' },
   { text: 'Public', value: 'Public' },
-  { text: 'Custom', value: '', icon: 'plus-sign.svg' }
+  { text: 'Custom', value: '', icon: '/images/activity/plus-sign.svg' }
 ];

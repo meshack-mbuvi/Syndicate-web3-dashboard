@@ -14,6 +14,7 @@ const MaxButton: React.FC<{ handleClick: () => void }> = ({ handleClick }) => {
   };
   return (
     <button
+      // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
       ref={ref}
       className={`ml-4 px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full hover:ring-1 hover:ring-blue-navy ${
         isButtonActive && 'ring-1 ring-blue-navy'

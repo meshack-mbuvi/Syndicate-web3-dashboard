@@ -34,12 +34,13 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
  * @returns string amount
  */
 export const getWeiAmount = (
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   web3: any,
   amount: string,
   tokenDecimals: number,
   multiplication: boolean
 ): any => {
-  if (!amount || isEmpty(web3)) return 0;
+  if (!amount || isEmpty(web3) || isNaN(+amount)) return 0;
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;
@@ -73,7 +74,7 @@ export const getWeiAmount = (
  * @param denominator
  * @returns division result as a float
  */
-export const divideIfNotByZero = (numerator, denominator) => {
+export const divideIfNotByZero = (numerator: any, denominator: any) => {
   if (denominator === 0 || numerator === 0 || isNaN(denominator)) {
     return 0;
   } else {
@@ -81,7 +82,7 @@ export const divideIfNotByZero = (numerator, denominator) => {
   }
 };
 
-export const isUnlimited = (value, web3) => {
+export const isUnlimited = (value: any, web3: any) => {
   if (!value) return;
   const BN = web3.utils.BN;
   const BNValue = new BN(value.toString());

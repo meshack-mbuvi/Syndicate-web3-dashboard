@@ -8,7 +8,7 @@ export const TimeInputField = (props: {
   isInErrorState?: boolean;
   currentTimeZone: string;
   extraClasses?: string;
-  onChange: (e) => void;
+  onChange: (e: any) => void;
 }): React.ReactElement => {
   const {
     value,

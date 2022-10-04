@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useDemoMode } from '@/hooks/useDemoMode';
 import React from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
@@ -5,10 +6,11 @@ import { CREATE_LEGAL_ENTITY_CLICK } from '@/components/amplitude/eventNames';
 
 const CreateEntityCard: React.FC = () => {
   const isDemoMode = useDemoMode();
+  const DOOLA_LINK = 'https://doolahq.typeform.com/syndicate-197';
 
   return (
     <a
-      href={isDemoMode ? undefined : 'https://doolahq.typeform.com/syndicate'}
+      href={isDemoMode ? undefined : DOOLA_LINK}
       target="_blank"
       rel="noreferrer"
       onClick={() => {

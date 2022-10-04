@@ -3,7 +3,7 @@ import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import ERC20ABI from 'src/utils/abi/erc20';
+import ERC20ABI from '@/utils/abi/erc20.json';
 
 const useOwnsGenesisNFT: any = () => {
   const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
@@ -56,7 +56,9 @@ const useOwnsGenesisNFT: any = () => {
   // check whether user has RUG tokens
   const availableRugTokens = async () => {
     try {
+      // @ts-expect-error TS(2339): Property 'methods' does not exist on type 'never'.
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
+      // @ts-expect-error TS(2339): Property 'methods' does not exist on type 'never'.
       const decimals = await rugRadioContract?.methods.decimals().call();
       setAccountRugTokens(getWeiAmount(web3, tokens, decimals, false));
     } catch (error) {

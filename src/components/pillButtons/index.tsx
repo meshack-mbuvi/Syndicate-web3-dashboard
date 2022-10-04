@@ -7,7 +7,7 @@ export const PillButton = (props: {
   isActive?: boolean;
   extraClasses?: string;
   style?: PillButtonStyle;
-  onClick: (e) => void;
+  onClick: (e: any) => void;
   children: any;
 }): React.ReactElement => {
   const {

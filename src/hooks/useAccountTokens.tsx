@@ -14,14 +14,14 @@ import { useDemoMode } from './useDemoMode';
  * @returns
  */
 export function useAccountTokens(): {
-  accountTokens;
-  memberPercentShare;
-  memberDeposits;
-  memberOwnership;
-  loadingMemberOwnership;
-  refetchMemberData;
-  startPolling;
-  stopPolling;
+  accountTokens: any;
+  memberPercentShare: any;
+  memberDeposits: any;
+  memberOwnership: any;
+  loadingMemberOwnership: any;
+  refetchMemberData: any;
+  startPolling: any;
+  stopPolling: any;
 } {
   const {
     web3Reducer: {

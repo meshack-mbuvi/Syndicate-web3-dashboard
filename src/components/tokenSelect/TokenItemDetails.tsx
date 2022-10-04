@@ -138,7 +138,10 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
       </button>
       {showTokenGateModal && (
         <div className={showImportBtn ? 'pr-3' : 'pr-8'}>
-          <TokenExternalLink address={address} />
+          <TokenExternalLink
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
+            address={address}
+          />
         </div>
       )}
       {showImportBtn && (
@@ -148,6 +151,7 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
             name,
             logoURI,
             price,
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
             address,
             collectionCount,
             decimals
@@ -186,6 +190,7 @@ export const TokenItemsSection: React.FC<TokenItemsSectionProps> = ({
 
         let currentToken;
         if (allActiveTokens?.length) {
+          // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
           currentToken = allActiveTokens[activeItemIndex];
         }
         const isNavHighlighted = token == currentToken;

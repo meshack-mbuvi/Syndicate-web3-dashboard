@@ -547,7 +547,6 @@
     }
 
     /* Scroll bar */
-
     .no-scroll-bar::-webkit-scrollbar {
       display: none;
     }
@@ -980,6 +979,7 @@ input[type='checkbox'] {
 /* scrollbar styling on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 
 *::-webkit-scrollbar-track {

@@ -28,7 +28,7 @@ const useFetchAirdropInfo: any = () => {
   const [loading, setLoading] = useState(false);
   const [airdropData, setAirdropData] = useState([]);
 
-  const getAirdropInfo = async (merkleExists) => {
+  const getAirdropInfo = async (merkleExists: any) => {
     setLoading(true);
     const { MerkleDistributorModuleERC721 } = syndicateContracts;
     let events;
@@ -72,6 +72,7 @@ const useFetchAirdropInfo: any = () => {
       !publicSingleClaimEnabled &&
       !publicUtilityClaimEnabled
     ) {
+      // @ts-expect-error TS(2339): Property 'returnValues' does not exist on type 'ne... Remove this comment to see the full error message
       const airdropObj = airdropData[0].returnValues;
       dispatch(
         setERC721AirdropInfo({
@@ -82,6 +83,7 @@ const useFetchAirdropInfo: any = () => {
       );
       dispatch(setLoadingERC721AirdropInfo(false));
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721AirdropInfo());
     }
   }, [

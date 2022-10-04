@@ -30,7 +30,7 @@ const TokenEmptyState: React.FC<{
     }
   }, [chain]);
 
-  const GetNetworkByName = (name) => {
+  const GetNetworkByName = (name: any) => {
     const network = useGetNetwork(name);
     setUrlNetwork(network);
   };
@@ -75,6 +75,7 @@ const TokenEmptyState: React.FC<{
               <button
                 className="primary-CTA"
                 onClick={() => {
+                  // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                   switchNetworks(urlNetwork.chainId);
                 }}
               >

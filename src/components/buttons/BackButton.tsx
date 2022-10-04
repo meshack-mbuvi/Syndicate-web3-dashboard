@@ -47,6 +47,7 @@ const BackButton: React.FC<{
         style={{ transform }}
       >
         <Link href={backUrl}>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a>
             <svg
               style={{ left: '-1px' }}

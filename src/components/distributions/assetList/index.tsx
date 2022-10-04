@@ -61,7 +61,7 @@ export const AssetList: React.FC<Props> = ({
   );
 
   // This returns true if the inputted string is a valid number with a period at the end
-  const isStringIncompleteDecimalNumber = (strNumber) => {
+  const isStringIncompleteDecimalNumber = (strNumber: any) => {
     return (
       !isNaN(Number(strNumber) && strNumber.includes('.')) &&
       strNumber[strNumber.length - 1] === '.'
@@ -72,7 +72,7 @@ export const AssetList: React.FC<Props> = ({
     return activeIndices.includes(index);
   };
 
-  const dynamicInputFieldStyles = (index, amount) => {
+  const dynamicInputFieldStyles = (index: any, amount: any) => {
     const minimumDesktopSize = 'md';
 
     // Calculates both mobile and desktop font sizes
@@ -141,8 +141,8 @@ export const AssetList: React.FC<Props> = ({
       let newActiveIndices;
       const indexToRemove = activeIndices.indexOf(index);
       if (indexToRemove > -1) {
-        const arrayWithoutIndex = (array, index) =>
-          array.filter((_, i) => i !== index);
+        const arrayWithoutIndex = (array: any, index: any) =>
+          array.filter((_: any, i: any) => i !== index);
         newActiveIndices = arrayWithoutIndex(activeIndices, indexToRemove);
 
         handleActiveIndicesChange(newActiveIndices);
@@ -153,6 +153,7 @@ export const AssetList: React.FC<Props> = ({
     else {
       handleActiveIndicesChange([...activeIndices, index]);
       setTimeout(() => {
+        // @ts-expect-error TS(2339): Property 'focus' does not exist on type 'never'.
         inputRefs.current[index].focus();
       }, 300);
     }
@@ -279,6 +280,7 @@ export const AssetList: React.FC<Props> = ({
                   }}
                 >
                   <InputField
+                    // @ts-expect-error TS(2322): Type 'HTMLInputElement | null' is not assignable t... Remove this comment to see the full error message
                     ref={(el) => (inputRefs.current[index] = el)}
                     disabled={!isIndexActive(index)}
                     value={
@@ -288,12 +290,14 @@ export const AssetList: React.FC<Props> = ({
                         !option.isEditingInFiat
                           ? temporaryInputFieldValues[index].tokenAmount
                             ? temporaryInputFieldValues[index].tokenAmount
-                            : option.tokenAmount.toLocaleString(undefined, {
+                            : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                              option.tokenAmount.toLocaleString(undefined, {
                                 maximumFractionDigits: 10
                               })
                           : temporaryInputFieldValues[index].fiatAmount
                           ? temporaryInputFieldValues[index].fiatAmount
-                          : option.fiatAmount.toLocaleString(undefined, {
+                          : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                            option.fiatAmount.toLocaleString(undefined, {
                               maximumFractionDigits: 10
                             })
                       )
@@ -343,11 +347,13 @@ export const AssetList: React.FC<Props> = ({
                          * needs to be updated since they refer to the same.
                          */
                         if (option.isEditingInFiat) {
+                          // @ts-expect-error TS(2322): Type 'string | 0' is not assignable to type 'numbe... Remove this comment to see the full error message
                           fiatAmount = strAmount ? strAmount : 0;
                           tokenAmount =
                             parseFloat(strAmount) /
                             parseFloat(`${option.price}`);
                         } else {
+                          // @ts-expect-error TS(2322): Type 'string | 0' is not assignable to type 'numbe... Remove this comment to see the full error message
                           tokenAmount = strAmount ? strAmount : 0;
                           fiatAmount =
                             parseFloat(strAmount) *
@@ -419,9 +425,11 @@ export const AssetList: React.FC<Props> = ({
                     )
                   )}`}
                   // clicking symbol should focus the input field
+                  // @ts-expect-error TS(2339): Property 'focus' does not exist on type 'never'.
                   onClick={() => inputRefs.current[index].focus()}
                   tabIndex={0}
                   role="button"
+                  // @ts-expect-error TS(2339): Property 'focus' does not exist on type 'never'.
                   onKeyPress={() => inputRefs.current[index].focus()}
                 >
                   {!option.isEditingInFiat ? option.symbol : `USD`}

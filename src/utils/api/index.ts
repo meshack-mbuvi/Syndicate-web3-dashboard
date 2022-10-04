@@ -60,6 +60,7 @@ export const getSynToken = async (
 
   try {
     return await axios({
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       url: BACKEND_LINKS[chainId].graphs.theGraph,
       method: 'POST',
       data: JSON.stringify({
@@ -68,19 +69,7 @@ export const getSynToken = async (
       })
     });
   } catch (error) {
-    return;
-  }
-};
-
-export const getEthGasPrice = async (
-  blockExplorerUrl: string
-): Promise<AxiosResponse> => {
-  const apiKey = process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
-  try {
-    return axios.get(
-      `${blockExplorerUrl}/api?module=proxy&action=eth_gasPrice&apikey=${apiKey}`
-    );
-  } catch (error) {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'AxiosR... Remove this comment to see the full error message
     return;
   }
 };
@@ -123,6 +112,7 @@ export const getCollectivesDetails = async (
 
   try {
     return await axios({
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       url: BACKEND_LINKS[chainId].graphs.theGraph,
       method: 'POST',
       data: JSON.stringify({
@@ -135,6 +125,7 @@ export const getCollectivesDetails = async (
       })
     });
   } catch (error) {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'AxiosResponse<{ data: { syndicateCollectives:...
     return;
   }
 };
@@ -182,6 +173,7 @@ export const getAccountHoldings = async (
   `;
 
   return await axios({
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     url: BACKEND_LINKS[chainId].graphs.backend,
     method: 'POST',
     headers: {

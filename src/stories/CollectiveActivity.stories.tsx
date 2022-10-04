@@ -7,11 +7,12 @@ export default {
   title: '3. Molecules/Collectives/Activity'
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <CollectiveActivity {...args} />;
 };
 
 export const Received = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Received.args = {
   activityType: CollectiveActivityType.RECEIVED,
   profile: {
@@ -22,6 +23,7 @@ Received.args = {
 };
 
 export const Transfer = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Transfer.args = {
   activityType: CollectiveActivityType.TRANSFER,
   transfer: {
@@ -32,6 +34,7 @@ Transfer.args = {
 };
 
 export const Sale = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Sale.args = {
   activityType: CollectiveActivityType.SALE,
   sale: {
@@ -45,6 +48,7 @@ Sale.args = {
 };
 
 export const List = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 List.args = {
   activityType: CollectiveActivityType.LIST,
   list: {
@@ -57,6 +61,7 @@ List.args = {
 };
 
 export const Offer = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Offer.args = {
   activityType: CollectiveActivityType.OFFER,
   offer: {

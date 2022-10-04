@@ -32,7 +32,7 @@ interface Props {
   handleCloseDateChange?: (newDate: Date) => void;
   closeTime?: string;
   handleCloseTimeChange?: (newTime: string) => void;
-  maxSupply;
+  maxSupply: any;
   handleMaxSupplyChange: (newMaxSupply: number) => void;
   selectedTimeWindow?: TimeWindow;
   handleTimeWindowChange?: (newTimeWindowIndex: number) => void;
@@ -172,6 +172,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             className={editButtonStyles}
             onClick={() => {
               if (currentlyEditingIndex !== 0) {
+                // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(0);
               } else {
                 setCurrentlyEditingIndex(null);
@@ -210,6 +211,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                 >
                   <InputFieldPriceToJoin
                     priceToJoin={priceToJoin}
+                    // @ts-expect-error TS(2322): Type '(newPriceToJoin: number) => void' is not assignable to type '(newPriceToJoin: string | number) => void'.
                     handlePriceToJoinChange={handlePriceToJoinChange}
                     tokenDetails={tokenDetails}
                     handleClickToChangeToken={handleClickToChangeToken}
@@ -225,12 +227,12 @@ export const CollectiveFormReview: React.FC<Props> = ({
                 >
                   <div className="flex space-x-1 items-center">
                     <img
-                      src={tokenDetails.icon}
+                      src={tokenDetails?.icon}
                       alt="Token"
                       className="h-5 w-5 mr-1"
                     />{' '}
                     <div>{priceToJoin}</div>
-                    <div>{tokenDetails.symbol}</div>
+                    <div>{tokenDetails?.symbol}</div>
                   </div>
                 </div>
               </div>
@@ -241,6 +243,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             className={editButtonStyles}
             onClick={() => {
               if (currentlyEditingIndex !== 2) {
+                // @ts-expect-error TS(2345): Argument of type '2' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(2);
               } else {
                 setCurrentlyEditingIndex(null);
@@ -283,6 +286,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             className={editButtonStyles}
             onClick={() => {
               if (currentlyEditingIndex !== 3) {
+                // @ts-expect-error TS(2345): Argument of type '3' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(3);
               } else {
                 setCurrentlyEditingIndex(null);
@@ -333,6 +337,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             className={editButtonStyles}
             onClick={() => {
               if (currentlyEditingIndex !== 4) {
+                // @ts-expect-error TS(2345): Argument of type '4' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(4);
               } else {
                 setCurrentlyEditingIndex(null);
@@ -386,6 +391,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
               className={editButtonStyles}
               onClick={() => {
                 if (currentlyEditingIndex !== 5) {
+                  // @ts-expect-error TS(2345): Argument of type '5' is not assignable to paramete... Remove this comment to see the full error message
                   setCurrentlyEditingIndex(5);
                 } else {
                   setCurrentlyEditingIndex(null);
@@ -423,6 +429,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                       if (Number(amount)) {
                         handleMaxSupplyChange(Number(amount));
                       } else if (amount === '') {
+                        // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                         handleMaxSupplyChange(null);
                       }
                     }}
@@ -445,6 +452,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
               className={editButtonStyles}
               onClick={() => {
                 if (currentlyEditingIndex !== 6) {
+                  // @ts-expect-error TS(2345): Argument of type '6' is not assignable to paramete... Remove this comment to see the full error message
                   setCurrentlyEditingIndex(6);
                 } else {
                   setCurrentlyEditingIndex(null);
@@ -491,6 +499,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             className={editButtonStyles}
             onClick={() => {
               if (currentlyEditingIndex !== 7) {
+                // @ts-expect-error TS(2345): Argument of type '7' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(7);
               } else {
                 setCurrentlyEditingIndex(null);

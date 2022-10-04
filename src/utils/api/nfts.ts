@@ -18,6 +18,7 @@ export const getNfts = async (
   };
 
   // This will retrieve all assets regardless of the owner.
+  // @ts-expect-error TS(2790): The operand of a 'delete' operator must be optional.
   if (!address) delete params.owner;
 
   const result = await proxyGet<NftAssetResponse>('nft/assets', params);
@@ -70,8 +71,10 @@ export const getOpenSeaLink = async (
       params
     );
     const slug = res.data.slug;
+    // @ts-expect-error TS(2322): Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message
     return slug ? `${base}/collection/${slug}` : null;
   } catch {
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'st... Remove this comment to see the full error message
     return null;
   }
 };

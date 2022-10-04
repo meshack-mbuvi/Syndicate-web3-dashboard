@@ -1,27 +1,37 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "downlevelIteration": true,
+    "target": "es5" /* nextjs default */,
+    "downlevelIteration": true /* ? */,
     "baseUrl": ".",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"] /* nextjs default */,
+    "allowJs": true /* nextjs default */,
+    "skipLibCheck": true /* nextjs default */,
+    "strict": true /* nextjs default */,
+    "forceConsistentCasingInFileNames": true /* nextjs default */,
+    "noEmit": true /* nextjs default */,
+    "esModuleInterop": true /* nextjs default */,
+    "module": "esnext" /* nextjs default */,
+    "moduleResolution": "node" /* nextjs default */,
+    "resolveJsonModule": true /* nextjs default */,
+    "isolatedModules": true /* nextjs default */,
+    "jsx": "preserve" /* nextjs default */,
+    "incremental": true /* nextjs default */,
     "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
     "paths": {
       "@/*": ["src/*"],
       "@/graphql": ["graphql/*"]
     }
   },
 
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ] /* nextjs default */,
+  "exclude": ["node_modules"] /* nextjs default */
 }

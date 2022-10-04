@@ -8,7 +8,7 @@ import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { ContractMapper } from '@/hooks/useGasDetails';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
@@ -28,10 +28,9 @@ export const SubmitContent: React.FC<{
   const opacityTransition = isSubmitDisabled ? 'opacity-0' : 'opacity-100';
 
   const {
-    collectiveDetailsReducer: {
+    modifyCollectiveSettingsReducer: {
       activeRow,
-      details: { mintPrice, metadataCid, mintEndTime, maxPerWallet },
-      settings: { isTransferable }
+      settings: { isTransferable, mintPrice, mintEndTime, maxPerWallet }
     },
     modifyClubSettingsReducer: { maxNumberOfMembers, maxAmountRaising },
     erc20TokenSliceReducer: {
@@ -100,12 +99,14 @@ export const SubmitContent: React.FC<{
 
           <Callout extraClasses="rounded-xl p-4">
             <EstimateGas
+              // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ContractMapper'
               contract={activeContract}
               args={{
                 /* Collective Settings */
                 collectiveAddress,
                 mintPrice,
-                metadataCid,
+                metadataCid:
+                  'bafkreich7a3peetvllpl7fefehzxmoizlb7qv774ln2vqtibcs764myqga', // Easter egg metadata for gas estimation
                 collectiveMintEndTime: mintEndTime,
                 maxPerWallet,
                 isTransferable,

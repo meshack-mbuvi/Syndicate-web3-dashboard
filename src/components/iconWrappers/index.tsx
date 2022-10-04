@@ -49,7 +49,7 @@ export enum ExternalLinkColor {
 }
 
 /**Shows an icon for external links */
-export const ExternalLinkIcon = (props) => {
+export const ExternalLinkIcon = (props: any) => {
   let icon;
   switch (props.iconcolor) {
     case ExternalLinkColor.GRAY:

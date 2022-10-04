@@ -1,9 +1,5 @@
 import { ExternalLinkColor } from '@/components/iconWrappers';
-import {
-  AddressImageSize,
-  AddressLayout,
-  AddressWithENS
-} from '@/components/shared/ensAddress';
+import { AddressLayout, AddressWithENS } from '@/components/shared/ensAddress';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
@@ -27,7 +23,7 @@ interface IAddressMenuDropDown {
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  Web3: { account, providerName, web3, ensResolver },
+  Web3: { account, providerName, web3, ethersProvider },
   showWalletDropdown
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
@@ -45,14 +41,12 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     if (account && !nativeBalance) {
       web3.eth
         .getBalance(account)
-        .then((balance) => web3.utils.fromWei(balance, 'ether'))
+        .then((balance: any) => web3.utils.fromWei(balance, 'ether'))
         .then(setNativeBalance);
     }
   }, [account, nativeBalance]);
 
-  const formattedAddress = formatAddress(account, 6, 4);
-
-  const { data } = useFetchEnsAssets(ensResolver);
+  const { data } = useFetchEnsAssets(account, ethersProvider);
   const dispatch = useDispatch();
 
   const toggleDropdown = () => {
@@ -62,14 +56,23 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 
   const refId = 'accountButton';
 
-  const closeDropdown = (event) => {
+  const closeDropdown = (event: any) => {
+    // find whether click is coming from any of the component in path
+    const [isClickedInsideRefId] =
+      event?.path?.filter((path: any) => path?.id === refId) || [];
+
     if (
       !account ||
       event.target?.id == refId ||
-      event.target?.offsetParent?.id == refId
-    )
+      event.target?.offsetParent?.id == refId ||
+      isClickedInsideRefId
+    ) {
       return event;
-    if (event.target?.id !== refId || event.target?.id == '') {
+    }
+    if (
+      showWalletDropdown &&
+      (event.target?.id !== refId || event.target?.id == '')
+    ) {
       dispatch(setShowWalletDropdownMenu(false));
       return event;
     }
@@ -102,18 +105,16 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                   src={data?.avatar || '/images/jazzicon.png'}
                   alt=""
                 />
-                <div
-                  className={`${width <= 425 ? 'flex' : 'hidden md:flex ml-3'}`}
-                >
+                <div className={`${width <= 425 ? 'flex' : 'hidden md:flex'}`}>
                   <AddressWithENS
-                    address={{ label: formattedAddress }}
-                    name={data?.name}
-                    image={{ src: data?.avatar, size: AddressImageSize.SMALL }}
+                    address={account}
                     layout={AddressLayout.ONE_LINE}
+                    ethersProvider={ethersProvider}
+                    extraClasses={`${!data?.avatar && 'ml-1'}`}
                     id={refId}
                   />
                 </div>
-                <div className="flex items-center ml-3">
+                <div className="flex items-center ml-2">
                   <img
                     src="/images/chevron-down.svg"
                     width="9"
@@ -194,7 +195,11 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       <div className="flex justify-center">
                         <button
                           className="primary-CTA rounded-custom w-full"
-                          onClick={disconnectWallet}
+                          onClick={() => {
+                            dispatch(setShowWalletDropdownMenu(false));
+                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+                            disconnectWallet();
+                          }}
                         >
                           Disconnect
                         </button>

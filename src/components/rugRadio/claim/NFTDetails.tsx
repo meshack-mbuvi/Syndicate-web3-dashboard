@@ -110,7 +110,7 @@ export const NFTDetails: React.FC = () => {
     );
   };
 
-  const onTxFail = (error) => {
+  const onTxFail = (error: any) => {
     const { code } = error;
     setClaimBonus(false);
 
@@ -136,10 +136,11 @@ export const NFTDetails: React.FC = () => {
   /**
    * Function to claim all NFTs for a give wallet
    */
-  const handleClaimAll = async (event) => {
+  const handleClaimAll = async (event: any) => {
     event.preventDefault();
     setClaimBonus(false);
 
+    // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
     const tokenIds = collectibles.map((collectible) => collectible.id);
 
     if (!tokenIds.length) return;
@@ -157,11 +158,12 @@ export const NFTDetails: React.FC = () => {
     );
   };
 
-  const handleClaimBonus = async (event) => {
+  const handleClaimBonus = async (event: any) => {
     // claim bonus
     setClaimBonus(true);
     event.preventDefault();
 
+    // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
     const tokenIds = collectibles.map((collectible) => collectible.id);
 
     if (!tokenIds.length) return;
@@ -560,8 +562,10 @@ export const NFTDetails: React.FC = () => {
                         } else if (animation) {
                           // animation could be a .mov or .mp4 video
                           const movAnimation =
+                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mov$/) != null;
                           const mp4Animation =
+                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mp4$/) != null;
 
                           if (movAnimation || mp4Animation) {
@@ -573,6 +577,7 @@ export const NFTDetails: React.FC = () => {
                           // The animation link is a .html which is not captured.
                           // Until we find a better way to handle this, let's have the fix below
                           if (
+                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.html$/) != null &&
                             id == '3216'
                           ) {
@@ -580,14 +585,17 @@ export const NFTDetails: React.FC = () => {
                           }
 
                           // animation could be a gif
+                          // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                           if (animation.match(/\.gif$/) != null) {
                             mediaType = 'animatedNFT';
                           }
 
                           // add support for .wav and .mp3 files
                           const wavAnimation =
+                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.wav$/) != null;
                           const mp3Animation =
+                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mp3$/) != null;
                           const soundtrack = wavAnimation || mp3Animation;
 
@@ -596,17 +604,20 @@ export const NFTDetails: React.FC = () => {
                           }
                         }
                         return (
-                          <NFTComponent
-                            {...{
-                              ...{
-                                collectible,
-                                mediaType,
-                                showCollectibles: true,
-                                refresh: processed
-                              }
-                            }}
-                            key={index}
-                          />
+                          <>
+                            {/* @ts-expect-error TS(2322): Type '{ key: number; collectible: never; mediaType... Remove this comment to see the full error message */}
+                            <NFTComponent
+                              {...{
+                                ...{
+                                  collectible,
+                                  mediaType,
+                                  showCollectibles: true,
+                                  refresh: processed
+                                }
+                              }}
+                              key={index}
+                            />
+                          </>
                         );
                       })
                     : null}

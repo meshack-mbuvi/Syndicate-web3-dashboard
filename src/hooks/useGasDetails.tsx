@@ -1,13 +1,13 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
-import { getNativeTokenPrice } from '@/utils/api/transactions';
+import { GAS_RATE } from '@/graphql/queries';
+import { useQuery } from '@apollo/client';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { getEthGasPrice } from '@/utils/api';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import BigNumber from 'bignumber.js';
 
 export enum ContractMapper {
@@ -26,7 +26,8 @@ export enum ContractMapper {
   MaxMemberCountMixin,
   MaxTotalSupplyMixin,
   TokenGatedMixin,
-  CloseClubPostMint
+  CloseClubPostMint,
+  DistributionsERC20
 }
 
 interface IProps {
@@ -36,6 +37,7 @@ interface IProps {
   skipQuery?: boolean;
 }
 
+// @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'number... Remove this comment to see the full error message
 const useGasDetails: (props: IProps) => {
   gas: number;
   fiatAmount: string;
@@ -60,10 +62,11 @@ const useGasDetails: (props: IProps) => {
         erc721Collective,
         maxMemberCountMixin,
         maxTotalSupplyMixin,
-        tokenGatedMixin
+        tokenGatedMixin,
+        distributionsERC20
       }
     },
-    collectiveDetailsReducer: { activeRow }
+    modifyCollectiveSettingsReducer: { activeRow }
   } = useSelector((state: AppState) => state);
 
   const [gas, setGas] = useState(0);
@@ -79,6 +82,7 @@ const useGasDetails: (props: IProps) => {
       syndicateContract: clubERC20Factory,
       estimateGas: () => {
         if (!clubERC20Factory) return;
+        // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
         clubERC20Factory.getEstimateGas(account, setGasUnits);
       }
     },
@@ -89,6 +93,7 @@ const useGasDetails: (props: IProps) => {
         erc20ClubFactory.getEstimateGas(
           account,
           args.clubParams as ClubMixinParams,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -105,6 +110,7 @@ const useGasDetails: (props: IProps) => {
         erc721CollectiveFactory.getEstimateGas(
           account,
           args.collectiveParams as ICollectiveParams,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -131,6 +137,7 @@ const useGasDetails: (props: IProps) => {
           endTime,
           args.maxMemberCount,
           web3.utils.toWei(args.maxTotalSupply),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -150,6 +157,7 @@ const useGasDetails: (props: IProps) => {
           args.clubAddress,
           args.memberAddress,
           web3.utils.toWei(args.amountToMint),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -165,6 +173,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.mintPrice,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -178,6 +187,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.metadataCid,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -195,6 +205,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.maxPerWallet,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -210,6 +221,7 @@ const useGasDetails: (props: IProps) => {
           timeRequirements.getEstimateGasCloseTimeWindow(
             account,
             token,
+            // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
             setGasUnits
           );
         } else {
@@ -222,6 +234,7 @@ const useGasDetails: (props: IProps) => {
             token,
             0,
             mintEndTime,
+            // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
             setGasUnits
           );
         }
@@ -240,6 +253,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.maxTotalSupply,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -252,6 +266,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.collectiveAddress,
           args.isTransferable,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -266,6 +281,7 @@ const useGasDetails: (props: IProps) => {
           args.contractAddress,
           '1', // Hardcode to mint a single token
           account,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -283,6 +299,7 @@ const useGasDetails: (props: IProps) => {
           account,
           args.clubAddress,
           args.maxNumberOfMembers,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -301,6 +318,7 @@ const useGasDetails: (props: IProps) => {
             18,
             true
           ),
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -322,6 +340,7 @@ const useGasDetails: (props: IProps) => {
           args.logicOperator,
           args.tokens,
           args.balances,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }
@@ -333,38 +352,59 @@ const useGasDetails: (props: IProps) => {
         timeRequirements.getEstimateGasCloseTimeWindow(
           account,
           args.clubAddress,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.DistributionsERC20]: {
+      syndicateContract: distributionsERC20,
+      estimateGas: () => {
+        if (
+          !distributionsERC20 ||
+          !args.clubAddress ||
+          !args.distributionERC20Address ||
+          !args.members ||
+          !args.numSelectedTokens
+        )
+          return;
+        distributionsERC20.getEstimateGasDistributeERC20(
+          account,
+          args.numSelectedTokens,
+          args.clubAddress,
+          args.distributionERC20Address,
+          args.totalDistributionAmount,
+          args.members,
+          args.batchIdentifier,
           setGasUnits
         );
       }
     }
   };
 
-  const processBaseFee = async (result) => {
-    if (result.status === '0') return;
-    const baseFee = result.result;
-    const baseFeeInDecimal = parseInt(baseFee, 16);
-    setGasBaseFee(baseFeeInDecimal);
-  };
-
-  const fetchGasUnitAndBaseFee = useCallback(async () => {
-    await Promise.all([
-      !account ? setGasUnits(380000) : contracts[contract]?.estimateGas(),
-      getEthGasPrice(activeNetwork.blockExplorer.api)
-        .then((res) => processBaseFee(res.data))
-        .catch(() => 0),
-      withFiatCurrency &&
-        getNativeTokenPrice(activeNetwork.chainId)
-          .then((res) => setNativeTokenPrice(res))
-          .catch(() => 0)
-    ]);
-  }, [account, contracts[contract]?.syndicateContract, args]);
+  // GET GAS DETAILS
+  const { loading, data } = useQuery(GAS_RATE, {
+    variables: {
+      chainId: activeNetwork.chainId
+    },
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: skipQuery || !activeNetwork.chainId
+  });
 
   useEffect(() => {
     if (skipQuery) return;
-    if (activeNetwork.chainId) {
-      void fetchGasUnitAndBaseFee();
+    if (activeNetwork.chainId && account) {
+      contracts[contract]?.estimateGas();
+    } else {
+      setGasUnits(380000);
     }
-  }, [activeNetwork.chainId, skipQuery]);
+  }, [activeNetwork.chainId, skipQuery, account, args]);
+
+  useEffect(() => {
+    if (loading || !data) return;
+    setGasBaseFee(parseInt(data.gas.unitPrice));
+    setNativeTokenPrice(parseFloat(data.gas.nativeToken.price.usd));
+  }, [loading, data]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
@@ -376,13 +416,10 @@ const useGasDetails: (props: IProps) => {
       false
     );
     setGas(+estimatedGas);
-  }, [gasUnits, gasBaseFee]);
-
-  useEffect(() => {
     if (withFiatCurrency && nativeTokenPrice) {
-      setFiatAmount((gas * nativeTokenPrice).toFixed(2));
+      setFiatAmount((+estimatedGas * nativeTokenPrice).toFixed(2));
     }
-  }, [gas, nativeTokenPrice]);
+  }, [gasUnits, gasBaseFee]);
 
   return { gas, fiatAmount, nativeTokenPrice };
 };

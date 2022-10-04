@@ -30,6 +30,7 @@ export const epochTimeToDateFormat = (
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const formattedDate = utcToZonedTime(date, timezone);
 
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   return format(formattedDate, dateFormat, {
     timeZone: timezone
   });
@@ -43,8 +44,8 @@ export const epochTimeToDateFormat = (
 export const getCountDownDays = (date: string): string => {
   const now = moment();
   const closeDateCountdown = moment(new Date(parseInt(date)), 'M/DD/YYYY');
+  // @ts-expect-error TS(2339): Property 'preciseDiff' does not exist on type 'typ... Remove this comment to see the full error message
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
   const { years, months, days, hours, minutes, seconds } = moment.preciseDiff(
     now,
     closeDateCountdown,

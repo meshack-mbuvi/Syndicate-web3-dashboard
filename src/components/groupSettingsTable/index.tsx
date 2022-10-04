@@ -5,7 +5,7 @@ import {
 import { useRef, Dispatch, SetStateAction } from 'react';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/collectiveDetails/index';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 interface Props {
   title: string;
   subtitle?: string;
@@ -71,6 +71,7 @@ export const GroupSettingsTable: React.FC<Props> = ({
 
         {/* Rows */}
         <div
+          // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
           ref={rowsRef}
           className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
         >
@@ -96,6 +97,7 @@ export const GroupSettingsTable: React.FC<Props> = ({
                     className={`xl:mr-0 ${
                       editGroupFieldClicked ? 'sm:col-span-8' : 'sm:col-span-6'
                     } xl:mr-0 flex space-x-3 items-center text-white`}
+                    // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
                     ref={editRef}
                   >
                     <div className="w-full flex flex-col space-y-6">
@@ -115,8 +117,11 @@ export const GroupSettingsTable: React.FC<Props> = ({
                       {isEditable && (
                         <EditButton
                           handleClick={() => {
+                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                             setActiveRow(rowIndex);
+                            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
                             dispatch(setActiveRowIdx(rowIndex));
+                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                             setEditGroupFieldClicked(true);
                           }}
                         />
@@ -133,10 +138,13 @@ export const GroupSettingsTable: React.FC<Props> = ({
               <div className="sm:col-span-8 xl:mr-0 flex">
                 <SubmitContent
                   isSubmitDisabled={errorUploadText !== ''}
+                  // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
                   handleEdit={handleDisclaimerConfirmation}
                   cancelEdit={() => {
+                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                     setActiveRow(0);
                     dispatch(setActiveRowIdx(0));
+                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                     setEditGroupFieldClicked(false);
                     cancelEdit();
                   }}

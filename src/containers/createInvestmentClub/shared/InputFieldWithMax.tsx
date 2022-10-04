@@ -8,7 +8,7 @@ export const InputFieldWithMax = (props: {
   label?: string;
   name?: string;
   id?: string;
-  onChange?;
+  onChange?: any;
   disabled?: boolean;
   placeholder?: string;
   error?: string;

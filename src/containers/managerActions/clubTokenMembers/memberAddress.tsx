@@ -1,24 +1,26 @@
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { formatAddress } from '@/utils/formatAddress';
+import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import Tooltip from 'react-tooltip-lite';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
+import Tooltip from 'react-tooltip-lite';
 
+import {
+  AddressImageSize,
+  AddressWithENS
+} from '@/components/shared/ensAddress';
 import { SignedIcon } from '../shared/signedIcon';
 
 interface IProps {
   memberAddress: string;
-  setSelectedMember;
+  setSelectedMember: any;
 }
 export const MemberAddressComponent: React.FC<IProps> = (props) => {
   const { memberAddress, setSelectedMember, ...rest } = props;
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, ethersProvider }
     }
   } = useSelector((state: AppState) => state);
 
@@ -46,9 +48,13 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       className="flex space-x-3 align-center text-base leading-6"
       onClick={() => setSelectedMember({ memberAddress, ...rest })}
     >
-      <Image width="32" height="32" src={'/images/user.svg'} alt="user" />
       <p className="flex my-1 items-center ">
-        <span className="mr-2">{formatAddress(memberAddress, 6, 4)}</span>
+        <AddressWithENS
+          ethersProvider={ethersProvider}
+          userPlaceholderImg={'/images/user.svg'}
+          address={memberAddress}
+          imageSize={AddressImageSize.LARGE}
+        />
         <Tooltip
           content={
             <div className="text-sm text-gray-syn4">

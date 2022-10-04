@@ -60,6 +60,7 @@ export const TextField: React.FC<IProps> = ({
     field: { value, ...fieldAttributes },
     formState: { errors }
   } = useController({
+    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     rules: { required },
@@ -100,7 +101,7 @@ export const TextField: React.FC<IProps> = ({
           <div
             className={`${cornerHint?.textColor || 'text-gray-syn10'} text-sm`}
           >
-            {cornerHint.text}
+            {cornerHint?.text}
           </div>
         ) : null}
       </div>
@@ -115,6 +116,7 @@ export const TextField: React.FC<IProps> = ({
                     : 'border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0'
                 }`
           }  text-white placeholder-gray-syn5`}
+          // @ts-expect-error TS(2783): 'name' is specified more than once, so this usage ... Remove this comment to see the full error message
           name={name}
           {...fieldAttributes}
           value={value}

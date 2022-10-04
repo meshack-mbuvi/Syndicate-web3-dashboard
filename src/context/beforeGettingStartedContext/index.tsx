@@ -13,9 +13,9 @@ type BeforeGettingStartedProps = {
   agreementChecked: boolean;
   hideBeforeGettingStarted: () => void;
   error: boolean;
-  handleClickOutside;
-  handleChange;
-  buttonDisabled;
+  handleClickOutside: any;
+  handleChange: any;
+  buttonDisabled: any;
 };
 
 const BeforeGettingStartedContext = createContext<
@@ -59,6 +59,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
       return;
 
     const { showBeforeGettingStarted } =
+      // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
       JSON.parse(localStorage.getItem(clubAddress as string)) || {};
 
     if (showBeforeGettingStarted == undefined || null) {

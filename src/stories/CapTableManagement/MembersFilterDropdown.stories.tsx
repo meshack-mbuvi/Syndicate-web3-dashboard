@@ -11,7 +11,7 @@ export default {
     showOuterBorder: { type: 'boolean', defaultValue: false }
   },
   decorators: [
-    (Story): React.ReactElement => (
+    (Story: any): React.ReactElement => (
       <Provider store={store}>
         <Story />
       </Provider>
@@ -19,7 +19,7 @@ export default {
   ]
 };
 
-const Template = ({ numberOfMembers, showOuterBorder, ...args }) => {
+const Template = ({ numberOfMembers, showOuterBorder, ...args }: any) => {
   // 8 dummy members for testing.
   const data = [
     {

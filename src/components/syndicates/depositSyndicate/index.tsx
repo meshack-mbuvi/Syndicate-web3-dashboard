@@ -8,14 +8,16 @@ import { Spinner } from '@/components/shared/spinner';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
+import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
+import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubMember } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
@@ -39,20 +41,21 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Floater from 'react-floater';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
-import { InfoIcon } from 'src/components/iconWrappers';
-import { SkeletonLoader } from 'src/components/skeletonLoader';
-import ERC20ABI from 'src/utils/abi/erc20';
+import { InfoIcon } from '@/components/iconWrappers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-import TokenGatingRequirements from '@/components/syndicates/depositSyndicate/TokenGatingRequirements';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLUB_DEPOSIT } from '@/components/amplitude/eventNames';
+import {
+  CLUB_DEPOSIT,
+  DEPOSIT_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 
+import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
-import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -219,11 +222,13 @@ const DepositSyndicate: React.FC = () => {
     if (depositTokenSwitched) {
       const switchedAmount = nativeDepositToken
         ? truncateDecimals(
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             ((parseFloat(depositAmount) / depositTokenPriceInUSD) * 100) / 100,
             4
           )
         : (
             Math.floor(
+              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
               (parseFloat(depositAmount) / depositTokenPriceInUSD) * 100
             ) / 100
           ).toString();
@@ -246,6 +251,7 @@ const DepositSyndicate: React.FC = () => {
     setClaimBalanceValue(claimValue);
     setClaimBalanceDecimalValue(claimDecimalValue);
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const newTotalSupply = +totalSupply + +myMerkleProof?._amount;
     const memberPercentShare = +myMerkleProof?._amount / newTotalSupply;
 
@@ -315,13 +321,25 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const [, setpreviousAccountTokens] = useState(accountTokens);
-  const isMember = useIsClubMember();
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    if (!account || !address || isEmpty(web3)) return;
+
+    getMemberBalance(address, account, web3, activeNetwork).then((balance) => {
+      if (balance) {
+        setIsMember(true);
+      } else {
+        setIsMember(false);
+      }
+    });
+  }, [account, address]);
 
   // since the subgraph might give us old data on refetch,
   // we need to compare old and new data as we continue to poll.
   useEffect(() => {
     if (isDemoMode || !checkSuccess) return;
-    setpreviousAccountTokens((prevState) => {
+    setpreviousAccountTokens((prevState: any) => {
       if (
         (isMember && +prevState > 0 && +prevState < +accountTokens) ||
         (!isMember && +prevState < +accountTokens)
@@ -339,7 +357,7 @@ const DepositSyndicate: React.FC = () => {
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
 
-  const onTxFail = (error) => {
+  const onTxFail = (error: any) => {
     // if transaction errored because of a timeout, we do not need to
     // show the error state.
     if (error?.message.includes('Be aware that it might still be mined')) {
@@ -385,10 +403,13 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.SingleTokenMintModule;
   const NATIVE_MINT_MODULE =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
   const DEPOSIT_TOKEN_MINT_MODULE =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.DepositTokenMintModule;
 
   /**
@@ -467,6 +488,7 @@ const DepositSyndicate: React.FC = () => {
         deposit_token: depositTokenSymbol
       });
     } catch (error) {
+      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
       const { code, message } = error;
 
       // we don't want to dismiss the modal when the user rejects
@@ -499,9 +521,10 @@ const DepositSyndicate: React.FC = () => {
     } else {
       if (loadingTokenHoldings || !tokenBalanceHoldings) return;
       const details = getTokenReqDetails(tokenBalanceHoldings.tokenHoldings);
+      // @ts-expect-error TS(2345): Argument of type '{ meetsRequirements: boolean; requiredTokenDetails... Remove this comment to see the full error message
       dispatch(setTokenGatingDetails(details));
       setLoadingTokenGating(false);
-      setMeetsNewClubRequirements(details?.meetsRequirements);
+      setMeetsNewClubRequirements(details?.meetsRequirements ?? false);
     }
   }, [
     isNewClub,
@@ -556,6 +579,7 @@ const DepositSyndicate: React.FC = () => {
       if (depositTokenSwitched) {
         const maxDepositAmountAdjustedToUSD = Math.min(
           erc20Balance,
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           erc20Balance * depositTokenPriceInUSD
         );
         setDepositAmount(maxDepositAmountAdjustedToUSD.toString());
@@ -571,7 +595,7 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
-  const addGrayToDecimalInput = (str) => {
+  const addGrayToDecimalInput = (str: any) => {
     const [wholeNumber, decimalPart] = str.split('.');
     return (
       <div className="flex">
@@ -654,6 +678,7 @@ const DepositSyndicate: React.FC = () => {
     +memberDeposits >= 10000 && ((width > 868 && width < 1025) || width < 500);
 
   useEffect(() => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const remainingClubTokensBalance = +maxTotalSupply - +totalSupply;
 
     setIsTextRed(false);
@@ -662,6 +687,7 @@ const DepositSyndicate: React.FC = () => {
 
     if (depositTokenSwitched) {
       if (
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         +depositAmount / depositTokenPriceInUSD > remainingClubTokensBalance &&
         !insufficientBalance
       ) {
@@ -778,7 +804,7 @@ const DepositSyndicate: React.FC = () => {
         _depositTokenContract.methods
           .approve(mintModule, amountToApprove)
           .send({ from: account, gasPrice: gasEstimate })
-          .on('transactionHash', (transactionHash) => {
+          .on('transactionHash', (transactionHash: any) => {
             // user clicked on confirm
             // show loading state
             setSubmittingAllowanceApproval(true);
@@ -790,7 +816,7 @@ const DepositSyndicate: React.FC = () => {
               resolve(transactionHash);
             }
           })
-          .on('receipt', async (receipt) => {
+          .on('receipt', async (receipt: any) => {
             // sometimes the returned values from the attached event do not have
             // value key, hence the will be undefined.
             // call this function does the job of checking whether the allowance
@@ -802,7 +828,7 @@ const DepositSyndicate: React.FC = () => {
             // update current transaction step
             setCurrentTransaction(2);
           })
-          .on('error', (error) => {
+          .on('error', (error: any) => {
             // user clicked reject.
             if (error?.code === 4001) {
               setTransactionRejected(true);
@@ -896,10 +922,12 @@ const DepositSyndicate: React.FC = () => {
     depositTokenSwitched
   ]);
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const checkNativeBalance = async () => {
     try {
       if (depositTokenSwitched) {
         if (
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           +nativeBalance * depositTokenPriceInUSD < +depositAmount ||
           nativeBalance === 0
         ) {
@@ -922,12 +950,14 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const checkERC20TokenBalance = async () => {
     if (!erc20TokenContract?.address) return;
 
     try {
       if (depositTokenSwitched) {
         if (
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           +erc20Balance * depositTokenPriceInUSD < +depositAmount ||
           erc20Balance === 0
         ) {
@@ -962,6 +992,7 @@ const DepositSyndicate: React.FC = () => {
       setClubWideErrors(message);
       setDepositError('');
       setImageSRC('/images/deposit/userAttention.svg');
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     } else if (+totalSupply >= +maxTotalSupply) {
       message = `The maximum club tokens supply of ${floatedNumberWithCommas(
         maxTotalSupply
@@ -975,7 +1006,7 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
-  const handleSetDeposit = (value) => {
+  const handleSetDeposit = (value: any) => {
     setDepositAmount(value);
     const remainingErc20Balance = +maxTotalDeposits - +totalDeposits;
     setIsTextRed(false);
@@ -983,6 +1014,7 @@ const DepositSyndicate: React.FC = () => {
     let message;
 
     if (depositTokenSwitched) {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (+value / depositTokenPriceInUSD > remainingErc20Balance) {
         message = (
           <>
@@ -1065,6 +1097,7 @@ const DepositSyndicate: React.FC = () => {
           <StatusBadge
             merkleLoading={merkleLoading}
             depositsEnabled={depositsEnabled}
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             depositExceedTotal={+totalSupply === +maxTotalSupply}
             claimEnabled={claimEnabled && !invalidClaim ? claimEnabled : false}
           />
@@ -1344,6 +1377,7 @@ const DepositSyndicate: React.FC = () => {
                     <p className="text-gray-syn4">
                       ~{' '}
                       {floatedNumberWithCommas(
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         parseFloat(depositAmount) / depositTokenPriceInUSD,
                         nativeDepositToken ?? false
                       )}{' '}
@@ -1353,6 +1387,7 @@ const DepositSyndicate: React.FC = () => {
                     <p className="text-gray-syn4">
                       ~{' '}
                       {floatedNumberWithCommas(
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         parseFloat(depositAmount) * depositTokenPriceInUSD
                       )}{' '}
                       USD
@@ -1481,6 +1516,9 @@ const DepositSyndicate: React.FC = () => {
                             } else {
                               investInSyndicate(depositAmountFinalized);
                             }
+                            amplitudeLogger(DEPOSIT_CONTINUE_CLICK, {
+                              flow: Flow.CLUB_DEPOSIT
+                            });
                             toggleDepositProcessingModal();
                           }}
                           disabled={
@@ -1517,6 +1555,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{' '}
                             {floatedNumberWithCommas(
+                              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               nativeBalance * depositTokenPriceInUSD
                             )}{' '}
                             USD)
@@ -1525,6 +1564,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{' '}
                             {floatedNumberWithCommas(
+                              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                               erc20Balance * depositTokenPriceInUSD
                             )}{' '}
                             USD)
@@ -1659,6 +1699,7 @@ const DepositSyndicate: React.FC = () => {
                   title="Amount deposited"
                   amount={floatedNumberWithCommas(memberDeposits)}
                   tokenName={depositTokenSymbol}
+                  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                   amountInUSD={memberDeposits * depositTokenPriceInUSD}
                 />
               </div>

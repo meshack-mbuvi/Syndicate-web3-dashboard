@@ -14,6 +14,7 @@ export const Widget: React.FC<Props> = ({ options }) => {
   const iconStyles = 'flex-shrink-0 w-4.5 h-4.5 overflow-hidden mr-4';
 
   const renderedOptions = options.map((option, index) => (
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a
       className={`block space-y-1 hover:bg-gray-syn7 rounded-xl cursor-pointer py-2 px-4`}
       key={index}

@@ -7,30 +7,27 @@ import {
 import { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
+import HideAssetPill from '@/containers/layoutWithSyndicateDetails/assets/shared/HideAssetPill';
+import { Collectible } from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
 
 interface ICollectibleMedia {
   showCollectibles: boolean;
+  showHiddenNfts?: boolean;
+  showOrHideNfts?: (e: Event, contractAddress: string) => void;
   mediaType: string;
   setDetailsOfSelectedCollectible?: (details: any) => void;
-  collectible: {
-    id: string;
-    image: string;
-    animation: string;
-    permalink: string;
-    name: string;
-    description: string;
-    collection: any;
-    floorPrice: string;
-    lastPurchasePrice: string;
-    futureNft?: boolean;
-  };
+  isOwner?: boolean;
+  collectible: Collectible;
 }
 
 const CollectibleMedia: FC<ICollectibleMedia> = ({
   collectible,
   mediaType,
   showCollectibles,
-  setDetailsOfSelectedCollectible
+  setDetailsOfSelectedCollectible,
+  showHiddenNfts,
+  showOrHideNfts,
+  isOwner
 }) => {
   const {
     setCollectibleDetailsSliceReducer: {
@@ -59,6 +56,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
 
   const videoMute = () => {
     if (videoRef.current) {
+      // @ts-expect-error TS(2339): Property 'muted' does not exist on type 'never'.
       videoRef.current.muted = !muteVideo;
       setMuteVideo(!muteVideo);
     }
@@ -66,8 +64,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
 
   const audioMute = () => {
     if (audioRef.current) {
+      // @ts-expect-error TS(2339): Property 'play' does not exist on type 'never'.
       audioRef.current.play();
+      // @ts-expect-error TS(2339): Property 'volume' does not exist on type 'never'.
       audioRef.current.volume = 0.3;
+      // @ts-expect-error TS(2339): Property 'muted' does not exist on type 'never'.
       audioRef.current.muted = !muteAudio;
       setMuteAudio(!muteAudio);
     }
@@ -77,9 +78,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     // mute media that is already playing when the same media is opened
     // inside the modal or full-screen overlay.
     if (mediaType === 'videoNFT') {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       videoRef.current.muted = true;
       setMuteVideo(true);
     } else if (mediaType === 'soundtrackNFT') {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       audioRef.current.muted = true;
       setMuteAudio(true);
     }
@@ -89,11 +92,14 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     dispatch(setShowFullScreen(false));
   };
 
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (videoRef && videoRef.current) {
       const video = videoRef.current;
+      // @ts-expect-error TS(2339): Property 'addEventListener' does not exist on type... Remove this comment to see the full error message
       video.addEventListener('webkitendfullscreen', handleMobileFullScreenExit);
       return () => {
+        // @ts-expect-error TS(2339): Property 'removeEventListener' does not exist on t... Remove this comment to see the full error message
         video.removeEventListener(
           'webkitendfullscreen',
           handleMobileFullScreenExit
@@ -120,6 +126,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
       'Last purchase price': any;
     };
   }) => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     setDetailsOfSelectedCollectible(details);
     muteBackgroundMedia();
   };
@@ -158,8 +165,12 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   let media;
   const mediaClickButton = showCollectibles ? (
     <button
-      className="w-full h-full"
+      className={`w-full h-full ${
+        collectible.hidden ? 'cursor-not-allowed' : 'cursor-pointer'
+      }`}
       onClick={() => {
+        // do not open details modal if nft is hidden
+        if (collectible.hidden) return;
         setActiveCollectibleDetails({
           collectible,
           mediaType,
@@ -177,7 +188,14 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     media = (
       <div
         style={{
-          backgroundImage: `url('${image}')`,
+          backgroundImage: `url('${
+            image.includes('ipfs://')
+              ? `https://syndicate.mypinata.cloud/ipfs/${image.replace(
+                  'ipfs://',
+                  ''
+                )}`
+              : image
+          }')`,
           backgroundSize: `${showFullScreen ? 'contain' : 'cover'}`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'
@@ -285,7 +303,15 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
             showFullScreen ? 'h-full' : 'relative bg-gray-syn7 overflow-hidden'
           }`}
         >
-          {media}
+          <div
+            className={`duration-300 transition-all h-full w-full ${
+              collectible.hidden && showHiddenNfts
+                ? 'opacity-30'
+                : 'opacity-100'
+            }`}
+          >
+            {media}
+          </div>
 
           {showFullScreen ? (
             <div className="absolute right-14 bottom-14 flex items-center z-10">
@@ -376,61 +402,86 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
             </div>
           ) : (
             <>
-              {mediaType === 'videoNFT' ||
-              mediaType === 'soundtrackNFT' ||
-              mediaType === 'htmlNFT' ? (
+              {
                 <div
                   id="controls"
                   className={`absolute bottom-4 z-10 ${
                     showCollectibles ? 'right-4' : 'right-14'
                   } flex items-center space-x-4 select-none`}
                 >
-                  <button
-                    onClick={() => {
-                      if (mediaType === 'videoNFT' || mediaType === 'htmlNFT') {
-                        videoMute();
-                      } else {
-                        audioMute();
-                      }
-                    }}
-                  >
-                    {mediaType === 'videoNFT' || mediaType === 'htmlNFT' ? (
-                      <>
-                        {muteVideo ? (
-                          <img
-                            className="h-8 w-8"
-                            src="/images/nftClaim/mute-overlay.svg"
-                            alt=""
-                          />
-                        ) : (
-                          <img
-                            className="h-8 w-8"
-                            src="/images/nftClaim/unmute-overlay.svg"
-                            alt=""
-                          />
-                        )}
-                      </>
-                    ) : null}
-                    {mediaType === 'soundtrackNFT' ? (
-                      <>
-                        {muteAudio ? (
-                          <img
-                            className="h-8 w-8"
-                            src="/images/nftClaim/mute-overlay.svg"
-                            alt=""
-                          />
-                        ) : (
-                          <img
-                            className="h-8 w-8"
-                            src="/images/nftClaim/unmute-overlay.svg"
-                            alt=""
-                          />
-                        )}
-                      </>
-                    ) : null}
-                  </button>
+                  {/* hide/unhide nft button  */}
+                  {isOwner ? (
+                    <div className="duration-300 transition-all opacity-0 group-hover:opacity-100">
+                      <HideAssetPill
+                        hide={!collectible.hidden}
+                        iconOnly={true}
+                        onClick={(e) =>
+                          showOrHideNfts
+                            ? showOrHideNfts(e, collectible.id)
+                            : null
+                        }
+                      />
+                    </div>
+                  ) : null}
+
+                  {mediaType === 'videoNFT' ||
+                  mediaType === 'soundtrackNFT' ||
+                  mediaType === 'htmlNFT' ? (
+                    <button
+                      className={`${
+                        !showCollectibleModal
+                          ? 'bg-white bg-opacity-30 rounded-full w-8 h-8'
+                          : ''
+                      }`}
+                      onClick={() => {
+                        if (
+                          mediaType === 'videoNFT' ||
+                          mediaType === 'htmlNFT'
+                        ) {
+                          videoMute();
+                        } else {
+                          audioMute();
+                        }
+                      }}
+                    >
+                      {mediaType === 'videoNFT' || mediaType === 'htmlNFT' ? (
+                        <>
+                          {muteVideo ? (
+                            <img
+                              className="h-8 w-8"
+                              src="/images/nftClaim/mute-overlay.svg"
+                              alt=""
+                            />
+                          ) : (
+                            <img
+                              className="h-8 w-8"
+                              src="/images/nftClaim/unmute-overlay.svg"
+                              alt=""
+                            />
+                          )}
+                        </>
+                      ) : null}
+                      {mediaType === 'soundtrackNFT' ? (
+                        <>
+                          {muteAudio ? (
+                            <img
+                              className="h-8 w-8"
+                              src="/images/nftClaim/mute-overlay.svg"
+                              alt=""
+                            />
+                          ) : (
+                            <img
+                              className="h-8 w-8"
+                              src="/images/nftClaim/unmute-overlay.svg"
+                              alt=""
+                            />
+                          )}
+                        </>
+                      ) : null}
+                    </button>
+                  ) : null}
                 </div>
-              ) : null}
+              }
               {!showCollectibles ? (
                 <>
                   <div className="absolute bottom-4 left-4 flex items-center space-x-4 select-none">
@@ -461,10 +512,13 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
               ) : null}
 
               {/* Future collectible pill  */}
-              {showCollectibles && collectible.futureNft && (
+              {showCollectibles && (
                 <button
-                  className="absolute top-4 left-4"
+                  className={`absolute top-4 left-4 ${
+                    collectible.hidden ? 'cursor-not-allowed' : 'cursor-pointer'
+                  }`}
                   onClick={() => {
+                    if (collectible.hidden) return;
                     setActiveCollectibleDetails({
                       collectible,
                       mediaType,
@@ -477,7 +531,14 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                     });
                   }}
                 >
-                  <FutureCollectiblePill />
+                  {collectible.hidden && showHiddenNfts ? (
+                    <HideAssetPill
+                      currentlyHidden={true}
+                      backgroundColor="bg-white bg-opacity-10"
+                    />
+                  ) : collectible.futureNft && !collectible.hidden ? (
+                    <FutureCollectiblePill />
+                  ) : null}
                 </button>
               )}
             </>

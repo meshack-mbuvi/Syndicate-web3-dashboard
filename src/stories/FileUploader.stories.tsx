@@ -18,9 +18,10 @@ export default {
   }
 };
 
-const Template = (args) => <FileUploader {...args} />;
+const Template = (args: any) => <FileUploader {...args} />;
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   fileName: 'file.csv',
   successText: '32 addresses',
@@ -31,6 +32,7 @@ Default.args = {
 };
 
 export const AddOn = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 AddOn.args = {
   fileName: 'file.csv',
   successText: '32 addresses',
@@ -49,6 +51,7 @@ AddOn.args = {
 };
 
 export const LoadingBar = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 LoadingBar.args = {
   fileName: 'file.csv',
   successText: '32 addresses',
@@ -59,6 +62,7 @@ LoadingBar.args = {
 };
 
 export const Spinner = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Spinner.args = {
   fileName: 'file.csv',
   successText: '32 addresses',
@@ -70,6 +74,7 @@ Spinner.args = {
 };
 
 export const Complete = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Complete.args = {
   fileName: 'file.csv',
   successText: '32 addresses',
@@ -80,6 +85,7 @@ Complete.args = {
 };
 
 export const Error = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Error.args = {
   fileName: 'file.csv',
   successText: '32 addresses',

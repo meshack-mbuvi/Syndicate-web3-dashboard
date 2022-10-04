@@ -15,6 +15,7 @@ export const SearchInput: React.FC<{
   };
 
   useEffect(() => {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     searchInput.current.focus();
   });
 

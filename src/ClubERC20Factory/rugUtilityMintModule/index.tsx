@@ -8,7 +8,7 @@ export class RugUtilityMintModuleContract {
   activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork) {
+  constructor(contractAddress: string, web3: any, activeNetwork: any) {
     this.activeNetwork = activeNetwork;
     this.web3 = web3;
     this.contract = new web3.eth.Contract(
@@ -23,10 +23,10 @@ export class RugUtilityMintModuleContract {
     forAddress: string,
     tokenID: number,
     value: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);
 
@@ -61,10 +61,10 @@ export class RugUtilityMintModuleContract {
     forAddress: string,
     tokenIDs: [],
     value: string,
-    onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt, tokenIDs) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt: any, tokenIDs: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: any
   ): Promise<any> {
     const gasEstimate = await estimateGas(this.web3);
 
@@ -72,7 +72,7 @@ export class RugUtilityMintModuleContract {
       this.contract.methods
         .redeemMany(tokenIDs)
         .send({ from: forAddress, gasPrice: gasEstimate, value })
-        .on('receipt', async (receipt) => {
+        .on('receipt', async (receipt: any) => {
           onTxReceipt(receipt, tokenIDs);
         })
         .on('error', onTxFail)
@@ -118,7 +118,7 @@ export class RugUtilityMintModuleContract {
       return '';
     }
   }
-  async tokenRedeemed(tokenID): Promise<boolean> {
+  async tokenRedeemed(tokenID: any): Promise<boolean> {
     try {
       return this.contract.methods.tokenRedeemed(tokenID).call();
     } catch (error) {
@@ -127,6 +127,7 @@ export class RugUtilityMintModuleContract {
   }
 
   getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
     if (!distEvent.trim()) return;
     try {
       const events = await this.contract.getPastEvents(distEvent, {

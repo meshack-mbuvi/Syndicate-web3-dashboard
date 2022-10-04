@@ -4,23 +4,23 @@ import React from 'react';
 
 /**
  * An input component with label and icon at the right end
- * If the input is disable, the input field without border, and with grayish
+ * If the input is disabled, the input field without border, and with grayish
  *  small text is rendered.
  * @param {*} props
  */
 export const SearchInput = (props: {
   name?: string;
   id?: string;
-  onChangeHandler;
+  onChangeHandler: any;
   disabled?: boolean;
   error?: string;
   column?: boolean;
   full?: boolean;
   searchValue: string;
-  itemsCount?;
+  itemsCount?: any;
   customClass?: string;
   searchItem?: string;
-  clearSearchValue?: (event) => void;
+  clearSearchValue?: (event: any) => void;
   width?: number;
   parentBackground?: string;
   padding?: string;

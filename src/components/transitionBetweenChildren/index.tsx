@@ -21,6 +21,7 @@ const TransitionBetweenChildren: FC<Props> = ({
   transitionType = TransitionBetweenChildrenType.FADE,
   extraClasses
 }) => {
+  // @ts-expect-error TS(7030): Not all code paths return a value.
   const renderedTabContent = children.map((child, index) => {
     if (
       transitionType === TransitionBetweenChildrenType.FADE ||

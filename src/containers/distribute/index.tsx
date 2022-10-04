@@ -3,10 +3,10 @@ import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview'
 import Layout from '@/components/layout';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -16,14 +16,9 @@ import {
   setMockCollectiblesResult,
   setMockTokensResult
 } from '@/state/assets/slice';
-import { setClubMembers } from '@/state/clubMembers';
-import {
-  setDistributeTokens,
-  setDistributionMembers,
-  setEth
-} from '@/state/distributions';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
+import { isZeroAddress } from '@/utils';
 import { getSynToken } from '@/utils/api';
 import {
   mockActiveERC20Token,
@@ -36,7 +31,6 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
-import { EstimateDistributionsGas } from './estimateDistributionsGas';
 import TokenSelector from './TokenSelector';
 
 enum Steps {
@@ -49,13 +43,7 @@ const Distribute: FC = () => {
     initializeContractsReducer: {
       syndicateContracts: { DepositTokenMintModule }
     },
-    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
-    distributeTokensReducer: {
-      distributionTokens,
-      gasEstimate,
-      eth,
-      isLoading
-    },
+    distributeTokensReducer: { gasEstimate },
     erc20TokenSliceReducer: {
       erc20Token,
       depositDetails: { nativeDepositToken }
@@ -70,12 +58,6 @@ const Distribute: FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
-  // calls the estimate gas function which changes the redux state of gasEstimate
-  EstimateDistributionsGas();
-
-  // fetch club members
-  useClubTokenMembers();
-
   const dispatch = useDispatch();
 
   const [tokensDetails, setTokensDetails] = useState([]);
@@ -84,7 +66,23 @@ const Distribute: FC = () => {
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  /**
+   * Prepare and handle token selection.
+   */
+  const [activeIndices, setActiveIndices] = useState([]);
+  const [_options, setOptions] = useState([]);
+  const [distributionTokens, setDistributionTokens] = useState([]);
+  const [processingTokens, setProcessingTokens] = useState(true);
+  const [currentNativeToken, setCurrentNativeToken] = useState<{
+    available: number;
+    totalToDistribute: number;
+  }>({
+    available: 0,
+    totalToDistribute: 0
+  });
+
   const [isClubFound, setIsClubFound] = useState(false);
+  const [hasError, setHasError] = useState(true);
 
   const {
     owner,
@@ -96,6 +94,26 @@ const Distribute: FC = () => {
     symbol
   } = erc20Token;
 
+  const { gas: gasPrice, fiatAmount } = useGasDetails({
+    contract: ContractMapper.DistributionsERC20,
+    withFiatCurrency: true,
+    args: {
+      numSelectedTokens: distributionTokens.length,
+      clubAddress:
+        activeNetwork.chainId === 137
+          ? '0x979e031fa7b743ce8896b03d4b96a212c3dd8417'
+          : '0xb02a13a268339bedd892a00ff132da4352ed9df5',
+      distributionERC20Address:
+        activeNetwork.chainId === 137
+          ? '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+          : '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+      totalDistributionAmount: 0,
+      members: ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0'],
+      batchIdentifier: 'batch'
+    },
+    skipQuery: !distributionTokens.length
+  });
+
   // Prepare distributions tokens for overview badge
   const router = useRouter();
 
@@ -105,8 +123,14 @@ const Distribute: FC = () => {
     query: { clubAddress }
   } = router;
 
-  const isOwner = useIsClubOwner();
   const isDemoMode = useDemoMode(clubAddress as string);
+
+  const { isOwner } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
 
   useEffect(() => {
     if (!isReady || isEmpty(web3)) return;
@@ -160,13 +184,16 @@ const Distribute: FC = () => {
       setCtaButtonDisabled(false);
 
       setTokensDetails(
-        distributionTokens.map(({ symbol, tokenAmount, fiatAmount, icon }) => ({
-          tokenAmount,
-          fiatAmount,
-          tokenIcon: icon,
-          tokenSymbol: symbol,
-          isLoading: loadingAssets
-        }))
+        // @ts-expect-error TS(2345): Argument of type '{ tokenAmount: any; fiatAmount: any; tokenIcon: any'..... Remove this comment to see the full error message
+        distributionTokens.map(
+          ({ symbol, tokenAmount, fiatAmount, icon }: any) => ({
+            tokenAmount,
+            fiatAmount,
+            tokenIcon: icon,
+            tokenSymbol: symbol,
+            isLoading: loadingAssets
+          })
+        )
       );
     } else {
       setCtaButtonDisabled(true);
@@ -178,28 +205,15 @@ const Distribute: FC = () => {
     };
   }, [JSON.stringify(distributionTokens)]);
 
-  useEffect(() => {
-    if (loadingClubMembers) return;
-
-    dispatch(setDistributionMembers(clubMembers));
-  }, [JSON.stringify(clubMembers), loadingClubMembers]);
-
-  /**
-   * Prepare and handle token selection.
-   */
-  const [activeIndices, setActiveIndices] = useState([]);
-  const [_options, setOptions] = useState([]);
-  const [processingTokens, setProcessingTokens] = useState(true);
-
   // check whether we have sufficient gas for distribution
   useEffect(() => {
     if (!activeIndices.length) return; // return, there is nothing to distribute
 
     const [_loadedNativeToken] = tokensResult.filter(
-      (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+      (token: any) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
     );
     const [_nativeToken] = distributionTokens.filter(
-      (token) => token.symbol === activeNetwork.nativeCurrency.symbol
+      (token: any) => token.symbol === activeNetwork.nativeCurrency.symbol
     );
 
     const _totalNativeCurrencyGasEstimate =
@@ -217,7 +231,7 @@ const Distribute: FC = () => {
       }
     } else {
       // token not selected for distribution
-      if (_loadedNativeToken?.tokenBalance > _totalNativeCurrencyGasEstimate) {
+      if (+_loadedNativeToken?.tokenBalance > _totalNativeCurrencyGasEstimate) {
         // we have enough gas
         setSufficientGas(true);
       } else {
@@ -242,7 +256,7 @@ const Distribute: FC = () => {
               logo,
               tokenValue,
               ...rest
-            }) => {
+            }: any) => {
               const {
                 data: {
                   data: { syndicateDAOs }
@@ -269,7 +283,9 @@ const Distribute: FC = () => {
                   price: price?.usd ?? 0,
                   fiatAmount: tokenValue,
                   isEditingInFiat: false,
-                  warning: ''
+                  isSelected: false,
+                  warning: '',
+                  error: ''
                 };
               }
             }
@@ -277,6 +293,7 @@ const Distribute: FC = () => {
         ])
       ).filter((token) => (token = token !== undefined));
 
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setOptions(tokens);
       setProcessingTokens(false);
     }
@@ -295,19 +312,22 @@ const Distribute: FC = () => {
   useEffect(() => {
     if (activeIndices.length > 0) {
       const selectedTokens = _options.filter((_, index) => {
+        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
         return activeIndices.includes(index);
       });
 
-      dispatch(setDistributeTokens(selectedTokens));
+      setDistributionTokens(selectedTokens);
     } else {
-      dispatch(setDistributeTokens([]));
+      setDistributionTokens([]);
     }
   }, [_options, activeIndices, dispatch]);
 
-  // Whenever the a new token is selected, maximum native token value should be recalculated
+  // Whenever a new token is selected, maximum native token value should be recalculated
   useEffect(() => {
     let _ethIndex = -1;
+    // @ts-expect-error TS(7030): Not all code paths return a value.
     const [nativeToken] = _options.filter((token, ethIndex) => {
+      // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never'.
       if (token.symbol === activeNetwork.nativeCurrency.symbol) {
         _ethIndex = ethIndex;
         return token;
@@ -318,10 +338,11 @@ const Distribute: FC = () => {
       const { maximumTokenAmount: currentMax } = nativeToken;
 
       // Calculate maximum amount of nativeToken that can be distributed
-      // Note: Added a 0.5 margin for gas estimate inaccuracy
+      // Note: Added a 2% margin for gas estimate inaccuracy
       const _newMaxTokenAmount = activeIndices.length
-        ? +eth.available - +gasEstimate.tokenAmount * activeIndices.length * 1.5
-        : +eth.available - +gasEstimate.tokenAmount * 1.5;
+        ? +currentNativeToken.available -
+          +gasEstimate.tokenAmount * activeIndices.length * 1.2
+        : +currentNativeToken.available - +gasEstimate.tokenAmount * 1.2;
 
       // if maximum value is selected, trigger error message
       let error = '';
@@ -333,10 +354,12 @@ const Distribute: FC = () => {
         setSufficientGas(true);
       }
 
-      // update maximumTokenAmount on ETH token
+      // update maximumTokenAmount on currentNativeToken token
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setOptions([
         ..._options.slice(0, _ethIndex),
         {
+          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ..._options[_ethIndex],
           error,
           maximumTokenAmount: _newMaxTokenAmount
@@ -344,19 +367,18 @@ const Distribute: FC = () => {
         ..._options.slice(_ethIndex + 1)
       ]);
     }
-  }, [activeIndices, gasEstimate.tokenAmount]);
+  }, [activeIndices, gasEstimate.tokenAmount, currentNativeToken]);
 
   // dispatch the price of the deposit token for use in other
   // components
   useGetDepositTokenPrice(activeNetwork.chainId);
-  const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
 
   useEffect(() => {
     // Demo mode
-    if (clubAddress === zeroAddress) {
+    if (isZeroAddress(clubAddress as string)) {
       router.push('/clubs/demo/manage');
     }
   });
@@ -399,7 +421,7 @@ const Distribute: FC = () => {
     if (!clubAddress || status == Status.CONNECTING) return;
 
     if (
-      clubAddress !== zeroAddress &&
+      !isZeroAddress(clubAddress as string) &&
       web3.utils?.isAddress(clubAddress as string) &&
       DepositTokenMintModule
     ) {
@@ -412,10 +434,6 @@ const Distribute: FC = () => {
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
       dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setClubMembers([]));
-      };
     } else if (isDemoMode) {
       // using "Active" as the default view.
       resetClubState(dispatch, mockActiveERC20Token);
@@ -429,42 +447,34 @@ const Distribute: FC = () => {
   ]);
 
   /**
-   * if max ETH is selected and other tokens are available but not selected,
-   * show warning message asking the admin to reserve some ETH for other token
+   * if max native is selected and other tokens are available but not selected,
+   * show warning message asking the admin to reserve some native for other token
    * distributions.
    */
   useEffect(() => {
     let warning = '';
-    const eth = {
-      available: '0',
-      totalToDistribute: '0'
-    };
 
-    if (tokensResult.length) {
-      const [nativeToken] = tokensResult.filter(
-        (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
-      );
-      eth.available = nativeToken?.tokenBalance || '0';
-    }
-
-    const [nativeToken] = distributionTokens.filter(
+    const [_selectedNativeToken] = distributionTokens.filter(
+      // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never.
       (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
-
-    // update total selected amount
-    eth.totalToDistribute = nativeToken?.tokenAmount ?? '0';
 
     if (
       tokensResult.length > 1 &&
       distributionTokens.length < tokensResult.length
     ) {
-      if (nativeToken) {
+      if (_selectedNativeToken) {
         if (
-          nativeToken.tokenAmount > 0 &&
-          nativeToken.tokenAmount == nativeToken.maximumTokenAmount
+          // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
+          _selectedNativeToken.tokenAmount > 0 &&
+          // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
+          _selectedNativeToken.tokenAmount ==
+            // @ts-expect-error TS(2339): Property 'maximumTokenAmount' does not exist on type 'never.
+            _selectedNativeToken.maximumTokenAmount
         ) {
-          warning = `Consider reserving ${nativeToken.symbol} to pay gas on future 
-          distributions`;
+          // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never.
+          warning = `Consider reserving ${_selectedNativeToken.symbol} to pay gas on future 
+            distributions`;
         } else {
           warning = '';
         }
@@ -472,16 +482,19 @@ const Distribute: FC = () => {
         warning = '';
       }
 
-      // find index of ETH token on _options
+      // find index of native token on _options
       const ethIndex = _options.findIndex(
+        // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'never'.
         (option) => option.symbol == activeNetwork.nativeCurrency.symbol
       );
 
       if (ethIndex > -1) {
-        // update warning on ETH token
+        // update warning on native token
+        // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
         setOptions([
           ..._options.slice(0, ethIndex),
           {
+            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ..._options[ethIndex],
             warning
           },
@@ -490,20 +503,28 @@ const Distribute: FC = () => {
       }
     }
 
-    dispatch(setEth(eth));
+    setCurrentNativeToken({
+      available:
+        +tokensResult.filter(
+          (token: any) =>
+            token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+        )[0]?.tokenBalance || 0,
+      // @ts-expect-error TS(2339): Property 'tokenAmount' does not exist on type 'never.
+      totalToDistribute: +_selectedNativeToken?.tokenAmount ?? 0
+    });
   }, [
     JSON.stringify(distributionTokens),
     JSON.stringify(tokensResult),
     loadingAssets
   ]);
 
-  const [hasError, setHasError] = useState(true);
   useEffect(() => {
+    // @ts-expect-error TS(2339): Property 'error' does not exist on type 'never'.
     const _hasError = _options.some((option) => option.error);
     setHasError(_hasError);
   }, [_options]);
 
-  const handleNext = (event) => {
+  const handleNext = (event: any) => {
     event.preventDefault();
     setCurrentStep(Steps.selectMembers);
     setActiveIndex(1);
@@ -513,9 +534,16 @@ const Distribute: FC = () => {
     <div className="space-y-8">
       <BadgeWithOverview
         tokensDetails={tokensDetails}
-        gasEstimate={gasEstimate}
-        isLoading={isLoading}
-        numSelectedTokens={distributionTokens.length}
+        // @ts-expect-error TS(2322): Type '{ tokenSymbol: string; tokenAmount: ' is not assig ... Remove this comment to see the full error message
+        gasEstimate={
+          gasPrice
+            ? {
+                tokenSymbol: activeNetwork?.nativeCurrency?.symbol,
+                tokenAmount: String(gasPrice),
+                fiatAmount: fiatAmount
+              }
+            : null
+        }
         isCTADisabled={ctaButtonDisabled || !sufficientGas || hasError}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
@@ -532,14 +560,13 @@ const Distribute: FC = () => {
         <div className="flex justify-center items-center">
           <ClubHeader
             {...{
-              loading,
               name,
               symbol,
               owner,
-              loadingClubDeposits,
+              loading: loadingClubDeposits || loading,
               totalDeposits,
               managerSettingsOpen: true,
-              clubAddress
+              clubAddress: clubAddress?.toString() || ''
             }}
           />
         </div>
@@ -555,7 +582,7 @@ const Distribute: FC = () => {
       `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
-  const handlePrevious = (event) => {
+  const handlePrevious = (event: any) => {
     event.preventDefault();
     if (activeIndex === 0) return;
     setActiveIndex(activeIndex - 1);
@@ -579,13 +606,16 @@ const Distribute: FC = () => {
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
               leftColumnComponent={
-                <div>
+                <div className="space-y-16">
                   {headerComponent}
                   <TokenSelector
+                    symbol={symbol}
                     options={_options}
                     activeIndices={activeIndices}
-                    setOptions={setOptions}
-                    setActiveIndices={setActiveIndices}
+                    // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
+                    handleOptionsChange={setOptions}
+                    // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
+                    handleActiveIndicesChange={setActiveIndices}
                     loading={loadingAssets || loading || processingTokens}
                   />
                 </div>
@@ -610,6 +640,7 @@ const Distribute: FC = () => {
             <Layout
               managerSettingsOpen={false}
               showNav={true}
+              showNavButton={true}
               showBackButton={true}
               dotIndicatorOptions={dotIndicatorOptions}
               handleExitClick={handleExitClick}
@@ -618,7 +649,10 @@ const Distribute: FC = () => {
               hideWalletAndEllipsis={true}
               showCloseButton={true}
             >
-              <ReviewDistribution />
+              <ReviewDistribution
+                tokens={distributionTokens}
+                handleExitClick={handleExitClick}
+              />
             </Layout>
           ) : null}
         </>

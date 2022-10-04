@@ -1,23 +1,24 @@
-import React from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
-import { CategoryPill } from '../../../activity/shared/CategoryPill';
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import React from 'react';
+import { CategoryPill } from '../../../activity/shared/CategoryPill';
 import TokenDetail from '../../collectibles/shared/TokenDetail';
 
 interface ITokenModal {
   showModal: boolean;
   closeModal: any;
   tokenDetails: any;
+  isOwner: boolean;
 }
 
 const TokenModal: React.FC<ITokenModal> = ({
   showModal,
   closeModal,
-  tokenDetails
+  tokenDetails,
+  isOwner
 }) => {
-  const clubBalance = floatedNumberWithCommas(tokenDetails.tokenBalance);
-  const addGrayToDecimalInput = (str) => {
+  const addGrayToDecimalInput = (str: any) => {
     if (typeof str !== 'string') {
       str.toString();
     }
@@ -30,9 +31,9 @@ const TokenModal: React.FC<ITokenModal> = ({
     );
   };
 
-  const additionaDetails = {
+  const additionalDetails = {
     'Token name': tokenDetails.tokenName,
-    'Club balance': tokenDetails.tokenBalance,
+    'Club balance': floatedNumberWithCommas(tokenDetails.tokenBalance),
     Value: tokenDetails.value
   };
   return (
@@ -52,7 +53,7 @@ const TokenModal: React.FC<ITokenModal> = ({
       <div>
         <div className="flex rounded-t-2xl items-center flex-col relative py-10 px-5 bg-gray-syn7">
           <div className="mb-8">
-            <CategoryPill category="TOKEN" readonly={true} />
+            <CategoryPill category="TOKEN" readonly={true} isOwner={isOwner} />
           </div>
           <div className="flex items-center">
             {tokenDetails.logo ? (
@@ -85,12 +86,13 @@ const TokenModal: React.FC<ITokenModal> = ({
           )}
           <div>
             <p>Details</p>
-            {Object.keys(additionaDetails).map((key, index) => {
+            {Object.keys(additionalDetails).map((key, index) => {
               return (
                 <div key={index}>
                   <TokenDetail
                     title={key}
-                    value={additionaDetails[key]}
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+                    value={additionalDetails[key]}
                     symbol={tokenDetails.tokenSymbol}
                   />
                 </div>

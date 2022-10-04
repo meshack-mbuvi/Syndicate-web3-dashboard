@@ -54,7 +54,7 @@ const ClaimNFT: React.FC = () => {
 
   const { nftAddress } = router.query;
 
-  const updateMinted = (amount) => {
+  const updateMinted = (amount: any) => {
     setUnMinted(unMinted - amount);
   };
 
@@ -112,7 +112,7 @@ const ClaimNFT: React.FC = () => {
     getNativeBalance();
   }, [account]);
 
-  const getERC721TokenDetails = async (ERC721tokenContract) => {
+  const getERC721TokenDetails = async (ERC721tokenContract: any) => {
     const { address } = ERC721tokenContract;
     const { mintPolicyERC721, PublicMintWithFeeModule } = syndicateContracts;
 
@@ -126,9 +126,11 @@ const ClaimNFT: React.FC = () => {
       ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.OnePerAddressMintModule;
 
     const PUBLIC_UTILITY_MINT_MODULE =
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.UtilityMintModule;
 
     const tokenPrice = await getNativeTokenPrice(activeNetwork.chainId);
@@ -219,6 +221,7 @@ const ClaimNFT: React.FC = () => {
       web3.utils &&
       web3.utils.isAddress(nftAddress) &&
       syndicateContracts?.MerkleDistributorModuleERC721 &&
+      // @ts-expect-error TS(2341): Property '_address' is private and only accessible... Remove this comment to see the full error message
       syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address &&
       syndicateContracts?.PublicMintWithFeeModule
     ) {
@@ -250,6 +253,7 @@ const ClaimNFT: React.FC = () => {
     currentAccount,
     router.isReady,
     syndicateContracts?.MerkleDistributorModuleERC721,
+    // @ts-expect-error TS(2341): Property '_address' is private and only accessible... Remove this comment to see the full error message
     syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address,
     syndicateContracts?.PublicMintWithFeeModule,
     web3.utils

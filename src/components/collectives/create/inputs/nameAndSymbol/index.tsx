@@ -17,7 +17,7 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
   extraClasses
 }) => {
   const isTokenSymbolAlphanumeric = (symbol: string) => {
-    return symbol.match(/^[0-9a-zA-Z]+$/) || symbol === '';
+    return /^[0-9a-zA-Z]+$/.exec(symbol) || symbol === '';
   };
 
   const isTokenSymbol10CharsOrLess = (symbol: string) => {
@@ -69,10 +69,13 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
               handleTokenSymbolChange(value.toUpperCase());
               setSymbolError(null);
             } else {
+              // @ts-expect-error TS(2345): Argument of type '"Only numbers and letters allowe... Remove this comment to see the full error message
               setSymbolError(generateSymbolError(value));
             }
           }}
+          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
           isInErrorState={symbolError} // alphanumeric and <= 10 charcters
+          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | un... Remove this comment to see the full error message
           infoLabel={symbolError}
         />
       </div>

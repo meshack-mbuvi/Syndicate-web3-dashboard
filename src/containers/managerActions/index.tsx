@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DEPOSIT_LINK_COPY } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import CreateEntityCard from '@/components/shared/createEntityCard';
@@ -11,6 +13,7 @@ import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAct
 import { L2 } from '@/components/typography';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
@@ -18,14 +21,11 @@ import { Status } from '@/state/wallet/types';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { XIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
-import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { DEPOSIT_LINK_COPY } from '@/components/amplitude/eventNames';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -140,6 +140,7 @@ const ManagerActions = (): JSX.Element => {
 
     if (source && source === 'create') {
       // reset creation context states
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
@@ -174,6 +175,7 @@ const ManagerActions = (): JSX.Element => {
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const depositExceedTotal = +totalSupply === +maxTotalSupply;
 
   const [showShareOrChangeLegalDocs, setShowShareOrChangeLegalDocs] =
@@ -197,287 +199,304 @@ const ManagerActions = (): JSX.Element => {
     setShowShareOrChangeLegalDocs(false);
   };
 
-  return isReady && readyDistributionsClient ? (
-    <ErrorBoundary>
-      <div className="w-full mt-4 sm:mt-0 relative overflow-hidden">
-        <FadeIn>
-          <div className="rounded-2-half bg-gray-syn8">
-            <StatusBadge
-              {...{
-                depositsEnabled,
-                claimEnabled,
-                creatingSyndicate,
-                syndicateSuccessfullyCreated,
-                syndicateCreationFailed,
-                showConfettiSuccess
-              }}
-              isManager
-              depositExceedTotal={depositExceedTotal}
-            />
-            {status !== Status.DISCONNECTED && loading ? (
-              <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
-                <SkeletonLoader
-                  width="1/3"
-                  height="5"
-                  borderRadius="rounded-full"
+  return (
+    <>
+      {isReady && readyDistributionsClient ? (
+        <ErrorBoundary>
+          <div className="w-full mt-4 sm:mt-0 relative overflow-hidden">
+            <FadeIn>
+              <div className="rounded-2-half bg-gray-syn8">
+                <StatusBadge
+                  {...{
+                    depositsEnabled,
+                    claimEnabled,
+                    creatingSyndicate,
+                    syndicateSuccessfullyCreated,
+                    syndicateCreationFailed,
+                    showConfettiSuccess
+                  }}
+                  isManager
+                  depositExceedTotal={depositExceedTotal}
                 />
-                <SkeletonLoader
-                  width="3/4"
-                  height="4"
-                  borderRadius="rounded-full"
-                />
-                <SkeletonLoader width="full" height="12" />
-              </div>
-            ) : (depositsEnabled && !depositExceedTotal) || claimEnabled ? (
-              <div
-                className={`h-fit-content relative ${
-                  showConfettiSuccess
-                    ? 'p-0'
-                    : `pt-6 ${showShareWarning ? 'pb-6' : 'pb-10'} px-8`
-                } flex justify-center items-start flex-col w-full`}
-              >
-                {status === Status.DISCONNECTED && !isDemoMode ? (
-                  <ConnectWalletAction />
-                ) : (
-                  <>
-                    {!syndicateCreationFailed &&
-                      !creatingSyndicate &&
-                      !showConfettiSuccess && (
-                        <div className="flex flex-col items-start mb-6">
-                          <L2 extraClasses="pb-2">
-                            Invite to {claimEnabled ? 'claim' : 'deposit'}
-                          </L2>
-                          <div className="text-gray-syn4">
-                            <p>
-                              Invite members by sharing your club’s{' '}
-                              {claimEnabled ? 'claim' : 'deposit'} link
-                            </p>
-                            {!adminSigned && (
-                              <button
-                                className="flex space-between mt-3"
-                                onClick={() =>
-                                  setLinkShareAgreementChecked(
-                                    !linkShareAgreementChecked
-                                  )
-                                }
-                              >
-                                <input
-                                  className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
-                                  onChange={() =>
-                                    setLinkShareAgreementChecked(
-                                      !linkShareAgreementChecked
-                                    )
-                                  }
-                                  type="checkbox"
-                                  id="linkShareAgreement"
-                                  name="linkShareAgreement"
-                                  checked={linkShareAgreementChecked}
-                                />
-                                <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
-                                  I agree to only share this link privately. I
-                                  understand that publicly sharing this link may
-                                  violate securities laws. <br></br>
-                                  <a
-                                    target="_blank"
-                                    style={{ color: '#4376ff' }}
-                                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                                    rel="noopener noreferrer"
+                {status !== Status.DISCONNECTED && loading ? (
+                  <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
+                    <SkeletonLoader
+                      width="1/3"
+                      height="5"
+                      borderRadius="rounded-full"
+                    />
+                    <SkeletonLoader
+                      width="3/4"
+                      height="4"
+                      borderRadius="rounded-full"
+                    />
+                    <SkeletonLoader width="full" height="12" />
+                  </div>
+                ) : (depositsEnabled && !depositExceedTotal) || claimEnabled ? (
+                  <div
+                    className={`h-fit-content relative ${
+                      showConfettiSuccess
+                        ? 'p-0'
+                        : `pt-6 ${showShareWarning ? 'pb-6' : 'pb-10'} px-8`
+                    } flex justify-center items-start flex-col w-full`}
+                  >
+                    {status === Status.DISCONNECTED && !isDemoMode ? (
+                      <ConnectWalletAction />
+                    ) : (
+                      <>
+                        {!syndicateCreationFailed &&
+                          !creatingSyndicate &&
+                          !showConfettiSuccess && (
+                            <div className="flex flex-col items-start mb-6">
+                              <L2 extraClasses="pb-2">
+                                Invite to {claimEnabled ? 'claim' : 'deposit'}
+                              </L2>
+                              <div className="text-gray-syn4">
+                                <p>
+                                  Invite members by sharing your club’s{' '}
+                                  {claimEnabled ? 'claim' : 'deposit'} link
+                                </p>
+                                {!adminSigned && (
+                                  <button
+                                    className="flex space-between mt-3"
+                                    onClick={() =>
+                                      setLinkShareAgreementChecked(
+                                        !linkShareAgreementChecked
+                                      )
+                                    }
                                   >
-                                    Learn more.
-                                  </a>{' '}
-                                </animated.p>
-                              </button>
-                            )}
-                            {adminSigned && (
-                              <p>
-                                {hasAgreements
-                                  ? 'Contains legal agreements'
-                                  : 'Bypasses legal agreements'}{' '}
-                                <button
-                                  className="text-blue-navy cursor-pointer"
-                                  onClick={() => setShowGenerateLinkModal(true)}
-                                >
-                                  Change
-                                </button>
-                              </p>
-                            )}
+                                    <input
+                                      className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
+                                      onChange={() =>
+                                        setLinkShareAgreementChecked(
+                                          !linkShareAgreementChecked
+                                        )
+                                      }
+                                      type="checkbox"
+                                      id="linkShareAgreement"
+                                      name="linkShareAgreement"
+                                      checked={linkShareAgreementChecked}
+                                    />
+                                    <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
+                                      I agree to only share this link privately.
+                                      I understand that publicly sharing this
+                                      link may violate securities laws.{' '}
+                                      <br></br>
+                                      <a
+                                        target="_blank"
+                                        style={{ color: '#4376ff' }}
+                                        href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                                        rel="noopener noreferrer"
+                                      >
+                                        Learn more.
+                                      </a>{' '}
+                                    </animated.p>
+                                  </button>
+                                )}
+                                {adminSigned && (
+                                  <p>
+                                    {hasAgreements
+                                      ? 'Contains legal agreements'
+                                      : 'Bypasses legal agreements'}{' '}
+                                    <button
+                                      className="text-blue-navy cursor-pointer"
+                                      onClick={() =>
+                                        setShowGenerateLinkModal(true)
+                                      }
+                                    >
+                                      Change
+                                    </button>
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                        {creatingSyndicate && (
+                          <div className="pb-6 flex flex-col items-center justify-center">
+                            <p className="pb-6 text-gray-syn4 text-center">
+                              Your investment club is coming into on-chain
+                              existence. Once the transaction is complete,
+                              you’ll see your club’s deposit link below.
+                            </p>
+                            <BlockExplorerLink
+                              resourceId={transactionHash}
+                              prefix="View progress on "
+                              resource="transaction"
+                            />
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                    {creatingSyndicate && (
-                      <div className="pb-6 flex flex-col items-center justify-center">
-                        <p className="pb-6 text-gray-syn4 text-center">
-                          Your investment club is coming into on-chain
-                          existence. Once the transaction is complete, you’ll
-                          see your club’s deposit link below.
-                        </p>
-                        <BlockExplorerLink
-                          resourceId={transactionHash}
-                          prefix="View progress on "
-                          resource="transaction"
-                        />
-                      </div>
-                    )}
+                        {syndicateCreationFailed && (
+                          <div className="flex flex-col items-center pb-6">
+                            <p className="text-gray-syn4 pb-6">
+                              Please try again and{' '}
+                              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                              <a
+                                href="#"
+                                className="text-blue hover:opacity-90"
+                                target="_blank"
+                              >
+                                let us know
+                              </a>{' '}
+                              if the issue persists.
+                            </p>
+                            <BlockExplorerLink
+                              resourceId={transactionHash}
+                              resource="transaction"
+                            />
+                          </div>
+                        )}
 
-                    {syndicateCreationFailed && (
-                      <div className="flex flex-col items-center pb-6">
-                        <p className="text-gray-syn4 pb-6">
-                          Please try again and{' '}
-                          <a
-                            href="#"
-                            className="text-blue hover:opacity-90"
-                            target="_blank"
-                          >
-                            let us know
-                          </a>{' '}
-                          if the issue persists.
-                        </p>
-                        <BlockExplorerLink
-                          resourceId={transactionHash}
-                          resource="transaction"
-                        />
-                      </div>
-                    )}
+                        {showConfettiSuccess && (
+                          <div className="w-full py-10 px-8">
+                            <SuccessCard
+                              {...{
+                                syndicateSuccessfullyCreated,
+                                updateDepositLinkCopyState,
+                                showDepositLinkCopyState,
+                                clubDepositLink: depositLink,
+                                showConfettiSuccess,
+                                setShowConfettiSuccess
+                              }}
+                            />
+                          </div>
+                        )}
+                        {!showConfettiSuccess && (
+                          <GenerateDepositLink
+                            showGenerateLinkModal={showGenerateLinkModal}
+                            setShowGenerateLinkModal={setShowGenerateLinkModal}
+                            updateDepositLinkCopyState={
+                              updateDepositLinkCopyState
+                            }
+                            showDepositLinkCopyState={showDepositLinkCopyState}
+                            syndicateCreationFailed={syndicateCreationFailed}
+                            showConfettiSuccess={showConfettiSuccess}
+                            creatingSyndicate={creatingSyndicate}
+                            syndicateSuccessfullyCreated={
+                              syndicateSuccessfullyCreated
+                            }
+                            agreementChecked={linkShareAgreementChecked}
+                          />
+                        )}
 
-                    {showConfettiSuccess && (
-                      <div className="w-full py-10 px-8">
-                        <SuccessCard
-                          {...{
-                            syndicateSuccessfullyCreated,
-                            updateDepositLinkCopyState,
-                            showDepositLinkCopyState,
-                            clubDepositLink: depositLink,
-                            showConfettiSuccess,
-                            setShowConfettiSuccess
-                          }}
-                        />
-                      </div>
+                        {showShareWarning &&
+                          !showConfettiSuccess &&
+                          adminSigned && (
+                            <div className="flex flex-row mt-4 text-gray-syn4 bg-gray-syn9 rounded-1.5lg py-3 px-4">
+                              <p className="text-sm">
+                                I agree to only share this link privately. I
+                                understand that publicly sharing this link may
+                                violate securities laws.{' '}
+                                <a
+                                  target="_blank"
+                                  style={{ color: '#4376ff' }}
+                                  href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                                  rel="noopener noreferrer"
+                                >
+                                  Learn more.
+                                </a>{' '}
+                              </p>
+                              <div className="flex items-center pl-2.5">
+                                <XIcon
+                                  className="h-3 w-3 cursor-pointer"
+                                  onClick={() => handleShowShareWarning(false)}
+                                  onKeyPress={() =>
+                                    handleShowShareWarning(false)
+                                  }
+                                  role="button"
+                                  tabIndex={0}
+                                />
+                              </div>
+                            </div>
+                          )}
+                      </>
                     )}
-                    {!showConfettiSuccess && (
-                      <GenerateDepositLink
-                        showGenerateLinkModal={showGenerateLinkModal}
-                        setShowGenerateLinkModal={setShowGenerateLinkModal}
-                        updateDepositLinkCopyState={updateDepositLinkCopyState}
-                        showDepositLinkCopyState={showDepositLinkCopyState}
-                        syndicateCreationFailed={syndicateCreationFailed}
-                        showConfettiSuccess={showConfettiSuccess}
-                        creatingSyndicate={creatingSyndicate}
-                        syndicateSuccessfullyCreated={
-                          syndicateSuccessfullyCreated
-                        }
-                        agreementChecked={linkShareAgreementChecked}
+                  </div>
+                ) : null}
+              </div>
+              <DepositLinkModal
+                setShowGenerateLinkModal={setShowGenerateLinkModal}
+                showGenerateLinkModal={showGenerateLinkModal}
+              />
+            </FadeIn>
+
+            {status !== Status.DISCONNECTED && (
+              <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+                {/* TODO: Update to distributions before merging */}
+                {readyDistributionsClient.treatment === 'on' &&
+                !depositsEnabled ? (
+                  <div
+                    className={`${
+                      loading ? `` : `hover:bg-gray-syn7`
+                    } rounded-xl py-2 px-4 w-full`}
+                  >
+                    {loading ? (
+                      <>
+                        <SkeletonLoader width="2/3" height="6" />
+                        <SkeletonLoader width="full" height="10" />
+                      </>
+                    ) : (
+                      <MakeDistributionCard />
+                    )}
+                  </div>
+                ) : null}
+
+                <div
+                  className={`${
+                    loading ? `` : `hover:bg-gray-syn7`
+                  } rounded-xl py-2 px-4 w-full`}
+                >
+                  {loading ? (
+                    <>
+                      <SkeletonLoader width="2/3" height="6" />
+                      <SkeletonLoader width="full" height="10" />
+                    </>
+                  ) : (
+                    <CreateEntityCard />
+                  )}
+                </div>
+
+                {!depositsEnabled ? (
+                  <div
+                    className={`${
+                      loading ? `` : `hover:bg-gray-syn7`
+                    } rounded-xl py-2 px-4 w-full`}
+                  >
+                    {loading ? (
+                      <SkeletonLoader width="full" height="6" />
+                    ) : (
+                      <SignLegalDocumentsCard
+                        onClick={handleSignLegalDocument}
                       />
                     )}
+                  </div>
+                ) : null}
 
-                    {showShareWarning && !showConfettiSuccess && adminSigned && (
-                      <div className="flex flex-row mt-4 text-gray-syn4 bg-gray-syn9 rounded-1.5lg py-3 px-4">
-                        <p className="text-sm">
-                          I agree to only share this link privately. I
-                          understand that publicly sharing this link may violate
-                          securities laws.{' '}
-                          <a
-                            target="_blank"
-                            style={{ color: '#4376ff' }}
-                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                            rel="noopener noreferrer"
-                          >
-                            Learn more.
-                          </a>{' '}
-                        </p>
-                        <div className="flex items-center pl-2.5">
-                          <XIcon
-                            className="h-3 w-3 cursor-pointer"
-                            onClick={() => handleShowShareWarning(false)}
-                            onKeyPress={() => handleShowShareWarning(false)}
-                            role="button"
-                            tabIndex={0}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
+                <div
+                  className={`${
+                    loading ? `` : `hover:bg-gray-syn7`
+                  } rounded-xl py-2 px-4 w-full`}
+                >
+                  {loading ? (
+                    <SkeletonLoader width="full" height="6" />
+                  ) : (
+                    <ModifyClubSettingsCard />
+                  )}
+                </div>
               </div>
-            ) : null}
+            )}
+
+            <ShareOrChangeLegalDocuments
+              showShareOrChangeDocs={showShareOrChangeLegalDocs}
+              setShowShareOrChangeDocsModal={setShowShareOrChangeLegalDocs}
+              handleChangeLegalDocument={handleChangeLegalDocument}
+            />
           </div>
-          <DepositLinkModal
-            setShowGenerateLinkModal={setShowGenerateLinkModal}
-            showGenerateLinkModal={showGenerateLinkModal}
-          />
-        </FadeIn>
-
-        {status !== Status.DISCONNECTED && (
-          <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
-            {/* TODO: Update to distributions before merging */}
-            {readyDistributionsClient.treatment === 'on' && !depositsEnabled ? (
-              <div
-                className={`${
-                  loading ? `` : `hover:bg-gray-syn7`
-                } rounded-xl py-2 px-4 w-full`}
-              >
-                {loading ? (
-                  <>
-                    <SkeletonLoader width="2/3" height="6" />
-                    <SkeletonLoader width="full" height="10" />
-                  </>
-                ) : (
-                  <MakeDistributionCard />
-                )}
-              </div>
-            ) : null}
-
-            <div
-              className={`${
-                loading ? `` : `hover:bg-gray-syn7`
-              } rounded-xl py-2 px-4 w-full`}
-            >
-              {loading ? (
-                <>
-                  <SkeletonLoader width="2/3" height="6" />
-                  <SkeletonLoader width="full" height="10" />
-                </>
-              ) : (
-                <CreateEntityCard />
-              )}
-            </div>
-
-            {!depositsEnabled ? (
-              <div
-                className={`${
-                  loading ? `` : `hover:bg-gray-syn7`
-                } rounded-xl py-2 px-4 w-full`}
-              >
-                {loading ? (
-                  <SkeletonLoader width="full" height="6" />
-                ) : (
-                  <SignLegalDocumentsCard onClick={handleSignLegalDocument} />
-                )}
-              </div>
-            ) : null}
-
-            <div
-              className={`${
-                loading ? `` : `hover:bg-gray-syn7`
-              } rounded-xl py-2 px-4 w-full`}
-            >
-              {loading ? (
-                <SkeletonLoader width="full" height="6" />
-              ) : (
-                <ModifyClubSettingsCard />
-              )}
-            </div>
-          </div>
-        )}
-
-        <ShareOrChangeLegalDocuments
-          showShareOrChangeDocs={showShareOrChangeLegalDocs}
-          setShowShareOrChangeDocsModal={setShowShareOrChangeLegalDocs}
-          handleChangeLegalDocument={handleChangeLegalDocument}
-        />
-      </div>
-    </ErrorBoundary>
-  ) : null;
+        </ErrorBoundary>
+      ) : null}
+    </>
+  );
 };
 
 export default ManagerActions;

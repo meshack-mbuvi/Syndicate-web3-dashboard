@@ -1,17 +1,19 @@
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { B1, B3 } from '@/components/typography';
 import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
+import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'huma... Remove this comment to see the full error message
 import abi from 'human-standard-token-abi';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
@@ -19,8 +21,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NumberTreatment from '../NumberTreatment';
 import { DetailsCard, ProgressIndicator } from './shared';
-import { B1, B3 } from '@/components/typography';
-import { divideIfNotByZero } from '@/utils/conversions';
 
 interface ClubDetails {
   header: string;
@@ -30,10 +30,10 @@ interface ClubDetails {
 }
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
-  managerSettingsOpen,
-  children
-}) => {
+const SyndicateDetails: FC<{
+  managerSettingsOpen: boolean;
+  isOwner: boolean;
+}> = ({ managerSettingsOpen, isOwner, children }) => {
   const {
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -155,6 +155,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       }
 
       dispatch(
+        // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: st... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
           ...depositDetails,
           loading: false
@@ -243,6 +244,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 extraClasses="text-gray-syn3">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * maxTotalDeposits
                         )}{' '}
                         USD
@@ -278,6 +280,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 className="text-gray-syn3 text-sm">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * amountRaised
                         )}{' '}
                         USD
@@ -317,6 +320,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     {!isStableCoin(depositTokenSymbol) ? (
                       <B3 extraClasses="text-gray-syn3">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD *
                             (+maxTotalDeposits - +amountRaised)
                         )}{' '}
@@ -375,6 +379,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     {!isStableCoin(depositTokenSymbol) ? (
                       <div className="text-gray-syn4 text-sm">
                         {floatedNumberWithCommas(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                           depositTokenPriceInUSD * totalDeposits
                         )}{' '}
                         USD
@@ -423,15 +428,15 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     depositTokenPriceInUSD
   ]);
 
-  const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
-  const isOwnerOrMember =
-    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   const [showDuplicateClubWarning, setShowDuplicateClubWarning] =
     useState(false);
   const [duplicateClubWarningExists, setDuplicateClubWarningExists] =
     useState(false);
+
+  const isOwnerOrMember =
+    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   useEffect(() => {
     const duplicateWarningCookieSet = document.cookie
@@ -485,6 +490,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
                 nativeDepositToken={nativeDepositToken}
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 depositTokenPriceInUSD={depositTokenPriceInUSD.toString()}
                 tokenDetails={{
                   symbol: depositTokenSymbol,

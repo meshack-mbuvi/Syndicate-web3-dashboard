@@ -9,7 +9,7 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 export default {
   title: '3. Molecules/Share Social Modal',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <ConnectWalletProvider>
           <Story />
@@ -20,11 +20,12 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return <ShareSocialModal {...args} />;
 };
 
 export const Distributions = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Distributions.args = {
   isModalVisible: true,
   handleClick: () => null,
@@ -36,6 +37,7 @@ Distributions.args = {
 };
 
 export const Collectives = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Collectives.args = {
   isModalVisible: true,
   handleClick: () => null,

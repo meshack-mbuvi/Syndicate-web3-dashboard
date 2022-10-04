@@ -99,8 +99,6 @@ export class ERC20ClubFactory extends ContractBase {
       depositTokenModule
     } = this.setupContracts();
 
-    if (!account) return;
-
     const salt = this.web3.utils.randomHex(32);
     const nextToken = await this.predictAddress(account, salt);
 
@@ -175,7 +173,6 @@ export class ERC20ClubFactory extends ContractBase {
       );
     }
 
-    // TODO: [TOKEN-GATING] confirm if only memberMixin
     // custom mixins event
     contractAddresses.push(this.addresses.GuardMixinManager);
     encodedFunctions.push(
@@ -196,13 +193,13 @@ export class ERC20ClubFactory extends ContractBase {
   public async create(
     account: string,
     clubParams: ClubMixinParams,
-    onTxConfirm: (transactionHash) => void,
-    onTxReceipt: (receipt) => void,
-    onTxFail: (err) => void
+    onTxConfirm: (transactionHash: any) => void,
+    onTxReceipt: (receipt: any) => void,
+    onTxFail: (err: any) => void
   ): Promise<void> {
     const { clubTokenName, clubTokenSymbol, endTime } = clubParams;
 
-    if (!clubTokenSymbol || !endTime) {
+    if (!clubTokenSymbol || !endTime || !account) {
       return;
     }
     const { salt, contractAddresses, encodedFunctions } =
@@ -229,6 +226,7 @@ export class ERC20ClubFactory extends ContractBase {
     clubParams: ClubMixinParams,
     onResponse: (gas?: number) => void
   ): Promise<void> {
+    if (!account) return;
     const { salt, contractAddresses, encodedFunctions } =
       await this.createSetupParams(account, clubParams);
 

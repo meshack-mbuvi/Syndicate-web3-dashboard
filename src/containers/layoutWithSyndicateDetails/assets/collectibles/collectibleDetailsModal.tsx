@@ -1,14 +1,16 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@/state';
 import Modal, { ModalStyle } from '@/components/modal';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
-import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
-import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
+import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
+import { AppState } from '@/state';
+import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FullScreenOverlay from './shared/FullscreenOverlay';
 
-const CollectibleDetailsModal: React.FC = () => {
+const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
+  isOwner
+}) => {
   const {
     setCollectibleDetailsSliceReducer: {
       showCollectibleModal,
@@ -56,7 +58,11 @@ const CollectibleDetailsModal: React.FC = () => {
                 className={`flex h-full rounded-t-2xl items-center flex-col relative py-10 px-5 bg-gray-syn7 last:rounded-b-2xl`}
               >
                 <div className="mb-8">
-                  <CategoryPill category="COLLECTIBLE" readonly={true} />
+                  <CategoryPill
+                    category="COLLECTIBLE"
+                    readonly={true}
+                    isOwner={isOwner}
+                  />
                 </div>
                 <div className="relative items-center flex flex-col w-80 mb-6">
                   <CollectibleMedia

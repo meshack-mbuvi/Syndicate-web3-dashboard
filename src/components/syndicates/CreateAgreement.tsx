@@ -33,7 +33,7 @@ const schema = yup.object({
     .string()
     .email('Invalid email address')
     .when('counselName', {
-      is: (counselName) => counselName?.trim().length > 0,
+      is: (counselName: any) => counselName?.trim().length > 0,
       then: yup
         .string()
         .email('Invalid email address')
@@ -74,7 +74,7 @@ const CreateAgreementComponent: React.FC = () => {
   const router = useRouter();
   const { clubAddress } = router.query;
 
-  const setFormValues = (clubData) => {
+  const setFormValues = (clubData: any) => {
     for (const [key, value] of Object.entries(clubData)) {
       if (key === 'legalEntityName' && clubData.isSeriesLLC) {
         setValue('legalEntityName', clubData.seriesLLC, {
@@ -95,7 +95,7 @@ const CreateAgreementComponent: React.FC = () => {
     }
   }, [clubAddress, router]);
 
-  const onSubmit = (values) => {
+  const onSubmit = (values: any) => {
     dispatch(
       setClubLegalInfo({
         ...values,

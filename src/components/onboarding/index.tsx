@@ -10,6 +10,7 @@ const OnboardingModal: React.FC = () => {
   return (
     <Modal
       title="Welcome to the future of investing"
+      // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
       show={showInvestorOnboarding}
       closeModal={hideInvestorOnboarding}
       modalStyle={ModalStyle.DARK}

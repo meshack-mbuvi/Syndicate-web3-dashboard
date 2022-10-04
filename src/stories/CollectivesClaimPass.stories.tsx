@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 export default {
   title: '4. Organisms/Collectives/Claim Pass',
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <Provider store={store}>
         <ConnectWalletProvider>
           <Story />
@@ -22,7 +22,7 @@ export default {
   ]
 };
 
-const Template = (args) => {
+const Template = (args: any) => {
   return (
     <div className="">
       <ClaimCollectivePass {...args} />
@@ -31,6 +31,7 @@ const Template = (args) => {
 };
 
 export const ConnectedWallet = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 ConnectedWallet.args = {
   links: { openSea: '/', externalLink: '/' },
   numberOfExistingMembers: 8000,
@@ -48,6 +49,7 @@ ConnectedWallet.args = {
 };
 
 export const WrongWallet = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 WrongWallet.args = {
   links: { openSea: '/', externalLink: '/' },
   numberOfExistingMembers: 8000,
@@ -61,6 +63,7 @@ WrongWallet.args = {
 };
 
 export const DisconnectedWallet = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 DisconnectedWallet.args = {
   links: { openSea: '/', externalLink: '/' },
   numberOfExistingMembers: 8000,
@@ -73,6 +76,7 @@ DisconnectedWallet.args = {
 };
 
 export const Pending = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Pending.args = {
   links: { openSea: '/', externalLink: '/' },
   numberOfExistingMembers: 8000,
@@ -89,6 +93,7 @@ Pending.args = {
 };
 
 export const MaxReached = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 MaxReached.args = {
   links: { openSea: '/', externalLink: '/' },
   numberOfExistingMembers: 8000,

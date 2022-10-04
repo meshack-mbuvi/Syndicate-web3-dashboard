@@ -83,6 +83,7 @@ The Syndicate smart contract is available on the Rinkeby test network at [0x9a89
 - [Tailwind documentation](https://tailwindcss.com/docs/what-is-tailwind/)
 - [Prettier documentation](https://prettier.io/docs/en/index.html)
 - [ESLint documentation](https://eslint.org/docs/user-guide/configuring)
+- [Typescript](https://www.typescriptlang.org/docs/)
 
 ## License
 

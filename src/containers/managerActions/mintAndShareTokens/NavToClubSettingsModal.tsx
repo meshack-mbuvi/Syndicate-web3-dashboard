@@ -56,7 +56,6 @@ const NavToClubSettingsModal: React.FC<INavToClubSettingsModal> = ({
             </a>
           </div>
         </div>
-
         <CtaButton
           fullWidth={false}
           onClick={() => {

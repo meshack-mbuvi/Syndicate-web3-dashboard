@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { useIsClubMember, useIsClubOwner } from '@/hooks/useClubOwner';
+import { H4 } from '@/components/typography';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
@@ -10,30 +12,50 @@ import {
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { ArrowRightIcon } from '@heroicons/react/outline';
 import moment from 'moment';
 import Image from 'next/image';
-import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useRef,
+  useState,
+  useEffect
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ActivityModal from '../activity/shared/ActivityModal';
-import { ArrowRightIcon } from '@heroicons/react/outline';
-import { H4 } from '@/components/typography';
+import {
+  CollapseChevronButton,
+  CollapsedSectionType
+} from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
+import { SortOrderType } from '@/containers/layoutWithSyndicateDetails/assets';
 
 interface InvestmentsViewProps {
   pageOffset: number;
   setPageOffset: Dispatch<SetStateAction<number>>;
   canNextPage: boolean;
+  isMember: boolean;
   transactionsLoading: boolean;
   dataLimit: number;
   refetchTransactions: () => void;
+  isOwner: boolean;
+  storeSortColumn: (
+    column: string,
+    sortAscending: boolean,
+    assetSection: SortOrderType
+  ) => void;
 }
 
 const InvestmentsView: FC<InvestmentsViewProps> = ({
+  isOwner,
   pageOffset,
   setPageOffset,
   canNextPage,
   transactionsLoading,
   dataLimit,
-  refetchTransactions
+  refetchTransactions,
+  isMember
 }) => {
   const {
     transactionsReducer: {
@@ -46,34 +68,75 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     }
   } = useSelector((state: AppState) => state);
 
+  let clubAddress = '';
+  if (typeof window !== 'undefined') {
+    clubAddress = window?.location?.pathname.split('/')[2];
+  }
   const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
     useModal();
   const [showNote, setShowNote] = useState(false);
+
+  // show/hide investments table
+  const [isInvestmentsTableCollapsed, setIsInvestmentsTableCollapsed] =
+    useState(false);
+
+  const investmentsTableBoundsRef = useRef<HTMLDivElement>(null);
 
   const isDemoMode = useDemoMode();
 
   const investmentsTableRef = useRef(null);
 
   const dispatch = useDispatch();
-  const isOwner = useIsClubOwner();
-  const isMember = useIsClubMember();
+
   // pagination functions
   function goToNextPage() {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset + dataLimit);
   }
 
   function goToPreviousPage() {
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset - dataLimit);
   }
 
-  const invesmentsTitle = (
-    <div className="flex items-center justify-start pb-8">
-      <img src="/images/investments-title-icon.svg" alt="Invesments title" />
-      <H4 extraClasses="pl-3">Off-chain investments</H4>
+  const investmentsTableTitle = (
+    <div className="flex w-full justify-between items-center">
+      {/* title text  */}
+      <div className="flex items-center justify-start">
+        <img src="/images/investments-title-icon.svg" alt="Invesments title" />
+        <H4 extraClasses="pl-3">Off-chain investments</H4>
+      </div>
+
+      {/* collapse button  */}
+      {transactionsLoading && !currentTransaction.hash ? null : (
+        <CollapseChevronButton
+          isCollapsed={isInvestmentsTableCollapsed}
+          setIsCollapsed={setIsInvestmentsTableCollapsed}
+          collapsedSection={CollapsedSectionType.OFF_CHAIN_INVESTMENT}
+        />
+      )}
     </div>
   );
+
+  // get state of off-chain investment section collapsed from localStorage
+  useEffect(() => {
+    if (window.localStorage) {
+      const existingClubsCollapsedStates =
+        JSON.parse(
+          localStorage.getItem('clubAssetsCollapsedState') as string
+        ) || {};
+      const currentClubCollapsedState =
+        existingClubsCollapsedStates[clubAddress as string] || {};
+
+      const isInvestmentsSectionCollapsed =
+        currentClubCollapsedState[CollapsedSectionType.OFF_CHAIN_INVESTMENT] ||
+        false;
+
+      setIsInvestmentsTableCollapsed(isInvestmentsSectionCollapsed);
+    }
+  }, [clubAddress]);
 
   // loading/empty state for investments table.
   const LoaderContent: React.FC<{
@@ -87,8 +150,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   }) => {
     return (
       <div>
-        {invesmentsTitle}
-        <div className="relative">
+        <div className={`relative ${!animate ? 'px-2' : 'px-0'}`}>
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
               <H4 extraClasses="text-white mb-4">{titleText}</H4>
@@ -97,7 +159,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
           )}
 
           <div className={!animate ? `filter grayscale blur-md` : undefined}>
-            {[...Array(4).keys()].map((_, index) => {
+            {[...Array(5).keys()].map((_, index) => {
               return (
                 <div
                   className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 ${
@@ -169,23 +231,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
   // when to show pagination
   const showPagination = totalInvestmentTransactionsCount > dataLimit;
+  const loading = transactionsLoading && !currentTransaction.hash;
 
-  if (transactionsLoading && !currentTransaction.hash) {
-    return <LoaderContent animate={true} />;
-  }
-
-  // show empty state if account is not a member or the admin
-  if (!isMember && !isOwner && !isDemoMode) {
-    return (
-      <LoaderContent
-        animate={false}
-        titleText="Off-chain investments are only visible to members."
-        subText="If you're a member of this club, connect the same wallet you used to deposit."
-      />
-    );
-  }
-
-  const viewInvestmentDetails = (investmentData) => {
+  const viewInvestmentDetails = (investmentData: any) => {
     if (!isMember && !isOwner) return;
     const {
       fromAddress,
@@ -231,222 +279,275 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     toggleShowOffChainInvestmentsModal();
   };
 
+  const [containerHeight, setContainerHeight] = useState<number>(0);
+
+  // get height of investments table to animate on collapse
+  useEffect(() => {
+    if (investmentsTableBoundsRef) {
+      const containerHeight = investmentsTableBoundsRef.current
+        ? investmentsTableBoundsRef.current.getBoundingClientRect().height
+        : 0;
+
+      setContainerHeight(containerHeight);
+    }
+  }, [JSON.stringify(investmentTransactions)]);
+
   return (
-    <>
-      {investmentTransactions?.[pageOffset]?.length ? (
-        <div className="mt-16">
-          {invesmentsTitle}
-          <div className="flex flex-col">
-            {/* scroll to top of table with this button when pagination is clicked  */}
-            <button ref={investmentsTableRef} />
-            <div className="grid grid-cols-12 gap-5 pb-3">
-              {columns?.map((col, idx) => (
-                <div
-                  key={`token-table-header-${idx}`}
-                  className={`text-sm ${idx < 2 ? 'col-span-3' : 'col-span-2'}`}
-                >
-                  <span className="text-gray-syn4 text-sm">{col}</span>
+    <div>
+      {investmentsTableTitle}
+      <div
+        className="duration-500 transition-all h-full overflow-hidden"
+        style={{
+          height: isInvestmentsTableCollapsed ? '0' : `${containerHeight}px`
+        }}
+      >
+        <div className="w-full pt-8" ref={investmentsTableBoundsRef}>
+          {/* loading state  */}
+          {loading && <LoaderContent animate={true} />}
+
+          {/* show empty state if account is not a member or the admin  */}
+          {!isMember && !isOwner && !isDemoMode && !loading && (
+            <LoaderContent
+              animate={false}
+              titleText="Off-chain investments are only visible to members."
+              subText="If you're a member of this club, connect the same wallet you used to deposit."
+            />
+          )}
+          {investmentTransactions?.[pageOffset]?.length &&
+          (isMember || isOwner || isDemoMode) &&
+          !loading ? (
+            <div className="w-full">
+              <div className="flex flex-col">
+                {/* scroll to top of table with this button when pagination is clicked  */}
+                <button ref={investmentsTableRef} />
+                <div className="grid grid-cols-12 gap-5 pb-3">
+                  {columns?.map((col, idx) => (
+                    <div
+                      key={`token-table-header-${idx}`}
+                      className={`text-sm flex items-center group ${
+                        idx < 1 ? 'col-span-3' : 'col-span-2'
+                      } ${idx > 1 ? 'md:justify-end' : ''}`}
+                    >
+                      <span className="text-gray-syn4 text-sm">{col}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {investmentTransactions?.[pageOffset].map((investmentData, index) => {
-            const { metadata } = investmentData;
-            const {
-              companyName,
-              roundCategory,
-              preMoneyValuation,
-              postMoneyValuation
-            } = metadata;
-            const showAddMemo =
-              !companyName ||
-              !roundCategory ||
-              !postMoneyValuation ||
-              !preMoneyValuation;
-            const [costBasisUSD, costBasisDecimalValue] =
-              floatedNumberWithCommas(postMoneyValuation).split('.');
-            const [investmentValueUSD, investmentDecimalValue] =
-              floatedNumberWithCommas(preMoneyValuation).split('.');
-            const dashForMissingValue = (
-              <span className="text-gray-syn4">-</span>
-            );
-            const defaultCompanyName = (
-              <span className="text-gray-syn4">No company name added</span>
-            );
-            const investmentDataValue = getWeiAmount(
-              web3,
-              investmentData.value,
-              investmentData.tokenDecimal,
-              false
-            );
-            const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
-              floatedNumberWithCommas(investmentDataValue).split('.');
-
-            const defaultCostBasis = (
-              <span>
-                {defaultCostBasisUSD}
-                {defaultCostBasisDecimalValue && (
-                  <span className="text-gray-lightManatee">
-                    .{defaultCostBasisDecimalValue}
-                  </span>
-                )}
-                &nbsp;
-                {investmentData.tokenSymbol}
-              </span>
-            );
-
-            return (
-              <div
-                key={`token-table-row-${index}`}
-                className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
-                  isMember || isOwner ? 'cursor-pointer' : ''
-                }`}
-                onClick={() => viewInvestmentDetails(investmentData)}
-              >
-                <div className="flex flex-row col-span-3 items-center">
-                  <div className="text-base flex items-center">
-                    {companyName ? companyName : defaultCompanyName}
-                  </div>
-                </div>
-
-                <div className="text-base col-span-3 flex items-center">
-                  {roundCategory ? roundCategory : dashForMissingValue}
-                </div>
-
-                <div className="text-base flex col-span-2 items-center">
-                  {+postMoneyValuation > 0 ? (
-                    <span>
-                      {costBasisUSD}
-                      {costBasisDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{costBasisDecimalValue}
-                        </span>
-                      )}
-                      &nbsp;
-                      {'USD'}
-                    </span>
-                  ) : (
-                    defaultCostBasis
-                  )}
-                </div>
-
-                <div className="text-base flex col-span-2 items-center">
-                  {+preMoneyValuation > 0 ? (
-                    <span>
-                      {investmentValueUSD}
-                      {investmentDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{investmentDecimalValue}
-                        </span>
-                      )}
-                      &nbsp;
-                      {'USD'}
-                    </span>
-                  ) : (
-                    dashForMissingValue
-                  )}
-                </div>
-                {(isMember || isOwner || isDemoMode) && (
-                  <div className="text-base flex col-span-2 items-center justify-end">
-                    {isOwner && showAddMemo ? (
-                      <div className="cursor-pointer flex items-center text-blue">
-                        <span
-                          aria-hidden={true}
-                          onClick={() => viewInvestmentDetails(investmentData)}
-                        >
-                          Add memo
-                        </span>
-                        <ArrowRightIcon className="w-5 h-5 ml-2" />
-                      </div>
-                    ) : (
-                      <div className="cursor-pointer flex items-center">
-                        <div className="mr-2 flex items-center">
-                          <Image
-                            width="16"
-                            height="16"
-                            src="/images/assets/memo.svg"
-                          />
-                        </div>
-                        <span
-                          className="text-gray-syn4"
-                          aria-hidden={true}
-                          onClick={() => viewInvestmentDetails(investmentData)}
-                        >
-                          View memo
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <LoaderContent animate={false} />
-      )}
-      <div>
-        {/* Pagination  */}
-        {showPagination && (
-          <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
-            <button
-              className={`pt-1 ${
-                pageOffset === 0
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:opacity-90'
-              }`}
-              onClick={() => goToPreviousPage()}
-              disabled={pageOffset === 0}
-            >
-              <Image
-                src={'/images/arrowBack.svg'}
-                height="16"
-                width="16"
-                alt="Previous"
-              />
-            </button>
-            <p className="">
-              {pageOffset === 0 ? '1' : pageOffset} -{' '}
-              {investmentTransactions?.[pageOffset]?.length < dataLimit
-                ? pageOffset + investmentTransactions[pageOffset].length
-                : pageOffset + dataLimit}
-              {` of `} {totalInvestmentTransactionsCount}
-            </p>
+              {investmentTransactions?.[pageOffset].map(
+                (investmentData, index) => {
+                  const { metadata } = investmentData;
+                  const {
+                    companyName,
+                    roundCategory,
+                    preMoneyValuation,
+                    postMoneyValuation
+                  } = metadata;
+                  const showAddMemo =
+                    !companyName ||
+                    !roundCategory ||
+                    !postMoneyValuation ||
+                    !preMoneyValuation;
+                  const [costBasisUSD, costBasisDecimalValue] =
+                    floatedNumberWithCommas(postMoneyValuation).split('.');
+                  const [investmentValueUSD, investmentDecimalValue] =
+                    floatedNumberWithCommas(preMoneyValuation).split('.');
+                  const dashForMissingValue = (
+                    <span className="text-gray-syn4">-</span>
+                  );
+                  const defaultCompanyName = (
+                    <span className="text-gray-syn4">
+                      No company name added
+                    </span>
+                  );
+                  const investmentDataValue = getWeiAmount(
+                    web3,
+                    investmentData.value,
+                    investmentData.tokenDecimal,
+                    false
+                  );
+                  const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
+                    floatedNumberWithCommas(investmentDataValue).split('.');
 
-            <button
-              className={`pt-1 ${
-                !canNextPage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:opacity-90'
-              }`}
-              onClick={() => goToNextPage()}
-              disabled={!canNextPage}
-            >
-              <Image
-                src={'/images/arrowNext.svg'}
-                height="16"
-                width="16"
-                alt="Next"
-              />
-            </button>
+                  const defaultCostBasis = (
+                    <span>
+                      {defaultCostBasisUSD}
+                      {defaultCostBasisDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{defaultCostBasisDecimalValue}
+                        </span>
+                      )}
+                      &nbsp;
+                      {investmentData.tokenSymbol}
+                    </span>
+                  );
+
+                  return (
+                    <div
+                      key={`token-table-row-${index}`}
+                      className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
+                        isMember || isOwner ? 'cursor-pointer' : ''
+                      }`}
+                      onClick={() => viewInvestmentDetails(investmentData)}
+                    >
+                      {/* company name  */}
+                      <div className="flex flex-row col-span-3 items-center">
+                        <div className="text-base flex items-center">
+                          {companyName ? companyName : defaultCompanyName}
+                        </div>
+                      </div>
+
+                      {/* seed round  */}
+                      <div className="text-base col-span-3 flex items-center">
+                        {roundCategory ? roundCategory : dashForMissingValue}
+                      </div>
+
+                      {/* cost basis  */}
+                      <div className="text-base flex col-span-2 items-center">
+                        {+postMoneyValuation > 0 ? (
+                          <span>
+                            {costBasisUSD}
+                            {costBasisDecimalValue && (
+                              <span className="text-gray-lightManatee">
+                                .{costBasisDecimalValue}
+                              </span>
+                            )}
+                            &nbsp;
+                            {'USD'}
+                          </span>
+                        ) : (
+                          defaultCostBasis
+                        )}
+                      </div>
+
+                      {/* current investment value  */}
+
+                      <div className="text-base flex col-span-2 items-center">
+                        {+preMoneyValuation > 0 ? (
+                          <span>
+                            {investmentValueUSD}
+                            {investmentDecimalValue && (
+                              <span className="text-gray-lightManatee">
+                                .{investmentDecimalValue}
+                              </span>
+                            )}
+                            &nbsp;
+                            {'USD'}
+                          </span>
+                        ) : (
+                          dashForMissingValue
+                        )}
+                      </div>
+                      {(isMember || isOwner || isDemoMode) && (
+                        <div className="text-base flex col-span-2 items-center justify-end">
+                          {isOwner && showAddMemo ? (
+                            <div className="cursor-pointer flex items-center text-blue">
+                              <span
+                                aria-hidden={true}
+                                onClick={() =>
+                                  viewInvestmentDetails(investmentData)
+                                }
+                              >
+                                Add memo
+                              </span>
+                              <ArrowRightIcon className="w-5 h-5 ml-2" />
+                            </div>
+                          ) : (
+                            <div className="cursor-pointer flex items-center">
+                              <div className="mr-2 flex items-center">
+                                <Image
+                                  width="16"
+                                  height="16"
+                                  src="/images/assets/memo.svg"
+                                />
+                              </div>
+                              <span
+                                className="text-gray-syn4"
+                                aria-hidden={true}
+                                onClick={() =>
+                                  viewInvestmentDetails(investmentData)
+                                }
+                              >
+                                View memo
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              )}
+            </div>
+          ) : null}
+
+          {!investmentTransactions?.[pageOffset]?.length &&
+            (isMember || isOwner || isDemoMode) &&
+            !loading && <LoaderContent animate={false} />}
+
+          <div>
+            {/* Pagination  */}
+            {showPagination && (
+              <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
+                <button
+                  className={`pt-1 ${
+                    pageOffset === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-90'
+                  }`}
+                  onClick={() => goToPreviousPage()}
+                  disabled={pageOffset === 0}
+                >
+                  <Image
+                    src={'/images/arrowBack.svg'}
+                    height="16"
+                    width="16"
+                    alt="Previous"
+                  />
+                </button>
+                <p className="">
+                  {pageOffset === 0 ? '1' : pageOffset} -{' '}
+                  {investmentTransactions?.[pageOffset]?.length < dataLimit
+                    ? pageOffset + investmentTransactions[pageOffset].length
+                    : pageOffset + dataLimit}
+                  {` of `} {totalInvestmentTransactionsCount}
+                </p>
+
+                <button
+                  className={`pt-1 ${
+                    !canNextPage
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-90'
+                  }`}
+                  onClick={() => goToNextPage()}
+                  disabled={!canNextPage}
+                >
+                  <Image
+                    src={'/images/arrowNext.svg'}
+                    height="16"
+                    width="16"
+                    alt="Next"
+                  />
+                </button>
+              </div>
+            )}
           </div>
-        )}
+          <ActivityModal
+            isOwner={isOwner}
+            showModal={showOffChainInvestmentsModal}
+            closeModal={() => {
+              setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
+              setShowNote(false);
+              toggleShowOffChainInvestmentsModal();
+            }}
+            refetchTransactions={() => {
+              refetchTransactions();
+            }}
+            showNote={showNote}
+            setShowNote={setShowNote}
+          />
+        </div>
       </div>
-      <ActivityModal
-        showModal={showOffChainInvestmentsModal}
-        closeModal={() => {
-          setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
-          setShowNote(false);
-          toggleShowOffChainInvestmentsModal();
-        }}
-        refetchTransactions={() => {
-          refetchTransactions();
-        }}
-        showNote={showNote}
-        setShowNote={setShowNote}
-      />
-    </>
+    </div>
   );
 };
 

@@ -21,6 +21,7 @@ export const useFetchAccountHoldingsAndDetails = (): {
   const fetchHoldings = useCallback(() => {
     setLoading(true);
     getAccountHoldings(
+      // @ts-expect-error TS(2345): Argument of type 'string[] | undefined' is not assig... Remove this comment to see the full error message
       activeModuleDetails?.activeMintModuleReqs?.requiredTokens?.map((token) =>
         token.toLocaleLowerCase()
       ),
@@ -28,6 +29,7 @@ export const useFetchAccountHoldingsAndDetails = (): {
       account
     )
       .then((res) => {
+        // @ts-expect-error TS(2345): Argument of type '{ tokenHoldings: { balance: number; token:... Remove this comment to see the full error messag
         setAccountHoldings(res.data.data);
         setLoading(false);
       })
@@ -44,6 +46,7 @@ export const useFetchAccountHoldingsAndDetails = (): {
 
   return {
     loading,
+    // @ts-expect-error TS(2322): Type 'AccountHoldings | undefined' is not assign... Remove this comment to see the full error message
     data: accountHoldings
   };
 };

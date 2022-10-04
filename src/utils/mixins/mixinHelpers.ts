@@ -24,7 +24,7 @@ export const validateAndOrderTokenRules = (tokenRules: TokenGateRule[]) => {
  * @param tokenRules
  * @returns
  */
-export const unzipTokenRules = (tokenRules: TokenGateRule[], web3) => {
+export const unzipTokenRules = (tokenRules: TokenGateRule[], web3: any) => {
   return tokenRules.reduce<ReducedTokenRule>(
     (splitRules, value) => {
       if (value.contractAddress == null) {

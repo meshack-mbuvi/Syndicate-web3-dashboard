@@ -1,11 +1,14 @@
-import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
-import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
-import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
-import { useState, useEffect, useRef } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { L2 } from '@/components/typography';
+import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
+import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
+import { useEffect, useRef, useState } from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { COLLECTIVE_CLAIM_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
+import {
+  CLAIM_PAGE_LANDING,
+  COLLECTIVE_CLAIM_DISCLAIMER_AGREE
+} from '@/components/amplitude/eventNames';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -48,8 +51,17 @@ const ClaimPass: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setTimeout(() => {
+      amplitudeLogger(CLAIM_PAGE_LANDING, {
+        flow: Flow.COLLECTIVE_CLAIM
+      });
+    }, 500);
+  }, []);
+
+  useEffect(() => {
     if (!scrollAgreementRef.current) return;
     const onScroll = () => {
+      // @ts-expect-error TS(2339): Property 'scrollTop' does not exist on type 'HTMLInputElement | undefined'.
       const { scrollTop, scrollHeight, clientHeight } =
         scrollAgreementRef.current;
       if (scrollTop + clientHeight >= scrollHeight) {
@@ -75,6 +87,7 @@ const ClaimPass: React.FC = () => {
           <div className="space-y-3">
             <L2>Accessing Syndicate</L2>
             <div
+              // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
               ref={scrollAgreementRef}
               className="text-base text-gray-syn4 overflow-y-scroll no-scroll-bar h-44"
             >
@@ -115,6 +128,3 @@ const ClaimPass: React.FC = () => {
 };
 
 export default ClaimPass;
-function setShowDisclaimer(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

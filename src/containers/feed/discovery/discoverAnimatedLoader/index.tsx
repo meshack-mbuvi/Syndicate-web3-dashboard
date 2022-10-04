@@ -10,7 +10,7 @@ export const DiscoverAnimatedLoader = () => {
    * @param {number} count the number of loader items to be rendered
    * @returns {array} animations list of loader items
    */
-  const showLoader = (count) => {
+  const showLoader = (count: any) => {
     const animations = [];
     for (let index = 0; index < count; index++) {
       animations.push(

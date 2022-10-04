@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
-const useFetchAirdropInfo: any = (skipQuery) => {
+const useFetchAirdropInfo: any = (skipQuery: any) => {
   const dispatch = useDispatch();
 
   const {
@@ -68,6 +68,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
       );
       dispatch(setLoadingAirdropInfo(false));
     } else {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearAirdropInfo());
     }
   }, [loading, JSON.stringify(airdropData)]);

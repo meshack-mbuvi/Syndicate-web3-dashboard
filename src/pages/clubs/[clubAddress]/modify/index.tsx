@@ -6,11 +6,7 @@ import { useSelector } from 'react-redux';
 
 const Modify: React.FC = () => {
   const {
-    erc20TokenSliceReducer: {
-      erc20Token: { loading },
-      isNewClub,
-      loadingClubDeposits
-    }
+    erc20TokenSliceReducer: { isNewClub }
   } = useSelector((state: AppState) => state);
 
   return (
@@ -18,9 +14,7 @@ const Modify: React.FC = () => {
       <LayoutWithSyndicateDetails managerSettingsOpen={true} />
       <div className="container mx-auto left-0 grid grid-cols-12 gap-5">
         <div className="md:col-start-1 md:col-end-8 col-span-12 text-white pb-10">
-          {loading || loadingClubDeposits ? (
-            <div /> /* TODO use skeleton loader */
-          ) : isNewClub ? (
+          {isNewClub ? (
             <ModifyTokenGatedClub />
           ) : (
             <ModifyClubSettings isVisible={true} />

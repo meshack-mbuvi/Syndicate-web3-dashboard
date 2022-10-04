@@ -1,17 +1,15 @@
-import React from 'react';
-
 // our table is inverted, column names show vertically
 const InvestmentDetailsTable = ({
   columns,
-  data,
-  editMode,
-  hover
-}): JSX.Element => {
+  data
+}: // editMode,
+// hover
+any): JSX.Element => {
   const borderStyles = `border-b-1 border-gray-syn6 border-collapse text-gray-syn4`;
   return (
     <div>
       <table className="w-full font-whyte-light">
-        {columns.map((column, index) => {
+        {columns.map((column: any, index: any) => {
           return (
             <tr key={index}>
               <th

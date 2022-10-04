@@ -27,7 +27,7 @@ export default {
   title: '1. Quarks/Typography'
 };
 
-const Template = (args) => (
+const Template = (args: any) => (
   <div className="space-y-4 text-white" {...args}>
     <div className="flex space-x-8">
       <div className="w-1/2 space-y-4">
@@ -81,6 +81,7 @@ const Template = (args) => (
 );
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
   t1_semibold: 'T1, Semibold, 88',
   t2_semibold: 'T2, Semibold, 72',

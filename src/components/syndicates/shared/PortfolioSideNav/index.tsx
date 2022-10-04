@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import { DotIndicators } from '@/components/dotIndicators';
 import React from 'react';
@@ -7,7 +8,7 @@ interface IProps {
   dotIndicatorOptions: string[];
   handleNext: (index?: number) => void;
   handleBack: (index?: number) => void;
-  handleExitClick: (event?) => void;
+  handleExitClick: (event?: any) => void;
   nextBtnDisabled?: boolean;
   showDotIndicatorLabels?: boolean;
 }

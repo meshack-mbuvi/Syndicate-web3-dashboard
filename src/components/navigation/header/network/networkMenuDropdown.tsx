@@ -51,17 +51,18 @@ const NetworkMenuDropDown: FC = () => {
       chainId = +chainID;
     }
     if (chainId) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       switchNetworks(+chainId);
     }
   }, [network, chain]);
 
-  const GetChainIdByName = (name) => {
+  const GetChainIdByName = (name: any) => {
     const network = useGetNetwork(name);
 
     return network?.chainId;
   };
 
-  const VerifyChainId = (chainId) => {
+  const VerifyChainId = (chainId: any) => {
     const network = useGetNetworkById(chainId);
     return network?.chainId;
   };
@@ -79,10 +80,10 @@ const NetworkMenuDropDown: FC = () => {
   const getGasAndBlock = async () => {
     try {
       // block number of latest mined block
-      await web3Instance.eth.getBlockNumber().then((data) => {
+      await web3Instance.eth.getBlockNumber().then((data: any) => {
         setBlockNumber(data);
       });
-      await web3Instance.eth.getGasPrice().then((value) => {
+      await web3Instance.eth.getGasPrice().then((value: any) => {
         const _gas = +web3Instance.utils.fromWei(value, 'gwei');
         setGas(String(Math.ceil(_gas)));
       });
@@ -112,7 +113,8 @@ const NetworkMenuDropDown: FC = () => {
     };
   }, [activeNetwork]);
 
-  const networkSwitchAction = (chainId) => {
+  const networkSwitchAction = (chainId: any) => {
+    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
     providerName !== 'WalletConnect' ? switchNetworks(chainId) : null;
   };
 
@@ -123,26 +125,34 @@ const NetworkMenuDropDown: FC = () => {
 
   const refId = 'networkButton';
 
-  const closeDropdown = (event) => {
+  const closeDropdown = (event: any) => {
+    // find whether click is coming from any of the component in path
+    const [isClickedInsideRefId] =
+      event?.path?.filter((path: any) => path?.id === 'accountButton') || [];
+
     if (
       event.target?.id == '' &&
       event.target?.offsetParent?.id !== 'accountButton' &&
       event.target?.parentElement?.id !== 'accountButton'
     ) {
-      dispatch(setShowNetworkDropdownMenu(false));
-      if (showWalletDropdown) {
+      if (showNetworkDropdown) dispatch(setShowNetworkDropdownMenu(false));
+
+      if (showWalletDropdown && !isClickedInsideRefId) {
         dispatch(setShowWalletDropdownMenu(false));
       }
       return event;
     }
 
-    if (event.target?.id !== refId) {
+    if (event.target?.id !== refId && showNetworkDropdown) {
       dispatch(setShowNetworkDropdownMenu(false));
     } else if (
-      event.target?.offsetParent?.id == 'accountButton' ||
-      event.target?.parentElement?.id == 'accountButton'
+      (event.target?.offsetParent?.id == 'accountButton' ||
+        event.target?.parentElement?.id == 'accountButton' ||
+        isClickedInsideRefId) &&
+      showWalletDropdown
     ) {
-      dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
+      dispatch(setShowWalletDropdownMenu(!showNetworkDropdown));
+      return event;
     }
     return event;
   };
@@ -156,7 +166,7 @@ const NetworkMenuDropDown: FC = () => {
           return (
             <>
               <button
-                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-3 py-2 sm:py-1 items-center ${
+                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-4 py-2 sm:py-1 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
                 } h-10 hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
@@ -173,7 +183,7 @@ const NetworkMenuDropDown: FC = () => {
                 <span
                   className={`${
                     width <= 425 ? 'flex' : 'hidden md:block'
-                  } focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular`}
+                  } focus:outline-none mr-4 sm:mr-0 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular`}
                 >
                   {activeNetwork.displayName}
                 </span>

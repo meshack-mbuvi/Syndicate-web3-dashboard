@@ -65,8 +65,10 @@ const ClubNameSelector: React.FC<{
       investmentClubSymbolPlaceHolder &&
       !editButtonClicked
     ) {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(false);
     } else {
+      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setNextBtnDisabled(true);
     }
   }, [
@@ -76,7 +78,7 @@ const ClubNameSelector: React.FC<{
     setNextBtnDisabled
   ]);
 
-  const handleSymbolChange = (e) => {
+  const handleSymbolChange = (e: any) => {
     const _sym = (e.target.value as string).trim().toUpperCase();
     const { validSym, errorMsg } = symbolValidation(_sym);
     dispatch(setInvestmentClubSymbolPlaceHolder(validSym));
@@ -89,7 +91,7 @@ const ClubNameSelector: React.FC<{
     }
   };
 
-  const handleRandomizer = (e) => {
+  const handleRandomizer = (e: any) => {
     amplitudeLogger(RANDOMIZE_NAME_CLICK, {
       flow: Flow.CLUB_CREATE
     });
@@ -144,6 +146,7 @@ const ClubNameSelector: React.FC<{
               />
 
               <button
+                // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
                 ref={ref}
                 onClick={handleRandomizer}
                 className="absolute inset-y-0 right-0 pr-4 py-3.5"

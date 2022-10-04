@@ -17,6 +17,7 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
           className={`primary-CTA w-full flex ease-in-out justify-center py-4 border text-base rounded-full leading-5.75`}
           onMouseOver={() => setShowMoreContent(true)}
           onMouseOut={() => setShowMoreContent(false)}
+          // @ts-expect-error TS(2345): Type '(e?: MouseEvent<HTMLInputElement, MouseEvent> | undefined) => void' is not assignable
           onClick={onClick}
           onBlur={() => setShowMoreContent(false)}
           onFocus={() => setShowMoreContent(true)}

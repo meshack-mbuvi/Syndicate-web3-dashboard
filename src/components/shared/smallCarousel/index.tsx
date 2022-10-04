@@ -1,8 +1,17 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { ChevronIcon, ChevronIconDirection } from '@/components/icons/chevron';
 import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B4 } from '@/components/typography';
 import { useEffect, useState } from 'react';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  GUILD_CLICK,
+  LUMA_CLICK,
+  SLIK_CLICK,
+  SNAPSHOT_CLICK,
+  SYNDICATE_CLICK
+} from '@/components/amplitude/eventNames';
 
 interface Props {
   slides: any[];
@@ -16,7 +25,7 @@ export const SmallCarousel: React.FC<Props> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [showSlideNavigator, setShowSlideNavigator] = useState(false);
   const duration = 2000;
-  let interval;
+  let interval: any;
   const incrementIndex = () => {
     setActiveIndex((activeIndex + slides.length + 1) % slides.length);
   };
@@ -126,6 +135,11 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => {
+      amplitudeLogger(SYNDICATE_CLICK, {
+        flow: Flow.COLLECTIVE_MANAGE
+      });
+    }}
   >
     <img
       src="/images/collectives/applications/invest.svg"
@@ -155,6 +169,11 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => {
+      amplitudeLogger(SNAPSHOT_CLICK, {
+        flow: Flow.COLLECTIVE_MANAGE
+      });
+    }}
   >
     <img
       src="/images/collectives/applications/governance.svg"
@@ -183,6 +202,11 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => {
+      amplitudeLogger(GUILD_CLICK, {
+        flow: Flow.COLLECTIVE_MANAGE
+      });
+    }}
   >
     <img
       src="/images/collectives/applications/membership.svg"
@@ -211,6 +235,11 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => {
+      amplitudeLogger(SLIK_CLICK, {
+        flow: Flow.COLLECTIVE_MANAGE
+      });
+    }}
   >
     <img
       src="/images/collectives/applications/storage.svg"
@@ -239,6 +268,11 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => {
+      amplitudeLogger(LUMA_CLICK, {
+        flow: Flow.COLLECTIVE_MANAGE
+      });
+    }}
   >
     <img
       src="/images/collectives/applications/events.svg"

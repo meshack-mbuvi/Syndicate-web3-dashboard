@@ -30,6 +30,7 @@ export const DotIndicators: React.FC<Props> = ({
   useEffect(() => {
     // Calculate how much to offset all the dots such that the
     // first dot is at the middle of the option label
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const containerHeight = containerRef.current.getBoundingClientRect().height;
 
     // hard-coding dot height to 8px to solve an issue with dotRef being reset to null
@@ -41,11 +42,13 @@ export const DotIndicators: React.FC<Props> = ({
     // We don't want the dots to animate to their starting position
     // on the first render. So check that the top offset was calculated
     // correctly before adding transitions
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const containerHeight = containerRef.current.getBoundingClientRect().height;
 
     // hard-coding dot height to 8px to solve an issue with dotRef being reset to null
     // when options value is changed after selecting a different club type
     if (dotsTopOffset >= containerHeight / 2 - 8 /** dotHeight */ / 2) {
+      // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
       setDotsTransitionStyles(`transition-all ${animationTimingStyles}`);
     }
   }, [dotsTopOffset, activeIndex]);

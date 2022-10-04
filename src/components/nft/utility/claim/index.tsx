@@ -39,7 +39,8 @@ const ClaimUtilityNFT: React.FC = () => {
 
   const { nftAddress } = router.query;
 
-  const handleSelected = async (childData) => {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const handleSelected = async (childData: any) => {
     if (!selectedNFTCards.includes(childData)) {
       setSelectedNFTCards((oldArray) => [...oldArray, childData]);
     } else {
@@ -49,7 +50,8 @@ const ClaimUtilityNFT: React.FC = () => {
     }
   };
 
-  const handleClaimed = async (tokenID) => {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const handleClaimed = async (tokenID: any) => {
     setUnclaimedNFTs(unclaimedNFTs.filter((item) => item !== Number(tokenID)));
   };
 
@@ -89,7 +91,8 @@ const ClaimUtilityNFT: React.FC = () => {
     setSubmitting(true);
   };
 
-  const onTxReceipt = async (receipt, tokenIDs) => {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const onTxReceipt = async (receipt: any, tokenIDs: any) => {
     setUnclaimedNFTs(unclaimedNFTs.filter((item) => !tokenIDs.includes(item)));
     setSelectedNFTCards(
       selectedNFTCards.filter((item) => !tokenIDs.includes(item))
@@ -106,7 +109,7 @@ const ClaimUtilityNFT: React.FC = () => {
     setClaimFailed(true);
   };
 
-  const claimNFTs = async (NFTsToClaim) => {
+  const claimNFTs = async (NFTsToClaim: any) => {
     setClaimList(NFTsToClaim);
     setSubmitting(true);
     setShowProcessingClaimModal(true);
@@ -288,6 +291,7 @@ const ClaimUtilityNFT: React.FC = () => {
           setShowProcessingClaimModal(false);
         }}
         successfulClaim={successfulClaim}
+        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
         transactionHash={transactionHash}
         claimFailed={claimFailed}
         submitting={submitting}

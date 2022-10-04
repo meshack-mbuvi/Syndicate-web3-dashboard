@@ -41,7 +41,7 @@ interface Props {
   handleOpenUntilChange: (newOpenUntil: OpenUntil) => void;
   openUntil: OpenUntil;
   isContinueButtonActive: boolean;
-  handleContinue: (e) => void;
+  handleContinue: (e: any) => void;
 }
 
 export const CollectiveFormCustomize: React.FC<Props> = ({
@@ -95,7 +95,8 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                   Members join by claiming your Collective’s NFT. If you’d like
                   to keep invitations private, only share the link with people
                   you trust. Note that your Collective will still be available
-                  on-chain and could be minted directly without being sent the link.
+                  on-chain and could be minted directly without being sent the
+                  link.
                 </B4>
               </div>
             </div>
@@ -103,6 +104,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             {/* [ENG-4149] Uncomment DetailedTile when we support Allowlist and Token-gating */}
             {/* <DetailedTile
               activeIndex={2}
+              // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(selectedIndex: number) => void'.
               onClick={null}
               disabledIndices={[0, 1]}
               options={[
@@ -170,14 +172,18 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             onChange={(e) => {
               const amount = stringNumberRemoveCommas(e.target.value);
               if (Number(amount)) {
+                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 handleMaxMembersChange(Number(amount));
               } else if (amount === '') {
+                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 handleMaxMembersChange(null);
               }
             }}
             placeholderLabel="10,000"
             extraClasses="mt-2"
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             isInErrorState={maxMembers > 10000}
+            // @ts-expect-error TS(2322): Type 'false | "Max members must be below 10,000"' ... Remove this comment to see the full error message
             infoLabel={maxMembers > 10000 && 'Max members must be below 10,000'}
           />
         </div>
@@ -188,6 +194,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
             <div>Price per NFT</div>
             <InputFieldPriceToJoin
               priceToJoin={priceToJoin}
+              // @ts-expect-error TS(2322): Type '(newPriceToJoin: number) => void'... Remove this comment to see the full error message
               handlePriceToJoinChange={handlePriceToJoinChange}
               handleClickToChangeToken={handleClickToChangeToken}
               tokenDetails={tokenDetails}
@@ -284,6 +291,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                 if (Number(amount)) {
                   handleMaxSupplyChange(Number(amount));
                 } else if (amount === '') {
+                  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                   handleMaxSupplyChange(null);
                 }
               }}
@@ -329,6 +337,7 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
           className={`${
             isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
           } w-full`}
+          // @ts-expect-error TS(2322): Type '((e: any) => void) | null' is not assignable... Remove this comment to see the full error message
           onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue

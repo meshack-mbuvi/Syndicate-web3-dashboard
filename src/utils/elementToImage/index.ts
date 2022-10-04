@@ -6,7 +6,7 @@ import domtoimage from 'dom-to-image';
  * */
 
 export const elementToImage = (
-  captureRef,
+  captureRef: any,
   scale: number,
   handleCapture: (imageURI: string) => void
 ) => {

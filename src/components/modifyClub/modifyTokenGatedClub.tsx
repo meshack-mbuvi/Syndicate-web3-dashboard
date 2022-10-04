@@ -1,3 +1,53 @@
+import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
+import { TimeInputField } from '@/components/inputs/timeInputField';
+import Modal, { ModalStyle } from '@/components/modal';
+import { B2, H4, T5 } from '@/components/typography';
+import AllowedMembers from '@/containers/createInvestmentClub/membership/allowedMembers';
+import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { SUPPORTED_TOKENS } from '@/Networks';
+import { AppState } from '@/state';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
+import {
+  resetClubCreationReduxState,
+  setActiveTokenGateOption,
+  setLogicalOperator,
+  setTokenRules
+} from '@/state/createInvestmentClub/slice';
+import {
+  LogicalOperator,
+  TokenGateOption
+} from '@/state/createInvestmentClub/types';
+import {
+  setExistingAmountRaised,
+  setExistingIsOpenToDeposits,
+  setExistingMaxAmountRaising,
+  setExistingMaxNumberOfMembers,
+  setExistingNumberOfMembers,
+  setExistingOpenToDepositsUntil,
+  setMaxAmountRaising,
+  setMaxNumberOfMembers
+} from '@/state/modifyClubSettings/slice';
+import { Status } from '@/state/wallet/types';
+import { IRequiredTokenRules } from '@/types/modules';
+import { isZeroAddress } from '@/utils';
+import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
+import { DAY_IN_SECONDS } from '@/utils/constants';
+
+import { getWeiAmount } from '@/utils/conversions';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import {
+  floatedNumberWithCommas,
+  numberInputRemoveCommas
+} from '@/utils/formattedNumbers';
+import { validateAndOrderTokenRules } from '@/utils/mixins/mixinHelpers';
+import { BigNumber } from 'bignumber.js';
+import moment from 'moment';
+import { default as _moment } from 'moment-timezone';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   SetStateAction,
@@ -5,68 +55,18 @@ import React, {
   useEffect,
   useState
 } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import AddToCalendar from '../addToCalendar';
 import BackButton from '../buttons/BackButton';
 import { CollapsibleTable } from '../collapsibleTable';
-import { SkeletonLoader } from '../skeletonLoader';
-import { T5, H4 } from '../typography';
-import Image from 'next/image';
-import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
-import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { TimeInputField } from '@/components/inputs/timeInputField';
-import { default as _moment } from 'moment-timezone';
-import moment from 'moment';
-import AddToCalendar from '../addToCalendar';
+import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
+import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '../inputs/inputFieldWithToken';
-import {
-  floatedNumberWithCommas,
-  numberInputRemoveCommas
-} from '@/utils/formattedNumbers';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
-import { useRouter } from 'next/router';
-import Modal, { ModalStyle } from '@/components/modal';
-import { B2 } from '@/components/typography';
 import { ProgressCard, ProgressState } from '../progressCard';
-import {
-  LogicalOperator,
-  TokenGateOption
-} from '@/state/createInvestmentClub/types';
-import { getWeiAmount } from '@/utils/conversions';
-import AllowedMembers from '@/containers/createInvestmentClub/membership/allowedMembers';
-import { DAY_IN_SECONDS } from '@/utils/constants';
-import {
-  setExistingOpenToDepositsUntil,
-  setExistingIsOpenToDeposits,
-  setExistingMaxAmountRaising,
-  setExistingAmountRaised,
-  setExistingMaxNumberOfMembers,
-  setExistingNumberOfMembers,
-  setMaxNumberOfMembers,
-  setMaxAmountRaising
-} from '@/state/modifyClubSettings/slice';
-import { setActiveRowIdx } from '@/state/collectiveDetails';
-import { EditRowIndex } from '@/state/collectiveDetails/types';
-import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
-import { BigNumber } from 'bignumber.js';
-import { validateAndOrderTokenRules } from '@/utils/mixins/mixinHelpers';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
-import { SUPPORTED_TOKENS } from '@/Networks';
-import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
-import {
-  resetClubCreationReduxState,
-  setActiveTokenGateOption,
-  setLogicalOperator,
-  setTokenRules
-} from '@/state/createInvestmentClub/slice';
-import { isZeroAddress } from '@/utils';
-import { IRequiredTokenRules } from '@/types/modules';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import { Status } from '@/state/wallet/types';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import { SkeletonLoader } from '../skeletonLoader';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -107,7 +107,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     web3Reducer: {
       web3: { web3, account, activeNetwork, status }
     },
-    collectiveDetailsReducer: { activeRow },
+    modifyCollectiveSettingsReducer: { activeRow },
     createInvestmentClubSliceReducer: {
       tokenRules,
       logicalOperator,
@@ -162,10 +162,16 @@ const ModifyTokenGatedClub: React.FC = () => {
     location: ''
   };
 
-  const isOwner = useIsClubOwner();
   const isDemoMode = useDemoMode();
 
   const { pathname, isReady } = router;
+
+  const { isOwner, isLoading } = useTokenOwner(
+    clubAddress as string,
+    web3,
+    activeNetwork,
+    account
+  );
 
   useEffect(() => {
     if (
@@ -173,26 +179,20 @@ const ModifyTokenGatedClub: React.FC = () => {
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
-      !isReady
+      !isReady ||
+      isLoading
     )
       return;
 
-    if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
+    if (
+      (pathname.includes('/modify') && !isOwner && !isLoading) ||
+      isDemoMode
+    ) {
       router.replace(
         `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }
-  }, [
-    owner,
-    clubAddress,
-    account,
-    loading,
-    status,
-    isReady,
-    isOwner,
-    pathname,
-    isDemoMode
-  ]);
+  }, [isReady, isLoading]);
 
   const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
     activeNetwork.nativeCurrency;
@@ -218,10 +218,12 @@ const ModifyTokenGatedClub: React.FC = () => {
       if (+maxTotalSupply === 0 && depositTokenSymbol) {
         if (depositTokenSymbol === nativeSymbol) {
           dispatch(setMaxAmountRaising(+maxTotalSupply / nativeEchageRate));
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
         } else {
           dispatch(setMaxAmountRaising(maxTotalSupply));
           dispatch(setExistingMaxAmountRaising(maxTotalSupply));
+          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
           dispatch(setExistingAmountRaised(totalSupply));
         }
       }
@@ -253,6 +255,7 @@ const ModifyTokenGatedClub: React.FC = () => {
       openToDepositsUntil < eodToday
     ) {
       setOpenToDepositsUntilWarning(
+        // @ts-expect-error TS(2345): Argument of type'"You'll need a new date to reopen for deposits"' is not assign... Remove this comment to see the full error message
         "You'll need a new date to reopen for deposits"
       );
     } else {
@@ -306,6 +309,7 @@ const ModifyTokenGatedClub: React.FC = () => {
 
       let _tokencap = getWeiAmount(
         web3,
+        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         new BigNumber(maxTotalSupplyMintValue).toFixed(),
         18,
         false
@@ -316,6 +320,7 @@ const ModifyTokenGatedClub: React.FC = () => {
       ) {
         _tokencap = getWeiAmount(
           web3,
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           new BigNumber(maxTotalSupplyMintValue)
             .dividedBy(activeNetwork.nativeCurrency.exchangeRate)
             .toFixed(),
@@ -522,6 +527,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     const mixins = activeModuleDetails?.activeMintModuleReqs?.mixins;
 
     if (tokenGateOption === TokenGateOption.UNRESTRICTED) {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const _mixins = mixins.filter(
         (mixin) => mixin !== tokenGatedMixin.address
       );
@@ -541,8 +547,8 @@ const ModifyTokenGatedClub: React.FC = () => {
       return; // TODO [TOKEN GATING] this is hacky. Should be handled by disabling submit button
     }
 
-    const tokens = [];
-    const balances = [];
+    const tokens: any = [];
+    const balances: any = [];
     const logicOperator =
       logicalOperator === LogicalOperator.AND ? true : false;
     const sortedTokenRules = validateAndOrderTokenRules(tokenRules);
@@ -563,6 +569,7 @@ const ModifyTokenGatedClub: React.FC = () => {
       );
     });
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const isClubGated = mixins.find(
       (mixin) => mixin === tokenGatedMixin.address
     );
@@ -571,7 +578,7 @@ const ModifyTokenGatedClub: React.FC = () => {
       await guardMixinManager.updateDefaultMixins(
         account,
         clubAddress as string,
-        [...mixins, tokenGatedMixin.address],
+        [...(mixins || []), tokenGatedMixin.address],
         onTxConfirm,
         onTxReceiptGuardUpdate,
         onTxFail
@@ -594,17 +601,21 @@ const ModifyTokenGatedClub: React.FC = () => {
     dispatch(setActiveRowIdx(rowIdx));
   };
 
-  const handleOnChangeAmountRaising = (e) => {
+  const handleOnChangeAmountRaising = (e: any) => {
     const amount = numberInputRemoveCommas(e);
     if (Number(amount) < existingAmountRaised && Number(amount) >= 0) {
       setMaxAmountRaisingError(
+        // @ts-expect-error TS(2345): Argument of type '"Below the current amount raise... Remove this comment to see the full error message
         'Below the current amount raised. Please withdraw funds first before setting a lower limit.'
       );
+      // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
     } else if (amount < 0 || isNaN(amount)) {
+      // @ts-expect-error TS(2345): Argument of type '"Max amount is required"' is not assig... Remove this comment to see the full error message
       setMaxAmountRaisingError('Max amount is required');
     } else {
       setMaxAmountRaisingError(null);
     }
+    // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
     dispatch(setMaxAmountRaising(amount >= 0 ? amount : 0));
   };
 
@@ -617,18 +628,22 @@ const ModifyTokenGatedClub: React.FC = () => {
     }
   };
 
-  const handleOnChangeMaxMembers = (e) => {
+  const handleOnChangeMaxMembers = (e: any) => {
     const numberOfMembers = e.target.value;
     if (Number(numberOfMembers) < 0) {
+      // @ts-expect-error TS(2345): Argument of type '"Number can't be negative"' is not assig... Remove this comment to see the full error message
       setMaxNumberOfMembersError(`Number can't be negative`);
     } else if (isNaN(numberOfMembers) || Number(numberOfMembers) == 0) {
+      // @ts-expect-error TS(2345): Argument of type '"Please enter a number between 1 and 99"' is not assig... Remove this comment to see the full error message
       setMaxNumberOfMembersError(`Please enter a number between 1 and 99`);
     } else if (Number(numberOfMembers) < existingNumberOfMembers) {
       setMaxNumberOfMembersError(
+        // @ts-expect-error TS(2345): Argument of type 'string' is not assig... Remove this comment to see the full error message
         `Club already has ${existingNumberOfMembers} members`
       );
     } else if (Number(numberOfMembers) > MAX_MEMBERS_ALLOWED) {
       setMaxNumberOfMembersError(
+        // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
         <div>
           Between 1 and 99 accepted to maintain investment club status. Reach
           out to us at{' '}
@@ -697,6 +712,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                   <div className="flex flex-col space-y-4">
                     <div>
                       {getFormattedDateTimeWithTZ(
+                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                         +activeModuleDetails?.activeMintModuleReqs?.endTime *
                           1000,
                         'dddd, MMM D, YYYY h:mma zz'
@@ -731,6 +747,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                       closeTimeError={closeTimeError}
                       setCloseTime={setCloseTime}
                       setCloseDate={setCloseDate}
+                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
                       dateWarning={openToDepositsUntilWarning}
                     />
                   )
@@ -763,6 +780,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                       value={String(maxAmountRaising)}
                       symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
                       onChange={handleOnChangeAmountRaising}
+                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
                       isInErrorState={maxAmountRaisingError}
                       infoLabel={
                         maxAmountRaisingError
@@ -837,6 +855,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         <ProgressCard
           title={progressTitle}
           description={progressDescription}
+          // @ts-expect-error TS(2345): Argument of type 'ProgressState | undefined' is not assig... Remove this comment to see the full error message
           state={progressState}
           transactionHash={transactionHash}
           transactionType="transaction"
@@ -897,7 +916,7 @@ const EditCloseTime: React.FC<{
     setCloseTime(timeValue);
   };
 
-  const handleDateChange = (targetDate) => {
+  const handleDateChange = (targetDate: any) => {
     setCloseDate(targetDate);
     setOpenToDepositsUntil(targetDate);
   };
@@ -913,6 +932,7 @@ const EditCloseTime: React.FC<{
           <InputFieldWithDate
             onChange={(targetDate) => handleDateChange(targetDate)}
             isInErrorState={isInErrorState}
+            // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assignable t... Remove this comment to see the full error message
             selectedDate={dateWarning ? null : openToDepositsUntil}
             infoLabel={dateWarning && dateWarning}
           />
@@ -972,16 +992,20 @@ const TokenGatedModules: React.FC = () => {
   }, [requiredTokensLogicalOperator]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2345): Argument of type 'TokenGateOption | undefined' is not assig... Remove this comment to see the full error message
     dispatch(setActiveTokenGateOption(tokenGateOption));
   }, [tokenGateOption]);
 
   useEffect(() => {
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
       const chainTokens: typeof SUPPORTED_TOKENS[1 | 4 | 137] =
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];
 
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       const tokens = requiredTokenRules.map((_token) => {
         const contractAddress = isZeroAddress(_token.contractAddress)
           ? ''
@@ -1017,6 +1041,7 @@ const TokenGatedModules: React.FC = () => {
           tokens.filter((t) => t?.name)
         );
       } else {
+        // @ts-expect-error TS(2345): Argument of type "type '({ name: string; quantity: any; symbol: string; chainId:... Remove this comment to see the full error message
         dispatch(setTokenRules(tokens.filter((t) => t)));
       }
     }
@@ -1025,11 +1050,12 @@ const TokenGatedModules: React.FC = () => {
   const fetchTokenDetails = useCallback(
     async (notFoundTokens, foundTokens) => {
       const tokens = await Promise.all(
-        notFoundTokens.map((token) =>
+        notFoundTokens.map((token: any) =>
           getTokenDetails(token.contractAddress, activeNetwork.chainId)
         )
       ).then((res) =>
         res.map((_res) => {
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           const quantity = requiredTokenRules.find(
             (t) => t.contractAddress === _res.data.contractAddress
           )?.quantity;
@@ -1038,6 +1064,7 @@ const TokenGatedModules: React.FC = () => {
             icon: _res.data.logo,
             quantity: getWeiAmount(
               web3,
+              // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
               new BigNumber(quantity).toFixed(),
               _res.data.decimals,
               false
@@ -1067,13 +1094,14 @@ const TokenGatedModules: React.FC = () => {
         activeNetwork.chainId
       ).then((res) => res.data.data.syndicateCollectives);
 
-      const _tokens = [];
+      const _tokens: any = [];
 
       if (tokens?.length) {
         _tokens.push(
           ...tokens.map((token) => {
             return {
               name: token.name,
+              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
               quantity: +tokenAddresses.find(
                 (t) => t.contractAddress === token.contractAddress
               ).quantity,
@@ -1088,7 +1116,9 @@ const TokenGatedModules: React.FC = () => {
       }
 
       const notFoundTokens2 = tokenAddresses.filter((t) =>
-        _tokens.every((t2) => !t2.contractAddress.includes(t.contractAddress))
+        _tokens.every(
+          (t2: any) => !t2.contractAddress.includes(t.contractAddress)
+        )
       );
 
       const tokens2 = [...foundTokens, ..._tokens];

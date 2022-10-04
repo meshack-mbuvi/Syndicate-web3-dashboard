@@ -3,7 +3,7 @@ import { AppState } from '@/state';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useDemoMode } from '../../useDemoMode';
 
 const useVerifyCollectiveCreation = (
@@ -15,11 +15,10 @@ const useVerifyCollectiveCreation = (
 } => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3 }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
-  const dispatch = useDispatch();
   const isDemoMode = useDemoMode();
   const router = useRouter();
 
@@ -44,7 +43,7 @@ const useVerifyCollectiveCreation = (
     }
   );
 
-  const verifyCreation = async (collectiveAddress) => {
+  const verifyCreation = async (collectiveAddress: any) => {
     // Verification will start once collectiveAddress is set
     setCollectiveAddress(collectiveAddress);
   };

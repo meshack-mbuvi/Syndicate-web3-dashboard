@@ -42,14 +42,15 @@ export const useMyClubs = (): IProps => {
   const fetchMyClubs = useCallback(async () => {
     if (data?.syndicateDAOs) {
       const clubs = await processMyClubs(data?.syndicateDAOs);
+      // @ts-expect-error TS(2345): Argument of type 'any[] | never[]' is not assignab... Remove this comment to see the full error message
       setMyClubs(clubs);
     }
   }, [JSON.stringify(data?.syndicateDAOs)]);
 
-  const processMyClubs = async (tokens) => {
+  const processMyClubs = async (tokens: any) => {
     setIsLoading(true);
     return await Promise.all([
-      ...tokens.map(async (token) => {
+      ...tokens.map(async (token: any) => {
         const { contractAddress } = token;
 
         let clubERC20Contract;

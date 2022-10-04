@@ -1,15 +1,15 @@
 import { InputField } from '@/components/inputs/inputField';
 import { AppState } from '@/state';
 import { useSelector, useDispatch } from 'react-redux';
-import { setMaxSupply } from '@/state/collectiveDetails';
+import { setMaxSupply } from '@/state/modifyCollectiveSettings';
 import { B2, B3 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
 
 const EditMaxSupply: React.FC = () => {
   const {
-    collectiveDetailsReducer: {
-      details: { maxSupply }
+    modifyCollectiveSettingsReducer: {
+      settings: { maxSupply }
     }
   } = useSelector((state: AppState) => state);
 
@@ -33,6 +33,7 @@ const EditMaxSupply: React.FC = () => {
           if (Number(amount)) {
             dispatch(setMaxSupply(Number(amount)));
           } else if (amount === '') {
+            // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to par... Remove this comment to see the full error message
             dispatch(setMaxSupply(null));
           }
         }}

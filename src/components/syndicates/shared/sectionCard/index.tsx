@@ -1,6 +1,6 @@
 import Portal from '@/components/shared/Portal';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { AppState } from '@/state';
 import React, { FC, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -41,7 +41,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
   const [coord, setCoords] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handlePopoverOpen = (event) => {
+  const handlePopoverOpen = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
 

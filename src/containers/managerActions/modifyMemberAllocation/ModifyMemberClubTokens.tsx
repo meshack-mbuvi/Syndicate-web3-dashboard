@@ -14,13 +14,13 @@ interface IModifyMemberClubTokens {
   setShowModifyCapTable: Dispatch<SetStateAction<boolean>>;
   showModifyCapTable: boolean;
   clearModalFields: () => void;
-  handleAmountChange: (e) => void;
+  handleAmountChange: (e: any) => void;
   memberAllocationError: string | React.ReactElement;
   memberAllocation: string;
-  handleSubmit: (e) => void;
+  handleSubmit: (e: any) => void;
   member: string;
   setMember: Dispatch<SetStateAction<string>>;
-  symbol;
+  symbol: any;
   continueButtonDisabled: boolean;
 }
 const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
@@ -86,7 +86,6 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                 />
               </div>
             </div>
-
             <CtaButton
               disabled={
                 Boolean(memberAllocationError) ||
@@ -94,7 +93,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                 !member ||
                 continueButtonDisabled
               }
-              onClick={(e) => {
+              onClick={(e: any) => {
                 handleSubmit(e);
               }}
             >

@@ -1,10 +1,10 @@
-import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
-import { Provider, useDispatch } from 'react-redux';
-import { store } from '@/state/index';
-import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import { setCurrentTransaction } from '@/state/erc20transactions';
+import { store } from '@/state/index';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { Provider, useDispatch } from 'react-redux';
 
 const client = new ApolloClient({
   uri: '#',
@@ -15,7 +15,7 @@ export default {
   title: '4. Organisms/Activity Modal',
 
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ApolloProvider client={client}>
         <Provider store={store}>
           <ConnectWalletProvider>
@@ -51,6 +51,7 @@ const Template = () => {
       readOnly: false,
       timestamp: 'Tuesday, Sep 14 2021, 3:45 PM',
       transactionId: 'transaction id',
+      // @ts-expect-error TS(2322): Type 'null' is not assignable to type '{ acquisiti... Remove this comment to see the full error message
       metadata: null,
       blockTimestamp: 123
     })
@@ -59,7 +60,9 @@ const Template = () => {
   return (
     <div>
       <ActivityModal
+        isOwner={false}
         showModal={true}
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type '() => void'... Remove this comment to see the full error message
         refetchTransactions={null}
         showNote={true}
         closeModal={null}
@@ -72,4 +75,5 @@ const Template = () => {
 };
 
 export const Default = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Default.args = {};
