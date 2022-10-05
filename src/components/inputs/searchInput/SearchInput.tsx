@@ -9,6 +9,8 @@ import React from 'react';
  * @param {*} props
  */
 export const SearchInput = (props: {
+  onChangeHandler;
+  searchValue: string;
   name?: string;
   id?: string;
   onChangeHandler: any;
@@ -45,7 +47,7 @@ export const SearchInput = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center ${full ? `w-full` : ``} `}
+      } justify-center ${full ? `w-full` : ``}`}
     >
       <div className={`w-5/6 flex-grow flex flex-col justify-between`}>
         {/* input field */}
@@ -63,6 +65,7 @@ export const SearchInput = (props: {
                   color={searchValue ? 'text-white' : 'text-gray-syn4'}
                   width="w-4"
                   height="h-4"
+                  extraClasses="transition-color duration-300"
                 />
               </div>
 
@@ -70,7 +73,9 @@ export const SearchInput = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-0 ${customClass} relative border-0 text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
+                className={`focus:ring-0 ${customClass} relative border-0 ${
+                  searchValue ? 'text-white' : 'text-gray-syn4'
+                } text-placeholder-gray-syn4 leading-6 text-lg block w-full rounded-md pl-6 pr-5 sm:text-sm ${
                   disabled ? 'opacity-40' : ''
                 }`}
                 placeholder={`Search${

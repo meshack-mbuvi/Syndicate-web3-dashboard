@@ -75,13 +75,19 @@ interface ISearchIcon {
   height?: string;
   width?: string;
   color?: string;
+  extraClasses?: string;
 }
 export const SearchIcon: React.FC<ISearchIcon> = (props) => {
-  const { height = 'h-4', width = 'w-4', color = 'text-gray-3' } = props;
+  const {
+    height = 'h-4',
+    width = 'w-4',
+    color = 'text-gray-3',
+    extraClasses = ''
+  } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`${height} ${width} ${color}`}
+      className={`${height} ${width} ${color} ${extraClasses}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

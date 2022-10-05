@@ -342,6 +342,10 @@
     @apply text-gray-placeholder;
   }
 
+  .text-placeholder-gray-syn4::placeholder {
+    @apply text-gray-syn4;
+  }
+
   .h1 {
     @apply text-2xl sm:text-4.5xl font-medium;
     line-height: normal;
