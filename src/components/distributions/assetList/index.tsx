@@ -9,6 +9,7 @@ import {
   numberWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
+import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
@@ -110,7 +111,7 @@ export const AssetList: React.FC<Props> = ({
    *
    * @param index The index of the option that is being edited
    */
-  const handleMaxOnClick = (index: number) => {
+  const handleMaxOnClick = (index: number): void => {
     const { price, maximumTokenAmount } = options[index];
 
     const tokenAmount = maximumTokenAmount;
@@ -177,12 +178,12 @@ export const AssetList: React.FC<Props> = ({
       {/* Left column */}
       <div
         className="flex space-x-4 md:space-x-4 items items-center w-full max-w-6/12"
-        onClick={() => {
+        onClick={(): void => {
           if (isIndexActive(index)) {
             handleOnClick(index);
           }
         }}
-        onKeyPress={() => {
+        onKeyPress={(): void => {
           // This div becomes click target when checkbox is checked
           if (isIndexActive(index)) {
             handleOnClick(index);
@@ -195,11 +196,15 @@ export const AssetList: React.FC<Props> = ({
           isActive={isIndexActive(index)}
           extraClasses="flex-shrink-0"
         />
-        <img
-          src={option.icon ? option.icon : '/images/token-gray.svg'}
-          alt="Token icon"
-          className="w-7 h-7 md:w-8 md:h-8 transition-all flex-shrink-0"
-        />
+        <div className="w-7 h-7 md:w-8 md:h-8 transition-all flex-shrink-0">
+          <Image
+            src={option.icon ? option.icon : '/images/token-gray.svg'}
+            alt="Token icon"
+            width={28}
+            height={28}
+            layout="responsive"
+          />
+        </div>
         {/* Name */}
         <div className="text-left flex-grow overflow-hidden md:overflow-visible">
           <div className="block whitespace-nowrap md:whitespace-normal md:inline truncate">
@@ -212,7 +217,7 @@ export const AssetList: React.FC<Props> = ({
       </div>
 
       {/* Right column */}
-      <div className="text-right flex ml-7 md:ml-0 border-gray-syn7">
+      <div className="text-right flex ml-7 md:ml-0">
         <div className="flex items-center md:space-x-2">
           {/* Max button */}
           {!option.isLoading && (
@@ -272,7 +277,7 @@ export const AssetList: React.FC<Props> = ({
                         ? `${
                             option.isEditingInFiat
                               ? String(option.fiatAmount).length
-                              : String(option.tokenAmount).length
+                              : String(option.tokenAmount).length + 1
                           }ch`
                         : `auto`
                     }`,
@@ -302,7 +307,7 @@ export const AssetList: React.FC<Props> = ({
                             })
                       )
                     }
-                    onClick={(e) => {
+                    onClick={(e): void => {
                       // This stops the row from toggling active/inactive
                       e.stopPropagation();
                     }}
@@ -450,9 +455,10 @@ export const AssetList: React.FC<Props> = ({
                 className={`flex text-sm text-gray-syn4 justify-end transition-all text-right w-full ${
                   option.error && isIndexActive(index)
                     ? 'text-red-error'
-                    : option.warning &&
-                      isIndexActive(index) &&
-                      'text-yellow-warning'
+                    : (option.warning &&
+                        isIndexActive(index) &&
+                        'text-yellow-warning') ||
+                      ''
                 }`}
               >
                 {(option.error || option.warning) && isIndexActive(index) ? (
@@ -515,5 +521,5 @@ export const AssetList: React.FC<Props> = ({
     </button>
   ));
 
-  return <div className="">{renderedOptions}</div>;
+  return <div>{renderedOptions}</div>;
 };
