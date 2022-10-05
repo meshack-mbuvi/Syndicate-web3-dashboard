@@ -30,6 +30,7 @@ import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
+import { Contract } from 'ethers';
 import router, { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -317,7 +318,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     contractAddress: string;
     tokenDecimal: number;
     symbol: string;
-  }) => {
+  }): Promise<void> => {
     updateSteps('isInErrorState', false);
     setIsTransactionPending(true);
 
@@ -332,10 +333,10 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     try {
       let gnosisTxHash;
 
-      const gasEstimate = await estimateGas(web3);
+      const gasEstimate: string = await estimateGas(web3);
 
       await new Promise((resolve, reject) => {
-        const _tokenContract = new web3.eth.Contract(
+        const _tokenContract: Contract = new web3.eth.Contract(
           ERC20ABI as AbiItem[],
           token.contractAddress
         );
@@ -369,7 +370,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
               // break here
             }
 
-            amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
+            void amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
               flow: Flow.MGR_DISTRIBUTION,
               distribution_amount: amountToApprove
             });
@@ -396,13 +397,13 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const checkTokenAllowance = async (token: {
     tokenDecimal: number;
     contractAddress: string;
-  }) => {
+  }): Promise<string> => {
     const _tokenContract = new web3.eth.Contract(
       ERC20ABI as AbiItem[],
       token.contractAddress
     );
     try {
-      const allowanceAmount = await _tokenContract?.methods
+      const allowanceAmount: string = await _tokenContract?.methods
         .allowance(account.toString(), distributionERC20Address)
         .call({ from: account });
 
@@ -415,7 +416,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
       return currentAllowanceAmount;
     } catch (error) {
-      return 0;
+      return '0';
     }
   };
 

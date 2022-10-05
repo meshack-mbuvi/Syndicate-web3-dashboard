@@ -1,5 +1,20 @@
+export interface token {
+  contractAddress: string;
+  logo: string | undefined;
+  tokenDecimal: string;
+  tokenSymbol?: string;
+  tokenBalance: string;
+  tokenName: string;
+  name?: string;
+  icon?: string | undefined;
+  tokenValue: number;
+  isTransferable?: boolean;
+  price?: {
+    usd?: number;
+  };
+}
 export interface InitialState {
-  tokensResult: any;
+  tokensResult: token[];
   collectiblesResult: any;
   loading: boolean;
   loadingCollectibles: boolean;

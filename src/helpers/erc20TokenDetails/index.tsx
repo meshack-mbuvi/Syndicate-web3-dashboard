@@ -104,7 +104,6 @@ export const getERC20TokenDetails = async (
         activeMintReqs,
         mintModule
       );
-
       const [name, owner, tokenDecimals, symbol, memberCount] =
         await Promise.all([
           ERC20tokenContract.name(),
@@ -112,7 +111,9 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.decimals(),
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount()
-        ]);
+        ]).catch(() => {
+          return [];
+        });
 
       const totalSupply = await ERC20tokenContract.totalSupply().then(
         (wei: any) => getWeiAmount(web3, wei, tokenDecimals, false)

@@ -16,10 +16,10 @@ import {
   setMockCollectiblesResult,
   setMockTokensResult
 } from '@/state/assets/slice';
+import { token } from '@/state/assets/types';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
-import { getSynToken } from '@/utils/api';
 import {
   mockActiveERC20Token,
   mockDepositModeTokens,
@@ -41,7 +41,7 @@ enum Steps {
 const Distribute: FC = () => {
   const {
     initializeContractsReducer: {
-      syndicateContracts: { DepositTokenMintModule }
+      syndicateContracts: { DepositTokenMintModule, distributionsERC20 }
     },
     distributeTokensReducer: { gasEstimate },
     erc20TokenSliceReducer: {
@@ -69,7 +69,7 @@ const Distribute: FC = () => {
   /**
    * Prepare and handle token selection.
    */
-  const [activeIndices, setActiveIndices] = useState([]);
+  const [activeIndices, setActiveIndices] = useState<number[]>([]);
   const [_options, setOptions] = useState([]);
   const [distributionTokens, setDistributionTokens] = useState([]);
   const [processingTokens, setProcessingTokens] = useState(true);
@@ -207,7 +207,7 @@ const Distribute: FC = () => {
 
   // check whether we have sufficient gas for distribution
   useEffect(() => {
-    if (!activeIndices.length) return; // return, there is nothing to distribute
+    if (!activeIndices?.length) return; // return, there is nothing to distribute
 
     const [_loadedNativeToken] = tokensResult.filter(
       (token: any) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
@@ -216,7 +216,7 @@ const Distribute: FC = () => {
       (token: any) => token.symbol === activeNetwork.nativeCurrency.symbol
     );
 
-    const _totalNativeCurrencyGasEstimate =
+    const _totalNativeCurrencyGasEstimate: number =
       distributionTokens.length * +gasEstimate.tokenAmount;
 
     // _nativeToken is undefined if its not selected
@@ -242,12 +242,41 @@ const Distribute: FC = () => {
 
   // Calculates maximum tokens that can be distributed per given token
   const getTransferableTokens = useCallback(async () => {
-    if (_options.length) {
+    if (_options?.length) {
       setOptions(_options);
     } else {
+      // Remove tokens hidden manually by admin.
+      const existingClubsHiddenAssets =
+        JSON.parse(localStorage.getItem('hiddenAssets') as string) || {};
+
+      // filter out hidden tokens
+      let filteredAssets;
+      if (Object.keys(existingClubsHiddenAssets).length) {
+        const clubHiddenAssets =
+          existingClubsHiddenAssets[clubAddress as string];
+
+        if (clubHiddenAssets && clubHiddenAssets?.length) {
+          filteredAssets = tokensResult.map((data) => {
+            const { contractAddress } = data;
+            return {
+              ...data,
+              hidden: clubHiddenAssets.indexOf(contractAddress) > -1
+            };
+          });
+        }
+      }
+
+      // For the remaining assets after removing those hidden manually by admin,
+      // check whether there is any that is not transferrable
+      // and filter it out.
+      const filteredTokens =
+        filteredAssets && filteredAssets?.length
+          ? filteredAssets.filter((token) => !token?.hidden)
+          : tokensResult;
+
       const tokens = await await (
         await Promise.all([
-          ...tokensResult.map(
+          ...filteredTokens.map(
             async ({
               tokenBalance,
               tokenName,
@@ -255,43 +284,83 @@ const Distribute: FC = () => {
               price,
               logo,
               tokenValue,
+              contractAddress,
               ...rest
-            }: any) => {
-              const {
-                data: {
-                  data: { syndicateDAOs }
-                }
-              } = await getSynToken(
-                rest.contractAddress,
-                activeNetwork.chainId
-              );
-
-              if (!syndicateDAOs.length && +tokenBalance > 0) {
-                return {
-                  ...rest,
-                  logo,
-                  icon: logo,
-                  name: tokenName,
-                  symbol: tokenSymbol,
-                  tokenAmount: tokenBalance,
-                  maximumTokenAmount:
-                    tokenSymbol == activeNetwork.nativeCurrency.symbol &&
-                    gasEstimate?.tokenAmount
-                      ? parseFloat(`${tokenBalance}`) -
-                        parseFloat(`${gasEstimate.tokenAmount}`)
-                      : tokenBalance,
-                  price: price?.usd ?? 0,
-                  fiatAmount: tokenValue,
-                  isEditingInFiat: false,
-                  isSelected: false,
-                  warning: '',
-                  error: ''
-                };
+            }) => {
+              let isTransferable = false;
+              if (contractAddress && contractAddress !== 'nativeTokenAddress') {
+                await distributionsERC20
+                  .getEstimateGasDistributeERC20(
+                    account,
+                    1,
+                    clubAddress as string,
+                    contractAddress,
+                    0,
+                    ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0'],
+                    'test-123',
+                    () => {
+                      // successful gas estimates implies that the token can be distributed.
+                      isTransferable = true;
+                    },
+                    (error: { message: string }) => {
+                      if (
+                        error.message.includes(
+                          'requested transfer not allowed'
+                        ) ||
+                        error.message.includes(
+                          'Sender or recipient must be DAOs'
+                        )
+                      ) {
+                        isTransferable = false;
+                      }
+                    }
+                  )
+                  .catch((error: { message: string }) => {
+                    if (
+                      error.message.includes(
+                        'requested transfer not allowed'
+                      ) ||
+                      error.message.includes('Sender or recipient must be DAOs')
+                    ) {
+                      isTransferable = false;
+                    }
+                  });
               }
+
+              if (contractAddress == 'nativeTokenAddress') {
+                isTransferable = true;
+              }
+
+              return {
+                ...rest,
+                tokenBalance,
+                tokenName,
+                tokenSymbol,
+                logo,
+                tokenValue,
+                isTransferable,
+                contractAddress,
+                icon: logo,
+                name: tokenName,
+                symbol: tokenSymbol,
+                tokenAmount: tokenBalance,
+                maximumTokenAmount:
+                  tokenSymbol == activeNetwork.nativeCurrency.symbol &&
+                  gasEstimate?.tokenAmount
+                    ? parseFloat(`${tokenBalance}`) -
+                      parseFloat(`${gasEstimate.tokenAmount}`)
+                    : tokenBalance,
+                price: price?.usd ?? 0,
+                fiatAmount: tokenValue,
+                isEditingInFiat: false,
+                isSelected: false,
+                warning: '',
+                error: ''
+              };
             }
           )
         ])
-      ).filter((token) => (token = token !== undefined));
+      ).filter((token) => token?.isTransferable);
 
       // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setOptions(tokens);
@@ -305,17 +374,17 @@ const Distribute: FC = () => {
   ]);
 
   useEffect(() => {
-    getTransferableTokens();
+    void getTransferableTokens();
   }, [getTransferableTokens, tokensResult]);
 
   // Add all selected tokens to store
   useEffect(() => {
     if (activeIndices.length > 0) {
-      const selectedTokens = _options.filter((_, index) => {
-        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
+      const selectedTokens: token[] = _options.filter((_, index: number) => {
         return activeIndices.includes(index);
       });
 
+      // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setDistributionTokens(selectedTokens);
     } else {
       setDistributionTokens([]);
@@ -379,7 +448,7 @@ const Distribute: FC = () => {
   useEffect(() => {
     // Demo mode
     if (isZeroAddress(clubAddress as string)) {
-      router.push('/clubs/demo/manage');
+      void router.push('/clubs/demo/manage');
     }
   });
 
@@ -614,7 +683,6 @@ const Distribute: FC = () => {
                     activeIndices={activeIndices}
                     // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
                     handleOptionsChange={setOptions}
-                    // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
                     handleActiveIndicesChange={setActiveIndices}
                     loading={loadingAssets || loading || processingTokens}
                   />

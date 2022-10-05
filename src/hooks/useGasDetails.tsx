@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { GAS_RATE } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
-import { getWeiAmount } from '@/utils/conversions';
-import moment from 'moment';
+import { AppState } from '@/state';
 import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { useQuery } from '@apollo/client';
 import BigNumber from 'bignumber.js';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -83,14 +83,14 @@ const useGasDetails: (props: IProps) => {
       estimateGas: () => {
         if (!clubERC20Factory) return;
         // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
-        clubERC20Factory.getEstimateGas(account, setGasUnits);
+        void clubERC20Factory.getEstimateGas(account, setGasUnits);
       }
     },
     [ContractMapper.ERC20ClubFactory]: {
       syndicateContract: erc20ClubFactory,
       estimateGas: () => {
         if (!erc20ClubFactory) return;
-        erc20ClubFactory.getEstimateGas(
+        void erc20ClubFactory.getEstimateGas(
           account,
           args.clubParams as ClubMixinParams,
           // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
@@ -100,14 +100,14 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.ERC721CollectiveFactory]: {
       syndicateContract: erc721CollectiveFactory,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!erc721CollectiveFactory) return;
         // convert price to wei
         args.collectiveParams.ethPrice = web3.utils.toWei(
           String(args.collectiveParams.ethPrice)
         );
 
-        erc721CollectiveFactory.getEstimateGas(
+        void erc721CollectiveFactory.getEstimateGas(
           account,
           args.collectiveParams as ICollectiveParams,
           // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
@@ -117,7 +117,7 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.MintPolicy]: {
       syndicateContract: policyMintERC20,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !policyMintERC20 ||
           !args.clubAddress ||
@@ -130,7 +130,7 @@ const useGasDetails: (props: IProps) => {
         const startTime = moment(now).valueOf();
         const endTime = moment(moment(now).valueOf()).add(1, 'days').valueOf();
 
-        policyMintERC20.getEstimateGas(
+        void policyMintERC20.getEstimateGas(
           account,
           args.clubAddress,
           startTime,
@@ -144,7 +144,7 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.OwnerMintModule]: {
       syndicateContract: OwnerMintModule,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !OwnerMintModule ||
           !args.clubAddress ||
@@ -152,7 +152,7 @@ const useGasDetails: (props: IProps) => {
           !args.amountToMint
         )
           return;
-        OwnerMintModule.getEstimateGas(
+        void OwnerMintModule.getEstimateGas(
           account,
           args.clubAddress,
           args.memberAddress,
@@ -164,12 +164,12 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.EthPriceMintModule]: {
       syndicateContract: ethPriceMintModule,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!ethPriceMintModule || !args.collectiveAddress || !args.mintPrice)
           return;
         // convert price to wei
         args.mintPrice = web3.utils.toWei(String(args.mintPrice));
-        ethPriceMintModule.getEstimateGas(
+        void ethPriceMintModule.getEstimateGas(
           account,
           args.collectiveAddress,
           args.mintPrice,
@@ -180,10 +180,10 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.FixedRenderer]: {
       syndicateContract: fixedRenderer,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!fixedRenderer || !args.collectiveAddress || !args.metadataCid)
           return;
-        fixedRenderer.getEstimateGas(
+        void fixedRenderer.getEstimateGas(
           account,
           args.collectiveAddress,
           args.metadataCid,
@@ -194,14 +194,14 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.MaxPerMemberERC721]: {
       syndicateContract: maxPerMemberERC721,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !maxPerMemberERC721 ||
           !args.collectiveAddress ||
           !args.maxPerWallet
         )
           return;
-        maxPerMemberERC721.getEstimateGas(
+        void maxPerMemberERC721.getEstimateGas(
           account,
           args.collectiveAddress,
           args.maxPerWallet,
@@ -212,13 +212,13 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.TimeRequirements]: {
       syndicateContract: timeRequirements,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!timeRequirements) return;
         if (!args.collectiveAddress && !args.clubAddress) return;
 
         const token = args.collectiveAddress || args.clubAddress;
         if (activeRow === EditRowIndex.CloseTimeWindow) {
-          timeRequirements.getEstimateGasCloseTimeWindow(
+          void timeRequirements.getEstimateGasCloseTimeWindow(
             account,
             token,
             // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
@@ -226,10 +226,10 @@ const useGasDetails: (props: IProps) => {
           );
         } else {
           if (!args.collectiveMintEndTime && !args.clubMintEndTime) return;
-          const mintEndTime = args.collectiveAddress
+          const mintEndTime: number = args.collectiveAddress
             ? args.collectiveMintEndTime
             : args.clubMintEndTime;
-          timeRequirements.getEstimateGas(
+          void timeRequirements.getEstimateGas(
             account,
             token,
             0,
@@ -242,14 +242,14 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.MaxTotalSupplyERC721]: {
       syndicateContract: maxTotalSupplyERC721,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !maxTotalSupplyERC721 ||
           !args.collectiveAddress ||
           !args.maxTotalSupply
         )
           return;
-        maxTotalSupplyERC721.getEstimateGas(
+        void maxTotalSupplyERC721.getEstimateGas(
           account,
           args.collectiveAddress,
           args.maxTotalSupply,
@@ -260,9 +260,9 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.ERC721Collective]: {
       syndicateContract: erc721Collective,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!erc721Collective) return;
-        erc721Collective.getEstimateGas(
+        void erc721Collective.getEstimateGas(
           account,
           args.collectiveAddress,
           args.isTransferable,
@@ -273,10 +273,10 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.EthPriceMintModuleMint]: {
       syndicateContract: ethPriceMintModule,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!ethPriceMintModule || !args.priceEth || !args.contractAddress)
           return;
-        ethPriceMintModule.getMintEstimateGas(
+        void ethPriceMintModule.getMintEstimateGas(
           args.priceEth,
           args.contractAddress,
           '1', // Hardcode to mint a single token
@@ -288,14 +288,14 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.MaxMemberCountMixin]: {
       syndicateContract: maxMemberCountMixin,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !maxMemberCountMixin ||
           !args.clubAddress ||
           !args.maxNumberOfMembers
         )
           return;
-        maxMemberCountMixin.getEstimateGas(
+        void maxMemberCountMixin.getEstimateGas(
           account,
           args.clubAddress,
           args.maxNumberOfMembers,
@@ -306,10 +306,10 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.MaxTotalSupplyMixin]: {
       syndicateContract: maxTotalSupplyMixin,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!maxTotalSupplyMixin || !args.clubAddress || !args.totalSupply)
           return;
-        maxTotalSupplyMixin.getEstimateGas(
+        void maxTotalSupplyMixin.getEstimateGas(
           account,
           args.clubAddress,
           getWeiAmount(
@@ -325,7 +325,7 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.TokenGatedMixin]: {
       syndicateContract: tokenGatedMixin,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !tokenGatedMixin ||
           !args.clubAddress ||
@@ -334,7 +334,7 @@ const useGasDetails: (props: IProps) => {
           !args.balances.length
         )
           return;
-        tokenGatedMixin.getEstimateGas(
+        void tokenGatedMixin.getEstimateGas(
           account,
           args.clubAddress,
           args.logicOperator,
@@ -347,7 +347,7 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.CloseClubPostMint]: {
       syndicateContract: erc721Collective,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!timeRequirements || !args.clubAddress) return;
         timeRequirements.getEstimateGasCloseTimeWindow(
           account,
@@ -359,7 +359,7 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.DistributionsERC20]: {
       syndicateContract: distributionsERC20,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (
           !distributionsERC20 ||
           !args.clubAddress ||
@@ -368,7 +368,7 @@ const useGasDetails: (props: IProps) => {
           !args.numSelectedTokens
         )
           return;
-        distributionsERC20.getEstimateGasDistributeERC20(
+        void distributionsERC20.getEstimateGasDistributeERC20(
           account,
           args.numSelectedTokens,
           args.clubAddress,
