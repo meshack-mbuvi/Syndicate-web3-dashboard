@@ -77,8 +77,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20FactoryNative: '',
     erc20ClubFactory: '0xed582132c33de5b5a661de3d2dce5fb8f2d8f33d',
     DepositTokenMintModule: '0x56b21198b67ffa1d2882463401bcdd810b11bb1c',
-    distributionsERC20: '0x07a93cb58de13d594e42748827fcb8ca89aa3815',
-    distributionsETH: '0xeb1081b1bc69bbc5f39c7ae4a2d26618ff8fa998',
+    distributionsERC20: '0xd1b5206bd5f4fdc590d1c65a30a6dacd6476e8e4',
+    distributionsETH: '0xd1261b73ed8ed9cd2551f9c3e97078b8b31b412b',
     ERC721MintPolicy: '',
     NativeMintModule: '0xc6984ed3b22f212e0c8a3dc80454478b58f5c176', // EthMintModule-
     MerkleDistributorModule: '0x19cf03a6f1190062eeafd70c42cbc5f7ecff05a8',
