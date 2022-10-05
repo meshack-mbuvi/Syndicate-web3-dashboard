@@ -26,7 +26,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import { Dispatch } from 'redux';
 
 export const ERC20TokenDefaultState = {
-  isValidClub: false,
+  isValid: false,
   name: '',
   owner: '',
   address: '',
@@ -112,9 +112,13 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount()
         ]).catch(() => {
+          // High chances that this club does not exist in active network
           return [];
         });
 
+      if (!name || !owner) return ERC20TokenDefaultState;
+
+      // High likelihood this club does not exist in active network
       const totalSupply = await ERC20tokenContract.totalSupply().then(
         (wei: any) => getWeiAmount(web3, wei, tokenDecimals, false)
       );
@@ -320,7 +324,6 @@ export const setERC20Token =
       },
       erc20TokenSliceReducer: { activeModuleDetails }
     } = getState();
-
     dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoadingClub(true));
     try {
@@ -334,13 +337,11 @@ export const setERC20Token =
         activeModuleDetails?.activeMintModuleReqs,
         web3
       );
-
       const { _nativeDepositToken } = await isNativeDepositToken(
         ERC20tokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule
       );
-
       dispatch(
         setERC20TokenDetails({
           ...erc20Token,
@@ -355,7 +356,6 @@ export const setERC20Token =
             : erc20Token.maxTotalDeposits
         })
       );
-
       dispatch(setLoadingClub(false));
     } catch (error) {
       console.log({ error });

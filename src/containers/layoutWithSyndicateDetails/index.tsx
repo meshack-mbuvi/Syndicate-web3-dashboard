@@ -3,11 +3,10 @@ import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import IClubEmptyState from '@/components/shared/SyndicateEmptyState';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import {
   getDepositDetails,
@@ -20,8 +19,6 @@ import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
-import { useProvider } from '@/hooks/web3/useProvider';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -52,7 +49,6 @@ import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { syndicateActionConstants } from 'src/components/syndicates/shared/Constants';
 import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import { Assets } from './assets';
@@ -135,25 +131,6 @@ const LayoutWithSyndicateDetails: FC<{
 
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const { switchNetworks } = useConnectWalletContext();
-  const { providerName } = useProvider();
-  const [urlNetwork, setUrlNetwork] = useState<any>(null);
-
-  const {
-    query: { chain }
-  } = router;
-
-  useEffect(() => {
-    if (chain) {
-      GetNetworkByName(chain);
-    }
-  }, [chain]);
-
-  const GetNetworkByName = (name: any) => {
-    const network = useGetNetwork(name);
-    setUrlNetwork(network);
-  };
 
   const {
     loading: queryLoading,
@@ -404,62 +381,6 @@ const LayoutWithSyndicateDetails: FC<{
     [name]
   );
 
-  // get static text from constants
-  const { noTokenTitleText } = syndicateActionConstants;
-
-  // set texts to display on empty state
-  // we'll initialize this to instances where address is not a syndicate.
-  // if the address is invalid, this texts will be updated accordingly.
-
-  // set syndicate empty state.
-  // component will be rendered if the address is not a syndicate
-  const syndicateEmptyState = (
-    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-        <div className="w-full flex justify-center mb-6">
-          <img
-            className="inline w-12"
-            src="/images/syndicateStatusIcons/warning-triangle-gray.svg"
-            alt="Warning"
-          />
-        </div>
-        <p className="text-lg md:text-2xl text-center mb-3">
-          {noTokenTitleText}
-        </p>
-        <BlockExplorerLink resourceId={clubAddress} />
-        {urlNetwork?.chainId &&
-        urlNetwork?.chainId !== activeNetwork?.chainId ? (
-          <div
-            className={`mt-5 flex justify-center flex-col w-full rounded-1.5lg p-6 bg-${urlNetwork.metadata.colors.background} bg-opacity-15`}
-          >
-            <div className="text-lg text-center mb-3">
-              This club exists on {urlNetwork.name}
-            </div>
-            <div className="flex justify-center mb-3">
-              <img width={40} height={40} src={urlNetwork.logo} alt="" />
-            </div>
-            {providerName === 'WalletConnect' ? (
-              <div className="text-sm text-center text-gray-syn3">
-                You&#39;re using WalletConnect. To switch networks, you&#39;ll
-                need to do so directly in your wallet.
-              </div>
-            ) : (
-              <button
-                className="primary-CTA"
-                onClick={() => {
-                  // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-                  switchNetworks(urlNetwork.chainId);
-                }}
-              >
-                Switch to {urlNetwork.name}
-              </button>
-            )}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-
   const [activeTab, setActiveTab] = useState('assets');
 
   const isActive = !depositsEnabled;
@@ -497,7 +418,7 @@ const LayoutWithSyndicateDetails: FC<{
               !isValid &&
               !loading &&
               !isDemoMode ? (
-                syndicateEmptyState
+                <IClubEmptyState activeNetwork={activeNetwork} />
               ) : (
                 <div className="container mx-auto">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}

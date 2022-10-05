@@ -1,6 +1,7 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import Layout from '@/components/layout';
+import SyndicateEmptyState from '@/components/shared/SyndicateEmptyState';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
@@ -8,6 +9,8 @@ import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { INetwork } from '@/Networks/networks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -120,7 +123,7 @@ const Distribute: FC = () => {
   const {
     pathname,
     isReady,
-    query: { clubAddress }
+    query: { clubAddress, chain }
   } = router;
 
   const isDemoMode = useDemoMode(clubAddress as string);
@@ -131,6 +134,19 @@ const Distribute: FC = () => {
     activeNetwork,
     account
   );
+
+  const [urlNetwork, setUrlNetwork] = useState<INetwork>();
+
+  useEffect(() => {
+    if (chain) {
+      GetNetworkByName(chain as string);
+    }
+  }, [chain]);
+
+  const GetNetworkByName = (name: string): void => {
+    const network: INetwork = useGetNetwork(name);
+    setUrlNetwork(network);
+  };
 
   useEffect(() => {
     if (!isReady || isEmpty(web3)) return;
@@ -646,14 +662,19 @@ const Distribute: FC = () => {
   const dotIndicatorOptions = ['Distribute', 'Review'];
 
   // Redirect to /manage
-  const handleExitClick = () =>
-    router.replace(
-      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
+  const handleExitClick = (): void => {
+    void router.replace(
+      `/clubs/${clubAddress as string}/manage${
+        '?chain=' + activeNetwork.network
+      }`
     );
+  };
 
-  const handlePrevious = (event: any) => {
+  const handlePrevious = (event: any): void => {
     event.preventDefault();
+
     if (activeIndex === 0) return;
+
     setActiveIndex(activeIndex - 1);
     setCurrentStep(Steps.selectTokens);
   };
@@ -662,6 +683,9 @@ const Distribute: FC = () => {
     <>
       {!isClubFound ? (
         <NotFoundPage />
+      ) : urlNetwork?.chainId &&
+        urlNetwork?.chainId !== activeNetwork?.chainId ? (
+        <SyndicateEmptyState activeNetwork={activeNetwork} />
       ) : (
         <>
           {currentStep == Steps.selectTokens ? (

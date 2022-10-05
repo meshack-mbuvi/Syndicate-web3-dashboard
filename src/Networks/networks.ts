@@ -1,3 +1,41 @@
+export interface INetwork {
+  name: string;
+  displayName: string;
+  shortName: string;
+  network: string;
+  testnet: boolean;
+  chainId: number;
+  networkId: number;
+  testNetwork: false;
+  rpcUrl: string;
+  publicRPC: string;
+  logo: string;
+  blockExplorer: {
+    name: string;
+    baseUrl: string;
+    api: string;
+    resources: {
+      transaction: string;
+      address: string;
+    };
+  };
+  nativeCurrency: {
+    symbol: string;
+    name: string;
+    decimals: string;
+    exchangeRate: number;
+    logo: string;
+  };
+  gnosis: {
+    txServiceUrl: string;
+  };
+  metadata: {
+    colors: {
+      background: string;
+    };
+  };
+}
+
 export const NETWORKS = Object.freeze({
   1: {
     name: 'Ethereum Mainnet',

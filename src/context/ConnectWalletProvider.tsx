@@ -200,8 +200,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * Instantiates contract, and adds it together with web3 provider details to
    * store
    */
-  // @ts-expect-error TS(7030): Not all code paths return a value.
-  const initializeWeb3 = async () => {
+  const initializeWeb3 = async (): Promise<void> => {
     try {
       // initialize contract now
       const contracts = await getSyndicateContracts(web3, activeNetwork);
@@ -216,7 +215,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
       if (account) {
-        return dispatch(
+        dispatch(
           setLibrary({
             account,
             web3: web3,
@@ -226,7 +225,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
           })
         );
       } else {
-        return dispatch(
+        dispatch(
           setLibrary({
             account,
             // @ts-expect-error TS(2322): Type 'Web3 | undefined' is not assignable to type 'IWeb3'.
@@ -317,7 +316,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       };
 
       const handleChainChanged = async () => {
-        getCurrentEthNetwork();
+        await getCurrentEthNetwork();
         await newWeb3Instance(activeProvider);
         const { network, ethersProvider } = await getProviderAccountAndNetwork(
           activeProvider
@@ -368,7 +367,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     const [address, network] = await Promise.all([
       ethersProvider.getSigner().getAddress(),
       ethersProvider.getNetwork()
-    ]);
+    ]).catch(() => []);
     // if (network.chainId == 1) {
     //   // ens only works for mainnet
     //   const ensName = await p.lookupAddress(address);
@@ -496,7 +495,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     // check current network type
-    getCurrentEthNetwork();
+    void getCurrentEthNetwork();
   }, [currentEthereumNetwork]);
 
   // always show the success modal for only 1 second
@@ -535,7 +534,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [chainId, supportedNetworks]);
 
   // This handles the connect for a wallet
-  const connectWallet = async (providerName: string, walletName?: string) => {
+  const connectWallet = async (
+    providerName: string,
+    walletName?: string
+  ): Promise<void> => {
     closeWalletModal();
     setWalletConnecting(true);
 
