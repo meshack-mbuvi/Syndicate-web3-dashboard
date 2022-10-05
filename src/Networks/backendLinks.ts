@@ -3,11 +3,12 @@ export const BACKEND_LINKS = Object.freeze({
   1: {
     graphs: {
       backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT
+      theGraph: process.env.NEXT_PUBLIC_SATSUMA_MAINNET_ENDPOINT
     },
     apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
   },
   // Rinkeby
+  // rinkeby not updated with satsuma because it will be sunset
   4: {
     graphs: {
       backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
@@ -19,7 +20,7 @@ export const BACKEND_LINKS = Object.freeze({
   5: {
     graphs: {
       backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_GOERLI_ENDPOINT
+      theGraph: process.env.NEXT_PUBLIC_SATSUMA_GOERLI_ENDPOINT
     },
     apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
   },
@@ -27,7 +28,7 @@ export const BACKEND_LINKS = Object.freeze({
   137: {
     graphs: {
       backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_MATIC_ENDPOINT
+      theGraph: process.env.NEXT_PUBLIC_SATSUMA_MATIC_ENDPOINT
     },
     apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
   }
