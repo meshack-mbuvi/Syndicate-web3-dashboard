@@ -5,7 +5,7 @@ export default {
   title: '2. Atoms/Input Field/Search Input'
 };
 
-const Template = (args) => {
+const Template = () => {
   const [value, setValue] = useState('');
   return (
     <SearchInput
@@ -18,4 +18,3 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
-Default.args = {};

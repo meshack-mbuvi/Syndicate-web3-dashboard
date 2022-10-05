@@ -9,17 +9,15 @@ import React from 'react';
  * @param {*} props
  */
 export const SearchInput = (props: {
-  onChangeHandler;
   searchValue: string;
   name?: string;
   id?: string;
-  onChangeHandler: any;
+  onChangeHandler: (event: any) => void;
   disabled?: boolean;
   error?: string;
   column?: boolean;
   full?: boolean;
-  searchValue: string;
-  itemsCount?: any;
+  itemsCount?: number;
   customClass?: string;
   searchItem?: string;
   clearSearchValue?: (event: any) => void;

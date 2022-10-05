@@ -15,7 +15,7 @@ const initialState: {
   distributionMembers: [],
   gasEstimate: {
     tokenSymbol: 'ETH',
-    tokenAmount: '0.02',
+    tokenAmount: '0.00',
     fiatAmount: '25'
   },
   isLoading: true
