@@ -91,7 +91,10 @@ const CollectiveDescription = () => {
 const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: {
+        account,
+        ethereumNetwork: { invalidEthereumNetwork }
+      }
     }
   } = useSelector((state: AppState) => state);
 
@@ -132,12 +135,15 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
       <div className={`flex relative flex-col mt-6 space-y-5`}>
         <div
           className={`flex relative flex-col mt-6 w-full space-y-5 ${
-            permissionType === PermissionType.NON_MEMBER || !account
+            permissionType === PermissionType.NON_MEMBER ||
+            !account ||
+            invalidEthereumNetwork
               ? 'opacity-70 filter blur-md'
               : ''
           }`}
         >
-          {permissionType !== PermissionType.NON_MEMBER ? (
+          {permissionType !== PermissionType.NON_MEMBER &&
+          !invalidEthereumNetwork ? (
             activities.length || creationActivity.length ? (
               <div className="space-y-5">
                 {activities.length
@@ -165,7 +171,9 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
           )}
         </div>
 
-        {permissionType === PermissionType.NON_MEMBER || !account ? (
+        {permissionType === PermissionType.NON_MEMBER ||
+        !account ||
+        invalidEthereumNetwork ? (
           <div className="absolute top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
             <MembersOnly />
           </div>
