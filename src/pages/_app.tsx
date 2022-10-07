@@ -33,7 +33,9 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
 import { BACKEND_LINKS } from '@/Networks/backendLinks';
+
 import { SplitFactory } from '@splitsoftware/splitio-react';
+import useIsInDarkMode from '@/hooks/useDarkMode';
 
 //Binding events.
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -81,7 +83,11 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
         {/* Safari favicon */}
         <link rel="icon" href="/favicon.png" sizes="any" />
         {/* Favicon */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>{' '}
+        <link
+          rel="icon"
+          href={useIsInDarkMode() ? '/favicon-white.svg' : 'favicon.svg'}
+          type="image/svg+xml"
+        ></link>{' '}
         <FontsPreloader />
         <meta
           name="viewport"
