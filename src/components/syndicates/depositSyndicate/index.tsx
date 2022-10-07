@@ -624,7 +624,7 @@ const DepositSyndicate: React.FC = () => {
   useEffect(() => {
     if (depositAmount) {
       if (
-        parseInt(currentMemberAllowance) >= parseInt(depositAmount) ||
+        parseFloat(currentMemberAllowance) >= parseFloat(depositAmount) ||
         nativeDepositToken
       ) {
         // allowance already exists. Proceed with deposit
@@ -823,6 +823,7 @@ const DepositSyndicate: React.FC = () => {
             // was approved successfully or not.
             await checkCurrentMemberAllowance();
             setSubmittingAllowanceApproval(false);
+            setSufficientAllowanceSet(true);
             resolve(receipt);
 
             // update current transaction step
