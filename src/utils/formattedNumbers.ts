@@ -6,7 +6,9 @@ export const numberWithCommas = (number: string | number): string => {
   if (!number) return '0';
 
   // Don't group decimal part
-  const [wholePart, decimalPart] = number.toString().split('.');
+  const [wholePart, decimalPart] = parseFloat(number.toString())
+    .toString()
+    .split('.');
 
   return (
     wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') +

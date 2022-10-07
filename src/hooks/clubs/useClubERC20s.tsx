@@ -310,7 +310,7 @@ const useClubERC20s = () => {
             maxTotalSupply
           }: any) => {
             let clubERC20Contract;
-            let decimals = 0;
+            let decimals = '0';
             let clubName = '';
             let clubSymbol = '';
 
@@ -322,7 +322,6 @@ const useClubERC20s = () => {
                 activeNetwork
               );
 
-              // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'number'.
               decimals = await clubERC20Contract.decimals();
               clubName = await clubERC20Contract.name();
               clubSymbol = await clubERC20Contract.symbol();
@@ -341,7 +340,7 @@ const useClubERC20s = () => {
             const totalSupplyFromWei = getWeiAmount(
               web3,
               totalSupply,
-              decimals,
+              +decimals,
               false
             );
 

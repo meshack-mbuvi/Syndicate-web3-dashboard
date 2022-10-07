@@ -2,7 +2,10 @@ import { Callout } from '@/components/callout';
 import { CtaButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import {
+  floatedNumberWithCommas,
+  numberWithCommas
+} from '@/utils/formattedNumbers';
 import React, { useState } from 'react';
 
 interface Props {
@@ -72,7 +75,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
           ) : (
             <>
               <div className="truncate mr-1">
-                {floatedNumberWithCommas(tokenDetails.tokenAmount)}
+                {numberWithCommas(tokenDetails.tokenAmount)}
               </div>
               <div>{tokenDetails.tokenSymbol}</div>
             </>

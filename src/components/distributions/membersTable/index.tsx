@@ -6,7 +6,7 @@ import {
   AddressWithENS
 } from '@/components/shared/ensAddress';
 import { B2, H4 } from '@/components/typography';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { numberWithCommas } from '@/utils/formattedNumbers';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
@@ -23,7 +23,12 @@ interface Props {
       tokenIcon: string;
     }[];
   }[];
-  tokens: { tokenAmount: string; symbol: string; icon: string }[];
+  tokens: {
+    tokenSymbol: string;
+    tokenAmount: string;
+    symbol: string;
+    icon: string;
+  }[];
   activeAddresses: Array<string>;
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
@@ -62,7 +67,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
       ensName: string;
       address: string;
       clubTokenHolding?: number;
-      distributionShare: number;
+      distributionShare: string | number;
       ownershipShare: number;
       selected: boolean;
       receivingTokens: {
@@ -123,8 +128,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
           return {
             ...rest,
             ownershipShare,
-            distributionShare:
-              (+ownershipShare * 100) / cumulativeActiveMemberOwnership,
+            distributionShare: (
+              (+ownershipShare * 100) /
+              cumulativeActiveMemberOwnership
+            ).toFixed(4),
             receivingTokens: tokens.map(({ tokenAmount, symbol, icon }) => {
               return {
                 amount:
@@ -396,7 +403,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
             {/* Percentage */}
             <div>
               {isAddressActive(memberDetails.address)
-                ? parseFloat(`${memberDetails.distributionShare}`).toFixed(2)
+                ? parseFloat(`${memberDetails.distributionShare}`)
                 : '0'}
               %
             </div>
@@ -427,13 +434,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
                   {memberDetails.receivingTokens.find((receivingToken) => {
                     return receivingToken.tokenSymbol === tokenSymbol;
                   }) && isAddressActive(memberDetails.address)
-                    ? floatedNumberWithCommas(
+                    ? numberWithCommas(
                         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        memberDetails.receivingTokens?.find(
-                          (receivingToken) => {
-                            return receivingToken.tokenSymbol === tokenSymbol;
-                          }
-                        ).amount
+                        memberDetails.receivingTokens
+                          ?.find((receivingToken) => {
+                            return receivingToken?.tokenSymbol === tokenSymbol;
+                          })
+                          .amount.toFixed(4)
                       )
                     : 0}
                 </div>
@@ -489,7 +496,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
               key={index}
             >
               <div>
-                {floatedNumberWithCommas(tokenAmountTotals[index])}{' '}
+                {numberWithCommas(
+                  parseFloat(tokenAmountTotals[index]).toFixed(4)
+                )}{' '}
                 <span className={`text-gray-syn4`}>{tokenSymbol}</span>
               </div>
             </div>

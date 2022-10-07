@@ -207,8 +207,8 @@ const Distribute: FC = () => {
         // @ts-expect-error TS(2345): Argument of type '{ tokenAmount: any; fiatAmount: any; tokenIcon: any'..... Remove this comment to see the full error message
         distributionTokens.map(
           ({ symbol, tokenAmount, fiatAmount, icon }: any) => ({
-            tokenAmount,
             fiatAmount,
+            tokenAmount: parseFloat(tokenAmount).toFixed(4),
             tokenIcon: icon,
             tokenSymbol: symbol,
             isLoading: loadingAssets
