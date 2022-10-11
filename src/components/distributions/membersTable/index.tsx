@@ -7,6 +7,7 @@ import {
 } from '@/components/shared/ensAddress';
 import { B2, H4 } from '@/components/typography';
 import { numberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
@@ -155,12 +156,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
   }, [activeAddresses]);
 
   const normalCellHeight = 'h-16';
-  const memberCellStyles = (address: any) => {
+  const memberCellStyles = (address: string): string => {
     return `${
-      hoveredRow === address && 'bg-gray-syn7'
+      (hoveredRow === address && 'bg-gray-syn8') || ''
     } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
       address === _membersDetails[0].address ? 'border-t-0' : 'border-t-1'
-    } ${!isAddressActive(address) && 'text-gray-syn5'}`;
+    } ${(!isAddressActive(address) && 'text-gray-syn5') || ''}`;
   };
   const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
   const wideCellStyles = `w-60 xl:w-72`;
@@ -282,11 +283,14 @@ export const DistributionMembersTable: React.FC<Props> = ({
               className={`flex space-x-2 items-center text-right justify-end ${headerCellStyles}`}
             >
               <div>Receiving</div>
-              <img
-                className="w-6 h-6"
-                src={allUniqueReceivingTokens.tokenIcons[index]}
-                alt=""
-              />
+              <div className="flex align-center">
+                <Image
+                  src={allUniqueReceivingTokens.tokenIcons[index]}
+                  alt=""
+                  width={24}
+                  height={24}
+                />
+              </div>
               <div>{tokenSymbol}</div>
             </div>
           );
@@ -382,9 +386,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
           {/* Member name */}
           <div
-            className={`flex items-center space-x-4 ${wideCellStyles} ${memberCellStyles(
-              memberDetails.address
-            )} ${!isAddressActive(memberDetails.address) && 'opacity-50'}`}
+            className={`flex items-center space-x-4 ${
+              (!isAddressActive(memberDetails.address) && 'text-gray-syn5') ||
+              ''
+            } ${wideCellStyles} ${memberCellStyles(memberDetails.address)}`}
           >
             <AddressWithENS
               ethersProvider={ethersProvider}

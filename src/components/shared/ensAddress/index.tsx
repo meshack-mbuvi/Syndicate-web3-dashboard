@@ -1,8 +1,8 @@
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import { formatAddress } from '@/utils/formatAddress';
 import { Web3Provider } from '@ethersproject/providers';
-import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 
 export enum AddressImageSize {
   SMALLER = 'w-5 h-5',
@@ -82,7 +82,7 @@ export const AddressWithENS: React.FC<Props> = ({
     <div
       className={`flex items-center space-x-${
         layout === AddressLayout.TWO_LINES ? '4' : '3'
-      } ${extraClasses}`}
+      } ${extraClasses ?? ''}`}
       {...rest}
     >
       {data?.avatar ? (
@@ -104,7 +104,9 @@ export const AddressWithENS: React.FC<Props> = ({
       ) : null}
       <div
         className={`${
-          layout === AddressLayout.ONE_LINE && 'flex items-center space-x-2'
+          (layout === AddressLayout.ONE_LINE &&
+            'flex items-center space-x-2') ||
+          ''
         } transition-all relative`}
         style={{
           top: '-0.0rem'
@@ -125,11 +127,11 @@ export const AddressWithENS: React.FC<Props> = ({
         <div
           className={`transition-all duration-500 ${
             !data?.name && address
-              ? `${layout === AddressLayout.TWO_LINES && '-mt-4'} ${
-                  layout === AddressLayout.ONE_LINE && 'hidden'
+              ? `${(layout === AddressLayout.TWO_LINES && '-mt-4') || ''} ${
+                  (layout === AddressLayout.ONE_LINE && 'hidden') || ''
                 } opacity-0` // hidden
-              : `${layout === AddressLayout.TWO_LINES && 'mt-0'} ${
-                  layout === AddressLayout.ONE_LINE && '-mt-2'
+              : `${(layout === AddressLayout.TWO_LINES && 'mt-0') || ''} ${
+                  (layout === AddressLayout.ONE_LINE && '-mt-2') || ''
                 } opacity-100` // visible
           }`}
         >
