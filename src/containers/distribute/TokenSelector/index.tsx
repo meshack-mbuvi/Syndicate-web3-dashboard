@@ -66,16 +66,16 @@ const TokenSelector: React.FC<Props> = ({
                 className="flex space-x-2"
               >
                 <Image
-                  src="/images/question-gray5.svg"
+                  src="/images/question.svg"
                   alt=""
                   className="mr-2"
                   height={16}
                   width={16}
                 />
-                <B3 extraClasses="flex text-gray-syn5 hidden md:flex">
+                <B3 extraClasses="flex text-gray-syn4 hidden md:flex">
                   Why don’t NFTs show up here?
                 </B3>
-                <B4 extraClasses="flex text-gray-syn5 md:hidden">
+                <B4 extraClasses="flex text-gray-syn4 md:hidden">
                   Why don’t NFTs show up here?
                 </B4>
               </div>

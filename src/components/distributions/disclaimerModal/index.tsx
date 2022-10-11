@@ -32,7 +32,7 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
             By proceeding, I agree that I reviewed and confirm the following:
             <ul className="list-disc ml-8 mt-2">
               <li>
-                Distributions cannot be reversed and may create a taxable event
+                Distributions cannot be reversed and may create a taxable event.
               </li>
               <li>
                 Distributing proceeds of an asset to members who did not invest

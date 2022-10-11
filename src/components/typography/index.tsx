@@ -375,8 +375,8 @@ export const B1 = ({
   return (
     <div
       className={`text-lg transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        (weightClassOverride && weightClassOverride) || ''
+      } ${extraClasses || ''}`}
       {...rest}
     >
       {children}
@@ -399,7 +399,7 @@ export const B2 = ({
     <div
       className={`text-base transform transition-font-size ${
         weightClassOverride ?? ''
-      } ${extraClasses}`}
+      } ${extraClasses || ''}`}
       {...rest}
     >
       {children}
@@ -492,8 +492,8 @@ export const M2 = ({
   return (
     <div
       className={`text-sm font-mono transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        (weightClassOverride && weightClassOverride) || ''
+      } ${extraClasses || ''}`}
       {...rest}
     >
       {children}
@@ -517,8 +517,8 @@ export const D1 = ({
   return (
     <div
       className={`text-base font-mono transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        (weightClassOverride && weightClassOverride) || ''
+      } ${extraClasses || ''}`}
       {...rest}
     >
       {children}
@@ -540,8 +540,8 @@ export const D2 = ({
   return (
     <div
       className={`text-sm font-mono transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+        (weightClassOverride && weightClassOverride) || ''
+      } ${extraClasses || ''}`}
       {...rest}
     >
       {children}

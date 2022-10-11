@@ -141,7 +141,7 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
           <H4 extraClasses="text-center mt-10 mb-4 leading-4 text-white">
             {processingModalTitle}
           </H4>
-          <B2 extraClasses="text-center font-Slussen leading-5 text-gray-lightManatee">
+          <B2 extraClasses="text-center leading-5 text-gray-lightManatee">
             {processingModalDescription}
           </B2>
 

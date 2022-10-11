@@ -681,18 +681,18 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
                 <>
                   <div className="md:flex ml-16 max-h-14 hidden space-x-8">
                     <PrimaryButton
-                      customClasses="border-none font-Slussen"
+                      customClasses="border-none"
                       textColor="text-blue"
                       onClick={handleCancelAction}
                     >
                       Cancel
                     </PrimaryButton>
                     <PrimaryButton
-                      customClasses={`border-none font-Slussen ${
+                      customClasses={`border-none ${
                         activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
                       } px-8 py-4`}
                       textColor={`${
-                        activeMembersChanged ? 'text-black' : 'text-white'
+                        activeMembersChanged ? 'text-black' : 'text-gray-syn4'
                       }`}
                       onClick={handleSaveAction}
                     >
@@ -704,14 +704,14 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
                   <div className="fixed bottom-0 md:hidden z-10 left-0 w-full">
                     <div className="flex container justify-between bg-black w-full p-5 mx-auto">
                       <PrimaryButton
-                        customClasses="border-none font-Slussen"
+                        customClasses="border-none"
                         textColor="text-blue"
                         onClick={handleCancelAction}
                       >
                         Cancel
                       </PrimaryButton>
                       <PrimaryButton
-                        customClasses={`border-none font-Slussen ${
+                        customClasses={`border-none ${
                           activeMembersChanged ? 'bg-white' : 'bg-gray-syn7'
                         } px-8 py-4`}
                         textColor={`${

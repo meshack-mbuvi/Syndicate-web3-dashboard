@@ -1,9 +1,13 @@
+import Image from 'next/image';
+import { B2 } from '../typography';
+
+interface Step {
+  title: string;
+  description?: string | any;
+  isInErrorState?: boolean;
+}
 interface Props {
-  steps: {
-    title: string;
-    description?: string | any;
-    isInErrorState?: boolean;
-  }[];
+  steps: Step[];
   alwaysShowDescriptions?: boolean;
   activeIndex: number;
   extraClasses: string;
@@ -14,9 +18,10 @@ export const StepsOutline: React.FC<Props> = ({
   alwaysShowDescriptions,
   activeIndex,
   extraClasses
-}) => {
+}: Props) => {
   const transitionStyles = 'transition-all duration-500';
-  const dynamicCircleStyles = (step: any, index: any) => {
+
+  const dynamicCircleStyles = (step: Step, index: number): string => {
     return `rounded-full h-5 w-5 border-0.5 overflow-hidden ${transitionStyles} ${
       step.isInErrorState && activeIndex >= index
         ? 'border-red-error'
@@ -31,7 +36,8 @@ export const StepsOutline: React.FC<Props> = ({
         : 'bg-transparent'
     }`;
   };
-  const dynamicCheckmarkIconStyles = (step: any, index: any) => {
+
+  const dynamicCheckmarkIconStyles = (step: Step, index: number): string => {
     return `mx-auto vertically-center ${transitionStyles} ${
       step.isInErrorState
         ? 'opacity-0'
@@ -40,17 +46,20 @@ export const StepsOutline: React.FC<Props> = ({
         : 'opacity-0'
     }`;
   };
-  const dynamicLineStyles = (step: any, index: any) => {
+
+  const dynamicLineStyles = (index: number): string => {
     return `flex-grow mx-auto w-0.5 ${transitionStyles} ${
       activeIndex > index ? 'bg-blue-neptune' : 'bg-gray-syn6'
     }`;
   };
-  const dynamicTitleStyles = (step: any, index: any) => {
+
+  const dynamicTitleStyles = (index: number): string => {
     return `${transitionStyles} ${
       activeIndex >= index ? 'text-white' : 'text-gray-syn5'
     }`;
   };
-  const dynamicDescriptionStyles = (step: any, index: any) => {
+
+  const dynamicDescriptionStyles = (index: number): string => {
     return `text-sm ${
       activeIndex >= index ? 'text-gray-syn4' : 'text-gray-syn6'
     } ${transitionStyles} ${
@@ -65,24 +74,27 @@ export const StepsOutline: React.FC<Props> = ({
       {/* Circle + line */}
       <div className="flex flex-col">
         {/* Circle */}
-        <div className={`${dynamicCircleStyles(step, index)}`}>
-          <img
-            src={`/images/checkmark-white.svg`}
-            alt="Checkmark"
-            className={dynamicCheckmarkIconStyles(step, index)}
-          />
+        <div className={`${dynamicCircleStyles(step, index)} mt-0.5`}>
+          <div className={`${dynamicCheckmarkIconStyles(step, index)} ml-0.5`}>
+            <Image
+              src={`/images/checkmark-white.svg`}
+              alt="Checkmark"
+              width={12}
+              height={12}
+            />
+          </div>
         </div>
 
         {/* Line */}
         {index !== steps.length - 1 && (
-          <div className={dynamicLineStyles(step, index)} />
+          <div className={`${dynamicLineStyles(index)} -mb-0.5`} />
         )}
       </div>
 
       {/* Text */}
       <div className="mb-6">
-        <div className={dynamicTitleStyles(step, index)}>{step.title}</div>
-        <div className={dynamicDescriptionStyles(step, index)}>
+        <B2 className={`${dynamicTitleStyles(index)}`}>{step.title}</B2>
+        <div className={dynamicDescriptionStyles(index)}>
           {step.description}
         </div>
       </div>

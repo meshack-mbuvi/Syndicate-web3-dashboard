@@ -501,9 +501,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
               key={index}
             >
               <div>
-                {numberWithCommas(
-                  parseFloat(tokenAmountTotals[index]).toFixed(4)
-                )}{' '}
+                {parseFloat(tokenAmountTotals[index]) > 0
+                  ? numberWithCommas(
+                      parseFloat(tokenAmountTotals[index]).toFixed(4)
+                    )
+                  : '0'}{' '}
                 <span className={`text-gray-syn4`}>{tokenSymbol}</span>
               </div>
             </div>

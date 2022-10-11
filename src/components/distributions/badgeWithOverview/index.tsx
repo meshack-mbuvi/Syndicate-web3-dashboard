@@ -6,6 +6,7 @@ import {
   floatedNumberWithCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
+import Image from 'next/image';
 import React, { useState } from 'react';
 
 interface Props {
@@ -18,8 +19,8 @@ interface Props {
   }[];
   gasEstimate: {
     tokenSymbol: string;
-    tokenAmount?: string;
-    fiatAmount?: string;
+    tokenAmount: string;
+    fiatAmount: string;
   };
   attribution?: string;
   CTALabel: string;
@@ -57,11 +58,14 @@ export const BadgeWithOverview: React.FC<Props> = ({
       >
         {/* Token */}
         <div className="flex items-center w-1/2 truncate">
-          <img
-            src={tokenDetails.tokenIcon || '/images/token-gray.svg'}
-            alt="Token icon"
-            className="w-6 h-6 mr-3"
-          />
+          <div className="w-6 h-6 mr-3">
+            <Image
+              src={tokenDetails.tokenIcon || '/images/token-gray.svg'}
+              alt="Token icon"
+              width={24}
+              height={24}
+            />
+          </div>
 
           {/* Token amount */}
           {tokenDetails.isLoading ? (
@@ -122,7 +126,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
                 <div className="divide-y">
                   {/* Token rows */}
-                  <div className="space-y-4 mb-4">{renderedTokenRows}</div>
+                  <div className="space-y-4 mb-6">{renderedTokenRows}</div>
 
                   {/* Total */}
                   <div className="flex justify-between space-x-4 border-gray-syn7 pt-4">
@@ -154,7 +158,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
                   <div className="flex space-x-1">
                     <div>Estimated gas</div>
                     <div className="pr-1">
-                      <img
+                      <Image
+                        width={14}
+                        height={14}
                         src="/images/fuel-pump-blue.svg"
                         className="w-3.5 relative top-0.5"
                         alt="Gas icon"
@@ -163,8 +169,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     <div className="pl-1">
                       {!gasEstimate
                         ? '-'
-                        : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-                          parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
+                        : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
                     </div>
                     <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
@@ -172,8 +177,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     $
                     {!gasEstimate
                       ? ' -'
-                      : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-                        parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
+                      : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                   </div>
                 </div>
               </Callout>
@@ -245,7 +249,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
                   <div className="flex space-x-1">
                     <div>Estimated gas</div>
                     <div className="pr-1">
-                      <img
+                      <Image
+                        width={14}
+                        height={14}
                         src="/images/fuel-pump-blue.svg"
                         className="w-3.5 relative top-0.5"
                         alt="Gas icon"
@@ -254,8 +260,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     <div className="pl-1">
                       {!gasEstimate
                         ? '-'
-                        : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-                          parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
+                        : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
                     </div>
                     <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
@@ -263,8 +268,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     $
                     {!gasEstimate
                       ? ' -'
-                      : // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-                        parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
+                      : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
                   </div>
                 </div>
               </Callout>
