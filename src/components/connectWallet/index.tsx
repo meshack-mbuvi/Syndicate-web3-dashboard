@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerWithImage } from '../shared/spinner/spinnerWithImage';
 import { L2 } from '../typography';
 import { ConnectModal, ConnectModalStyle } from './connectModal';
+import { WalletProviderList } from './providerButtons';
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -44,13 +45,11 @@ const ConnectWallet: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const {
-    connectWallet,
     showSuccessModal,
     walletConnecting,
     setShowSuccessModal,
     providerName,
-    cancelWalletConnection,
-    loadedAsSafeApp
+    cancelWalletConnection
   } = useConnectWalletContext();
 
   //loader text
@@ -102,116 +101,7 @@ const ConnectWallet: React.FC = () => {
   // activate method handles connection to any wallet account while library will
   // contain the web3 provider selected
 
-  // The providers supported are listed in here with their custom details
-  const providers = [
-    {
-      name: 'Metamask',
-      icon: '/images/metamaskIcon.svg',
-      // @ts-expect-error TS(7030): Not all code paths return a value.
-      providerToActivate: () => {
-        // check whether coinbase extension is installed
-        const metamaskWallet =
-          // providers exists when you have more than one extensions installed.
-          window?.ethereum?.providers?.filter(
-            (provider: any) => provider?.isMetaMask
-          )[0] || window?.ethereum?.isMetaMask;
-
-        if (!metamaskWallet) {
-          return window.open('https://metamask.io/download/', '_blank');
-        }
-
-        activateInjected('Metamask');
-      },
-      hidden: loadedAsSafeApp
-    },
-    {
-      name: 'Gnosis Safe',
-      icon: '/images/gnosisSafe.png',
-      providerToActivate: () => activateGnosisSafe(),
-      hidden: !loadedAsSafeApp
-    },
-    {
-      name: 'WalletConnect',
-      icon: '/images/walletConnect.svg',
-      providerToActivate: () => activateWalletConnect(),
-      hidden: loadedAsSafeApp
-    },
-    {
-      name: 'Coinbase Wallet',
-      icon: '/images/coinbase-wallet.svg',
-      // @ts-expect-error TS(7030): Not all code paths return a value.
-      providerToActivate: () => {
-        // check whether coinbase extension is installed
-        const coinbaseWallet =
-          window?.ethereum?.providers?.filter(
-            (provider: any) => provider?.isCoinbaseWallet
-          )[0] || window?.ethereum?.isCoinbaseWallet;
-
-        if (!coinbaseWallet) {
-          return window.open(
-            'https://www.coinbase.com/wallet/getting-started-extension',
-            '_blank'
-          );
-        }
-
-        activateInjected('Coinbase Wallet');
-      },
-      hidden: loadedAsSafeApp
-    }
-  ];
-
-  /**
-   * This function is triggered when user clicks metamask button
-   * The provider for metamask is named injected
-   */
-  const activateInjected = async (walletName?: string) => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    await connectWallet('Injected', walletName);
-  };
-
-  /**
-   * This method is triggered when user clicks wallet connect button.
-   * It calls activateProvider passing WalletConnect as the parameters.
-   */
-  const activateWalletConnect = async () => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    await connectWallet('WalletConnect', 'WalletConnect');
-  };
-
-  /**
-   * This method is triggered when user clicks Gnosis Safe connect button.
-   * It calls activateProvider passing gnosisSafeConnect as the parameters.
-   *
-   */
-  const activateGnosisSafe = async () => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    await connectWallet('GnosisSafe');
-  };
-
   // showConnectWalletModal
-
-  // button for each provider
-  const ProviderButton = ({ name, icon, providerToActivate, hidden }: any) => {
-    if (!hidden) {
-      return (
-        <div className="flex justify-center items-center m-auto">
-          <button
-            className={`w-full py-4.5 px-6 rounded-custom flex items-center justify-between focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r bg-gray-syn7 hover:bg-gray-syn6`}
-            onClick={() => providerToActivate()}
-          >
-            <span className="text-white text-sm sm:text-base">{name}</span>
-            <img
-              alt="icon"
-              src={icon}
-              className="inline mw-6 sm:w-10 max-h-7"
-            />
-          </button>
-        </div>
-      );
-    }
-    return null;
-  };
 
   let errorButtonText, errorIcon;
   const metamaskNotInstalledError =
@@ -301,11 +191,7 @@ const ConnectWallet: React.FC = () => {
 
             {/* Connect wallet */}
             {/* show wallet providers */}
-            <div className="space-y-4 my-6">
-              {providers.map((provider, i) => (
-                <ProviderButton {...provider} key={i} />
-              ))}
-            </div>
+            <WalletProviderList extraClasses="my-6" />
 
             <div className="flex items-center justify-center space-x-2 pb-6">
               <p className="text-sm text-center">New to crypto?</p>

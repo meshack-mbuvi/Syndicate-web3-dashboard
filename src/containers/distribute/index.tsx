@@ -696,7 +696,8 @@ const Distribute: FC = () => {
             <TwoColumnLayout
               activeIndex={activeIndex}
               handlePrevious={handlePrevious}
-              hideWalletAndEllipsis={true}
+              hideWallet={true}
+              hideEllipsis={true}
               showCloseButton={true}
               headerTitle={name}
               managerSettingsOpen={true}
@@ -742,7 +743,8 @@ const Distribute: FC = () => {
               handleExitClick={handleExitClick}
               activeIndex={activeIndex}
               handlePrevious={handlePrevious}
-              hideWalletAndEllipsis={true}
+              hideWallet={true}
+              hideEllipsis={true}
               showCloseButton={true}
             >
               <ReviewDistribution

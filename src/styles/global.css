@@ -498,6 +498,12 @@
       position: fixed;
     }
 
+    .push-baseline-to-bottom::after {
+      content: '';
+      height: 100%;
+      display: inline-block;
+    }
+
     /*
       For when you dont want to use margins, and can position a
       div relatively.

@@ -27,3 +27,10 @@ AddMember.args = {
   type: LinkType.MEMBER,
   label: 'Button'
 };
+
+export const Link = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
+Link.args = {
+  children: 'Learn more',
+  URL: 'https://storybook.syndicate.io'
+};

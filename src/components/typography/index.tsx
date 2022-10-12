@@ -148,12 +148,14 @@ export const T5 = ({
 // Heading
 
 export const H1 = ({
+  forwardRef,
   children,
   regular,
   weightClassOverride,
   extraClasses,
   ...rest
 }: {
+  forwardRef?: any;
   children?: any;
   regular?: boolean;
   weightClassOverride?: string;
@@ -162,6 +164,7 @@ export const H1 = ({
 }): JSX.Element => {
   return (
     <div
+      ref={forwardRef}
       className={`text-H1-mobile sm:text-H1 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride

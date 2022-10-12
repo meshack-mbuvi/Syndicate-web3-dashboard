@@ -262,7 +262,7 @@ module.exports = {
         T3: ['4rem', '4rem'],
         T4: ['3.5rem', '3.5rem'],
         T5: ['3rem', '3rem'],
-        'H1-mobile': ['2rem', '2rem'],
+        'H1-mobile': ['2rem', 'normal'],
         'H2-mobile': ['1.8125rem', '1.8125rem'],
         'H3-mobile': ['1.375rem', '150%'],
         'H4-mobile': ['1.125rem', '150%'],

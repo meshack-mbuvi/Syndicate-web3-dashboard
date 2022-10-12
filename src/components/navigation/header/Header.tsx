@@ -25,11 +25,13 @@ interface props {
   handleExitClick?: () => void;
   handlePrevious?: (event?: any) => void;
   handleNext?: (event?: any) => void;
-  hideWalletAndEllipsis?: boolean;
+  hideWallet?: boolean;
+  hideEllipsis?: boolean;
   showCloseButton?: boolean;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
   showLogo?: boolean;
+  keepLogoCentered?: boolean;
   showSideNav?: boolean;
   nextBtnDisabled?: boolean;
 }
@@ -41,12 +43,14 @@ const Header: React.FC<props> = ({
   showBackButton = true,
   showNav = true,
   activeIndex = 0,
-  hideWalletAndEllipsis = false,
+  hideWallet = false,
+  hideEllipsis = false,
   showCloseButton = false,
   dotIndicatorOptions = [],
   showNavButton = false,
   showCreateProgressBar = false,
   showLogo = true,
+  keepLogoCentered = false,
   showSideNav = false,
   handleNext = () => ({}),
   nextBtnDisabled = true
@@ -194,6 +198,9 @@ const Header: React.FC<props> = ({
               </button>
             </div>
           ) : null}
+          {!navItems.length && keepLogoCentered && (
+            <div className="hidden sm:block flex-1" />
+          )}
           {createClubPage || !navItems.length ? null : (
             <div className="hidden sm:flex flex-1 items-center">
               {navItems.map(({ navItemText, url, isLegal }, index) => (
@@ -241,9 +248,7 @@ const Header: React.FC<props> = ({
           </div>
           <div className="relative w-full hidden sm:flex sm:space-x-3 flex-1 md:justify-end items-center">
             <div
-              className={`flex space-x-3 w-full justify-between md:justify-end ${
-                hideWalletAndEllipsis ? 'hidden' : ''
-              }`}
+              className={`flex space-x-3 w-full justify-between md:justify-end`}
             >
               {showSideNav ? (
                 <div className="flex h-11 space-x-5 mr-3 md:hidden justify-between">
@@ -273,9 +278,15 @@ const Header: React.FC<props> = ({
                 </div>
               ) : null}
               <div className="flex space-x-3">
-                <NetworkComponent />
-                <WalletComponent />
-                <MoreMenu />
+                <div className={`${hideWallet ? 'hidden' : ''}`}>
+                  <NetworkComponent />
+                </div>
+                <div className={`${hideWallet ? 'hidden' : ''}`}>
+                  <WalletComponent />
+                </div>
+                <div className={`${hideEllipsis ? 'hidden' : ''}`}>
+                  <MoreMenu />
+                </div>
               </div>
             </div>
 

@@ -23,13 +23,16 @@ interface Props {
   showNav?: boolean;
   activeIndex?: number;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
-  hideWalletAndEllipsis?: boolean;
+  hideWallet?: boolean;
+  hideEllipsis?: boolean;
   showCloseButton?: boolean;
+  keepLogoCentered?: boolean;
   customClasses?: string;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
   showSideNav?: boolean;
   nextBtnDisabled?: boolean;
+  hideFooter?: boolean;
   handleNext?: (index?: number) => void;
   showDotIndicatorLabels?: boolean;
   handlePrevious?: (index?: number) => void;
@@ -43,13 +46,16 @@ const Layout: FC<Props> = ({
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
-  hideWalletAndEllipsis = false,
+  hideWallet = false,
+  hideEllipsis = false,
   showCloseButton = false,
+  keepLogoCentered = false,
   showCreateProgressBar = false,
   customClasses,
   showSideNav = false,
   nextBtnDisabled = true,
   showDotIndicatorLabels = true,
+  hideFooter = false,
   handleNext,
   handlePrevious,
   navItems = [
@@ -186,9 +192,11 @@ const Layout: FC<Props> = ({
           handleExitClick={handleExitClick}
           activeIndex={activeIndex || 0}
           handlePrevious={handlePrevious}
-          hideWalletAndEllipsis={hideWalletAndEllipsis}
+          hideWallet={hideWallet}
+          hideEllipsis={hideEllipsis}
           showCloseButton={showCloseButton}
           showNavButton={showNavButton}
+          keepLogoCentered={keepLogoCentered}
           showCreateProgressBar={showCreateProgressBar}
           showLogo={!showSideNav}
           showSideNav={showSideNav}
@@ -232,7 +240,8 @@ const Layout: FC<Props> = ({
       </div>
 
       {/* need to add in a check for collectives settings open because it uses Layout component */}
-      {createClubPage ||
+      {hideFooter ||
+      createClubPage ||
       modifyClubPage ||
       managerSettingsOpen ||
       distributionPage ? null : (

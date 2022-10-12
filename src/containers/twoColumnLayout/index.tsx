@@ -1,6 +1,5 @@
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
-import { FinalStateModal } from '@/components/shared/transactionStates';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { useTailwindScreenWidth } from '@/helpers/layout';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -8,7 +7,8 @@ import { FC } from 'react';
 
 export enum TwoColumnLayoutType {
   DEFAULT = 'DEFAULT',
-  FLEX = 'FLEX'
+  FLEX = 'FLEX',
+  EQUAL_COLUMNS = 'EQUAL_COLUMNS'
 }
 
 const TwoColumnLayout: FC<{
@@ -17,14 +17,18 @@ const TwoColumnLayout: FC<{
   leftColumnComponent: any;
   rightColumnComponent: any;
   handleExitClick?: any;
-  hideWalletAndEllipsis?: boolean;
+  hideWallet?: boolean;
+  hideEllipsis?: boolean;
+  hideFooter?: boolean;
   showCloseButton?: boolean;
+  keepLogoCentered?: boolean;
   headerTitle: string;
   activeIndex?: number;
   type?: TwoColumnLayoutType;
   showNavButton?: boolean;
   flipColumns?: boolean;
   showSideNav?: boolean;
+  gridGapClass?: string;
   showDotIndicatorLabels?: boolean;
   handlePrevious?: (event?: any) => void;
   handleNext?: (event?: any) => void;
@@ -34,17 +38,21 @@ const TwoColumnLayout: FC<{
   leftColumnComponent,
   rightColumnComponent,
   headerTitle,
+  hideFooter = false,
   activeIndex,
   showNavButton,
   handlePrevious = () => ({}),
   handleNext,
   handleExitClick = () => ({}),
   dotIndicatorOptions = [],
-  hideWalletAndEllipsis = false,
+  hideWallet = false,
+  hideEllipsis = false,
   showCloseButton = false,
+  keepLogoCentered = false,
   type = TwoColumnLayoutType.DEFAULT,
-  flipColumns = FinalStateModal,
+  flipColumns = false,
   showSideNav = false,
+  gridGapClass = 'gap-5',
   showDotIndicatorLabels = true,
   nextBtnDisabled = true
 }) => {
@@ -64,8 +72,11 @@ const TwoColumnLayout: FC<{
           showNav={true}
           showBackButton={true}
           handleExitClick={handleExitClick}
-          hideWalletAndEllipsis={hideWalletAndEllipsis}
+          hideWallet={hideWallet}
+          hideEllipsis={hideEllipsis}
           showCloseButton={showCloseButton}
+          hideFooter={hideFooter}
+          keepLogoCentered={keepLogoCentered}
           activeIndex={activeIndex}
           navItems={[]}
           showNavButton={showNavButton}
@@ -80,7 +91,7 @@ const TwoColumnLayout: FC<{
             <div className="w-full">
               <div className="container mx-auto">
                 {/* Two Columns (Syndicate Details + Widget Cards) */}
-                <div className="grid grid-cols-12 gap-5">
+                <div className={`grid grid-cols-12 ${gridGapClass}`}>
                   {/* Left Column */}
                   <div
                     className={`md:col-start-1 ${
@@ -111,8 +122,11 @@ const TwoColumnLayout: FC<{
           showNav={true}
           showBackButton={true}
           handleExitClick={handleExitClick}
-          hideWalletAndEllipsis={hideWalletAndEllipsis}
+          hideWallet={hideWallet}
+          hideEllipsis={hideEllipsis}
           showCloseButton={showCloseButton}
+          hideFooter={hideFooter}
+          keepLogoCentered={keepLogoCentered}
           activeIndex={activeIndex}
           navItems={[]}
           customClasses="h-screen "
@@ -152,6 +166,50 @@ const TwoColumnLayout: FC<{
                         : 'translate-x-0'
                     }`}
                   >
+                    {rightColumnComponent}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ErrorBoundary>
+        </Layout>
+      )}
+      {type === TwoColumnLayoutType.EQUAL_COLUMNS && (
+        <Layout
+          dotIndicatorOptions={dotIndicatorOptions}
+          managerSettingsOpen={managerSettingsOpen}
+          showNav={true}
+          showBackButton={true}
+          handleExitClick={handleExitClick}
+          hideWallet={hideWallet}
+          hideEllipsis={hideEllipsis}
+          showCloseButton={showCloseButton}
+          hideFooter={hideFooter}
+          keepLogoCentered={keepLogoCentered}
+          activeIndex={activeIndex}
+          navItems={[]}
+          showNavButton={showNavButton}
+          showSideNav={showSideNav}
+          showDotIndicatorLabels={showDotIndicatorLabels}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          nextBtnDisabled={nextBtnDisabled}
+        >
+          <Head title={headerTitle || 'Club'} />
+          <ErrorBoundary>
+            <div className="w-full sm:mt-6">
+              <div className="container mx-auto">
+                {/* Two Columns (Syndicate Details + Widget Cards) */}
+                <div className={`grid grid-cols-12 ${gridGapClass}`}>
+                  {/* Left Column */}
+                  <div
+                    className={`col-span-12 col-start-1 md:col-span-6 1.5xl:col-span-4 1.5xl:col-start-3`}
+                  >
+                    {leftColumnComponent}
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="pt-0 col-span-12 md:col-start-7 md:col-span-6 1.5xl:col-span-4">
                     {rightColumnComponent}
                   </div>
                 </div>

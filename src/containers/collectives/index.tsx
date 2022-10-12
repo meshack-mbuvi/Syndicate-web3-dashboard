@@ -352,7 +352,8 @@ const Collective: React.FC = () => {
   return (
     <CollectivesContainer>
       <TwoColumnLayout
-        hideWalletAndEllipsis={false}
+        hideWallet={false}
+        hideEllipsis={false}
         showCloseButton={false}
         headerTitle={'Collective NFT'}
         managerSettingsOpen={false}

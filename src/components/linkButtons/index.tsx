@@ -1,15 +1,27 @@
 import IconPlus from '@/components/icons/plusIcon';
+import { ChevronRightIcon } from '@heroicons/react/outline';
 export enum LinkType {
   CALENDAR = 'CALENDAR',
   MEMBER = 'MEMBER'
 }
 
 export const LinkButton = (props: {
-  type: LinkType;
+  type?: LinkType;
   extraClasses?: string;
-  onClick: () => void;
+  onClick?: () => void;
+  URL?: string;
+  children?: any;
+  showChevron?: boolean;
 }): JSX.Element => {
-  const { type, extraClasses = '', onClick, ...rest } = props;
+  const {
+    type,
+    extraClasses = '',
+    onClick,
+    URL,
+    children,
+    showChevron,
+    ...rest
+  } = props;
 
   let icon;
   let label;
@@ -22,20 +34,51 @@ export const LinkButton = (props: {
       icon = <IconPlus />;
       label = 'Add member';
       break;
+    default:
+      icon = null;
+      label = null;
   }
 
-  return (
-    <button
-      className={`text-blue flex items-center space-x-2 ${extraClasses}`}
-      onClick={onClick}
-      {...rest}
-    >
-      {typeof icon === 'string' ? (
-        <img src={icon} alt="" className="" />
-      ) : (
-        <IconPlus />
+  const innerContent = (
+    <div className="flex items-center">
+      {type && (
+        <div className="flex-shrink-0 mr-2">
+          {typeof icon === 'string' ? (
+            <img src={icon} alt="" className="" />
+          ) : (
+            <IconPlus />
+          )}
+        </div>
       )}
-      <div>{label}</div>
-    </button>
+      <div className="flex-grow">{children ? children : label}</div>
+      {(URL || showChevron) && (
+        <div className="h-4 w-4 ml-0.5">
+          <ChevronRightIcon />
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      {URL ? (
+        <a
+          href={URL}
+          className={`text-blue flex items-center space-x-2 ${extraClasses}`}
+          onClick={onClick}
+          {...rest}
+        >
+          {innerContent}
+        </a>
+      ) : (
+        <button
+          className={`text-blue flex items-center space-x-2 ${extraClasses}`}
+          onClick={onClick}
+          {...rest}
+        >
+          {innerContent}
+        </button>
+      )}
+    </>
   );
 };
