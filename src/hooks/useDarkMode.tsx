@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // Check if the browser is in dark mode
-const useIsInDarkMode = (): { width: number; height: number } => {
-  const [isInDarkMode, setIsInDarkMode] = useState(null);
+const useIsInDarkMode = (): boolean => {
+  const [isInDarkMode, setIsInDarkMode] = useState(false);
 
   useEffect(() => {
     setIsInDarkMode(

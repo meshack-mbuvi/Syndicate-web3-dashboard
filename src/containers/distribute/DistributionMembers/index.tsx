@@ -54,6 +54,21 @@ type Props = {
   handleExitClick: () => void;
 };
 
+interface memberDetail {
+  ensName: string;
+  avatar?: string;
+  address: string;
+  clubTokenHolding?: number;
+  distributionShare: number;
+  ownershipShare: number;
+  receivingTokens: {
+    amount: number;
+    tokenSymbol: string;
+    tokenIcon: string;
+  }[];
+}
+[];
+
 const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const {
     web3Reducer: {
@@ -67,7 +82,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   } = useSelector((state: AppState) => state);
 
   const [activeAddresses, setActiveAddresses] = useState<string[]>([]);
-  const [memberDetails, setMemberDetails] = useState([]);
+  const [memberDetails, setMemberDetails] = useState<memberDetail[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [batchIdentifier, setBatchIdentifier] = useState('');
@@ -150,8 +165,8 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             ...rest,
             ownershipShare,
             address: memberAddress,
-            clubTokenHolding: clubTokens,
-            distributionShare: +ownershipShare,
+            clubTokenHolding: +clubTokens,
+            distributionShare: +numberWithCommas(ownershipShare.toFixed(4)),
             receivingTokens: tokens.map(
               ({ tokenAmount, symbol, logo, icon }: any) => {
                 return {
@@ -165,7 +180,6 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         }
       );
 
-      // @ts-expect-error TS(2345): Argument of type '{ ownershipShare: number; member... Remove this comment to see the full error message
       setMemberDetails(memberDetails);
     } else {
       setMemberDetails([]);

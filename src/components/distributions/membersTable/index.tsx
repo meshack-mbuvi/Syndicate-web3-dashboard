@@ -13,11 +13,11 @@ import { useEffect, useMemo, useState } from 'react';
 interface Props {
   membersDetails: {
     ensName: string;
+    avatar?: string;
     address: string;
     clubTokenHolding?: number;
     distributionShare: number;
     ownershipShare: number;
-    selected: boolean;
     receivingTokens: {
       amount: number;
       tokenSymbol: string;
@@ -55,8 +55,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   handleActiveAddressesChange,
   extraClasses,
   ethersProvider
-}) => {
-  const isAddressActive = (address: string) => {
+}: Props) => {
+  const isAddressActive = (address: string): boolean => {
     return activeAddresses.includes(address);
   };
 
@@ -67,10 +67,10 @@ export const DistributionMembersTable: React.FC<Props> = ({
     {
       ensName: string;
       address: string;
+      avatar?: string;
       clubTokenHolding?: number;
       distributionShare: string | number;
       ownershipShare: number;
-      selected: boolean;
       receivingTokens: {
         amount: number;
         tokenSymbol: string;
@@ -86,7 +86,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
     [membersDetails.length, currentPage, dataLimit]
   );
 
-  const handleLoadMore = () => {
+  const handleLoadMore = (): void => {
     setCurrentPage(currentPage + 1);
   };
 
@@ -150,7 +150,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
       setMemberDetails([]);
     }
 
-    return () => {
+    return (): void => {
       setMemberDetails([]);
     };
   }, [activeAddresses]);
@@ -386,16 +386,17 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
           {/* Member name */}
           <div
-            className={`flex items-center space-x-4 ${
-              (!isAddressActive(memberDetails.address) && 'text-gray-syn5') ||
-              ''
-            } ${wideCellStyles} ${memberCellStyles(memberDetails.address)}`}
+            className={`flex items-center space-x-4  ${wideCellStyles} ${memberCellStyles(
+              memberDetails.address
+            )}`}
           >
             <AddressWithENS
               ethersProvider={ethersProvider}
               userPlaceholderImg={'/images/user.svg'}
               address={memberDetails.address}
               imageSize={AddressImageSize.LARGE}
+              disableTransition={isEditing}
+              disabled={!isAddressActive(memberDetails.address)}
             />
           </div>
 
@@ -426,7 +427,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
         {/* Right columns - receiving tokens */}
         <div className={`flex`}>
           {/* Each column represents a different token a member is receiving */}
-          {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
+          {allUniqueReceivingTokens?.tokenSymbols.map((tokenSymbol, index) => {
+            const amount =
+              memberDetails?.receivingTokens
+                ?.find((receivingToken) => {
+                  return receivingToken?.tokenSymbol === tokenSymbol;
+                })
+                ?.amount.toFixed(4) || 0;
             return (
               // Individual column
               <div
@@ -436,17 +443,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 key={index}
               >
                 <div className="text-right truncate w-full">
-                  {memberDetails.receivingTokens.find((receivingToken) => {
-                    return receivingToken.tokenSymbol === tokenSymbol;
-                  }) && isAddressActive(memberDetails.address)
-                    ? numberWithCommas(
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        memberDetails.receivingTokens
-                          ?.find((receivingToken) => {
-                            return receivingToken?.tokenSymbol === tokenSymbol;
-                          })
-                          .amount.toFixed(4)
-                      )
+                  {isAddressActive(memberDetails.address)
+                    ? numberWithCommas(amount)
                     : 0}
                 </div>
                 <div

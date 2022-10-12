@@ -25,6 +25,8 @@ interface Props {
   id?: string;
   extraClasses?: string;
   userPlaceholderImg?: string | undefined;
+  disableTransition?: boolean;
+  disabled?: boolean;
 }
 
 export const AddressWithENS: React.FC<Props> = ({
@@ -36,8 +38,10 @@ export const AddressWithENS: React.FC<Props> = ({
   layout = AddressLayout.TWO_LINES,
   extraClasses,
   userPlaceholderImg,
+  disableTransition = false,
+  disabled = false,
   ...rest
-}) => {
+}: Props) => {
   const formattedAddress = addressAbbreviated
     ? address
     : formatAddress(
@@ -51,10 +55,13 @@ export const AddressWithENS: React.FC<Props> = ({
   const TopLineName = () => {
     return <div>{data?.name}</div>;
   };
-  const TopLineAddress = () => {
+
+  const TopLineAddress = (): JSX.Element => {
     return (
       <div {...rest}>
-        <span className="text-gray-syn4">0x</span>
+        <span className={`${disabled ? 'text-gray-syn5' : 'text-gray-syn4'}`}>
+          0x
+        </span>
         {address && (
           <span {...rest}>
             {formatAddress(
@@ -67,17 +74,20 @@ export const AddressWithENS: React.FC<Props> = ({
       </div>
     );
   };
-  const TopLine = () => {
+  const TopLine = (): JSX.Element => {
     return (
       <TransitionBetweenChildren
         visibleChildIndex={data?.name ? 0 : address ? 1 : -1}
-        transitionDurationClassOverride="duration-300"
+        transitionDurationClassOverride={`${
+          disableTransition ? 'duration-0' : 'duration-300'
+        }`}
       >
         <TopLineName />
         <TopLineAddress />
       </TransitionBetweenChildren>
     );
   };
+
   return (
     <div
       className={`flex items-center space-x-${
@@ -89,9 +99,9 @@ export const AddressWithENS: React.FC<Props> = ({
         <img
           src={data?.avatar}
           alt="ens"
-          className={`${
-            imageSize ?? 'w-8 h-8'
-          } transition-all rounded-full bg-gray-syn7`}
+          className={`${imageSize ?? 'w-8 h-8'} ${
+            (!disableTransition && 'transition-all') || ''
+          } rounded-full bg-gray-syn7`}
         />
       ) : userPlaceholderImg ? (
         <img
@@ -107,7 +117,7 @@ export const AddressWithENS: React.FC<Props> = ({
           (layout === AddressLayout.ONE_LINE &&
             'flex items-center space-x-2') ||
           ''
-        } transition-all relative`}
+        } ${(!disableTransition && 'transition-all') || ''}  relative`}
         style={{
           top: '-0.0rem'
         }}
@@ -125,7 +135,9 @@ export const AddressWithENS: React.FC<Props> = ({
 
         {/* Bottom line */}
         <div
-          className={`transition-all duration-500 ${
+          className={`${
+            (!disableTransition && 'transition-all duration-500') || ''
+          } ${
             !data?.name && address
               ? `${(layout === AddressLayout.TWO_LINES && '-mt-4') || ''} ${
                   (layout === AddressLayout.ONE_LINE && 'hidden') || ''

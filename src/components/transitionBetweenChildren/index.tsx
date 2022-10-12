@@ -21,7 +21,6 @@ const TransitionBetweenChildren: FC<Props> = ({
   transitionType = TransitionBetweenChildrenType.FADE,
   extraClasses
 }) => {
-  // @ts-expect-error TS(7030): Not all code paths return a value.
   const renderedTabContent = children.map((child, index) => {
     if (
       transitionType === TransitionBetweenChildrenType.FADE ||
@@ -54,7 +53,7 @@ const TransitionBetweenChildren: FC<Props> = ({
                 ? 'translate-y-0 opacity-100 h-full'
                 : '-translate-y-full opacity-0 pointer-events-none h-full'
             } ${
-              visibleChildIndex === index + 1 && 'transform'
+              (visibleChildIndex === index + 1 && 'transform') || ''
             } transition-all ease_vertical_move ${transitionDurationClassOverride} w-full`}
           >
             {child}
@@ -62,10 +61,12 @@ const TransitionBetweenChildren: FC<Props> = ({
         </div>
       ];
     }
+
+    return <></>;
   });
 
   return (
-    <div className={`relative ${extraClasses}`}>
+    <div className={`relative ${extraClasses ?? ''}`}>
       {transitionType === TransitionBetweenChildrenType.FADE && (
         <>
           {/* This is for taking up space in the flow */}

@@ -75,6 +75,7 @@ module.exports = {
         16: '16px'
       },
       transitionDuration: {
+        0: '0ms',
         800: '800ms'
       },
       transitionDelay: {
