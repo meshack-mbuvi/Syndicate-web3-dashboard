@@ -125,7 +125,7 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{
                     text: (
                       <a
-                        href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
+                        href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity"
                         target="_blank"
                         rel="noreferrer"
                         style={{ float: 'right' }}

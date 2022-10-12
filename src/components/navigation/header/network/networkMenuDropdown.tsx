@@ -297,7 +297,7 @@ const NetworkMenuDropDown: FC = () => {
                       </div>
                       <a
                         className="pt-3 flex space-x-2 items-center text-gray-syn4"
-                        href="https://guide.syndicate.io/frequently-asked-questions/wallet#wallet-support-guides"
+                        href="https://guide.syndicate.io/support/frequently-asked-questions/wallet#wallet-support-guides"
                         target="_blank"
                         rel="noreferrer"
                       >
