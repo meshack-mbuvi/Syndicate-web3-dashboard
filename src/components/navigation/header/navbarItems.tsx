@@ -1,4 +1,5 @@
 import ActiveLink from '@/components/syndicates/shared/ActiveLink';
+import { B2 } from '@/components/typography';
 import React from 'react';
 
 interface IProps {
@@ -21,12 +22,12 @@ export const NavBarNavItem: React.FC<IProps> = ({
           href={url}
           customActive="border-b-1 sm:hover:border-opacity-100"
         >
-          <div className="py-5 sm:py-4 h-full sm:mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 sm:hover:border-opacity-50 cursor-pointer">
+          <div className="py-3 md:py-5 sm:py-4 h-full sm:mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 sm:hover:border-opacity-50 cursor-pointer">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               className={`${customClasses} text-lg leading-5.5 sm:text-base sm:leading-4.75 text-white vertically-center sm:inline-block transition-all`}
             >
-              {navItemText}
+              <B2>{navItemText}</B2>
             </a>
           </div>
         </ActiveLink>

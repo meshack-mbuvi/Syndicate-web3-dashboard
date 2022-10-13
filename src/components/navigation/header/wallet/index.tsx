@@ -33,7 +33,7 @@ export const Wallet: React.FC = () => {
   const NotConnectedButton = () => (
     <button
       onClick={connectWallet}
-      className={`bg-white text-black flex relative rounded-full px-5 py-1 items-center h-10 primary-CTA`}
+      className={`bg-white w-full text-center justify-center text-black flex relative rounded-full px-5 py-1 items-center h-10 primary-CTA`}
       id="connectWallet"
     >
       Connect

@@ -166,27 +166,29 @@ const NetworkMenuDropDown: FC = () => {
           return (
             <>
               <button
-                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 pr-4 py-2 sm:py-1 items-center ${
+                className={`flex justify-between sm:rounded-full w-full sm:w-auto sm:pl-3 pr-4 sm:py-2 items-center ${
                   showNetworkDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
-                } h-10 hover:bg-gray-syn7`}
+                } h-12 sm:h-10 sm:hover:bg-gray-syn7`}
                 onClick={toggleDropdown}
                 id={refId}
                 ref={ref}
               >
-                <img
-                  width={24}
-                  height={24}
-                  className="mr-2"
-                  src={activeNetwork.logo}
-                  alt="chain logo"
-                />
-                <span
-                  className={`${
-                    width <= 425 ? 'flex' : 'hidden md:block'
-                  } focus:outline-none mr-4 sm:mr-0 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular`}
-                >
-                  {activeNetwork.displayName}
-                </span>
+                <div className="flex">
+                  <img
+                    width={24}
+                    height={24}
+                    className="mr-2"
+                    src={activeNetwork.logo}
+                    alt="chain logo"
+                  />
+                  <span
+                    className={`${
+                      width <= 425 ? 'flex' : 'block'
+                    } focus:outline-none text-base py-2`}
+                  >
+                    {activeNetwork.displayName}
+                  </span>
+                </div>
                 <div className="flex items-center ml-2">
                   <img
                     src="/images/chevron-down.svg"
@@ -203,12 +205,12 @@ const NetworkMenuDropDown: FC = () => {
                 leave="transition ease-in duration-75"
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
-                className="relative"
+                className="relative z-10"
               >
                 <Popover.Panel
                   static
                   as="ul"
-                  className="absolute sm:right-0 w-64 mt-10 sm:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
+                  className="absolute sm:right-0 w-64 mt-1 md:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
                 >
                   {Object.entries(NETWORKS).map(([key, value]) =>
                     value.testNetwork && !isDev ? (
