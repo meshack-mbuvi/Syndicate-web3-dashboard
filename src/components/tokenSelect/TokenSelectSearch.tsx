@@ -1,5 +1,12 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  indexReducer,
+  IndexReducerActionType
+} from '@/components/tokenSelect/indexReducer';
+import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
+import { useDebounce } from '@/hooks/useDebounce';
+import { SUPPORTED_TOKENS } from '@/Networks';
+import { AppState } from '@/state';
+import { Collective } from '@/state/collectives/types';
 import {
   setDepositTokenDetails,
   setDuplicateRulesError,
@@ -7,23 +14,17 @@ import {
   setShowImportTokenModal,
   setTokenRules
 } from '@/state/createInvestmentClub/slice';
-import { AppState } from '@/state';
-import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
-import { useDebounce } from '@/hooks/useDebounce';
-import { InputField, InputFieldStyle } from '../inputs/inputField';
 import { Token, TokenDetails } from '@/types/token';
-import {
-  indexReducer,
-  IndexReducerActionType
-} from '@/components/tokenSelect/indexReducer';
 import { getTokenDetails } from '@/utils/api';
+import { getNftCollection } from '@/utils/api/nfts';
 import { isDev } from '@/utils/environment';
 import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
-import { TokenModalVariant } from './TokenSelectModal';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { InputField, InputFieldStyle } from '../inputs/inputField';
 import { ImportTokenModal } from './ImportToken';
 import TokenSection from './TokenSection';
-import { getNftCollection } from '@/utils/api/nfts';
-import { SUPPORTED_TOKENS } from '@/Networks';
+import { TokenModalVariant } from './TokenSelectModal';
 
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
@@ -33,10 +34,13 @@ interface TokenSelectSearch {
   variant?: TokenModalVariant;
 }
 
-const dedupTokens = (tokensList_: any, recentTokens: any) => {
+const dedupTokens = (
+  tokensList_: Token[],
+  recentTokens: Token[] | undefined
+): Token[] => {
   return tokensList_.filter(
-    (tokens: any) =>
-      !(recentTokens || []).some((rec: any) => rec.address === tokens.address)
+    (token: Token) =>
+      !(recentTokens || []).some((rec: Token) => rec.address === token.address)
   );
 };
 
@@ -46,7 +50,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   suggestionListTitle,
   updateSuggestionList,
   variant = TokenModalVariant.Default
-}) => {
+}: TokenSelectSearch) => {
   const {
     web3Reducer: {
       web3: { web3, activeNetwork }
@@ -80,28 +84,25 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
-  const defaultTokenList = showTokenGateModal
+  const defaultTokenList: Token[] = showTokenGateModal
     ? [...(adminCollectives || []), ...(memberCollectives || [])]
         .slice(0, 6)
-        .map((collective) => {
+        .map((collective: Collective) => {
           return {
-            // @ts-expect-error TS(2339): Property 'tokenName' does not exist on type 'never'.
             name: collective.tokenName,
-            // @ts-expect-error TS(2339): Property 'address' does not exist on type 'never'.
             address: collective.address,
-            // @ts-expect-error TS(2339): Property 'tokenSymbol' does not exist on type 'never'.
             symbol: collective.tokenSymbol,
-            // @ts-expect-error TS(2339): Property 'tokenMedia' does not exist on type 'never'.
             logoURI: collective.tokenMedia,
-            // @ts-expect-error TS(2339): Property 'tokenMediaType' does not exist on type 'never'.
             collectionMediaType: collective.tokenMediaType
           };
         }) ||
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      SUPPORTED_TOKENS[activeNetwork.chainId] ||
+      SUPPORTED_TOKENS[
+        activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+      ] ||
       []
-    : // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      SUPPORTED_TOKENS[activeNetwork.chainId] || [];
+    : SUPPORTED_TOKENS[
+        activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+      ] || [];
 
   const _tokens = debouncedSearchTerm
     ? tokensList
@@ -117,14 +118,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   }, [searchInputRef]);
 
   const getTokenByAddressChainId = useCallback(
-    async (address: string, chainId: number): Promise<Token> => {
+    async (address: string, chainId: number): Promise<Token | null> => {
       setLoading(true);
       const promises = [getTokenDetails(address, chainId)];
 
       if (showTokenGateModal) {
         promises.push(getNftCollection(address, chainId));
       }
-      // @ts-expect-error TS(2322): Type '{ address: string; name: string; symbol: string... Remove this comment to see the full error message
       return Promise.allSettled(promises)
         .then((res) => {
           const _res = res.find((r) => r.status === 'fulfilled');
@@ -133,9 +133,9 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             return null;
           }
 
-          return (_res as any).value.data;
+          return (_res as any).value.data as TokenDetails;
         })
-        .then((data: TokenDetails) => {
+        .then((data: TokenDetails | null) => {
           if (!data || !data.name || !data.symbol) return null;
           return {
             address: data.contractAddress,
@@ -146,7 +146,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
             logoURI: data.logo,
             price: data.price,
             collectionCount: data.collectionCount
-          };
+          } as Token;
         })
         .catch((err) => {
           console.log(err);
@@ -157,26 +157,26 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     [debouncedSearchTerm]
   );
 
-  const validateToken = (token: any) => {
+  const validateToken = (token: Token): boolean => {
     /* add tokens by contract address on rinkey without validation since
     rinkeby tokens infrequently have name symbol etc. */
     if (isDev) {
       return true;
     }
 
-    const isValid =
+    const isValid: boolean =
       web3.utils.isAddress(token.address) &&
-      'name' in token &&
+      token.name &&
       token.name.length > 0 &&
-      'symbol' in token &&
+      token.symbol &&
       token.symbol.length > 0 &&
-      'chainId' in token &&
+      token.chainId &&
       token.chainId > 0;
 
     // We don't need to validate for 'decimals' in NFT tokens
     if (showTokenGateModal) return isValid;
 
-    return isValid && 'decimals' in token && token.decimals > 0;
+    return isValid && 'decimals' in token && (token?.decimals ?? 0) > 0;
   };
 
   useEffect(() => {
@@ -189,8 +189,9 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           ...(defaultTokenList || []),
           ...(suggestionList || []),
           ...(showTokenGateModal
-            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            ? SUPPORTED_TOKENS[
+                activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+              ] || []
             : [])
         ].find((token) => token.address === debouncedSearchTerm);
 
@@ -220,8 +221,9 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         [
           ...(defaultTokenList || []),
           ...(showTokenGateModal
-            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              SUPPORTED_TOKENS[activeNetwork.chainId] || []
+            ? SUPPORTED_TOKENS[
+                activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+              ] || []
             : [])
         ].map((defaultToken) => {
           if (
@@ -248,7 +250,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       const defaultTokens = defaultTokenList.filter(
         (token: Token) => token.name
       );
-      setTokenList(defaultTokens);
+      setTokenList(defaultTokens || []);
       setNoTokenFound(false);
     }
   }, [debouncedSearchTerm, activeNetwork]);
@@ -292,8 +294,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           icon: token.logoURI,
           decimals: token.decimals
         },
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        ...tokenRules.slice(idx + 1)
+        ...tokenRules.slice(idx ?? 0 + 1)
       ];
       // @ts-expect-error TS(2345): Argument of type 'Argument of type '(TokenGateRule | { name: string; quantity:... Remove this comment to see the full error message
       dispatch(setTokenRules(rules));
@@ -372,13 +373,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
               Each crypto asset is different.
               <button
                 className="pl-1 text-blue focus:outline-none"
-                onClick={() => setShowCryptoAssetModal(true)}
+                onClick={(): void => setShowCryptoAssetModal(true)}
               >
                 Learn more.
               </button>
               <CryptoAssetModal
                 showModal={showCryptoAssetModal}
-                closeModal={() => setShowCryptoAssetModal(false)}
+                closeModal={(): void => setShowCryptoAssetModal(false)}
               />
             </div>
           </div>
