@@ -138,7 +138,7 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
             permissionType === PermissionType.NON_MEMBER ||
             !account ||
             invalidEthereumNetwork
-              ? 'opacity-70 filter blur-md'
+              ? 'opacity-50 filter blur-md'
               : ''
           }`}
         >

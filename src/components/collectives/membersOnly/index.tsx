@@ -1,10 +1,10 @@
-import { B3 } from '@/components/typography';
 import { LockIcon } from '@/components/iconWrappers';
-import { useSelector, useDispatch } from 'react-redux';
+import { B3 } from '@/components/typography';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
-const MembersOnly = () => {
+const MembersOnly = (): JSX.Element => {
   const {
     web3Reducer: {
       web3: { account }
@@ -13,9 +13,10 @@ const MembersOnly = () => {
 
   const dispatch = useDispatch();
 
-  const handleConnectWallet = () => {
+  const handleConnectWallet = (): void => {
     dispatch(showWalletModal());
   };
+
   return (
     <>
       <div className="flex text-center">

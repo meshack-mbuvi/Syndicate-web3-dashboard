@@ -1,6 +1,6 @@
 import { useDisableBgScrollOnModal } from '@/hooks/useDisableBgScrollOnModal';
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useRef } from 'react';
+import { Fragment, useRef } from 'react';
 
 interface ModalProps {
   title?: string;
@@ -79,19 +79,19 @@ const Modal = (props: ModalProps): JSX.Element => {
     maxHeight = true
   } = props;
 
-  const bgColor = `${modalStyle === ModalStyle.LIGHT && 'bg-white'} ${
-    modalStyle === ModalStyle.DARK && 'bg-gray-syn8'
-  } ${modalStyle === ModalStyle.SUCCESS && 'bg-green-success'}`;
+  const bgColor = `${(modalStyle === ModalStyle.LIGHT && 'bg-white') || ''} ${
+    (modalStyle === ModalStyle.DARK && 'bg-gray-syn8') || ''
+  } ${(modalStyle === ModalStyle.SUCCESS && 'bg-green-success') || ''}`;
 
-  const textColor = `${modalStyle === ModalStyle.LIGHT && 'text-black'} ${
-    modalStyle === ModalStyle.DARK && 'text-white'
-  }`;
+  const textColor = `${
+    (modalStyle === ModalStyle.LIGHT && 'text-black') || ''
+  } ${(modalStyle === ModalStyle.DARK && 'text-white') || ''}`;
 
   useDisableBgScrollOnModal(show);
 
   const childWrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     if (closeModal) {
       closeModal();
     }
@@ -102,7 +102,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       <Dialog
         initialFocus={childWrapperRef}
         className={`fixed z-50 w-screen h-screen overflow-y-scroll no-scroll-bar justify-center align-middle py-auto inset-0 text-center`}
-        onClose={() => {
+        onClose={(): void => {
           if (outsideOnClick) {
             handleClose();
           }

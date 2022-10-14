@@ -58,7 +58,7 @@ const DistributeTokensPage: React.FC = () => {
         </div>
       </div>
     </Layout>
-  ) : isReady && readyDistributionsClient.treatment === 'on' ? (
+  ) : isReady && readyDistributionsClient?.treatment === 'on' ? (
     <DistributionContainer />
   ) : (
     <NotFoundPage />

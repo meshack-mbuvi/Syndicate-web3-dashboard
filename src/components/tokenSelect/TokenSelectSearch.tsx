@@ -105,7 +105,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       ] || [];
 
   const _tokens = debouncedSearchTerm
-    ? tokensList
+    ? [...(tokensList || [])]
     : [
         ...(suggestionList || []),
         ...(dedupTokens(defaultTokenList, suggestionList) || [])

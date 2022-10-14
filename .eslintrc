@@ -10,7 +10,7 @@
   "rules": {
     "react/prop-types": 1, // eventually 2
     "react/jsx-uses-react": "off", //https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#eslint
-    "react/react-in-jsx-scope": "off", // ^ 
+    "react/react-in-jsx-scope": "off", // ^
     "jsx-a11y/anchor-is-valid": [
       "error",
       {

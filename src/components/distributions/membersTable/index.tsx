@@ -40,6 +40,7 @@ interface Props {
   clearSearchValue: (event: any) => void;
   extraClasses?: string;
   ethersProvider?: any;
+  isBlurred?: boolean;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
@@ -54,7 +55,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   clearSearchValue,
   handleActiveAddressesChange,
   extraClasses,
-  ethersProvider
+  ethersProvider,
+  isBlurred = false
 }: Props) => {
   const isAddressActive = (address: string): boolean => {
     return activeAddresses.includes(address);
@@ -161,8 +163,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
       (hoveredRow === address && 'bg-gray-syn8') || ''
     } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
       address === _membersDetails[0].address ? 'border-t-0' : 'border-t-1'
-    } ${(!isAddressActive(address) && 'text-gray-syn5') || ''}`;
+    } ${(!isAddressActive(address) && 'text-gray-syn5') || ''} ${
+      (isBlurred && 'opacity-50 filter blur-md') || ''
+    }`;
   };
+
   const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
   const wideCellStyles = `w-60 xl:w-72`;
   const narrowCellStyles = `w-12`;
@@ -230,7 +235,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const renderedHeader = (
     <div className="flex text-sm text-gray-syn4">
       {/* Left columns - member, share */}
-      <div className="flex">
+      <div
+        className={`flex ${(isBlurred && 'opacity-50 filter blur-md') || ''}`}
+      >
         {/* Checkbox */}
         {isEditing ? (
           <div className={`flex items-center ${narrowCellStyles}`}>
@@ -275,7 +282,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
       <div className="flex-grow" />
 
       {/* Right columns - receiving tokens */}
-      <div className="flex">
+      <div
+        className={`flex ${(isBlurred && 'opacity-50 filter blur-md') || ''}`}
+      >
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <div
@@ -301,7 +310,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   const renderPagination = (
     <div
-      className={`flex justify-center w-full border-t-1 text-blue whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
+      className={`flex ${
+        (isBlurred && 'opacity-50 filter blur-md') || ''
+      } justify-center w-full border-t-1 text-blue whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
     >
       <button onClick={handleLoadMore}>Load {loadMoreText} more</button>
     </div>
@@ -319,7 +330,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   ).map((memberDetails) => {
     return (
       <button
-        onClick={() => {
+        onClick={(): void => {
           if (!isEditing) return;
           // The index was active so make it inactive
           if (isAddressActive(memberDetails.address)) {
@@ -328,7 +339,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
               memberDetails.address
             );
             if (indexToRemove > -1) {
-              const arrayWithoutIndex = (array: any, index: any) =>
+              const arrayWithoutIndex = (array: any, index: any): string[] =>
                 array.filter((_: any, i: any) => i !== index);
               newactiveIndices = arrayWithoutIndex(
                 activeAddresses,
@@ -466,7 +477,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   // The bottom footer row with aggregate data
   const renderedFooter = (
-    <div className="flex">
+    <div className={`flex ${isBlurred ? 'opacity-70 filter blur-md' : ''}`}>
       {/* Left columns - member, share */}
       <div className="flex">
         <div
@@ -520,7 +531,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
       }`}
     >
       {!hideSearch && _membersDetails.length !== 0 && (
-        <div className="flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center">
+        <div
+          className={`flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center ${
+            isBlurred ? 'opacity-70 filter blur-md' : ''
+          }`}
+        >
           <SearchInput
             {...{
               onChangeHandler: handleSearchChange,

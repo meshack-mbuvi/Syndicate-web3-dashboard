@@ -371,3 +371,15 @@ export const GAS_RATE = gql`
     }
   }
 `;
+
+export const graphCurrentBlock = gql`
+  query graphCurrentBlock {
+    _meta {
+      block {
+        hash
+        number
+      }
+      deployment
+    }
+  }
+`;

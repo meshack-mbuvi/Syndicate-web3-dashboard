@@ -2,11 +2,11 @@ import React from 'react';
 
 interface Props {
   disabled?: boolean;
-  onClick?: any;
+  onClick?: (e?: React.MouseEvent<HTMLElement>) => void;
   greenCta?: boolean;
   voltCta?: boolean;
   cherenkovCta?: boolean;
-  type?: any;
+  type?: 'submit' | 'reset' | 'button' | undefined;
   fullWidth?: boolean;
   extraClasses?: string;
 }

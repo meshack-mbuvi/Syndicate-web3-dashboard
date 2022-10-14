@@ -21,6 +21,7 @@ import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGraphSyncState } from '@/hooks/utils/useGraphState';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
@@ -36,6 +37,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import DistributionHeader from '../DistributionHeader';
+import { GraphStatusWarningModal } from './graphStatusWarning';
 
 type step = {
   title: string;
@@ -95,14 +97,28 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const [distributionERC20Address, setDistributionERC20Address] =
     useState<string>('');
 
+  const [showGraphWarning, setShowGraphWarning] = useState(false);
+
+  const { isDataStale, lastSyncedBlock, timeToSyncPendingBlocks } =
+    useGraphSyncState();
+
   const dispatch = useDispatch();
   const isDemoMode = useDemoMode();
+
   const {
     query: { clubAddress }
   } = useRouter();
 
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
+
+  // update state variable to show graph warning if data is stale
+  useEffect(() => {
+    setShowGraphWarning(isDataStale);
+    return (): void => {
+      setShowGraphWarning(false);
+    };
+  }, [isDataStale]);
 
   useEffect(() => {
     if (!activeNetwork) return;
@@ -185,7 +201,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       setMemberDetails([]);
     }
 
-    return () => {
+    return (): void => {
       setMemberDetails([]);
     };
   }, [
@@ -195,17 +211,21 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     JSON.stringify(tokens)
   ]);
 
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchValue(e.target.value);
   };
 
-  const toggleEditDistribution = () => {
+  const toggleEditDistribution = (): void => {
     setIsEditing(!isEditing);
   };
 
-  const clearSearchValue = (e: any) => {
+  const clearSearchValue = (e: React.MouseEvent<HTMLElement>): void => {
     e.preventDefault();
     setSearchValue('');
+  };
+
+  const handleAckAndContinue = (): void => {
+    setShowGraphWarning(false);
   };
 
   const [steps, setSteps] = useState<step[]>();
@@ -677,7 +697,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       {isFetchingMembers ? (
         <Spinner />
       ) : (
-        <>
+        <div className="relative">
           {memberDetails.length ? (
             <div className="flex mt-5 md:mt-16 align-middle items-center justify-between">
               <DistributionHeader
@@ -745,7 +765,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
                       greenCta={true}
                       fullWidth={false}
                       onClick={showDistributeDisclaimer}
-                      disabled={activeAddresses.length == 0}
+                      disabled={activeAddresses.length == 0 || showGraphWarning}
                     >
                       Submit
                     </CtaButton>
@@ -757,7 +777,9 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
                         greenCta={true}
                         fullWidth={false}
                         onClick={showDistributeDisclaimer}
-                        disabled={activeAddresses.length == 0}
+                        disabled={
+                          activeAddresses.length == 0 || showGraphWarning
+                        }
                         extraClasses={'w-full'}
                       >
                         Submit
@@ -793,8 +815,17 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
             handleSearchChange={handleSearchChange}
             clearSearchValue={clearSearchValue}
             ethersProvider={ethersProvider}
+            isBlurred={showGraphWarning}
           />
-        </>
+
+          {showGraphWarning ? (
+            <GraphStatusWarningModal
+              onClick={handleAckAndContinue}
+              titleWarningText={`Your cap table may not be up to date`}
+              content={`If any modifications have been made to this club’s cap table (including membership, club token balances, and ownership shares) in the last ${timeToSyncPendingBlocks.trim()} (since block ${lastSyncedBlock}) they will not be reflected in this distribution.`}
+            />
+          ) : null}
+        </div>
       )}
 
       <DistributionsDisclaimerModal
