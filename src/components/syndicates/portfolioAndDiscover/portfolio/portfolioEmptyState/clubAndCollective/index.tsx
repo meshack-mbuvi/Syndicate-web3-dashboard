@@ -52,10 +52,16 @@ export const CreateClubOrCollective: React.FC<Props> = ({
       : amplitudeLogger(CREATE_COLLECTIVE_CLICK, {
           flow: Flow.COLLECTIVE_CREATE
         });
-    router.push({
-      pathname: `/${isCreatingClub ? 'clubs' : 'collectives'}/create`,
-      query: { chain: activeNetwork.network }
-    });
+    if (isCreatingClub) {
+      router.push({
+        pathname: '/clubs/create',
+        query: { chain: activeNetwork.network }
+      });
+    } else {
+      router.push({
+        pathname: 'collectives/create'
+      });
+    }
   };
 
   // empty state for clubs
