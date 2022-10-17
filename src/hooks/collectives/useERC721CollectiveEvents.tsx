@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 export interface IEvent {
   activityType: CollectiveActivityType;
@@ -43,7 +44,10 @@ const useERC721CollectiveEvents = (): ICollectiveEventsResponse => {
     },
     skip:
       !collectiveAddress || !account || !activeNetwork.chainId || isDemoMode,
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    }
   });
 
   const collectiveEvents = useMemo(() => {

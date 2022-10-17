@@ -32,7 +32,11 @@ import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
-import { BACKEND_LINKS } from '@/Networks/backendLinks';
+import {
+  GRAPH_ENDPOINTS,
+  GraphLinks,
+  SUPPORTED_GRAPHS
+} from '@/Networks/backendLinks';
 
 import { SplitFactory } from '@splitsoftware/splitio-react';
 import useIsInDarkMode from '@/hooks/useDarkMode';
@@ -116,19 +120,18 @@ const App = (props: any) => {
 };
 
 // Construct dynamic httpLinks from available networks and graphs
-const constructGraphLinks = () => {
-  const links = {};
-  Object.entries(BACKEND_LINKS).map(([networkId, backendInfo]) => {
-    const graphs = Object.keys(backendInfo.graphs);
-    const httplinks = {};
-    graphs.forEach((value) => {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+const constructGraphLinks = (): GraphLinks => {
+  const links: GraphLinks = {};
+  Object.entries(GRAPH_ENDPOINTS).map(([networkId, graphEndpoints]) => {
+    const httplinks: Record<SUPPORTED_GRAPHS, HttpLink> = {} as Record<
+      SUPPORTED_GRAPHS,
+      HttpLink
+    >;
+    Object.values(SUPPORTED_GRAPHS).map((value) => {
       httplinks[value] = new HttpLink({
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-        uri: backendInfo.graphs[value]
+        uri: graphEndpoints[value]
       });
     });
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     links[networkId] = httplinks;
   });
 
@@ -140,8 +143,9 @@ const httpsLinks = Object.freeze(constructGraphLinks());
 const apolloInitializer = ({ initialState }: any) => {
   const graphLink = new ApolloLink((operation) => {
     const { clientName = 'backend', chainId = 1 } = operation.getContext();
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-    return httpsLinks[chainId][clientName].request(operation);
+    return httpsLinks[(chainId as string) || '1'][
+      (clientName as SUPPORTED_GRAPHS) || SUPPORTED_GRAPHS.BACKEND
+    ].request(operation);
   });
   return new ApolloClient({
     ssrMode: isSSR(),

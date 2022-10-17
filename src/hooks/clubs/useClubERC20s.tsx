@@ -1,5 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { CLUBS_HAVE_INVESTED, MY_CLUBS_QUERY } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
   setLoadingClubERC20s,
@@ -42,7 +43,10 @@ const useClubERC20s = () => {
     variables: {
       where: { ownerAddress: accountAddress }
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     // Avoid unnecessary calls when account is not defined
     skip:
       !accountAddress ||
@@ -61,7 +65,10 @@ const useClubERC20s = () => {
         memberAddress: accountAddress
       }
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     // Avoid unnecessary calls when account is not defined
     skip:
       !accountAddress ||

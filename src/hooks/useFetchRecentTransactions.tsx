@@ -1,4 +1,5 @@
 import { RECENT_TRANSACTIONS } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import * as CryptoJS from 'crypto-js';
@@ -42,6 +43,9 @@ export const useFetchRecentTransactions: any = (
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
     skip: !account || !activeNetwork.chainId || skipQuery || isDemoMode,
-    context: { clientName: 'backend', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    }
   });
 };

@@ -6,6 +6,7 @@ import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
@@ -101,7 +102,10 @@ const SyndicateDetails: FC<{
       syndicateDaoId: address.toLocaleLowerCase()
     },
     notifyOnNetworkStatusChange: true,
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     skip: !address || loading || !activeNetwork.chainId || isDemoMode,
     fetchPolicy: 'no-cache'
   });

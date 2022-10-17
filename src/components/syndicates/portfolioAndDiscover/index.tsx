@@ -1,7 +1,6 @@
 import CreateClubButton from '@/components/createClubButton';
 import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
-import useCollectives from '@/hooks/collectives/useGetCollectives';
 import useClubERC20s from '@/hooks/clubs/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
@@ -21,6 +20,8 @@ import {
   EmptyStateType
 } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
+import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -50,8 +51,7 @@ const generateSkeletons = (
 const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s },
-    collectivesSlice: { adminCollectives, memberCollectives }
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -64,7 +64,8 @@ const PortfolioAndDiscover: React.FC = () => {
   const { isLoading } = useClubERC20s();
   const { width } = useWindowSize();
 
-  useCollectives();
+  const { adminCollectives } = useAdminCollectives();
+  const { memberCollectives } = useMemberCollectives();
 
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();

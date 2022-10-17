@@ -1,4 +1,5 @@
 import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setConnectedMember } from '@/state/connectMember';
 import { Status } from '@/state/wallet/types';
@@ -46,7 +47,10 @@ export function useAccountTokens(): {
   const { loading, data, refetch, startPolling, stopPolling } = useQuery(
     CLUB_MEMBER_QUERY,
     {
-      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+      context: {
+        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+        chainId: activeNetwork.chainId
+      },
       variables: {
         where: {
           memberAddress: account.toLocaleLowerCase()

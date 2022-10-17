@@ -4,9 +4,8 @@ import {
 } from '@/components/tokenSelect/indexReducer';
 import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
 import { useDebounce } from '@/hooks/useDebounce';
-import { SUPPORTED_TOKENS } from '@/Networks';
 import { AppState } from '@/state';
-import { Collective } from '@/state/collectives/types';
+import { ICollective } from '@/hooks/collectives/utils/types';
 import {
   setDepositTokenDetails,
   setDuplicateRulesError,
@@ -19,12 +18,22 @@ import { getTokenDetails } from '@/utils/api';
 import { getNftCollection } from '@/utils/api/nfts';
 import { isDev } from '@/utils/environment';
 import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+  useMemo
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputField, InputFieldStyle } from '../inputs/inputField';
 import { ImportTokenModal } from './ImportToken';
 import TokenSection from './TokenSection';
 import { TokenModalVariant } from './TokenSelectModal';
+import { SUPPORTED_TOKENS } from '@/Networks';
+import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
+import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
@@ -61,12 +70,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       tokenRules,
       currentSelectedToken,
       logicalOperator
-    },
-    collectivesSlice: { adminCollectives, memberCollectives }
+    }
   } = useSelector((state: AppState) => state);
 
+  const { adminCollectives } = useAdminCollectives();
+  const { memberCollectives } = useMemberCollectives();
+
   const [tokensList, setTokenList] = useState<Token[]>([]);
-  // const [nftList, setNftList] = useState<Token[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [noTokenFound, setNoTokenFound] = useState(false);
   const [showCryptoAssetModal, setShowCryptoAssetModal] = useState(false);
@@ -84,32 +94,38 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
-  const defaultTokenList: Token[] = showTokenGateModal
-    ? [...(adminCollectives || []), ...(memberCollectives || [])]
-        .slice(0, 6)
-        .map((collective: Collective) => {
-          return {
-            name: collective.tokenName,
-            address: collective.address,
-            symbol: collective.tokenSymbol,
-            logoURI: collective.tokenMedia,
-            collectionMediaType: collective.tokenMediaType
-          };
-        }) ||
-      SUPPORTED_TOKENS[
-        activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
-      ] ||
-      []
-    : SUPPORTED_TOKENS[
-        activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
-      ] || [];
+  const defaultTokenList = useMemo<Token[]>((): Token[] => {
+    const defaultTokenList = showTokenGateModal
+      ? [...(adminCollectives || []), ...(memberCollectives || [])]
+          .slice(0, 6)
+          .map((collective: ICollective) => {
+            return {
+              name: collective.tokenName,
+              address: collective.address,
+              symbol: collective.tokenSymbol,
+              logoURI: collective.tokenMedia,
+              collectionMediaType: collective.tokenMediaType
+            };
+          }) ||
+        (SUPPORTED_TOKENS[
+          activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+        ] as Token[]) ||
+        []
+      : (SUPPORTED_TOKENS[
+          activeNetwork.chainId as keyof typeof SUPPORTED_TOKENS
+        ] as Token[]) || [];
+    setTokenList(defaultTokenList);
+    return defaultTokenList;
+  }, [adminCollectives, memberCollectives]);
 
-  const _tokens = debouncedSearchTerm
-    ? [...(tokensList || [])]
-    : [
-        ...(suggestionList || []),
-        ...(dedupTokens(defaultTokenList, suggestionList) || [])
-      ];
+  const _tokens = useMemo<Token[]>((): Token[] => {
+    return debouncedSearchTerm
+      ? tokensList
+      : ([
+          ...(suggestionList || []),
+          ...(dedupTokens(defaultTokenList, suggestionList) || [])
+        ] as Token[]);
+  }, [defaultTokenList]);
 
   useEffect(() => {
     if (searchInputRef.current) {

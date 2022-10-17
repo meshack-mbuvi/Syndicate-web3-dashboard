@@ -1,4 +1,5 @@
 import { CLAIMED_TOKEN } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
   clearTokenClaimed,
@@ -40,7 +41,10 @@ const useFetchTokenClaim: any = (skipQuery: any) => {
       }
     },
     skip: !account || skipQuery || !activeNetwork.chainId || isDemoMode,
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    }
   });
 
   useEffect(() => {

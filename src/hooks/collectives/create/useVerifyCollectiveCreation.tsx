@@ -1,4 +1,5 @@
 import { GetAdminCollectives } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
@@ -39,7 +40,10 @@ const useVerifyCollectiveCreation = (
         !activeNetwork.chainId ||
         skipQuery ||
         isDemoMode,
-      context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+      context: {
+        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+        chainId: activeNetwork.chainId
+      }
     }
   );
 

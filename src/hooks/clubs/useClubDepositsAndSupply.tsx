@@ -1,5 +1,6 @@
 import { SINGLE_CLUB_DETAILS } from '@/graphql/queries';
 import { SingleClubData } from '@/graphql/types';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setActiveModuleDetails, setIsNewClub } from '@/state/erc20token/slice';
 import { ModuleReqs, ModuleType } from '@/types/modules';
@@ -75,7 +76,10 @@ export function useClubDepositsAndSupply(contractAddress: string): {
           contractAddress: contractAddress?.toLocaleLowerCase()
         }
       },
-      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+      context: {
+        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+        chainId: activeNetwork.chainId
+      },
       // Avoid unnecessary calls when contractAddress is not defined or in demo mode
       skip: !contractAddress || !activeNetwork.chainId || isDemoMode
     }

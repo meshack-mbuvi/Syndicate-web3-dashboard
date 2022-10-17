@@ -1,4 +1,5 @@
 import { INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
   clearMerkleProof,
@@ -41,7 +42,10 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
       skipQuery ||
       !activeNetwork.chainId ||
       isDemoMode,
-    context: { clientName: 'backend', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    }
   });
 
   const processMerkleProofData = async (merkleObj: any) => {

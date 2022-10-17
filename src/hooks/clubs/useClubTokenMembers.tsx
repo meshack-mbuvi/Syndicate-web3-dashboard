@@ -1,4 +1,5 @@
 import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { mockClubMembers } from '@/utils/mockdata';
@@ -48,7 +49,10 @@ const useClubTokenMembers = (): {
         contractAddress: clubAddress?.toString().toLowerCase()
       }
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 

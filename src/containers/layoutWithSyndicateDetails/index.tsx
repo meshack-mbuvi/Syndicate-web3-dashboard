@@ -19,6 +19,7 @@ import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -141,7 +142,10 @@ const LayoutWithSyndicateDetails: FC<{
     variables: {
       syndicateDaoId: clubAddress?.toLocaleLowerCase()
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     notifyOnNetworkStatusChange: true,
     skip: !clubAddress || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'

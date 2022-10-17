@@ -1,4 +1,6 @@
-export const SUPPORTED_TOKENS = Object.freeze({
+import { Token } from '@/types/token';
+
+export const SUPPORTED_TOKENS: Record<number, Token[]> = Object.freeze({
   // Ethereum Mainnet
   1: [
     {

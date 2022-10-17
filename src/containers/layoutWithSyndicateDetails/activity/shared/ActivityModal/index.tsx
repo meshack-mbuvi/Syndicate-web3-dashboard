@@ -12,6 +12,7 @@ import {
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
@@ -74,7 +75,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
-    context: { clientName: 'backend', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    }
   });
 
   const { from } = transactionInfo;
@@ -85,7 +89,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
       clubAddress: address,
       address: from
     },
-    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    },
     skip: !address || !from || !activeNetwork.chainId
   });
 
@@ -232,7 +239,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
         chainId: activeNetwork.chainId,
         input: getInput(`${erc20Token.address}:${account}`)
       },
-      context: { clientName: 'backend', chainId: activeNetwork.chainId }
+      context: {
+        clientName: SUPPORTED_GRAPHS.BACKEND,
+        chainId: activeNetwork.chainId
+      }
     });
     if (!loadingNoteAnnotation) {
       refetchTransactions();

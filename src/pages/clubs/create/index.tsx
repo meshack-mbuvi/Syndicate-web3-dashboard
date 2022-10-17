@@ -22,7 +22,6 @@ import router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
-import useCollectives from '@/hooks/collectives/useGetCollectives';
 import SEO from '@/components/seo';
 
 const CreateInvestmentClub: React.FC = () => {
@@ -47,9 +46,6 @@ const CreateInvestmentClub: React.FC = () => {
     nextBtnDisabled,
     resetCreationStates
   } = useCreateInvestmentClubContext();
-
-  // Fetch account collectives to show in token gating step
-  useCollectives();
 
   const parentRef = useRef(null);
 

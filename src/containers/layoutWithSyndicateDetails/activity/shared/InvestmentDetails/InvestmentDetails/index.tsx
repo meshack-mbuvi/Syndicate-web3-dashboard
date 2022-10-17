@@ -7,6 +7,7 @@ import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shar
 import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useMutation } from '@apollo/client';
 import { isEmpty } from 'lodash';
@@ -136,7 +137,10 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
         chainId: activeNetwork.chainId,
         input: getInput(`${erc20Token.address}:${account}`)
       },
-      context: { clientName: 'backend', chainId: activeNetwork.chainId }
+      context: {
+        clientName: SUPPORTED_GRAPHS.BACKEND,
+        chainId: activeNetwork.chainId
+      }
     });
     setStoredInvestmentDetails(values);
     reset(values, {

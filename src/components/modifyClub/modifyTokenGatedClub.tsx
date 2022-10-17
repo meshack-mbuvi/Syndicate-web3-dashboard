@@ -1000,7 +1000,6 @@ const TokenGatedModules: React.FC = () => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
       const chainTokens: typeof SUPPORTED_TOKENS[1 | 4 | 137] =
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];
@@ -1023,7 +1022,7 @@ const TokenGatedModules: React.FC = () => {
             quantity: getWeiAmount(
               web3,
               new BigNumber(_token.quantity).toFixed(),
-              chainToken.decimals,
+              chainToken.decimals || 18,
               false
             ),
             symbol: chainToken.symbol,

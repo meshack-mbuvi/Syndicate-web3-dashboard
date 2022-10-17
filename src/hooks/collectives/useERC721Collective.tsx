@@ -9,6 +9,7 @@ import { useDemoMode } from '../useDemoMode';
 import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { getCollectiveName } from '@/utils/contracts/collective';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 export interface ICollectiveDetails {
   collectiveName: string;
@@ -113,7 +114,10 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
         }
       },
       skip: !collectiveAddress || !activeNetwork.chainId || isDemoMode,
-      context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+      context: {
+        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+        chainId: activeNetwork.chainId
+      }
     }
   );
 

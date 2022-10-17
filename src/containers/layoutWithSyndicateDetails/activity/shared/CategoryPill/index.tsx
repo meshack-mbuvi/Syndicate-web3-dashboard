@@ -3,6 +3,7 @@ import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
 import { TransactionCategory } from '@/state/erc20transactions/types';
@@ -265,7 +266,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           chainId: activeNetwork.chainId,
           input: getInput(`${erc20Token.address}:${account}`)
         },
-        context: { clientName: 'backend', chainId: activeNetwork.chainId }
+        context: {
+          clientName: SUPPORTED_GRAPHS.BACKEND,
+          chainId: activeNetwork.chainId
+        }
       });
       // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);

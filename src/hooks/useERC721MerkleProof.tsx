@@ -1,4 +1,5 @@
 import { ERC721_INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
   clearERC721MerkleProof,
@@ -35,7 +36,10 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
       chainId: activeNetwork.chainId
     },
     skip: !address || skipQuery || !activeNetwork.chainId,
-    context: { clientName: 'backend', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    }
   });
 
   const processMerkleProofData = async (merkleObj: any) => {

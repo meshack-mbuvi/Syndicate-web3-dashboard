@@ -11,6 +11,7 @@ import {
   AddressWithENS
 } from '@/components/shared/ensAddress';
 import { SignedIcon } from '../shared/signedIcon';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 interface IProps {
   memberAddress: string;
@@ -33,7 +34,10 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       clubAddress,
       address: memberAddress
     },
-    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    },
     skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 

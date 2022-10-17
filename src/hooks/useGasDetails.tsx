@@ -1,6 +1,7 @@
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { GAS_RATE } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { getWeiAmount } from '@/utils/conversions';
@@ -387,7 +388,10 @@ const useGasDetails: (props: IProps) => {
     variables: {
       chainId: activeNetwork.chainId
     },
-    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    },
     skip: skipQuery || !activeNetwork.chainId
   });
 

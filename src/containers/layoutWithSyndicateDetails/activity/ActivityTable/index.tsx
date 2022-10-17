@@ -27,6 +27,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FilterPill from '../shared/FilterPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   const dispatch = useDispatch();
@@ -389,7 +390,10 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
         chainId: activeNetwork.chainId,
         input: getInput(`${erc20TokenAddress}:${account}`)
       },
-      context: { clientName: 'backend', chainId: activeNetwork.chainId }
+      context: {
+        clientName: SUPPORTED_GRAPHS.BACKEND,
+        chainId: activeNetwork.chainId
+      }
     });
 
     if (!annotationLoading) {
