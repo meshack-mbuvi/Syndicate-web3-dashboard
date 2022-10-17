@@ -137,7 +137,7 @@ const PortfolioAndDiscover: React.FC = () => {
   ) {
     return (
       <div
-        className="w-full flex justify-center"
+        className="w-full flex justify-center md:h-100"
         style={{ marginTop: '144px' }}
       >
         <CreateClubOrCollective
