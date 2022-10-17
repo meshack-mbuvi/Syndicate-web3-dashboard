@@ -30,7 +30,6 @@ export const InputFieldMaxPerWallet: React.FC<Props> = ({
           handleMaxPerWalletChange(null);
         }
       }}
-      placeholderLabel="1"
       extraClasses={extraClasses}
     />
   );
