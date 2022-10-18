@@ -63,7 +63,15 @@ const Distribute: FC = () => {
 
   const dispatch = useDispatch();
 
-  const [tokensDetails, setTokensDetails] = useState([]);
+  const [tokensDetails, setTokensDetails] = useState<
+    {
+      fiatAmount: string;
+      tokenAmount: string;
+      tokenIcon: string;
+      tokenSymbol: string;
+      isLoading?: boolean;
+    }[]
+  >([]);
   const [ctaButtonDisabled, setCtaButtonDisabled] = useState(true);
   const [sufficientGas, setSufficientGas] = useState(false);
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
@@ -204,22 +212,21 @@ const Distribute: FC = () => {
       setCtaButtonDisabled(false);
 
       setTokensDetails(
-        // @ts-expect-error TS(2345): Argument of type '{ tokenAmount: any; fiatAmount: any; tokenIcon: any'..... Remove this comment to see the full error message
-        distributionTokens.map(
-          ({ symbol, tokenAmount, fiatAmount, icon }: any) => ({
-            fiatAmount,
-            tokenAmount: parseFloat(tokenAmount).toFixed(4),
-            tokenIcon: icon,
-            tokenSymbol: symbol,
-            isLoading: loadingAssets
-          })
-        )
+        distributionTokens.map(({ symbol, tokenAmount, fiatAmount, icon }) => ({
+          fiatAmount: isNaN(fiatAmount) ? '0' : Number(fiatAmount).toFixed(4),
+          tokenAmount: isNaN(tokenAmount)
+            ? '0'
+            : Number(tokenAmount).toFixed(4),
+          tokenIcon: icon,
+          tokenSymbol: symbol,
+          isLoading: loadingAssets
+        }))
       );
     } else {
       setCtaButtonDisabled(true);
     }
 
-    return () => {
+    return (): void => {
       setTokensDetails([]);
       setCtaButtonDisabled(true);
     };
@@ -623,7 +630,6 @@ const Distribute: FC = () => {
     <div className="space-y-8">
       <BadgeWithOverview
         tokensDetails={tokensDetails}
-        // @ts-expect-error TS(2322): Type '{ tokenSymbol: string; tokenAmount: ' is not assig ... Remove this comment to see the full error message
         gasEstimate={
           gasPrice
             ? {

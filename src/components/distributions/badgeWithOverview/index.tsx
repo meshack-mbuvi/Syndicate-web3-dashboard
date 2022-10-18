@@ -2,26 +2,22 @@ import { Callout } from '@/components/callout';
 import { CtaButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
-import {
-  floatedNumberWithCommas,
-  numberWithCommas
-} from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
 interface Props {
   tokensDetails?: {
     tokenSymbol: string;
-    tokenAmount: number;
+    tokenAmount: string;
     tokenIcon: string;
-    fiatAmount?: number;
+    fiatAmount: string;
     isLoading?: boolean;
   }[];
   gasEstimate: {
     tokenSymbol: string;
     tokenAmount: string;
     fiatAmount: string;
-  };
+  } | null;
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
@@ -43,12 +39,15 @@ export const BadgeWithOverview: React.FC<Props> = ({
     if (!isTotalLoading && tokenDetails.isLoading) {
       setIsTotalLoading(true);
     }
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    return total + tokenDetails.fiatAmount;
+
+    return (
+      parseFloat(total.toFixed(3)) + parseFloat(tokenDetails?.fiatAmount ?? 0)
+    );
   }, 0);
 
-  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-  const totalFiatAmount = fiatAmount + +gasEstimate?.fiatAmount;
+  const totalFiatAmount =
+    parseFloat(fiatAmount?.toString() ?? '0') +
+    parseFloat(gasEstimate ? gasEstimate?.fiatAmount : '0');
 
   const renderedTokenRows = tokensDetails?.map((tokenDetails, index) => {
     return (
@@ -78,9 +77,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
             />
           ) : (
             <>
-              <div className="truncate mr-1">
-                {numberWithCommas(tokenDetails.tokenAmount)}
-              </div>
+              <div className="truncate mr-1">{tokenDetails.tokenAmount}</div>
               <div>{tokenDetails.tokenSymbol}</div>
             </>
           )}
@@ -144,8 +141,10 @@ export const BadgeWithOverview: React.FC<Props> = ({
                       />
                     ) : (
                       <div className="text-gray-syn4 font-mono flex-grow text-right truncate">
-                        {'$'}
-                        {floatedNumberWithCommas(fiatAmount)}
+                        {Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(fiatAmount ?? 0)}
                       </div>
                     )}
                   </div>
@@ -208,8 +207,12 @@ export const BadgeWithOverview: React.FC<Props> = ({
             <div className="flex justify-between px-8 pt-6 mb-8 space-x-4">
               <div>Total</div>
               <div className="font-mono truncate flex-grow text-right">
-                {'$'}
-                {isTotalLoading ? 0 : floatedNumberWithCommas(totalFiatAmount)}
+                {isTotalLoading
+                  ? 0
+                  : Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    }).format(totalFiatAmount)}
               </div>
             </div>
             <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
@@ -221,76 +224,65 @@ export const BadgeWithOverview: React.FC<Props> = ({
 
       {/* Mobile */}
       <div className="w-full md:hidden bg-gray-syn8 py-5 px-8 sm:px-10 space-y-4">
-        {
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          tokensDetails.length > 0 ? (
-            <>
-              {/* Distributing N assets */}
-              <div className="flex justify-between">
-                <div>
-                  Distributing{' '}
-                  {
-                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                    tokensDetails.length
-                  }{' '}
-                  asset
-                  {
-                    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                    tokensDetails.length > 1 && 's'
-                  }
-                </div>
-                <div className="text-gray-syn4 font-mono">
-                  {`$${floatedNumberWithCommas(totalFiatAmount)}`}
-                </div>
+        {tokensDetails && tokensDetails.length > 0 ? (
+          <>
+            {/* Distributing N assets */}
+            <div className="flex justify-between">
+              <div>
+                Distributing {tokensDetails.length} asset
+                {tokensDetails.length > 1 && 's'}
               </div>
-              {/* Gas estimate */}
-              <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
-                <div className="flex justify-between">
-                  <div className="flex space-x-1">
-                    <div>Estimated gas</div>
-                    <div className="pr-1">
-                      <Image
-                        width={14}
-                        height={14}
-                        src="/images/fuel-pump-blue.svg"
-                        className="w-3.5 relative top-0.5"
-                        alt="Gas icon"
-                      />
-                    </div>
-                    <div className="pl-1">
-                      {!gasEstimate
-                        ? '-'
-                        : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
-                    </div>
-                    <div>{gasEstimate?.tokenSymbol}</div>
-                  </div>
-                  <div>
-                    $
-                    {!gasEstimate
-                      ? ' -'
-                      : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
-                  </div>
-                </div>
-              </Callout>
-              <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
-                {CTALabel}
-              </CtaButton>
-            </>
-          ) : (
-            <div className="flex items-center justify-between">
-              <SkeletonLoader
-                width="5/12"
-                height="4"
-                margin="0"
-                borderRadius="rounded"
-                customClass="opacity-60"
-              />
-              <div className="text-gray-syn4 text-right">
-                Waiting for selection...
+              <div className="text-gray-syn4 font-mono">
+                {`$${totalFiatAmount.toFixed(4)}`}
               </div>
             </div>
-          )
-        }
+            {/* Gas estimate */}
+            <Callout extraClasses="rounded-xl px-4 py-3 text-sm">
+              <div className="flex justify-between">
+                <div className="flex space-x-1">
+                  <div>Estimated gas</div>
+                  <div className="pr-1">
+                    <Image
+                      width={14}
+                      height={14}
+                      src="/images/fuel-pump-blue.svg"
+                      className="w-3.5 relative top-0.5"
+                      alt="Gas icon"
+                    />
+                  </div>
+                  <div className="pl-1">
+                    {!gasEstimate
+                      ? '-'
+                      : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
+                  </div>
+                  <div>{gasEstimate?.tokenSymbol}</div>
+                </div>
+                <div>
+                  $
+                  {!gasEstimate
+                    ? ' -'
+                    : parseFloat(gasEstimate?.fiatAmount).toFixed(2)}
+                </div>
+              </div>
+            </Callout>
+            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+              {CTALabel}
+            </CtaButton>
+          </>
+        ) : (
+          <div className="flex items-center justify-between">
+            <SkeletonLoader
+              width="5/12"
+              height="4"
+              margin="0"
+              borderRadius="rounded"
+              customClass="opacity-60"
+            />
+            <div className="text-gray-syn4 text-right">
+              Waiting for selection...
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

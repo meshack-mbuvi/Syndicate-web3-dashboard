@@ -4,14 +4,20 @@ import {
 } from '@/components/collectives/activity';
 import { BadgeWithMembers } from '@/components/collectives/badgeWithMembers';
 import { CollectiveCard } from '@/components/collectives/card';
+import MembersOnly from '@/components/collectives/membersOnly';
 import { PermissionType } from '@/components/collectives/shared/types';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B2, B3, H4 } from '@/components/typography';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import useERC721CollectiveEvents from '@/hooks/collectives/useERC721CollectiveEvents';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
+import { getOpenSeaLink } from '@/utils/api/nfts';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -19,12 +25,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
-import { getOpenSeaLink } from '@/utils/api/nfts';
-import MembersOnly from '@/components/collectives/membersOnly';
-import Modal, { ModalStyle } from '@/components/modal';
-import { Spinner } from '@/components/shared/spinner';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import useERC721CollectiveEvents from '@/hooks/collectives/useERC721CollectiveEvents';
 
 interface IProps {
   showModifySettings: boolean;
