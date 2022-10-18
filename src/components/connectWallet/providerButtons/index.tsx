@@ -19,8 +19,9 @@ export const WalletProviderList: React.FC<Props> = ({
    * The provider for metamask is named injected
    */
   const activateInjected = async (walletName?: string) => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    await connectWallet('Injected', walletName);
+    if (connectWallet !== undefined) {
+      await connectWallet('Injected', walletName);
+    }
   };
 
   /**

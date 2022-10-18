@@ -1,5 +1,6 @@
 import IconPlus from '@/components/icons/plusIcon';
 import { ChevronRightIcon } from '@heroicons/react/outline';
+import IconCirclePlus from '../icons/circlePlusIcon';
 export enum LinkType {
   CALENDAR = 'CALENDAR',
   MEMBER = 'MEMBER'
@@ -31,7 +32,7 @@ export const LinkButton = (props: {
       label = 'Add to calendar';
       break;
     case LinkType.MEMBER:
-      icon = <IconPlus />;
+      icon = <IconCirclePlus />;
       label = 'Add member';
       break;
     default:

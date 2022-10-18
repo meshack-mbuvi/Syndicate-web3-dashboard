@@ -285,7 +285,10 @@ module.exports = {
       letterSpacing: {
         '0.1px': '0.1px',
         px: '0.0625rem',
-        '2.5xl': '1.25rem'
+        '2.5xl': '1.25rem',
+        e1: '0.175rem',
+        e2: '0.125rem',
+        e3: '0.03125rem'
       },
       colors: {
         'twitter-blue': '#1DA1F2',

@@ -329,7 +329,7 @@ export const E1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono uppercase transform transition-font-size ${
+      className={`font-mono uppercase tracking-e1 transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -352,7 +352,7 @@ export const E2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono text-sm uppercase transform transition-font-size ${
+      className={`font-mono text-sm uppercase tracking-e2 transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
