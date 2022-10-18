@@ -27,7 +27,7 @@ export const BACKEND_LINKS = Object.freeze({
   137: {
     graphs: {
       backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_MATIC_ENDPOINT
+      theGraph: process.env.NEXT_PUBLIC_SATSUMA_MATIC_ENDPOINT
     },
     apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
   }
