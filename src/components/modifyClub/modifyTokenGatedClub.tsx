@@ -67,6 +67,7 @@ import {
 } from '../inputs/inputFieldWithToken';
 import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
+import { TokenDetails } from '@/types/token';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -999,7 +1000,7 @@ const TokenGatedModules: React.FC = () => {
   useEffect(() => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
-      const chainTokens: typeof SUPPORTED_TOKENS[1 | 4 | 137] =
+      const chainTokens: typeof SUPPORTED_TOKENS[1 | 137] =
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];
@@ -1053,9 +1054,9 @@ const TokenGatedModules: React.FC = () => {
           getTokenDetails(token.contractAddress, activeNetwork.chainId)
         )
       ).then((res) =>
-        res.map((_res) => {
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          const quantity = requiredTokenRules.find(
+        res.map((response) => {
+          const _res = response as { data: TokenDetails };
+          const quantity = requiredTokenRules?.find(
             (t) => t.contractAddress === _res.data.contractAddress
           )?.quantity;
 

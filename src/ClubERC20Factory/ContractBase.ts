@@ -13,7 +13,7 @@ export abstract class ContractBase {
   abiItem: AbiItem[];
   // @ts-expect-error TS(2564): Property 'isGnosisSafe' has no initializer and is ... Remove this comment to see the full error message
   isGnosisSafe: boolean;
-  addresses: typeof CONTRACT_ADDRESSES[1 | 4 | 137];
+  addresses: typeof CONTRACT_ADDRESSES[1 | 137];
 
   constructor(
     address: string,

@@ -35,42 +35,6 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4'
   },
 
-  // Rinkeby
-  4: {
-    clubERC20Factory: '0xBaE7eaA8317B3652dad3886caF454Da0706F53Ca',
-    clubERC20FactoryNative: '0x04A8A99C80cC19E7a56342Fef2d8DAC6cd5f8dD4', // clubERC20FactoryETH
-    erc20ClubFactory: '0x6df4d8c0e0cdba7862fd36fd438c5184c7b57826',
-    DepositTokenMintModule: '0x9cAf7337F9fe05469FaaA3b388C479C6E8393276',
-    distributionsERC20: '0x5ecba41367e90a493c3007c0e60400ead70cc611',
-    distributionsETH: '0xecba2cbdb805c5bed916396867fc581199058fba',
-    ERC721MintPolicy: '0xbBca348239b6D620D0F9c21C1b641f36f62988D6',
-    NativeMintModule: '0x15780803d56d0f574B9DB6f46c5dBA692c646ab6', // EthMintModule-
-    MerkleDistributorModule: '0x72B7817075AC3263783296f33c8F053e848594a3',
-    MerkleDistributorModuleERC721: '0xeC85E73048aaaBB2d7dD99f605E56E6Dc5A2a67B',
-    mintPolicy: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4',
-    policyMintERC20: '0x36d367884b5088465C0Ea2EaF52224a922DC71E6',
-    PublicOnePerAddress: '0xce6E260226639F1dD446dc19F21bd66cbE613d0D',
-    SingleTokenMintModule: '0x7f450D0B82f4785881736bcd7635bbDd0cbA7648',
-    UtilityMintModule: '0xD193Cfbc267f23127E024A025233A8483b29C66e',
-    OnePerAddressMintModule: '',
-    OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
-    maxMemberMixin: '0x3aed52ea820c42e84a2c3ad5f6d183ed550773f8',
-    maxTotalSupplyMixin: '0x4ec1a2eda3b36a06783ed44f2e3e6046b6de530d',
-    tokenGatingMixin: '0xf9a4b9d1cee93451f32f6d36aace26721e33848b',
-
-    // Collectives
-    ERC721Collective: '0xc11960ebf2f6a894f728e40ce47ae2ec04a4cf0b',
-    ERC721CollectiveFactory: '0x3140faab174f880703d75c3fca538c2f190cc58e',
-    FixedRenderer: '0x6c4f220416751503e81e38deee9899082a803275',
-    GuardMixinManager: '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
-    EthPriceMintModule: '0x89583ad6aba72c7c6de70ee9a290884abc4000c3',
-    TimeRequirements: '0x07ccfbb36468cec5d64c1e3582546a6b5b52732d',
-    MaxPerMemberERC721: '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
-    MaxTotalSupplyERC721: '0x50ab2de08f81522fffe1156af22374d37222e14f',
-    GuardAlwaysAllow: '0x1550A951Eb4a59cb1a92e231951A63e7C6936057',
-    GuardNeverAllow: '0x701EAE459BF3E501852E11499117b2eC333EBdF9'
-  },
-
   // Goerli
   5: {
     clubERC20Factory: '',

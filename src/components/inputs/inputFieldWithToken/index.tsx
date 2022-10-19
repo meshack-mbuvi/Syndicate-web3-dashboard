@@ -15,7 +15,7 @@ export enum SymbolDisplay {
 export const InputFieldWithToken = (props: {
   value?: string;
   placeholderLabel?: string;
-  infoLabel?: string | React.ReactElement;
+  infoLabel?: string | React.ReactElement | null;
   isInErrorState?: boolean;
   depositTokenLogo?: string;
   depositTokenSymbol?: string;

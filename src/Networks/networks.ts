@@ -75,44 +75,6 @@ export const NETWORKS = Object.freeze({
     }
   },
 
-  4: {
-    name: 'Ethereum Rinkeby',
-    displayName: 'Rinkeby',
-    shortName: 'rin',
-    network: 'rinkeby',
-    testnet: true,
-    chainId: 4,
-    networkId: 4,
-    testNetwork: true,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_RINKEBY,
-    publicRPC: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-    logo: '/images/chains/rinkeby.svg',
-    blockExplorer: {
-      name: 'Etherscan',
-      baseUrl: 'https://rinkeby.etherscan.io',
-      api: 'https://api-rinkeby.etherscan.io/',
-      resources: {
-        transaction: 'tx',
-        address: 'address'
-      }
-    },
-    nativeCurrency: {
-      symbol: 'ETH',
-      name: 'Ethereum',
-      decimals: '18',
-      exchangeRate: 10000,
-      logo: '/images/chains/rinkeby.svg'
-    },
-    gnosis: {
-      txServiceUrl: 'https://safe-transaction.rinkeby.gnosis.io/api/v1/'
-    },
-    metadata: {
-      colors: {
-        background: 'orange-light'
-      }
-    }
-  },
-
   5: {
     name: 'Ethereum Goerli',
     displayName: 'Goerli',
@@ -123,7 +85,7 @@ export const NETWORKS = Object.freeze({
     networkId: 5,
     testNetwork: true,
     rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_GOERLI,
-    publicRPC: 'https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    publicRPC: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     logo: '/images/chains/goerli.svg',
     blockExplorer: {
       name: 'Etherscan',

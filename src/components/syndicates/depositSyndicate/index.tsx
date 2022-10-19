@@ -488,8 +488,7 @@ const DepositSyndicate: React.FC = () => {
         deposit_token: depositTokenSymbol
       });
     } catch (error) {
-      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
-      const { code, message } = error;
+      const { code, message } = error as { code: number; message: string };
 
       // we don't want to dismiss the modal when the user rejects
       // the transaction.

@@ -71,11 +71,11 @@ Every pull request automatically generates a deploy preview on Netlify. All code
 
 [Staging](https://staging.app.syndicate.io/)
 
-The development workflow includes merging most changes into staging, completing thorough testing on Rinkeby, and then finalizing the merge into mainnet on a regular cadence (e.g. continuous Rinkeby merges, mainnet merges weekly or in case of an emergency).
+The development workflow includes merging most changes into staging, completing thorough testing on Goerli, and then finalizing the merge into mainnet on a regular cadence (e.g. continuous Goerli merges, mainnet merges weekly or in case of an emergency).
 
 ## Smart Contract
 
-The Syndicate smart contract is available on the Rinkeby test network at [0x9a894f95Fd40838B3F69F6494DB1Cc5Af3532Ea5](https://rinkeby.etherscan.io/address/0x9a894f95Fd40838B3F69F6494DB1Cc5Af3532Ea5). Documentation for the contract can be found in [Syndicate.md](https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/blob/main/Syndicate.md).
+Documentation for the contract can be found in [Syndicate.md](https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/blob/main/Syndicate.md).
 
 ## Resources
 
