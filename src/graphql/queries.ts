@@ -383,3 +383,18 @@ export const graphCurrentBlock = gql`
     }
   }
 `;
+
+export const TOKEN_DETAILS = gql`
+  query Token($chainId: Int!, $address: String!) {
+    token(chainId: $chainId, address: $address) {
+      ... on ERC20Token {
+        address
+      }
+      chainId
+      name
+      symbol
+      decimals
+      logo
+    }
+  }
+`;
