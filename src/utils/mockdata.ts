@@ -535,6 +535,33 @@ export const mockClubMembers = [
   }
 ];
 
+export const mockDataMintEvents = [
+  {
+    memberAddress: '0x005d3f75730cf16e25208bcb27ca941d33db9f8a',
+    createdAt: '1665758104'
+  },
+  {
+    memberAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad',
+    createdAt: '1665718104'
+  },
+  {
+    memberAddress: '0x0cba94a2e458ccace1cc5bac0f05c0c67d9680fd',
+    createdAt: '1665728304'
+  },
+  {
+    memberAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb',
+    createdAt: '1665738304'
+  },
+  {
+    memberAddress: '0x50ccff161ce2751fcfcdc6cf3ec9cc85c933af25',
+    createdAt: '1665748304'
+  },
+  {
+    memberAddress: '0x7cd2d1c36d287f7db66ed74477813f87ef33bf91',
+    createdAt: '1665758304'
+  }
+];
+
 export const mockActivityDepositTransactionsData = {
   edges: [
     {

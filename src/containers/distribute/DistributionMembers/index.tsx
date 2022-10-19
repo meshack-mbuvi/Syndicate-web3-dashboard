@@ -60,6 +60,7 @@ interface memberDetail {
   ensName: string;
   avatar?: string;
   address: string;
+  createdAt: string;
   clubTokenHolding?: number;
   distributionShare: number;
   ownershipShare: number;
@@ -474,7 +475,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setProgressDescriptorDescription('');
   };
 
-  const onTxConfirm = (transactionHash: any) => {
+  const onTxConfirm = (transactionHash: string): void => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
     // Update progress state
@@ -489,7 +490,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setTransactionHash(transactionHash);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setIsConfirmationModalVisible(true);
 
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
@@ -508,7 +509,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const onTxFail = (error?: any) => {
+  const onTxFail = (error?: any): void => {
     setIsConfirmationModalVisible(true);
 
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
@@ -542,7 +543,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const handleCheckAndApproveAllowance = async (step: any) => {
+  const handleCheckAndApproveAllowance = async (step: any): Promise<void> => {
     setIsTransactionPending(true);
     setProgressDescriptorDescription(`Approve ${step.symbol} from your wallet`);
 

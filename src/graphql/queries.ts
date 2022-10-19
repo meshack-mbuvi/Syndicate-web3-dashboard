@@ -56,13 +56,17 @@ export const CLUBS_HAVE_INVESTED = gql`
 `;
 
 export const CLUB_TOKEN_MEMBERS = gql`
-  query getClubMembers($where: SyndicateDAO_filter) {
+  query getClubMembers(
+    $where: SyndicateDAO_filter
+    $where2: SyndicateEvent_filter
+  ) {
     syndicateDAOs(where: $where) {
       id
       members {
         id
         depositAmount
         tokens
+        createdAt
         member {
           id
           memberAddress
@@ -73,6 +77,17 @@ export const CLUB_TOKEN_MEMBERS = gql`
       contractAddress
       startTime
       endTime
+    }
+
+    syndicateEvents(where: $where2) {
+      ... on MemberMinted {
+        memberAddress
+        createdAt
+      }
+      ... on OwnerMinted {
+        createdAt
+        memberAddress
+      }
     }
   }
 `;

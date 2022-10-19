@@ -131,3 +131,6 @@ export const truncateDecimals = (
   const fact = 10 ** digits;
   return Math.floor(inputNumber * fact) / fact;
 };
+
+export const removeTrailingDecimalPoint = (value: string): string =>
+  value.replace(/\.(?!\d)/g, '');
