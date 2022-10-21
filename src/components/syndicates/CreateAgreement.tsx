@@ -11,6 +11,8 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ADMIN_GENERATE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 
 interface FormInputs {
   legalEntityName: string;
@@ -236,6 +238,11 @@ const CreateAgreementComponent: React.FC = () => {
                       }`}
                       type="submit"
                       disabled={!isValid}
+                      onClick={() => {
+                        amplitudeLogger(ADMIN_GENERATE_DOCS_CLICK, {
+                          flow: Flow.CLUB_LEGAL
+                        });
+                      }}
                     >
                       Generate my documents
                     </button>

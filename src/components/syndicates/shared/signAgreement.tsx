@@ -1,5 +1,8 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { MGR_LEGAL_DOC_SIGN } from '@/components/amplitude/eventNames';
+import {
+  ADMIN_DOCS_SIGN,
+  MBR_DOCS_SIGN
+} from '@/components/amplitude/eventNames';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -261,10 +264,16 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         }
       };
       localStorage.setItem('legal', JSON.stringify(legal));
+      amplitudeLogger(ADMIN_DOCS_SIGN, {
+        flow: Flow.CLUB_LEGAL
+      });
     }
-    amplitudeLogger(MGR_LEGAL_DOC_SIGN, {
-      flow: Flow.CLUB_LEGAL
-    });
+
+    if (!isManager) {
+      amplitudeLogger(MBR_DOCS_SIGN, {
+        flow: Flow.CLUB_LEGAL
+      });
+    }
   };
 
   const [inputWidth, setInputWidth] = useState(0);

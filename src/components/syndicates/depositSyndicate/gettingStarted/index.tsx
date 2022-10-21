@@ -1,4 +1,9 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  MBR_DOCS_PAGE_LANDING,
+  MBR_GET_STARTED_CLICK
+} from '@/components/amplitude/eventNames';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
 import { Spinner } from '@/components/shared/spinner';
@@ -52,11 +57,22 @@ const GettingStarted: React.FC = () => {
     }
   }, [clubAddress, account, router.isReady, activeNetwork]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      amplitudeLogger(MBR_DOCS_PAGE_LANDING, {
+        flow: Flow.COLLECTIVE_CLAIM
+      });
+    }, 500);
+  }, []);
+
   const { name, loading, depositsEnabled } = erc20Token;
 
   const memberHasSigned = false;
 
   const handleGetStarted = () => {
+    amplitudeLogger(MBR_GET_STARTED_CLICK, {
+      flow: Flow.CLUB_LEGAL
+    });
     router.push(`/clubs/${clubAddress}/member/legal/prepare?form=${form}`);
   };
 
@@ -185,7 +201,12 @@ const GettingStarted: React.FC = () => {
                     href={`/clubs/${clubAddress}/member/legal/prepare?form=${form}`}
                   >
                     {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a className="bg-green rounded-custom w-full flex items-center justify-center py-4">
+                    <a
+                      aria-hidden
+                      className="bg-green rounded-custom w-full flex items-center justify-center py-4"
+                      onClick={handleGetStarted}
+                      onKeyPress={handleGetStarted}
+                    >
                       <p className="text-black pr-1 whitespace-nowrap font-semibold">
                         Get started
                       </p>
@@ -198,7 +219,8 @@ const GettingStarted: React.FC = () => {
                 ) : (
                   <button
                     className="bg-green rounded-custom w-full flex items-center justify-center py-4"
-                    onClick={() => handleGetStarted()}
+                    onClick={handleGetStarted}
+                    onKeyPress={handleGetStarted}
                   >
                     <p className="text-black pr-1 whitespace-nowrap font-semibold">
                       Get started
@@ -231,7 +253,12 @@ const GettingStarted: React.FC = () => {
                   href={`/clubs/${clubAddress}/member/legal/prepare?form=${form}`}
                 >
                   {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <a className="bg-green rounded-custom w-full flex items-center justify-center py-4">
+                  <a
+                    aria-hidden
+                    className="bg-green rounded-custom w-full flex items-center justify-center py-4"
+                    onClick={handleGetStarted}
+                    onKeyPress={handleGetStarted}
+                  >
                     <p className="text-black pr-1 whitespace-nowrap font-semibold">
                       Get started
                     </p>

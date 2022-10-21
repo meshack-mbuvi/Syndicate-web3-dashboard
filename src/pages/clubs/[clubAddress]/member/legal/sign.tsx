@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { MBR_FINISH_DOCS_CLICK } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -42,6 +44,9 @@ const MemberAgreementPage: NextPage = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const signHandler = () => {
+    amplitudeLogger(MBR_FINISH_DOCS_CLICK, {
+      flow: Flow.CLUB_LEGAL
+    });
     // Render Final Docs :
     const data = {
       ...memberInfo,

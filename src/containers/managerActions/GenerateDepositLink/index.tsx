@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ADMIN_PREPARE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 import { CtaButton } from '@/components/CTAButton';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -447,6 +449,9 @@ export const DepositLinkModal: FC<ILinkModal> = ({
                     if (depositsEnabled) {
                       startDocumentSigning('yes');
                     }
+                    amplitudeLogger(ADMIN_PREPARE_DOCS_CLICK, {
+                      flow: Flow.CLUB_LEGAL
+                    });
                   }}
                 >
                   Prepare legal documents

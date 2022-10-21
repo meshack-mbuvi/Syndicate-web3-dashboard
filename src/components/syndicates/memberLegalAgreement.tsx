@@ -13,6 +13,8 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { amplitudeLogger, Flow } from '../amplitude';
+import { MBR_REVIEW_DOCS_CLICK } from '../amplitude/eventNames';
 import ArrowDown from '/public/images/arrowDown.svg';
 
 interface FormInputs {
@@ -184,6 +186,11 @@ const LegalAgreement: React.FC = () => {
                     : 'primary-CTA hover:opacity-90 transition-all'
                 }`}
                 type="submit"
+                onClick={() => {
+                  amplitudeLogger(MBR_REVIEW_DOCS_CLICK, {
+                    flow: Flow.CLUB_LEGAL
+                  });
+                }}
               >
                 Review and sign
               </button>
