@@ -7,6 +7,7 @@ import IClubEmptyState from '@/components/shared/SyndicateEmptyState';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
+import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import {
   getDepositDetails,
@@ -132,6 +133,22 @@ const LayoutWithSyndicateDetails: FC<{
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  // Google Analytics
+  // Wait until enough data on the page is loaded
+  // before sending data to Google Analyitics
+  router.events?.on('routeChangeComplete', (url) => {
+    setFullPathname(url);
+  });
+  const [fullPathname, setFullPathname] = useState('');
+  useEffect(() => {
+    // Club name must be loaded before sending data, otherwise GA
+    // will record the page title incorrectly (e.g "Club | Syndicate")
+    // instead of using the actual club name
+    if (name && fullPathname) {
+      GoogleAnalyticsPageView(fullPathname);
+    }
+  }, [name, router.events]);
 
   const {
     loading: queryLoading,

@@ -355,7 +355,7 @@ const Collective: React.FC = () => {
         hideWallet={false}
         hideEllipsis={false}
         showCloseButton={false}
-        headerTitle={'Collective NFT'}
+        headerTitle={collectiveName ? collectiveName : 'Collective NFT'}
         managerSettingsOpen={false}
         dotIndicatorOptions={[]}
         leftColumnComponent={

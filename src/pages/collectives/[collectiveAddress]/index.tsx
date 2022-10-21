@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import router from 'next/router';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
 
 /**
  * This page shows the manager container for a given syndicate address
@@ -33,6 +36,26 @@ const CollectiveIndexPage: React.FC = () => {
       setPageIsLoading(true);
     };
   }, [readyCollectivesClient, isReady, web3]);
+
+  const {
+    collectiveDetails: { collectiveName }
+  } = useERC721Collective();
+
+  // Google Analytics
+  // Wait until enough data on the page is loaded
+  // before sending data to Google Analyitics
+  const [fullPathname, setFullPathname] = useState('');
+  router.events.on('routeChangeComplete', (url) => {
+    setFullPathname(url);
+  });
+  useEffect(() => {
+    // Collective name must be loaded before sending data, otherwise GA
+    // will record the page title incorrectly (e.g "Collective NFT | Syndicate")
+    // instead of using the actual collective name
+    if (collectiveName && fullPathname) {
+      GoogleAnalyticsPageView(fullPathname);
+    }
+  }, [router.events, collectiveName, fullPathname]);
 
   return pageIsLoading ? (
     <Layout>

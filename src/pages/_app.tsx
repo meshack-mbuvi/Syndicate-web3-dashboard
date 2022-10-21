@@ -29,7 +29,6 @@ import { RetryLink } from '@apollo/client/link/retry';
 import withApollo from 'next-with-apollo';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
 import {
@@ -39,12 +38,33 @@ import {
 } from '@/Networks/backendLinks';
 
 import { SplitFactory } from '@splitsoftware/splitio-react';
+import Script from 'next/script';
+import router from 'next/router';
+import {
+  GA_TRACKING_ID,
+  GoogleAnalyticsPageView
+} from '@/google-analytics/gtag';
 import useIsInDarkMode from '@/hooks/useDarkMode';
 
+const handleRouteChangeGoogleAnalytics = (url: string) => {
+  const isURLForClub = url.split('/').includes('clubs');
+  const isURLForCollective = url.split('/').includes('collectives');
+  if (!isURLForClub && !isURLForCollective) {
+    GoogleAnalyticsPageView(url);
+  }
+};
+
 //Binding events.
-Router.events.on('routeChangeStart', () => NProgress.start());
-Router.events.on('routeChangeComplete', () => NProgress.done());
-Router.events.on('routeChangeError', () => NProgress.done());
+router.events.on('routeChangeStart', () => NProgress.start());
+router.events.on('routeChangeError', () => NProgress.done());
+router.events.on('routeChangeComplete', (url: string) => {
+  NProgress.done();
+  handleRouteChangeGoogleAnalytics(url);
+});
+router.events.on('hashChangeComplete', (url: string) => {
+  NProgress.done();
+  handleRouteChangeGoogleAnalytics(url);
+});
 
 const sdkConfig = {
   core: {
@@ -101,6 +121,26 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
       <ApolloProvider client={apollo}>
         <Component {...pageProps} />
       </ApolloProvider>
+
+      {/* Google Analytics */}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });
+          `
+        }}
+      />
     </>
   );
 };
