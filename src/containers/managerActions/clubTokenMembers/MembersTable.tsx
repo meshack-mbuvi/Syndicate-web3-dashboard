@@ -1,5 +1,5 @@
+import { ActionButton, ActionButtonType } from '@/components/actionButton';
 import { SearchInput } from '@/components/inputs';
-import { LinkButton, LinkType } from '@/components/linkButtons';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { SET_MEMBER_SIGN_STATUS } from '@/graphql/mutations';
@@ -203,8 +203,8 @@ const MembersTable = ({
 
         {isOwner && (
           <div className="inline-flex items-right">
-            <LinkButton
-              type={LinkType.MEMBER}
+            <ActionButton
+              type={ActionButtonType.ADD}
               onClick={() => {
                 if (depositsEnabled) {
                   toggleAddMemberModal();
@@ -212,7 +212,9 @@ const MembersTable = ({
                   setShowMintNavToClubSettings(true);
                 }
               }}
-            />
+            >
+              Add member
+            </ActionButton>
           </div>
         )}
       </div>

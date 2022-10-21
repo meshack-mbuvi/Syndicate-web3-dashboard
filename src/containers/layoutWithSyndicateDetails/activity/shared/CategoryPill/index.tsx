@@ -312,7 +312,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     >
       <div className="flex justify-start items-center">
         {!showLoader ? (
-          <div className="flex-shrink-0 h-8 w-8 mr-2 my-1 ml-1">
+          <div className="flex-shrink-0 h-8 w-8 mr-2.25 my-1 ml-1">
             <img src={`/images/activity/${pillIcon}`} alt="transaction-icon" />
           </div>
         ) : (
@@ -326,7 +326,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           </div>
         )}
         {!showLoader ? (
-          <div className={`whitespace-nowrap py-2 ${readonly && 'pr-3'}`}>
+          <div className={`whitespace-nowrap py-2 ${readonly && 'pr-4'}`}>
             <span className="text-base">{pillText}</span>
           </div>
         ) : (

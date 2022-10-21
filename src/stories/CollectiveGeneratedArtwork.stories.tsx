@@ -2,7 +2,7 @@ import {
   NFTPreviewer,
   NFTMediaType
 } from '@/components/collectives/nftPreviewer';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { useRef, useState } from 'react';
 import Modal from '@/components/modal';
 import { CollectivesGeneratedArtwork } from '@/components/collectives/generatedArtwork';
@@ -43,7 +43,7 @@ const Template = (args: any) => {
       </div>
       <div className="space-y-5 w-fit-content">
         <div className="flex space-x-2">
-          <CtaButton
+          <CTAButton
             onClick={() => {
               elementToImage(printRef, 2, (imageURI) => {
                 setArtworkURL(imageURI);
@@ -52,7 +52,7 @@ const Template = (args: any) => {
             }}
           >
             Screenshot
-          </CtaButton>
+          </CTAButton>
         </div>
         <hr className="border-gray-syn6" />
         <NFTPreviewer

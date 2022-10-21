@@ -1,16 +1,16 @@
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { FC } from 'react';
-import PillTabs from '../tabs';
+import SegmentedControl from '../tabs';
 
 interface Props {
-  tabs: { name: string }[];
+  tabs: { label: string }[];
   activeIndex: number;
   height?: string;
   handleTabChange: (index: any) => void;
   children: React.ReactNode[];
 }
 
-const PillTabsAndContent: FC<Props> = ({
+const SegmentedControlAndContent: FC<Props> = ({
   tabs,
   activeIndex,
   height = '20rem',
@@ -23,11 +23,13 @@ const PillTabsAndContent: FC<Props> = ({
       style={{ height: `${height}` }}
     >
       {/* Tabs */}
-      <PillTabs
-        tabs={tabs}
-        activeIndex={activeIndex}
-        handleTabChange={handleTabChange}
-      />
+      <div className="inline-block mx-auto">
+        <SegmentedControl
+          tabs={tabs}
+          activeIndex={activeIndex}
+          handleTabChange={handleTabChange}
+        />
+      </div>
 
       <TransitionBetweenChildren
         visibleChildIndex={activeIndex}
@@ -39,4 +41,4 @@ const PillTabsAndContent: FC<Props> = ({
   );
 };
 
-export default PillTabsAndContent;
+export default SegmentedControlAndContent;

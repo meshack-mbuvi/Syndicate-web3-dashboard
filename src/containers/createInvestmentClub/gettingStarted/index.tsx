@@ -15,6 +15,7 @@ import {
   LogicalOperator,
   TokenGateOption
 } from '@/state/createInvestmentClub/types';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 
 const GettingStarted: React.FC = () => {
   const { handleNext } = useCreateInvestmentClubContext();
@@ -216,13 +217,16 @@ const GettingStarted: React.FC = () => {
             </a>
           </div>
 
-          <button
-            className="green-CTA w-full"
-            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-            onClick={() => handleNext()}
+          <CTAButton
+            type={CTAType.TRANSACTIONAL}
+            fullWidth={true}
+            onClick={() => {
+              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+              handleNext();
+            }}
           >
             Create on-chain club
-          </button>
+          </CTAButton>
         </div>
         <div className="mt-10 mb-6 h-px bg-gray-syn6"></div>
 

@@ -1,4 +1,5 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import {
   ADMIN_DOCS_SIGN,
   MBR_DOCS_SIGN
@@ -541,8 +542,10 @@ const CTAs = ({
           />
         </button>
       ) : (
-        <button
-          className="py-4 px-8 rounded-md bg-green text-black flex flex-row items-center font-whyte-medium w-full justify-center"
+        <CTAButton
+          extraClasses="flex flex-row items-center justify-center"
+          fullWidth={true}
+          type={CTAType.TRANSACTIONAL}
           onClick={handleWalletSignature}
         >
           Sign
@@ -551,7 +554,7 @@ const CTAs = ({
             src="/images/pencil.and.outline.svg"
             alt="sign"
           />
-        </button>
+        </CTAButton>
       )}
     </div>
   );

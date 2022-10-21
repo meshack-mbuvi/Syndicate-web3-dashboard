@@ -1,5 +1,5 @@
 import PrimaryButton from '@/components/buttons/PrimaryButton';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
 import DistributionHeader from '@/containers/distribute/DistributionHeader';
 import { useState } from 'react';
@@ -92,13 +92,13 @@ const Template = (args: any) => {
             </PrimaryButton>
           </div>
         ) : (
-          <CtaButton
-            greenCta={true}
+          <CTAButton
+            type={CTAType.TRANSACTIONAL}
             fullWidth={false}
             onClick={handleDistribute}
           >
             Submit
-          </CtaButton>
+          </CTAButton>
         )}
       </div>
       <DistributionMembersTable

@@ -1,5 +1,4 @@
 import CreateClubButton from '@/components/createClubButton';
-import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
 import useClubERC20s from '@/hooks/clubs/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -20,6 +19,7 @@ import {
   EmptyStateType
 } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import SegmentedControl from '@/components/segmentedControl/tabs';
 import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
 import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 
@@ -71,24 +71,20 @@ const PortfolioAndDiscover: React.FC = () => {
   const { isPolygon } = useIsPolygon();
 
   enum TabsType {
-    ADMIN = 'ADMIN',
-    MEMBER = 'MEMBER'
+    ADMIN = 0,
+    MEMBER = 1
   }
-  const [activeClubsTab, setActiveClubsTab] = useState<TabsType | string>(
+  const [activeClubsTab, setActiveClubsTab] = useState<number>(TabsType.ADMIN);
+  const [activeCollectivesTab, setActiveCollectivesTab] = useState<number>(
     TabsType.ADMIN
   );
-  const [activeCollectivesTab, setActiveCollectivesTab] = useState<
-    TabsType | string
-  >(TabsType.ADMIN);
 
   const filterOptions = [
     {
-      label: 'Admin',
-      value: TabsType.ADMIN
+      label: 'Admin'
     },
     {
-      label: 'Member',
-      value: TabsType.MEMBER
+      label: 'Member'
     }
   ];
 
@@ -288,11 +284,10 @@ const PortfolioAndDiscover: React.FC = () => {
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div className="mt-8">
               {otherClubERC20s.length !== 0 && myClubERC20s.length !== 0 && (
-                <TabsButton
-                  options={filterOptions}
-                  value={TabsType.ADMIN}
-                  onChange={(val) => setActiveClubsTab(val)}
-                  activeTab={activeClubsTab}
+                <SegmentedControl
+                  tabs={filterOptions}
+                  activeIndex={activeClubsTab}
+                  handleTabChange={setActiveClubsTab}
                 />
               )}
               <div className="mt-6 grid mr-6 sm:mr-0">
@@ -350,11 +345,10 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div className="mt-8">
                   {memberCollectives.length !== 0 &&
                     adminCollectives.length !== 0 && (
-                      <TabsButton
-                        options={filterOptions}
-                        value={TabsType.ADMIN}
-                        onChange={(val) => setActiveCollectivesTab(val)}
-                        activeTab={activeCollectivesTab}
+                      <SegmentedControl
+                        tabs={filterOptions}
+                        activeIndex={activeCollectivesTab}
+                        handleTabChange={setActiveCollectivesTab}
                       />
                     )}
                   <div className="mt-6 grid">

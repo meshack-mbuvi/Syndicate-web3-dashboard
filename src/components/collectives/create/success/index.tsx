@@ -1,6 +1,6 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { INVITE_LINK_COPY } from '@/components/amplitude/eventNames';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
 import { B2, H3 } from '@/components/typography';
 import { useState } from 'react';
@@ -51,9 +51,9 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         </div>
       </div>
       <div className="w-full flex sm:block justify-center">
-        <CtaButton extraClasses="mt-12 mb-6 px-6 md:px-0" onClick={CTAonClick}>
+        <CTAButton extraClasses="mt-12 mb-6 px-6 md:px-0" onClick={CTAonClick}>
           Manage on dashboard
-        </CtaButton>
+        </CTAButton>
       </div>
       <a
         href={blockExplorerLink}

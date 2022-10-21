@@ -1,13 +1,18 @@
+import { B3 } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import { FC, useEffect, useRef, useState } from 'react';
 
 interface Props {
-  tabs: { name: string }[];
+  tabs: { label?: string | JSX.Element; icon?: string }[];
   activeIndex: number;
   handleTabChange: (index: any) => void;
 }
 
-const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
+const SegmentedControl: FC<Props> = ({
+  tabs,
+  activeIndex,
+  handleTabChange
+}) => {
   const { width } = useWindowSize();
   const [tabHighlightDimensions, setTabHighlightDimensions] = useState({
     x: 0,
@@ -39,7 +44,7 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
     // During page resizing, initial renders, or tab changes,
     // we don't want any animation
     setTabHighlightAnimationStyles('');
-  }, [width, tabs]);
+  }, [width]);
 
   useEffect(() => {
     // Calculate position and width of highlighted tab
@@ -50,8 +55,8 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
   const renderedTabs = tabs.map((tab, index) => (
     <button
       key={index}
-      className={`relative z-0 py-2 px-5 rounded-full ${
-        activeIndex === index ? 'text-black bg-white' : 'text-white'
+      className={`h-full bg-opacity-50 overflow-hidden relative z-0 py-1.25 px-6 rounded-full ${
+        activeIndex === index ? 'text-black' : 'text-white'
       } transition-all`}
       onClick={() => {
         handleTabChange(index);
@@ -70,25 +75,30 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
         }
       }}
     >
-      {tab.name}
+      {typeof tab.label === 'string' ? <B3>{tab.label}</B3> : tab.label}
     </button>
   ));
 
   return (
-    <div ref={tabContainer} className="relative flex space-x-4 justify-center">
-      {/* Tab buttons */}
-      <div className="relative z-10">{renderedTabs}</div>
-
-      {/* Highligted tab */}
+    <div className="border border-gray-syn6 rounded-full p-1 inline-flex">
       <div
-        className={`absolute z-0 h-full ease-in-out rounded-full bg-white ${tabHighlightAnimationStyles}`}
-        style={{
-          width: `${tabHighlightDimensions.width}px`,
-          left: `calc(${tabHighlightDimensions.x}px - 1rem)`
-        }}
-      ></div>
+        ref={tabContainer}
+        className="relative inline-flex space-x-4 justify-center"
+      >
+        {/* Tab buttons */}
+        <div className="relative z-10 h-full">{renderedTabs}</div>
+
+        {/* Highligted tab */}
+        <div
+          className={`absolute z-0 h-full ease-in-out rounded-full bg-white ${tabHighlightAnimationStyles}`}
+          style={{
+            width: `${tabHighlightDimensions.width}px`,
+            left: `calc(${tabHighlightDimensions.x}px - 1rem)`
+          }}
+        ></div>
+      </div>
     </div>
   );
 };
 
-export default PillTabs;
+export default SegmentedControl;

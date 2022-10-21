@@ -1,3 +1,4 @@
+import { CTAButton } from '@/components/CTAButton';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { syndicateActionConstants } from '@/components/syndicates/shared/Constants';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
@@ -69,8 +70,7 @@ const Index: FC<Props> = ({ activeNetwork }) => {
                 need to do so directly in your wallet.
               </div>
             ) : (
-              <button
-                className="primary-CTA"
+              <CTAButton
                 onClick={(): void => {
                   if (switchNetworks) {
                     switchNetworks(urlNetwork.chainId);
@@ -78,7 +78,7 @@ const Index: FC<Props> = ({ activeNetwork }) => {
                 }}
               >
                 Switch to {urlNetwork.name}
-              </button>
+              </CTAButton>
             )}
           </div>
         ) : null}

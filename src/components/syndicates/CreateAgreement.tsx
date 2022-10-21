@@ -11,6 +11,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
+import { CTAButton, CTAType } from '../CTAButton';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { ADMIN_GENERATE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 
@@ -230,13 +231,9 @@ const CreateAgreementComponent: React.FC = () => {
                       />
                       <span className="ml-2">Back</span>
                     </button>
-                    <button
-                      className={`${
-                        !isValid
-                          ? 'primary-CTA-disabled text-gray-lightManatee'
-                          : 'primary-CTA hover:opacity-90 transition-all'
-                      }`}
-                      type="submit"
+                    <CTAButton
+                      type={!isValid ? CTAType.DISABLED : CTAType.PRIMARY}
+                      buttonType="submit"
                       disabled={!isValid}
                       onClick={() => {
                         amplitudeLogger(ADMIN_GENERATE_DOCS_CLICK, {
@@ -245,7 +242,7 @@ const CreateAgreementComponent: React.FC = () => {
                       }}
                     >
                       Generate my documents
-                    </button>
+                    </CTAButton>
                   </div>
                 </div>
               </div>

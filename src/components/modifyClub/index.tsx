@@ -35,6 +35,7 @@ import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import { Callout } from '../callout';
+import { CTAButton, CTAType } from '../CTAButton';
 import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
@@ -940,21 +941,21 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
               </div>
 
               {/* Submit button */}
-              <button
-                // @ts-expect-error TS(2322): Type '(() => Promise<void>) | null' is not assigna... Remove this comment to see the full error message
+              <CTAButton
+                type={
+                  areClubChangesAvailable && isOpenToDeposits
+                    ? CTAType.PRIMARY
+                    : CTAType.DISABLED
+                }
                 onClick={
                   areClubChangesAvailable && isOpenToDeposits
                     ? handleTransaction
                     : null
                 }
-                className={`${
-                  areClubChangesAvailable && isOpenToDeposits
-                    ? 'primary-CTA'
-                    : 'primary-CTA-disabled'
-                } transition-all duration-700 w-full lg:w-auto`}
+                extraClasses="transition-all duration-700 w-full lg:w-auto"
               >
                 Submit changes
-              </button>
+              </CTAButton>
             </div>
           </div>{' '}
           <ProgressStates />

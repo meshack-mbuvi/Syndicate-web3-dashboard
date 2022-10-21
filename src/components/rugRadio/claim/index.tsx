@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
@@ -132,23 +132,27 @@ export const ClaimComponent: React.FC = () => {
                     <div className="p-8 pb-3.5 bg-gray-syn8 rounded-b-2.5xl">
                       <div className="space-y-6 w-full">
                         {status === Status.DISCONNECTED ? (
-                          <CtaButton onClick={handleConnectWallet}>
+                          <CTAButton onClick={handleConnectWallet}>
                             Connect wallet
-                          </CtaButton>
+                          </CTAButton>
                         ) : loading ? (
                           <Spinner height="h-6" width="w-6" />
                         ) : (
-                          <CtaButton
+                          <CTAButton
                             onClick={handleContinue}
-                            greenCta={hasGenesisNFT && claimEnabled}
                             disabled={!hasGenesisNFT && claimEnabled}
+                            type={
+                              hasGenesisNFT && claimEnabled
+                                ? CTAType.TRANSACTIONAL
+                                : CTAType.PRIMARY
+                            }
                           >
                             {hasGenesisNFT
                               ? claimEnabled
                                 ? 'Continue'
                                 : 'Claiming available soon'
                               : 'Requirements not met'}
-                          </CtaButton>
+                          </CTAButton>
                         )}
 
                         <p className="small-body text-center text-gray-syn5">

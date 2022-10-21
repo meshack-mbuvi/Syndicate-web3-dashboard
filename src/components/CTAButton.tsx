@@ -1,45 +1,99 @@
 import React from 'react';
 
-interface Props {
-  disabled?: boolean;
-  onClick?: (e?: React.MouseEvent<HTMLElement>) => void;
-  greenCta?: boolean;
-  voltCta?: boolean;
-  cherenkovCta?: boolean;
-  type?: 'submit' | 'reset' | 'button' | undefined;
-  fullWidth?: boolean;
-  extraClasses?: string;
+export enum CTAStyle {
+  REGULAR = 'base-CTA regular',
+  DARK = 'base-CTA dark',
+  DARK_OUTLINED = 'base-CTA dark-outlined',
+  BLANK = 'base-CTA blank'
 }
 
-export const CtaButton: React.FC<Props> = ({
-  onClick,
+export enum CTAType {
+  PRIMARY = 'primary',
+  TRANSACTIONAL = 'green',
+  INVESTMENT_CLUB = 'volt',
+  COLLECTIVE = 'cherenkov',
+  WARNING = 'orange',
+  DISABLED = 'disabled'
+}
+
+interface Props {
+  disabled?: boolean;
+  buttonType?: 'submit' | 'reset' | 'button' | undefined;
+  fullWidth?: boolean;
+  rounded?: boolean;
+  style?: CTAStyle;
+  type?: CTAType;
+  id?: string;
+  extraClasses?: string;
+  onClick?: any;
+  onMouseOver?: any;
+  onMouseOut?: any;
+  onBlur?: any;
+  onFocus?: any;
+  href?: string;
+  target?: string;
+  rel?: string;
+}
+
+export const CTAButton: React.FC<Props> = ({
   children,
-  greenCta,
-  voltCta,
-  cherenkovCta,
   disabled = false,
-  type = 'button',
-  fullWidth = true,
-  extraClasses
+  buttonType = 'button',
+  fullWidth = false,
+  rounded = false,
+  type = CTAType.PRIMARY,
+  style = CTAStyle.REGULAR,
+  id,
+  extraClasses,
+  onClick,
+  onMouseOver,
+  onMouseOut,
+  onBlur,
+  onFocus,
+  href,
+  target,
+  rel,
+  ...rest
 }) => {
   return (
-    <button
-      className={`${fullWidth ? 'w-full' : ''} py-4 ${
-        disabled
-          ? 'primary-CTA-disabled text-gray-syn4'
-          : greenCta
-          ? 'green-CTA'
-          : voltCta
-          ? 'volt-CTA'
-          : cherenkovCta
-          ? 'cherenkov-CTA'
-          : 'primary-CTA'
-      } ${extraClasses ?? ''}`}
-      disabled={disabled}
-      onClick={onClick}
-      type={type}
-    >
-      {children}
-    </button>
+    <>
+      {href ? (
+        <a
+          href={href}
+          target={target}
+          className={`${type} ${style} ${fullWidth ? 'w-full' : ''} ${
+            rounded ? 'rounded-full' : ''
+          } ${extraClasses ?? ''}`}
+          type={buttonType}
+          id={id}
+          onClick={onClick}
+          onMouseOver={onMouseOver}
+          onFocus={onFocus}
+          onMouseOut={onMouseOut}
+          onBlur={onBlur}
+          rel={rel}
+          {...rest}
+        >
+          {children}
+        </a>
+      ) : (
+        <button
+          className={`${type} ${style} ${fullWidth ? 'w-full' : ''} ${
+            rounded ? 'rounded-full' : ''
+          } ${extraClasses ?? ''}`}
+          disabled={disabled ? true : type === CTAType.DISABLED ? true : false}
+          type={buttonType}
+          id={id}
+          onClick={onClick}
+          onMouseOver={onMouseOver}
+          onFocus={onFocus}
+          onMouseOut={onMouseOut}
+          onBlur={onBlur}
+          {...rest}
+        >
+          {children}
+        </button>
+      )}
+    </>
   );
 };

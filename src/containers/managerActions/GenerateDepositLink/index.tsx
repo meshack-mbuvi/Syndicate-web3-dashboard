@@ -1,6 +1,6 @@
+import { CTAButton } from '@/components/CTAButton';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { ADMIN_PREPARE_DOCS_CLICK } from '@/components/amplitude/eventNames';
-import { CtaButton } from '@/components/CTAButton';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
 import CopyLink from '@/components/shared/CopyLink';
@@ -444,7 +444,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               </div>
 
               <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
-                <CtaButton
+                <CTAButton
                   onClick={() => {
                     if (depositsEnabled) {
                       startDocumentSigning('yes');
@@ -455,7 +455,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
                   }}
                 >
                   Prepare legal documents
-                </CtaButton>
+                </CTAButton>
               </Link>
             </div>
           </div>

@@ -1,9 +1,9 @@
 // place all auth components here
 
+import { ActionButton, ActionButtonType } from '@/components/actionButton';
 import { WalletProviderList } from '@/components/connectWallet/providerButtons';
 import IconDiscordLogo from '@/components/icons/logos/discordLogo';
 import IconUserPrivacy from '@/components/icons/userPrivacy';
-import { LinkButton } from '@/components/linkButtons';
 import { SimpleTile, TileElevation } from '@/components/tile/simpleTile';
 import { B3, B4, E2, H1, L1 } from '@/components/typography';
 import TwoColumnLayout, {
@@ -89,7 +89,14 @@ export const AuthSignInPage: React.FC<Props> = ({ handleDiscordClick }) => {
                 }}
               >
                 <B3>
-                  <LinkButton showChevron={true}>Learn more</LinkButton>
+                  <ActionButton
+                    type={ActionButtonType.CHEVRON}
+                    onClick={() => {
+                      setShowPrivacyyModal(true);
+                    }}
+                  >
+                    Learn more
+                  </ActionButton>
                 </B3>
               </button>
             </div>

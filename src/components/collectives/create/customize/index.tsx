@@ -1,3 +1,4 @@
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import IconLink from '@/components/icons/link';
 import IconShield from '@/components/icons/shield';
 import IconToken from '@/components/icons/token';
@@ -333,15 +334,13 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
 
       {/* Continue button */}
       <div className="mt-10 pb-20">
-        <button
-          className={`${
-            isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
-          } w-full`}
-          // @ts-expect-error TS(2322): Type '((e: any) => void) | null' is not assignable... Remove this comment to see the full error message
+        <CTAButton
+          fullWidth={true}
+          type={isContinueButtonActive ? CTAType.PRIMARY : CTAType.DISABLED}
           onClick={isContinueButtonActive ? handleContinue : null}
         >
           Continue
-        </button>
+        </CTAButton>
         <B3 extraClasses="text-gray-syn4 my-2">
           All fields are modifiable later via an on-chain transaction with gas.
         </B3>

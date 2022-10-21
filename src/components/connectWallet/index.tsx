@@ -13,6 +13,7 @@ import {
 } from '@/state/wallet/actions';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { CTAButton } from '../CTAButton';
 import { SpinnerWithImage } from '../shared/spinner/spinnerWithImage';
 import { L2 } from '../typography';
 import { ConnectModal, ConnectModalStyle } from './connectModal';
@@ -351,13 +352,14 @@ const ConnectWallet: React.FC = () => {
               {error?.message}
             </p>
           </div>
-          <button
-            type="button"
-            className="primary-CTA flex cursor-pointer justify-center items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue w-full"
+          <CTAButton
+            buttonType="button"
+            extraClasses={`flex justify-center items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue`}
+            fullWidth={true}
             onClick={handleErrorButtonAction}
           >
             {errorButtonText}
-          </button>
+          </CTAButton>
         </div>
       </ConnectModal>
     </div>

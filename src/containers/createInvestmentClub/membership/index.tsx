@@ -2,7 +2,6 @@ import { Callout, CalloutType } from '@/components/callout';
 import Fade from '@/components/Fade';
 import IconLink from '@/components/icons/link';
 import IconToken from '@/components/icons/token';
-import PillTabsAndContent from '@/components/pillTabs/tabsAndContent';
 import { B3, B4 } from '@/components/typography';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
@@ -15,6 +14,7 @@ import InviteMembers from './inviteMembers';
 import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import { setActiveTokenGateOption } from '@/state/createInvestmentClub/slice';
+import SegmentedControlAndContent from '@/components/segmentedControl/tabsAndContent';
 
 const Membership: React.FC<{ className: any }> = ({ className }) => {
   const {
@@ -87,15 +87,15 @@ const Membership: React.FC<{ className: any }> = ({ className }) => {
 
         <div className="bg-gray-syn9 flex justify-center items-center">
           <div className="pt-5 w-full">
-            <PillTabsAndContent
+            <SegmentedControlAndContent
               activeIndex={activeTab}
               handleTabChange={setActiveTab}
               tabs={[
                 {
-                  name: 'Non-member'
+                  label: 'Non-member'
                 },
                 {
-                  name: 'Member'
+                  label: 'Member'
                 }
               ]}
             >
@@ -115,7 +115,7 @@ const Membership: React.FC<{ className: any }> = ({ className }) => {
                   alt="member"
                 />
               </div>
-            </PillTabsAndContent>
+            </SegmentedControlAndContent>
           </div>
         </div>
         {isReady && isClubMixinGuardTreatmentOn && !isPolygon ? (

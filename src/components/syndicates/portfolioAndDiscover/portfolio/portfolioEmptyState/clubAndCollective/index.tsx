@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, H3 } from '@/components/typography';
 import { AppState } from '@/state';
@@ -134,8 +134,9 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           </B2>
         </div>
 
-        <CtaButton
-          voltCta
+        <CTAButton
+          type={CTAType.INVESTMENT_CLUB}
+          fullWidth={true}
           extraClasses={`opacity-100 mt-6 ${
             clubHoverStateIndex === HoverState.HOVERING
               ? 'mt-6 opacity-100'
@@ -144,7 +145,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           onClick={() => (window.location.pathname = '/clubs/create')}
         >
           Create an investment club
-        </CtaButton>
+        </CTAButton>
       </div>
     </div>
   );
@@ -223,8 +224,9 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           </B2>
         </div>
 
-        <CtaButton
-          cherenkovCta
+        <CTAButton
+          type={CTAType.COLLECTIVE}
+          fullWidth={true}
           extraClasses={`opacity-100 mt-6 ${
             collectivesHoverStateIndex === HoverState.HOVERING
               ? 'mt-6 opacity-100'
@@ -233,7 +235,7 @@ export const CreateClubOrCollective: React.FC<Props> = ({
           onClick={() => (window.location.pathname = '/collectives/create')}
         >
           Form a collective
-        </CtaButton>
+        </CTAButton>
       </div>
     </div>
   );

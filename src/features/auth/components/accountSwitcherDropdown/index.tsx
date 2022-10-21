@@ -10,9 +10,9 @@ import {
 import { Spinner } from '@/components/shared/spinner';
 import { B2, B3, E2 } from '@/components/typography';
 import React, { useEffect, useRef, useState } from 'react';
-import { CtaButton } from '@/components/CTAButton';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
+import { CTAButton } from '@/components/CTAButton';
 
 interface Props {
   walletProviderName?: string;
@@ -252,9 +252,9 @@ const AuthAccountSwitcherDropdown: React.FC<Props> = ({
               </>
             ) : (
               <div className="p-3">
-                <CtaButton extraClasses="short py-2 rounded-full font-semibold">
+                <CTAButton extraClasses="short py-2 rounded-full font-semibold">
                   Connect wallet
-                </CtaButton>
+                </CTAButton>
               </div>
             )}
 

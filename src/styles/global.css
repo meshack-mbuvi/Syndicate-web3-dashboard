@@ -278,39 +278,77 @@
   /* Button CTAs */
 
   .base-CTA {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium transition-all;
-  }
-
-  .primary-CTA {
-    @apply base-CTA bg-white text-black transition-all hover:bg-opacity-90;
+    @apply font-semibold px-8 py-3.5 rounded-lg focus:outline-none whitespace-nowrap transition-all;
   }
 
   .primary-CTA.short {
     @apply py-2;
   }
 
-  .green-CTA {
-    @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
+  /* white */
+
+  .base-CTA.regular {
+    @apply bg-white hover:bg-gray-syn2 active:bg-gray-syn3 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt text-black transition-all hover:bg-opacity-90;
   }
 
-  .volt-CTA {
-    @apply base-CTA bg-green-volt text-black transition-all hover:bg-green-volt-shine;
+  /* disabled */
+
+  .base-CTA.disabled {
+    @apply cursor-not-allowed bg-gray-syn7 hover:bg-gray-syn7 text-gray-syn5 hover:bg-opacity-100;
   }
 
-  .cherenkov-CTA {
-    @apply base-CTA bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
+  /* dark */
+
+  .base-CTA.dark {
+    @apply bg-gray-syn8 border border-gray-syn7 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt;
   }
 
-  .cyan-CTA {
-    @apply base-CTA bg-cyan-cherenkov text-black transition-all;
+  .base-CTA.dark.disabled {
+    @apply cursor-not-allowed bg-gray-syn8 border border-gray-syn7 text-gray-syn5;
   }
 
-  .orange-CTA {
-    @apply base-CTA bg-yellow-warning text-black transition-all;
+  /* dark outlined */
+
+  .base-CTA.dark-outlined {
+    @apply bg-gray-syn8 border border-gray-syn5 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt;
   }
 
-  .primary-CTA-disabled {
-    @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
+  .base-CTA.dark-outlined.disabled {
+    @apply cursor-not-allowed bg-gray-syn8 border border-gray-syn7 text-gray-syn5;
+  }
+
+  /* blank */
+
+  .base-CTA.blank {
+    @apply hover:bg-gray-syn9 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt border-transparent;
+  }
+
+  .base-CTA.blank.disabled {
+    @apply text-gray-syn5 bg-transparent;
+  }
+
+  /* green - transactional */
+
+  .base-CTA.green {
+    @apply bg-green text-black transition-all hover:bg-green-shine;
+  }
+
+  /* volt - investment clubs */
+
+  .base-CTA.volt {
+    @apply bg-green-volt text-black transition-all hover:bg-green-volt-shine;
+  }
+
+  /* cherenkov - collectives */
+
+  .base-CTA.cherenkov {
+    @apply bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
+  }
+
+  /* orange - warning */
+
+  .base-CTA.orange {
+    @apply bg-yellow-warning hover:bg-yellow-warning-shine text-black transition-all;
   }
 
   .secondary-CTA {

@@ -1,5 +1,6 @@
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { ExternalLinkColor } from 'src/components/iconWrappers';
+import { CTAButton } from '../CTAButton';
 import { Spinner } from '../shared/spinner';
 
 export enum ProgressState {
@@ -94,14 +95,13 @@ export const ProgressCard = (props: {
       )}
 
       {buttonLabel && (
-        <button
+        <CTAButton
           onClick={buttonOnClick}
-          className={`primary-CTA flex-shrink block mx-auto mt-8 ${
-            buttonFullWidth ? 'w-full' : ''
-          }`}
+          extraClasses={`flex-shrink block mx-auto mt-8`}
+          fullWidth={buttonFullWidth}
         >
           {buttonLabel}
-        </button>
+        </CTAButton>
       )}
     </div>
   );

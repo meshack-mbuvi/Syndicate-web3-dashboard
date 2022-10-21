@@ -1,5 +1,5 @@
 import { Callout } from '@/components/callout';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import Image from 'next/image';
@@ -215,9 +215,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     }).format(totalFiatAmount)}
               </div>
             </div>
-            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+            <CTAButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
               {CTALabel}
-            </CtaButton>
+            </CTAButton>
           </>
         )}
       </div>
@@ -265,9 +265,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
               </div>
             </Callout>
-            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+            <CTAButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
               {CTALabel}
-            </CtaButton>
+            </CTAButton>
           </>
         ) : (
           <div className="flex items-center justify-between">

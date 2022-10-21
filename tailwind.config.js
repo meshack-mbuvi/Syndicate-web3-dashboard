@@ -86,6 +86,7 @@ module.exports = {
       },
       opacity: {
         25: '.25',
+        15: '.15',
         85: '.85'
       },
       zIndex: {
@@ -426,6 +427,7 @@ module.exports = {
           dark: '#FFC83C',
           semantic: '#F9D252',
           warning: '#FFA439',
+          'warning-shine': '#FFAF64',
           highlight: '#FFD252',
           saffron: '#FFA439'
         },
@@ -457,6 +459,8 @@ module.exports = {
         '1px': '1px',
         '9px': '9px',
         '5/12': '41.6666%',
+        1.25: '0.3125rem',
+        2.25: '0.5625rem',
         3.5: '0.875rem',
         5.5: '1.375rem',
         7.5: '1.875rem',

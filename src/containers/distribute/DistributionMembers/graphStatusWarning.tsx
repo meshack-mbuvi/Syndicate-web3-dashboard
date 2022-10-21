@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { B2, B3 } from '@/components/typography';
 import Image from 'next/image';
 
@@ -40,7 +40,7 @@ export const GraphStatusWarningModal: React.FC<Props> = ({
             {content}
           </B3>
           <div className="mb-10 mx-8 mt-6">
-            <CtaButton onClick={onClick}>Acknowledge and continue</CtaButton>
+            <CTAButton onClick={onClick}>Acknowledge and continue</CTAButton>
           </div>
         </div>
       </div>

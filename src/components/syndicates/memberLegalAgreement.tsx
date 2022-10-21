@@ -13,6 +13,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { CTAButton, CTAType } from '../CTAButton';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { MBR_REVIEW_DOCS_CLICK } from '../amplitude/eventNames';
 import ArrowDown from '/public/images/arrowDown.svg';
@@ -179,13 +180,9 @@ const LegalAgreement: React.FC = () => {
                 <img className="w-5 h-5" src="/images/arrowBack.svg" alt="" />
                 <span className="ml-2">Back</span>
               </button>
-              <button
-                className={`${
-                  !isValid
-                    ? 'primary-CTA-disabled text-gray-lightManatee'
-                    : 'primary-CTA hover:opacity-90 transition-all'
-                }`}
-                type="submit"
+              <CTAButton
+                type={!isValid ? CTAType.DISABLED : CTAType.PRIMARY}
+                buttonType="submit"
                 onClick={() => {
                   amplitudeLogger(MBR_REVIEW_DOCS_CLICK, {
                     flow: Flow.CLUB_LEGAL
@@ -193,7 +190,7 @@ const LegalAgreement: React.FC = () => {
                 }}
               >
                 Review and sign
-              </button>
+              </CTAButton>
             </div>
           </div>
         </form>

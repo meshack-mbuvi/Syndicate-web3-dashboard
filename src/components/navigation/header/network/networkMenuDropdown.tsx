@@ -184,7 +184,7 @@ const NetworkMenuDropDown: FC = () => {
                   <span
                     className={`${
                       width <= 425 ? 'flex' : 'block'
-                    } focus:outline-none text-base py-2`}
+                    } text-gray-syn2 focus:outline-none text-base py-2`}
                   >
                     {activeNetwork.displayName}
                   </span>
@@ -304,7 +304,11 @@ const NetworkMenuDropDown: FC = () => {
                         rel="noreferrer"
                       >
                         <span> Learn more </span>{' '}
-                        <IconInfo width={16} height={16} fill={'#90949E'} />
+                        <IconInfo
+                          width={16}
+                          height={16}
+                          textColorClass="text-gray-syn4"
+                        />
                       </a>
                     </div>
                   )}

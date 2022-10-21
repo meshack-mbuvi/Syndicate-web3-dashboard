@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
+import { CTAButton } from '@/components/CTAButton';
 import { ExternalLinkColor } from '@/components/iconWrappers';
 import Modal, { ModalStyle } from '@/components/modal';
 import { ShareCard } from '@/components/social';
@@ -61,12 +62,13 @@ export const ShareSocialModal: React.FC<Props> = ({
             customVisual={customVisual}
             description={description}
           />
-          <button
-            className={`primary-CTA w-full mt-8 ${!transactionHash && 'mb-6'}`}
+          <CTAButton
+            fullWidth={true}
+            extraClasses={`mt-8 ${!transactionHash ? 'mb-6' : ''}`}
             onClick={handleClick}
           >
             {buttonLabel}
-          </button>
+          </CTAButton>
           {transactionHash ? (
             <div>
               <div className="flex justify-center mt-6 mb-3">

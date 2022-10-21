@@ -15,6 +15,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 
 import { useDetectClickOutside } from 'react-detect-click-outside';
+import { CTAButton } from '@/components/CTAButton';
 
 interface IAddressMenuDropDown {
   Web3: any;
@@ -108,7 +109,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     address={account}
                     layout={AddressLayout.ONE_LINE}
                     ethersProvider={ethersProvider}
-                    extraClasses={`${!data?.avatar && 'ml-1'}`}
+                    extraClasses={`${
+                      !data?.avatar && 'ml-1'
+                    } text-gray-syn2 font-mono`}
                     id={refId}
                   />
                 </div>
@@ -191,8 +194,8 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       </div>
 
                       <div className="flex justify-center">
-                        <button
-                          className="primary-CTA rounded-custom w-full"
+                        <CTAButton
+                          fullWidth={true}
                           onClick={() => {
                             dispatch(setShowWalletDropdownMenu(false));
                             // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
@@ -200,7 +203,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                           }}
                         >
                           Disconnect
-                        </button>
+                        </CTAButton>
                       </div>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ import EstimateGas from '@/components/EstimateGas';
 import { Callout } from '@/components/callout';
 import { L2 } from '@/components/typography';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { CTAButton } from '@/components/CTAButton';
 
 interface IConfirmMemberAllocations {
   preview: boolean;
@@ -152,13 +153,13 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
               />
             </Callout>
             <div className="bg-blue bg-opacity-20 rounded-b-lg">
-              <button
-                className={`w-full primary-CTA hover:opacity-90 transition-all`}
-                type="button"
+              <CTAButton
                 onClick={handleUpdatingCapTable}
+                fullWidth={true}
+                buttonType="button"
               >
                 Modify club token allocation
-              </button>
+              </CTAButton>
             </div>
           </div>
         </div>

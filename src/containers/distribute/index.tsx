@@ -63,6 +63,7 @@ const Distribute: FC = () => {
 
   const dispatch = useDispatch();
 
+  const [CTAButtonDisabled, setCTAButtonDisabled] = useState(true);
   const [tokensDetails, setTokensDetails] = useState<
     {
       fiatAmount: string;
@@ -72,7 +73,6 @@ const Distribute: FC = () => {
       isLoading?: boolean;
     }[]
   >([]);
-  const [ctaButtonDisabled, setCtaButtonDisabled] = useState(true);
   const [sufficientGas, setSufficientGas] = useState(false);
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -209,7 +209,7 @@ const Distribute: FC = () => {
   // Prepare distributions tokens for overview badge
   useEffect(() => {
     if (distributionTokens.length) {
-      setCtaButtonDisabled(false);
+      setCTAButtonDisabled(false);
 
       setTokensDetails(
         distributionTokens.map(({ symbol, tokenAmount, fiatAmount, icon }) => ({
@@ -223,12 +223,12 @@ const Distribute: FC = () => {
         }))
       );
     } else {
-      setCtaButtonDisabled(true);
+      setCTAButtonDisabled(true);
     }
 
     return (): void => {
       setTokensDetails([]);
-      setCtaButtonDisabled(true);
+      setCTAButtonDisabled(true);
     };
   }, [JSON.stringify(distributionTokens)]);
 
@@ -639,7 +639,7 @@ const Distribute: FC = () => {
               }
             : null
         }
-        isCTADisabled={ctaButtonDisabled || !sufficientGas || hasError}
+        isCTADisabled={CTAButtonDisabled || !sufficientGas || hasError}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
         }

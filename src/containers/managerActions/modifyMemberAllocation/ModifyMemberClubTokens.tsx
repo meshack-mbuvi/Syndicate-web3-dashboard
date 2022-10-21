@@ -6,7 +6,7 @@ import {
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
 import { numberWithCommas } from '@/utils/formattedNumbers';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { L2 } from '@/components/typography';
 
 interface IModifyMemberClubTokens {
@@ -86,7 +86,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                 />
               </div>
             </div>
-            <CtaButton
+            <CTAButton
               disabled={
                 Boolean(memberAllocationError) ||
                 !memberAllocation ||
@@ -98,7 +98,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
               }}
             >
               <span className="text-black">Continue</span>
-            </CtaButton>
+            </CTAButton>
           </div>
         </div>
       </div>

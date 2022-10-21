@@ -1,3 +1,4 @@
+import { CTAButton } from '@/components/CTAButton';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
@@ -72,15 +73,14 @@ const TokenEmptyState: React.FC<{
                 need to do so directly in your wallet.
               </div>
             ) : (
-              <button
-                className="primary-CTA"
+              <CTAButton
                 onClick={() => {
                   // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
                   switchNetworks(urlNetwork.chainId);
                 }}
               >
                 Switch to {urlNetwork.name}
-              </button>
+              </CTAButton>
             )}
           </div>
         ) : null}

@@ -1,5 +1,6 @@
 import { AnimatedText } from '@/components/animatedText';
 import { Callout } from '@/components/callout';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { StepsOutline } from '@/components/stepsOutline';
 
 interface Props {
@@ -62,7 +63,13 @@ export const CollectivesCreateOutline: React.FC<Props> = ({ gasEstimate }) => {
         alwaysShowDescriptions={true}
         extraClasses="mt-6"
       />
-      <button className="cyan-CTA w-full mt-12">Start</button>
+      <CTAButton
+        extraClasses="mt-12"
+        fullWidth={true}
+        type={CTAType.COLLECTIVE}
+      >
+        Start
+      </CTAButton>
       <div className="mt-4 text-sm text-gray-syn4">
         Questions? Contact us at{' '}
         <a href="mailto:support@syndicate.io" className="text-gray-syn3">

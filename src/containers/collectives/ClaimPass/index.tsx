@@ -9,6 +9,7 @@ import {
   CLAIM_PAGE_LANDING,
   COLLECTIVE_CLAIM_DISCLAIMER_AGREE
 } from '@/components/amplitude/eventNames';
+import { CTAButton } from '@/components/CTAButton';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -106,13 +107,9 @@ const ClaimPass: React.FC = () => {
               agree I will seek legal counsel to ensure compliance with
               applicable laws in relevant jurisdictions.
             </div>
-            <button
-              className={`w-full primary-CTA transition-all`}
-              onClick={handleDisclaimerClick}
-              disabled={false}
-            >
+            <CTAButton fullWidth={true} onClick={handleDisclaimerClick}>
               {'I agree'}
-            </button>
+            </CTAButton>
           </div>
         </Modal>
       ) : null}

@@ -9,6 +9,7 @@ import {
 } from '@/utils/formattedNumbers';
 import React, { Dispatch, SetStateAction } from 'react';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { CTAButton } from '@/components/CTAButton';
 
 interface IConfirmMemberDetailsModal {
   preview: boolean;
@@ -152,13 +153,13 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
             />
           </Callout>
           <div className="bg-blue bg-opacity-20 rounded-b-lg">
-            <button
-              className={`w-full primary-CTA hover:opacity-90 transition-all`}
-              type="button"
+            <CTAButton
+              fullWidth={true}
+              buttonType="button"
               onClick={handleMinting}
             >
               Add member
-            </button>
+            </CTAButton>
           </div>
         </div>
       </div>

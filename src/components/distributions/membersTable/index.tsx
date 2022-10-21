@@ -707,10 +707,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
           {!isEditing ? (
             <div className="flex sm:space-x-8">
               <ActionButton
-                label="Edit distribution"
                 icon="/images/edit-circle-blue.svg"
                 onClick={handleIsEditingChange}
-              />
+              >
+                Edit distribution
+              </ActionButton>
             </div>
           ) : null}
         </div>

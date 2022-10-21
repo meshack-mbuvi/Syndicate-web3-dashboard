@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { ExternalLinkColor } from '@/components/iconWrappers';
 import Modal, { ModalStyle } from '@/components/modal';
 import NumberTreatment from '@/components/NumberTreatment';
@@ -298,13 +298,13 @@ export const NFTDetails: React.FC = () => {
             />
           </div>
         </div>
-        <button
-          className={`w-full primary-CTA hover:opacity-90 transition-all`}
-          type="button"
+        <CTAButton
+          buttonType="button"
+          fullWidth={true}
           onClick={handleCloseSuccessModal}
         >
           Done
-        </button>
+        </CTAButton>
       </div>
     );
   } else if (processingFailed) {
@@ -331,13 +331,13 @@ export const NFTDetails: React.FC = () => {
             ''
           )}
         </div>
-        <button
-          className={`w-full primary-CTA hover:opacity-90 transition-all`}
-          type="button"
+        <CTAButton
+          fullWidth={true}
+          buttonType="button"
           onClick={handleCloseSuccessModal}
         >
           Close
-        </button>
+        </CTAButton>
       </div>
     );
   }
@@ -360,15 +360,15 @@ export const NFTDetails: React.FC = () => {
                 </span>
                 {numberWithCommas(totalYieldTokens)} RUG
               </p>
-              <CtaButton
+              <CTAButton
                 onClick={handleClaimAll}
-                greenCta={true}
+                type={CTAType.TRANSACTIONAL}
                 disabled={totalYieldTokens == 0}
               >
                 {totalYieldTokens > 0
                   ? 'Claim yield'
                   : `Next claim in ${getCountDownDays(`${nextClaimTime}`)}`}
-              </CtaButton>
+              </CTAButton>
             </>
           )}
 

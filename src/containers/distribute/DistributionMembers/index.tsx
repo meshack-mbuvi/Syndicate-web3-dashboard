@@ -6,7 +6,7 @@ import {
   MGR_MAKE_DISTRIBUTE_EVENT
 } from '@/components/amplitude/eventNames';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { ConfirmDistributionsModal } from '@/components/distributions/confirmModal';
 import { DistributionsDisclaimerModal } from '@/components/distributions/disclaimerModal';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
@@ -762,20 +762,20 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
               ) : (
                 <>
                   <div className="hidden ml-16 md:block">
-                    <CtaButton
-                      greenCta={true}
+                    <CTAButton
+                      type={CTAType.TRANSACTIONAL}
                       fullWidth={false}
                       onClick={showDistributeDisclaimer}
                       disabled={activeAddresses.length == 0 || showGraphWarning}
                     >
                       Submit
-                    </CtaButton>
+                    </CTAButton>
                   </div>
                   {/* Mobile positioning */}
                   <div className="fixed bottom-0 md:hidden z-10 left-0 w-full space-y-8">
                     <div className="flex container sm:hidden justify-center w-full bg-gray-syn8 px-auto py-6 mx-auto">
-                      <CtaButton
-                        greenCta={true}
+                      <CTAButton
+                        type={CTAType.TRANSACTIONAL}
                         fullWidth={false}
                         onClick={showDistributeDisclaimer}
                         disabled={
@@ -784,20 +784,20 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
                         extraClasses={'w-full'}
                       >
                         Submit
-                      </CtaButton>
+                      </CTAButton>
                     </div>
 
                     {/* This has a different background. */}
                     <div className="sm:flex container hidden justify-center w-full p-6 pt-5 mx-auto">
-                      <CtaButton
-                        greenCta={true}
+                      <CTAButton
+                        type={CTAType.TRANSACTIONAL}
                         fullWidth={false}
                         onClick={showDistributeDisclaimer}
                         disabled={activeAddresses.length == 0}
                         extraClasses={'w-full'}
                       >
                         Submit
-                      </CtaButton>
+                      </CTAButton>
                     </div>
                   </div>
                 </>
@@ -860,9 +860,9 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
               steps?.[activeIndex].status ==
                 ProgressDescriptorState.FAILURE) && (
               <div className="mt-6">
-                <CtaButton onClick={handleClickAction}>
+                <CTAButton onClick={handleClickAction}>
                   Distribute {`${steps?.[activeIndex]?.symbol}`}
-                </CtaButton>
+                </CTAButton>
               </div>
             )}
         </>

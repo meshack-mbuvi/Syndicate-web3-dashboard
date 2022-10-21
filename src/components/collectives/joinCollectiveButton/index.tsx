@@ -1,3 +1,4 @@
+import { CTAButton } from '@/components/CTAButton';
 import { B4 } from '@/components/typography';
 import { useState } from 'react';
 
@@ -13,11 +14,11 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
   return (
     <div className="flex flex-col w-full max-w-88 justify-center h-24">
       <div className="flex w-full transform hover:-translate-y-0.5 hover:scale-104 transition-all duration-500 relative">
-        <button
-          className={`primary-CTA w-full flex ease-in-out justify-center py-4 border text-base rounded-full leading-5.75`}
+        <CTAButton
+          fullWidth={true}
+          extraClasses={`flex ease-in-out justify-center py-4 border text-base rounded-full leading-5.75`}
           onMouseOver={() => setShowMoreContent(true)}
           onMouseOut={() => setShowMoreContent(false)}
-          // @ts-expect-error TS(2345): Type '(e?: MouseEvent<HTMLInputElement, MouseEvent> | undefined) => void' is not assignable
           onClick={onClick}
           onBlur={() => setShowMoreContent(false)}
           onFocus={() => setShowMoreContent(true)}
@@ -49,7 +50,7 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
               {alreadyMember ? 'Claim NFT' : 'Claim NFT to join'}
             </B4>
           </div>
-        </button>
+        </CTAButton>
       </div>
     </div>
   );

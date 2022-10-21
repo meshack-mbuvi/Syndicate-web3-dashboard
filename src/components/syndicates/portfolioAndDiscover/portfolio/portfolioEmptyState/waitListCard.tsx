@@ -1,3 +1,4 @@
+import { CTAButton } from '@/components/CTAButton';
 import React from 'react';
 
 const WaitListCard: React.FC = () => {
@@ -10,15 +11,15 @@ const WaitListCard: React.FC = () => {
         To create an investment club, you’ll need an invite from the Syndicate
         team. Join the waitlist to get started.
       </p>
-      <a
+      <CTAButton
         href="https://bpiowescm93.typeform.com/to/mJnnQ5ZI"
-        className="primary-CTA flex justify-center items-center"
+        extraClasses="flex justify-center items-center"
         target="_blank"
         rel="noreferrer"
       >
         <p className="text-black pr-3 whitespace-nowrap">Join the waitlist</p>
         <img src="images/actionIcons/arrowRightBlack.svg" alt="arrow-right" />
-      </a>
+      </CTAButton>
     </div>
   );
 };

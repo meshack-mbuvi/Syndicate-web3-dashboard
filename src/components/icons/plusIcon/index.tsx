@@ -11,7 +11,7 @@ const IconPlus: React.FC<IIconPlus> = ({
   height = 16,
   width = 16,
   fill = '#4376FF',
-  extraClasses
+  extraClasses = ''
 }) => {
   return (
     <svg

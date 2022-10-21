@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { TextField } from '@/components/inputs';
 import NumberTreatment from '@/components/NumberTreatment';
 import { Spinner } from '@/components/shared/spinner';
@@ -148,9 +148,9 @@ export const NFTChecker: React.FC = () => {
           )}
 
           {nftFound == false && !loading && (
-            <CtaButton type="submit" disabled={!isValid || loading}>
+            <CTAButton buttonType="submit" disabled={!isValid || loading}>
               Check
-            </CtaButton>
+            </CTAButton>
           )}
 
           {loading ? <Spinner height="h-6" width="w-6" /> : null}

@@ -1,3 +1,4 @@
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import Modal, { ModalStyle } from '@/components/modal';
 import { B2, L2 } from '@/components/typography';
@@ -71,17 +72,15 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
               I understand that distributions are irreversible.
             </B2>
           </div>
-          <button
+          <CTAButton
             onClick={onClick}
             disabled={!isActive}
-            className={`${
-              isActive
-                ? 'green-CTA'
-                : 'base-CTA cursor-not-allowed bg-gray-syn7 text-gray-syn4'
-            } mt-6 w-full`}
+            type={isActive ? CTAType.TRANSACTIONAL : CTAType.DISABLED}
+            fullWidth={true}
+            extraClasses="mt-6"
           >
             I confirm
-          </button>
+          </CTAButton>
         </div>
       </div>
     </Modal>

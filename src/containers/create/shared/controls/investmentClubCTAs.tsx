@@ -1,5 +1,6 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CONFIRM_WALLET_CLICK } from '@/components/amplitude/eventNames';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import EstimateGas from '@/components/EstimateGas';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
@@ -163,14 +164,17 @@ const InvestmentClubCTAs: React.FC = () => {
             </button>
           )}
           {showNextButton && (
-            <button
-              className={`w-full sm:w-auto ${
+            <CTAButton
+              type={
                 nextBtnDisabled
-                  ? 'primary-CTA-disabled text-gray-syn4'
+                  ? CTAType.DISABLED
                   : isReviewStep
-                  ? 'green-CTA transition-all'
-                  : 'primary-CTA'
-              }`}
+                  ? CTAType.TRANSACTIONAL
+                  : CTAType.PRIMARY
+              }
+              extraClasses={`${
+                isReviewStep ? 'transition-all' : ''
+              } w-full sm:w-auto`}
               onClick={
                 isReviewStep
                   ? !account
@@ -193,7 +197,7 @@ const InvestmentClubCTAs: React.FC = () => {
                 : isMembershipStep
                 ? 'Review'
                 : 'Next'}
-            </button>
+            </CTAButton>
           )}
         </div>
       </div>
