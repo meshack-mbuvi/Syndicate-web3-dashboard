@@ -10,7 +10,7 @@ import {
 } from '@/state/assets/collectibles/slice';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { FC, useState, useEffect, useCallback, useRef } from 'react';
+import { FC, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -75,15 +75,21 @@ export const Collectibles: FC<Props> = ({
     clubAddress = window?.location?.pathname.split('/')[2];
   }
   // get height of nfts section to animate on collapse
+  const data = useMemo(
+    () => (nftsData.length ? JSON.stringify(nftsData) : []),
+    [nftsData]
+  );
   useEffect(() => {
-    if (nftsGallery) {
+    if (nftsGallery.current) {
       const containerHeight = nftsGallery.current
         ? nftsGallery.current.getBoundingClientRect().height
         : 0;
 
       setContainerHeight(containerHeight);
     }
-  }, [JSON.stringify(nftsData)]);
+    // added loading as a dependency here because
+    // nftsData only doesn't trigger a recalculation of the height.
+  }, [data, loading]);
 
   // get state of nfts section collapsed from localStorage
   useEffect(() => {
@@ -299,7 +305,7 @@ export const Collectibles: FC<Props> = ({
         <div
           className="duration-500 transition-all h-full overflow-hidden"
           style={{
-            height: isNftsCollapsed ? '0' : `${containerHeight}px`
+            height: isNftsCollapsed ? '0px' : `${containerHeight}px`
           }}
         >
           <div ref={nftsGallery} className="pt-8">
@@ -310,7 +316,6 @@ export const Collectibles: FC<Props> = ({
             {!loading && !nftsData.length ? (
               <LoaderContent animate={false} />
             ) : null}
-
             {nftsData.length > 0 && !loading ? (
               <InfiniteScroll
                 dataLength={nftsData.length}
@@ -388,92 +393,99 @@ export const Collectibles: FC<Props> = ({
                         <span className="text-gray-syn4">-</span>
                       );
 
-                      return (
-                        <div
-                          className={`col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer group ${
-                            hidden && !showHiddenNfts ? 'hidden' : 'block'
-                          } ${hidden ? 'cursor-not-allowed' : 'cursor-pointer '}
-                          `}
-                          key={index}
-                        >
-                          {!showFullScreen ? (
-                            <CollectibleMedia
-                              {...{
-                                collectible,
-                                mediaType,
-                                setDetailsOfSelectedCollectible,
-                                showCollectibles: true,
-                                showHiddenNfts,
-                                showOrHideNfts: showOrHideNftsById,
-                                isOwner
-                              }}
-                            />
-                          ) : null}
+                      if (mediaType) {
+                        return (
                           <div
-                            className={`flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36 ${
-                              hidden ? 'cursor-not-allowed' : 'cursor-pointer'
-                            }`}
-                            onClick={() => {
-                              // do not show more details if nft's hidden
-                              if (hidden) return;
-                              setDetailsOfSelectedCollectible({
-                                collectible,
-                                mediaType,
-                                moreDetails: {
-                                  'Token ID': futureNft ? '' : id,
-                                  'Token collection': collection.name,
-                                  'Floor price': floorPrice,
-                                  'Last purchase price': lastPurchasePrice
-                                }
-                              });
-                            }}
-                            onKeyDown={() => ({})}
-                            tabIndex={0}
-                            role="button"
+                            className={`col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer group ${
+                              hidden && !showHiddenNfts ? 'hidden' : 'block'
+                            } ${
+                              hidden ? 'cursor-not-allowed' : 'cursor-pointer '
+                            }
+                            `}
+                            key={index}
                           >
+                            {!showFullScreen ? (
+                              <CollectibleMedia
+                                {...{
+                                  collectible,
+                                  mediaType,
+                                  setDetailsOfSelectedCollectible,
+                                  showCollectibles: true,
+                                  showHiddenNfts,
+                                  showOrHideNfts: showOrHideNftsById,
+                                  isOwner
+                                }}
+                              />
+                            ) : null}
                             <div
-                              className={`mx-8 flex flex-col duration-300 transition-all ${
-                                hidden && showHiddenNfts
-                                  ? 'opacity-30'
-                                  : 'opacity-100'
+                              className={`flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36 ${
+                                hidden ? 'cursor-not-allowed' : 'cursor-pointer'
                               }`}
+                              onClick={() => {
+                                // do not show more details if nft's hidden
+                                if (hidden) return;
+                                setDetailsOfSelectedCollectible({
+                                  collectible,
+                                  mediaType,
+                                  moreDetails: {
+                                    'Token ID': futureNft ? '' : id,
+                                    'Token collection': collection.name,
+                                    'Floor price': floorPrice,
+                                    'Last purchase price': lastPurchasePrice
+                                  }
+                                });
+                              }}
+                              onKeyDown={() => ({})}
+                              tabIndex={0}
+                              role="button"
                             >
-                              <H4
-                                extraClasses={`line-clamp-1 ${
-                                  isNameEthereumAddress
-                                    ? 'break-all'
-                                    : 'break-words'
+                              <div
+                                className={`mx-8 flex flex-col duration-300 transition-all ${
+                                  hidden && showHiddenNfts
+                                    ? 'opacity-30'
+                                    : 'opacity-100'
                                 }`}
                               >
-                                {name ? name : blankValue}
-                              </H4>
-                              <span className="text-gray-syn4 text-sm pt-4">
-                                Floor price
-                              </span>
-                              <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
-                                <span className="">
-                                  {floorPrice
-                                    ? `${floorPrice} ${
-                                        isDemoMode
-                                          ? 'ETH'
-                                          : activeNetwork.nativeCurrency.symbol
-                                      }`
-                                    : blankValue}
+                                <H4
+                                  extraClasses={`line-clamp-1 ${
+                                    isNameEthereumAddress
+                                      ? 'break-all'
+                                      : 'break-words'
+                                  }`}
+                                >
+                                  {name ? name : blankValue}
+                                </H4>
+                                <span className="text-gray-syn4 text-sm pt-4">
+                                  Floor price
                                 </span>
-                                {+floorPrice > 0 && (
-                                  <span className="text-gray-syn4">
-                                    (
-                                    {floatedNumberWithCommas(
-                                      +floorPrice * nativeTokenPrice
-                                    )}{' '}
-                                    USD)
+                                <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
+                                  <span className="">
+                                    {floorPrice
+                                      ? `${floorPrice} ${
+                                          isDemoMode
+                                            ? 'ETH'
+                                            : activeNetwork.nativeCurrency
+                                                .symbol
+                                        }`
+                                      : blankValue}
                                   </span>
-                                )}
+                                  {+floorPrice > 0 && (
+                                    <span className="text-gray-syn4">
+                                      (
+                                      {floatedNumberWithCommas(
+                                        +floorPrice * nativeTokenPrice
+                                      )}{' '}
+                                      USD)
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      );
+                        );
+                      } else {
+                        return <></>;
+                      }
                     }
                   )}
                 </div>
