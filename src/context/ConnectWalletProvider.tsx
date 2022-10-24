@@ -145,7 +145,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   const detachedWeb3 = useMemo(() => {
     if (chainId) {
-      // @ts-expect-error TS(2339): Property 'rpcUrl' does not exist on type 'never'.
       const rpcUrl = NETWORKS[chainId]?.rpcUrl;
       if (rpcUrl) return new Web3(`${rpcUrl}`);
 
@@ -461,7 +460,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         // @ts-expect-error TS(2571): Object is of type 'unknown'.
         if (error.code === 4902) {
           try {
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             const activeNetwork = NETWORKS[_chainId];
             // @ts-expect-error TS(2339): Property 'request' does not exist on type 'never'.
             await activeProvider?.request({
@@ -488,7 +486,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
     } else {
       setChainId(_chainId);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       setWeb3(new Web3(`${NETWORKS[_chainId].rpcUrl}`));
     }
   };

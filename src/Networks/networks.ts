@@ -6,7 +6,7 @@ export interface INetwork {
   testnet: boolean;
   chainId: number;
   networkId: number;
-  testNetwork: false;
+  testNetwork: boolean;
   rpcUrl: string;
   publicRPC: string;
   logo: string;
@@ -36,7 +36,7 @@ export interface INetwork {
   };
 }
 
-export const NETWORKS = Object.freeze({
+export const NETWORKS: { [key: number]: INetwork } = Object.freeze({
   1: {
     name: 'Ethereum Mainnet',
     displayName: 'Ethereum',
@@ -46,7 +46,7 @@ export const NETWORKS = Object.freeze({
     chainId: 1,
     networkId: 1,
     testNetwork: false,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_MAINNET,
+    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_MAINNET || '',
     publicRPC: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     logo: '/images/chains/ethereum.svg',
     blockExplorer: {
@@ -84,7 +84,7 @@ export const NETWORKS = Object.freeze({
     chainId: 5,
     networkId: 5,
     testNetwork: true,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_GOERLI,
+    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_GOERLI || '',
     publicRPC: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     logo: '/images/chains/goerli.svg',
     blockExplorer: {
@@ -122,7 +122,7 @@ export const NETWORKS = Object.freeze({
     chainId: 137,
     networkId: 137,
     testNetwork: false,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON,
+    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON || '',
     publicRPC: 'https://polygon-rpc.com/',
     logo: '/images/chains/polygon.svg',
     blockExplorer: {
