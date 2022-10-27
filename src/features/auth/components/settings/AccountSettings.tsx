@@ -1,11 +1,11 @@
-import { ChevronRightIcon } from '@heroicons/react/outline';
 import React from 'react';
+import { ChevronRightIcon } from '@heroicons/react/outline';
 import TrashIcon from '@/components/icons/TrashIcon';
+import { T5, H2, B3, B2 } from '@/components/typography';
+import IconUserPrivacy from '@/components/icons/userPrivacy';
 import LinkedWallets from './LinkedWallets';
 import SocialAccounts from './SocialAccounts';
 import { AuthType } from './SocialCard';
-import UserPrivacy from '@/components/icons/social/UserPrivacy';
-import { T5, H2, B3, B2 } from '@/components/typography';
 
 const DISCLAIMER =
   'This won’t affect any of your Investment Clubs or Collectives but it will delete the links between your social accounts and wallets that are stored by Stytch.';
@@ -36,7 +36,11 @@ const AccountSettings: React.FC<{
         {/* Mobile */}
         <H2 extraClasses="block sm:hidden">Account settings</H2>
         <div className="flex items-center space-x-2 text-gray-syn3">
-          <UserPrivacy />
+          <IconUserPrivacy
+            height={18}
+            width={20}
+            textColorClass="text-gray-syn3"
+          />
           <B3>How is my data stored?</B3>
           <button
             className="text-blue flex items-center"

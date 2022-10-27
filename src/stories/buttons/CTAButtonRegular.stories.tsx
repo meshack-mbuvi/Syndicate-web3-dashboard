@@ -70,3 +70,14 @@ Disabled.args = {
   label: 'Button',
   fullWidth: false
 };
+
+export const Error = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
+Error.args = {
+  type: CTAType.ERROR,
+  style: CTAStyle.REGULAR,
+  disabled: true,
+  rounded: false,
+  label: 'Button',
+  fullWidth: false
+};

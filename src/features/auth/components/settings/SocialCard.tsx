@@ -11,7 +11,7 @@ const SocialCard: React.FC<{
   username: string;
   authType: AuthType;
   profileIcon?: string;
-}> = ({ username = 'Victor#1234', profileIcon, authType }) => {
+}> = ({ username, profileIcon, authType }) => {
   return (
     <div className="rounded-1.5lg bg-gray-syn8">
       <div className="py-4 px-5 flex flex-row space-x-3 items-center">

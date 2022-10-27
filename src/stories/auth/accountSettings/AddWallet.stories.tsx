@@ -1,4 +1,4 @@
-import AddWallet from '@/features/auth/components/AccountSetting/AddWallet';
+import AddWallet from '@/features/auth/components/settings/AddWallet';
 import React from 'react';
 
 export default {

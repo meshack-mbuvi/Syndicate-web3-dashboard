@@ -1,7 +1,7 @@
-import { DataStoragePrivacyModal } from '@/features/auth/components/privacyModal';
+import { DataStoragePrivacyModal } from '@/features/auth/components/modals/privacyModal';
 
 export default {
-  title: '3. Molecules/Auth/Data Storage Privacy Modal'
+  title: '4. Organisms/Auth/Modal/Data Storage Privacy'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

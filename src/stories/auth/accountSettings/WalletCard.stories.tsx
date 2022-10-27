@@ -5,7 +5,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import WalletCard from '@/features/auth/components/AccountSetting/WalletCard';
+import WalletCard from '@/features/auth/components/settings/WalletCard';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 5000 } }

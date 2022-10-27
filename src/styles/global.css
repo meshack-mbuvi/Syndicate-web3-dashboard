@@ -281,6 +281,10 @@
     @apply font-semibold px-8 py-3.5 rounded-lg focus:outline-none whitespace-nowrap transition-all;
   }
 
+  .focus-CTA {
+    @apply focus:ring focus:ring-blue-nasa-flight-cobalt;
+  }
+
   .primary-CTA.short {
     @apply py-2;
   }
@@ -288,7 +292,7 @@
   /* white */
 
   .base-CTA.regular {
-    @apply bg-white hover:bg-gray-syn2 active:bg-gray-syn3 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt text-black transition-all hover:bg-opacity-90;
+    @apply bg-white hover:bg-gray-syn2 active:bg-gray-syn3 focus:outline-none focus-CTA text-black transition-all hover:bg-opacity-90;
   }
 
   /* disabled */
@@ -300,7 +304,7 @@
   /* dark */
 
   .base-CTA.dark {
-    @apply bg-gray-syn8 border border-gray-syn7 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt;
+    @apply bg-gray-syn8 border border-gray-syn7 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus-CTA;
   }
 
   .base-CTA.dark.disabled {
@@ -310,7 +314,7 @@
   /* dark outlined */
 
   .base-CTA.dark-outlined {
-    @apply bg-gray-syn8 border border-gray-syn5 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt;
+    @apply bg-gray-syn8 border border-gray-syn5 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus-CTA;
   }
 
   .base-CTA.dark-outlined.disabled {
@@ -320,7 +324,7 @@
   /* blank */
 
   .base-CTA.blank {
-    @apply hover:bg-gray-syn9 focus:outline-none focus:ring focus:ring-blue-nasa-flight-cobalt border-transparent;
+    @apply hover:bg-gray-syn9 focus:outline-none focus-CTA border-transparent;
   }
 
   .base-CTA.blank.disabled {
@@ -349,6 +353,12 @@
 
   .base-CTA.orange {
     @apply bg-yellow-warning hover:bg-yellow-warning-shine text-black transition-all;
+  }
+
+  /* red - error */
+
+  .base-CTA.red {
+    @apply bg-red-error hover:bg-red-500 text-white transition-all;
   }
 
   .secondary-CTA {

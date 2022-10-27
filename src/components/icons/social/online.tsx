@@ -4,11 +4,19 @@ const OnlineIcon: React.FC<{
   fill?: string;
   stroke?: string;
   strokeWidth?: string;
-}> = ({ fill = '#30E696', stroke = 'black', strokeWidth = '2' }) => {
+  height?: number;
+  width?: number;
+}> = ({
+  fill = '#30E696',
+  stroke = 'black',
+  strokeWidth = '2',
+  width = 16,
+  height = 16
+}) => {
   return (
     <svg
-      width="16"
-      height="16"
+      width={height}
+      height={width}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

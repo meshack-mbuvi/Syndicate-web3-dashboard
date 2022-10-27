@@ -1,6 +1,6 @@
 import SocialCard, {
   AuthType
-} from '@/features/auth/components/AccountSetting/SocialCard';
+} from '@/features/auth/components/settings/SocialCard';
 import React from 'react';
 
 export default {

@@ -1,17 +1,20 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { ChevronDownIcon } from '@heroicons/react/outline';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 
 interface Props {
   items: { title: string; content: any }[];
   visibleItemIndex?: number | null;
   handleVisibleItemChange: (newIndex: number | null) => void;
+  titleClassName?: string;
+  contentClassName?: string;
 }
 
 export const Drawers: React.FC<Props> = ({
   items,
   visibleItemIndex,
-  handleVisibleItemChange
+  handleVisibleItemChange,
+  titleClassName = 'font-mono uppercase tracking-e2',
+  contentClassName = 'text-base'
 }) => {
   const drawerRefs = useRef<HTMLInputElement[]>([]);
   const renderedDrawers = items.map(
@@ -20,7 +23,7 @@ export const Drawers: React.FC<Props> = ({
         <button
           key={index}
           className="border-gray-syn6 items-center p-5 overflow-hidden w-full"
-          onClick={() => {
+          onClick={(): void => {
             if (index === visibleItemIndex) {
               handleVisibleItemChange(null);
             } else {
@@ -30,10 +33,7 @@ export const Drawers: React.FC<Props> = ({
         >
           {/* Title */}
           <div
-            className="flex justify-between items-center font-mono uppercase"
-            style={{
-              letterSpacing: '2px'
-            }}
+            className={`flex justify-between items-center ${titleClassName}`}
           >
             <div className="text-left">{item.title}</div>
             <div
@@ -48,7 +48,7 @@ export const Drawers: React.FC<Props> = ({
 
           {/* Content */}
           <div
-            className="transition-all duration-500"
+            className="transition-all duration-500 overflow-hidden"
             style={{
               height: `${
                 visibleItemIndex === index
@@ -60,7 +60,7 @@ export const Drawers: React.FC<Props> = ({
             }}
           >
             <div
-              ref={(ref) => {
+              ref={(ref): void => {
                 // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
                 if (ref && !drawerRefs.current.includes(ref)) {
                   // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
@@ -69,7 +69,7 @@ export const Drawers: React.FC<Props> = ({
               }}
               className={`${
                 visibleItemIndex === index ? `opacity-100` : 'opacity-0'
-              } pt-4 text-gray-syn3 00 transition-all duration-500 text-left`}
+              } pt-4 text-gray-syn3 00 transition-all duration-500 text-left ${contentClassName}`}
             >
               {item.content}
             </div>

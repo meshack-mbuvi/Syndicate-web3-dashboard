@@ -13,7 +13,8 @@ export enum CTAType {
   INVESTMENT_CLUB = 'volt',
   COLLECTIVE = 'cherenkov',
   WARNING = 'orange',
-  DISABLED = 'disabled'
+  DISABLED = 'disabled',
+  ERROR = 'red'
 }
 
 interface Props {

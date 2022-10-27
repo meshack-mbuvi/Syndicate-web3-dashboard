@@ -17,6 +17,7 @@ interface ModalProps {
   overflow?: string;
   showBackButton?: boolean;
   closeButtonClassName?: string;
+  closeButtonPosition?: string;
   modalStyle?: ModalStyle;
   opacity?: string;
   titleMarginClassName?: string;
@@ -28,6 +29,7 @@ interface ModalProps {
   alignment?: string;
   margin?: string;
   maxHeight?: boolean;
+  mobileModal?: boolean;
 }
 
 export enum ModalStyle {
@@ -63,6 +65,7 @@ const Modal = (props: ModalProps): JSX.Element => {
     showCloseButton = true,
     customClassName = 'p-2 sm:p-6',
     closeButtonClassName,
+    closeButtonPosition = 'top-9 right-10',
     outsideOnClick,
     titleMarginClassName,
     titleAlignment,
@@ -76,7 +79,8 @@ const Modal = (props: ModalProps): JSX.Element => {
     isMaxHeightScreen = true,
     alignment = 'align-middle',
     margin = 'md:my-14',
-    maxHeight = true
+    maxHeight = true,
+    mobileModal = false
   } = props;
 
   const bgColor = `${(modalStyle === ModalStyle.LIGHT && 'bg-white') || ''} ${
@@ -86,6 +90,9 @@ const Modal = (props: ModalProps): JSX.Element => {
   const textColor = `${
     (modalStyle === ModalStyle.LIGHT && 'text-black') || ''
   } ${(modalStyle === ModalStyle.DARK && 'text-white') || ''}`;
+
+  const mobilePosition = mobileModal ? 'items-end' : 'items-center';
+  const mobileRadius = mobileModal ? 'rounded-t-2xl' : 'rounded-2xl';
 
   useDisableBgScrollOnModal(show);
 
@@ -111,7 +118,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       >
         <div
           ref={childWrapperRef}
-          className={`flex items-center h-screen my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
+          className={`flex ${mobilePosition} h-screen my-auto justify-center text-center ${textColor} sm:px-4 sm:block sm:p-0`}
         >
           <Transition.Child
             as={Fragment}
@@ -149,7 +156,7 @@ const Modal = (props: ModalProps): JSX.Element => {
                 isMaxHeightScreen ? 'max-h-screen' : ''
               } ${
                 bgColor ? bgColor : ''
-              } rounded-2xl text-left shadow-xl transform transition-all ${
+              } ${mobileRadius} text-left shadow-xl transform transition-all ${
                 customWidth || ''
               } ${overflow || ''} ${customClassName || ''}`}
               role="dialog"
@@ -176,7 +183,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="absolute top-9 right-10 z-10">
+              <div className={`absolute z-10 ${closeButtonPosition}`}>
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button

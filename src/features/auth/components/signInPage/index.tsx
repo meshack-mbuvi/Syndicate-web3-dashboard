@@ -11,8 +11,8 @@ import TwoColumnLayout, {
 } from '@/containers/twoColumnLayout';
 import { useTailwindScreenWidth } from '@/helpers/layout';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useEffect, useRef, useState } from 'react';
-import { DataStoragePrivacyModal } from '../privacyModal';
+import React, { useEffect, useRef, useState } from 'react';
+import { DataStoragePrivacyModal } from '../modals/privacyModal';
 
 export {};
 

@@ -1,5 +1,5 @@
-import SocialAccounts from '@/features/auth/components/AccountSetting/SocialAccounts';
-import { AuthType } from '@/features/auth/components/AccountSetting/SocialCard';
+import SocialAccounts from '@/features/auth/components/settings/SocialAccounts';
+import { AuthType } from '@/features/auth/components/settings/SocialCard';
 import React from 'react';
 
 export default {

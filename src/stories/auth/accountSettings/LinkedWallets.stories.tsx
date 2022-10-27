@@ -1,6 +1,6 @@
 import ConnectWallet from '@/components/connectWallet';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
-import LinkedWallets from '@/features/auth/components/AccountSetting/LinkedWallets';
+import LinkedWallets from '@/features/auth/components/settings/LinkedWallets';
 import { store } from '@/state';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';

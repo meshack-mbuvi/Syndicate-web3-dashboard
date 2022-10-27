@@ -1,7 +1,7 @@
 import ConnectWallet from '@/components/connectWallet';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
-import AccountSettings from '@/features/auth/components/AccountSetting/AccountSettings';
-import { AuthType } from '@/features/auth/components/AccountSetting/SocialCard';
+import AccountSettings from '@/features/auth/components/settings/AccountSettings';
+import { AuthType } from '@/features/auth/components/settings/SocialCard';
 import { store } from '@/state';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
