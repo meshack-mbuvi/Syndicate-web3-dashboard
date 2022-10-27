@@ -10,6 +10,7 @@ import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { getCollectiveName } from '@/utils/contracts/collective';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import useVerifyCollectiveNetwork from '@/hooks/collectives/useVerifyCollectiveNetwork';
 
 export interface ICollectiveDetails {
   collectiveName: string;
@@ -32,27 +33,6 @@ export interface ICollectiveDetails {
   mediaCid: string;
   collectiveCardType: CollectiveCardType;
 }
-// export interface ICollectiveDetails {
-//   collectiveName?: string;
-//   ownerAddress?: string;
-//   collectiveSymbol?: string;
-//   collectiveAddress?: string;
-//   maxPerWallet?: string;
-//   maxTotalSupply?: string;
-//   totalSupply?: string;
-//   createdAt?: any;
-//   numOwners?: string;
-//   owners?: any;
-//   mintPrice?: string;
-//   isTransferable?: boolean;
-//   mintEndTime?: string;
-//   maxSupply?: number;
-//   description?: string;
-//   isOpen?: boolean;
-//   metadataCid?: string;
-//   mediaCid?: string;
-//   collectiveCardType?: CollectiveCardType;
-// }
 
 const emptyCollective: ICollectiveDetails = {
   collectiveName: '',
@@ -80,6 +60,7 @@ export interface ICollectiveDetailsResponse {
   collectiveDetails: ICollectiveDetails;
   collectiveDetailsLoading: boolean;
   collectiveNotFound: boolean;
+  correctCollectiveNetwork: boolean;
 }
 
 const useERC721Collective = (): ICollectiveDetailsResponse => {
@@ -95,6 +76,8 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
   } = router;
 
   const isDemoMode = useDemoMode();
+  const { correctCollectiveNetwork, checkingNetwork } =
+    useVerifyCollectiveNetwork(collectiveAddress as string);
 
   const MINT_MODULE =
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -127,6 +110,7 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
     if (loading) {
       return;
     }
+
     if (data && data.syndicateCollectives.length) {
       stopPolling();
 
@@ -158,8 +142,9 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
       activeModules.map((module: any) => {
         const { contractAddress, activeRequirements } = module;
         if (
+          MINT_MODULE &&
           web3.utils.toChecksumAddress(contractAddress) ===
-          web3.utils.toChecksumAddress(MINT_MODULE)
+            web3.utils.toChecksumAddress(MINT_MODULE)
         ) {
           activeRequirements.map((activeRequirement: any) => {
             const { requirement } = activeRequirement;
@@ -219,7 +204,7 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
     } else {
       verifyNotFound();
     }
-  }, [loading, data]);
+  }, [loading, data, activeNetwork?.chainId, MINT_MODULE]);
 
   const verifyNotFound = async () => {
     const collectiveName = await getCollectiveName(
@@ -249,8 +234,10 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
     // 2) or still polling the graph for data
     // In either case the UI should still show a loading interface
     collectiveDetailsLoading:
-      !collectiveNotFound && collectiveDetails.collectiveSymbol === '',
-    collectiveNotFound
+      (!collectiveNotFound && collectiveDetails.collectiveSymbol === '') ||
+      checkingNetwork,
+    collectiveNotFound,
+    correctCollectiveNetwork
   };
 };
 

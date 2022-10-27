@@ -7,7 +7,6 @@ import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import router from 'next/router';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
@@ -24,9 +23,6 @@ const CollectiveIndexPage: React.FC = () => {
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
   const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
-
-  // Check to make sure collectives are not viewable on Polygon
-  const { isPolygon } = useIsPolygon();
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
@@ -63,7 +59,7 @@ const CollectiveIndexPage: React.FC = () => {
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
+  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
     <CollectiveDetails />
   ) : (
     <NotFoundPage />
