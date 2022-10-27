@@ -12,6 +12,8 @@ import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
+import useAdminClubs from '@/hooks/clubs/useAdminClubs';
+import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
 
@@ -70,11 +72,14 @@ const Layout: FC<Props> = ({
     web3Reducer: {
       web3: { account, status, activeNetwork, web3 }
     },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
       erc20Token: { owner, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
+
+  const { adminClubs, adminClubsLoading } = useAdminClubs();
+  const { memberClubs, memberClubsLoading } = useMemberClubs();
+  const loading = adminClubsLoading || memberClubsLoading;
 
   const router = useRouter();
   const { chain } = router.query;
@@ -94,8 +99,8 @@ const Layout: FC<Props> = ({
   // get content to occupy the viewport if we are in these states.
   // this will push the footer down to the bottom of the page to make it uniform
   // across the app
-  const clubsFound = myClubERC20s.length > 0 || otherClubERC20s.length > 0;
-  const fewClubs = myClubERC20s.length + otherClubERC20s.length < 4;
+  const clubsFound = adminClubs.length > 0 || memberClubs.length > 0;
+  const fewClubs = adminClubs.length + memberClubs.length < 4;
   const onPortfolioPage = clubsFound && fewClubs && portfolioPage;
   const pushFooter =
     onPortfolioPage ||

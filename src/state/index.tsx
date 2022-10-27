@@ -3,7 +3,6 @@ import setCollectibleDetailsSliceReducer from '@/state/assets/collectibles/slice
 import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
-import clubERC20sReducer from '@/state/clubERC20';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
@@ -29,7 +28,6 @@ import { createWrapper } from 'next-redux-wrapper';
 
 export const store = configureStore({
   reducer: {
-    clubERC20sReducer,
     createInvestmentClubSliceReducer,
     createCollectiveSliceReducer,
     erc20TokenSliceReducer,
