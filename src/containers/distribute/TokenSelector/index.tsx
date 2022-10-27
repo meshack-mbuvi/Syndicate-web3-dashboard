@@ -1,6 +1,7 @@
 import { AssetList } from '@/components/distributions/assetList';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B3, B4 } from '@/components/typography';
+import { IToken } from '@/state/assets/types';
 import Image from 'next/image';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
@@ -9,35 +10,9 @@ import DistributionHeader from '../DistributionHeader';
 interface Props {
   loading: boolean;
   symbol: string;
-  options: {
-    icon: string;
-    name?: string;
-    symbol?: string;
-    price?: number;
-    tokenAmount?: number;
-    fiatAmount?: number;
-    maximumTokenAmount?: number;
-    isEditingInFiat?: boolean;
-    error?: string;
-    warning?: string;
-    isLoading?: boolean;
-  }[];
+  options: IToken[];
   activeIndices: number[];
-  handleOptionsChange: (
-    options: {
-      icon: string;
-      name?: string;
-      symbol?: string;
-      tokenAmount?: number;
-      fiatAmount?: number;
-      isEditingInFiat?: boolean;
-      error?: string;
-      warning?: string;
-      isLoading?: boolean;
-      maximumTokenAmount?: number;
-      price?: number;
-    }[]
-  ) => void;
+  handleOptionsChange: (options: IToken[]) => void;
   handleActiveIndicesChange: (indices: number[]) => void;
 }
 

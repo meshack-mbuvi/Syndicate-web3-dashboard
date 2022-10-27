@@ -119,15 +119,15 @@ const Header: React.FC<props> = ({
     };
   }, [router.events]);
 
-  const toggleMobileNav = () => {
+  const toggleMobileNav = (): void => {
     setShowMobileNav(!showMobileNav);
   };
 
-  const handleBackButton = () => {
+  const handleBackButton = (): void => {
     const path = router.pathname.split('/');
     //assumes showBackButton only used on ...[DYNAMIC]/currentPath
     const grandParentPath = path.slice(0, path.length - 2).join('/');
-    router.push(grandParentPath || '/');
+    void router.push(grandParentPath || '/');
   };
 
   // do not show the syndicate logo and nav links on the top nav for the create flow.

@@ -860,7 +860,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
               steps?.[activeIndex].status ==
                 ProgressDescriptorState.FAILURE) && (
               <div className="mt-6">
-                <CTAButton onClick={handleClickAction}>
+                <CTAButton onClick={handleClickAction} extraClasses="w-full">
                   Distribute {`${steps?.[activeIndex]?.symbol}`}
                 </CTAButton>
               </div>

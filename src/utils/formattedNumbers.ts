@@ -134,3 +134,21 @@ export const truncateDecimals = (
 
 export const removeTrailingDecimalPoint = (value: string): string =>
   value.replace(/\.(?!\d)/g, '');
+
+export const formatCoinDecimals = (
+  strAmount: string,
+  tokenDecimal = 18
+): string => {
+  let _sanitizedAmount = strAmount;
+  // check whether coin decimals are exceeded.
+  const [wholePart, decimalPart] = strAmount.split('.');
+  if (decimalPart?.length > +tokenDecimal) {
+    _sanitizedAmount =
+      wholePart +
+      '.' +
+      decimalPart.substring(0, +tokenDecimal - 1) +
+      Math.floor(+decimalPart[+tokenDecimal - 1]);
+  }
+
+  return _sanitizedAmount;
+};

@@ -79,9 +79,9 @@ export const CTAButton: React.FC<Props> = ({
         </a>
       ) : (
         <button
-          className={`${type} ${style} ${fullWidth ? 'w-full' : ''} ${
+          className={`${style} ${fullWidth ? 'w-full' : ''} ${
             rounded ? 'rounded-full' : ''
-          } ${extraClasses ?? ''}`}
+          } ${extraClasses ?? ''} ${disabled ? CTAType.DISABLED : type}`}
           disabled={disabled ? true : type === CTAType.DISABLED ? true : false}
           type={buttonType}
           id={id}

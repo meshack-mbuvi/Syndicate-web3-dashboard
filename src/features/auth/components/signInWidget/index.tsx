@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { ArrowRightIcon } from '@/components/icons/arrowRight';
 import { WalletIcon } from '@/components/iconWrappers';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
@@ -17,7 +17,7 @@ interface Props {
 export const AuthSignInWidget: React.FC<Props> = ({
   state,
   handleCTAClick
-}) => {
+}: Props) => {
   return (
     <>
       <div className="bg-gray-syn8 rounded-2.5xl max-w-480">
@@ -28,7 +28,7 @@ export const AuthSignInWidget: React.FC<Props> = ({
           ) : (
             <H4>Sign in to join this investment club</H4>
           )}
-          <CtaButton
+          <CTAButton
             extraClasses="flex items-center space-x-2 justify-center font-semibold"
             onClick={handleCTAClick}
           >
@@ -43,7 +43,7 @@ export const AuthSignInWidget: React.FC<Props> = ({
                 <ArrowRightIcon />
               </>
             )}
-          </CtaButton>
+          </CTAButton>
         </div>
       </div>
     </>

@@ -34,16 +34,17 @@ export const BadgeWithOverview: React.FC<Props> = ({
 }) => {
   const [isTotalLoading, setIsTotalLoading] = useState(false);
 
-  const fiatAmount = tokensDetails?.reduce((total, tokenDetails) => {
-    // If at least one token that is loading, then the total cost is loading.
-    if (!isTotalLoading && tokenDetails.isLoading) {
-      setIsTotalLoading(true);
-    }
+  const fiatAmount =
+    tokensDetails?.reduce((total, tokenDetails) => {
+      // If at least one token that is loading, then the total cost is loading.
+      if (!isTotalLoading && tokenDetails.isLoading) {
+        setIsTotalLoading(true);
+      }
 
-    return (
-      parseFloat(total.toFixed(3)) + parseFloat(tokenDetails?.fiatAmount ?? 0)
-    );
-  }, 0);
+      return (
+        parseFloat(total.toFixed(3)) + parseFloat(tokenDetails?.fiatAmount ?? 0)
+      );
+    }, 0) || 0;
 
   const totalFiatAmount =
     parseFloat(fiatAmount?.toString() ?? '0') +
@@ -215,7 +216,11 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     }).format(totalFiatAmount)}
               </div>
             </div>
-            <CTAButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+            <CTAButton
+              disabled={isCTADisabled}
+              onClick={ctaOnclickHandler}
+              extraClasses="w-full"
+            >
               {CTALabel}
             </CTAButton>
           </>
@@ -233,7 +238,10 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 {tokensDetails.length > 1 && 's'}
               </div>
               <div className="text-gray-syn4 font-mono">
-                {`$${totalFiatAmount.toFixed(4)}`}
+                {`${Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'USD'
+                }).format(fiatAmount)}`}
               </div>
             </div>
             {/* Gas estimate */}
@@ -265,7 +273,11 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
               </div>
             </Callout>
-            <CTAButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+            <CTAButton
+              disabled={isCTADisabled}
+              onClick={ctaOnclickHandler}
+              extraClasses="w-full"
+            >
               {CTALabel}
             </CTAButton>
           </>
