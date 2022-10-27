@@ -29,6 +29,7 @@ interface Props {
   isDistributing?: boolean;
   isWaitingForSelection?: boolean;
   merkleLoading?: boolean;
+  hideCountdown?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -46,7 +47,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     isDistributing,
     isWaitingForSelection,
     isOpenToNewMembers,
-    merkleLoading = false
+    merkleLoading = false,
+    hideCountdown = false
   } = props;
 
   const {
@@ -149,7 +151,8 @@ const StatusBadge = (props: Props): JSX.Element => {
               </div>
               {depositsEnabled &&
               !syndicateCreationFailed &&
-              !showConfettiSuccess ? (
+              !showConfettiSuccess &&
+              !hideCountdown ? (
                 <div className="flex">
                   <Tooltip
                     content={
