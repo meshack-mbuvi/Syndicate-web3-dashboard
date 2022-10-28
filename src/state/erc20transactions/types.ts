@@ -1,13 +1,3 @@
-enum GraphEventType {
-  MEMBER_MINTED
-}
-
-export interface GraphEvent {
-  id: string;
-  eventType: GraphEventType;
-  transactionId: string;
-}
-
 export type TransactionCategory =
   | 'INVESTMENT'
   | 'INVESTMENT_TOKEN'
@@ -33,43 +23,6 @@ export enum RoundCategory {
   OTHER
 }
 
-export interface TransactionAnnotation {
-  memo: string;
-  transactionCategory: TransactionCategory;
-  roundCategory: RoundCategory;
-  numberShares: string;
-  numberTokens: string;
-  fullyDilutedOwnershipStake: string;
-  acquisitionDate: Date;
-  preMoneyValuation: string;
-  postMoneyValuation: string;
-  fromLabel: string;
-  toLabel: string;
-  transactionId: string;
-  annotationMetadata: JSON;
-  createdAt: Date;
-  updatedAt: Date;
-  companyName: string;
-}
-
-export interface Transaction {
-  syndicateAddress: string;
-  blockTimestamp: number;
-  contractAddress: string;
-  fromAddress: string;
-  toAddress: string;
-  value: string;
-  tokenName: string;
-  tokenSymbol: string;
-  tokenDecimal: number;
-  events: GraphEvent[];
-  metadata: TransactionAnnotation;
-  isOutgoingTransaction: boolean;
-  hash: string;
-  categoryIsReadonly?: boolean;
-  tokenLogo?: string;
-}
-
 export interface CurrentTransaction {
   category: TransactionCategory;
   note: string;
@@ -81,9 +34,9 @@ export interface CurrentTransaction {
     isOutgoingTransaction: boolean;
   };
   amount: string;
-  tokenSymbol: string;
-  tokenLogo: string;
-  tokenName: string;
+  tokenSymbol?: string;
+  tokenLogo?: string;
+  tokenName?: string;
   readOnly: boolean;
   timestamp: string;
   transactionId?: string;
@@ -107,15 +60,9 @@ export interface CurrentTransaction {
   };
   blockTimestamp?: number;
 }
-export type ClubTransactions = Record<number, Transaction[]>;
 
 interface InitialState {
-  myTransactions: ClubTransactions;
   currentTransaction: CurrentTransaction;
-  totalTransactionsCount: number;
-  loading: boolean;
-  investmentTransactions: ClubTransactions;
-  totalInvestmentTransactionsCount: number;
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
@@ -137,10 +84,5 @@ export const emptyCurrentTransaction: CurrentTransaction = {
 };
 
 export const initialState: InitialState = {
-  myTransactions: {},
-  currentTransaction: emptyCurrentTransaction,
-  totalTransactionsCount: 0,
-  loading: true,
-  investmentTransactions: {},
-  totalInvestmentTransactionsCount: 0
+  currentTransaction: emptyCurrentTransaction
 };

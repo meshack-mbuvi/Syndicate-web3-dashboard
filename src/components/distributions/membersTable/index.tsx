@@ -29,17 +29,13 @@ interface Props {
       tokenIcon: string;
     }[];
   }[];
-  tokens: {
-    tokenSymbol: string;
-    tokenAmount: string;
-    symbol: string;
-    icon: string;
-  }[];
+  tokens: any;
   activeAddresses: Array<string>;
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
   handleIsEditingChange: () => void;
   hideSearch?: boolean;
+  hideEdit?: boolean;
   handleSearchChange: (event: any) => void;
   searchValue: string;
   clearSearchValue: (event: any) => void;
@@ -65,6 +61,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   tokens,
   handleIsEditingChange,
   hideSearch = false,
+  hideEdit = false,
   handleSearchChange,
   searchValue,
   clearSearchValue,
@@ -186,15 +183,17 @@ export const DistributionMembersTable: React.FC<Props> = ({
               (+ownershipShare * 100) /
               cumulativeActiveMemberOwnership
             ).toFixed(4),
-            receivingTokens: tokens.map(({ tokenAmount, symbol, icon }) => {
-              return {
-                amount:
-                  (ownershipShare / cumulativeActiveMemberOwnership) *
-                  +tokenAmount,
-                tokenSymbol: symbol,
-                tokenIcon: icon || '/images/token-gray.svg'
-              };
-            })
+            receivingTokens: tokens.map(
+              ({ tokenAmount, tokenSymbol, icon }: any) => {
+                return {
+                  amount:
+                    (ownershipShare / cumulativeActiveMemberOwnership) *
+                    +tokenAmount,
+                  tokenSymbol,
+                  tokenIcon: icon
+                };
+              }
+            )
           };
         })
         .sort((a, b) => {
@@ -701,10 +700,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
               searchValue: searchValue || '',
               itemsCount: _membersDetails.length,
               clearSearchValue: clearSearchValue,
-              padding: ''
+              padding: '',
+              customClass: 'bg-gray-syn8'
             }}
           />
-          {!isEditing ? (
+          {!isEditing && !hideEdit ? (
             <div className="flex sm:space-x-8">
               <ActionButton
                 icon="/images/edit-circle-blue.svg"

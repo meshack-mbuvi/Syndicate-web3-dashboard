@@ -10,17 +10,26 @@ import {
   SET_MEMBER_SIGN_STATUS
 } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
+import { CurrentTransaction } from '@/state/erc20transactions/types';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
+import { memberDetail } from '@/containers/distribute/DistributionMembers';
+import {
+  numberWithCommas,
+  removeTrailingDecimalPoint
+} from '@/utils/formattedNumbers';
+import { BatchIdTokenDetails } from '../../ActivityTable/index';
 
 interface IActivityModal {
   showModal: boolean;
@@ -29,6 +38,11 @@ interface IActivityModal {
   showNote: boolean;
   setShowNote: any;
   isOwner: boolean;
+  currentTransaction: CurrentTransaction;
+  currentBatchIdentifier: string;
+  batchIdentifiers: BatchIdTokenDetails;
+  transactionEvents: Array<TransactionEvents>;
+  setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
 /**
@@ -44,33 +58,36 @@ const ActivityModal: React.FC<IActivityModal> = ({
   refetchTransactions,
   showNote,
   setShowNote,
-  isOwner
+  isOwner,
+  currentTransaction,
+  currentBatchIdentifier,
+  batchIdentifiers,
+  setCurrentTransaction
 }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork, account }
+      web3: { web3, activeNetwork, account }
     },
     erc20TokenSliceReducer: { erc20Token },
-    transactionsReducer: {
-      currentTransaction: {
-        category,
-        note,
-        readOnly,
-        amount,
-        transactionInfo,
-        timestamp,
-        tokenSymbol,
-        tokenLogo,
-        tokenName,
-        hash,
-        metadata,
-        blockTimestamp
-      }
-    },
     erc20TokenSliceReducer: {
       erc20Token: { address }
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    category,
+    note,
+    readOnly,
+    amount,
+    transactionInfo,
+    timestamp,
+    tokenSymbol,
+    tokenLogo,
+    tokenName,
+    hash,
+    metadata,
+    blockTimestamp
+  } = currentTransaction;
 
   const isDemoMode = useDemoMode();
 
@@ -115,6 +132,89 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const [disableDropDown, setDisableDropDown] = useState(false);
   const [isDistributionTableExpanded, setIsDistributionTableExpanded] =
     useState(false);
+  const [tokensTableRows, setTokensTableRows] = useState([]);
+  const [memberDetails, setMemberDetails] = useState<memberDetail[]>([]);
+  const [activeAddresses, setActiveAddresses] = useState<string[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+
+  const { clubMembers, isFetchingMembers } = useClubTokenMembers();
+
+  /**
+   * Get addresses of all club members
+   */
+  useEffect(() => {
+    const activeAddresses: string[] = [];
+    clubMembers.forEach((member) => activeAddresses.push(member.memberAddress));
+    setActiveAddresses(activeAddresses);
+  }, [JSON.stringify(clubMembers)]);
+
+  // prepare member data here
+  useEffect(() => {
+    if (!clubMembers || !batchIdentifiers || !currentBatchIdentifier) return;
+    if (clubMembers.length && batchIdentifiers[currentBatchIdentifier].length) {
+      const memberDetails = clubMembers.map(
+        ({ ownershipShare, clubTokens, memberAddress, ...rest }) => {
+          return {
+            ...rest,
+            ownershipShare,
+            address: memberAddress,
+            clubTokenHolding: +clubTokens,
+            distributionShare: +numberWithCommas(ownershipShare.toFixed(4)),
+            receivingTokens: batchIdentifiers[currentBatchIdentifier].map(
+              ({ tokenAmount, tokenSymbol, icon }: any) => {
+                return {
+                  amount: (+ownershipShare * +tokenAmount) / 100,
+                  tokenSymbol,
+                  tokenIcon: icon
+                };
+              }
+            )
+          };
+        }
+      );
+
+      setMemberDetails(memberDetails);
+    } else {
+      setMemberDetails([]);
+    }
+
+    return (): void => {
+      setMemberDetails([]);
+    };
+  }, [
+    isFetchingMembers,
+    JSON.stringify(clubMembers),
+    batchIdentifiers,
+    currentBatchIdentifier
+  ]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchValue(e.target.value);
+  };
+
+  const toggleEditDistribution = (): void => {
+    setIsEditing(!isEditing);
+  };
+
+  const clearSearchValue = (e: React.MouseEvent<HTMLElement>): void => {
+    e.preventDefault();
+    setSearchValue('');
+  };
+
+  useEffect(() => {
+    if (!batchIdentifiers || !currentBatchIdentifier) return;
+    const rows: any = batchIdentifiers[currentBatchIdentifier].map((token) => {
+      return {
+        title: token.tokenName,
+        value: `${removeTrailingDecimalPoint(String(token.tokenAmount))} ${
+          token.tokenSymbol
+        }`,
+        externalLink: blockExplorerLink
+      };
+    });
+    setTokensTableRows(rows);
+  }, [batchIdentifiers, currentBatchIdentifier, blockExplorerLink, web3]);
 
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
@@ -322,18 +422,19 @@ const ActivityModal: React.FC<IActivityModal> = ({
               </div>
               <div className="items-center flex flex-col">
                 {transactionInfo && Object.keys(transactionInfo).length && (
-                  // TODO: update this to use multiple token details when PR 3821 is merged
                   <TransactionDetails
                     contractAddress={address}
                     tokenDetails={[
                       {
-                        name: tokenName,
+                        name: String(tokenName),
                         symbol:
                           category === 'INVESTMENT' ||
                           category === 'OFF_CHAIN_INVESTMENT'
                             ? 'USD'
-                            : tokenSymbol,
-                        icon: tokenLogo,
+                            : String(tokenSymbol),
+                        icon: tokenLogo
+                          ? tokenLogo
+                          : activeNetwork.nativeCurrency.logo,
                         // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
                         amount:
                           category === 'INVESTMENT' ||
@@ -356,8 +457,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     onModal={true}
                     category={category}
                     companyName={metadata?.companyName}
-                    // @ts-expect-error TS(2322): Type 'RoundCategory | undefined' is not assignable... Remove this comment to see the full error message
                     round={metadata?.roundCategory}
+                    numClubMembers={clubMembers.length}
                   />
                 )}
 
@@ -410,7 +511,13 @@ const ActivityModal: React.FC<IActivityModal> = ({
             category === 'UNCATEGORISED' ||
             category === null ||
             (!isOwner && !note && !showDetailSection) ? null : (
-              <div className="flex flex-col space-y-6 py-6 px-5">
+              <div
+                className={`${
+                  isDistributionTableExpanded
+                    ? 'flex flex-col space-y-6 pt-6 pb-0 px-5'
+                    : 'flex flex-col space-y-6 pt-6 pb-6 px-5'
+                }`}
+              >
                 {/* note */}
                 {!showNote && isOwner ? (
                   <button
@@ -431,6 +538,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         saveTransactionNote={saveTransactionNote}
                         setShowNote={setShowNote}
                         isOwner={isOwner}
+                        currentTransaction={currentTransaction}
+                        setCurrentTransaction={setCurrentTransaction}
                       />
                     )}
                   </div>
@@ -465,6 +574,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         transactionId={hash}
                         setStoredInvestmentDetails={setStoredInvestmentDetails}
                         isManager={isOwner}
+                        blockTimestamp={Number(blockTimestamp)}
                         onSuccessfulAnnotation={() => {
                           refetchTransactions();
                         }}
@@ -475,7 +585,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
               </div>
             )}
 
-            {/* TODO: fill table values when PR 3821 is merged */}
             {category === 'DISTRIBUTION' && (
               <>
                 <div
@@ -487,21 +596,17 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 >
                   <DistributionMembersTable
                     isEditing={false}
-                    hideSearch={true}
-                    membersDetails={[]}
-                    tokens={[]}
-                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '() => void'... Remove this comment to see the full error message
-                    handleIsEditingChange={null}
-                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(event: any... Remove this comment to see the full error message
-                    handleSearchChange={null}
-                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
-                    searchValue={null}
-                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(event: any... Remove this comment to see the full error message
-                    clearSearchValue={null}
-                    activeAddresses={[]}
-                    // @ts-expect-error TS(2322): Type 'null' is not assignable to type '(addresses:... Remove this comment to see the full error message
-                    handleActiveAddressesChange={null}
-                    extraClasses={`pl-10 no-scroll-bar`}
+                    hideSearch={false}
+                    hideEdit={true}
+                    membersDetails={memberDetails}
+                    tokens={batchIdentifiers[currentBatchIdentifier]}
+                    handleIsEditingChange={toggleEditDistribution}
+                    handleSearchChange={handleSearchChange}
+                    searchValue={searchValue}
+                    clearSearchValue={clearSearchValue}
+                    activeAddresses={activeAddresses}
+                    handleActiveAddressesChange={setActiveAddresses}
+                    extraClasses={`px-10 -pt-10 pb-10 no-scroll-bar`}
                   />
                 </div>
                 <div
@@ -512,15 +617,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   } duration-500 overflow-hidden transition-all`}
                 >
                   <div className="px-10 mb-2">Tokens distributed</div>
-                  <SimpleTable
-                    rows={[
-                      { title: 'Title', value: 'Value', externalLink: '/' },
-                      { title: 'Title', value: 'Value', externalLink: '/' },
-                      { title: 'Title', value: 'Value', externalLink: '/' },
-                      { title: 'Title', value: 'Value', externalLink: '/' }
-                    ]}
-                    extraClasses="mx-10"
-                  />
+                  <SimpleTable rows={tokensTableRows} extraClasses="mx-10" />
                 </div>
                 <button
                   className="space-x-2 flex justify-center w-full items-center px-10 text-blue-neptune pb-8"

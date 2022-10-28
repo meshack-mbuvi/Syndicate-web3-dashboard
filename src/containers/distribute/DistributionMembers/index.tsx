@@ -56,7 +56,7 @@ type Props = {
   handleExitClick: () => void;
 };
 
-interface memberDetail {
+export interface memberDetail {
   ensName: string;
   avatar?: string;
   address: string;

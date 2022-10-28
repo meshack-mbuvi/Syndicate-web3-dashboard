@@ -6,7 +6,9 @@ import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
-import { TransactionCategory } from '@/state/erc20transactions/types';
+import {
+  /* CurrentTransaction, */ TransactionCategory
+} from '@/state/erc20transactions/types';
 import { useMutation } from '@apollo/client';
 import React, {
   Dispatch,
@@ -33,6 +35,8 @@ interface ICategoryPill {
   uncategorisedIcon?: string;
   disableDropDown?: boolean;
   isOwner: boolean;
+  // currentTransaction: CurrentTransaction;
+  // setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
 /**
@@ -59,6 +63,8 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   uncategorisedIcon,
   disableDropDown,
   isOwner
+  // currentTransaction,
+  // setCurrentTransaction
 }) => {
   const dispatch = useDispatch();
   const {
@@ -106,11 +112,15 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       value: 'EXPENSE',
       icon: '/images/activity/expense-transaction.svg'
     },
-
     {
       text: 'Investment tokens',
       value: 'INVESTMENT_TOKEN',
       icon: '/images/activity/investment-tokens.svg'
+    },
+    {
+      text: 'Distribution',
+      value: 'DISTRIBUTION',
+      icon: '/images/activity/distribution.svg'
     }
   ];
 
@@ -248,6 +258,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       dispatch(
         setCurrentTransaction({ ...currentTransaction, category: value })
       );
+      // setCurrentTransaction({ ...currentTransaction, category: value })
     }
     setSelectedCategory(value);
 

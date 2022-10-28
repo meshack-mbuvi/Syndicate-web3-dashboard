@@ -387,6 +387,91 @@ export const GAS_RATE = gql`
   }
 `;
 
+export const LEGACY_TRANSACTIONS_QUERY = gql`
+  query LegacyTransactionEventQuery(
+    $chainId: Int!
+    $input: String!
+    $limit: Int
+    $order: Order = desc
+  ) {
+    legacyTransactionEvents(
+      chainId: $chainId
+      input: $input
+      order: $order
+      limit: $limit
+    ) {
+      cursor
+      events {
+        chainId
+        ownerAddress
+        hash
+        blockNumber
+        timestamp
+        transactionIndex
+        contractAddress
+        transfers {
+          chainId
+          blockNumber
+          timestamp
+          hash
+          from
+          to
+          contractAddress
+          gas
+          ... on NativeTransfer {
+            value
+          }
+          ... on Erc20Transfer {
+            tokenName
+            tokenSymbol
+            tokenDecimal
+            tokenLogo
+            value
+          }
+          ... on Erc721Transfer {
+            tokenId
+            tokenName
+            tokenSymbol
+            tokenDecimal
+          }
+          ... on Erc1155Transfer {
+            tokenId
+            tokenName
+            tokenSymbol
+            tokenValue
+          }
+        }
+        annotation {
+          chainId
+          acquisitionDate
+          createdAt
+          updatedAt
+          equityStake
+          fromLabel
+          transactionId
+          syndicateAddress
+          preMoneyValuation
+          postMoneyValuation
+          roundCategory
+          sharesAmount
+          toLabel
+          tokenAmount
+          transactionCategory
+          memo
+          companyName
+          annotationMetadata
+        }
+        syndicateEvents {
+          eventType
+          id
+          transactionId
+          distributionBatch
+        }
+      }
+    }
+  }
+`;
+
 export const graphCurrentBlock = gql`
   query graphCurrentBlock {
     _meta {

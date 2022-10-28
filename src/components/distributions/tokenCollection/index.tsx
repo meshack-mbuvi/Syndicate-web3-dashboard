@@ -1,8 +1,9 @@
+import { TokenDetails } from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
 import ReactTooltip from 'react-tooltip';
 
 interface Props {
   numberVisible: number;
-  tokenDetails: { name: string; symbol: string; icon?: string }[];
+  tokenDetails: TokenDetails[];
 }
 
 export const TokenCollection: React.FC<Props> = ({
@@ -13,16 +14,19 @@ export const TokenCollection: React.FC<Props> = ({
     <div className="flex items-center space-x-2">
       {tokenDetails.slice(0, numberVisible).map((token, index) => {
         return (
-          <div
-            key={index}
-            className="w-6 h-6 rounded-full"
-            style={{
-              backgroundImage: `url('${
-                token.icon ? token.icon : '/images/token.svg'
-              }')`,
-              backgroundSize: '100%'
-            }}
-          />
+          <div key={index} className="flex items-center mr-2">
+            <div
+              key={index}
+              className="w-6 h-6 rounded-full mr-2"
+              style={{
+                backgroundImage: `url('${
+                  token.icon ? token.icon : '/images/token.svg'
+                }')`,
+                backgroundSize: '100%'
+              }}
+            />{' '}
+            {Number(parseFloat(token.amount).toFixed(4))} {token.symbol}
+          </div>
         );
       })}
       {tokenDetails.length > numberVisible && (

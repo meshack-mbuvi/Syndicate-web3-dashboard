@@ -5,34 +5,51 @@ import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
+  useLegacyTransactions,
   getInput,
-  useFetchRecentTransactions
-} from '@/hooks/useFetchRecentTransactions';
+  SyndicateAnnotation,
+  SyndicateEvents,
+  SyndicateTransfers
+} from '@/hooks/useLegacyTransactions';
 import { AppState } from '@/state';
-import {
-  setLoadingTransactions,
-  setMyTransactions,
-  setTotalTransactionsCount
-} from '@/state/erc20transactions';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import {
   mockActivityDepositTransactionsData,
   mockActivityTransactionsData
 } from '@/utils/mockdata';
-import { NetworkStatus, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { capitalize } from 'lodash';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FilterPill from '../shared/FilterPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { getWeiAmount } from '@/utils/conversions';
 
-const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
-  const dispatch = useDispatch();
+interface DistributionTokenDetails {
+  annotation: SyndicateAnnotation;
+  hash: string;
+  timestamp: number;
+  ownerAddress: string;
+  syndicateEvents: Array<SyndicateEvents>;
+  transfers: Array<SyndicateTransfers>;
+  tokenName: string | undefined;
+  tokenSymbol: string | undefined;
+  tokenDecimal: number | undefined;
+  icon: string | undefined;
+  tokenAmount: number | undefined;
+}
+
+export interface BatchIdTokenDetails {
+  [key: string]: Array<DistributionTokenDetails>;
+}
+interface IActivityTable {
+  isOwner: boolean;
+}
+
+const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   const {
-    transactionsReducer: { totalTransactionsCount },
     erc20TokenSliceReducer: {
       erc20Token: {
         depositsEnabled: isOpenForDeposits,
@@ -40,13 +57,10 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
       }
     },
     web3Reducer: {
-      web3: { activeNetwork, account }
+      web3: { web3, activeNetwork, account }
     }
   } = useSelector((state: AppState) => state);
-  const router = useRouter();
-  const {
-    query: { clubAddress }
-  } = router;
+
   const isDemoMode = useDemoMode();
 
   const [filter, setFilter] = useState<string>('');
@@ -238,13 +252,94 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   );
 
   const {
-    loading: transactionsLoading,
-    data: transactionsData,
-    refetch: refetchTransactions,
-    networkStatus
-  } = useFetchRecentTransactions(pageOffset, false, {
+    transactionsLoading,
+    numTransactions,
+    transactionEvents,
+    refetchTransactions
+  } = useLegacyTransactions(pageOffset, false, {
     ...generateSearchFilter(filter, memoizedSearchTerm)
   });
+
+  // const [transactionEventsState, setTransactionEventsState] = useState(transactionEvents)
+  const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
+    {}
+  );
+
+  // Prepares token distributions per distributionBatch
+  useEffect(() => {
+    if (!transactionEvents) return;
+    const batchIds: BatchIdTokenDetails = {};
+    let newBatchIdValue: Array<DistributionTokenDetails> = [];
+    let last = '';
+    const nonDistributionTransactionsValue: Array<DistributionTokenDetails> =
+      [];
+    transactionEvents.map((transaction) => {
+      const transfers = transaction.transfers[0];
+      const newTokenDetails: DistributionTokenDetails = {
+        annotation: transaction.annotation,
+        hash: transaction.hash,
+        timestamp: transaction.timestamp,
+        ownerAddress: transaction.ownerAddress,
+        transfers: transaction.transfers,
+        syndicateEvents: transaction.syndicateEvents,
+        tokenName:
+          transaction.contractAddress === ''
+            ? activeNetwork.nativeCurrency.name
+            : transfers.tokenName,
+        tokenSymbol:
+          transaction.contractAddress === ''
+            ? activeNetwork.nativeCurrency.symbol
+            : transfers.tokenSymbol,
+        tokenDecimal:
+          transaction.contractAddress === ''
+            ? Number(activeNetwork.nativeCurrency.decimals)
+            : transfers.tokenDecimal,
+        icon:
+          transaction.contractAddress === ''
+            ? activeNetwork.nativeCurrency.logo
+            : transfers.tokenLogo,
+        tokenAmount:
+          transaction.contractAddress === ''
+            ? getWeiAmount(
+                web3,
+                String(transfers.value),
+                Number(activeNetwork.nativeCurrency.decimals),
+                false
+              )
+            : getWeiAmount(
+                web3,
+                String(transfers.value),
+                Number(transfers.tokenDecimal),
+                false
+              )
+      };
+      if (
+        transaction.syndicateEvents.length === 0 ||
+        transaction.syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
+      ) {
+        nonDistributionTransactionsValue.push(newTokenDetails);
+        return;
+      }
+      const event = transaction.syndicateEvents[0];
+      // Checks if transaction is a Distribution
+      if (event.distributionBatch) {
+        if (last === '' || last !== event.distributionBatch) {
+          last = event.distributionBatch;
+          newBatchIdValue = [];
+        }
+        newBatchIdValue.push(newTokenDetails);
+      }
+      batchIds[event.distributionBatch] = newBatchIdValue;
+    });
+    batchIds['nonDistributionTransactions'] = nonDistributionTransactionsValue;
+    setBatchIdentifiers(batchIds);
+  }, [
+    activeNetwork.nativeCurrency.decimals,
+    activeNetwork.nativeCurrency.name,
+    activeNetwork.nativeCurrency.symbol,
+    activeNetwork.nativeCurrency.logo,
+    transactionEvents
+  ]);
 
   useEffect(() => {
     if (filter) setPageOffset(0);
@@ -259,37 +354,17 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
 
   useEffect(() => {
-    if (transactionsData?.Financial_recentTransactions) {
-      processERC20Transactions(transactionsData.Financial_recentTransactions);
-      // disable next page button if no.of transactions is less than limit.
-      const { edges } = transactionsData.Financial_recentTransactions;
-      const countofTransactions = pageOffset + DATA_LIMIT;
+    const countofTransactions = pageOffset + DATA_LIMIT;
 
-      if (
-        edges.length < DATA_LIMIT ||
-        countofTransactions === totalTransactionsCount
-      ) {
-        setCanNextPage(false);
-      } else {
-        setCanNextPage(true);
-      }
-    } else if (isDemoMode) {
-      processERC20Transactions(mockTransactionsData);
+    if (
+      numTransactions < DATA_LIMIT ||
+      countofTransactions === numTransactions
+    ) {
+      setCanNextPage(false);
+    } else {
+      setCanNextPage(true);
     }
-  }, [
-    JSON.stringify(transactionsData?.Financial_recentTransactions),
-    clubAddress,
-    mockTransactionsData,
-    totalTransactionsCount
-  ]);
-
-  const processERC20Transactions = async (txns: any) => {
-    const { edges, totalCount } = txns;
-    dispatch(setLoadingTransactions(true));
-    dispatch(setMyTransactions({ txns: edges, skip: pageOffset }));
-    dispatch(setTotalTransactionsCount(totalCount));
-    dispatch(setLoadingTransactions(false));
-  };
+  }, [numTransactions, pageOffset]);
 
   // stuff to filter transactions with in the search input
   const handleSearchOnChange = (e: any) => {
@@ -412,16 +487,13 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     checkboxVisible: boolean
   ) => {
     if (!isOwner) return;
-    const data = transactionsData?.Financial_recentTransactions?.edges?.map(
-      (item: any, index: any) => {
-        return {
-          ...item,
-          checkboxVisible:
-            rowCheckboxActiveData[index]?.checkboxActive ?? false,
-          checkboxActive: rowCheckboxActiveData[index]?.checkboxActive ?? false
-        };
-      }
-    );
+    const data = transactionEvents.map((item: any, index: any) => {
+      return {
+        ...item,
+        checkboxVisible: rowCheckboxActiveData[index]?.checkboxActive ?? false,
+        checkboxActive: rowCheckboxActiveData[index]?.checkboxActive ?? false
+      };
+    });
 
     if (
       !rowCheckboxActiveData[checkboxIndex]?.checkboxActive &&
@@ -443,11 +515,6 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     );
   };
 
-  const transactionDataLength = useMemo(
-    () => transactionsData?.Financial_recentTransactions?.edges?.length,
-    [transactionsData?.Financial_recentTransactions?.edges?.length]
-  );
-
   return (
     <div className="mt-2 w-full -z-10">
       <div className="py-14 flex justify-between items-center">
@@ -467,8 +534,7 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
               disabled={
                 filter !== '' &&
                 !transactionsLoading &&
-                !transactionsData?.Financial_recentTransactions?.edges
-                  ?.length &&
+                !numTransactions &&
                 !searchValue &&
                 !mockTransactionsData.edges.length
               }
@@ -476,10 +542,10 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
             />
           </div>
         </div>
-        {transactionsChecked.length > 0 && transactionDataLength ? (
+        {transactionsChecked.length > 0 && numTransactions ? (
           <div className="flex justify-between items-center space-x-8">
             <div className="text-gray-syn4">
-              <span>{`${transactionsChecked.length} of ${transactionDataLength} selected:`}</span>
+              <span>{`${transactionsChecked.length} of ${numTransactions} selected:`}</span>
             </div>
             <CategoryPill
               category={groupCategory}
@@ -514,9 +580,10 @@ const ActivityTable: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
         refetchTransactions={refetchTransactions}
         goToPreviousPage={goToPreviousPage}
         goToNextPage={goToNextPage}
-        transactionsLoading={
-          transactionsLoading || networkStatus === NetworkStatus.refetch
-        }
+        transactionsLoading={transactionsLoading}
+        numTransactions={numTransactions}
+        transactionEvents={transactionEvents}
+        batchIdentifiers={batchIdentifiers}
         emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
         toggleRowCheckbox={toggleRowCheckbox}
         handleCheckboxSelect={handleSelect}

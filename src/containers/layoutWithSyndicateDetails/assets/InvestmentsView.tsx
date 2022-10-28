@@ -6,10 +6,10 @@ import { useDemoMode } from '@/hooks/useDemoMode';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import {
-  clearCurrentTransaction,
-  setCurrentTransaction
-} from '@/state/erc20transactions';
-import { TransactionCategory } from '@/state/erc20transactions/types';
+  CurrentTransaction,
+  emptyCurrentTransaction,
+  TransactionCategory
+} from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { ArrowRightIcon } from '@heroicons/react/outline';
@@ -23,20 +23,27 @@ import {
   useState,
   useEffect
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ActivityModal from '../activity/shared/ActivityModal';
 import {
   CollapseChevronButton,
   CollapsedSectionType
 } from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
 import { SortOrderType } from '@/containers/layoutWithSyndicateDetails/assets';
-
+import {
+  TransactionEvents,
+  SyndicateTransfers,
+  SyndicateAnnotation,
+  SyndicateEvents
+} from '@/hooks/useLegacyTransactions';
 interface InvestmentsViewProps {
   pageOffset: number;
   setPageOffset: Dispatch<SetStateAction<number>>;
   canNextPage: boolean;
   isMember: boolean;
   transactionsLoading: boolean;
+  numTransactions: number;
+  transactionEvents: Array<TransactionEvents>;
   dataLimit: number;
   refetchTransactions: () => void;
   isOwner: boolean;
@@ -53,18 +60,15 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   setPageOffset,
   canNextPage,
   transactionsLoading,
+  numTransactions,
+  transactionEvents,
   dataLimit,
   refetchTransactions,
   isMember
 }) => {
   const {
-    transactionsReducer: {
-      totalInvestmentTransactionsCount,
-      investmentTransactions,
-      currentTransaction
-    },
     web3Reducer: {
-      web3: { web3 }
+      web3: { web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -72,6 +76,11 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   if (typeof window !== 'undefined') {
     clubAddress = window?.location?.pathname.split('/')[2];
   }
+
+  const [currentTransaction, setCurrentTransaction] =
+    useState<CurrentTransaction>(emptyCurrentTransaction);
+  const [currentBatchIdentifier, setCurrentBatchIdentifier] =
+    useState<string>('');
   const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
     useModal();
   const [showNote, setShowNote] = useState(false);
@@ -85,8 +94,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const isDemoMode = useDemoMode();
 
   const investmentsTableRef = useRef(null);
-
-  const dispatch = useDispatch();
 
   // pagination functions
   function goToNextPage() {
@@ -110,7 +117,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       </div>
 
       {/* collapse button  */}
-      {transactionsLoading && !currentTransaction.hash ? null : (
+      {transactionsLoading ? null : (
         <CollapseChevronButton
           isCollapsed={isInvestmentsTableCollapsed}
           setIsCollapsed={setIsInvestmentsTableCollapsed}
@@ -230,30 +237,26 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   ];
 
   // when to show pagination
-  const showPagination = totalInvestmentTransactionsCount > dataLimit;
-  const loading = transactionsLoading && !currentTransaction.hash;
+  const showPagination = numTransactions > dataLimit;
 
-  const viewInvestmentDetails = (investmentData: any) => {
+  const viewInvestmentDetails: any = (
+    annotation: SyndicateAnnotation,
+    hash: string,
+    timestamp: number,
+    transfers: Array<SyndicateTransfers>,
+    ownerAddress: string,
+    syndicateEvents: Array<SyndicateEvents>
+  ) => {
     if (!isMember && !isOwner) return;
-    const {
-      fromAddress,
-      toAddress,
-      isOutgoingTransaction,
-      hash,
-      tokenName,
-      blockTimestamp,
-      tokenSymbol,
-      tokenDecimal,
-      value,
-      tokenLogo,
-      metadata
-    } = investmentData;
-    const { memo } = metadata;
-    const formattedBlockTime = moment(blockTimestamp * 1000).format(
+    const currentTransfer = transfers[0];
+    const { from, to } = currentTransfer;
+    const { memo } = annotation;
+    const formattedBlockTime = moment(timestamp * 1000).format(
       'dddd, MMM Do YYYY, h:mm A'
     );
 
     const category = 'OFF_CHAIN_INVESTMENT' as TransactionCategory;
+    const isOutgoingTransaction = ownerAddress === currentTransfer.from;
 
     const selectedTransactionData = {
       category,
@@ -261,21 +264,31 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       hash,
       transactionInfo: {
         transactionHash: hash,
-        from: fromAddress,
-        to: toAddress,
+        from: from,
+        to: to,
         isOutgoingTransaction: isOutgoingTransaction
       },
-      amount: getWeiAmount(web3, value, tokenDecimal, false),
-      tokenSymbol,
-      tokenLogo,
-      tokenName,
+      amount: getWeiAmount(
+        web3,
+        String(currentTransfer.value),
+        Number(currentTransfer.tokenDecimal),
+        false
+      ),
+      tokenSymbol: currentTransfer.tokenSymbol
+        ? currentTransfer.tokenSymbol
+        : activeNetwork.nativeCurrency.symbol,
+      tokenLogo: '/images/token-gray-4.svg' /* tokenDetails.logo */,
+      tokenName: currentTransfer.tokenName
+        ? currentTransfer.tokenName
+        : activeNetwork.nativeCurrency.name,
       readOnly: false,
       timestamp: formattedBlockTime,
-      transactionId: metadata?.transactionId,
-      metadata,
-      blockTimestamp
+      transactionId: annotation?.transactionId,
+      annotation,
+      blockTimestamp: timestamp
     };
-    dispatch(setCurrentTransaction(selectedTransactionData));
+    setCurrentTransaction(selectedTransactionData);
+    setCurrentBatchIdentifier(syndicateEvents[0].distributionBatch);
     toggleShowOffChainInvestmentsModal();
   };
 
@@ -290,7 +303,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
       setContainerHeight(containerHeight);
     }
-  }, [JSON.stringify(investmentTransactions)]);
+  }, [JSON.stringify(transactionEvents)]);
 
   return (
     <div>
@@ -303,19 +316,19 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       >
         <div className="w-full pt-8" ref={investmentsTableBoundsRef}>
           {/* loading state  */}
-          {loading && <LoaderContent animate={true} />}
+          {transactionsLoading && <LoaderContent animate={true} />}
 
           {/* show empty state if account is not a member or the admin  */}
-          {!isMember && !isOwner && !isDemoMode && !loading && (
+          {!isMember && !isOwner && !isDemoMode && !transactionsLoading && (
             <LoaderContent
               animate={false}
               titleText="Off-chain investments are only visible to members."
               subText="If you're a member of this club, connect the same wallet you used to deposit."
             />
           )}
-          {investmentTransactions?.[pageOffset]?.length &&
+          {transactionEvents?.[pageOffset]?.length !== 0 &&
           (isMember || isOwner || isDemoMode) &&
-          !loading ? (
+          !transactionsLoading ? (
             <div className="w-full">
               <div className="flex flex-col">
                 {/* scroll to top of table with this button when pagination is clicked  */}
@@ -333,15 +346,31 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                   ))}
                 </div>
               </div>
-              {investmentTransactions?.[pageOffset].map(
-                (investmentData, index) => {
-                  const { metadata } = investmentData;
+              {transactionEvents.map(
+                (
+                  {
+                    annotation,
+                    hash,
+                    timestamp,
+                    transfers,
+                    ownerAddress,
+                    syndicateEvents
+                  },
+                  index
+                ) => {
+                  // Handles cases where annotations are null or transactions are not investments
+                  if (
+                    !annotation ||
+                    annotation.transactionCategory !== 'INVESTMENT'
+                  )
+                    return;
+                  const currentTransfer = transfers[0];
                   const {
                     companyName,
                     roundCategory,
                     preMoneyValuation,
                     postMoneyValuation
-                  } = metadata;
+                  } = annotation;
                   const showAddMemo =
                     !companyName ||
                     !roundCategory ||
@@ -361,8 +390,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                   );
                   const investmentDataValue = getWeiAmount(
                     web3,
-                    investmentData.value,
-                    investmentData.tokenDecimal,
+                    String(currentTransfer.value),
+                    Number(currentTransfer.tokenDecimal),
                     false
                   );
                   const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
@@ -377,7 +406,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                         </span>
                       )}
                       &nbsp;
-                      {investmentData.tokenSymbol}
+                      {currentTransfer.tokenSymbol}
                     </span>
                   );
 
@@ -387,7 +416,16 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
                         isMember || isOwner ? 'cursor-pointer' : ''
                       }`}
-                      onClick={() => viewInvestmentDetails(investmentData)}
+                      onClick={() =>
+                        viewInvestmentDetails(
+                          annotation,
+                          hash,
+                          timestamp,
+                          transfers,
+                          ownerAddress,
+                          syndicateEvents
+                        )
+                      }
                     >
                       {/* company name  */}
                       <div className="flex flex-row col-span-3 items-center">
@@ -444,7 +482,14 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                               <span
                                 aria-hidden={true}
                                 onClick={() =>
-                                  viewInvestmentDetails(investmentData)
+                                  viewInvestmentDetails(
+                                    annotation,
+                                    hash,
+                                    timestamp,
+                                    transfers,
+                                    ownerAddress,
+                                    syndicateEvents
+                                  )
                                 }
                               >
                                 Add memo
@@ -464,7 +509,14 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                                 className="text-gray-syn4"
                                 aria-hidden={true}
                                 onClick={() =>
-                                  viewInvestmentDetails(investmentData)
+                                  viewInvestmentDetails(
+                                    annotation,
+                                    hash,
+                                    timestamp,
+                                    transfers,
+                                    ownerAddress,
+                                    syndicateEvents
+                                  )
                                 }
                               >
                                 View memo
@@ -480,9 +532,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             </div>
           ) : null}
 
-          {!investmentTransactions?.[pageOffset]?.length &&
+          {transactionEvents?.[pageOffset]?.length !== 0 &&
             (isMember || isOwner || isDemoMode) &&
-            !loading && <LoaderContent animate={false} />}
+            !transactionsLoading && <LoaderContent animate={false} />}
 
           <div>
             {/* Pagination  */}
@@ -506,10 +558,10 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                 </button>
                 <p className="">
                   {pageOffset === 0 ? '1' : pageOffset} -{' '}
-                  {investmentTransactions?.[pageOffset]?.length < dataLimit
-                    ? pageOffset + investmentTransactions[pageOffset].length
+                  {transactionEvents.length < dataLimit
+                    ? pageOffset + transactionEvents.length
                     : pageOffset + dataLimit}
-                  {` of `} {totalInvestmentTransactionsCount}
+                  {` of `} {numTransactions}
                 </p>
 
                 <button
@@ -535,13 +587,17 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             isOwner={isOwner}
             showModal={showOffChainInvestmentsModal}
             closeModal={() => {
-              setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
               setShowNote(false);
               toggleShowOffChainInvestmentsModal();
             }}
             refetchTransactions={() => {
               refetchTransactions();
             }}
+            transactionEvents={transactionEvents}
+            currentTransaction={currentTransaction}
+            currentBatchIdentifier={currentBatchIdentifier}
+            batchIdentifiers={{}}
+            setCurrentTransaction={setCurrentTransaction}
             showNote={showNote}
             setShowNote={setShowNote}
           />

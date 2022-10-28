@@ -22,8 +22,8 @@ export interface TokenDetails {
   amount: string;
 }
 
-interface ITransactionDetails {
-  tokenDetails: TokenDetails[];
+interface IBatchTransactionDetails {
+  tokenDetails: Array<TokenDetails>;
   transactionType: Transaction;
   isTransactionAnnotated: boolean;
   addresses: string | string[];
@@ -35,7 +35,7 @@ interface ITransactionDetails {
   numClubMembers?: number;
 }
 
-const TransactionDetails: React.FC<ITransactionDetails> = ({
+const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
   tokenDetails,
   transactionType,
   isTransactionAnnotated,
@@ -222,4 +222,4 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   );
 };
 
-export default TransactionDetails;
+export default BatchTransactionDetails;

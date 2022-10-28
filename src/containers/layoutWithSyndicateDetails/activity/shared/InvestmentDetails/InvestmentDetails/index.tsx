@@ -36,6 +36,7 @@ interface IInvestmentDetailsModal {
   transactionId: string;
   setStoredInvestmentDetails: (details: any) => void;
   isManager: boolean;
+  blockTimestamp: number;
   onSuccessfulAnnotation: () => void;
 }
 
@@ -47,6 +48,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   transactionId,
   setStoredInvestmentDetails,
   isManager,
+  blockTimestamp,
   onSuccessfulAnnotation
 }) => {
   const disabled = !editMode;
@@ -56,10 +58,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     web3Reducer: {
       web3: { activeNetwork, account }
     },
-    erc20TokenSliceReducer: { erc20Token },
-    transactionsReducer: {
-      currentTransaction: { blockTimestamp }
-    }
+    erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
 
   const setHoverState = (over: any) => {

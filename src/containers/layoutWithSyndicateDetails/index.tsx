@@ -19,7 +19,6 @@ import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
-import useTransactions from '@/hooks/useTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -35,7 +34,6 @@ import {
   setERC20TokenContract,
   setERC20TokenDepositDetails
 } from '@/state/erc20token/slice';
-import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
 import { getTextWidth } from '@/utils/getTextWidth';
 import {
@@ -128,9 +126,6 @@ const LayoutWithSyndicateDetails: FC<{
     refetch: refetchSingleClubDetails
   } = useClubDepositsAndSupply(clubAddress);
 
-  // fetch club transactions
-  useTransactions();
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -173,8 +168,6 @@ const LayoutWithSyndicateDetails: FC<{
       // clear transactions when component unmounts
       // solves an issue with previous transactions being loaded
       // when a switch is made to another club with a different owner.
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
-      dispatch(clearMyTransactions());
       dispatch(clearCollectiblesTransactions());
 
       // also clearing token details when switching between clubs

@@ -22,7 +22,7 @@ export type TokenDetailsQuery = {
   networkStatus: number;
 };
 
-const EmptyTokenDetails = {
+export const EmptyTokenDetails = {
   chainId: 1,
   name: '',
   symbol: '',
