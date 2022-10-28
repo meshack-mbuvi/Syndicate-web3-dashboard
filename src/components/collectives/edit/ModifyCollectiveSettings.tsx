@@ -60,6 +60,7 @@ import { CopyText } from './editables';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
 import EditMaxSupply from './EditMaxSupply';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import { RemixAdminTable } from '@/containers/remix/shared/RemixAdminTable';
 
 type step = {
   title: string;
@@ -128,6 +129,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const [artworkTypeState, setArtworkTypeState] = useState(NFTMediaType.CUSTOM);
   const [artworkUrlState, setArtworkUrlState] = useState('');
   const [activeRow, setActiveRow] = useState<number>(0);
+  const [activeRemixRow, setActiveRemixRow] = useState<number>(0);
   const [showImageUploader, setShowImageUploader] = useState<boolean>(false);
   const [exceededUploadLimit, setExceededUploadLimit] = useState('');
   const [progressPercent, setProgressPercent] = useState<number>(
@@ -1076,9 +1078,17 @@ const ModifyCollectiveSettings: React.FC = () => {
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
           setEditGroupFieldClicked={setEditGroupFieldClicked}
           switchRowIndex={EditRowIndex.Transfer}
-          cancelEdit={handleCancelEdit}
           {...{ activeRow, setActiveRow }}
         />
+
+        {/* Remix toggle */}
+        {collectiveAddress && (
+          <RemixAdminTable
+            activeRow={activeRemixRow}
+            setActiveRow={setActiveRemixRow}
+            contractAddress={collectiveAddress}
+          />
+        )}
       </div>
 
       {/* initial change settings disclaimer modal when clicking Submit after modifying something */}

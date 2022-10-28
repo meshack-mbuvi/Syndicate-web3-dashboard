@@ -2103,7 +2103,6 @@ const DepositSyndicate: React.FC = () => {
           )}
         </>
       </Modal>
-
       <BeforeGettingStarted />
     </ErrorBoundary>
   );

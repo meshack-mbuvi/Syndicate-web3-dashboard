@@ -17,6 +17,8 @@ import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
 import Link from 'next/link';
+import qs from 'qs';
+import { isEmpty } from 'lodash';
 
 interface Props {
   showBackButton?: boolean;
@@ -96,12 +98,11 @@ const Layout: FC<Props> = ({
   const loading = adminClubsLoading || memberClubsLoading;
 
   const router = useRouter();
-  const { chain } = router.query;
-  const urlNetwork = getNetworkByName(chain);
 
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
 
+  //TODO follow up on anything referencing router to check isReady
   const {
     pathname,
     isReady,
@@ -138,13 +139,18 @@ const Layout: FC<Props> = ({
   );
 
   const handleRouting = () => {
-    if (isLoading) return;
+    if (isLoading || !router.isReady) return;
+
+    const { chain, clubAddress, ...rest } = router.query;
+    const chainName = getNetworkByName(chain);
+
+    const stringy = qs.stringify(rest);
 
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
         `/clubs/${clubAddress}${
-          '?chain=' + urlNetwork?.network || activeNetwork.network
-        }`
+          '?chain=' + chainName?.network || activeNetwork.network
+        }${!isEmpty(rest) ? '&' + stringy : ''}`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
@@ -152,8 +158,8 @@ const Layout: FC<Props> = ({
     ) {
       router.replace(
         `/clubs/${clubAddress}/manage${
-          '?chain=' + urlNetwork?.network || activeNetwork.network
-        }`
+          '?chain=' + chainName?.network || activeNetwork.network
+        }${!isEmpty(rest) ? '&' + stringy : ''}`
       );
     }
   };

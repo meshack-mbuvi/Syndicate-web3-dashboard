@@ -1,11 +1,10 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { getInputs, shortenAddress, sortAbiFunction } from '@/utils/remix';
+import { sortAbiFunction } from '@/utils/remix';
 import { toChecksumAddress } from 'ethereumjs-util';
 import { FunctionFragment, isAddress } from 'ethers/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import AbiUI from './AbiUI';
-import AbiFnModal from './AbiFnModal';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
@@ -13,13 +12,19 @@ import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInf
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import getSupportedAbi, { SupportedAbi } from '@/helpers/getSupportedAbi';
 import { ProgressState } from '@/components/progressCard';
+import { useRouter } from 'next/router';
+import DecodedFnModal from './modalSteps/DecodedFnModal';
 
 interface ContractUIProps {
   contractAddress: string;
   chainId: number;
   index: number;
+  isActiveModule: boolean;
+  isAdmin: boolean;
+  name: string;
   decodedFnName?: string;
   encodedFnParams?: string | string[];
+  searchValue?: string;
 }
 
 export const CONTRACT_DETAILS = gql`
@@ -39,8 +44,12 @@ export const ContractUI: React.FC<ContractUIProps> = ({
   contractAddress,
   chainId,
   index,
+  isActiveModule,
+  name,
+  // isAdmin,
   decodedFnName,
-  encodedFnParams
+  encodedFnParams,
+  searchValue
 }: ContractUIProps) => {
   const [abi, setAbi] = useState<any>();
   const [contractName, setContractName] = useState('');
@@ -49,10 +58,9 @@ export const ContractUI: React.FC<ContractUIProps> = ({
   const [isUnverified, setUnverified] = useState<boolean>(false);
 
   // abiFnModal
-  const [showFnModal, setShowFnModal] = useState(true);
-  const [fnFragment, setFnFragment] = useState<FunctionFragment>();
+  const [showFnModal, setShowFnModal] = useState(false);
+  const [fnFragment, setFnFragment] = useState<FunctionFragment | null>();
   const [lookupOnly, setLookupOnly] = useState(false);
-  const [inputs, setInputs] = useState('');
 
   // res + txn + err
   const [callResponse, setCallResponse] = useState('');
@@ -66,6 +74,8 @@ export const ContractUI: React.FC<ContractUIProps> = ({
       web3: { web3, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
 
   const supportedAbi = useMemo((): SupportedAbi | null => {
     const supported = getSupportedAbi(contractAddress, activeNetwork?.chainId);
@@ -130,19 +140,39 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         abiLeaf.stateMutability === 'pure' ||
         isConstant;
       setLookupOnly(lookupOnly);
-      setInputs(getInputs(abiLeaf));
+      setShowFnModal(true);
     }
   }, [decodedFnName, abi, loading]);
 
-  const toggleShowDecodeModal = (): void => {
-    setShowFnModal(!showFnModal);
+  const clearParams = (): void => {
+    if (!router.isReady) return;
+    const { chain, clubAddress, collectiveAddress } = router.query;
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...(clubAddress && { clubAddress: clubAddress }),
+        ...(collectiveAddress && { collectiveAddress: collectiveAddress }),
+        chain: chain
+      }
+    });
   };
 
-  const onResponse = (res: any) => {
+  const clearCallResponse = (): void => {
+    setCallResponse('');
+  };
+
+  const toggleShowFnModal = (): void => {
+    setShowFnModal(!showFnModal);
+    setFnFragment(null);
+    clearCallResponse();
+    clearParams();
+  };
+
+  const onResponse = (res: any): void => {
     setCallResponse(res);
   };
 
-  const onTxConfirm = (txn: string) => {
+  const onTxConfirm = (txn: string): void => {
     console.log('txn', txn);
     setTransactionHash(txn);
     setProgressTitle('Approving');
@@ -152,14 +182,14 @@ export const ContractUI: React.FC<ContractUIProps> = ({
     setProgressStatus(ProgressState.PENDING);
   };
 
-  const onTxReceipt = (receipt: any) => {
+  const onTxReceipt = (receipt: any): void => {
     console.log('receipt', receipt);
     setProgressTitle('Transaction successful');
     setProgressDescription('');
     setProgressStatus(ProgressState.SUCCESS);
   };
 
-  const onTxFail = (err: any) => {
+  const onTxFail = (err: any): void => {
     console.log('err', err);
     setProgressTitle('Transaction Failed');
     setProgressStatus(ProgressState.FAILURE);
@@ -239,16 +269,24 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         }
       }
     } catch (err) {
-      callCb(`${err}`);
+      if (typeof err === 'string') {
+        callCb(err);
+      } else if (err instanceof Error) {
+        callCb(err.message);
+      }
     }
   };
 
   return (
-    <div key={`${index}-${data}`} className={`${index > 0 ? 'mt-2' : ''}`}>
-      {fnFragment && (
-        <AbiFnModal
-          showAbiFnModal={showFnModal}
-          handleModalClose={toggleShowDecodeModal}
+    <div key={`${index}-${data}`}>
+      {/* decoded function view (most likely a member but can be an admin */}
+      {fnFragment && decodedFnName ? (
+        <DecodedFnModal
+          showDecodedFnModal={showFnModal}
+          name={name}
+          isSyndicateSupported={supportedAbi ? true : false}
+          handleModalClose={toggleShowFnModal}
+          clearResponse={clearCallResponse}
           clickCallback={(
             abi: any,
             abiFunction: FunctionFragment | undefined,
@@ -268,9 +306,9 @@ export const ContractUI: React.FC<ContractUIProps> = ({
           }}
           contractAddress={contractAddress}
           abi={abi}
+          moduleName={contractName}
           funcABI={fnFragment}
           chainId={chainId}
-          stringInputs={inputs}
           lookupOnly={lookupOnly}
           txnProgress={
             progressStatus && {
@@ -280,53 +318,34 @@ export const ContractUI: React.FC<ContractUIProps> = ({
               txnHash: transactionHash
             }
           }
-          mode={decodedFnName ? 'decoded' : 'admin'}
           encodedFnParams={encodedFnParams}
           response={callResponse}
         />
-      )}
-      {!decodedFnName &&
-        (loading ? (
-          <SkeletonLoader
-            width="100%"
-            height="14"
-            borderRadius="rounded-full"
-          />
-        ) : invalidResponse ? (
-          <p>{invalidResponse}</p>
-        ) : (
-          <div className="flex w-full max-w-88 justify-center border-1 border-gray-syn7 rounded-2xl px-4 py-5">
-            {!isUnverified ? (
-              <AbiUI
-                key={validContractAddress}
-                instance={{
-                  address: validContractAddress,
-                  chainId: chainId,
-                  name: contractName,
-                  abi: abi
-                }}
-                setFnFragment={setFnFragment}
-                setFnLookupOnly={setLookupOnly}
-                setShowFnModal={setShowFnModal}
-              />
-            ) : (
-              <div>
-                <p>Contract source code not verified for </p>
-                <a
-                  href={`https://etherscan.io/address/${contractAddress}#code`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <p>
-                    {isAddress(contractAddress)
-                      ? shortenAddress(toChecksumAddress(contractAddress), 14)
-                      : contractAddress}
-                  </p>
-                </a>
-              </div>
-            )}
-          </div>
-        ))}
+      ) : loading ? (
+        <SkeletonLoader width="355" height="32" borderRadius="rounded-full" />
+      ) : !searchValue || contractName?.toLowerCase()?.includes(searchValue) ? (
+        <AbiUI
+          key={validContractAddress}
+          instance={{
+            address: validContractAddress,
+            chainId: chainId,
+            name: contractName,
+            abi: abi,
+            isSyndicateSupported: supportedAbi ? true : false,
+            isActive: isActiveModule,
+            isUnverified: isUnverified,
+            invalidResponse: invalidResponse
+          }}
+          showFnModal={showFnModal}
+          setShowFnModal={setShowFnModal}
+          handleToggleModal={toggleShowFnModal}
+          setFnFragment={setFnFragment}
+          setFnLookupOnly={setLookupOnly}
+          clearResponse={clearCallResponse}
+          selectedFnFragment={fnFragment}
+          selectedLookupOnly={lookupOnly}
+        />
+      ) : null}
     </div>
   );
 };

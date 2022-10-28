@@ -24,6 +24,7 @@ export const SearchInput = (props: {
   width?: number;
   parentBackground?: string;
   padding?: string;
+  textCustom?: string;
 }): JSX.Element => {
   const {
     error,
@@ -38,7 +39,8 @@ export const SearchInput = (props: {
     searchItem = 'members',
     width,
     parentBackground = 'bg-gray-8',
-    padding = 'py-2.5 pl-1'
+    padding = 'py-2.5 pl-1',
+    textCustom = 'sm:text-sm'
   } = props;
 
   return (
@@ -73,9 +75,9 @@ export const SearchInput = (props: {
                 id="search"
                 className={`focus:ring-0 ${customClass} relative border-0 ${
                   searchValue ? 'text-white' : 'text-gray-syn4'
-                } text-placeholder-gray-syn4 leading-6 text-lg block w-full rounded-md pl-6 pr-5 sm:text-sm ${
-                  disabled ? 'opacity-40' : ''
-                }`}
+                } text-placeholder-gray-syn4 leading-6 text-lg block w-full rounded-md pl-6 pr-5 ${
+                  textCustom ? textCustom : ''
+                } ${disabled ? 'opacity-40' : ''}`}
                 placeholder={`Search${
                   itemsCount ? ` ${itemsCount}` : ''
                 } ${searchItem}`}

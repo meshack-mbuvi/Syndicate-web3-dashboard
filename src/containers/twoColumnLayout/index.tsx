@@ -3,7 +3,7 @@ import Layout from '@/components/layout';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { useTailwindScreenWidth } from '@/helpers/layout';
 import useWindowSize from '@/hooks/useWindowSize';
-import { FC } from 'react';
+import { FC, ReactChild, ReactChildren } from 'react';
 
 export enum TwoColumnLayoutType {
   DEFAULT = 'DEFAULT',
@@ -16,6 +16,7 @@ const TwoColumnLayout: FC<{
   managerSettingsOpen: boolean;
   leftColumnComponent: any;
   rightColumnComponent: any;
+  fullComponent?: ReactChild | ReactChildren;
   handleExitClick?: any;
   hideWallet?: boolean;
   hideEllipsis?: boolean;
@@ -37,6 +38,7 @@ const TwoColumnLayout: FC<{
   managerSettingsOpen,
   leftColumnComponent,
   rightColumnComponent,
+  fullComponent,
   headerTitle,
   hideFooter = false,
   activeIndex,
@@ -112,6 +114,7 @@ const TwoColumnLayout: FC<{
                   </div>
                 </div>
               </div>
+              {fullComponent}
             </div>
           </ErrorBoundary>
         </Layout>
@@ -171,6 +174,7 @@ const TwoColumnLayout: FC<{
                   </div>
                 </div>
               </div>
+              {fullComponent}
             </div>
           </ErrorBoundary>
         </Layout>
@@ -215,6 +219,7 @@ const TwoColumnLayout: FC<{
                   </div>
                 </div>
               </div>
+              {fullComponent}
             </div>
           </ErrorBoundary>
         </Layout>

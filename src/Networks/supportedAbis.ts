@@ -17,8 +17,7 @@ export const SUPPORTED_ABIS: Readonly<{ [key: string]: AbiItem[] }> = {
   OwnerMintModule: ownerMintModule_ABI as AbiItem[],
   EthPriceMintModule: ETH_PRICE_MINT_MODULE_ABI as AbiItem[]
 
-  // OwnerMintModuleERC721/BatchMintModuleERC721 // only on mainnet assumes it is different from OwnerMintModule
-  // PublicMintWithFeeModule // only on matic and different address on dev docs vs releases
+  // OwnerMintModuleERC721/BatchMintModuleERC721 // only on mainnet and soon to be deprecated
   // RequiredTokensMintModule // not available yet
   // PermitMintModuleERC721 // not available yet
 

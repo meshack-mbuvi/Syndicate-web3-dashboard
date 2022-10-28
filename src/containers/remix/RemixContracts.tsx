@@ -1,23 +1,16 @@
-import { ContractUI } from '@/containers/remix/shared/ContractUI';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import { Switch } from '@/components/switch';
-import Image from 'next/image';
-import { B3, B4, H4 } from '@/components/typography';
+import { B1, H1 } from '@/components/typography';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { useQuery, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { Callout, CalloutType } from '@/components/callout';
 import { Module } from '@/types/modules';
 import { useRouter } from 'next/router';
+import { useQuery, gql } from '@apollo/client';
 import { getNetworkByName } from '@/helpers/getNetwork';
+import { SearchInput } from '@/components/inputs';
+import { CustomModuleCallout } from './shared/CustomModuleCallout';
+import RemixLink from './shared/RemixLink';
+import RemixModules from './RemixModules';
 
-interface RemixContractsContainerProps {
-  collectiveAddress: string;
-  activeNetwork: IActiveNetwork;
-}
-
-// lift this up to parent component if need to get activeModules for club
-const ACTIVEMODULES = gql`
+const COLLECTIVES_ACTIVEMODULES = gql`
   query SyndicateCollective($syndicateCollectiveId: ID!) {
     syndicateCollective(id: $syndicateCollectiveId) {
       activeModules {
@@ -27,126 +20,149 @@ const ACTIVEMODULES = gql`
   }
 `;
 
+const CLUBS_ACTIVEMODULES = gql`
+  query Syndicate_ActiveModules($syndicateDAOId: ID!) {
+    syndicateDAO(id: $syndicateDAOId) {
+      activeModules {
+        contractAddress
+      }
+    }
+  }
+`;
+
+interface RemixContractsContainerProps {
+  isAdmin: boolean;
+  name: string;
+  entityType: 'club' | 'collective';
+  contractAddress: string;
+  activeNetwork: IActiveNetwork;
+}
+
 export const RemixContractsContainer: React.FC<
   RemixContractsContainerProps
-> = ({ collectiveAddress, activeNetwork }: RemixContractsContainerProps) => {
-  const [activeModules, setActiveModules] = useState<Module[]>([]);
-  const [hardCodedModules, setHardcodedeModules] = useState(false);
+> = ({
+  isAdmin,
+  name,
+  entityType,
+  contractAddress,
+  activeNetwork
+}: RemixContractsContainerProps) => {
+  const [isRemixEnabled, setRemixEnabled] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState('');
 
-  const router = useRouter();
-  const query = router.query;
-  // decoded txn values
-  const [decodedChainId, setDecodedChainId] = useState<number>();
-  const [decodedFnName, setDecodedFnName] = useState('');
-  const [encodedFnParams, setEncodedFnParams] = useState<string | string[]>();
-
-  //TODO: conditionally query only if right permissions? hide if member?
-  const { loading, data } = useQuery(ACTIVEMODULES, {
+  const { loading, data } = useQuery(COLLECTIVES_ACTIVEMODULES, {
     variables: {
-      syndicateCollectiveId: collectiveAddress?.toLocaleLowerCase()
+      syndicateCollectiveId: contractAddress?.toLocaleLowerCase()
     },
     context: {
       clientName: 'theGraph',
       chainId: activeNetwork?.chainId
     },
     notifyOnNetworkStatusChange: true,
-    skip: !collectiveAddress || !activeNetwork.chainId,
+    skip: !(entityType == 'collective') || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
-  useEffect(() => {
-    if (data?.syndicateCollective && !decodedFnName) {
-      setActiveModules(data.syndicateCollective?.activeModules ?? []);
+  const { loading: clubLoading, data: clubData } = useQuery(
+    CLUBS_ACTIVEMODULES,
+    {
+      variables: {
+        syndicateDAOId: contractAddress?.toLocaleLowerCase()
+      },
+      context: {
+        clientName: 'theGraph',
+        chainId: activeNetwork?.chainId
+      },
+      notifyOnNetworkStatusChange: true,
+      skip: !(entityType == 'club') || !activeNetwork.chainId,
+      fetchPolicy: 'no-cache'
     }
-    if (hardCodedModules) {
-      activeNetwork?.chainId == 1
-        ? setActiveModules([
-            { contractAddress: '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D' },
-            { contractAddress: '0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB' }
-          ])
-        : activeNetwork?.chainId == 5
-        ? setActiveModules([
-            { contractAddress: '0xf712457C8DDAb398A55A53dAD80852902DD89750' },
-            { contractAddress: '0xf4910C763eD4e47A585E2D34baA9A4b611aE448C' }
-          ])
-        : setActiveModules([]);
-    }
-  }, [loading, hardCodedModules, activeNetwork]);
+  );
+
+  const router = useRouter();
+  const query = router.query;
 
   useEffect(() => {
     if (!query) {
       return;
     }
-    const { contractAddress, fn, chain, fnParams } = query;
+    const { mode } = query;
 
-    setDecodedFnName(fn as string);
-    setActiveModules([{ contractAddress: contractAddress as string }]);
-    const chainNetwork = getNetworkByName(chain);
-    setDecodedChainId(chainNetwork.chainId);
-    setEncodedFnParams(fnParams);
-  }, [query]);
+    if (mode && mode == 'remix') {
+      setRemixEnabled(true);
+    } else {
+      setRemixEnabled(
+        localStorage.getItem(`${contractAddress}-adminEnabledRemix`) === 'true'
+      );
+    }
+  }, [query, contractAddress]);
 
-  // TODO:
-  // [PRO2-53] gasEstimate for funcABI transactions
-  // [PRO2-52][DES-1041] handle displaying inputs, input validation, transaction progress + results
-  // refactor + remove unneeded
+  const activeModules: Module[] = query?.fn
+    ? [{ contractAddress: query?.contractAddress as string }]
+    : data?.syndicateCollective
+    ? data.syndicateCollective?.activeModules ?? []
+    : clubData?.syndicateDAO
+    ? clubData.syndicateDAO?.activeModules ?? []
+    : [];
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchValue(e.target.value);
+  };
+
+  const clearSearchValue = (e: React.MouseEvent<HTMLElement>): void => {
+    e.preventDefault();
+    setSearchValue('');
+  };
 
   return (
     <>
-      <div className="flex mb-3">
-        <Image
-          src={'/images/remix/remix-gradient.svg'}
-          width={71}
-          height={20}
-          objectFit="contain"
-        />
-        <H4 extraClasses="ml-2 font-normal">playground</H4>
-      </div>
-      <Callout
-        type={CalloutType.WARNING}
-        showIcon={false}
-        extraClasses="p-4 rounded-2xl mb-3"
-      >
-        <div className="p-0.5">
-          <div className="flex align-items-center mb-2">
-            <Image
-              src={'/images/syndicateStatusIcons/warning-triangle-yellow.svg'}
-              objectFit="contain"
-              height={14.5}
-              width={16}
-            />
-            <B3 extraClasses="font-semibold ml-3">
-              Exercise caution with custom modules
-            </B3>
+      {isRemixEnabled && (
+        <>
+          <div className="flex flex-col md:flex-row w-full">
+            {/* top or left column */}
+            <div className="flex-1 shrink-0">
+              <div className="max-w-480">
+                <H1 extraClasses="mb-4">Remix</H1>
+                <B1 extraClasses="mb-8">
+                  Remix modules are modules in the smart contract that extend
+                  your Collective with new functions.
+                </B1>
+                <CustomModuleCallout />
+              </div>
+            </div>
+            {/* bottom or right column */}
+            <div className="flex-1 shrink-0">
+              <H1 extraClasses="mb-4">Modules</H1>
+              <div className="flex justify-between items-center">
+                <SearchInput
+                  searchValue={searchValue}
+                  onChangeHandler={handleSearchChange}
+                  padding="py-2 pl-3"
+                  textCustom="sm:text-base"
+                  searchItem=""
+                  clearSearchValue={clearSearchValue}
+                />
+                <RemixLink link="" text="Create custom module" />
+              </div>
+              <RemixModules
+                isAdmin={isAdmin}
+                name={name}
+                loading={loading || clubLoading}
+                chainId={
+                  getNetworkByName(query?.chain)?.chainId ||
+                  activeNetwork?.chainId
+                }
+                activeModules={activeModules}
+                searchValue={searchValue}
+                decodedContractAddress={
+                  (query?.contractAddress as string) ?? ''
+                }
+                decodedFnName={(query?.fn as string) ?? ''}
+                encodedFnParams={query?.fnParams}
+              />
+            </div>
           </div>
-          <B4 extraClasses="mt-1">
-            These modules haven’t been verified by Syndicate. They don’t
-            necessarily do what they say they do.
-          </B4>
-        </div>
-      </Callout>
-      <div className="flex justify-between items-center mb-3">
-        <div className="text-sm text-gray-syn4">Use hardcoded</div>
-        <Switch
-          isOn={hardCodedModules}
-          onClick={() => setHardcodedeModules(!hardCodedModules)}
-        />
-      </div>
-      {loading ? (
-        <SkeletonLoader width="100%" height="14" borderRadius="rounded-full" />
-      ) : (
-        activeModules?.map((activeModule, i: number) => {
-          return (
-            <ContractUI
-              contractAddress={activeModule?.contractAddress}
-              chainId={decodedChainId || activeNetwork.chainId}
-              index={i}
-              key={`${i}-${activeModule?.contractAddress}`}
-              decodedFnName={decodedFnName}
-              encodedFnParams={encodedFnParams}
-            />
-          );
-        })
+        </>
       )}
     </>
   );

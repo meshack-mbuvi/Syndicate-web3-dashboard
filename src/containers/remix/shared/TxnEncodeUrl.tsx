@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+import CopyLink from '@/components/shared/CopyLink';
 import { getNetworkById } from '@/helpers/getNetwork';
 import { FunctionFragment } from 'ethers/lib/utils';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { computeEncodedUrl } from './encodeParams';
 
@@ -12,7 +11,6 @@ interface TxnEncodeUrlProps {
   fnParams: Record<string, any>;
   abiLeaf: FunctionFragment;
   mode: 'remix' | '';
-  inputsValid: boolean;
 }
 
 const TxnEncodeUrl: React.FC<TxnEncodeUrlProps> = ({
@@ -21,20 +19,26 @@ const TxnEncodeUrl: React.FC<TxnEncodeUrlProps> = ({
   contractAddress,
   fnParams,
   abiLeaf,
-  mode,
-  inputsValid
+  mode
 }: TxnEncodeUrlProps) => {
   const [url, setUrl] = useState('');
   const network = getNetworkById(chainId);
+  const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
+    useState<boolean>(false);
+
+  const updateDepositLinkCopyState = () => {
+    setShowDepositLinkCopyState(true);
+    setTimeout(() => setShowDepositLinkCopyState(false), 1000);
+  };
   useEffect(() => {
     if (!window.location) return;
     const location = window.location.href;
     const [prefix, after] = location.split('?');
+
     setUrl(
       computeEncodedUrl(
         {
           mode,
-          chainName: network?.network as string,
           fn,
           contractAddress,
           fnParams: fnParams,
@@ -46,15 +50,18 @@ const TxnEncodeUrl: React.FC<TxnEncodeUrlProps> = ({
     );
   }, [abiLeaf, contractAddress, fn, fnParams, mode, network?.network]);
   return (
-    <>
-      {inputsValid && (
-        <Link href={url} passHref>
-          <a target="_blank" rel="noreferrer">
-            <p className="break-words">{url}</p>
-          </a>
-        </Link>
-      )}
-    </>
+    <div className="mt-10 mb-8">
+      <CopyLink
+        link={url}
+        updateCopyState={updateDepositLinkCopyState}
+        showCopiedState={showDepositLinkCopyState}
+        accentColor="white"
+        backgroundColor="bg-black"
+        borderColor="border-none"
+        borderRadius="rounded-2xl"
+        copyBorderRadius="rounded-lg"
+      />
+    </div>
   );
 };
 
