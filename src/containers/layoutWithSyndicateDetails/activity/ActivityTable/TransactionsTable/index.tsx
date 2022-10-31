@@ -213,8 +213,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   );
 
                   const category: any = annotation?.transactionCategory
-                    ? syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED'
-                    : 'DISTRIBUTION' ?? null;
+                    ? annotation?.transactionCategory
+                    : syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED'
+                    ? 'DISTRIBUTION'
+                    : null;
+
                   return (
                     <div
                       key={`token-table-row-${index}`}
