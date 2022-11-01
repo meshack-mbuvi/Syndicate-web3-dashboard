@@ -925,6 +925,7 @@ const ReviewDistribution: React.FC<Props> = ({
       </ConfirmDistributionsModal>
 
       <ShareSocialModal
+        showCollectiveCTA={false}
         isModalVisible={shareDistributionNews}
         handleModalClose={(): void => {
           setShareDistributionNews(false);
@@ -935,7 +936,7 @@ const ReviewDistribution: React.FC<Props> = ({
         transactionHash={transactionHash}
         description={`Just made an investment distribution for ${name} (${symbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
         handleClick={handleViewDashboard}
-        buttonLabel="View on dashboard"
+        buttonLabel="Done"
       />
     </div>
   );

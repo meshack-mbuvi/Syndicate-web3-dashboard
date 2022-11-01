@@ -17,6 +17,7 @@ interface Props {
   buttonLabel: string | any;
   imageOptions?: string[];
   customVisual?: any;
+  showCollectiveCTA?: boolean;
 }
 
 export const ShareSocialModal: React.FC<Props> = ({
@@ -28,13 +29,14 @@ export const ShareSocialModal: React.FC<Props> = ({
   description,
   handleClick,
   buttonLabel,
+  showCollectiveCTA = true,
   imageOptions = [
     'https://media3.giphy.com/media/nV92wySC3iMGhAmR71/giphy.gif',
     'https://media4.giphy.com/media/ZmgSpGW4p8EUspn0Uk/giphy.gif',
     'https://media.giphy.com/media/lMameLIF8voLu8HxWV/giphy.gif'
   ],
   customVisual
-}) => {
+}: Props) => {
   return (
     <>
       <Modal
@@ -71,7 +73,11 @@ export const ShareSocialModal: React.FC<Props> = ({
           </CTAButton>
           {transactionHash ? (
             <div>
-              <div className="flex justify-center mt-6 mb-3">
+              <div
+                className={`flex justify-center mt-6 ${
+                  showCollectiveCTA ? 'mb-3' : 'mb-8'
+                }`}
+              >
                 <div>
                   <BlockExplorerLink
                     resourceId={transactionHash}
@@ -80,15 +86,17 @@ export const ShareSocialModal: React.FC<Props> = ({
                   />
                 </div>
               </div>
-              <div className="flex justify-center mb-6">
-                <a
-                  href="/collectives/create"
-                  target="_blank"
-                  className="text-orange-utopia"
-                >
-                  Launch your Collective →
-                </a>
-              </div>
+              {showCollectiveCTA ? (
+                <div className="flex justify-center mb-6">
+                  <a
+                    href="/collectives/create"
+                    target="_blank"
+                    className="text-orange-utopia"
+                  >
+                    Launch your Collective →
+                  </a>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
