@@ -558,12 +558,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
               memberDetails.address
             )}`}
           >
-            <div>
+            <B2>
               {getFormattedDateTimeWithTZ(
                 +memberDetails.createdAt * 1000,
                 'MMMM DD YYYY'
               )}
-            </div>
+            </B2>
           </div>
 
           {/* Share of holdings */}
@@ -573,12 +573,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
             )}`}
           >
             {/* Percentage */}
-            <div>
+            <B2>
               {isAddressActive(memberDetails.address)
                 ? parseFloat(`${memberDetails.distributionShare}`)
                 : '0'}
               %
-            </div>
+            </B2>
           </div>
         </div>
 
@@ -602,8 +602,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 ?.amount.toFixed(4) || 0;
             return (
               // Individual column
-              <div
-                className={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
+              <B2
+                extraClasses={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
                   memberDetails.address
                 )} ${amountCellStyles}`}
                 key={index}
@@ -622,7 +622,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 >
                   {tokenSymbol}
                 </div>
-              </div>
+              </B2>
             );
           })}
         </div>
