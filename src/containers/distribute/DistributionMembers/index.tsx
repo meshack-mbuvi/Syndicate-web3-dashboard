@@ -24,6 +24,7 @@ import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGraphSyncState } from '@/hooks/utils/useGraphState';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
+import { IToken } from '@/state/assets/types';
 import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
@@ -53,7 +54,7 @@ type step = {
 };
 
 type Props = {
-  tokens: any;
+  tokens: IToken[];
   handleExitClick: () => void;
 };
 
@@ -73,7 +74,10 @@ export interface memberDetail {
 }
 [];
 
-const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
+const ReviewDistribution: React.FC<Props> = ({
+  tokens,
+  handleExitClick
+}: Props) => {
   const {
     web3Reducer: {
       web3: { status, account, web3, activeNetwork, ethersProvider }
@@ -89,11 +93,11 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const [memberDetails, setMemberDetails] = useState<memberDetail[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [batchIdentifier, setBatchIdentifier] = useState('');
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const [timerId, setTimerId] = useState(0);
   const [transactionHash, setTransactionHash] = useState('');
+  const [batchIdentifier, setBatchIdentifier] = useState(uuidv4());
 
   const [shareDistributionNews, setShareDistributionNews] = useState(false);
 
@@ -258,12 +262,12 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   useEffect(() => {
     if (!tokens.length) return;
 
-    const steps: any = [];
-    tokens.forEach((token: any) => {
+    const steps: any[] = [];
+    tokens.forEach((token: IToken) => {
       if (token.symbol == activeNetwork.nativeCurrency.symbol) {
         steps.push({
           ...token,
-          title: `Distribute ${numberWithCommas(token.tokenAmount)} ${
+          title: `Distribute ${numberWithCommas(token.tokenAmount ?? 0)} ${
             token.symbol
           }`,
           isInErrorState: false,
@@ -284,7 +288,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         },
         {
           ...token,
-          title: `Distribute ${numberWithCommas(token.tokenAmount)} ${
+          title: `Distribute ${numberWithCommas(token.tokenAmount ?? 0)} ${
             token.symbol
           }`,
           isInErrorState: false,
@@ -323,7 +327,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         `Approve ${steps[activeIndex].symbol} from your wallet`
       );
       setProgressDescriptorDescription(``);
-      handleAllowanceApproval(steps[activeIndex]).then(() => {
+      void handleAllowanceApproval(steps[activeIndex]).then(() => {
         updateSteps('status', '');
       });
       setTransactionHash('');
@@ -332,7 +336,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     }
   }, [activeIndex]);
 
-  const handleSaveAction = (e: any) => {
+  const handleSaveAction = (e: MouseEvent): void => {
     e.preventDefault();
     toggleEditDistribution();
   };
@@ -340,7 +344,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   /**
    * This function reverts activeAddresses to the state before editing
    */
-  const handleCancelAction = (e: any) => {
+  const handleCancelAction = (e: MouseEvent): void => {
     e.preventDefault();
 
     // restore active indices from state
@@ -476,7 +480,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleModalClose = () => {
+  const handleModalClose = (): void => {
     setIsModalVisible(false);
     clearErrorStepErrorStates();
   };
@@ -593,19 +597,44 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   };
 
   /**
+   * @dev this method is used to get a new batchId if we don't have one yet.
+   * Otherwise, retrieve the existing one.
+   *
+   * @return { batchId } an identifier for the distribution.
+   */
+  const getBatchId = (): string => {
+    if (!batchIdentifier) {
+      // Generate a new one and save it to local state for subsequent use incase
+      // the user encounters an error.
+      const newBatchId = uuidv4();
+
+      setBatchIdentifier(newBatchId);
+      return newBatchId;
+    } else {
+      return batchIdentifier;
+    }
+  };
+
+  const clearBatchIdentifier = (): void => {
+    localStorage.removeItem('batchId');
+  };
+
+  /**
    * Make either ETH or ERC20 distributions
    *
    * @param token an erc20 token to be distributed to members
    */
-  const makeDistributions = async (token: any) => {
+  const makeDistributions = async (token: step): Promise<void> => {
     try {
+      const batchIdentifier = getBatchId();
+
       setIsTransactionPending(true);
       setTransactionHash('');
 
       const amountToDistribute = getWeiAmount(
         web3,
         token.tokenAmount,
-        token.tokenDecimal,
+        +token.tokenDecimal,
         true
       );
 
@@ -615,7 +644,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
           address,
           amountToDistribute,
           activeAddresses,
-          batchIdentifier,
+          `${batchIdentifier}`,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -627,7 +656,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
           token.contractAddress,
           amountToDistribute,
           activeAddresses,
-          batchIdentifier,
+          `${batchIdentifier}`,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -664,12 +693,10 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
   const showDistributeDisclaimer = (e: MouseEvent): void => {
     e.preventDefault();
-    setBatchIdentifier(uuidv4());
-
     setIsModalVisible(true);
   };
 
-  const handleCloseConfirmModal = () => {
+  const handleCloseConfirmModal = (): void => {
     // should not close modal if there is pending transaction.
     if (isTransactionPending) return;
 
@@ -899,9 +926,10 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
-        handleModalClose={() => {
+        handleModalClose={(): void => {
           setShareDistributionNews(false);
           handleExitClick();
+          clearBatchIdentifier();
         }}
         socialURL={socialURL}
         transactionHash={transactionHash}
