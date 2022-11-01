@@ -13,21 +13,30 @@ export enum CalloutIconPosition {
   INLINE = 'INLINE'
 }
 
-export const Callout: React.FC<{
+interface Props {
   type?: CalloutType;
   extraClasses?: string;
   showIcon?: boolean;
-  icon?: string;
+  icon?: string | undefined | null;
   iconPosition?: CalloutIconPosition;
-}> = ({
+  children?: any;
+  textColor?: string;
+  backgroundOpacity?: string;
+  backgroundColor?: string;
+}
+
+export const Callout: React.FC<Props> = ({
   type = CalloutType.REGULAR,
   extraClasses = '',
   showIcon = true,
   icon = null,
+  backgroundOpacity = 'bg-opacity-10',
+  textColor = 'text-white',
   iconPosition = CalloutIconPosition.INLINE,
+  backgroundColor = 'bg-blue-stratosphere',
   children
-}) => {
-  let styles = `bg-blue-stratosphere bg-opacity-10 text-white`;
+}: Props) => {
+  let styles = `${backgroundColor} bg-opacity-${backgroundOpacity} ${textColor}`;
   let calloutIcon: string | any = icon;
   switch (type) {
     case CalloutType.REGULAR:
@@ -42,7 +51,7 @@ export const Callout: React.FC<{
           />
         );
       }
-      styles = 'bg-blue-stratosphere bg-opacity-10 text-white';
+      styles = `${backgroundColor} ${backgroundOpacity} ${textColor}`;
       break;
     case CalloutType.WARNING:
       if (iconPosition === CalloutIconPosition.TOP) {
@@ -50,7 +59,7 @@ export const Callout: React.FC<{
           ? icon
           : '/images/syndicateStatusIcons/warning-triangle-yellow.svg';
       }
-      styles = 'bg-yellow-warning bg-opacity-10 text-white';
+      styles = `bg-yellow-warning ${backgroundOpacity} ${textColor}`;
       break;
     case CalloutType.OUTLINE:
       if (iconPosition === CalloutIconPosition.TOP) {
@@ -65,7 +74,7 @@ export const Callout: React.FC<{
           />
         );
       }
-      styles = 'border border-gray-syn6 text-white';
+      styles = `border border-gray-syn6 ${textColor}`;
       break;
   }
 

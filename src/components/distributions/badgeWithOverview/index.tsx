@@ -153,11 +153,16 @@ export const BadgeWithOverview: React.FC<Props> = ({
               </div>
 
               {/* Gas estimate */}
-              <Callout extraClasses="rounded-xl px-4 py-3 text-sm mx-4">
+              <Callout
+                extraClasses="rounded-xl px-4 py-3 text-sm mx-4"
+                textColor="text-blue-neptune"
+                backgroundOpacity={'bg-opacity-20'}
+                backgroundColor="bg-blue-neptune"
+              >
                 <div className="flex justify-between">
-                  <div className="flex space-x-1">
+                  <div className="flex space-x-3">
                     <div>Estimated gas</div>
-                    <div className="pr-1">
+                    <div className="flex">
                       <Image
                         width={14}
                         height={14}
@@ -166,12 +171,12 @@ export const BadgeWithOverview: React.FC<Props> = ({
                         alt="Gas icon"
                       />
                     </div>
-                    <div className="pl-1">
+                    <div>
                       {!gasEstimate
                         ? '-'
                         : parseFloat(gasEstimate?.tokenAmount).toFixed(6)}
+                      <span className="ml-1">{gasEstimate?.tokenSymbol}</span>
                     </div>
-                    <div>{gasEstimate?.tokenSymbol}</div>
                   </div>
                   <div>
                     $
