@@ -1,10 +1,17 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLUB_DEPOSIT,
+  DEPOSIT_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import ArrowDown from '@/components/icons/arrowDown';
+import { InfoIcon } from '@/components/iconWrappers';
 import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
@@ -28,6 +35,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
@@ -41,17 +49,9 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Floater from 'react-floater';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
-import { InfoIcon } from '@/components/iconWrappers';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import ERC20ABI from '@/utils/abi/erc20.json';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CLUB_DEPOSIT,
-  DEPOSIT_CONTINUE_CLICK
-} from '@/components/amplitude/eventNames';
 
 import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';

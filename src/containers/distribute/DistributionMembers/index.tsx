@@ -28,6 +28,7 @@ import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
 import ERC20ABI from '@/utils/abi/erc20.json';
+import { pollTransaction } from '@/utils/contracts/pollTransaction';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
@@ -91,6 +92,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const [batchIdentifier, setBatchIdentifier] = useState('');
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
+  const [timerId, setTimerId] = useState(0);
   const [transactionHash, setTransactionHash] = useState('');
 
   const [shareDistributionNews, setShareDistributionNews] = useState(false);
@@ -99,6 +101,15 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     useState<string>('');
 
   const [showGraphWarning, setShowGraphWarning] = useState(false);
+
+  //clear timer on unmount
+  useEffect(() => {
+    return (): void => {
+      if (timerId > 0) {
+        clearInterval(timerId);
+      }
+    };
+  }, [timerId]);
 
   const { isDataStale, lastSyncedBlock, timeToSyncPendingBlocks } =
     useGraphSyncState();
@@ -229,7 +240,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setShowGraphWarning(false);
   };
 
-  const [steps, setSteps] = useState<step[]>();
+  const [steps, setSteps] = useState<step[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [progressDescriptorTitle, setProgressDescriptorTitle] = useState('');
@@ -240,6 +251,9 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
 
   // flag to check whether there is pending transaction before closing modal
   const [isTransactionPending, setIsTransactionPending] = useState(false);
+
+  const TRANSACTION_TOO_LONG_MSG =
+    'This transaction is taking a while. You can speed it up by spending more gas via your wallet.';
 
   useEffect(() => {
     if (!tokens.length) return;
@@ -334,15 +348,16 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     toggleEditDistribution();
   };
 
-  const updateSteps = (key: any, value: any) => {
+  const updateSteps = (key: string, value: string | boolean): void => {
     const updatedSteps = steps;
+    if (!updatedSteps[activeIndex]) return;
+
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
 
-  const incrementActiveIndex = () => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+  const incrementActiveIndex = (): void => {
     if (activeIndex !== steps.length - 1) {
       setActiveIndex(activeIndex + 1);
     }
@@ -400,10 +415,6 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
           })
           .on('error', (error: any) => {
             setIsTransactionPending(false);
-            // user clicked reject.
-            if (error?.code === 4001) {
-              // break here
-            }
 
             void amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
               flow: Flow.MGR_DISTRIBUTION,
@@ -418,14 +429,22 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
         await checkTokenAllowance(token);
         setIsTransactionPending(false);
       }
-    } catch (error) {
-      updateSteps('isInErrorState', true);
-      updateSteps('status', ProgressDescriptorState.FAILURE);
+    } catch (error: any) {
+      if (error?.message.includes('Be aware that it might still be mined')) {
+        setProgressDescriptorTitle(`Transaction taking too long`);
 
-      setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
-      setProgressDescriptorTitle(`Error Approving ${token.symbol}`);
-      setProgressDescriptorDescription('');
-      setIsTransactionPending(false);
+        setProgressDescriptorDescription(TRANSACTION_TOO_LONG_MSG);
+        setIsTransactionPending(false);
+        return;
+      } else {
+        updateSteps('isInErrorState', true);
+        updateSteps('status', ProgressDescriptorState.FAILURE);
+
+        setProgressDescriptorTitle(`Error Approving ${token.symbol}`);
+        setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
+        setProgressDescriptorDescription('');
+        setIsTransactionPending(false);
+      }
     }
   };
 
@@ -462,8 +481,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     clearErrorStepErrorStates();
   };
 
-  const clearErrorStepErrorStates = () => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+  const clearErrorStepErrorStates = (): void => {
     const updatedSteps = steps.map((step) => ({
       ...step,
       isInErrorState: false,
@@ -476,7 +494,6 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   };
 
   const onTxConfirm = (transactionHash: string): void => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const { tokenAmount, symbol } = steps[activeIndex];
     // Update progress state
     setProgressDescriptorTitle(
@@ -493,7 +510,6 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
   const onTxReceipt = (): void => {
     setIsConfirmationModalVisible(true);
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
 
@@ -509,33 +525,49 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const onTxFail = (error?: any): void => {
-    setIsConfirmationModalVisible(true);
+  const updateStepStatus = (status: boolean): void => {
+    if (status) {
+      // Transaction was successfully processed.
+      onTxReceipt();
+    } else {
+      setProgressDescriptorDescription(
+        'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
+      );
+      updateSteps('isInErrorState', true);
+      updateSteps('status', ProgressDescriptorState.FAILURE);
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+      setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
+      setIsTransactionPending(false);
+    }
+  };
+
+  const onTxFail = (error?: { code: number; message: string }): void => {
+    setIsConfirmationModalVisible(true);
     const { tokenAmount, symbol } = steps[activeIndex];
 
-    updateSteps('isInErrorState', true);
-    updateSteps('status', ProgressDescriptorState.FAILURE);
+    if (error?.message.includes('Be aware that it might still be mined')) {
+      setProgressDescriptorDescription(TRANSACTION_TOO_LONG_MSG);
+
+      // Update progress state
+      setProgressDescriptorTitle(``);
+
+      updateSteps('isInErrorState', false);
+      setTimerId(pollTransaction(web3, transactionHash, updateStepStatus));
+      return;
+    }
 
     // Update progress state
     setProgressDescriptorTitle(
       `Error distributing ${numberWithCommas(tokenAmount)} ${symbol}`
     );
-    if (
-      error?.message?.indexOf('Transaction was not mined within 50 blocks') > -1
-    ) {
-      setProgressDescriptorDescription(
-        'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
-      );
-    } else {
-      setProgressDescriptorDescription(
-        'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
-      );
-    }
+    setProgressDescriptorDescription(
+      'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
+    );
+    updateSteps('isInErrorState', true);
+    updateSteps('status', ProgressDescriptorState.FAILURE);
 
     // User rejected transaction does not have transactionHash
-    if (error.code == 4001) {
+    if (error?.code == 4001) {
       setTransactionHash('');
     }
 
@@ -543,7 +575,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     setIsTransactionPending(false);
   };
 
-  const handleCheckAndApproveAllowance = async (step: any): Promise<void> => {
+  const handleCheckAndApproveAllowance = async (step: step): Promise<void> => {
     setIsTransactionPending(true);
     setProgressDescriptorDescription(`Approve ${step.symbol} from your wallet`);
 
@@ -601,18 +633,17 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
           onTxFail
         );
       }
-    } catch (error) {
+    } catch (error: any | unknown) {
       onTxFail(error);
     }
   };
 
-  const handleDisclaimerConfirmation = (e?: any) => {
-    e.preventDefault();
+  const handleDisclaimerConfirmation = (e?: MouseEvent): void => {
+    e?.preventDefault();
     setIsModalVisible(false);
 
     // handle distributions
     setIsConfirmationModalVisible(true);
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     if (token.action == 'distribute') {
       // no approval stage for ETH
@@ -627,12 +658,11 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       makeDistributions(token);
     } else {
       clearErrorStepErrorStates();
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       handleCheckAndApproveAllowance(steps[activeIndex]);
     }
   };
 
-  const showDistributeDisclaimer = (e: any) => {
+  const showDistributeDisclaimer = (e: MouseEvent): void => {
     e.preventDefault();
     setBatchIdentifier(uuidv4());
 
@@ -647,10 +677,9 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     clearErrorStepErrorStates();
   };
 
-  const handleClickAction = async (e: any) => {
+  const handleClickAction = async (e: MouseEvent): Promise<void> => {
     e.preventDefault();
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const token = steps[activeIndex];
     updateSteps('status', ProgressDescriptorState.PENDING);
     updateSteps('isInErrorState', false);
@@ -669,9 +698,11 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
     JSON.stringify(activeAddresses) !==
     JSON.stringify(activeMembersBeforeEditing);
 
-  const handleViewDashboard = () => {
-    router.replace(
-      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
+  const handleViewDashboard = (): void => {
+    void router.replace(
+      `/clubs/${clubAddress as string}/manage${
+        '?chain=' + activeNetwork.network
+      }`
     );
   };
 
@@ -840,13 +871,12 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
       <ConfirmDistributionsModal
         activeStepIndex={activeIndex}
         isModalVisible={isConfirmationModalVisible}
-        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
         showCloseButton={!isTransactionPending}
       >
         <>
-          {steps?.[activeIndex].status !== '' && (
+          {steps?.[activeIndex]?.status !== '' && (
             <ProgressDescriptor
               title={progressDescriptorTitle}
               description={progressDescriptorDescription}
@@ -854,8 +884,7 @@ const ReviewDistribution: React.FC<Props> = ({ tokens, handleExitClick }) => {
               transactionHash={transactionHash}
             />
           )}
-
-          {steps?.[activeIndex].action === 'distribute' &&
+          {steps?.[activeIndex]?.action === 'distribute' &&
             (steps?.[activeIndex].status == '' ||
               steps?.[activeIndex].status ==
                 ProgressDescriptorState.FAILURE) && (

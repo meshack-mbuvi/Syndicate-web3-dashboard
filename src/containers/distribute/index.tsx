@@ -664,9 +664,7 @@ const Distribute: FC = () => {
     );
   };
 
-  const handlePrevious = (event: any): void => {
-    event.preventDefault();
-
+  const handlePrevious = (): void => {
     if (activeIndex === 0) return;
 
     setActiveIndex(activeIndex - 1);
