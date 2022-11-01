@@ -1053,6 +1053,11 @@ input[type='checkbox'] {
   border-radius: 4px;
 }
 
+.dark-scrollbar::-webkit-scrollbar-track {
+  scrollbar-color: #3f4147;
+  background: transparent;
+}
+
 .react-add-to-calendar {
   @apply relative inline-block text-center;
 }

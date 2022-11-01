@@ -14,8 +14,7 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
   isModalVisible,
   handleModalClose,
   onClick
-}) => {
-  // Checkbox status
+}: Props) => {
   const [isActive, setIsActive] = useState(false);
   return (
     <Modal
@@ -28,7 +27,7 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
     >
       <div className="m-h-screen">
         <L2 extraClasses="mb-4 px-10">Distributions</L2>
-        <div className="mx-10 text-gray-syn4 h-54 overflow-y-scroll no-scroll-bar">
+        <div className="mx-10 text-gray-syn4 h-54 dark-scrollbar overflow-y-auto">
           <B2>
             By proceeding, I agree that I reviewed and confirm the following:
             <ul className="list-disc ml-8 mt-2">
