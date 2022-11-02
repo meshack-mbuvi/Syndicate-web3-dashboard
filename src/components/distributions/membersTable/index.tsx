@@ -700,8 +700,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
               searchValue: searchValue || '',
               itemsCount: _membersDetails.length,
               clearSearchValue: clearSearchValue,
-              padding: '',
-              customClass: 'bg-gray-syn8'
+              padding: ''
             }}
           />
           {!isEditing && !hideEdit ? (

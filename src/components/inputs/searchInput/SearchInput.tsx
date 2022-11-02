@@ -32,7 +32,7 @@ export const SearchInput = (props: {
     itemsCount,
     full,
     clearSearchValue,
-    customClass = 'bg-black',
+    customClass = 'bg-transparent',
     disabled = false,
     column = false,
     searchItem = 'members',
