@@ -12,7 +12,8 @@ import { useSelector } from 'react-redux';
 import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import {
   CurrentTransaction,
-  emptyCurrentTransaction
+  emptyCurrentTransaction,
+  TransactionCategory
 } from '@/state/erc20transactions/types';
 import { BatchIdTokenDetails } from '../index';
 import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
@@ -212,11 +213,21 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                     'dddd, MMM Do YYYY, h:mm A'
                   );
 
-                  const category: any = annotation?.transactionCategory
-                    ? annotation?.transactionCategory
-                    : syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED'
-                    ? 'DISTRIBUTION'
-                    : null;
+                  let category: TransactionCategory = 'UNCATEGORISED';
+
+                  if (annotation?.transactionCategory) {
+                    category = annotation?.transactionCategory;
+                  } else if (
+                    syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
+                    isOutgoingTransaction
+                  ) {
+                    category = 'DISTRIBUTION';
+                  } else if (
+                    syndicateEvents[0]?.eventType === 'MEMBER_MINTED' ||
+                    syndicateEvents[0]?.eventType === 'MEMBER_MINTED_ETH'
+                  ) {
+                    category = 'DEPOSIT';
+                  }
 
                   return (
                     <div
