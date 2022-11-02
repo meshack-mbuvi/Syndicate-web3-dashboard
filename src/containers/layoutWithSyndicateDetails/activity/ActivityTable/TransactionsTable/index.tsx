@@ -307,10 +307,15 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         }}
                       >
                         {rowCheckboxActiveData[index] &&
-                          rowCheckboxActiveData[index].checkboxVisible && (
+                          rowCheckboxActiveData[index].checkboxVisible &&
+                          category !== 'DISTRIBUTION' && (
                             <div
-                              onMouseEnter={() => setCheckboxActive(true)}
-                              onMouseLeave={() => setCheckboxActive(false)}
+                              onMouseEnter={() => {
+                                setCheckboxActive(true);
+                              }}
+                              onMouseLeave={() => {
+                                setCheckboxActive(false);
+                              }}
                             >
                               <input
                                 type="checkbox"
@@ -326,12 +331,14 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       <div className="flex flex-row col-span-3 items-center">
                         <div
                           className="w-fit-content py-3"
-                          onMouseEnter={() =>
-                            toggleCategoryPillReadOnly(index, false)
-                          }
-                          onMouseLeave={() =>
-                            toggleCategoryPillReadOnly(index, true)
-                          }
+                          onMouseEnter={() => {
+                            if (category !== 'DISTRIBUTION')
+                              toggleCategoryPillReadOnly(index, false);
+                          }}
+                          onMouseLeave={() => {
+                            if (category !== 'DISTRIBUTION')
+                              toggleCategoryPillReadOnly(index, true);
+                          }}
                         >
                           <CategoryPill
                             isOwner={isOwner}
@@ -341,7 +348,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                             setInlineCategorising={setInlineCategorising}
                             readonly={
                               pillHover[index]?.categoryIsReadonly ===
-                                undefined || category === 'DEPOSIT'
+                                undefined ||
+                              category === 'DEPOSIT' ||
+                              category === 'DISTRIBUTION'
                                 ? true
                                 : pillHover[index]?.categoryIsReadonly
                             }
