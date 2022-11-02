@@ -1,5 +1,5 @@
-import { Web3Provider } from '@ethersproject/providers';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
+import { Web3Provider } from '@ethersproject/providers';
 import { DisplayAddressWithENS } from './display';
 
 export enum AddressImageSize {
@@ -39,7 +39,7 @@ export const AddressWithENS: React.FC<Props> = ({
   disableTransition = false,
   disabled = false,
   ...rest
-}) => {
+}: Props) => {
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const { data } = useFetchEnsAssets(address, ethersProvider);
   return (

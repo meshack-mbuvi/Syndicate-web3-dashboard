@@ -232,8 +232,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const memberCellStyles = (address: string): string => {
     return `${
       (hoveredRow === address && 'bg-gray-syn8') || ''
-    } transition-all ease-out ${normalCellHeight} border-gray-syn6
-    } ${(!isAddressActive(address) && 'text-gray-syn5') || ''} ${
+    } transition-all ease-out ${normalCellHeight} border-b-1 border-gray-syn6
+     ${(!isAddressActive(address) && 'text-gray-syn5') || ''} ${
       (isBlurred && 'opacity-50 filter blur-md') || ''
     }`;
   };
@@ -515,9 +515,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         }}
         className={`w-full flex justify-between ${
           isEditing ? 'cursor-pointer' : 'cursor-text'
-        } transition-all ease-out border-b-1 border-gray-syn6 ${
-          isBlurred ? 'opacity-70 filter blur-md' : ''
-        }`}
+        } transition-all ease-out `}
         key={memberDetails.address}
       >
         {/* Left columns - member, share */}
@@ -640,7 +638,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
             !isEditing ? 'w-0' : narrowCellStyles
           } ${footerCellStyles}`}
         >
-          Total distributed
+          Total distributing
         </div>
 
         {/* Space reserved for member name column */}

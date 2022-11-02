@@ -43,7 +43,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
   disableTransition,
   disabled,
   ...rest
-}) => {
+}: Props) => {
   const formattedAddress = addressAbbreviated
     ? address
     : formatAddress(
@@ -52,10 +52,10 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
         2 + maxDigits / 2,
         maxDigits % 2 ? (maxDigits + 1) / 2 : maxDigits / 2
       );
-  const TopLineName = () => {
+  const TopLineName = (): JSX.Element => {
     return <div>{name}</div>;
   };
-  const TopLineAddress = () => {
+  const TopLineAddress = (): JSX.Element => {
     return (
       <div {...rest}>
         <span className={`${disabled ? 'text-gray-syn5' : 'text-gray-syn4'}`}>
@@ -113,7 +113,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
           (layout === AddressLayout.ONE_LINE &&
             'flex items-center space-x-2') ||
           ''
-        } transition-all relative`}
+        } ${disableTransition ? '' : 'transition-all'} relative`}
         style={{
           top: '-0.0rem'
         }}
