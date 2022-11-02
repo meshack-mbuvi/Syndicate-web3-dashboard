@@ -427,20 +427,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     tokenDetails={[
                       {
                         name: String(tokenName),
-                        symbol:
-                          category === 'INVESTMENT' ||
-                          category === 'OFF_CHAIN_INVESTMENT'
-                            ? 'USD'
-                            : String(tokenSymbol),
+                        symbol: String(tokenSymbol),
                         icon: tokenLogo
                           ? tokenLogo
                           : activeNetwork.nativeCurrency.logo,
-                        // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-                        amount:
-                          category === 'INVESTMENT' ||
-                          category === 'OFF_CHAIN_INVESTMENT'
-                            ? metadata?.postMoneyValuation
-                            : amount
+                        amount: amount
                       }
                     ]}
                     transactionType={

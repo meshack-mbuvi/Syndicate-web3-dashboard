@@ -249,12 +249,19 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                               to: currentTransfer.to,
                               isOutgoingTransaction
                             },
-                            amount: getWeiAmount(
-                              web3,
-                              String(currentTransfer.value),
-                              Number(currentTransfer.tokenDecimal),
-                              false
-                            ),
+                            amount: currentTransfer.tokenDecimal
+                              ? getWeiAmount(
+                                  web3,
+                                  String(currentTransfer.value),
+                                  Number(currentTransfer.tokenDecimal),
+                                  false
+                                )
+                              : getWeiAmount(
+                                  web3,
+                                  String(currentTransfer.value),
+                                  Number(activeNetwork.nativeCurrency.decimals),
+                                  false
+                                ),
                             tokenSymbol: currentTransfer.tokenSymbol
                               ? currentTransfer.tokenSymbol
                               : activeNetwork.nativeCurrency.symbol,
@@ -393,12 +400,21 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                                 icon: currentTransfer.tokenLogo
                                   ? currentTransfer.tokenLogo
                                   : activeNetwork.nativeCurrency.logo,
-                                amount: getWeiAmount(
-                                  web3,
-                                  String(currentTransfer.value),
-                                  Number(currentTransfer.tokenDecimal),
-                                  false
-                                )
+                                amount: currentTransfer.tokenDecimal
+                                  ? getWeiAmount(
+                                      web3,
+                                      String(currentTransfer.value),
+                                      Number(currentTransfer.tokenDecimal),
+                                      false
+                                    )
+                                  : getWeiAmount(
+                                      web3,
+                                      String(currentTransfer.value),
+                                      Number(
+                                        activeNetwork.nativeCurrency.decimals
+                                      ),
+                                      false
+                                    )
                               }
                             ]}
                             transactionType={
