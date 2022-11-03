@@ -598,6 +598,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     activeAddresses={activeAddresses}
                     handleActiveAddressesChange={setActiveAddresses}
                     extraClasses={`px-10 -pt-10 pb-10 no-scroll-bar`}
+                    fadeGradientColorHEX="#131416"
                   />
                 </div>
                 <div

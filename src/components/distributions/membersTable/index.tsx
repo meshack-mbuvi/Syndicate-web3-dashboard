@@ -42,6 +42,7 @@ interface Props {
   extraClasses?: string;
   ethersProvider?: any;
   isBlurred?: boolean;
+  fadeGradientColorHEX?: string;
 }
 
 enum SORT_BY {
@@ -68,7 +69,8 @@ export const DistributionMembersTable: React.FC<Props> = ({
   handleActiveAddressesChange,
   extraClasses,
   ethersProvider,
-  isBlurred = false
+  isBlurred = false,
+  fadeGradientColorHEX = '#000000'
 }: Props) => {
   const isAddressActive = (address: string): boolean => {
     return activeAddresses.includes(address);
@@ -229,6 +231,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   }, [activeAddresses]);
 
   const normalCellHeight = 'h-16';
+  const normalCellWidth = `w-40 md:w-52 lg:w-56 xl:w-60 2xl:w-72`;
   const memberCellStyles = (address: string): string => {
     return `${
       (hoveredRow === address && 'bg-gray-syn8') || ''
@@ -237,12 +240,13 @@ export const DistributionMembersTable: React.FC<Props> = ({
       (isBlurred && 'opacity-50 filter blur-md') || ''
     }`;
   };
-
   const footerCellStyles = `${normalCellHeight}`;
-  const wideCellStyles = `w-60 xl:w-72`;
+  const wideCellStyles = `${normalCellWidth} transition-all pl-1`;
+  const headerCellStyles = `${normalCellWidth} transition-all pl-1`;
   const narrowCellStyles = `w-12`;
-  const headerCellStyles = 'w-60 xl:w-72';
   const amountCellStyles = 'font-mono';
+
+  const rightOffsetForFade = 'pr-6';
 
   const handleSetSortParams = (_sortBy: SORT_BY): void => {
     let order = SORT_ORDER.ASC;
@@ -422,7 +426,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
       {/* Right columns - receiving tokens */}
       <div
-        className={`flex ${(isBlurred && 'opacity-50 filter blur-md') || ''}`}
+        className={`flex ${rightOffsetForFade} ${
+          (isBlurred && 'opacity-50 filter blur-md') || ''
+        }`}
       >
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
@@ -433,7 +439,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
               <div>Receiving</div>
               <div className="flex align-center">
                 <Image
-                  src={allUniqueReceivingTokens.tokenIcons[index]}
+                  src={
+                    allUniqueReceivingTokens.tokenIcons[index]
+                      ? allUniqueReceivingTokens.tokenIcons[index]
+                      : '/images/token-gray-4.svg'
+                  }
                   alt=""
                   width={24}
                   height={24}
@@ -536,7 +546,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
           {/* Member name */}
           <div
-            className={`flex items-center space-x-4  ${wideCellStyles} ${memberCellStyles(
+            className={`flex items-center space-x-4 ${wideCellStyles} ${memberCellStyles(
               memberDetails.address
             )}`}
           >
@@ -552,7 +562,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
           {/* Date member joined */}
           <div
-            className={`flex space-x-3 items-center font-mono ${wideCellStyles} ${memberCellStyles(
+            className={`flex space-x-3 text-left items-center font-mono ${wideCellStyles} ${memberCellStyles(
               memberDetails.address
             )}`}
           >
@@ -589,7 +599,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         />
 
         {/* Right columns - receiving tokens */}
-        <div className={`flex`}>
+        <div className={`flex ${rightOffsetForFade}`}>
           {/* Each column represents a different token a member is receiving */}
           {allUniqueReceivingTokens?.tokenSymbols.map((tokenSymbol, index) => {
             const amount =
@@ -659,14 +669,14 @@ export const DistributionMembersTable: React.FC<Props> = ({
       <div className={`flex-grow ${footerCellStyles}`} />
 
       {/* Right columns - receiving tokens */}
-      <div className="flex">
+      <div className={`flex ${rightOffsetForFade}`}>
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <div
               className={`flex space-x-2 items-center justify-end ${wideCellStyles} ${footerCellStyles} ${amountCellStyles}`}
               key={index}
             >
-              <div>
+              <div className="pl-1">
                 {parseFloat(tokenAmountTotals[index]) > 0
                   ? removeTrailingDecimalPoint(
                       numberWithCommas(
@@ -685,69 +695,85 @@ export const DistributionMembersTable: React.FC<Props> = ({
   );
 
   return (
-    <div className={`relative w-full mb-32 sm:mb-auto ${extraClasses ?? ''}`}>
-      {!hideSearch && _membersDetails.length !== 0 && (
-        <div
-          className={`flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center ${
-            isBlurred ? 'opacity-70 filter blur-md' : ''
-          }`}
-        >
-          <SearchInput
-            {...{
-              onChangeHandler: handleSearchChange,
-              searchValue: searchValue || '',
-              itemsCount: _membersDetails.length,
-              clearSearchValue: clearSearchValue,
-              padding: ''
-            }}
-          />
-          {!isEditing && !hideEdit ? (
-            <div className="flex sm:space-x-8">
-              <ActionButton
-                icon="/images/edit-circle-blue.svg"
-                onClick={handleIsEditingChange}
-              >
-                Edit distribution
-              </ActionButton>
-            </div>
-          ) : null}
-        </div>
-      )}
+    <div className="relative">
+      {/* Table */}
+      <div className={`relative w-full mb-32 sm:mb-auto ${extraClasses ?? ''}`}>
+        {!hideSearch && _membersDetails.length !== 0 && (
+          <div
+            className={`flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center ${
+              isBlurred ? 'opacity-70 filter blur-md' : ''
+            }`}
+          >
+            <SearchInput
+              {...{
+                onChangeHandler: handleSearchChange,
+                searchValue: searchValue || '',
+                itemsCount: _membersDetails.length,
+                clearSearchValue: clearSearchValue,
+                padding: ''
+              }}
+            />
+            {!isEditing && !hideEdit ? (
+              <div className="flex sm:space-x-8">
+                <ActionButton
+                  icon="/images/edit-circle-blue.svg"
+                  onClick={handleIsEditingChange}
+                  extraClasses={`${rightOffsetForFade}`}
+                >
+                  Edit distribution
+                </ActionButton>
+              </div>
+            ) : null}
+          </div>
+        )}
 
-      {searchValue &&
-      _membersDetails.filter(
-        (member) =>
-          member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
-          member.ensName.toLowerCase().includes(searchValue.toLowerCase())
-      ).length === 0 ? (
-        <div className="flex flex-col justify-center">
-          <H4 className="text-xl text-center">
-            No results for {`"${searchValue}"`}
-          </H4>
+        {searchValue &&
+        _membersDetails.filter(
+          (member) =>
+            member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
+            member.ensName.toLowerCase().includes(searchValue.toLowerCase())
+        ).length === 0 ? (
+          <div className="flex flex-col justify-center">
+            <H4 className="text-xl text-center">
+              No results for {`"${searchValue}"`}
+            </H4>
 
-          <B2 className="text-gray-syn4 text-center">
-            Double check the wallet address or try another search
-          </B2>
-        </div>
-      ) : _membersDetails.length ? (
-        <div className="overflow-x-auto">
-          <div className="mb-2 w-full">{renderedHeader}</div>
-          <div className="w-full">{renderedTable}</div>
-          {canLoadMore ? <div className="w-full">{renderPagination}</div> : ''}
+            <B2 className="text-gray-syn4 text-center">
+              Double check the wallet address or try another search
+            </B2>
+          </div>
+        ) : _membersDetails.length ? (
+          <div className="overflow-x-auto">
+            <div className="mb-2 w-full">{renderedHeader}</div>
+            <div className="w-full">{renderedTable}</div>
+            {canLoadMore ? (
+              <div className="w-full">{renderPagination}</div>
+            ) : (
+              ''
+            )}
 
-          <div className="w-full">{renderedFooter}</div>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center space-y-4 my-11">
-          <H4 className="text-xl text-center">
-            This club does not have members.
-          </H4>
+            <div className="w-full">{renderedFooter}</div>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center space-y-4 my-11">
+            <H4 className="text-xl text-center">
+              This club does not have members.
+            </H4>
 
-          <B2 className="text-gray-syn4 text-center">
-            Distributions can only be made for a club with members.
-          </B2>
-        </div>
-      )}
+            <B2 className="text-gray-syn4 text-center">
+              Distributions can only be made for a club with members.
+            </B2>
+          </div>
+        )}
+      </div>
+
+      {/* Right fade */}
+      <div
+        className="w-6 h-full absolute top-0 right-0 pointer-events-none"
+        style={{
+          background: `linear-gradient(270deg, ${fadeGradientColorHEX} 0%, rgba(0, 0, 0, 0) 100%)`
+        }}
+      />
     </div>
   );
 };
