@@ -31,6 +31,7 @@ export const AuthSignInWidget: React.FC<Props> = ({
           <CTAButton
             extraClasses="flex items-center space-x-2 justify-center font-semibold"
             onClick={handleCTAClick}
+            fullWidth={true}
           >
             {state === AuthSignInWidgetState.CONNECT_WALLET ? (
               <>

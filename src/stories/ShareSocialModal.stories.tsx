@@ -8,6 +8,7 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
   title: '3. Molecules/Share Social Modal',
+  component: ShareSocialModal,
   decorators: [
     (Story: any) => (
       <Provider store={store}>
@@ -33,7 +34,8 @@ Distributions.args = {
   socialURL: 'http://app.syndicate.io/clubs/123456789',
   description:
     'Just made an investment distribution for Alpha Beta Club (✺ABC) on Syndicate  🎉  Check our dashboard for details on how much you will be receiving.',
-  buttonLabel: 'View on dashboard'
+  buttonLabel: 'View on dashboard',
+  chromatic: { disableSnapshot: true }
 };
 
 export const Collectives = Template.bind({});
@@ -64,5 +66,6 @@ Collectives.args = {
     </div>
   ),
   transactionHash:
-    '0x5e3d4545afda8da89a6da42ec4793fd3c4b45972290ba45b83d095337880d796'
+    '0x5e3d4545afda8da89a6da42ec4793fd3c4b45972290ba45b83d095337880d796',
+  chromatic: { disableSnapshot: true }
 };

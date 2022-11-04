@@ -1,7 +1,21 @@
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import ConnectWallet from '@/components/connectWallet';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Collectives/CollectiveHeader'
+  title: '3. Molecules/Collectives/Collective Header',
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <ConnectWalletProvider>
+          <Story />
+          <ConnectWallet />
+        </ConnectWalletProvider>
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

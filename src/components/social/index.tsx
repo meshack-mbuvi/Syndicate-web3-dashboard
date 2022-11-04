@@ -34,10 +34,10 @@ export const ShareCard: React.FC<Props> = ({
   return (
     <div className="flex flex-col bg-gray-syn7 max-w-104 rounded-custom overflow-hidden">
       {customVisual ? (
-        <div className="w-full h-52">{customVisual}</div>
+        <div className="w-full h-52 chromatic-ignore">{customVisual}</div>
       ) : (
         <div
-          className="bg-gray-syn5 h-52 w-full"
+          className="bg-gray-syn5 h-52 w-full chromatic-ignore"
           style={{
             // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             backgroundImage: `url('${imageOptions[randomImageIndex]}')`,

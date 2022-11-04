@@ -33,7 +33,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
 
     return (
       <div
-        className={`relative ${heightClass} ${widthClass} overflow-hidden select-none`}
+        className={`relative ${heightClass} ${widthClass} overflow-hidden select-none chromatic-ignore`}
       >
         {/* tsParticles: Copyright 2020 Matteo Bruni, released under MIT License | https://github.com/matteobruni/tsparticles/blob/main/LICENSE */}
         <Particles

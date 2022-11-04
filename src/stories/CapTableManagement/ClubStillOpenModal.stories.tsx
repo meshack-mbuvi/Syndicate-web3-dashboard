@@ -2,15 +2,23 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
 
 export default {
   title:
     'Molecules/Cap Table Management/Modals/Add Member/Club Still Open Modal',
   decorators: [
     (Story: any) => (
-      <Provider store={store}>
-        <Story />
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      </ApolloProvider>
     )
   ],
   parameters: {

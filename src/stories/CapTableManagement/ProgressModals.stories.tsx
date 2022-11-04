@@ -1,7 +1,10 @@
 import { ProgressState } from '@/components/progressCard';
 import { ProgressModal } from '@/components/progressModal';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
   title:
@@ -16,7 +19,16 @@ export default {
       ],
       control: { type: 'select' }
     }
-  }
+  },
+  decorators: [
+    (Story: React.FC): React.ReactElement => (
+      <Provider store={store}>
+        <ConnectWalletProvider>
+          <Story />
+        </ConnectWalletProvider>
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {
@@ -39,7 +51,8 @@ Pending.args = {
   title: 'Updating cap table',
   description:
     'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
-  transactionHash: '#',
+  transactionHash:
+    '0xd7ea2c427125b772113e3ea2ea5ecb5ec9546db9102e6bcb5688679fff812056',
   transactionType: 'transaction',
   state: ProgressState.PENDING
 };

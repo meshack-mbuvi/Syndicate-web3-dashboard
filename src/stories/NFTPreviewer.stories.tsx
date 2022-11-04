@@ -5,7 +5,8 @@ import {
 } from '@/components/collectives/nftPreviewer';
 
 export default {
-  title: '3. Molecules/NFT Previewer'
+  title: '3. Molecules/NFT Previewer',
+  component: NFTPreviewer
 };
 
 const Template = (args: any) => {
@@ -53,5 +54,6 @@ Artwork.args = {
       label="Alpha Beta Punks"
       backgroundColorClass="bg-blue"
     />
-  )
+  ),
+  chromatic: { disableSnapshot: true }
 };

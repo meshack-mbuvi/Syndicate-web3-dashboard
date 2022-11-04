@@ -4,20 +4,36 @@ import { CollectiveFormReview } from '@/components/collectives/create/review';
 import ConnectWallet from '@/components/connectWallet';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import { store } from '@/state/index';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+// react-query
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5000 } }
+});
+
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
 
 export default {
   title: '4. Organisms/Collectives/Create/Review',
   isFullscreen: true,
   decorators: [
     (Story: any) => (
-      <Provider store={store}>
-        <ConnectWalletProvider>
-          <Story />
-          <ConnectWallet />
-        </ConnectWalletProvider>
-      </Provider>
+      <ApolloProvider client={client}>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <ConnectWalletProvider>
+              <Story />
+              <ConnectWallet />
+            </ConnectWalletProvider>
+          </Provider>
+        </QueryClientProvider>
+      </ApolloProvider>
     )
   ]
 };

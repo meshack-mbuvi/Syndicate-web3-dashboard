@@ -9,7 +9,7 @@ import { CollectivesGeneratedArtwork } from '@/components/collectives/generatedA
 import { elementToImage } from '@/utils/elementToImage';
 
 export default {
-  title: 'Testing/Generated Artwork'
+  title: 'Experiments/Generated Artwork'
 };
 
 const Template = (args: any) => {
@@ -91,5 +91,6 @@ const Template = (args: any) => {
 export const Image = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Image.args = {
-  label: 'My label'
+  label: 'My label',
+  chromatic: { disableSnapshot: true }
 };

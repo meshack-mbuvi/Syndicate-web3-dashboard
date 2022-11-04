@@ -12,6 +12,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { isAddress } from 'ethers/lib/utils';
 
 export type Transaction = 'outgoing' | 'incoming';
 
@@ -187,7 +188,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                       category === 'DISTRIBUTION' &&
                       numClubMembers !== 1
                     ? `${numClubMembers} members`
-                    : !web3.utils.isAddress(addresses[0])
+                    : !isAddress(addresses[0])
                     ? addresses[0]
                     : formatAddress(addresses[0], 6, 4)}
                 </div>
@@ -203,7 +204,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
             <p className="text-xl">
               {companyName
                 ? companyName
-                : !web3.utils.isAddress(addresses[0])
+                : !isAddress(addresses[0])
                 ? addresses[0]
                 : formatAddress(addresses[0], 6, 4)}
             </p>

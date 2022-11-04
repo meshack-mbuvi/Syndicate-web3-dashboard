@@ -1,7 +1,8 @@
 import { ShareCard } from '@/components/social';
 
 export default {
-  title: '3. Molecules/Share Social'
+  title: '3. Molecules/Share Social',
+  component: ShareCard
 };
 
 const Template = (args: any) => {
@@ -18,5 +19,6 @@ Default.args = {
   ],
   description:
     'Just made an investment distribution for Alpha Beta Club (✺ABC) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.',
-  URL: 'https://app.syndicate.io'
+  URL: 'https://app.syndicate.io',
+  chromatic: { disableSnapshot: true }
 };

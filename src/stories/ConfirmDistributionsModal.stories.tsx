@@ -16,7 +16,6 @@ const client = new ApolloClient({
 
 export default {
   title: '4. Organisms/Confirm Distributions Modal',
-
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

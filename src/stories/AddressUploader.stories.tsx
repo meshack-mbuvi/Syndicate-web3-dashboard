@@ -1,5 +1,7 @@
 import { AddressUploader } from '@/components/uploaders/addressUploader';
 import React, { useState } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
   title: '4. Organisms/Address Uploader',
@@ -7,7 +9,14 @@ export default {
     handleCancelUpload: {
       action: 'Clicked Delete'
     }
-  }
+  },
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

@@ -1,10 +1,9 @@
 import { useEffect, useState, SetStateAction, Dispatch } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { SearchInput } from '@/containers/managerActions/shared/searchInput';
 import { formatAddress } from 'src/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
-import { AppState } from '@/state';
 
 export interface IMember {
   clubTokens: string;
@@ -26,12 +25,6 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
   setMemberAddress,
   setShowMembersList
 }) => {
-  const {
-    web3Reducer: {
-      web3: { web3 }
-    }
-  } = useSelector((state: AppState) => state);
-
   const [membersList, setMembersList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [noMemberFound, setNoMemberFound] = useState(false);
@@ -77,7 +70,7 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
       <SearchInput
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
-        web3={web3}
+        // web3={web3}
       />
 
       {noMemberFound ? null : (

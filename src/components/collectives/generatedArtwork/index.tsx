@@ -104,7 +104,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
     return (
       <button
         ref={captureRef ? captureRef : continerRef}
-        className={`relative w-full h-full ${backgroundColorClass} text-left flex justify-center items-center overflow-hidden`}
+        className={`relative w-full h-full ${backgroundColorClass} text-left flex justify-center items-center overflow-hidden chromatic-ignore`}
       >
         <CollectivesInteractiveBackground
           heightClass="h-full"

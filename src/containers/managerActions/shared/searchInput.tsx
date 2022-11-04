@@ -1,13 +1,14 @@
 import { useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import { formatAddress } from 'src/utils/formatAddress';
+import { isAddress } from 'ethers/lib/utils';
 
 // component to set filter term for data.
 export const SearchInput: React.FC<{
   setSearchTerm: Dispatch<SetStateAction<string>>;
   searchTerm: string;
-  web3: any;
+  // web3: any;
   placeholder?: string;
-}> = ({ setSearchTerm, searchTerm, web3, placeholder = 'Search members' }) => {
+}> = ({ setSearchTerm, searchTerm, placeholder = 'Search members' }) => {
   const searchInput = useRef(null);
 
   const clearInputField = () => {
@@ -34,7 +35,7 @@ export const SearchInput: React.FC<{
           placeholder={placeholder}
           onChange={(e) => setSearchTerm(e.target.value)}
           value={
-            web3.utils.isAddress(searchTerm)
+            isAddress(searchTerm)
               ? formatAddress(searchTerm, 18, 17)
               : searchTerm
           }

@@ -51,7 +51,11 @@ export const CollectivesCreateSuccess: React.FC<Props> = ({
         </div>
       </div>
       <div className="w-full flex sm:block justify-center">
-        <CTAButton extraClasses="mt-12 mb-6 px-6 md:px-0" onClick={CTAonClick}>
+        <CTAButton
+          extraClasses="mt-12 mb-6 px-6 md:px-0"
+          fullWidth={true}
+          onClick={CTAonClick}
+        >
           Manage on dashboard
         </CTAButton>
       </div>
