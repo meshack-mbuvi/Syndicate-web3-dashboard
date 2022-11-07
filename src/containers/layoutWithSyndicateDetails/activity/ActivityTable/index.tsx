@@ -12,6 +12,7 @@ import {
   SyndicateTransfers
 } from '@/hooks/useLegacyTransactions';
 import { AppState } from '@/state';
+import { v4 as uuidv4 } from 'uuid';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import {
   mockActivityDepositTransactionsData,
@@ -260,7 +261,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     ...generateSearchFilter(filter, memoizedSearchTerm)
   });
 
-  // const [transactionEventsState, setTransactionEventsState] = useState(transactionEvents)
   const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
     {}
   );
@@ -271,8 +271,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     const batchIds: BatchIdTokenDetails = {};
     let newBatchIdValue: Array<DistributionTokenDetails> = [];
     let last = '';
-    const nonDistributionTransactionsValue: Array<DistributionTokenDetails> =
-      [];
     transactionEvents.map((transaction) => {
       const transfers = transaction.transfers[0];
       const newTokenDetails: DistributionTokenDetails = {
@@ -317,7 +315,8 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         transaction.syndicateEvents.length === 0 ||
         transaction.syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
       ) {
-        nonDistributionTransactionsValue.push(newTokenDetails);
+        const newId = uuidv4();
+        batchIds[`nonBatching-${newId}`] = [newTokenDetails];
         return;
       }
       const event = transaction.syndicateEvents[0];
@@ -331,7 +330,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       }
       batchIds[event.distributionBatch] = newBatchIdValue;
     });
-    batchIds['nonDistributionTransactions'] = nonDistributionTransactionsValue;
     setBatchIdentifiers(batchIds);
   }, [
     activeNetwork.nativeCurrency.decimals,

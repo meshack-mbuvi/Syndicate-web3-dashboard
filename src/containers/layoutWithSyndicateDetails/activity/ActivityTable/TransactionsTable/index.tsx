@@ -146,146 +146,142 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     <div className="w-max sm:w-full">
       {Object.keys(batchIdentifiers).length !== 0 ? (
         <div>
-          {
-            Object.keys(batchIdentifiers).map(function (key) {
-              const tokensList: any = [];
-              if (
-                !(
-                  key === 'nonDistributionTransactions' ||
-                  batchIdentifiers[key].length === 1
-                )
-              ) {
-                batchIdentifiers[key].map((transaction) => {
-                  tokensList.push({
-                    name: transaction.transfers[0].tokenName
-                      ? transaction.transfers[0].tokenName
-                      : activeNetwork.nativeCurrency.name,
-                    symbol: transaction.transfers[0].tokenSymbol
-                      ? transaction.transfers[0].tokenSymbol
-                      : activeNetwork.nativeCurrency.symbol,
-                    icon: transaction.transfers[0].tokenLogo
-                      ? transaction.transfers[0].tokenLogo
-                      : activeNetwork.nativeCurrency.logo,
-                    amount: transaction.transfers[0].tokenDecimal
-                      ? getWeiAmount(
-                          web3,
-                          String(transaction.transfers[0].value),
-                          Number(transaction.transfers[0].tokenDecimal),
-                          false
-                        )
-                      : getWeiAmount(
-                          web3,
-                          String(transaction.transfers[0].value),
-                          Number(activeNetwork.nativeCurrency.decimals),
-                          false
-                        )
-                  });
+          {Object.keys(batchIdentifiers).map(function (key) {
+            const tokensList: any = [];
+            if (!(batchIdentifiers[key].length === 1)) {
+              batchIdentifiers[key].map((transaction) => {
+                tokensList.push({
+                  name: transaction.transfers[0].tokenName
+                    ? transaction.transfers[0].tokenName
+                    : activeNetwork.nativeCurrency.name,
+                  symbol: transaction.transfers[0].tokenSymbol
+                    ? transaction.transfers[0].tokenSymbol
+                    : activeNetwork.nativeCurrency.symbol,
+                  icon: transaction.transfers[0].tokenLogo
+                    ? transaction.transfers[0].tokenLogo
+                    : activeNetwork.nativeCurrency.logo,
+                  amount: transaction.transfers[0].tokenDecimal
+                    ? getWeiAmount(
+                        web3,
+                        String(transaction.transfers[0].value),
+                        Number(transaction.transfers[0].tokenDecimal),
+                        false
+                      )
+                    : getWeiAmount(
+                        web3,
+                        String(transaction.transfers[0].value),
+                        Number(activeNetwork.nativeCurrency.decimals),
+                        false
+                      )
                 });
-              }
-              return batchIdentifiers[key].map(
-                (
-                  {
-                    annotation,
-                    hash,
-                    timestamp,
-                    transfers,
-                    ownerAddress,
-                    syndicateEvents
-                  },
-                  index
-                ) => {
-                  if (
-                    !(
-                      key === 'nonDistributionTransactions' ||
-                      batchIdentifiers[key].length === 1
-                    ) &&
-                    index > 0
-                  )
-                    return;
-                  const currentTransfer = transfers[0];
-                  const isOutgoingTransaction =
-                    ownerAddress === currentTransfer.from;
-                  const timeSinceTransaction = moment(
-                    timestamp * 1000
-                  ).fromNow();
+              });
+            }
+            return batchIdentifiers[key].map(
+              (
+                {
+                  annotation,
+                  hash,
+                  timestamp,
+                  transfers,
+                  ownerAddress,
+                  syndicateEvents
+                },
+                index
+              ) => {
+                if (!(batchIdentifiers[key].length === 1) && index > 0) return;
+                const currentTransfer = transfers[0];
+                const isOutgoingTransaction =
+                  ownerAddress === currentTransfer.from;
+                const timeSinceTransaction = moment(timestamp * 1000).fromNow();
 
-                  const formattedBlockTime = moment(timestamp * 1000).format(
-                    'dddd, MMM Do YYYY, h:mm A'
-                  );
+                const formattedBlockTime = moment(timestamp * 1000).format(
+                  'dddd, MMM Do YYYY, h:mm A'
+                );
 
-                  let category: TransactionCategory = 'UNCATEGORISED';
+                let category: TransactionCategory = 'UNCATEGORISED';
 
-                  if (annotation?.transactionCategory) {
-                    category = annotation?.transactionCategory;
-                  } else if (
-                    syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
-                    isOutgoingTransaction
-                  ) {
-                    category = 'DISTRIBUTION';
-                  } else if (
-                    syndicateEvents[0]?.eventType === 'MEMBER_MINTED' ||
-                    syndicateEvents[0]?.eventType === 'MEMBER_MINTED_ETH'
-                  ) {
-                    category = 'DEPOSIT';
-                  }
+                if (annotation?.transactionCategory) {
+                  category = annotation?.transactionCategory;
+                } else if (
+                  syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
+                  isOutgoingTransaction
+                ) {
+                  category = 'DISTRIBUTION';
+                } else if (
+                  syndicateEvents[0]?.eventType === 'MEMBER_MINTED' ||
+                  syndicateEvents[0]?.eventType === 'MEMBER_MINTED_ETH'
+                ) {
+                  category = 'DEPOSIT';
+                }
 
-                  return (
-                    <div
-                      key={`token-table-row-${index}`}
-                      className="relative grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 cursor-pointer"
-                      onClick={() => {
-                        if (
-                          !inlineCategorising &&
-                          !checkboxActive &&
-                          !transactionsLoading
-                        ) {
-                          const selectedTransactionData = {
-                            category,
-                            note: annotation ? annotation.memo : '',
-                            hash,
-                            transactionInfo: {
-                              transactionHash: hash,
-                              from: currentTransfer.from,
-                              to: currentTransfer.to,
-                              isOutgoingTransaction
-                            },
-                            amount: currentTransfer.tokenDecimal
-                              ? getWeiAmount(
-                                  web3,
-                                  String(currentTransfer.value),
-                                  Number(currentTransfer.tokenDecimal),
-                                  false
-                                )
-                              : getWeiAmount(
-                                  web3,
-                                  String(currentTransfer.value),
-                                  Number(activeNetwork.nativeCurrency.decimals),
-                                  false
-                                ),
-                            tokenSymbol: currentTransfer.tokenSymbol
-                              ? currentTransfer.tokenSymbol
-                              : activeNetwork.nativeCurrency.symbol,
-                            tokenLogo: currentTransfer.tokenLogo,
-                            tokenName: currentTransfer.tokenName
-                              ? currentTransfer.tokenName
-                              : activeNetwork.nativeCurrency.name,
-                            readOnly: category === 'DEPOSIT' ? true : false,
-                            timestamp: formattedBlockTime,
-                            transactionId: annotation?.transactionId,
-                            annotation,
-                            blockTimestamp: timestamp
-                          };
-                          setCurrentTransaction(selectedTransactionData);
-                          setCurrentBatchIdentifier(
-                            syndicateEvents[0]?.distributionBatch
-                          );
-                          toggleShowAnnotationsModal();
-                          if (annotation?.memo) {
-                            setShowNote(true);
-                          }
+                return (
+                  <div
+                    key={`token-table-row-${index}`}
+                    className="relative grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 cursor-pointer"
+                    onClick={() => {
+                      if (
+                        !inlineCategorising &&
+                        !checkboxActive &&
+                        !transactionsLoading
+                      ) {
+                        const selectedTransactionData = {
+                          category,
+                          note: annotation ? annotation.memo : '',
+                          hash,
+                          transactionInfo: {
+                            transactionHash: hash,
+                            from: currentTransfer.from,
+                            to: currentTransfer.to,
+                            isOutgoingTransaction
+                          },
+                          amount: currentTransfer.tokenDecimal
+                            ? getWeiAmount(
+                                web3,
+                                String(currentTransfer.value),
+                                Number(currentTransfer.tokenDecimal),
+                                false
+                              )
+                            : getWeiAmount(
+                                web3,
+                                String(currentTransfer.value),
+                                Number(activeNetwork.nativeCurrency.decimals),
+                                false
+                              ),
+                          tokenSymbol: currentTransfer.tokenSymbol
+                            ? currentTransfer.tokenSymbol
+                            : activeNetwork.nativeCurrency.symbol,
+                          tokenLogo: currentTransfer.tokenLogo,
+                          tokenName: currentTransfer.tokenName
+                            ? currentTransfer.tokenName
+                            : activeNetwork.nativeCurrency.name,
+                          readOnly: category === 'DEPOSIT' ? true : false,
+                          timestamp: formattedBlockTime,
+                          transactionId: annotation?.transactionId,
+                          annotation,
+                          blockTimestamp: timestamp
+                        };
+                        setCurrentTransaction(selectedTransactionData);
+                        setCurrentBatchIdentifier(
+                          syndicateEvents[0]?.distributionBatch
+                        );
+                        toggleShowAnnotationsModal();
+                        if (annotation?.memo) {
+                          setShowNote(true);
                         }
-                      }}
-                      aria-hidden={true}
+                      }
+                    }}
+                    aria-hidden={true}
+                    onMouseEnter={() => {
+                      if (category !== 'DEPOSIT')
+                        toggleRowCheckbox(index, true);
+                    }}
+                    onMouseLeave={() => {
+                      if (category !== 'DEPOSIT')
+                        toggleRowCheckbox(index, false);
+                    }}
+                  >
+                    <div
+                      className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
                       onMouseEnter={() => {
                         if (category !== 'DEPOSIT')
                           toggleRowCheckbox(index, true);
@@ -295,165 +291,146 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                           toggleRowCheckbox(index, false);
                       }}
                     >
+                      {rowCheckboxActiveData[index] &&
+                        rowCheckboxActiveData[index].checkboxVisible &&
+                        category !== 'DISTRIBUTION' && (
+                          <div
+                            onMouseEnter={() => {
+                              setCheckboxActive(true);
+                            }}
+                            onMouseLeave={() => {
+                              setCheckboxActive(false);
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              className="bg-transparent rounded focus:ring-offset-0"
+                              onChange={(e) => handleCheckboxSelect(e, index)}
+                              checked={
+                                rowCheckboxActiveData[index].checkboxActive
+                              }
+                            />
+                          </div>
+                        )}
+                    </div>
+                    <div className="flex flex-row col-span-3 items-center">
                       <div
-                        className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
+                        className="w-fit-content py-3"
                         onMouseEnter={() => {
-                          if (category !== 'DEPOSIT')
-                            toggleRowCheckbox(index, true);
+                          if (category !== 'DISTRIBUTION')
+                            toggleCategoryPillReadOnly(index, false);
                         }}
                         onMouseLeave={() => {
-                          if (category !== 'DEPOSIT')
-                            toggleRowCheckbox(index, false);
+                          if (category !== 'DISTRIBUTION')
+                            toggleCategoryPillReadOnly(index, true);
                         }}
                       >
-                        {rowCheckboxActiveData[index] &&
-                          rowCheckboxActiveData[index].checkboxVisible &&
-                          category !== 'DISTRIBUTION' && (
-                            <div
-                              onMouseEnter={() => {
-                                setCheckboxActive(true);
-                              }}
-                              onMouseLeave={() => {
-                                setCheckboxActive(false);
-                              }}
-                            >
-                              <input
-                                type="checkbox"
-                                className="bg-transparent rounded focus:ring-offset-0"
-                                onChange={(e) => handleCheckboxSelect(e, index)}
-                                checked={
-                                  rowCheckboxActiveData[index].checkboxActive
-                                }
-                              />
-                            </div>
-                          )}
-                      </div>
-                      <div className="flex flex-row col-span-3 items-center">
-                        <div
-                          className="w-fit-content py-3"
-                          onMouseEnter={() => {
-                            if (category !== 'DISTRIBUTION')
-                              toggleCategoryPillReadOnly(index, false);
-                          }}
-                          onMouseLeave={() => {
-                            if (category !== 'DISTRIBUTION')
-                              toggleCategoryPillReadOnly(index, true);
-                          }}
-                        >
-                          <CategoryPill
-                            isOwner={isOwner}
-                            outgoing={isOutgoingTransaction}
-                            category={category}
-                            renderedInline={true}
-                            setInlineCategorising={setInlineCategorising}
-                            readonly={
-                              pillHover[index]?.categoryIsReadonly ===
-                                undefined ||
-                              category === 'DEPOSIT' ||
-                              category === 'DISTRIBUTION'
-                                ? true
-                                : pillHover[index]?.categoryIsReadonly
-                            }
-                            transactionHash={hash}
-                            refetchTransactions={refetchTransactions}
-                            showLoader={
-                              transactionsLoading &&
-                              activeTransactionHashes?.includes(hash) &&
-                              !showAnnotationsModal
-                            }
-                            setActiveTransactionHash={
-                              setActiveTransactionHashes
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      {/* For distributions that have > 1 token */}
-                      {!(
-                        key === 'nonDistributionTransactions' ||
-                        batchIdentifiers[key].length === 1
-                      ) && (
-                        <div className="text-base col-span-6 flex space-x-3 items-center">
-                          <BatchTransactionDetails
-                            contractAddress={erc20Token.address}
-                            tokenDetails={tokensList}
-                            transactionType={
-                              isOutgoingTransaction ? 'outgoing' : 'incoming'
-                            }
-                            isTransactionAnnotated={annotation ? true : false}
-                            addresses={[
-                              isOutgoingTransaction
-                                ? currentTransfer.to
-                                : currentTransfer.from
-                            ]}
-                            category={annotation?.transactionCategory}
-                            companyName={annotation?.companyName}
-                            round={annotation?.roundCategory}
-                          />
-                        </div>
-                      )}
-
-                      {(key === 'nonDistributionTransactions' ||
-                        batchIdentifiers[key].length === 1) && (
-                        <div className="text-base col-span-6 flex space-x-3 items-center">
-                          <TransactionDetails
-                            contractAddress={erc20Token.address}
-                            tokenDetails={[
-                              {
-                                name: currentTransfer.tokenName
-                                  ? currentTransfer.tokenName
-                                  : activeNetwork.nativeCurrency.name,
-                                symbol: currentTransfer.tokenSymbol
-                                  ? currentTransfer.tokenSymbol
-                                  : activeNetwork.nativeCurrency.symbol,
-                                icon: currentTransfer.tokenLogo
-                                  ? currentTransfer.tokenLogo
-                                  : activeNetwork.nativeCurrency.logo,
-                                amount: currentTransfer.tokenDecimal
-                                  ? getWeiAmount(
-                                      web3,
-                                      String(currentTransfer.value),
-                                      Number(currentTransfer.tokenDecimal),
-                                      false
-                                    )
-                                  : getWeiAmount(
-                                      web3,
-                                      String(currentTransfer.value),
-                                      Number(
-                                        activeNetwork.nativeCurrency.decimals
-                                      ),
-                                      false
-                                    )
-                              }
-                            ]}
-                            transactionType={
-                              isOutgoingTransaction ? 'outgoing' : 'incoming'
-                            }
-                            isTransactionAnnotated={annotation ? true : false}
-                            addresses={[
-                              isOutgoingTransaction
-                                ? currentTransfer.to
-                                : currentTransfer.from
-                            ]}
-                            category={annotation?.transactionCategory}
-                            companyName={annotation?.companyName}
-                            round={annotation?.roundCategory}
-                          />
-                        </div>
-                      )}
-
-                      <div className="text-base flex col-span-3 items-center justify-end">
-                        <span className="text-gray-syn5">
-                          {timeSinceTransaction}
-                        </span>
+                        <CategoryPill
+                          isOwner={isOwner}
+                          outgoing={isOutgoingTransaction}
+                          category={category}
+                          renderedInline={true}
+                          setInlineCategorising={setInlineCategorising}
+                          readonly={
+                            pillHover[index]?.categoryIsReadonly ===
+                              undefined ||
+                            category === 'DEPOSIT' ||
+                            category === 'DISTRIBUTION'
+                              ? true
+                              : pillHover[index]?.categoryIsReadonly
+                          }
+                          transactionHash={hash}
+                          refetchTransactions={refetchTransactions}
+                          showLoader={
+                            transactionsLoading &&
+                            activeTransactionHashes?.includes(hash) &&
+                            !showAnnotationsModal
+                          }
+                          setActiveTransactionHash={setActiveTransactionHashes}
+                        />
                       </div>
                     </div>
-                  );
-                }
-              );
-            })
-            // sort by timestamp
-          }
+
+                    {/* For distributions that have > 1 token */}
+                    {!(batchIdentifiers[key].length === 1) && (
+                      <div className="text-base col-span-6 flex space-x-3 items-center">
+                        <BatchTransactionDetails
+                          contractAddress={erc20Token.address}
+                          tokenDetails={tokensList}
+                          transactionType={
+                            isOutgoingTransaction ? 'outgoing' : 'incoming'
+                          }
+                          isTransactionAnnotated={annotation ? true : false}
+                          addresses={[
+                            isOutgoingTransaction
+                              ? currentTransfer.to
+                              : currentTransfer.from
+                          ]}
+                          category={annotation?.transactionCategory}
+                          companyName={annotation?.companyName}
+                          round={annotation?.roundCategory}
+                        />
+                      </div>
+                    )}
+
+                    {batchIdentifiers[key].length === 1 && (
+                      <div className="text-base col-span-6 flex space-x-3 items-center">
+                        <TransactionDetails
+                          contractAddress={erc20Token.address}
+                          tokenDetails={[
+                            {
+                              name: currentTransfer.tokenName
+                                ? currentTransfer.tokenName
+                                : activeNetwork.nativeCurrency.name,
+                              symbol: currentTransfer.tokenSymbol
+                                ? currentTransfer.tokenSymbol
+                                : activeNetwork.nativeCurrency.symbol,
+                              icon: currentTransfer.tokenLogo
+                                ? currentTransfer.tokenLogo
+                                : activeNetwork.nativeCurrency.logo,
+                              amount: currentTransfer.tokenDecimal
+                                ? getWeiAmount(
+                                    web3,
+                                    String(currentTransfer.value),
+                                    Number(currentTransfer.tokenDecimal),
+                                    false
+                                  )
+                                : getWeiAmount(
+                                    web3,
+                                    String(currentTransfer.value),
+                                    Number(
+                                      activeNetwork.nativeCurrency.decimals
+                                    ),
+                                    false
+                                  )
+                            }
+                          ]}
+                          transactionType={
+                            isOutgoingTransaction ? 'outgoing' : 'incoming'
+                          }
+                          isTransactionAnnotated={annotation ? true : false}
+                          addresses={[
+                            isOutgoingTransaction
+                              ? currentTransfer.to
+                              : currentTransfer.from
+                          ]}
+                          category={annotation?.transactionCategory}
+                          companyName={annotation?.companyName}
+                          round={annotation?.roundCategory}
+                        />
+                      </div>
+                    )}
+
+                    <div className="text-base flex col-span-3 items-center justify-end">
+                      <span className="text-gray-syn5">
+                        {timeSinceTransaction}
+                      </span>
+                    </div>
+                  </div>
+                );
+              }
+            );
+          })}
           {/* Pagination  */}
           {showPagination && (
             <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
