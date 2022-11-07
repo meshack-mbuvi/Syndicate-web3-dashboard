@@ -113,7 +113,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     if (transactionsChecked) {
       const categories = new Set(
         transactionsChecked.map((transaction) => {
-          return transaction.metadata?.transactionCategory ?? null;
+          return transaction.annotation?.transactionCategory ?? null;
         })
       );
 
@@ -182,10 +182,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     let obj = {};
     if (filterValue && filterValue !== 'everything') {
       filter === 'uncategorised'
-        ? (obj = { ...obj, metadata: null })
+        ? (obj = { ...obj, annotation: null })
         : (obj = {
             ...obj,
-            metadata: { transactionCategory: `${filter?.toUpperCase()}` }
+            annotation: { transactionCategory: `${filter?.toUpperCase()}` }
           });
     }
     if (searchValue) {
@@ -261,17 +261,36 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     ...generateSearchFilter(filter, memoizedSearchTerm)
   });
 
+  const [transactionEventsState, setTransactionEventsState] = useState<any>();
   const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
     {}
   );
 
+  useEffect(() => {
+    if (isDemoMode) {
+      setTransactionEventsState(mockTransactionsData.events);
+    } else {
+      setTransactionEventsState(transactionEvents);
+      const countofTransactions = pageOffset + DATA_LIMIT;
+
+      if (
+        numTransactions < DATA_LIMIT ||
+        countofTransactions === numTransactions
+      ) {
+        setCanNextPage(false);
+      } else {
+        setCanNextPage(true);
+      }
+    }
+  }, [numTransactions, pageOffset]);
+
   // Prepares token distributions per distributionBatch
   useEffect(() => {
-    if (!transactionEvents) return;
+    if (!transactionEventsState) return;
     const batchIds: BatchIdTokenDetails = {};
     let newBatchIdValue: Array<DistributionTokenDetails> = [];
     let last = '';
-    transactionEvents.map((transaction) => {
+    transactionEventsState.map((transaction: any) => {
       const transfers = transaction.transfers[0];
       const newTokenDetails: DistributionTokenDetails = {
         annotation: transaction.annotation,
@@ -336,7 +355,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     activeNetwork.nativeCurrency.name,
     activeNetwork.nativeCurrency.symbol,
     activeNetwork.nativeCurrency.logo,
-    transactionEvents
+    transactionEventsState
   ]);
 
   useEffect(() => {
@@ -350,19 +369,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       refetchTransactions();
     }
   }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
-
-  useEffect(() => {
-    const countofTransactions = pageOffset + DATA_LIMIT;
-
-    if (
-      numTransactions < DATA_LIMIT ||
-      countofTransactions === numTransactions
-    ) {
-      setCanNextPage(false);
-    } else {
-      setCanNextPage(true);
-    }
-  }, [numTransactions, pageOffset]);
 
   // stuff to filter transactions with in the search input
   const handleSearchOnChange = (e: any) => {
@@ -382,21 +388,20 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       : mockActivityTransactionsData;
     let filteredData;
     if (filter && filter !== 'everything') {
-      filteredData = data.edges.filter(
+      filteredData = data.events.filter(
         (transaction) =>
-          transaction.metadata.transactionCategory === filter.toUpperCase()
+          transaction.annotation?.transactionCategory === filter.toUpperCase()
       );
     }
 
     if (searchValue) {
-      filteredData = data.edges.filter((transaction) => {
-        const { hash, fromAddress, toAddress, tokenName, tokenSymbol } =
-          transaction;
+      filteredData = data.events.filter((transaction: any) => {
+        const { hash, from, to, tokenName, tokenSymbol } = transaction;
 
         return (
           manualMockDataFilter(hash) ||
-          manualMockDataFilter(fromAddress) ||
-          manualMockDataFilter(toAddress) ||
+          manualMockDataFilter(from) ||
+          manualMockDataFilter(to) ||
           manualMockDataFilter(tokenName) ||
           manualMockDataFilter(tokenSymbol)
         );
@@ -404,7 +409,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     }
 
     setMockTransactionsData({
-      edges: filteredData,
+      events: filteredData,
       // @ts-expect-error TS(2454): Variable 'filteredData' is used before being assig... Remove this comment to see the full error message
       totalCount: filteredData?.length
     });
@@ -485,7 +490,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     checkboxVisible: boolean
   ) => {
     if (!isOwner) return;
-    const data = transactionEvents.map((item: any, index: any) => {
+    const data = transactionEventsState.map((item: any, index: any) => {
       return {
         ...item,
         checkboxVisible: rowCheckboxActiveData[index]?.checkboxActive ?? false,
@@ -534,7 +539,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
                 !transactionsLoading &&
                 !numTransactions &&
                 !searchValue &&
-                !mockTransactionsData.edges.length
+                !mockTransactionsData.events.length
               }
               width={searchWidth}
             />
@@ -580,7 +585,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         goToNextPage={goToNextPage}
         transactionsLoading={transactionsLoading}
         numTransactions={numTransactions}
-        transactionEvents={transactionEvents}
+        transactionEvents={transactionEventsState}
         batchIdentifiers={batchIdentifiers}
         emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
         toggleRowCheckbox={toggleRowCheckbox}

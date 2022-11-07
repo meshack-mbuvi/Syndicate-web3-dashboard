@@ -131,7 +131,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   >({});
   const [disableDropDown, setDisableDropDown] = useState(false);
   const [isDistributionTableExpanded, setIsDistributionTableExpanded] =
-    useState(false);
+    useState(isDemoMode);
   const [tokensTableRows, setTokensTableRows] = useState([]);
   const [memberDetails, setMemberDetails] = useState<memberDetail[]>([]);
   const [activeAddresses, setActiveAddresses] = useState<string[]>([]);
