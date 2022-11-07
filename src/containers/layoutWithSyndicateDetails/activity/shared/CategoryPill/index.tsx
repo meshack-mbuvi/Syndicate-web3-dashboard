@@ -116,11 +116,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       text: 'Investment tokens',
       value: 'INVESTMENT_TOKEN',
       icon: '/images/activity/investment-tokens.svg'
-    },
-    {
-      text: 'Distribution',
-      value: 'DISTRIBUTION',
-      icon: '/images/activity/distribution.svg'
     }
   ];
 
