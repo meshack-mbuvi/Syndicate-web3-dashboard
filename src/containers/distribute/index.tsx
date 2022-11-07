@@ -41,7 +41,7 @@ enum Steps {
   selectMembers = 'select members'
 }
 
-const GAS_ESTIMATE_MARGIN = 1.5; // A margin of 50% is added to the estimate.
+const GAS_ESTIMATE_MARGIN = 2; // A margin of 100% is added to the estimate.
 
 const Distribute: FC = () => {
   const {
@@ -479,18 +479,29 @@ const Distribute: FC = () => {
 
     const price = _options[_nativeTokenIndex].price.usd;
 
+    const _currentSetAmount = nativeToken.tokenAmount ?? 0;
+
     // update maximumTokenAmount on currentNativeToken token
+    // If current set amount is less than max available token amount, do not update the amounts
     setOptions([
       ..._options.slice(0, _nativeTokenIndex),
       {
         ..._options[_nativeTokenIndex],
         error,
         fiatAmount: price
-          ? price * +_newMaxTokenAmount > 0
+          ? +_currentSetAmount < _newMaxTokenAmount
+            ? price * +_currentSetAmount
+            : price * +_newMaxTokenAmount > 0
             ? price * +_newMaxTokenAmount
             : 0
           : 0,
-        tokenAmount: `${_newMaxTokenAmount > 0 ? _newMaxTokenAmount : 0}`,
+        tokenAmount: `${
+          +_currentSetAmount < _newMaxTokenAmount
+            ? _currentSetAmount
+            : _newMaxTokenAmount > 0
+            ? _newMaxTokenAmount
+            : 0
+        }`,
         maximumTokenAmount: `${_newMaxTokenAmount > 0 ? _newMaxTokenAmount : 0}`
       },
       ..._options.slice(_nativeTokenIndex + 1)
@@ -574,11 +585,6 @@ const Distribute: FC = () => {
     DepositTokenMintModule
   ]);
 
-  /**
-   * if max native is selected and other tokens are available but not selected,
-   * show warning message asking the admin to reserve some native for other token
-   * distributions.
-   */
   useEffect(() => {
     const [_selectedNativeToken]: IToken[] = distributionTokens.filter(
       (token: IToken) => token.symbol == activeNetwork.nativeCurrency.symbol

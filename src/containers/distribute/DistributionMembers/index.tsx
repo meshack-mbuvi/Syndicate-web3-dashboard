@@ -29,7 +29,6 @@ import { setERC20TokenContract } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { isZeroAddress } from '@/utils';
 import ERC20ABI from '@/utils/abi/erc20.json';
-import { pollTransaction } from '@/utils/contracts/pollTransaction';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
@@ -95,7 +94,6 @@ const ReviewDistribution: React.FC<Props> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
-  const [timerId, setTimerId] = useState(0);
   const [transactionHash, setTransactionHash] = useState('');
   const [batchIdentifier, setBatchIdentifier] = useState(uuidv4());
 
@@ -105,15 +103,6 @@ const ReviewDistribution: React.FC<Props> = ({
     useState<string>('');
 
   const [showGraphWarning, setShowGraphWarning] = useState(false);
-
-  //clear timer on unmount
-  useEffect(() => {
-    return (): void => {
-      if (timerId > 0) {
-        clearInterval(timerId);
-      }
-    };
-  }, [timerId]);
 
   const { isDataStale, lastSyncedBlock, timeToSyncPendingBlocks } =
     useGraphSyncState();
@@ -529,36 +518,9 @@ const ReviewDistribution: React.FC<Props> = ({
     setIsTransactionPending(false);
   };
 
-  const updateStepStatus = (status: boolean): void => {
-    if (status) {
-      // Transaction was successfully processed.
-      onTxReceipt();
-    } else {
-      setProgressDescriptorDescription(
-        'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
-      );
-      updateSteps('isInErrorState', true);
-      updateSteps('status', ProgressDescriptorState.FAILURE);
-
-      setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
-      setIsTransactionPending(false);
-    }
-  };
-
   const onTxFail = (error?: { code: number; message: string }): void => {
     setIsConfirmationModalVisible(true);
     const { tokenAmount, symbol } = steps[activeIndex];
-
-    if (error?.message.includes('Be aware that it might still be mined')) {
-      setProgressDescriptorDescription(TRANSACTION_TOO_LONG_MSG);
-
-      // Update progress state
-      setProgressDescriptorTitle(``);
-
-      updateSteps('isInErrorState', false);
-      setTimerId(pollTransaction(web3, transactionHash, updateStepStatus));
-      return;
-    }
 
     // Update progress state
     setProgressDescriptorTitle(
@@ -674,6 +636,7 @@ const ReviewDistribution: React.FC<Props> = ({
     // handle distributions
     setIsConfirmationModalVisible(true);
     const token = steps[activeIndex];
+
     if (token.action == 'distribute') {
       // no approval stage for ETH
       setProgressDescriptorStatus(ProgressDescriptorState.PENDING);

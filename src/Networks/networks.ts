@@ -1,4 +1,5 @@
 export interface INetwork {
+  transactionBlockTimeout: number;
   name: string;
   displayName: string;
   shortName: string;
@@ -46,6 +47,7 @@ export const NETWORKS: { [key: number]: INetwork } = Object.freeze({
     chainId: 1,
     networkId: 1,
     testNetwork: false,
+    transactionBlockTimeout: 75,
     rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_MAINNET || '',
     publicRPC: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     logo: '/images/chains/ethereum.svg',
@@ -84,6 +86,7 @@ export const NETWORKS: { [key: number]: INetwork } = Object.freeze({
     chainId: 5,
     networkId: 5,
     testNetwork: true,
+    transactionBlockTimeout: 100,
     rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_GOERLI || '',
     publicRPC: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     logo: '/images/chains/goerli.svg',
@@ -122,6 +125,7 @@ export const NETWORKS: { [key: number]: INetwork } = Object.freeze({
     chainId: 137,
     networkId: 137,
     testNetwork: false,
+    transactionBlockTimeout: 75,
     rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON || '',
     publicRPC: 'https://polygon-rpc.com/',
     logo: '/images/chains/polygon.svg',

@@ -458,7 +458,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     const { message } = error;
     // this error is triggered on Polygon after transaction success.
     // we don't need to show the failure modal.
-    if (message.indexOf('Transaction was not mined within 50 blocks') > -1) {
+    if (message.indexOf('Be aware that it might still be mined') > -1) {
       setMintFailed(false);
     } else {
       setMintFailed(true);

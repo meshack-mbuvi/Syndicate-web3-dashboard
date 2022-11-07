@@ -317,9 +317,7 @@ const ModifyCollectiveSettings: React.FC = () => {
 
     // Update progress state
     setProgressDescriptorTitle(`Error updating`);
-    if (
-      error?.message?.indexOf('Transaction was not mined within 50 blocks') > -1
-    ) {
+    if (error?.message?.indexOf('Be aware that it might still be mined') > -1) {
       setProgressDescriptorDescription(
         'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
       );

@@ -296,7 +296,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             console.log({ error });
           });
       } else if (!loading && activeNetwork && !account) {
-        initializeWeb3();
+        void initializeWeb3();
       }
     } catch (error) {
       console.log({ error });
@@ -381,12 +381,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     return { address, network, ethersProvider };
   };
 
-  const newWeb3Instance = async (provider: any) => {
+  const newWeb3Instance = async (provider: any): Promise<void> => {
+    const transactionBlockTimeout =
+      NETWORKS[chainId || 1].transactionBlockTimeout;
+
     const newWeb3 = new Web3(provider);
     // hot fix
     // increase default timeout to 48hrs (172800 seconds)
     // this stops transactions from being marked as failed on the UI while still pending on-chain.
     newWeb3.eth.transactionPollingTimeout = 172800;
+    newWeb3.eth.transactionBlockTimeout = transactionBlockTimeout;
 
     setWeb3(newWeb3);
   };
@@ -500,7 +504,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (showSuccessModal) {
       const timer = setTimeout(() => setShowSuccessModal(false), 1000);
-      return () => clearTimeout(timer);
+      return (): void => clearTimeout(timer);
     }
   }, [showSuccessModal]);
 
@@ -553,18 +557,14 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
-    } catch (error) {
+    } catch (error: any) {
       if (
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         error.code === -32002 ||
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         error.message === 'Already processing eth_requestAccounts. Please wait.'
       ) {
         showWalletConnecting = true;
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
       } else if (error.message === 'User Rejected') {
         connectionRejected = true;
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
       } else if (error.message === 'No Web3 Provider found') {
         providerNotFound = true;
       } else {
