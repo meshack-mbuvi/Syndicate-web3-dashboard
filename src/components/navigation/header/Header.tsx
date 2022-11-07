@@ -294,7 +294,7 @@ const Header: React.FC<props> = ({
             <div className={`flex space-x-3 w-full justify-end`}>
               {showSideNav ? (
                 <div className="flex h-11 space-x-5 mr-3 md:hidden justify-between">
-                  <div className="">
+                  <div>
                     <NavButton
                       type={NavButtonType.CLOSE}
                       onClick={handleExitClick}
@@ -345,13 +345,18 @@ const Header: React.FC<props> = ({
                   <NavButton
                     handlePrevious={handlePrevious}
                     type={NavButtonType.HORIZONTAL}
+                    extraClasses="flex-shrink-0"
                   />
                 ) : null}
               </>
             ) : null}
 
             {showCloseButton && (
-              <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+              <NavButton 
+                type={NavButtonType.CLOSE} 
+                onClick={handleExitClick}
+                extraClasses="flex-shrink-0"
+              />
             )}
           </div>
         </div>
