@@ -17,6 +17,7 @@ import {
 } from '@/state/erc20transactions/types';
 import { BatchIdTokenDetails } from '../index';
 import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 
 interface ITransactionsTableProps {
   canNextPage: boolean;
@@ -76,6 +77,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const [showAnnotationsModal, toggleShowAnnotationsModal] = useModal();
   const [checkboxActive, setCheckboxActive] = useState<boolean>(false);
   const [showNote, setShowNote] = useState<boolean>(false);
+
+  const { clubMembers } = useClubTokenMembers();
 
   // loading state for transactions table.
   const loaderContent = (
@@ -370,9 +373,10 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                               ? currentTransfer.to
                               : currentTransfer.from
                           ]}
-                          category={annotation?.transactionCategory}
+                          category={category}
                           companyName={annotation?.companyName}
                           round={annotation?.roundCategory}
+                          numClubMembers={clubMembers.length}
                         />
                       </div>
                     )}
@@ -419,9 +423,10 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                               ? currentTransfer.to
                               : currentTransfer.from
                           ]}
-                          category={annotation?.transactionCategory}
+                          category={category}
                           companyName={annotation?.companyName}
                           round={annotation?.roundCategory}
+                          numClubMembers={clubMembers.length}
                         />
                       </div>
                     )}

@@ -64,7 +64,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
       return category === 'INVESTMENT'
         ? 'invested in'
         : category === 'DISTRIBUTION'
-        ? 'distributing to members'
+        ? 'distributed to'
         : 'sent to';
     } else if (transactionType === 'incoming') {
       if (onModal) {
@@ -176,6 +176,13 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     />
                   </div>
                 ) : null}
+                {!onModal && category === 'DISTRIBUTION' && (
+                  <div className="text-base">
+                    {numClubMembers === 1
+                      ? `${numClubMembers} member`
+                      : `${numClubMembers} members`}
+                  </div>
+                )}
                 <div
                   className={`${
                     onModal ? 'sm:text-2xl text-base' : 'text-base'
