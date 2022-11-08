@@ -2,12 +2,19 @@ import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 
+interface RemixDetails {
+  inputValues: any;
+  abiFunction: any;
+  remixContractAddress: any;
+  remixAbi: AbiItem[];
+}
 interface Props {
   contract: ContractMapper;
   customClasses?: string;
   withFiatCurrency?: boolean;
   args?: Record<string, any>;
   skipQuery?: boolean;
+  remixDetails?: RemixDetails;
 }
 
 const EstimateGas: React.FC<Props> = ({
@@ -15,7 +22,8 @@ const EstimateGas: React.FC<Props> = ({
   customClasses = '',
   withFiatCurrency = false,
   args = {},
-  skipQuery = false
+  skipQuery = false,
+  remixDetails
 }) => {
   const {
     web3Reducer: {
@@ -27,7 +35,8 @@ const EstimateGas: React.FC<Props> = ({
     contract,
     withFiatCurrency,
     args,
-    skipQuery
+    skipQuery,
+    remixDetails
   });
 
   return (

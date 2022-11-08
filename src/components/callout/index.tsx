@@ -27,7 +27,7 @@ interface Props {
 
 export const Callout: React.FC<Props> = ({
   type = CalloutType.REGULAR,
-  extraClasses = '',
+  extraClasses = 'px-5 py-4 rounded-xl',
   showIcon = true,
   icon = null,
   backgroundOpacity = 'bg-opacity-10',
@@ -87,7 +87,7 @@ export const Callout: React.FC<Props> = ({
           : iconPosition === CalloutIconPosition.TOP
           ? 'space-y-3.5'
           : ''
-      } rounded-xl px-5 py-4 ${extraClasses}`}
+      } ${extraClasses}`}
       {...rest}
     >
       {showIcon && calloutIcon && typeof calloutIcon === 'string' ? (

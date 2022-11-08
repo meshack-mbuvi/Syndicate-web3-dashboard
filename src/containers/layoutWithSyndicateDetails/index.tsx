@@ -145,6 +145,7 @@ const LayoutWithSyndicateDetails: FC<{
       GoogleAnalyticsPageView(fullPathname);
     }
   }, [name, router.events]);
+  
 
   const {
     loading: queryLoading,

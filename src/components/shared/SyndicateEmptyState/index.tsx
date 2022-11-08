@@ -13,6 +13,7 @@ interface Props {
     chainId: number;
   };
 }
+
 const Index: FC<Props> = ({ activeNetwork }) => {
   const router = useRouter();
   const {

@@ -14,6 +14,9 @@ import FragmentInputs from './FragmentInputs';
 import { CustomModuleCallout } from '../CustomModuleCallout';
 import { ProgressModal } from '@/components/progressModal';
 import { getInputs } from '@/utils/remix';
+import EstimateGas from '@/components/EstimateGas';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { Callout } from '@/components/callout';
 
 interface DecodedFnModalProps {
   showDecodedFnModal: boolean;
@@ -145,6 +148,12 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
     }
   }, [account]);
 
+  // check if all params have a value since we cannot call estimate
+  // gas on the func with a required argument missing.
+  const paramsAvailable =
+    Object.keys(fnParams).filter((key) => Boolean(fnParams[key])).length ===
+    funcABI?.inputs.length;
+
   return (
     <>
       {txnProgress?.progressStatus === ProgressState.FAILURE ||
@@ -253,8 +262,29 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
                 alwaysShowDescriptions={false}
                 extraClasses="mt-6"
               />
-              <div className="mt-6">
-                {/* TODO: add gasEstimate */}
+              <div className="flex flex-col mt-6 -space-y-5">
+                {paramsAvailable && activeStepIndex > 1 ? (
+                  <div className="mt-3">
+                    <Callout
+                      backgroundColor="bg-blue-midnightExpress"
+                      backgroundOpacity="bg-opacity-100"
+                      extraClasses="pt-3 pb-8 px-4 text-sm rounded-1.5lg"
+                    >
+                      <EstimateGas
+                        contract={ContractMapper.RemixActiveModule}
+                        withFiatCurrency={true}
+                        remixDetails={{
+                          inputValues: getMultiValsString(fnParams),
+                          abiFunction: funcABI,
+                          remixContractAddress: contractAddress,
+                          remixAbi: abi
+                        }}
+                        customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
+                      />
+                    </Callout>
+                  </div>
+                ) : null}
+
                 <CTAButton
                   onClick={handleStepAction}
                   extraClasses={'w-full'}

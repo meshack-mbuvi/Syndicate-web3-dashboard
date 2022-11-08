@@ -98,7 +98,6 @@ const Layout: FC<Props> = ({
   const loading = adminClubsLoading || memberClubsLoading;
 
   const router = useRouter();
-
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
 
