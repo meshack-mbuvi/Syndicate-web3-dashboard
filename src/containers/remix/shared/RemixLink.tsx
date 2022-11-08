@@ -1,4 +1,4 @@
-import ExternalLinkIcon from '@/components/icons/externalLink';
+import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
 
 interface RemixLinkProps {
   text: string;
@@ -19,7 +19,7 @@ const RemixLink: React.FC<RemixLinkProps> = ({
         }`}
       >
         <span className="mr-0.5 pr-2 whitespace-nowrap">{text}</span>
-        {<ExternalLinkIcon fill={'#4376FF'} />}
+        {<SimpleExternalLinkIcon textColorClass={'#4376FF'} />}
       </div>
     </a>
   );

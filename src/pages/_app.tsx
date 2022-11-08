@@ -73,7 +73,8 @@ export enum FEATURE_FLAGS {
   DISTRIBUTIONS = 'Distributions',
   COLLECTIVES = 'Collectives',
   CLUBS_MIXIN_GUARDED = 'ClubsMixinGuarded',
-  DEALS = 'Deals'
+  DEALS = 'Deals',
+  REMIX = 'Remix'
 }
 
 const StateProviders: React.FC = ({ children }) => (

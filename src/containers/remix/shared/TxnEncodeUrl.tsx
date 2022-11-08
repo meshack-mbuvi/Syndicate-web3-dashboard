@@ -34,6 +34,7 @@ const TxnEncodeUrl: React.FC<TxnEncodeUrlProps> = ({
     if (!window.location) return;
     const location = window.location.href;
     const [prefix, after] = location.split('?');
+    const cleanPrefix = prefix.replace('/manage', '');
 
     setUrl(
       computeEncodedUrl(
@@ -44,24 +45,23 @@ const TxnEncodeUrl: React.FC<TxnEncodeUrlProps> = ({
           fnParams: fnParams,
           abiLeaf
         },
-        prefix,
+        cleanPrefix,
         after
       )
     );
   }, [abiLeaf, contractAddress, fn, fnParams, mode, network?.network]);
   return (
-    <div className="mt-10 mb-8">
-      <CopyLink
-        link={url}
-        updateCopyState={updateDepositLinkCopyState}
-        showCopiedState={showDepositLinkCopyState}
-        accentColor="white"
-        backgroundColor="bg-black"
-        borderColor="border-none"
-        borderRadius="rounded-2xl"
-        copyBorderRadius="rounded-lg"
-      />
-    </div>
+    <CopyLink
+      link={url}
+      updateCopyState={updateDepositLinkCopyState}
+      showCopiedState={showDepositLinkCopyState}
+      showBanner={false}
+      accentColor="white"
+      backgroundColor="bg-black"
+      borderColor="border-none"
+      borderRadius="rounded-2xl"
+      copyBorderRadius="rounded-lg"
+    />
   );
 };
 

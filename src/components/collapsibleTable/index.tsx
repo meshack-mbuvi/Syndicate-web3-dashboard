@@ -3,7 +3,14 @@ import {
   EditButton,
   SubmitContent
 } from '@/components/collectives/edit/editables';
-import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+  ReactElement
+} from 'react';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
@@ -12,7 +19,7 @@ import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 const transitionSettings = 'transition-all duration-700';
 
 interface Props {
-  title: string;
+  title: string | ReactElement;
   subtitle?: string;
   isExpandable?: boolean;
   rows: {
@@ -33,10 +40,10 @@ interface Props {
     showSubmitCTA?: boolean;
     setIsExpanded?: Dispatch<SetStateAction<boolean>>;
   };
-  extraClasses?: string;
-  showForm?: boolean;
   activeRow: number;
   setActiveRow: (arg: number) => void;
+  extraClasses?: string;
+  showForm?: boolean;
   setEditGroupFieldClicked?: (arg: boolean) => void;
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
@@ -51,9 +58,9 @@ export const CollapsibleTable: React.FC<Props> = ({
   title,
   rows,
   subtitle,
-  extraClasses = '',
   activeRow,
   setActiveRow,
+  extraClasses = '',
   setEditGroupFieldClicked,
   handleDisclaimerConfirmation,
   expander: {
@@ -103,7 +110,7 @@ export const CollapsibleTable: React.FC<Props> = ({
       {/* Top row */}
       <div
         className={`flex justify-between items-center ${
-          isTableHighlightingActive && activeRow && 'opacity-50'
+          isTableHighlightingActive && activeRow ? 'opacity-50' : ''
         }`}
       >
         <div className="flex flex-col">
@@ -115,6 +122,7 @@ export const CollapsibleTable: React.FC<Props> = ({
           <Switch
             isOn={isExpanded}
             type={SwitchType.EXPLICIT}
+            extraClasses="flex-shrink-0"
             onClick={() => {
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setActiveRow(showSubmitCTA ? 0 : switchRowIndex);

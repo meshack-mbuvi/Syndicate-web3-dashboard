@@ -3,18 +3,16 @@ import { FunctionFragment } from 'ethers/lib/utils';
 import { ChangeEvent } from 'react';
 import { FuncInput } from '@/types/remix';
 import { B2 } from '../../../../components/typography';
-import { cleanupInputValue, mapValueToPlaceholder } from '../encodeParams';
+import { mapValueToPlaceholder } from '../encodeParams';
 
 interface FragmentInputsProps {
-  clearResponse: () => void;
-  funcABI: FunctionFragment;
+  fnFragment: FunctionFragment;
   fnParams: Record<string, string | number | boolean>;
   setFnParams: (params: any) => void;
 }
 
 const FragmentInputs: React.FC<FragmentInputsProps> = ({
-  clearResponse,
-  funcABI,
+  fnFragment,
   fnParams,
   setFnParams
 }: FragmentInputsProps) => {
@@ -23,22 +21,20 @@ const FragmentInputs: React.FC<FragmentInputsProps> = ({
       {/* inputs */}
       <div
         className={`${
-          !(funcABI.inputs && funcABI.inputs.length > 0) ? 'hidden' : ''
+          !(fnFragment.inputs && fnFragment.inputs.length > 0) ? 'hidden' : ''
         }`}
       >
         <div>
-          {funcABI.inputs.map((inp: FuncInput, index: number) => {
+          {fnFragment.inputs.map((inp: FuncInput, index: number) => {
             const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-              const newValue = cleanupInputValue(e.target.value);
-              clearResponse();
               setFnParams((oldParams: any) => ({
                 ...oldParams,
-                [inp.name]: newValue
+                [inp.name]: e.target.value
               }));
             };
 
             return (
-              <div className="py-4" key={index}>
+              <div className="py-3" key={index}>
                 {inp.name && (
                   <B2>{`${inp.name.slice(0, 1).toUpperCase()}${inp.name.slice(
                     1
@@ -47,11 +43,8 @@ const FragmentInputs: React.FC<FragmentInputsProps> = ({
                 <InputField
                   value={fnParams[inp.name]?.toString() ?? ''}
                   onChange={handleChange}
-                  //TODO: [REMIX] map inp.type to placeholders
                   placeholder={mapValueToPlaceholder(inp?.type)}
                   extraClasses="mt-2"
-                  // isInErrorState={}
-                  // infoLabel={}
                 />
               </div>
             );

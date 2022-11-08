@@ -19,34 +19,15 @@ export const getMultiValsString = (
   fields: Record<string, string | number | boolean>
 ): string[] | undefined => {
   const entries = Object.entries(fields);
-  let ret = '';
   const valArrayTest: string[] = [];
 
   for (let j = 0; j < entries.length; j++) {
-    if (ret !== '') ret += ',';
     const elVal = entries[j] ? entries[j][1] : '';
-
-    // valArrayTest.push(elVal);
-    // elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3'); // replace non quoted number by quoted number
-    // elVal = elVal.replace(
-    //   /(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g,
-    //   '$1"$2"$3'
-    // ); // replace non quoted hex string by quoted hex string
-    // if (elVal) {
-    //   try {
-    //     JSON.parse(elVal);
-    //   } catch (e) {
-    //     elVal = '"' + elVal + '"';
-    //   }
-    // }
-    ret += elVal;
-
     valArrayTest.push(elVal.toString());
   }
   const valStringTest = valArrayTest.join('');
 
   if (valStringTest) {
-    // return ret;
     return valArrayTest;
   } else {
     return undefined;
@@ -77,7 +58,9 @@ export function parseValue(val: any): string | string[] {
     return (val === 'true').toString();
   } else if (Array.isArray(val)) {
     // handle deeply-nested array data (like `proof` for a merkle `claim` fn)
-    return val.map((subValue: any) => parseValue(subValue).toString());
+    return val.map((subValue: any) => parseValue(subValue)).toString();
+  } else if (val.startsWith?.('[') && val.endsWith?.(']')) {
+    return JSON.parse(val.replace(/'/g, '"'));
   } else if (val.constructor === Object) {
     return parseObject(val).toString();
   } else if (isDecimalNumber(val)) {
@@ -92,16 +75,13 @@ const qsOptions: qs.IStringifyOptions = {
 export class EncodeURIComponent {
   /**
    * Encode a [deeply] nested object for use in a url
-   * Assumes Array.each is defined
    */
   public static encode(queryObj: Array<unknown>): string {
     return qs.stringify(queryObj, qsOptions);
   }
-  public static decode(str: string): Array<string> {
+  public static decode(str: string): Array<unknown> {
     const vals = Object.values(qs.parse(str, qsOptions));
-    return vals.map((val) => {
-      return parseValue(val).toString();
-    });
+    return vals;
   }
 }
 
@@ -160,7 +140,11 @@ export const computeEncodedUrl = (
     Object.entries(fnParams).forEach(([key, value]) => {
       // stringified array
       if (value.startsWith?.('[') && value.endsWith?.(']')) {
-        encodedFnParams[key] = JSON.parse(value);
+        try {
+          encodedFnParams[key] = JSON.parse(value);
+        } catch {
+          encodedFnParams[key] = value.toString();
+        }
       }
     });
     const url = encodeParams(
@@ -188,7 +172,7 @@ export const mapValueToPlaceholder = (type: string): string => {
       return '0x...';
       break;
     case 'address[]':
-      return '0x..., 0x...';
+      return '["0x...", "0x..."]';
       break;
     default:
       return type;

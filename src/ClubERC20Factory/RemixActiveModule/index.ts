@@ -1,4 +1,5 @@
 import { IActiveNetwork } from '@/state/wallet/types';
+import { validateInputs } from '@/utils/abi/validateInputs';
 import { ContractBase } from '../ContractBase';
 
 export class RemixActiveModule extends ContractBase {
@@ -15,11 +16,16 @@ export class RemixActiveModule extends ContractBase {
    * Estimate gas for a transaction on remix
    */
   async getRemixFuncGasEstimate(
-    inputValues: string,
+    inputValues: string[],
     functionName: string,
     account: string,
     onResponse: (gas?: number) => void
   ): Promise<void> {
+    const inputs = this.getAbiObject(functionName)?.inputs;
+    const hasValidInputs = validateInputs(inputValues, inputs);
+
+    if (!hasValidInputs) return;
+
     this.estimateGas(
       account,
       () => this.contract.methods[functionName](...(inputValues || [])),

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ContractUI } from './shared/ContractUI';
 import { Module } from '@/types/modules';
+import Modal, { ModalStyle } from '@/components/modal';
 
 interface RemixModulesProps {
   isAdmin: boolean;
@@ -10,6 +10,8 @@ interface RemixModulesProps {
   chainId: number;
   activeModules: Module[];
   searchValue: string;
+  entityType: 'club' | 'collective';
+  entityAddress: string;
   decodedFnName?: string;
   decodedContractAddress?: string;
   encodedFnParams?: string | string[] | undefined;
@@ -22,43 +24,75 @@ const RemixModules: React.FC<RemixModulesProps> = ({
   chainId,
   activeModules,
   searchValue,
+  entityType,
+  entityAddress,
   decodedFnName,
   decodedContractAddress,
   encodedFnParams
 }: RemixModulesProps) => {
-  const [combinedList, setCombinedList] = useState<Module[]>();
-
-  useEffect(() => {
-    //TODO [REMIX]: v0.1+ add supported modules to browse
-    const all = [...(activeModules || []), ...[]];
-
-    const filtered = all.filter(
-      (v, i, a) =>
-        a.findIndex((v2) => v2.contractAddress === v.contractAddress) === i
-    );
-    setCombinedList(filtered);
-  }, [activeModules, chainId]);
+  const all: Module[] = activeModules;
+  //TODO [REMIX]: [PRO2-76] v0.1+ add supported modules to browse
+  const combinedList = all.filter(
+    (v, i, a) =>
+      a.findIndex((v2) => v2.contractAddress === v.contractAddress) === i
+  );
 
   return (
     <>
       {loading ? (
         <>
-          <SkeletonLoader width="355" height="32" borderRadius="rounded-full" />
+          {decodedFnName ? (
+            <Modal
+              show={loading}
+              modalStyle={ModalStyle.DARK}
+              customWidth={'w-full max-w-480'}
+              customClassName={'py-8 px-6'}
+            >
+              <>
+                <SkeletonLoader
+                  width="60"
+                  height="6"
+                  borderRadius="rounded-md"
+                />
+                <div className="mt-2">
+                  <SkeletonLoader
+                    width={'100'}
+                    height={'10'}
+                    borderRadius="rounded-md"
+                  />
+                </div>
+                <div className="mt-3">
+                  <SkeletonLoader
+                    width={'160'}
+                    height={'6'}
+                    borderRadius="rounded-sm"
+                  />
+                </div>
+              </>
+            </Modal>
+          ) : (
+            <SkeletonLoader
+              width="355"
+              height="32"
+              borderRadius="rounded-full"
+            />
+          )}
         </>
       ) : (
-        <div className="flex flex-col xl:flex-row min-w-0 flex-wrap justify-between">
+        <div className="flex flex-wrap justify-between mt-4">
           {combinedList?.map((match: Module, i: number) => {
             return (
               <ContractUI
                 contractAddress={match.contractAddress}
                 name={name}
+                entityType={entityType}
+                entityAddress={entityAddress}
                 isActiveModule={activeModules?.some(
                   (m) =>
                     m.contractAddress?.toLowerCase() ===
                     match.contractAddress?.toLowerCase()
                 )}
                 chainId={chainId}
-                index={i}
                 key={`${i}-${match?.contractAddress}`}
                 isAdmin={isAdmin}
                 decodedFnName={

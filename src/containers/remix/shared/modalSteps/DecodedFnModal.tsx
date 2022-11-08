@@ -1,211 +1,199 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { FunctionFragment } from 'ethers/lib/utils';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { B2, M2 } from '../../../../components/typography';
-import { ProgressState } from '@/components/progressCard';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+import { B2 } from '../../../../components/typography';
 import { EncodeURIComponent, getMultiValsString } from '../encodeParams';
 import { CTAButton } from '@/components/CTAButton';
-// import { showWalletModal } from '@/state/wallet/actions';
-import SharedAbiFnModal from '../SharedAbiFnModal';
 import { StepsOutline } from '@/components/stepsOutline';
 import FragmentInputs from './FragmentInputs';
 import { CustomModuleCallout } from '../CustomModuleCallout';
-import { ProgressModal } from '@/components/progressModal';
-import { getInputs } from '@/utils/remix';
 import EstimateGas from '@/components/EstimateGas';
 import { ContractMapper } from '@/hooks/useGasDetails';
 import { Callout } from '@/components/callout';
-
+import SharedAbiFnModal from '../SharedAbiFnModal';
+import { showWalletModal } from '@/state/wallet/actions';
 interface DecodedFnModalProps {
-  showDecodedFnModal: boolean;
   isSyndicateSupported: boolean;
-  handleModalClose: () => void;
-  clearResponse: () => void;
   clickCallback: (
     abi: any,
-    abiFunction: FunctionFragment | undefined,
+    abiFunction: FunctionFragment | null,
     inputsValues: string[] | undefined,
-    lookupOnly?: boolean
+    isLookupOnly?: boolean
   ) => void;
   contractAddress: string;
   name: string;
-  chainId: number;
+  isLoading: boolean;
   abi: any;
   moduleName: string;
-  funcABI: FunctionFragment;
-  lookupOnly: boolean;
-  txnProgress?: {
-    progressStatus: ProgressState;
-    progressTitle?: string;
-    progressDescription?: string;
-    txnHash?: string;
-  };
+  setFnFragment: (fn: FunctionFragment | null) => void;
+  fnFragment: FunctionFragment;
+  isLookupOnly: boolean;
   encodedFnParams?: string | string[];
-  response?: any;
 }
 
 const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
-  showDecodedFnModal,
   isSyndicateSupported,
-  handleModalClose,
-  clearResponse,
   clickCallback,
   contractAddress,
   name,
+  // isLoading,
   abi,
   moduleName,
-  funcABI,
-  lookupOnly,
-  encodedFnParams,
-  response,
-  txnProgress
+  setFnFragment,
+  fnFragment,
+  isLookupOnly,
+  encodedFnParams
 }: DecodedFnModalProps) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork },
+      showWalletModal: isShowingWalletModal
     }
   } = useSelector((state: AppState) => state);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const [fnParams, setFnParams] = useState<
     Record<string, string | number | boolean>
   >({});
 
-  const [activeStepIndex, setActiveStepIndex] = useState<number>(-1);
+  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [hasReviewedCode, setHasReviewedCode] = useState<boolean>(false);
+  const [showDecodedFnModal, setShowDecodedFnModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!funcABI?.inputs) return;
+    if (fnFragment) {
+      setShowDecodedFnModal(true);
+    }
+    if (!fnFragment?.inputs) return;
     setFnParams({});
-    funcABI.inputs.forEach((inp) => {
+    fnFragment.inputs.forEach((inp) => {
       setFnParams((oldParams) => ({
         ...oldParams,
         [inp.name]: ''
       }));
     });
-  }, [funcABI]);
+  }, [fnFragment]);
 
   useEffect(() => {
-    let params: string[] = [];
-    if (typeof encodedFnParams == 'string') {
+    let params: Array<unknown> = [];
+    if (typeof encodedFnParams === 'string') {
       params = EncodeURIComponent.decode(encodedFnParams);
     } else if (Array.isArray(encodedFnParams)) {
-      params = EncodeURIComponent.decode(encodedFnParams.toString());
+      params = encodedFnParams.map((v) => EncodeURIComponent.decode(v));
     }
 
-    if (params.length == funcABI?.inputs?.length) {
-      // assumes params are in order of funcAbi
-      funcABI.inputs.forEach((inp, i) => {
+    if (params.length == fnFragment?.inputs?.length) {
+      // assumes params are in order of fnFragment
+      fnFragment.inputs.forEach((inp, i) => {
         setFnParams((oldParams) => ({
           ...oldParams,
-          [inp.name]: params[i]
+          [inp.name]: Array.isArray(params[i])
+            ? JSON.stringify(params[i])
+            : params[i] + ''
         }));
       });
     }
-  }, [encodedFnParams]);
-
-  const handleClose = () => {
-    setActiveStepIndex(-1);
-    handleModalClose();
-  };
+  }, [encodedFnParams, fnFragment.inputs]);
 
   useEffect(() => {
-    if (activeStepIndex === 1 && !hasReviewedCode) {
+    if (!isSyndicateSupported && activeStepIndex === 1 && !hasReviewedCode) {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
     }
-  }, [activeStepIndex, hasReviewedCode]);
+  }, [activeStepIndex, hasReviewedCode, isSyndicateSupported]);
 
-  const submitTxOrCall = () => {
-    const valsString = getMultiValsString(fnParams);
-    clickCallback(abi, funcABI, valsString, lookupOnly);
+  const clearParams = (): void => {
+    if (!router.isReady) return;
+    const { chain, clubAddress, collectiveAddress } = router.query;
+    void router.push({
+      pathname: router.pathname,
+      query: {
+        ...(clubAddress && { clubAddress: clubAddress }),
+        ...(collectiveAddress && { collectiveAddress: collectiveAddress }),
+        chain: chain
+      }
+    });
   };
 
-  // const handleConnectWallet = (e: any) => {
-  //   e.preventDefault();
-  //   dispatch(showWalletModal());
-  // };
+  const handleClose = (): void => {
+    setActiveStepIndex(0);
+    if (!isShowingWalletModal) {
+      clearParams();
+    }
+  };
 
-  const handleStepAction = () => {
-    if (activeStepIndex < 3) {
+  const submitTxOrCall = (): void => {
+    const valsString = getMultiValsString(fnParams);
+    clickCallback(abi, fnFragment, valsString, isLookupOnly);
+  };
+
+  const handleStepAction = useCallback(() => {
+    const handleConnectWallet = (): void => {
+      dispatch(showWalletModal());
+    };
+
+    if (!account && activeStepIndex === 0) {
+      handleConnectWallet();
+    } else if (
+      (!isSyndicateSupported && activeStepIndex < 3) ||
+      (isSyndicateSupported && activeStepIndex < 2)
+    ) {
       setTimeout(() => setActiveStepIndex(activeStepIndex + 1), 500);
     } else {
       submitTxOrCall();
     }
-  };
+  }, [account, activeStepIndex, isSyndicateSupported, submitTxOrCall]);
 
   useEffect(() => {
-    if (account && activeStepIndex === -1) {
+    if (account && activeStepIndex === 0) {
       handleStepAction();
       setIsDisabled(false);
     } else if (!account) {
       setActiveStepIndex(0);
-      setIsDisabled(true);
+      setIsDisabled(false);
     }
-  }, [account]);
-
-  // check if all params have a value since we cannot call estimate
-  // gas on the func with a required argument missing.
-  const paramsAvailable =
-    Object.keys(fnParams).filter((key) => Boolean(fnParams[key])).length ===
-    funcABI?.inputs.length;
+  }, [account, activeStepIndex, handleStepAction]);
 
   return (
     <>
-      {txnProgress?.progressStatus === ProgressState.FAILURE ||
-      txnProgress?.progressStatus === ProgressState.SUCCESS ? (
-        <ProgressModal
-          isVisible={true}
-          title={''}
-          description={
-            <span>
-              The function
-              <M2 extraClasses="text-gray-syn3 mt-3 mb-4">
-                <span className="bg-gray-syn7 pb-1 px-2 text-center rounded">
-                  {`${funcABI.name}: ${getInputs(funcABI)}`}
-                </span>
-              </M2>
-              was called successfully.
-            </span>
-          }
-          buttonLabel={'Done'}
-          buttonOnClick={handleModalClose}
-          buttonFullWidth={false}
-          state={txnProgress?.progressStatus}
-        />
-      ) : (
-        <SharedAbiFnModal
-          showSharedAbiFnModal={showDecodedFnModal}
-          handleModalClose={handleClose}
-          moduleName={moduleName}
-          selectedFnFragment={funcABI}
-          selectedLookupOnly={lookupOnly}
-          isSyndicateSupported={isSyndicateSupported}
-        >
+      <SharedAbiFnModal
+        showSharedAbiFnModal={showDecodedFnModal}
+        handleModalClose={handleClose}
+        setFnFragment={setFnFragment}
+        moduleName={moduleName}
+        selectedFnFragment={fnFragment}
+        selectedLookupOnly={isLookupOnly}
+        isSyndicateSupported={isSyndicateSupported}
+      >
+        <>
+          {activeStepIndex === 0 && (
+            <div className="mt-4 pt-1">
+              <B2 extraClasses="mb-8">
+                {`${name}'${
+                  name.charAt(name?.length - 1) == 's' ? '' : 's'
+                } admin would like you to run a function from a ${
+                  !isSyndicateSupported ? 'custom' : ''
+                } module.`}
+              </B2>
+
+              {!isSyndicateSupported && <CustomModuleCallout />}
+            </div>
+          )}
+
           <>
-            {activeStepIndex === 0 && (
-              <div className="mt-4 pt-1">
-                <B2 extraClasses="mb-8">
-                  {`${name}'${
-                    name.charAt(name?.length - 1) == 's' ? '' : 's'
-                  } admin would like you to run a function from a ${
-                    !isSyndicateSupported ? 'custom' : ''
-                  } module.`}
-                </B2>
-
-                {!isSyndicateSupported && <CustomModuleCallout />}
-              </div>
-            )}
-
-            <>
-              {activeStepIndex === 1 && (
+            {activeStepIndex === 1 &&
+              (isSyndicateSupported ? (
+                <div className="pt-3"></div>
+              ) : (
                 <button
-                  className="w-full"
-                  onClick={() => setHasReviewedCode(true)}
+                  className="w-full pt-3"
+                  onClick={(): void => setHasReviewedCode(true)}
                 >
                   <a
                     href={`${activeNetwork?.blockExplorer?.baseUrl}/address/${contractAddress}#code`}
@@ -225,88 +213,87 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
                     </B2>
                   </a>
                 </button>
-              )}
-              {activeStepIndex === 2 && (
-                <>
-                  <FragmentInputs
-                    clearResponse={clearResponse}
-                    funcABI={funcABI}
-                    fnParams={fnParams}
-                    setFnParams={setFnParams}
-                  />
-                  {response && <p>{`res: ${response}`}</p>}
-                </>
-              )}
-              {activeStepIndex > 2 && (
-                <>{response && <p>{`res: ${response}`}</p>}</>
-              )}
-
-              <StepsOutline
-                activeIndex={activeStepIndex}
-                steps={[
-                  {
-                    title: 'Connect wallet',
-                    description:
-                      'To use this custom module, connect the member wallet associated with this Collective.'
-                  },
-                  {
-                    title: 'Review code',
-                    description:
-                      'Before continuing, please review this custom module’s smart contract code by viewing it on Etherscan.'
-                  },
-                  {
-                    title: 'Input data and run function',
-                    description: 'This custom module needs data inputs.'
-                  }
-                ]}
-                alwaysShowDescriptions={false}
-                extraClasses="mt-6"
-              />
-              <div className="flex flex-col mt-6 -space-y-5">
-                {paramsAvailable && activeStepIndex > 1 ? (
-                  <div className="mt-3">
-                    <Callout
-                      backgroundColor="bg-blue-midnightExpress"
-                      backgroundOpacity="bg-opacity-100"
-                      extraClasses="pt-3 pb-8 px-4 text-sm rounded-1.5lg"
-                    >
-                      <EstimateGas
-                        contract={ContractMapper.RemixActiveModule}
-                        withFiatCurrency={true}
-                        remixDetails={{
-                          inputValues: getMultiValsString(fnParams),
-                          abiFunction: funcABI,
-                          remixContractAddress: contractAddress,
-                          remixAbi: abi
-                        }}
-                        customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
-                      />
-                    </Callout>
-                  </div>
-                ) : null}
-
-                <CTAButton
-                  onClick={handleStepAction}
-                  extraClasses={'w-full'}
-                  disabled={isDisabled}
-                >
-                  {activeStepIndex === -1
-                    ? 'Connect wallet'
-                    : activeStepIndex === 0
-                    ? 'Get started'
-                    : activeStepIndex === 1
-                    ? 'Continue'
-                    : activeStepIndex === 2
-                    ? 'Run function'
-                    : activeStepIndex === 3
-                    ? 'Running function'
-                    : 'Done'}
-                </CTAButton>
+              ))}
+            {((isSyndicateSupported && activeStepIndex === 2) ||
+              (!isSyndicateSupported && activeStepIndex === 3)) && (
+              <div className="pt-3">
+                <FragmentInputs
+                  fnFragment={fnFragment}
+                  fnParams={fnParams}
+                  setFnParams={setFnParams}
+                />
               </div>
-            </>
+            )}
+            <StepsOutline
+              activeIndex={activeStepIndex}
+              steps={[
+                {
+                  title: 'Connect wallet',
+                  description:
+                    'To use this custom module, connect the member wallet associated with this Collective.'
+                },
+                ...(!isSyndicateSupported
+                  ? [
+                      {
+                        title: 'Review code',
+                        description:
+                          'Before continuing, please review this custom module’s smart contract code by viewing it on Etherscan.'
+                      }
+                    ]
+                  : []),
+                {
+                  title: 'Input data and run function',
+                  description: 'This custom module needs data inputs.'
+                }
+              ]}
+              alwaysShowDescriptions={false}
+              extraClasses="mt-6"
+            />
+            <div className="flex flex-col mt-2 -space-y-5">
+              {!isLookupOnly && activeStepIndex > 1 && (
+                <div className="mt-3">
+                  <Callout
+                    backgroundColor="bg-blue-midnightExpress"
+                    backgroundOpacity="bg-opacity-100"
+                    extraClasses="pt-3 pb-8 px-4 text-sm rounded-1.5lg"
+                  >
+                    <EstimateGas
+                      contract={ContractMapper.RemixActiveModule}
+                      withFiatCurrency={true}
+                      remixDetails={{
+                        inputValues: getMultiValsString(fnParams),
+                        abiFunction: fnFragment,
+                        remixContractAddress: contractAddress,
+                        remixAbi: abi
+                      }}
+                      customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
+                    />
+                  </Callout>
+                </div>
+              )}
+
+              <CTAButton
+                onClick={handleStepAction}
+                extraClasses={'w-full mb-0.5'}
+                disabled={isDisabled}
+              >
+                {activeStepIndex === 0
+                  ? 'Connect wallet'
+                  : activeStepIndex === 1
+                  ? 'Get started'
+                  : activeStepIndex === 2 && !isSyndicateSupported
+                  ? 'Continue'
+                  : activeStepIndex === 3 ||
+                    (activeStepIndex === 2 && isSyndicateSupported)
+                  ? 'Run function'
+                  : // : activeStepIndex === 3 // TODO [REMIX]: [PRO2-75] reformat after auth step outlines progressModal
+                    // ? 'Running function'
+                    'Done'}
+              </CTAButton>
+            </div>
           </>
-        </SharedAbiFnModal>
-      )}
+        </>
+      </SharedAbiFnModal>
     </>
   );
 };

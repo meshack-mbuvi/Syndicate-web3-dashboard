@@ -60,7 +60,7 @@ import { CopyText } from './editables';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
 import EditMaxSupply from './EditMaxSupply';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
-import { RemixAdminTable } from '@/containers/remix/shared/RemixAdminTable';
+import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 
 type step = {
   title: string;
@@ -1078,6 +1078,7 @@ const ModifyCollectiveSettings: React.FC = () => {
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
           setEditGroupFieldClicked={setEditGroupFieldClicked}
           switchRowIndex={EditRowIndex.Transfer}
+          cancelEdit={handleCancelEdit}
           {...{ activeRow, setActiveRow }}
         />
 

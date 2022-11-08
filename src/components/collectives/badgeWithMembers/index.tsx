@@ -135,14 +135,13 @@ export const BadgeWithMembers: React.FC<Props> = ({
       {(permissionType == PermissionType.NON_MEMBER ||
         collectiveBalance < +maxPerWallet) &&
       isOpen ? (
-        <>
-          <JoinCollectiveCTA
-            alreadyMember={collectiveBalance > 0}
-            // @ts-expect-error TS(2322): Type '(e: React.MouseEvent<HTMLInputElement>) => void' is not assig...
-            onClick={goToClaim}
-          />
-        </>
+        <JoinCollectiveCTA
+          alreadyMember={collectiveBalance > 0}
+          // @ts-expect-error TS(2322): Type '(e: React.MouseEvent<HTMLInputElement>) => void' is not assig...
+          onClick={goToClaim}
+        />
       ) : null}
+
       {admins && admins.length > 0 ? (
         <div>
           <H4 extraClasses="mb-4">Admin</H4>

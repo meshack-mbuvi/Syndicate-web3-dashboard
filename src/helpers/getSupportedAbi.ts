@@ -10,15 +10,17 @@ export enum SupportedAbiError {
   ABI_NOT_FOUND = 'ABI_NOT_FOUND'
 }
 
-export interface SupportedAbi {
+export interface SupportedAbiDetails {
   contractName: string;
   abi: AbiItem[];
+  description: string;
+  type?: string;
 }
 
 const getSupportedAbi = (
   contractAddress: string,
   chainId: number
-): SupportedAbi | SupportedAbiError => {
+): SupportedAbiDetails | SupportedAbiError => {
   if (!chainId) {
     return SupportedAbiError.NO_CHAIN_ID;
   }
@@ -33,11 +35,18 @@ const getSupportedAbi = (
       activeContractAddresses[i][1]?.toLowerCase() ==
       contractAddress.toLowerCase()
     ) {
-      const abi = SUPPORTED_ABIS[activeContractAddresses[i][0]];
-      if (!abi) {
+      const supported = SUPPORTED_ABIS[activeContractAddresses[i][0]];
+      if (!supported) {
         return SupportedAbiError.ABI_NOT_FOUND;
       } else {
-        return { abi, contractName: activeContractAddresses[i][0] };
+        return {
+          abi: supported.abi,
+          contractName: supported.name
+            ? supported.name
+            : activeContractAddresses[i][0],
+          description: supported.description ?? '',
+          type: supported?.type
+        };
       }
     }
   }

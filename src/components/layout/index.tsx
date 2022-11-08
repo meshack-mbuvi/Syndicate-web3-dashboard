@@ -101,7 +101,6 @@ const Layout: FC<Props> = ({
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
 
-  //TODO follow up on anything referencing router to check isReady
   const {
     pathname,
     isReady,
@@ -183,8 +182,7 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isDemoMode,
-    activeNetwork
+    isDemoMode
   ]);
 
   return (

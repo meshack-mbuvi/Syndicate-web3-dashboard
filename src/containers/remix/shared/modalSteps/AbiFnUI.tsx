@@ -5,21 +5,21 @@ import { FunctionFragment } from 'ethers/lib/utils';
 export interface AbiFnUIProps {
   funcABI: FunctionFragment;
   inputs: string;
-  lookupOnly: boolean;
-  setFnFragment: (fn: FunctionFragment) => void;
+  isLookupOnly: boolean;
+  setFnFragment: (fn: FunctionFragment | null) => void;
   setFnLookupOnly: (isLookup: boolean) => void;
 }
 
 const AbiFnUI: React.FC<AbiFnUIProps> = ({
   funcABI,
   inputs,
-  lookupOnly,
+  isLookupOnly,
   setFnFragment,
   setFnLookupOnly
 }: AbiFnUIProps) => {
   const selectFn = (): void => {
     setFnFragment(funcABI);
-    setFnLookupOnly(lookupOnly);
+    setFnLookupOnly(isLookupOnly);
   };
 
   return (
@@ -30,15 +30,17 @@ const AbiFnUI: React.FC<AbiFnUIProps> = ({
         title={funcABI.name}
       >
         <div className="flex flex-nowrap">
-          <M1 extraClasses="flex-none grow-0 shrink-1 min-w-0">{`${
-            lookupOnly ? '[read]' : ''
-          }${funcABI.name}`}</M1>
+          <M1 extraClasses="flex-0 overflow-hidden flex-nowrap">
+            <span className="whitespace-nowrap text-ellipsis inline-block">
+              {`${isLookupOnly ? '[read]' : ''}`}${funcABI.name}
+            </span>
+          </M1>
           <div className="flex-1 min-w-0 overflow-hidden mr-1">
             <M1 extraClasses="float-left min-w-0 whitespace-nowrap text-ellipsis inline-block">
               {inputs ? ': ' + inputs : ''}
             </M1>
           </div>
-          <div className="grow shrink-0 self-end justify-self-end">
+          <div className="grow min-w-0 shrink-0 self-end justify-self-end">
             <div className="justify-self-end self-end">
               <Image
                 src={'/images/managerActions/arrowRight.svg'}

@@ -70,7 +70,7 @@ import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import { getFirstOrString } from '@/utils/stringUtils';
-import { RemixAdminTable } from '@/containers/remix/shared/RemixAdminTable';
+import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 
 const MAX_MEMBERS_ALLOWED = 99;
 

@@ -50,7 +50,7 @@ import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
-import { RemixContractsContainer } from '../remix/RemixContracts';
+import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import ActivityView from './activity';
 import { Assets } from './assets';
 import TabButton from './TabButton';
@@ -145,7 +145,6 @@ const LayoutWithSyndicateDetails: FC<{
       GoogleAnalyticsPageView(fullPathname);
     }
   }, [name, router.events]);
-  
 
   const {
     loading: queryLoading,
@@ -560,19 +559,25 @@ const LayoutWithSyndicateDetails: FC<{
                       ) : null}
                     </div>
                   </div>
-                  <div className="pt-20">
-                    <div className="pt-20 border-t border-gray-syn7">
-                      <div className="mx-auto container">
-                        <RemixContractsContainer
-                          isAdmin={isOwner}
-                          name={name}
-                          entityType={'club'}
-                          contractAddress={clubAddress ?? ''}
-                          activeNetwork={activeNetwork}
-                        />
+                  {!managerSettingsOpen && (
+                    <div className={`${isOwner ? 'pt-20' : ''}`}>
+                      <div
+                        className={`${
+                          isOwner ? 'pt-20 border-t border-gray-syn7' : ''
+                        }`}
+                      >
+                        <div className="mx-auto container">
+                          <RemixContractsContainer
+                            isAdmin={isOwner}
+                            name={name}
+                            entityType={'club'}
+                            contractAddress={clubAddress ?? ''}
+                            activeNetwork={activeNetwork}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </div>

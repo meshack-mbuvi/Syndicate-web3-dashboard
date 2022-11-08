@@ -23,7 +23,7 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RemixContractsContainer } from '../remix/RemixContracts';
+import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
 
@@ -381,8 +381,20 @@ const Collective: React.FC = () => {
           )
         }
         fullComponent={
-          <div className="container pt-20 mx-auto">
-            <div className="border-t border-gray-syn7 pt-20">
+          <div
+            className={`${
+              permissionType === PermissionType.ADMIN
+                ? 'container pt-20 mx-auto'
+                : ''
+            }`}
+          >
+            <div
+              className={`${
+                permissionType === PermissionType.ADMIN
+                  ? 'border-t border-gray-syn7 pt-20'
+                  : ''
+              }`}
+            >
               <RemixContractsContainer
                 isAdmin={permissionType == PermissionType.ADMIN}
                 name={collectiveName}

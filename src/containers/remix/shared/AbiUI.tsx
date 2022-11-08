@@ -6,11 +6,14 @@ import AbiFnUI from './modalSteps/AbiFnUI';
 import { B1, B2, B3, B4, E2 } from '@/components/typography';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
-import { StepsOutline } from '@/components/stepsOutline';
 import { CTAButton } from '@/components/CTAButton';
 import FragmentInputs from './modalSteps/FragmentInputs';
 import TxnEncodeUrl from './TxnEncodeUrl';
 import RemixLink from './RemixLink';
+import { getMultiValsString } from './encodeParams';
+import { Callout } from '@/components/callout';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import EstimateGas from '@/components/EstimateGas';
 
 export interface AbiUIProps {
   instance: {
@@ -20,39 +23,43 @@ export interface AbiUIProps {
     abi: any;
     isSyndicateSupported: boolean;
     isActive: boolean;
+    description?: string;
     isUnverified?: boolean;
     invalidResponse?: string;
   };
-  showFnModal: boolean;
-  setShowFnModal: (bool: boolean) => void;
-  handleToggleModal: () => void;
-  setFnFragment: (fn: FunctionFragment) => void;
+  setFnFragment: (fn: FunctionFragment | null) => void;
+  fnFragment: FunctionFragment | null;
   setFnLookupOnly: (isLookup: boolean) => void;
-  clearResponse: () => void;
+  isLookupOnly: boolean;
+  clickCallback: (
+    abi: any,
+    abiFunction: FunctionFragment | null,
+    inputsValues: string[] | undefined,
+    isLookupOnly?: boolean
+  ) => void;
   selectedFnFragment?: FunctionFragment | null;
   selectedLookupOnly?: boolean;
 }
 
 const AbiUI: React.FC<AbiUIProps> = ({
   instance,
-  showFnModal,
-  setShowFnModal,
-  handleToggleModal,
   setFnFragment,
+  fnFragment,
   setFnLookupOnly,
-  clearResponse,
+  isLookupOnly,
+  clickCallback,
   selectedFnFragment,
   selectedLookupOnly
 }: AbiUIProps) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork },
+      showWalletModal: isShowingWalletModal
     }
   } = useSelector((state: AppState) => state);
   const [abiFns, setAbiFns] = useState<FunctionFragment[]>();
-
-  //steps
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
+  const [showFnModal, setShowFnModal] = useState(false);
 
   const {
     abi,
@@ -61,15 +68,14 @@ const AbiUI: React.FC<AbiUIProps> = ({
     chainId,
     isSyndicateSupported,
     isActive,
+    description,
     isUnverified,
     invalidResponse
   } = instance;
 
-  const handleClose = useCallback(() => {
-    setShowFnModal(false);
-    setActiveStepIndex(0);
-    handleToggleModal();
-  }, [handleToggleModal, setShowFnModal]);
+  const [fnParams, setFnParams] = useState<
+    Record<string, string | number | boolean>
+  >({});
 
   useEffect(() => {
     if (abi) {
@@ -77,17 +83,25 @@ const AbiUI: React.FC<AbiUIProps> = ({
     }
   }, [abi]);
 
+  const handleClose = useCallback(() => {
+    if (!isShowingWalletModal) {
+      setActiveStepIndex(0);
+      setFnParams({});
+      setFnFragment(null);
+      setShowFnModal(false);
+    }
+  }, [isShowingWalletModal, setFnFragment]);
+
   useEffect(() => {
     if (activeStepIndex > 1) {
       setTimeout(() => handleClose(), 500);
     }
   }, [activeStepIndex, handleClose]);
 
-  const [fnParams, setFnParams] = useState<
-    Record<string, string | number | boolean>
-  >({});
-
   useEffect(() => {
+    if (selectedFnFragment) {
+      setShowFnModal(true);
+    }
     if (!selectedFnFragment?.inputs) return;
     setFnParams({});
     selectedFnFragment.inputs.forEach((inp) => {
@@ -98,157 +112,162 @@ const AbiUI: React.FC<AbiUIProps> = ({
     });
   }, [selectedFnFragment]);
 
-  const handleStepAction = (): void => {
-    setActiveStepIndex(activeStepIndex + 1);
+  const submitTxOrCall = (): void => {
+    const valsString = getMultiValsString(fnParams);
+    clickCallback(abi, fnFragment, valsString, isLookupOnly);
   };
 
   return (
     <>
-      {!isUnverified && !invalidResponse && (
-        <div id={`instance${address}`}>
-          <button
-            onClick={handleToggleModal}
-            className={`${
-              isActive ? 'bg-gray-syn8' : 'border-1 border-gray-syn7'
-            } rounded-2.5xl px-8 py-5 mb-5 max-w-88`}
-          >
-            <div className="flex flex-col items-start">
-              {isActive && (
-                <div
-                  className="px-2 py-1 rounded-3xl mb-2 w-14"
-                  style={{
-                    background: `linear-gradient(89.98deg, #4176FF 0.01%, #85FFD3 98.21%)`
-                  }}
-                >
-                  <B4 extraClasses="text-black">Active</B4>
-                </div>
-              )}
-              <B1 extraClasses="mb-2">{name}</B1>
+      <div
+        id={`instance${address}`}
+        className={`w-full max-w-355 ${
+          !isUnverified && !invalidResponse ? '' : 'hidden'
+        }`}
+      >
+        <button
+          onClick={() => setShowFnModal(!showFnModal)}
+          className={`${
+            isActive ? 'bg-gray-syn8' : 'border-1 border-gray-syn7'
+          } rounded-2.5xl px-8 py-6 mb-5 w-full`}
+        >
+          <div className="flex flex-col items-start">
+            {isActive && (
+              <div
+                className="px-2 py-1 rounded-3xl mb-2 w-14"
+                style={{
+                  background: `linear-gradient(89.98deg, #4176FF 0.01%, #85FFD3 98.21%)`
+                }}
+              >
+                <B4 extraClasses="text-black">Active</B4>
+              </div>
+            )}
+            <B1 extraClasses="mb-2">{name}</B1>
+            {description && (
               <B3 extraClasses="text-gray-syn3 mb-5 text-left">
-                TODO: REPLACE WITH CRAFTED MODULE DESCRIPTIONS Allows the
-                Collective owner to &#34;airdrop&#34; a list of recipient
-                addresses as a Merkle tree, and allows recipients on that list
-                to claim a token.
+                {description}
               </B3>
-              <E2 extraClasses="font-normal text-gray-syn4">
-                {(abiFns || []).filter((fn) => fn?.type === 'function')?.length}{' '}
-                functions
-              </E2>
-            </div>
-          </button>
-          <div className={`${showFnModal ? '' : 'hidden'}`} data-id="">
-            <SharedAbiFnModal
-              showSharedAbiFnModal={showFnModal}
-              handleModalClose={handleClose}
-              moduleName={name}
-              selectedFnFragment={selectedFnFragment}
-              selectedLookupOnly={selectedLookupOnly}
-              isSyndicateSupported={isSyndicateSupported}
-            >
-              {!selectedFnFragment ? (
-                <>
-                  <div className="pt-2 mb-10">
-                    <B2 extraClasses="mb-4">
-                      TODO: REPLACE WITH CRAFTED MODULE DESCRIPTIONS Allows the
-                      Collective owner to &#34;airdrop&#34; a list of recipient
-                      addresses as a Merkle tree, and allows recipients on that
-                      list to claim a token.
-                    </B2>
-                    {/* links */}
-                    <div className="flex items-center">
-                      <RemixLink
-                        text="View docs"
-                        //TODO: add remix docs
-                        link="https://guide.syndicate.io/en/developer-platform/start-here"
-                        extraClasses="mr-6"
-                      />
-                      <RemixLink
-                        text="View code on Etherscan"
-                        link={`${activeNetwork?.blockExplorer?.baseUrl}/address/${address}#code`}
-                        extraClasses="ml-0.5"
+            )}
+            <E2 extraClasses="font-normal text-gray-syn4">
+              {(abiFns || []).filter((fn) => fn?.type === 'function')?.length}{' '}
+              functions
+            </E2>
+          </div>
+        </button>
+        <SharedAbiFnModal
+          showSharedAbiFnModal={showFnModal}
+          showBackButton={selectedFnFragment ? true : false}
+          handleModalClose={handleClose}
+          moduleName={name}
+          selectedFnFragment={selectedFnFragment}
+          selectedLookupOnly={selectedLookupOnly}
+          isSyndicateSupported={isSyndicateSupported}
+          setFnFragment={setFnFragment}
+        >
+          {!selectedFnFragment ? (
+            <>
+              <div className="mb-10">
+                {description && (
+                  <B2 extraClasses="mb-4 text-gray-syn3">{description}</B2>
+                )}
+                {/* links */}
+                <div className="flex items-center">
+                  <RemixLink
+                    text="View docs"
+                    //TODO [REMIX][DOCS]: [PRO2-89] add remix docs
+                    link="https://guide.syndicate.io/en/developer-platform/start-here"
+                    extraClasses="mr-6"
+                  />
+                  <RemixLink
+                    text="View code on Etherscan"
+                    link={`${activeNetwork?.blockExplorer?.baseUrl}/address/${address}#code`}
+                    extraClasses="ml-0.5"
+                  />
+                </div>
+              </div>
+              {abiFns &&
+                abiFns.map((funcABI, index) => {
+                  if (funcABI.type !== 'function') return null;
+                  const isConstant =
+                    funcABI.constant !== undefined ? funcABI.constant : false;
+                  const isLookupOnly =
+                    funcABI.stateMutability === 'view' ||
+                    funcABI.stateMutability === 'pure' ||
+                    isConstant;
+                  const inputs = getInputs(funcABI);
+
+                  return (
+                    <div key={index} className={`mt-2`}>
+                      <AbiFnUI
+                        funcABI={funcABI}
+                        inputs={inputs}
+                        isLookupOnly={isLookupOnly}
+                        setFnFragment={setFnFragment}
+                        setFnLookupOnly={setFnLookupOnly}
+                        key={index}
                       />
                     </div>
-                  </div>
-                  {abiFns &&
-                    abiFns.map((funcABI, index) => {
-                      if (funcABI.type !== 'function') return null;
-                      const isConstant =
-                        funcABI.constant !== undefined
-                          ? funcABI.constant
-                          : false;
-                      const lookupOnly =
-                        funcABI.stateMutability === 'view' ||
-                        funcABI.stateMutability === 'pure' ||
-                        isConstant;
-                      const inputs = getInputs(funcABI);
+                  );
+                })}
+            </>
+          ) : (
+            <div className="pt-3">
+              <FragmentInputs
+                fnFragment={selectedFnFragment}
+                fnParams={fnParams}
+                setFnParams={setFnParams}
+              />
 
-                      return (
-                        <div key={index} className={`mt-2`}>
-                          <AbiFnUI
-                            funcABI={funcABI}
-                            inputs={inputs}
-                            lookupOnly={lookupOnly}
-                            setFnFragment={setFnFragment}
-                            setFnLookupOnly={setFnLookupOnly}
-                            key={index}
-                          />
-                        </div>
-                      );
-                    })}
-                </>
-              ) : (
-                <>
-                  {activeStepIndex === 0 ? (
-                    <FragmentInputs
-                      clearResponse={clearResponse}
-                      funcABI={selectedFnFragment}
-                      fnParams={fnParams}
-                      setFnParams={setFnParams}
+              {!isLookupOnly && (
+                <div className="mt-6">
+                  <Callout
+                    backgroundColor="bg-blue-midnightExpress"
+                    backgroundOpacity="bg-opacity-100"
+                    extraClasses="pt-3 pb-4 px-4 text-sm rounded-1.5lg"
+                  >
+                    <EstimateGas
+                      contract={ContractMapper.RemixActiveModule}
+                      withFiatCurrency={true}
+                      remixDetails={{
+                        inputValues: getMultiValsString(fnParams),
+                        abiFunction: fnFragment,
+                        remixContractAddress: address,
+                        remixAbi: abi
+                      }}
+                      customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"
                     />
-                  ) : (
-                    <TxnEncodeUrl
-                      fn={selectedFnFragment.name}
-                      chainId={chainId}
-                      contractAddress={address}
-                      fnParams={fnParams}
-                      abiLeaf={selectedFnFragment}
-                      mode={'remix'}
-                    />
-                  )}
-                  <StepsOutline
-                    activeIndex={activeStepIndex}
-                    steps={[
-                      {
-                        title: 'Input data',
-                        description: (
-                          <div>
-                            <div>{`This ${
-                              isSyndicateSupported ? 'custom' : ''
-                            } module needs data inputs.`}</div>
-                          </div>
-                        )
-                      },
-                      {
-                        title: 'Share with members'
-                      }
-                    ]}
-                    alwaysShowDescriptions={true}
-                    extraClasses="mt-6"
-                  />
-                  <div className="mt-6">
-                    <CTAButton
-                      onClick={handleStepAction}
-                      extraClasses={'w-full'}
-                    >
-                      {activeStepIndex >= 1 ? 'Done' : 'Continue'}
-                    </CTAButton>
-                  </div>
-                </>
+                  </Callout>
+                </div>
               )}
-            </SharedAbiFnModal>
-          </div>
-        </div>
-      )}
+              <CTAButton
+                onClick={submitTxOrCall}
+                extraClasses={`w-full ${isLookupOnly ? 'mt-5' : ''}`}
+              >
+                {'Run function'}
+              </CTAButton>
+
+              <div className="flex items-center my-6">
+                <div className="flex-grow h-px bg-gray-syn6"></div>
+                <E2 extraClasses="mx-2">OR</E2>
+                <div className="flex-grow h-px bg-gray-syn6"></div>
+              </div>
+
+              <TxnEncodeUrl
+                fn={selectedFnFragment.name}
+                chainId={chainId}
+                contractAddress={address}
+                fnParams={fnParams}
+                abiLeaf={selectedFnFragment}
+                mode={'remix'}
+              />
+              <B3 extraClasses="mt-2 text-gray-syn3">
+                Members can run this function themselves via the special link
+                above.
+              </B3>
+            </div>
+          )}
+        </SharedAbiFnModal>
+      </div>
     </>
   );
 };
