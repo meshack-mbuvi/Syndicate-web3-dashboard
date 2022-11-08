@@ -436,9 +436,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
       showCloseButton={false}
       outsideOnClick={true}
       showHeader={false}
-      overflow="overflow-x-visible"
+      overflow="overflow-y-scroll "
       overflowYScroll={false}
-      isMaxHeightScreen={false}
+      isMaxHeightScreen={true}
       overflowXScroll={false}
       maxHeight={false}
     >

@@ -162,6 +162,11 @@ const Modal = (props: ModalProps): JSX.Element => {
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
+              style={{
+                maxHeight: `${
+                  isMaxHeightScreen ? 'calc(100vh - 100px)' : 'auto'
+                }`
+              }}
             >
               <div className="hidden sm:block absolute p-4 top-0 left-0">
                 {/* back button at the left top of the modal */}
