@@ -586,6 +586,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
           <ActivityModal
             isOwner={isOwner}
             showModal={showOffChainInvestmentsModal}
+            isAnnotationsModalShown={false}
             closeModal={() => {
               setShowNote(false);
               toggleShowOffChainInvestmentsModal();

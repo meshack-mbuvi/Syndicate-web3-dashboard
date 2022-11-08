@@ -4,14 +4,20 @@ import ReactTooltip from 'react-tooltip';
 interface Props {
   numberVisible: number;
   tokenDetails: TokenDetails[];
+  isAnnotationsModalShown: boolean;
 }
 
 export const TokenCollection: React.FC<Props> = ({
   numberVisible,
-  tokenDetails
+  tokenDetails,
+  isAnnotationsModalShown
 }) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div
+      className={`flex items-center ${
+        isAnnotationsModalShown ? '-space-x-2' : ''
+      }`}
+    >
       {tokenDetails.slice(0, numberVisible).map((token, index) => {
         return (
           <div key={index} className="flex items-center mr-2">
@@ -25,7 +31,10 @@ export const TokenCollection: React.FC<Props> = ({
                 backgroundSize: '100%'
               }}
             />{' '}
-            {Number(parseFloat(token.amount).toFixed(4))} {token.symbol}
+            {!isAnnotationsModalShown
+              ? Number(parseFloat(token.amount).toFixed(4))
+              : null}{' '}
+            {!isAnnotationsModalShown ? token.symbol : null}
           </div>
         );
       })}

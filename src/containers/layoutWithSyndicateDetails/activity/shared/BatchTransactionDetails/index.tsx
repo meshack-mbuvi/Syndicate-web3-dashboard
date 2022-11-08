@@ -25,6 +25,7 @@ export interface TokenDetails {
 interface IBatchTransactionDetails {
   tokenDetails: Array<TokenDetails>;
   transactionType: Transaction;
+  isAnnotationsModalShown: boolean;
   isTransactionAnnotated: boolean;
   addresses: string | string[];
   onModal?: boolean;
@@ -39,6 +40,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
   tokenDetails,
   transactionType,
   isTransactionAnnotated,
+  isAnnotationsModalShown,
   addresses,
   onModal = false,
   category,
@@ -132,7 +134,11 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                 </div>
               </>
             ) : (
-              <TokenCollection numberVisible={3} tokenDetails={tokenDetails} />
+              <TokenCollection
+                numberVisible={3}
+                isAnnotationsModalShown={isAnnotationsModalShown}
+                tokenDetails={tokenDetails}
+              />
             )}
           </div>
           {/* Transaction direction: e.g "invested in", "to", "from" ... */}

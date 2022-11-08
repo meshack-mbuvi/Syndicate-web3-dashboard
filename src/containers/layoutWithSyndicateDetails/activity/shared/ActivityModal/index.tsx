@@ -30,9 +30,11 @@ import {
   removeTrailingDecimalPoint
 } from '@/utils/formattedNumbers';
 import { BatchIdTokenDetails } from '../../ActivityTable/index';
+import { getWeiAmount } from '@/utils/conversions';
 
 interface IActivityModal {
   showModal: boolean;
+  isAnnotationsModalShown: boolean;
   closeModal: any;
   refetchTransactions: () => void;
   showNote: boolean;
@@ -45,6 +47,13 @@ interface IActivityModal {
   setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
+type TokenDetailsList = {
+  name: string;
+  symbol: string;
+  icon: string | undefined;
+  amount: string;
+};
+
 /**
  * category pill component used either in read-only mode or as a drop-down.
  * @param showModal boolean for when to show and hide modal
@@ -55,6 +64,7 @@ interface IActivityModal {
 const ActivityModal: React.FC<IActivityModal> = ({
   showModal,
   closeModal,
+  isAnnotationsModalShown,
   refetchTransactions,
   showNote,
   setShowNote,
@@ -78,16 +88,57 @@ const ActivityModal: React.FC<IActivityModal> = ({
     category,
     note,
     readOnly,
-    amount,
     transactionInfo,
     timestamp,
-    tokenSymbol,
-    tokenLogo,
-    tokenName,
     hash,
     metadata,
     blockTimestamp
   } = currentTransaction;
+
+  const [tokenDetailsList, setTokenDetailsList] = useState<
+    Array<TokenDetailsList>
+  >([]);
+
+  useEffect(() => {
+    if (!batchIdentifiers || !currentBatchIdentifier) return;
+    const tokenDetailsList: Array<TokenDetailsList> = [];
+    batchIdentifiers[currentBatchIdentifier].map((transaction) => {
+      if (transaction.transfers[0].contractAddress !== '') {
+        tokenDetailsList.push({
+          name: String(transaction.transfers[0].tokenName),
+          symbol: String(transaction.transfers[0].tokenSymbol),
+          icon: transaction.transfers[0].tokenLogo,
+          amount: getWeiAmount(
+            web3,
+            String(transaction.transfers[0].value),
+            Number(transaction.transfers[0].tokenDecimal),
+            false
+          )
+        });
+      } else {
+        tokenDetailsList.push({
+          name: activeNetwork.nativeCurrency.name,
+          symbol: activeNetwork.nativeCurrency.symbol,
+          icon: activeNetwork.nativeCurrency.logo,
+          amount: getWeiAmount(
+            web3,
+            String(transaction.transfers[0].value),
+            Number(activeNetwork.nativeCurrency.decimals),
+            false
+          )
+        });
+      }
+    });
+    setTokenDetailsList(tokenDetailsList);
+  }, [
+    activeNetwork.nativeCurrency.decimals,
+    activeNetwork.nativeCurrency.logo,
+    activeNetwork.nativeCurrency.name,
+    activeNetwork.nativeCurrency.symbol,
+    batchIdentifiers,
+    currentBatchIdentifier,
+    web3
+  ]);
 
   const isDemoMode = useDemoMode();
 
@@ -424,16 +475,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 {transactionInfo && Object.keys(transactionInfo).length && (
                   <TransactionDetails
                     contractAddress={address}
-                    tokenDetails={[
-                      {
-                        name: String(tokenName),
-                        symbol: String(tokenSymbol),
-                        icon: tokenLogo
-                          ? tokenLogo
-                          : activeNetwork.nativeCurrency.logo,
-                        amount: amount
-                      }
-                    ]}
+                    tokenDetails={tokenDetailsList}
+                    isAnnotationsModalShown={isAnnotationsModalShown}
                     transactionType={
                       transactionInfo.isOutgoingTransaction
                         ? 'outgoing'

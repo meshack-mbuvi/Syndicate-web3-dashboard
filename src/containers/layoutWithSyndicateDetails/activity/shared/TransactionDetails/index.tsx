@@ -26,6 +26,7 @@ export interface TokenDetails {
 interface ITransactionDetails {
   tokenDetails: TokenDetails[];
   transactionType: Transaction;
+  isAnnotationsModalShown: boolean;
   isTransactionAnnotated: boolean;
   addresses: string | string[];
   onModal?: boolean;
@@ -39,6 +40,7 @@ interface ITransactionDetails {
 const TransactionDetails: React.FC<ITransactionDetails> = ({
   tokenDetails,
   transactionType,
+  isAnnotationsModalShown,
   isTransactionAnnotated,
   addresses,
   onModal = false,
@@ -133,7 +135,11 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 </div>
               </>
             ) : (
-              <TokenCollection numberVisible={3} tokenDetails={tokenDetails} />
+              <TokenCollection
+                numberVisible={3}
+                tokenDetails={tokenDetails}
+                isAnnotationsModalShown={isAnnotationsModalShown}
+              />
             )}
           </div>
           {/* Transaction direction: e.g "invested in", "to", "from" ... */}

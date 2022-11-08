@@ -71,6 +71,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     useState<string>('');
   // table functionality
   const [inlineCategorising, setInlineCategorising] = useState<boolean>(false);
+  const [isAnnotationsModalShown, setIsAnnotationsModalShown] =
+    useState<boolean>(false);
   const [showAnnotationsModal, toggleShowAnnotationsModal] = useModal();
   const [checkboxActive, setCheckboxActive] = useState<boolean>(false);
   const [showNote, setShowNote] = useState<boolean>(false);
@@ -265,6 +267,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                           syndicateEvents[0]?.distributionBatch
                         );
                         toggleShowAnnotationsModal();
+                        setIsAnnotationsModalShown(true);
                         if (annotation?.memo) {
                           setShowNote(true);
                         }
@@ -356,6 +359,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       <div className="text-base col-span-6 flex space-x-3 items-center">
                         <BatchTransactionDetails
                           contractAddress={erc20Token.address}
+                          isAnnotationsModalShown={isAnnotationsModalShown}
                           tokenDetails={tokensList}
                           transactionType={
                             isOutgoingTransaction ? 'outgoing' : 'incoming'
@@ -377,6 +381,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       <div className="text-base col-span-6 flex space-x-3 items-center">
                         <TransactionDetails
                           contractAddress={erc20Token.address}
+                          isAnnotationsModalShown={isAnnotationsModalShown}
                           tokenDetails={[
                             {
                               name: currentTransfer.tokenName
@@ -486,9 +491,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         <ActivityModal
           isOwner={isOwner}
           showModal={showAnnotationsModal}
+          isAnnotationsModalShown={isAnnotationsModalShown}
           closeModal={() => {
             setShowNote(false);
             toggleShowAnnotationsModal();
+            setIsAnnotationsModalShown(false);
           }}
           refetchTransactions={refetchTransactions}
           currentTransaction={currentTransaction}
