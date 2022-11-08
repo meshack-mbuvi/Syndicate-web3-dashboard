@@ -462,7 +462,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         ? transactionInfo.isOutgoingTransaction
                         : false
                     }
-                    readonly={readOnly}
+                    readonly={category === 'DISTRIBUTION' ? true : readOnly}
                     changeAdaptiveBackground={changeAdaptiveBackground}
                     renderedInModal={true}
                     refetchTransactions={refetchTransactions}
