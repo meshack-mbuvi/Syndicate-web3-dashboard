@@ -428,6 +428,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
         closeModal();
         setEditMode(false);
         setShowDetailSection(false);
+        setIsDistributionTableExpanded(false);
       }}
       customWidth={`w-full sm:${
         isDistributionTableExpanded ? 'w-10/12' : 'w-564'
