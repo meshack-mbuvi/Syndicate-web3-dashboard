@@ -58,13 +58,11 @@ const AmountToRaise: React.FC<{
 
   // catch input field errors
   useEffect(() => {
-    if (!amount || +amount === 0 || editButtonClicked) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
+    if (!amount || editButtonClicked) {
+      setNextBtnDisabled?.(true);
     } else {
       setError('');
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
+      setNextBtnDisabled?.(false);
     }
     amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
   }, [amount, editButtonClicked, setNextBtnDisabled]);
