@@ -178,6 +178,7 @@
     "autoprefixer": "^9.8.8",
     "babel-eslint": "10.1.0",
     "babel-loader": "^8.2.3",
+    "chromatic": "^6.10.4",
     "cssnano": "^5.0.14",
     "cypress": "^7.6.0",
     "eslint": "^7.29.0",
