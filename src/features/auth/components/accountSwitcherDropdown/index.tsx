@@ -13,6 +13,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
 import { CTAButton } from '@/components/CTAButton';
+import { DotsVerticalIcon } from '@heroicons/react/outline';
+import WalletSheetMobileModal from '../modals/WalletSheetMobileModal';
 
 interface Props {
   walletProviderName?: string;
@@ -77,8 +79,10 @@ const AuthAccountSwitcherDropdown: React.FC<Props> = ({
     }
   }, [wallets]);
   const ActiveWallet = (): JSX.Element => {
+    const [showModal, setShowModal] = useState(false);
+
     return (
-      <div className={`rounded-custom bg-gray-syn8 divide-y`}>
+      <div className={`rounded-custom bg-gray-syn7 md:bg-gray-syn8 divide-y`}>
         <div className="px-4 py-2 flex items-center space-x-2">
           <div className="w-1.5 h-1.5 bg-green rounded-full flex-shrink-0" />
           <div className="uppercase text-gray-syn3 text-xs font-mono">
@@ -95,7 +99,7 @@ const AuthAccountSwitcherDropdown: React.FC<Props> = ({
             imageSize={AddressImageSize.SMALL}
             customTailwindXSpacingUnit={3}
           />
-          <div className="flex space-x-4 items-center">
+          <div className="hidden sm:flex space-x-4 items-center">
             {/* Copy to clipboard */}
             <CopyToClipboard
               text={
@@ -168,18 +172,27 @@ const AuthAccountSwitcherDropdown: React.FC<Props> = ({
               />
             </button>
           </div>
+          <button
+            className="sm:hidden inline-block"
+            onClick={(): void => setShowModal(true)}
+          >
+            <DotsVerticalIcon className="text-gray-syn4 w-4 h-4" />
+          </button>
         </div>
+        <WalletSheetMobileModal
+          showModal={showModal}
+          closeModal={(): void => setShowModal(false)}
+          linkedAddress={activeWallet?.address || ''}
+          ens={activeWallet?.name || ''}
+          blockExplorerLink={externalLink || ''}
+          showInfo={false}
+        />
       </div>
     );
   };
   return (
     <>
-      <div
-        className={`rounded-2.5xl w-full p-2 border-gray-syn7 border`}
-        style={{
-          width: '18.75rem'
-        }}
-      >
+      <div className="rounded-b-2.5xl md:rounded-2.5xl bg-gray-syn8 md:bg-transparent w-screen md:w-75 p-2 border-gray-syn7 border-0 md:border">
         {isActiveWalletAContract && (
           <div>
             <div className="pb-4">

@@ -22,7 +22,9 @@ export const Drawers: React.FC<Props> = ({
       return (
         <button
           key={index}
-          className="border-gray-syn6 items-center p-5 overflow-hidden w-full"
+          className={`border-gray-syn6 items-center overflow-hidden w-full ${
+            index === visibleItemIndex ? 'p-5 h-auto' : 'px-5 py-4 h-14'
+          }`}
           onClick={(): void => {
             if (index === visibleItemIndex) {
               handleVisibleItemChange(null);

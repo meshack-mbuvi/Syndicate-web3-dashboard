@@ -16,9 +16,10 @@ interface IWalletSheetMobileModal {
   closeModal: () => void;
   linkedAddress: string;
   ens: string;
-  walletInfo: string;
-  isConnectedWallet: boolean;
+  walletInfo?: string;
+  isConnectedWallet?: boolean;
   blockExplorerLink: string;
+  showInfo?: boolean;
 }
 
 const WalletSheetMobileModal: React.FC<IWalletSheetMobileModal> = ({
@@ -28,7 +29,8 @@ const WalletSheetMobileModal: React.FC<IWalletSheetMobileModal> = ({
   ens = '',
   walletInfo = '',
   isConnectedWallet,
-  blockExplorerLink
+  blockExplorerLink,
+  showInfo = true
 }) => {
   const [showCopyState, setShowCopyState] = useState(false);
 
@@ -56,36 +58,44 @@ const WalletSheetMobileModal: React.FC<IWalletSheetMobileModal> = ({
       mobileModal={true}
     >
       <div className="flex flex-col w-full justify-center">
-        <div className="flex flex-row items-center">
-          <div className="pr-3 relative">
-            <div className="w-8 h-8 bg-green rounded-full">
-              <img
-                src="/images/collectives/collectiveMemberAvatar.svg"
-                alt="avator"
-              />
+        {showInfo && (
+          <>
+            <div className="flex flex-row items-center">
+              <div className="pr-3 relative">
+                <div className="w-8 h-8 bg-green rounded-full">
+                  <img
+                    src="/images/collectives/collectiveMemberAvatar.svg"
+                    alt="avator"
+                  />
+                </div>
+                <div className="absolute top-0 right-2.5">
+                  {isConnectedWallet && <OnlineIcon />}
+                </div>
+              </div>
+              {ens ? (
+                <div className="flex flex-row space-x-2">
+                  <B2>{ens}</B2>
+                  <B2 extraClasses="text-gray-syn4">
+                    {formatAddress(linkedAddress, 6, 4)}
+                  </B2>
+                </div>
+              ) : (
+                <B2 extraClasses="break-all">
+                  <span className="text-gray-syn4">0x</span>
+                  <span className="">{linkedAddress.substring(2)}</span>
+                </B2>
+              )}
             </div>
-            <div className="absolute top-0 right-2.5">
-              {isConnectedWallet && <OnlineIcon />}
-            </div>
-          </div>
-          {ens ? (
-            <div className="flex flex-row space-x-2">
-              <B2>{ens}</B2>
-              <B2 extraClasses="text-gray-syn4">
-                {formatAddress(linkedAddress, 6, 4)}
-              </B2>
-            </div>
-          ) : (
-            <B2 extraClasses="break-all">
-              <span className="text-gray-syn4">0x</span>
-              <span className="">{linkedAddress.substring(2)}</span>
-            </B2>
-          )}
-        </div>
-        <B3 extraClasses="text-gray-syn3 pt-3 pb-1">{walletInfo}</B3>
+            <B3 extraClasses="text-gray-syn3 pt-3 pb-1">{walletInfo}</B3>
+          </>
+        )}
         <div className="flex flex-col text-left divide-y-1 divide-gray-syn7">
           <CopyToClipboard text={linkedAddress} onCopy={updateAddressCopyState}>
-            <div className="relative cursor-pointer flex items-center py-4 space-x-3">
+            <div
+              className={`relative cursor-pointer flex items-center space-x-3 pb-4 ${
+                showInfo ? 'pt-4' : 'pt-1'
+              }`}
+            >
               <CopyToClipboardIcon color="text-white" />
               <B2>Copy address</B2>
               {showCopyState && (

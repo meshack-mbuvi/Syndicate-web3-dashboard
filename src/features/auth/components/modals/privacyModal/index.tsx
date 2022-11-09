@@ -1,8 +1,9 @@
 import { Drawers } from '@/components/drawers';
 import IconUserPrivacy from '@/components/icons/userPrivacy';
 import Modal, { ModalStyle } from '@/components/modal';
-import { B3, H4 } from '@/components/typography';
-import { useState } from 'react';
+import { B1, B3, H4 } from '@/components/typography';
+import { isMobile } from '@/utils/calendarHelpers';
+import React, { useState } from 'react';
 
 interface Props {
   show: boolean;
@@ -16,20 +17,34 @@ export const DataStoragePrivacyModal: React.FC<Props> = ({
   const [visibleDrawerIndex, setVisibleDrawerIndex] = useState<number | null>(
     null
   );
+
+  const showMobileModal = isMobile();
+
   return (
     <Modal
       show={show}
       closeModal={closeModal}
       modalStyle={ModalStyle.DARK}
-      customClassName="p-8 max-w-120"
+      customClassName="p-5 md:p-8"
       showHeader={false}
+      mobileModal={showMobileModal}
+      showCloseButton={!showMobileModal}
+      customWidth={showMobileModal ? 'w-full' : undefined}
+      outsideOnClick={true}
     >
       <>
-        <div className="flex space-x-2 items-center mb-3">
-          <IconUserPrivacy width={32} height={32} />
-          <H4>How is my data stored?</H4>
+        <div className="flex space-x-2 items-center mb-2 md:mb-3">
+          <IconUserPrivacy
+            width={showMobileModal ? 24 : 32}
+            height={showMobileModal ? 24 : 32}
+          />
+          {showMobileModal ? (
+            <B1>How is my data stored?</B1>
+          ) : (
+            <H4>How is my data stored?</H4>
+          )}
         </div>
-        <B3 extraClasses="text-gray-syn3 mb-6">
+        <B3 extraClasses="text-gray-syn3 mb-4 md:mb-6">
           Syndicate does not currently store or sell any data. Linkages between
           your social accounts and wallets are stored by{' '}
           <a
@@ -43,6 +58,16 @@ export const DataStoragePrivacyModal: React.FC<Props> = ({
           , a third-party provider.
         </B3>
         <Drawers
+          titleClassName={`transform transition-font-size ${
+            showMobileModal
+              ? 'text-base tracking-0.1px'
+              : 'font-mono text-sm uppercase tracking-e2'
+          }`}
+          contentClassName={
+            showMobileModal
+              ? 'text-sm transform transition-font-size'
+              : 'text-base'
+          }
           items={[
             {
               title: 'Wallets + social accounts',

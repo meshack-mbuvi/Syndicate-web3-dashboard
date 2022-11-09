@@ -91,8 +91,8 @@ const Modal = (props: ModalProps): JSX.Element => {
     (modalStyle === ModalStyle.LIGHT && 'text-black') || ''
   } ${(modalStyle === ModalStyle.DARK && 'text-white') || ''}`;
 
-  const mobilePosition = mobileModal ? 'items-end' : 'items-center';
-  const mobileRadius = mobileModal ? 'rounded-t-2xl' : 'rounded-2xl';
+  const modalPosition = mobileModal ? 'items-end' : 'items-center';
+  const modalRadius = mobileModal ? 'rounded-t-2xl' : 'rounded-2xl';
 
   useDisableBgScrollOnModal(show);
 
@@ -118,7 +118,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       >
         <div
           ref={childWrapperRef}
-          className={`flex ${mobilePosition} h-screen my-auto justify-center text-center ${textColor} sm:px-4 sm:block sm:p-0`}
+          className={`flex ${modalPosition} h-screen my-auto justify-center text-center ${textColor} sm:px-4 sm:block sm:p-0`}
         >
           <Transition.Child
             as={Fragment}
@@ -156,7 +156,7 @@ const Modal = (props: ModalProps): JSX.Element => {
                 isMaxHeightScreen ? 'max-h-screen' : ''
               } ${
                 bgColor ? bgColor : ''
-              } ${mobileRadius} text-left shadow-xl transform transition-all ${
+              } ${modalRadius} text-left shadow-xl transform transition-all ${
                 customWidth || ''
               } ${overflow || ''} ${customClassName || ''}`}
               role="dialog"
