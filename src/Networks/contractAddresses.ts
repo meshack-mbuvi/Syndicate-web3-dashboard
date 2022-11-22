@@ -32,7 +32,10 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxPerMemberERC721: '0xfdaf4240cb10aa0d022219fb25df5d478eb21d1d',
     MaxTotalSupplyERC721: '0x77c86b6d1b03751b8162a6c1133dd23677863150',
     GuardAlwaysAllow: '0x54B2b5A9835704EBEcc9AE13Feb937F89fffE124',
-    GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4'
+    GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4',
+
+    // precommit
+    precommitModule: '' // TODO: add contract address for mainnet
   },
 
   // Goerli
@@ -68,7 +71,10 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxPerMemberERC721: '0x960fd5cfa6c36e9db131824ddf07df6322a053de',
     MaxTotalSupplyERC721: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3',
     GuardAlwaysAllow: '0xd81d0cae5d4ac81b7aca5db7a76ec7d82260ca75',
-    GuardNeverAllow: '0xab5390d3708c78e84b82de12d3e07d94145a3c0b'
+    GuardNeverAllow: '0xab5390d3708c78e84b82de12d3e07d94145a3c0b',
+
+    // precommit
+    precommitModule: '0xa244f78fa18e74a925483984fec489b68d07f23e'
   },
 
   // Matic
@@ -104,6 +110,9 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxPerMemberERC721: '', // TODO
     MaxTotalSupplyERC721: '', // TODO
     GuardAlwaysAllow: '0x5eF43cd77a929A48E0B6fCEf614a460336e3070a',
-    GuardNeverAllow: '0xb47FaFc19659Ada3B12c3D072Dd6768429aC2272'
+    GuardNeverAllow: '0xb47FaFc19659Ada3B12c3D072Dd6768429aC2272',
+
+    // precommit
+    precommitModule: '' // TODO: add contract address for Polygon
   }
 });

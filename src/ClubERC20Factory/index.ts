@@ -33,6 +33,7 @@ import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { TimeRequirements } from './TimeRequirements';
 import { TokenGatedMixin } from './tokenGatingMixin';
+import { PrecommitModule } from './PrecommitModule';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -258,6 +259,11 @@ export const getSyndicateContracts = async (
     ? new TokenGatedMixin(addresses.tokenGatingMixin, web3, activeNetwork)
     : null;
 
+  // pre-commit contract
+  const precommitModule = addresses.precommitModule
+    ? new PrecommitModule(addresses.precommitModule, web3, activeNetwork)
+    : null;
+
   // return all initialized contracts
   return {
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
@@ -321,6 +327,8 @@ export const getSyndicateContracts = async (
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxTotalSupplyMixin,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    tokenGatedMixin
+    tokenGatedMixin,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    precommitModule
   };
 };
