@@ -32,6 +32,7 @@ export interface ICollectiveDetails {
   metadataCid: string;
   mediaCid: string;
   collectiveCardType: CollectiveCardType;
+  custom?: any;
 }
 
 const emptyCollective: ICollectiveDetails = {
@@ -53,7 +54,8 @@ const emptyCollective: ICollectiveDetails = {
   isOpen: false,
   metadataCid: '',
   mediaCid: '',
-  collectiveCardType: CollectiveCardType.TIME_WINDOW
+  collectiveCardType: CollectiveCardType.TIME_WINDOW,
+  custom: {}
 };
 
 export interface ICollectiveDetailsResponse {
@@ -82,6 +84,10 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
   const MINT_MODULE =
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.EthPriceMintModule;
+
+  const CUSTOM_MERKLE_MINT =
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeTokenPriceMerkleMintModule;
 
   const [collectiveDetails, setCollectiveDetails] =
     useState<ICollectiveDetails>(emptyCollective);
@@ -136,7 +142,8 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
       let collectiveCardType = CollectiveCardType.TIME_WINDOW,
         mintEndTime = '',
         isOpen = true,
-        maxSupply = 0;
+        maxSupply = 0,
+        custom = {};
 
       // set collective card type and check if collective is active
       activeModules.map((module: any) => {
@@ -146,6 +153,40 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
           web3.utils.toChecksumAddress(contractAddress) ===
             web3.utils.toChecksumAddress(MINT_MODULE)
         ) {
+          activeRequirements.map((activeRequirement: any) => {
+            const { requirement } = activeRequirement;
+            const { endTime, requirementType } = requirement;
+
+            if (
+              +endTime > 0 &&
+              requirementType === CollectiveCardType.TIME_WINDOW
+            ) {
+              collectiveCardType = CollectiveCardType.TIME_WINDOW;
+              mintEndTime = String(endTime);
+              isOpen =
+                parseInt((new Date().getTime() / 1000).toString()) < +endTime;
+              return;
+            } else if (
+              requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY
+            ) {
+              const currentTime = Date.now();
+              collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
+              isOpen = +totalSupply < +maxTotalSupply;
+              mintEndTime = String(Math.ceil(currentTime / 1000));
+              maxSupply = maxTotalSupply;
+              return;
+            }
+          });
+
+          return;
+        }
+
+        // TODO: Handle the merkle use case correctly below
+        if (
+          web3.utils.toChecksumAddress(contractAddress) ===
+          web3.utils.toChecksumAddress(CUSTOM_MERKLE_MINT)
+        ) {
+          custom = { merkle: true };
           activeRequirements.map((activeRequirement: any) => {
             const { requirement } = activeRequirement;
             const { endTime, requirementType } = requirement;
@@ -199,7 +240,8 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
         metadataCid,
         description,
         mediaCid,
-        collectiveCardType
+        collectiveCardType,
+        custom
       });
     } else {
       verifyNotFound();

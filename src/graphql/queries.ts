@@ -1,3 +1,4 @@
+import { DocumentNode } from '@apollo/client';
 import gql from 'graphql-tag';
 
 export const MY_CLUBS_QUERY = gql`
@@ -495,6 +496,14 @@ export const TOKEN_DETAILS = gql`
       symbol
       decimals
       logo
+    }
+  }
+`;
+
+export const getBasicMerkleProofQuery: DocumentNode = gql`
+  query getBasicMerkleProof($merkleRoot: String!, $account: String!) {
+    getBasicMerkleProof(merkleRoot: $merkleRoot, account: $account) {
+      proof
     }
   }
 `;

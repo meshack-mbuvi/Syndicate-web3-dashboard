@@ -27,3 +27,11 @@ export const SET_MEMBER_SIGN_STATUS = gql`
     )
   }
 `;
+
+export const CREATE_BASIC_MERKLE_TREE_MUTATION = gql`
+  mutation createBasicMerkleTree($accounts: [String!]!) {
+    createBasicMerkleTree(accounts: $accounts) {
+      merkleRoot
+    }
+  }
+`;

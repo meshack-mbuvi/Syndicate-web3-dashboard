@@ -11,6 +11,9 @@ import {
 import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
+import MintModuleHarness from '@/components/mintModules/MintModuleHarness';
+import NativePriceMintModuleHarness from '@/components/mintModules/NativePriceMintModuleHarness';
+import NativeTokenPriceMerkleMintModuleHarness from '@/components/mintModules/NativeTokenPriceMerkleMintModuleHarness';
 import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
@@ -20,9 +23,11 @@ import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
 import { getCollectiveBalance } from '@/utils/contracts/collective';
 import { getWeiAmount } from '@/utils/conversions';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
+import { useApolloClient } from '@apollo/client';
+import useMintModuleEligibility from '@/hooks/useMintModuleEligibility';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -40,6 +45,8 @@ const NftClaimAndInfoCard: React.FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
+  const apolloClient = useApolloClient();
+
   const {
     collectiveDetails: {
       mintPrice,
@@ -52,7 +59,8 @@ const NftClaimAndInfoCard: React.FC = () => {
       collectiveAddress,
       numOwners,
       maxPerWallet,
-      metadataCid
+      metadataCid,
+      custom
     },
     collectiveDetailsLoading
   } = useERC721Collective();
@@ -87,6 +95,21 @@ const NftClaimAndInfoCard: React.FC = () => {
   const [progressState, setProgressState] = useState<ProgressState>();
   const [openSeaLink, setOpenSeaLink] = useState<string>();
 
+  const mintModule: MintModuleHarness = useMemo(() => {
+    if (custom?.merkle) {
+      return new NativeTokenPriceMerkleMintModuleHarness(
+        collectiveAddress,
+        syndicateContracts.nativeTokenPriceMerkleMintModule,
+        apolloClient
+      );
+    } else {
+      return new NativePriceMintModuleHarness(
+        getWeiAmount(web3, mintPrice, 18, true),
+        syndicateContracts.ethPriceMintModule
+      );
+    }
+  }, [account, collectiveAddress, syndicateContracts]);
+  const { isEligible } = useMintModuleEligibility(mintModule);
   useEffect(() => {
     if (progressState == ProgressState.TAKING_LONG || !interval) return;
 
@@ -142,12 +165,10 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   const claimCollective = async () => {
     setProgressState(ProgressState.CONFIRM);
+    console.log('the mint module to use for minting', mintModule);
     try {
-      const { ethPriceMintModule } = syndicateContracts;
-      await ethPriceMintModule.mint(
-        getWeiAmount(web3, mintPrice, 18, true),
+      (await mintModule).mint(
         collectiveAddress,
-        '1', // Hardcode to mint a single token
         account,
         onTxConfirm,
         onTxReceipt,
@@ -190,7 +211,7 @@ const NftClaimAndInfoCard: React.FC = () => {
     } else {
       if (hasAccountReachedMaxPasses) {
         _walletState = WalletState.MAX_PASSES_REACHED;
-      } else if (!isAccountEligible) {
+      } else if (!isAccountEligible || !isEligible) {
         _walletState = WalletState.WRONG_WALLET;
       } else {
         _walletState = WalletState.CONNECTED;
@@ -199,7 +220,7 @@ const NftClaimAndInfoCard: React.FC = () => {
 
     // check whether connected account can claim and update _walletState
     setWalletState(_walletState);
-  }, [account, isAccountEligible, hasAccountReachedMaxPasses]);
+  }, [isEligible, account, isAccountEligible, hasAccountReachedMaxPasses]);
 
   const shortenOwnerAddress = (address: string) => {
     if (!address) return '';

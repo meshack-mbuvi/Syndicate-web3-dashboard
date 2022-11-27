@@ -33,9 +33,11 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxTotalSupplyERC721: '0x77c86b6d1b03751b8162a6c1133dd23677863150',
     GuardAlwaysAllow: '0x54B2b5A9835704EBEcc9AE13Feb937F89fffE124',
     GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4',
+    nativeTokenPriceMerkleMintModule:
+      '0xd200c8bca3ee5f264547489ed025a22e6aff88b4',
 
     // precommit
-    precommitModule: '' // TODO: add contract address for mainnet
+    precommitModule: '' // TODO: add contract address for mainnet,
   },
 
   // Goerli
@@ -72,6 +74,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxTotalSupplyERC721: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3',
     GuardAlwaysAllow: '0xd81d0cae5d4ac81b7aca5db7a76ec7d82260ca75',
     GuardNeverAllow: '0xab5390d3708c78e84b82de12d3e07d94145a3c0b',
+    nativeTokenPriceMerkleMintModule:
+      '0x124D5DcF3575b528de9c85dae6afA43bB7ba736b',
 
     // precommit
     precommitModule: '0xa244f78fa18e74a925483984fec489b68d07f23e'
@@ -111,6 +115,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     MaxTotalSupplyERC721: '', // TODO
     GuardAlwaysAllow: '0x5eF43cd77a929A48E0B6fCEf614a460336e3070a',
     GuardNeverAllow: '0xb47FaFc19659Ada3B12c3D072Dd6768429aC2272',
+    nativeTokenPriceMerkleMintModule:
+      '0x0942a0f4a9e3f4ce890d86491b28b187b21bb219',
 
     // precommit
     precommitModule: '' // TODO: add contract address for Polygon

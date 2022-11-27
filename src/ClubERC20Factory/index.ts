@@ -33,6 +33,7 @@ import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { TimeRequirements } from './TimeRequirements';
 import { TokenGatedMixin } from './tokenGatingMixin';
+import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
 import { PrecommitModule } from './PrecommitModule';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
@@ -259,6 +260,14 @@ export const getSyndicateContracts = async (
     ? new TokenGatedMixin(addresses.tokenGatingMixin, web3, activeNetwork)
     : null;
 
+  const nativeTokenPriceMerkleMintModule =
+    addresses.nativeTokenPriceMerkleMintModule
+      ? new NativeTokenPriceMerkleMintModule(
+          addresses.nativeTokenPriceMerkleMintModule,
+          web3,
+          activeNetwork
+        )
+      : null;
   // pre-commit contract
   const precommitModule = addresses.precommitModule
     ? new PrecommitModule(addresses.precommitModule, web3, activeNetwork)
@@ -328,6 +337,8 @@ export const getSyndicateContracts = async (
     maxTotalSupplyMixin,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     tokenGatedMixin,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     precommitModule
   };
