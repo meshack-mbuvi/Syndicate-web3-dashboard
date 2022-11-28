@@ -85,6 +85,10 @@ export const CLUB_TOKEN_MEMBERS = gql`
         memberAddress
         createdAt
       }
+      ... on MemberMintedEth {
+        memberAddress
+        createdAt
+      }
       ... on OwnerMinted {
         createdAt
         memberAddress

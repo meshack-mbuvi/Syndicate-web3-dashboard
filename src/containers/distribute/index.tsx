@@ -114,17 +114,22 @@ const Distribute: FC = () => {
       clubAddress:
         activeNetwork.chainId === 137
           ? '0x979e031fa7b743ce8896b03d4b96a212c3dd8417'
-          : activeNetwork.chainId === 4
-          ? '0xb02a13a268339bedd892a00ff132da4352ed9df5'
-          : '0xc96ff0a7fe274a4588f6d2a9baacfe9698bab3b0',
+          : activeNetwork.chainId === 5
+          ? '0xc96ff0a7fe274a4588f6d2a9baacfe9698bab3b0'
+          : '0xf2a3edf640b0247f47ec655235c25409ba6607ee',
       distributionERC20Address:
         activeNetwork.chainId === 137
           ? '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
-          : activeNetwork.chainId === 4
-          ? '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926'
-          : '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          : activeNetwork.chainId === 5
+          ? '0x07865c6E87B9F70255377e024ace6630C1Eaa37F'
+          : '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       totalDistributionAmount: 0,
-      members: ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0'],
+      // This is a quick hack for estimateGas on mainnet
+      // TODO (ENG-4673): Make example gas estimate arguments more scalable and less hardcoded
+      members:
+        activeNetwork.chainId === 137 || activeNetwork.chainId === 5
+          ? ['0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0']
+          : ['0x4c02247cfcdab0444d3a17f06af5219404953f20'],
       batchIdentifier: 'batch'
     },
     skipQuery: !distributionTokens.length
