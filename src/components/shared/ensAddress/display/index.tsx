@@ -1,6 +1,7 @@
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
 import { formatAddress } from '@/utils/formatAddress';
+import { useRef, useState, useEffect } from 'react';
 
 export enum AddressImageSize {
   SMALLER = 'w-5 h-5',
@@ -44,6 +45,8 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
   disabled,
   ...rest
 }: Props) => {
+  const [addressWidth, setAddressWidth] = useState(84);
+
   const formattedAddress = addressAbbreviated
     ? address
     : formatAddress(
@@ -53,11 +56,21 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
         maxDigits % 2 ? (maxDigits + 1) / 2 : maxDigits / 2
       );
   const TopLineName = (): JSX.Element => {
-    return <div>{name}</div>;
+    return (
+      <div className="truncate" style={{ width: addressWidth }}>
+        {name}
+      </div>
+    );
   };
   const TopLineAddress = (): JSX.Element => {
+    const addressRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      setAddressWidth(addressRef.current?.getBoundingClientRect().width || 84);
+    }, [addressRef]);
+
     return (
-      <div {...rest}>
+      <div {...rest} ref={addressRef}>
         <span className={`${disabled ? 'text-gray-syn5' : 'text-gray-syn4'}`}>
           0x
         </span>
