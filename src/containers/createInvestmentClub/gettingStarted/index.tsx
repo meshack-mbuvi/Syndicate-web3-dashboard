@@ -203,7 +203,7 @@ const GettingStarted: React.FC = () => {
           </div>
           <div className="text-sm mb-6 flex flex-row items-center justify-center">
             <a
-              href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
+              href="https://syndicate.io/terms"
               className="text-gray-syn4 cursor-pointer"
               target="_blank"
               rel="noopener noreferrer"
