@@ -16,6 +16,20 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
     .toNumber();
 
 /**
+ * Takes a javascript number and converts it to a bigNumber.
+ *
+ * @param {string} value amount to convert
+ * @param {string} tokenFactor result of 10 raised to the power of token decimals
+ * @returns
+ */
+export const numberToEther = (value: string, tokenFactor?: string): number =>
+  new BigNumber(value)
+    .multipliedBy(
+      new BigNumber(tokenFactor ? tokenFactor : '1000000000000000000')
+    )
+    .toNumber();
+
+/**
  * To minimise error margins while passing javascript numbers to solidity, we
  * multiplying them by 1000 before converting to ether. Therefore to convert
  * any value from % to decimal, we just divide by 1000.
@@ -58,6 +72,9 @@ export const getWeiAmount = (
     // Example: For a token with 8 decimals, eg GALA, tokenUnit is undefined
     // and thus fromWei defaults to 18 decimals.
     // web3.utils.unitMap does not have any unit supporting 8 decimals
+    if (multiplication) {
+      return numberToEther(amount, tokenFactor.toString());
+    }
     return etherToNumber(amount, tokenFactor.toString());
   }
 
