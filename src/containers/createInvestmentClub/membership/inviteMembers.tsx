@@ -286,7 +286,7 @@ const InviteMembers: React.FC = () => {
                 )
               : '',
             onChange: (e) => {
-              if (isNaN(e.target.value.replace(/,/g, ''))) {
+              if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
                 return;
               }
               handleAmountPerAddressChange(e);

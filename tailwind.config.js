@@ -489,11 +489,19 @@ module.exports = {
       },
       animation: {
         fade_in: 'fade_in 0.5s ease-out 1',
+        fade_in_double: 'fade_in 1s ease-out 1',
+        'fade-in-delay': 'fade-in-delay 1s ease-in-out 1',
         fade_in_bg: 'fade_in_bg 6s ease-out 1',
         'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite',
         float: 'float 8s ease-in-out infinite',
         'move-in': 'move-in 1.2s ease-in-out 1',
-        'move-in-brief': 'move-in-brief 1.4s ease-in-out'
+        'move-in-brief': 'move-in-brief 1.4s ease-in-out',
+        'deal-coin-top-left': 'deal-coin-top-left 0.8s ease-out 1',
+        'deal-coin-middle-left': 'deal-coin-middle-left 0.8s ease-out 1',
+        'deal-coin-bottom-left': 'deal-coin-bottom-left 0.8s ease-out 1',
+        'deal-coin-top-right': 'deal-coin-top-right 0.8s ease-out 1',
+        'deal-coin-middle-right': 'deal-coin-middle-right 0.8s ease-out 1',
+        'deal-coin-bottom-right': 'deal-coin-bottom-right 0.8s ease-out 1'
       },
       keyframes: {
         'move-in': {
@@ -543,6 +551,17 @@ module.exports = {
             opacity: '1'
           }
         },
+        'fade-in-delay': {
+          '0%': {
+            opacity: '0'
+          },
+          '50%': {
+            opacity: '0'
+          },
+          '100%': {
+            opacity: '1'
+          }
+        },
         fade_in_bg: {
           '0%': {
             backgroundOpacity: '0.3'
@@ -563,6 +582,78 @@ module.exports = {
           '100%': {
             transform: 'scale(1)',
             opacity: '1'
+          }
+        },
+        'deal-coin-top-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            opacity: '1',
+            left: '4rem',
+            top: '1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-middle-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '3rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem'
+          }
+        },
+        'deal-coin-bottom-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '4rem',
+            top: '-1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-top-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            opacity: '1',
+            left: '-4rem',
+            top: '1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-middle-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '-3rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem'
+          }
+        },
+        'deal-coin-bottom-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '-4rem',
+            top: '-1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem',
+            top: '0rem'
           }
         }
       },

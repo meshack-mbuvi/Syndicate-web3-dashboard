@@ -2,7 +2,9 @@
   "name": "Syndicate-Web3-Dashboard",
   "description": "Web3 Dashboard for Syndicate Protocol",
   "version": "0.0.1",
-  "author": "Syndicate Inc.",
+  "author": {
+    "name": "Syndicate Inc."
+  },
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@apollo/react-hooks": "^4.0.0",
@@ -146,7 +148,8 @@
     "lambda-build": "netlify-lambda build functions/src",
     "generate-types": "typechain --target=truffle-v5 'src/contracts/*.json' --out-dir='src/@types/contracts'",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token=f6d7eb9d5271"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",
@@ -204,7 +207,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vercel/next.js/"
+    "url": "git+https://github.com/vercel/next.js.git"
   },
   "bugs": {
     "url": "https://github.com/vercel/next.js/issues"
@@ -217,5 +220,8 @@
       "prettier --write",
       "eslint --fix"
     ]
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/vercel/next.js#readme",
+  "_id": "Syndicate-Web3-Dashboard@0.0.1"
 }

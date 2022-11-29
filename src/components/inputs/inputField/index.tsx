@@ -18,6 +18,7 @@ interface InputFieldProps {
   onChange?: (e: any) => void;
   onKeyDown?: (e: any) => void;
   onClick?: (e: any) => void;
+  onFocus?: (e: any) => void;
   disabled?: boolean;
 }
 
@@ -35,6 +36,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       classesOverride,
       onChange,
       onClick,
+      onFocus,
       ...rest
     } = props;
 
@@ -90,6 +92,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               textOverflow: 'ellipsis',
               minWidth: '1ch'
             }}
+            onFocus={onFocus}
             {...rest}
           />
         </div>

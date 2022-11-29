@@ -38,7 +38,7 @@ import { Callout } from '../callout';
 import { CTAButton, CTAType } from '../CTAButton';
 import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
+import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import {
   InputFieldWithToken,
@@ -747,10 +747,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         borderRadius="rounded-1.5lg"
                       />
                     ) : (
-                      <InputFieldWithButton
+                      <InputFieldWithAddOn
                         value={String(maxNumberOfMembers)}
-                        buttonLabel="Max"
-                        buttonOnClick={() => {
+                        addOn="Max"
+                        addOnOnClick={() => {
                           setMaxNumberOfMembers(99);
                           setMaxNumberOfMembersError(null);
                         }}

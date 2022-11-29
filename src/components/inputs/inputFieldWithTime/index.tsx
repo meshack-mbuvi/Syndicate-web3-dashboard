@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { InputField } from '../inputField';
 
 export const InputFieldWithTime = (props: {
@@ -7,6 +8,7 @@ export const InputFieldWithTime = (props: {
   isInErrorState?: boolean;
   extraClasses?: string;
   onChange: (e: any) => void;
+  onFocus?: (e: any) => void;
 }): React.ReactElement => {
   const {
     value,
@@ -15,9 +17,11 @@ export const InputFieldWithTime = (props: {
     isInErrorState = false,
     extraClasses = '',
     onChange,
+    onFocus,
     ...rest
   } = props;
-
+  const [convertToTypeTimeAfterFocus, setConvertToTypeTimeAfterFocus] =
+    useState(false);
   return (
     <>
       <div className="relative w-full">
@@ -27,7 +31,14 @@ export const InputFieldWithTime = (props: {
           isInErrorState={isInErrorState}
           extraClasses={extraClasses}
           onChange={onChange}
-          type="time"
+          type={`${convertToTypeTimeAfterFocus ? 'time' : 'text'}`}
+          onFocus={
+            onFocus
+              ? onFocus
+              : () => {
+                  setConvertToTypeTimeAfterFocus(true);
+                }
+          }
           {...rest}
         />
       </div>

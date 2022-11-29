@@ -551,3 +551,27 @@ export const D2 = ({
     </div>
   );
 };
+
+export const FL = ({
+  children,
+  extraClasses,
+  ...rest
+}: {
+  children?: any;
+  extraClasses?: string;
+  [rest: string]: any;
+}): JSX.Element => {
+  return (
+    <div
+      className={`font-medium transform transition-font-size ${
+        extraClasses || ''
+      }`}
+      style={{
+        fontSize: '0.9375rem'
+      }}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+};

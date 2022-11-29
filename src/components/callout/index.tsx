@@ -17,7 +17,7 @@ interface Props {
   type?: CalloutType;
   extraClasses?: string;
   showIcon?: boolean;
-  icon?: string | undefined | null;
+  icon?: string | undefined | null | React.ReactNode;
   iconPosition?: CalloutIconPosition;
   children?: any;
   textColor?: string;
@@ -34,7 +34,8 @@ export const Callout: React.FC<Props> = ({
   textColor = 'text-white',
   iconPosition = CalloutIconPosition.INLINE,
   backgroundColor = 'bg-blue-stratosphere',
-  children
+  children,
+  ...rest
 }: Props) => {
   let styles = `${backgroundColor} bg-opacity-${backgroundOpacity} ${textColor}`;
   let calloutIcon: string | any = icon;
@@ -87,6 +88,7 @@ export const Callout: React.FC<Props> = ({
           ? 'space-y-3.5'
           : ''
       } rounded-xl px-5 py-4 ${extraClasses}`}
+      {...rest}
     >
       {showIcon && calloutIcon && typeof calloutIcon === 'string' ? (
         <img

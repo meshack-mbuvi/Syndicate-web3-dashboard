@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
   options: { icon?: string; title: string; subTitle?: string }[];
-  activeIndex: number;
+  activeIndex?: number;
   disabledIndices?: number[];
   customClasses?: string;
   onClick: (selectedIndex: number) => void;
@@ -76,7 +76,7 @@ export const DetailedTile: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (activeIndex !== null) {
+    if (activeIndex !== null && activeIndex !== undefined) {
       setHighlightDimensions(calculateHighlightDimensions(activeIndex));
     }
     setHighlightTransitionStyles('');

@@ -3,8 +3,8 @@ import { numberWithCommas } from '@/utils/formattedNumbers';
 import { CTAButton } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
-import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
 import { L2 } from '@/components/typography';
+import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 
 interface IMemberDetails {
   show: boolean;
@@ -77,8 +77,8 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
           </div>
           <div className="mb-8">
             <div className="mb-2 text-white">Amount to mint</div>
-            <InputFieldWithButton
-              buttonLabel="Max"
+            <InputFieldWithAddOn
+              addOn="Max"
               value={
                 amountToMint
                   ? numberWithCommas(
@@ -95,7 +95,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               infoLabel={amountToMintError ? amountToMintError : ''}
               extraClasses="border-gray-syn6"
               symbol={symbol}
-              buttonOnClick={setMaxRemainingSupply}
+              addOnOnClick={setMaxRemainingSupply}
               disabled={inputFieldsDisabled}
             />
           </div>

@@ -60,7 +60,6 @@ import AddToCalendar from '../addToCalendar';
 import BackButton from '../buttons/BackButton';
 import { CollapsibleTable } from '../collapsibleTable';
 import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import {
   InputFieldWithToken,
   SymbolDisplay
@@ -68,6 +67,7 @@ import {
 import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
 import { TokenDetails } from '@/types/token';
+import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -806,10 +806,10 @@ const ModifyTokenGatedClub: React.FC = () => {
                   rowIndex: EditRowIndex.MaxMembers,
                   handleDisclaimerConfirmation,
                   inputField: (
-                    <InputFieldWithButton
+                    <InputFieldWithAddOn
                       value={String(maxNumberOfMembers)}
-                      buttonLabel="Max"
-                      buttonOnClick={() => {
+                      addOn="Max"
+                      addOnOnClick={() => {
                         dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
                         setMaxNumberOfMembersError(null);
                       }}

@@ -1,18 +1,22 @@
 import React from 'react';
 
 interface Props {
+  forwardRef?: React.LegacyRef<HTMLTextAreaElement>;
   value: string;
   handleValueChange: (input: string) => void;
+  onFocus?: () => void;
   placeholderLabel?: string;
   helperText?: string;
-  widthClass: string;
+  widthClass?: string;
   heightRows?: number;
   isInErrorState?: boolean;
 }
 
 export const TextArea: React.FC<Props> = ({
+  forwardRef,
   value,
   handleValueChange,
+  onFocus,
   placeholderLabel,
   helperText,
   widthClass,
@@ -27,14 +31,22 @@ export const TextArea: React.FC<Props> = ({
   return (
     <div>
       <textarea
-        className={`${widthClass} ${inputStyles} ${errorStyles}`}
+        ref={forwardRef}
+        className={`${
+          widthClass ? widthClass : ''
+        } ${inputStyles} ${errorStyles}`}
         rows={heightRows}
         value={value}
         onChange={(e) => handleValueChange(e.target.value)}
         placeholder={placeholderLabel}
+        onFocus={onFocus}
       />
       {helperText && (
-        <div className={`text-sm text-gray-syn4 ${errorStyles}`}>
+        <div
+          className={`text-sm text-gray-syn4 ${errorStyles} ${
+            isInErrorState ? 'text-red-error' : ''
+          }`}
+        >
           {helperText}
         </div>
       )}

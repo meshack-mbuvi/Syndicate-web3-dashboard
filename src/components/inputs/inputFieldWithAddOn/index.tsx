@@ -1,29 +1,33 @@
 import { PillButton } from '@/components/pillButtons';
 import { InputField } from '../inputField';
 
-export const InputFieldWithButton = (props: {
+export const InputFieldWithAddOn = (props: {
+  forwardRef?: any;
   value?: string;
   placeholderLabel?: string;
   infoLabel?: string | any;
   isInErrorState?: boolean;
   extraClasses?: string;
-  buttonLabel: string | any;
+  addOn: string | any;
   isButtonActive?: boolean;
   disabled?: boolean;
-  buttonOnClick: () => void;
+  addOnOnClick: () => void;
   onChange: (e: any) => void;
+  onFocus?: (e: any) => void;
   symbol?: string;
 }): React.ReactElement => {
   const {
+    forwardRef,
     value,
     placeholderLabel,
     infoLabel,
     isInErrorState = false,
     extraClasses = '',
-    buttonLabel,
+    addOn,
     isButtonActive = false,
-    buttonOnClick,
+    addOnOnClick,
     onChange,
+    onFocus,
     symbol,
     disabled,
     ...rest
@@ -33,21 +37,27 @@ export const InputFieldWithButton = (props: {
     <>
       <div className="relative">
         <InputField
+          ref={forwardRef}
           value={value}
           placeholderLabel={placeholderLabel}
           isInErrorState={isInErrorState}
           extraClasses={extraClasses}
           onChange={onChange}
           disabled={disabled}
+          onFocus={onFocus}
           {...rest}
         />
         <div
           className="inline-flex items-center space-x-4 absolute top-1/2 right-4"
           style={{ transform: 'translateY(-50%)' }}
         >
-          <PillButton isActive={isButtonActive} onClick={buttonOnClick}>
-            {buttonLabel}
-          </PillButton>
+          {typeof addOn === 'string' ? (
+            <PillButton isActive={isButtonActive} onClick={addOnOnClick}>
+              {addOn}
+            </PillButton>
+          ) : (
+            <button onClick={addOnOnClick}>{addOn}</button>
+          )}
           {symbol && <div className="text-white">{symbol}</div>}
         </div>
       </div>

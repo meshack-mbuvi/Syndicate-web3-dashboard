@@ -133,7 +133,7 @@ const StatusBadge = (props: Props): JSX.Element => {
   );
 
   return (
-    <div className="h-fit-content rounded-3xl bg-gray-syn8">
+    <div className="h-fit-content rounded-3xl bg-gray-syn8 chromatic-ignore">
       <div
         className={`h-auto sm:h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
