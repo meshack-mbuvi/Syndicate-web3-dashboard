@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DISTRIBUTION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 import { CTAButton, CTAType } from '@/components/CTAButton';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -72,7 +74,12 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
             </B2>
           </div>
           <CTAButton
-            onClick={onClick}
+            onClick={() => {
+              onClick();
+              amplitudeLogger(DISTRIBUTION_DISCLAIMER_AGREE, {
+                flow: Flow.CLUB_DISTRIBUTE
+              });
+            }}
             disabled={!isActive}
             type={isActive ? CTAType.TRANSACTIONAL : CTAType.DISABLED}
             fullWidth={true}

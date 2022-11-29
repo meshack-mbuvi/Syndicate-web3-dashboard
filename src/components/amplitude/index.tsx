@@ -36,7 +36,8 @@ type EventProperty = {
   deposit_token?: string;
   deposit_amount?: string | number;
   transaction_category?: string;
-  distribution_amount?: string | number;
+  distribution_token?: string | (string | undefined)[];
+  distribution_amount?: (string | undefined)[];
   file_type?: string;
   file_size?: string;
 };
@@ -45,7 +46,6 @@ type EventProperty = {
 /*
 wallet_address
 wallet_network
-total_sessions
 */
 
 // Event Property: Flow
@@ -58,6 +58,7 @@ export enum Flow {
   CLUB_MANAGE = 'Investment Clubs: Manage Flow',
   CLUB_DEPOSIT = 'Investment Clubs: Deposit Flow',
   CLUB_LEGAL = 'Investment Clubs: Legal Flow',
+  CLUB_DISTRIBUTE = 'Investment Clubs: Distributions Flow',
 
   // Collectives
   COLLECTIVE_CREATE = 'Collectives: Create Flow',
@@ -65,11 +66,7 @@ export enum Flow {
   COLLECTIVE_CLAIM = 'Collectives: Claim Flow',
 
   // Uncategorized
-  UNCATEGORIZED = 'Uncategorized',
-
-  // Deprecated
-  MGR_SET_DIST = 'MGR_SET_DIST',
-  MGR_DISTRIBUTION = 'MANAGER_DISTRIBUTION'
+  UNCATEGORIZED = 'Uncategorized'
 }
 
 export const amplitudeLogger = (

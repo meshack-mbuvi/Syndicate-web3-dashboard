@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { CopiedLinkIcon, CopyToClipboardIcon } from '@/components/iconWrappers';
 import {
+  SHARE_LINK_COPY,
   TELEGRAM_SHARE_CLICK,
   TWITTER_SHARE_CLICK
 } from '../amplitude/eventNames';
@@ -29,6 +30,9 @@ export const ShareCard: React.FC<Props> = ({
   const changeCopiedState = () => {
     setShowCopiedState(true);
     setTimeout(() => setShowCopiedState(false), 1000);
+    amplitudeLogger(SHARE_LINK_COPY, {
+      flow: Flow.UNCATEGORIZED
+    });
   };
 
   return (
@@ -75,7 +79,7 @@ export const ShareCard: React.FC<Props> = ({
               rel="noreferrer"
               onClick={() => {
                 amplitudeLogger(TELEGRAM_SHARE_CLICK, {
-                  flow: Flow.COLLECTIVE_CLAIM
+                  flow: Flow.UNCATEGORIZED
                 });
               }}
             >
@@ -93,7 +97,7 @@ export const ShareCard: React.FC<Props> = ({
               rel="noreferrer"
               onClick={() => {
                 amplitudeLogger(TWITTER_SHARE_CLICK, {
-                  flow: Flow.COLLECTIVE_CLAIM
+                  flow: Flow.UNCATEGORIZED
                 });
               }}
             >

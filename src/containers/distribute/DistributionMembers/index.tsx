@@ -2,8 +2,8 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
-  ERROR_MGR_DISTRIBUTION,
-  MGR_MAKE_DISTRIBUTE_EVENT
+  DISTRIBUTION_SUBMIT_CLICK,
+  DISTRIBUTION_TRANSACTION
 } from '@/components/amplitude/eventNames';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { CTAButton, CTAType } from '@/components/CTAButton';
@@ -398,21 +398,12 @@ const ReviewDistribution: React.FC<Props> = ({
             await checkTokenAllowance(token);
 
             incrementActiveIndex();
-
-            amplitudeLogger(MGR_MAKE_DISTRIBUTE_EVENT, {
-              flow: Flow.MGR_DISTRIBUTION,
-              distribution_amount: amountToApprove
-            });
             resolve(receipt);
             setIsTransactionPending(false);
           })
           .on('error', (error: any) => {
             setIsTransactionPending(false);
 
-            void amplitudeLogger(ERROR_MGR_DISTRIBUTION, {
-              flow: Flow.MGR_DISTRIBUTION,
-              distribution_amount: amountToApprove
-            });
             reject(error);
           });
       });
@@ -502,6 +493,13 @@ const ReviewDistribution: React.FC<Props> = ({
 
   const onTxReceipt = (): void => {
     setIsConfirmationModalVisible(true);
+    const { symbol } = steps[activeIndex];
+
+    amplitudeLogger(DISTRIBUTION_TRANSACTION, {
+      flow: Flow.CLUB_DISTRIBUTE,
+      transaction_status: 'Success',
+      distribution_token: symbol
+    });
 
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
@@ -521,6 +519,12 @@ const ReviewDistribution: React.FC<Props> = ({
   const onTxFail = (error?: { code: number; message: string }): void => {
     setIsConfirmationModalVisible(true);
     const { tokenAmount, symbol } = steps[activeIndex];
+
+    amplitudeLogger(DISTRIBUTION_TRANSACTION, {
+      flow: Flow.CLUB_DISTRIBUTE,
+      transaction_status: 'Failure',
+      distribution_token: symbol
+    });
 
     // Update progress state
     setProgressDescriptorTitle(
@@ -624,8 +628,8 @@ const ReviewDistribution: React.FC<Props> = ({
           onTxFail
         );
       }
-    } catch (error: any | unknown) {
-      onTxFail(error);
+    } catch (error) {
+      return;
     }
   };
 
@@ -657,6 +661,9 @@ const ReviewDistribution: React.FC<Props> = ({
   const showDistributeDisclaimer = (e: MouseEvent): void => {
     e.preventDefault();
     setIsModalVisible(true);
+    amplitudeLogger(DISTRIBUTION_SUBMIT_CLICK, {
+      flow: Flow.CLUB_DISTRIBUTE
+    });
   };
 
   const handleCloseConfirmModal = (): void => {

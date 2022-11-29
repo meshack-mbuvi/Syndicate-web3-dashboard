@@ -40,6 +40,13 @@ export const MBR_GET_STARTED_CLICK = 'MBR_GET_STARTED_CLICK';
 export const MBR_REVIEW_DOCS_CLICK = 'MBR_REVIEW_DOCS_CLICK';
 export const MBR_DOCS_SIGN = 'MBR_DOCS_SIGN';
 export const MBR_FINISH_DOCS_CLICK = 'MBR_FINISH_DOCS_CLICK';
+// CLUB_DISTRIBUTE
+export const MAKE_DISTRIBUTION_CLICK = 'MAKE_DISTRIBUTION_CLICK';
+export const DISTRIBUTION_REVIEW_MEMBERS_CLICK =
+  'DISTRIBUTION_REVIEW_MEMBERS_CLICK';
+export const DISTRIBUTION_SUBMIT_CLICK = 'DISTRIBUTION_SUBMIT_CLICK';
+export const DISTRIBUTION_DISCLAIMER_AGREE = 'DISTRIBUTION_DISCLAIMER_AGREE';
+export const DISTRIBUTION_TRANSACTION = 'DISTRIBUTION_TRANSACTION';
 
 //// Collectives ////
 
@@ -77,26 +84,9 @@ export const COLLECTIVE_CLAIM_DISCLAIMER_AGREE =
 export const COLLECTIVE_CLAIM = 'COLLECTIVE_CLAIM';
 export const CLAIM_TRY_AGAIN_CLICK = 'CLAIM_TRY_AGAIN_CLICK';
 export const VIEW_COLLECTIVE_CLICK = 'VIEW_COLLECTIVE_CLICK';
+
+//// Uncategorized ////
+
+export const SHARE_LINK_COPY = 'SHARE_LINK_COPY';
 export const TELEGRAM_SHARE_CLICK = 'TELEGRAM_SHARE_CLICK';
 export const TWITTER_SHARE_CLICK = 'TWITTER_SHARE_CLICK';
-
-//// DEPRECATED ////
-
-// CLUB_DISTRIBUTE
-export const OPEN_DISTRIBUTE_TOKEN_MODAL = 'Open Distribute Token Modal';
-export const CLICK_APPROVE_DISTRIBUTION_TOKEN =
-  'Click Approve Distribution Token Button';
-export const DISTRIBUTION_TOKEN_APPROVED = 'Distribution Token approved';
-export const DISTRIBUTION_TOKEN_NOT_APPROVED =
-  'Distribution Token Not Approved';
-export const ERROR_CREATING_DISTRIBUTION_TOKEN =
-  'Error Creating Distribution Token';
-export const CLICK_CHOOSE_ANOTHER_DISTRIBUTION_TOKEN_BUTTON =
-  'Click Choose Another Token Button';
-export const CLICK_REMOVE_DISTRIBUTION_TOKEN_BUTTON =
-  'Click Delete Distribution Token Button';
-export const MGR_MAKE_DISTRIBUTE_EVENT = 'Manager make distribution';
-export const ERROR_MGR_DISTRIBUTION = 'Error in distribution';
-export const CLICK_DISTRIBUTE_TOKENS_BUTTON = 'Click Distribute Tokens Button';
-export const SUCCESS_DISTRIBUTE_TOKENS = 'Success Distribute Token';
-export const ERROR_SETTING_DISTRIBUTIONS = 'Error Setting Distributions';

@@ -1,4 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DISTRIBUTION_REVIEW_MEMBERS_CLICK } from '@/components/amplitude/eventNames';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import Layout from '@/components/layout';
 import SyndicateEmptyState from '@/components/shared/SyndicateEmptyState';
@@ -619,6 +621,15 @@ const Distribute: FC = () => {
     event.preventDefault();
     setCurrentStep(Steps.selectMembers);
     setActiveIndex(1);
+    amplitudeLogger(DISTRIBUTION_REVIEW_MEMBERS_CLICK, {
+      flow: Flow.CLUB_DISTRIBUTE,
+      distribution_token: distributionTokens.map((asset) => {
+        return asset.tokenSymbol;
+      }),
+      distribution_amount: distributionTokens.map((asset) => {
+        return asset.tokenAmount;
+      })
+    });
   };
 
   const rightColumnComponent = (
