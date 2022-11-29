@@ -252,19 +252,34 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     [debouncedSearchTerm]
   );
 
+  const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
+    {}
+  );
+
+  let activityViewLength = 0;
+  Object.keys(batchIdentifiers).map(function (key) {
+    if (key === 'nonDistributionTransactions') {
+      activityViewLength += batchIdentifiers[key].length;
+    } else {
+      activityViewLength += 1;
+    }
+  });
+
   const {
     transactionsLoading,
     numTransactions,
     transactionEvents,
     refetchTransactions
-  } = useLegacyTransactions(pageOffset, false, {
-    ...generateSearchFilter(filter, memoizedSearchTerm)
-  });
+  } = useLegacyTransactions(
+    {
+      ...generateSearchFilter(filter, memoizedSearchTerm)
+    },
+    pageOffset,
+    100,
+    false
+  );
 
   const [transactionEventsState, setTransactionEventsState] = useState<any>();
-  const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
-    {}
-  );
 
   useEffect(() => {
     if (isDemoMode) {
@@ -286,7 +301,8 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
 
   // Prepares token distributions per distributionBatch
   useEffect(() => {
-    if (!transactionEventsState) return;
+    if (!transactionEventsState || transactionEventsState[0].length == 0)
+      return;
     const batchIds: BatchIdTokenDetails = {};
     let newBatchIdValue: Array<DistributionTokenDetails> = [];
     let last = '';
@@ -580,6 +596,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         isOwner={isOwner}
         dataLimit={DATA_LIMIT}
         pageOffset={pageOffset}
+        activityViewLength={activityViewLength}
         refetchTransactions={refetchTransactions}
         goToPreviousPage={goToPreviousPage}
         goToNextPage={goToNextPage}

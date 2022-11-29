@@ -393,84 +393,67 @@ export const GAS_RATE = gql`
 `;
 
 export const LEGACY_TRANSACTIONS_QUERY = gql`
-  query LegacyTransactionEventQuery(
+  query Query(
     $chainId: Int!
     $input: String!
+    $order: Order
     $limit: Int
-    $order: Order = desc
+    $where: TransactionEventSearchFilter
+    $offset: Int
   ) {
     legacyTransactionEvents(
       chainId: $chainId
       input: $input
       order: $order
       limit: $limit
+      where: $where
+      offset: $offset
     ) {
-      cursor
       events {
         chainId
-        ownerAddress
         hash
         blockNumber
         timestamp
-        transactionIndex
+        ownerAddress
         contractAddress
+        syndicateEvents {
+          id
+          eventType
+          transactionId
+          distributionBatch
+        }
+        annotation {
+          chainId
+          transactionId
+          syndicateAddress
+          memo
+          companyName
+          transactionCategory
+          roundCategory
+          sharesAmount
+          tokenAmount
+          equityStake
+          acquisitionDate
+          preMoneyValuation
+          postMoneyValuation
+          fromLabel
+          toLabel
+          annotationMetadata
+          createdAt
+          updatedAt
+        }
         transfers {
           chainId
-          blockNumber
-          timestamp
           hash
           from
           to
           contractAddress
-          gas
-          ... on NativeTransfer {
-            value
-          }
-          ... on Erc20Transfer {
-            tokenName
-            tokenSymbol
-            tokenDecimal
-            tokenLogo
-            value
-          }
-          ... on Erc721Transfer {
-            tokenId
-            tokenName
-            tokenSymbol
-            tokenDecimal
-          }
-          ... on Erc1155Transfer {
-            tokenId
-            tokenName
-            tokenSymbol
-            tokenValue
-          }
-        }
-        annotation {
-          chainId
-          acquisitionDate
-          createdAt
-          updatedAt
-          equityStake
-          fromLabel
-          transactionId
-          syndicateAddress
-          preMoneyValuation
-          postMoneyValuation
-          roundCategory
-          sharesAmount
-          toLabel
-          tokenAmount
-          transactionCategory
-          memo
-          companyName
-          annotationMetadata
-        }
-        syndicateEvents {
-          eventType
-          id
-          transactionId
-          distributionBatch
+          type
+          value
+          tokenName
+          tokenSymbol
+          tokenDecimal
+          tokenLogo
         }
       }
     }

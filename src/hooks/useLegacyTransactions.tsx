@@ -149,9 +149,10 @@ export const getInput: any = (address: string) => {
 };
 
 export const useLegacyTransactions = (
-  skip = 0,
-  skipQuery = true,
-  where = {}
+  where = {},
+  offset = 0,
+  limit = 10,
+  skipQuery = true
 ): TransactionQueryDetails => {
   const {
     web3Reducer: {
@@ -169,11 +170,11 @@ export const useLegacyTransactions = (
     refetch: refetchTransactions
   } = useQuery<TransactionsQuery>(LEGACY_TRANSACTIONS_QUERY, {
     variables: {
+      chainId: activeNetwork.chainId,
       input,
       where,
-      take: 10,
-      skip,
-      chainId: activeNetwork.chainId
+      offset,
+      limit
     },
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
