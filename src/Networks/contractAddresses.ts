@@ -36,8 +36,13 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     nativeTokenPriceMerkleMintModule:
       '0xd200c8bca3ee5f264547489ed025a22e6aff88b4',
 
-    // precommit
-    precommitModule: '' // TODO: add contract address for mainnet,
+    // Precommit
+    ERC20DealFactory: '', // TODO
+    AllowancePrecommitModuleERC20: '', // TODO: add contract address for mainnet
+    MinPerMemberERC20Mixin: '', // TODO
+    DealTimeRequirements: '', // TODO
+    GuardModuleAllowed: '', // TODO
+    usdcContract: '' // TODO: add contract address for mainnet
   },
 
   // Goerli
@@ -77,8 +82,13 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     nativeTokenPriceMerkleMintModule:
       '0x124D5DcF3575b528de9c85dae6afA43bB7ba736b',
 
-    // precommit
-    precommitModule: '0xa244f78fa18e74a925483984fec489b68d07f23e'
+    // Precommit
+    ERC20DealFactory: '0x2C74e40B2B2A383C58a48917a48b51835A85b923',
+    AllowancePrecommitModuleERC20: '0xa244f78fa18e74a925483984fec489b68d07f23e',
+    MinPerMemberERC20Mixin: '0x735150ED24728904B90198D6E4022Bcad6B5dD15',
+    DealTimeRequirements: '0x5744686c44d3b9991463e9affba95beb7cbfda69',
+    GuardModuleAllowed: '0xC32dF31446770f570c09ed882fEE7a45785dE4a5',
+    usdcContract: '0xb6e77703b036bfb97dd40a22f021a85ae4a6d750' // can remove this once we add support for other ERC20s
   },
 
   // Matic
@@ -118,7 +128,12 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     nativeTokenPriceMerkleMintModule:
       '0x0942a0f4a9e3f4ce890d86491b28b187b21bb219',
 
-    // precommit
-    precommitModule: '' // TODO: add contract address for Polygon
+    // Precommit
+    ERC20DealFactory: '', // TODO
+    AllowancePrecommitModuleERC20: '', // TODO: add contract address for Polygon
+    MinPerMemberERC20Mixin: '', // TODO
+    DealTimeRequirements: '', // TODO
+    GuardModuleAllowed: '', // TODO
+    usdcContract: '' // TODO: add contract address for Polygon
   }
 });

@@ -1,10 +1,34 @@
-import PRECOMMIT_MODULE_ABI from '@/contracts/PrecommitModule.json';
+import PRECOMMIT_MODULE_ABI from '@/contracts/AllowancePrecommitModuleERC20.json';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { ContractBase } from '../ContractBase';
+import { TransactionReceipt } from 'web3-core';
 
-export class PrecommitModule extends ContractBase {
+export class AllowancePrecommitModuleERC20 extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
     super(address, web3, activeNetwork, PRECOMMIT_MODULE_ABI as AbiItem[]);
+  }
+
+  /**
+   * encoded call to update deal details (destination address and commit token)
+   * @param dealToken {string} address of the deal
+   * @param dealDestination {string} destination address of the deal
+   * @param commitToken {string} address of the commit token for the deal
+   * @param dealGoal {string} address of the commit token for the deal
+   * @param commitToken {string[]} array of addresses of guard mixins to check eligibility for precommit
+   *
+   */
+  public updateDealDetails(
+    dealToken: string,
+    dealDestination: string,
+    commitToken: string,
+    dealGoal: string,
+    mixins: string[]
+  ): string {
+    return this.web3.eth.abi.encodeFunctionCall(
+      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
+      this.getAbiObject('updateDealDetails'),
+      [dealToken, dealDestination, commitToken, dealGoal, mixins] as string[]
+    );
   }
 
   /**
@@ -17,8 +41,8 @@ export class PrecommitModule extends ContractBase {
     dealToken: string,
     amount: string,
     ownerAddress: string,
-    onTxConfirm: (transactionHash?: any) => void,
-    onTxReceipt: (receipt?: any) => void,
+    onTxConfirm: (transactionHash?: string) => void,
+    onTxReceipt: (receipt?: TransactionReceipt) => void,
     onTxFail: (error?: any) => void
   ): Promise<void> {
     await this.send(
@@ -38,8 +62,8 @@ export class PrecommitModule extends ContractBase {
   async cancelPrecommit(
     dealToken: string,
     account: string,
-    onTxConfirm: (transactionHash?: any) => void,
-    onTxReceipt: (receipt?: any) => void,
+    onTxConfirm: (transactionHash?: string) => void,
+    onTxReceipt: (receipt?: TransactionReceipt) => void,
     onTxFail: (error?: any) => void
   ): Promise<void> {
     await this.send(
@@ -61,8 +85,8 @@ export class PrecommitModule extends ContractBase {
     dealToken: string,
     ownerAddress: string,
     addresses: string[],
-    onTxConfirm: (transactionHash?: any) => void,
-    onTxReceipt: (receipt?: any) => void,
+    onTxConfirm: (transactionHash?: string) => void,
+    onTxReceipt: (receipt?: TransactionReceipt) => void,
     onTxFail: (error?: any) => void
   ): Promise<void> {
     await this.send(

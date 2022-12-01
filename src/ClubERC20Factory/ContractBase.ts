@@ -1,5 +1,6 @@
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 import { estimateGas } from './shared/getGasEstimate';
 import { getGnosisTxnInfo } from './shared/gnosisTransactionInfo';
@@ -43,7 +44,7 @@ export abstract class ContractBase {
     account: string,
     contractMethod: any,
     onTxConfirm: (txHash: string) => void,
-    onTxReceipt: (receipt: string) => void,
+    onTxReceipt: (receipt: TransactionReceipt) => void,
     onTxFail: (err: any) => void,
     value?: string
   ): Promise<void> {
@@ -65,7 +66,7 @@ export abstract class ContractBase {
             onTxConfirm('');
           }
         })
-        .on('receipt', (receipt: any) => {
+        .on('receipt', (receipt: TransactionReceipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
