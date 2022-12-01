@@ -54,7 +54,7 @@ const handleRouteChangeGoogleAnalytics = (url: string) => {
   }
 };
 
-//Binding events.
+// Binding events.
 router.events.on('routeChangeStart', () => NProgress.start());
 router.events.on('routeChangeError', () => NProgress.done());
 router.events.on('routeChangeComplete', (url: string) => {
