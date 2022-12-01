@@ -21,7 +21,7 @@ import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
@@ -56,6 +56,7 @@ import ConnectWalletAction from '../shared/connectWalletAction';
 import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
+import { FEATURE_FLAGS } from '@/pages/_app';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
@@ -178,8 +179,10 @@ const DepositSyndicate: React.FC = () => {
     useFetchAccountHoldingsAndDetails();
   const { getTokenReqDetails } = useMeetsTokenGatedRequirements();
 
-  const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag();
+  const { isReady, isTreatmentOn: isClubMixinGuardTreatmentOn } =
+    useFeatureFlag(FEATURE_FLAGS.CLUBS_MIXIN_GUARDED, {
+      clubsMixinGuardedAllowlisted: true
+    });
 
   useEffect(() => {
     // calculate member ownership for the intended deposits

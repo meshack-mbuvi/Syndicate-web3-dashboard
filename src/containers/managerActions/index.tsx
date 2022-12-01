@@ -13,8 +13,9 @@ import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAct
 import { L2 } from '@/components/typography';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
 import { Status } from '@/state/wallet/types';
@@ -66,7 +67,13 @@ const ManagerActions = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
 
-  const { isReady, readyDistributionsClient } = useDistributionsFeatureFlag();
+  const {
+    isReady,
+    readyClient: readyDistributionsClient,
+    isTreatmentOn: isDistributionsTreatmentOn
+  } = useFeatureFlag(FEATURE_FLAGS.DISTRIBUTIONS, {
+    distributionsAllowlisted: true
+  });
 
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
@@ -424,8 +431,7 @@ const ManagerActions = (): JSX.Element => {
             {status !== Status.DISCONNECTED && (
               <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
                 {/* TODO: Update to distributions before merging */}
-                {readyDistributionsClient.treatment === 'on' &&
-                !depositsEnabled ? (
+                {isDistributionsTreatmentOn && !depositsEnabled ? (
                   <div
                     className={`${
                       loading ? `` : `hover:bg-gray-syn7`

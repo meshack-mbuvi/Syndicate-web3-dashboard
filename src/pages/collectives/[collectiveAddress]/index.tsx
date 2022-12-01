@@ -6,10 +6,11 @@ import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import router from 'next/router';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 /**
  * This page shows the manager container for a given syndicate address
@@ -22,7 +23,12 @@ const CollectiveIndexPage: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+  const { isReady, readyClient: readyCollectivesClient } = useFeatureFlag(
+    FEATURE_FLAGS.COLLECTIVES,
+    {
+      collectivesAllowlisted: true
+    }
+  );
 
   useEffect(() => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
@@ -53,13 +59,18 @@ const CollectiveIndexPage: React.FC = () => {
     }
   }, [router.events, collectiveName, fullPathname]);
 
+  const isCollectivesReady =
+    isReady &&
+    readyCollectivesClient &&
+    readyCollectivesClient.treatment === 'on';
+
   return pageIsLoading ? (
     <Layout>
       <div className="container my-32">
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' ? (
+  ) : isCollectivesReady ? (
     <CollectiveDetails />
   ) : (
     <NotFoundPage />

@@ -10,11 +10,12 @@ import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { Spinner } from '@/components/shared/spinner';
-import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { PermissionType } from '@/components/collectives/shared/types';
 import { useRouter } from 'next/router';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 const ModifyCollectives: React.FC = () => {
   const {
@@ -35,7 +36,12 @@ const ModifyCollectives: React.FC = () => {
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();
 
-  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+  const { isReady, readyClient: readyCollectivesClient } = useFeatureFlag(
+    FEATURE_FLAGS.COLLECTIVES,
+    {
+      collectivesAllowlisted: true
+    }
+  );
 
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
@@ -67,13 +73,16 @@ const ModifyCollectives: React.FC = () => {
     network
   ]);
 
+  const isCollectivesReady =
+    isReady && readyCollectivesClient?.treatment === 'on' && !isPolygon;
+
   return pageIsLoading ? (
     <Layout>
       <div className="container my-32">
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
+  ) : isCollectivesReady ? (
     <CollectivesContainer>
       <Layout>
         <Head title={collectiveName || 'Collective'} />

@@ -11,10 +11,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AllowedMembers from './allowedMembers';
 import InviteMembers from './inviteMembers';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import { setActiveTokenGateOption } from '@/state/createInvestmentClub/slice';
 import SegmentedControlAndContent from '@/components/segmentedControl/tabsAndContent';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 const Membership: React.FC<{ className: any }> = ({ className }) => {
   const {
@@ -31,8 +32,11 @@ const Membership: React.FC<{ className: any }> = ({ className }) => {
   const [activeTab, setActiveTab] = useState(0);
   const { setNextBtnDisabled, isCreatingInvestmentClub } =
     useCreateInvestmentClubContext();
-  const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag();
+
+  const { isReady, isTreatmentOn: isClubMixinGuardTreatmentOn } =
+    useFeatureFlag(FEATURE_FLAGS.CLUBS_MIXIN_GUARDED, {
+      clubsMixinGuardedAllowlisted: true
+    });
 
   const { isPolygon } = useIsPolygon();
 
