@@ -29,7 +29,7 @@ const TokenSelector: React.FC<Props> = ({
       {!loading ? (
         <>
           <DistributionHeader
-            titleText="What would you like to distribute?"
+            titleText="What would you like to distribute and what amount?"
             subTitleText={`Assets are distributed in proportion to members’ ownership of ${symbol} tokens.`}
           />
           <div className="mt-1">
