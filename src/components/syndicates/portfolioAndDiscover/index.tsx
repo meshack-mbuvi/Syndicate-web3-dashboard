@@ -12,7 +12,6 @@ import {
   MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
 import CollectivesTable from './portfolio/collectivesTable';
-import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 import {
   CreateClubOrCollective,
   EmptyStateType
@@ -23,6 +22,8 @@ import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
 import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 import useAdminClubs from '@/hooks/clubs/useAdminClubs';
 import useMemberClubs from '@/hooks/clubs/useMemberClubs';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -59,7 +60,12 @@ const PortfolioAndDiscover: React.FC = () => {
     account
   } = web3;
 
-  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+  const { isReady, readyClient: readyCollectivesClient } = useFeatureFlag(
+    FEATURE_FLAGS.COLLECTIVES,
+    {
+      collectivesAllowlisted: true
+    }
+  );
 
   const { adminClubs, adminClubsLoading } = useAdminClubs();
   const { memberClubs, memberClubsLoading } = useMemberClubs();

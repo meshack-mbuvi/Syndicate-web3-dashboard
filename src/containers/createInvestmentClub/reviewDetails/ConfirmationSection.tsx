@@ -9,7 +9,8 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CreateActiveSteps } from '@/context/CreateInvestmentClubContext/steps';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 interface ConfirmationSectionProps {
   hasCheckedAgreement: boolean;
@@ -23,8 +24,11 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({
   const { investmentClubSymbol, tokenGateOption, tokenRules, logicalOperator } =
     useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
-  const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag();
+  const { isReady, isTreatmentOn: isClubMixinGuardTreatmentOn } =
+    useFeatureFlag(FEATURE_FLAGS.CLUBS_MIXIN_GUARDED, {
+      clubsMixinGuardedAllowlisted: true
+    });
+
   const {
     currentStep,
     stepsNames,
