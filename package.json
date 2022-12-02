@@ -153,6 +153,8 @@
     "chromatic": "npx chromatic --project-token=f6d7eb9d5271"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/preset-typescript": "^7.16.0",
     "@next/eslint-plugin-next": "^11.1.2",
     "@storybook/addon-actions": "^6.4.17",
     "@storybook/addon-essentials": "^6.4.17",
@@ -180,6 +182,7 @@
     "@typescript-eslint/parser": "^4.28.0",
     "autoprefixer": "^9.8.8",
     "babel-eslint": "10.1.0",
+    "babel-loader": "^8.2.3",
     "chromatic": "^6.10.4",
     "cssnano": "^5.0.14",
     "cypress": "^7.6.0",
@@ -194,6 +197,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-webpack-plugin": "^2.4.3",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.5",
     "postcss": "^7.0.39",
