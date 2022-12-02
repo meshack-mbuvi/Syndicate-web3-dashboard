@@ -1,11 +1,11 @@
-import { AppState } from '@/state';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/client';
-import * as CryptoJS from 'crypto-js';
-import { useDemoMode } from './useDemoMode';
 import { LEGACY_TRANSACTIONS_QUERY } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
+import { useQuery } from '@apollo/client';
+import * as CryptoJS from 'crypto-js';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 // import { RoundCategory, TransactionCategory } from '@/state/erc20transactions/types';
 
 export type SyndicateEvents = {

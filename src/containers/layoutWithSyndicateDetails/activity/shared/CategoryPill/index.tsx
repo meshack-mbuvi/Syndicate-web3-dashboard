@@ -206,13 +206,13 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     );
   }, [outgoing, selectedCategory]);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     setShowDropdown(!showDropdown);
   };
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e: any) => {
+    const onPageClickEvent = (e: any): void => {
       if (
         categorySelect.current !== null &&
         // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
@@ -227,7 +227,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       window.addEventListener('click', onPageClickEvent);
     }
 
-    return () => {
+    return (): void => {
       window.removeEventListener('click', onPageClickEvent);
     };
   }, [showDropdown]);
@@ -295,7 +295,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     }
   }, [readonly, renderedInline, showDropdown, disableDropDown]);
 
-  const closeDropDown = () => {
+  const closeDropDown = (): void => {
     if (renderedInline && readonly) {
       setShowDropdown(false);
       return;
@@ -310,8 +310,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       }`}
       onClick={() => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
-      onMouseEnter={() => setPillActiveRowState(true)}
-      onMouseLeave={() => setPillActiveRowState(false)}
+      onMouseEnter={(): void => {
+        setPillActiveRowState(true);
+      }}
+      onMouseLeave={(): void => setPillActiveRowState(false)}
       onKeyDown={() => null}
       tabIndex={0}
       role="button"
@@ -352,7 +354,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       {showDropdown && isOwner && !showLoader ? (
         <div
           className="mt-2 absolute top-10 -left-2 transition-all duration-500 ease-in-out z-10"
-          onMouseLeave={() => closeDropDown()}
+          onMouseLeave={(): void => closeDropDown()}
         >
           <CategoryPillDropDown
             options={dropDownOptions}

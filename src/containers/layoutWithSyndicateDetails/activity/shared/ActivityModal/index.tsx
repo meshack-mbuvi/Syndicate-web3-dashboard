@@ -3,6 +3,7 @@ import { TRANSACTION_DETAIL_ADD } from '@/components/amplitude/eventNames';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
 import Modal, { ModalStyle } from '@/components/modal';
 import { SimpleTable } from '@/components/simpleTable';
+import { memberDetail } from '@/containers/distribute/DistributionMembers';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
 import {
@@ -17,20 +18,19 @@ import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { CurrentTransaction } from '@/state/erc20transactions/types';
-import { useMutation, useQuery } from '@apollo/client';
-import Image from 'next/image';
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useSelector } from 'react-redux';
-import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
-import TransactionDetails from '../TransactionDetails';
-import ActivityNote from './ActivityNote';
-import { memberDetail } from '@/containers/distribute/DistributionMembers';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   numberWithCommas,
   removeTrailingDecimalPoint
 } from '@/utils/formattedNumbers';
+import { useMutation, useQuery } from '@apollo/client';
+import Image from 'next/image';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
 import { BatchIdTokenDetails } from '../../ActivityTable/index';
-import { getWeiAmount } from '@/utils/conversions';
+import TransactionDetails from '../TransactionDetails';
+import ActivityNote from './ActivityNote';
 
 interface IActivityModal {
   showModal: boolean;
@@ -451,8 +451,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
               className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
             >
               <div
-                onMouseLeave={() => toggleDropDown(true)}
-                onMouseEnter={() => toggleDropDown(false)}
+                onMouseLeave={(): void => toggleDropDown(true)}
+                onMouseEnter={(): void => toggleDropDown(false)}
               >
                 <div className="mb-8">
                   <CategoryPill
