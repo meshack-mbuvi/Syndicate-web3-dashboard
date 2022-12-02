@@ -2,7 +2,7 @@ import template from 'lodash/template';
 import { NextApiRequest } from 'next';
 import * as yup from 'yup';
 
-import * as mailgun from './utils/mailgun';
+import * as mailgun from '@/utils/mailgun';
 
 const requestBody = yup.object().shape({
   legalEntityName: yup.string().required('legalEntityName is required'),
@@ -17,7 +17,7 @@ const requestBody = yup.object().shape({
   memberEmail: yup.string().email().required('Member email is required')
 });
 
-export const handler = async (request: NextApiRequest) => {
+export default async (request: NextApiRequest) => {
   const {
     legalEntityName,
     clubAddress,

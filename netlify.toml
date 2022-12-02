@@ -1,9 +1,3 @@
-[build]
-  functions = "functions/build"
-
-[functions]
-  directory = "functions/build"
-
 [[plugins]]
   package = 'netlify-plugin-contextual-env'
   [plugins.inputs]
