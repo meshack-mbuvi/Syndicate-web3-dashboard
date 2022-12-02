@@ -1,8 +1,11 @@
 [build]
   functions = "functions/build"
 
+[context."ENG-4690/max-call-stack-error"]
+  command = "CI='' npm run build"
+
 [functions]
-  directory = "functions/build"
+  directory = "functions/"
 
 [[plugins]]
   package = 'netlify-plugin-contextual-env'
