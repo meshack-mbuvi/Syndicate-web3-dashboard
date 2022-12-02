@@ -3,7 +3,7 @@ import Mailgun from 'mailgun.js';
 
 export const client = new Mailgun(FormData).client({
   username: 'api',
-  key: process.env.NEXT_PUBLIC_MAILGUN_PRIVATE_KEY as string
+  key: process.env.NEXT_PUBLIC_MAILGUN_PRIVATE_KEY
 });
 
 export interface SendEmailParams {
