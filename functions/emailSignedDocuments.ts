@@ -17,7 +17,7 @@ const requestBody = yup.object().shape({
   memberEmail: yup.string().email().required('Member email is required')
 });
 
-export default async (request: NextApiRequest) => {
+export const handler = async (request: NextApiRequest) => {
   const {
     legalEntityName,
     clubAddress,
