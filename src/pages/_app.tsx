@@ -75,10 +75,13 @@ const sdkConfig = {
   }
 };
 
-// Names of splits here
-export const distributions_feature = 'Distributions';
-export const collectives_feature = 'Collectives';
-export const clubsMixinGuarded_feature = 'ClubsMixinGuarded';
+// Names of splits here should match the names of the feature flags in Split.io
+export enum FEATURE_FLAGS {
+  DISTRIBUTIONS = 'Distributions',
+  COLLECTIVES = 'Collectives',
+  CLUBS_MIXIN_GUARDED = 'ClubsMixinGuarded',
+  DEALS = 'Deals'
+}
 
 const StateProviders: React.FC = ({ children }) => (
   <SplitFactory config={sdkConfig}>

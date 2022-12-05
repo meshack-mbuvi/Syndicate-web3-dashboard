@@ -1,8 +1,9 @@
 import Layout from '@/components/layout';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import DistributionContainer from '@/containers/distribute';
-import useDistributionsFeatureFlag from '@/hooks/distributions/useDistributionsFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import NotFoundPage from '@/pages/404';
+import { FEATURE_FLAGS } from '@/pages/_app';
 import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -19,8 +20,13 @@ const DistributeTokensPage: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const { isReady, readyDistributionsClient } = useDistributionsFeatureFlag();
-
+  const {
+    isReady,
+    readyClient: readyDistributionsClient,
+    isTreatmentOn: isDistributionsTreatmentOn
+  } = useFeatureFlag(FEATURE_FLAGS.DISTRIBUTIONS, {
+    distributionsAllowlisted: true
+  });
   useEffect(() => {
     if (!readyDistributionsClient || isEmpty(web3) || !isReady) return;
 
@@ -58,7 +64,7 @@ const DistributeTokensPage: React.FC = () => {
         </div>
       </div>
     </Layout>
-  ) : isReady && readyDistributionsClient?.treatment === 'on' ? (
+  ) : isReady && isDistributionsTreatmentOn ? (
     <DistributionContainer />
   ) : (
     <NotFoundPage />
