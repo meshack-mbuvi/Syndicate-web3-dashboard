@@ -3,13 +3,13 @@ import { Switch, SwitchType } from '@/components/switch';
 
 interface IOptions {
   text: string;
-  value: string;
+  value: string | null;
   icon?: string;
 }
 
 interface ICategoryPillDropDown {
   options: IOptions[];
-  onSelect: Dispatch<SetStateAction<string>>;
+  onSelect: Dispatch<SetStateAction<string | null>>;
   customTextStyles?: string;
   showHiddenAssetsToggle?: boolean;
   setShowHiddenAssets?: (hidden: boolean) => void;
