@@ -2581,18 +2581,6 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.2.tgz"
   integrity sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==
 
-"@react-hook/async@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@react-hook/async/-/async-3.1.1.tgz#c3cd06648fa5e6d209e9372940c806adb8462975"
-  integrity sha512-C9KoDSIjhmVwm6jXPnWfVqqrdPvqOnvUrkUStkUUODV4F1GfNlyVdmYx/54HsgMlham61xEF6UvScqiLTaHYeQ==
-  dependencies:
-    "@react-hook/latest" "^1.0.2"
-
-"@react-hook/latest@^1.0.2":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@react-hook/latest/-/latest-1.0.3.tgz#c2d1d0b0af8b69ec6e2b3a2412ba0768ac82db80"
-  integrity sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==
-
 "@react-spring/animated@~9.4.0":
   version "9.4.2"
   resolved "https://registry.npmjs.org/@react-spring/animated/-/animated-9.4.2.tgz"
