@@ -132,6 +132,7 @@
   ],
   "license": "UNLICENSED",
   "scripts": {
+    "lint": "next lint",
     "analyze:lint": "eslint --quiet --ext .tsx --ext .jsx --ext .js .",
     "analyze:prettier": "prettier --list-different \"**/*.{css,js,jsx,json,md}\"",
     "analyze": "npm run analyze:lint && npm run analyze:prettier",

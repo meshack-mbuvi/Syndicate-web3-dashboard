@@ -1,67 +1,6 @@
 {
-  // https://eslint.org/docs/user-guide/configuring#specifying-environments
-  "env": {
-    "browser": true,
-    "node": true,
-    "es2020": true
-  },
-  "plugins": ["@typescript-eslint", "react", "import"],
-  "parser": "@typescript-eslint/parser",
   "rules": {
-    "react/prop-types": 1, // eventually 2
-    "react/jsx-uses-react": "off", //https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#eslint
-    "react/react-in-jsx-scope": "off", // ^
-    "jsx-a11y/anchor-is-valid": [
-      "error",
-      {
-        "components": ["Link"],
-        "specialLink": ["to"]
-      }
-    ],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
-    "@typescript-eslint/no-explicit-any": "warn", // eventually error
-    "@typescript-eslint/no-unsafe-assignment": "warn", // eventually error
-    "@typescript-eslint/no-unsafe-member-access": "warn", // eventually error
-    "@typescript-eslint/no-unsafe-call": "warn", // eventually error
-    "@typescript-eslint/no-unsafe-return": "warn", // eventually error
-    "@typescript-eslint/explicit-function-return-type": "warn", // eventually error
-    "@typescript-eslint/no-floating-promises": "warn", // eventually error
-    "@typescript-eslint/restrict-template-expressions": "warn" // eventually error
+    "@next/next/no-img-element": "off"
   },
-  "settings": {
-    "react": {
-      "version": "detect"
-    },
-    "import/resolver": {
-      "alias": {
-        "map": [
-          ["src", "./src"],
-          ["/public", "./public"],
-          ["@/*", "./src"]
-        ],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:@next/next/core-web-vitals"
-  ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "project": ["tsconfig.json"]
-  }
+  "extends": ["next/core-web-vitals"]
 }
