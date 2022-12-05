@@ -17,11 +17,11 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
    * @param commitToken {string[]} array of addresses of guard mixins to check eligibility for precommit
    *
    */
-  public updateDealDetails(
+  public encodeUpdateDealDetails(
     dealToken: string,
     dealDestination: string,
     commitToken: string,
-    dealGoal: string,
+    dealGoal: number,
     mixins: string[]
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
