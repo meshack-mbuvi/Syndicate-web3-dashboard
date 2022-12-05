@@ -1,19 +1,22 @@
 import { SearchInput } from '@/components/inputs';
 import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
-  useLegacyTransactions,
   getInput,
   SyndicateAnnotation,
   SyndicateEvents,
-  SyndicateTransfers
+  SyndicateTransfers,
+  useLegacyTransactions
 } from '@/hooks/useLegacyTransactions';
+import useForceUpdate from '@/hooks/utils/forceUpdate';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { v4 as uuidv4 } from 'uuid';
 import { TransactionCategory } from '@/state/erc20transactions/types';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   mockActivityDepositTransactionsData,
   mockActivityTransactionsData
@@ -23,10 +26,8 @@ import { capitalize } from 'lodash';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 import FilterPill from '../shared/FilterPill';
-import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { getWeiAmount } from '@/utils/conversions';
 
 interface DistributionTokenDetails {
   annotation: SyndicateAnnotation;
@@ -40,6 +41,7 @@ interface DistributionTokenDetails {
   tokenDecimal: number | undefined;
   icon: string | undefined;
   tokenAmount: number | undefined;
+  isOutgoingTransaction?: boolean;
 }
 
 export interface BatchIdTokenDetails {
@@ -75,13 +77,15 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     useState<TransactionCategory>('SELECT_CATEGORY');
   const [groupTransactionsDestination, setGroupTransactionsDestination] =
     useState<any>([]);
-  const [rowCheckboxActiveData, setRowCheckboxActiveData] = useState<any>([]);
+  const [rowCheckboxActiveData, setrowCheckboxActiveData] = useState<any>({});
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
   const [uncategorisedIcon, setUncategorisedIcon] = useState<string>('');
   const [searchWidth, setSearchWidth] = useState<number>(48);
   const [mockTransactionsData, setMockTransactionsData] = useState<any>(
     mockActivityDepositTransactionsData
   );
+
+  const forceUpdate = useForceUpdate();
 
   useEffect(() => {
     if (isOpenForDeposits) {
@@ -127,13 +131,13 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       );
 
       if (outgoingStatuses.size > 1) {
-        setUncategorisedIcon('select-category.svg');
+        setUncategorisedIcon('/images/activity/select-category.svg');
       } else if (outgoingStatuses.size === 1) {
         const selectedOutgoingStatus = Array.from(outgoingStatuses)[0];
         setUncategorisedIcon(
           selectedOutgoingStatus
-            ? 'outgoing-transaction.svg'
-            : 'incoming-transaction.svg'
+            ? '/images/activity/outgoing-transaction.svg'
+            : '/images/activity/incoming-transaction.svg'
         );
       }
 
@@ -285,6 +289,8 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     if (isDemoMode) {
       setTransactionEventsState(mockTransactionsData.events);
     } else {
+      if (transactionsLoading) return;
+
       setTransactionEventsState(transactionEvents);
       const countofTransactions = pageOffset + DATA_LIMIT;
 
@@ -297,74 +303,111 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         setCanNextPage(true);
       }
     }
-  }, [numTransactions, pageOffset]);
+  }, [
+    numTransactions,
+    pageOffset,
+    JSON.stringify(transactionEvents),
+    transactionsLoading
+  ]);
 
   // Prepares token distributions per distributionBatch
   useEffect(() => {
-    if (!transactionEventsState || transactionEventsState[0].length == 0)
+    if (!transactionEventsState || transactionEventsState[0]?.length == 0)
       return;
     const batchIds: BatchIdTokenDetails = {};
     let newBatchIdValue: Array<DistributionTokenDetails> = [];
     let last = '';
-    transactionEventsState.map((transaction: any) => {
-      const transfers = transaction.transfers[0];
-      const newTokenDetails: DistributionTokenDetails = {
-        annotation: transaction.annotation,
-        hash: transaction.hash,
-        timestamp: transaction.timestamp,
-        ownerAddress: transaction.ownerAddress,
-        transfers: transaction.transfers,
-        syndicateEvents: transaction.syndicateEvents,
-        tokenName:
-          transaction.contractAddress === ''
-            ? activeNetwork.nativeCurrency.name
-            : transfers.tokenName,
-        tokenSymbol:
-          transaction.contractAddress === ''
-            ? activeNetwork.nativeCurrency.symbol
-            : transfers.tokenSymbol,
-        tokenDecimal:
-          transaction.contractAddress === ''
-            ? Number(activeNetwork.nativeCurrency.decimals)
-            : transfers.tokenDecimal,
-        icon:
-          transaction.contractAddress === ''
-            ? activeNetwork.nativeCurrency.logo
-            : transfers.tokenLogo,
-        tokenAmount:
-          transaction.contractAddress === ''
-            ? getWeiAmount(
-                web3,
-                String(transfers.value),
-                Number(activeNetwork.nativeCurrency.decimals),
-                false
-              )
-            : getWeiAmount(
-                web3,
-                String(transfers.value),
-                Number(transfers.tokenDecimal),
-                false
-              )
-      };
-      if (
-        transaction.syndicateEvents.length === 0 ||
-        transaction.syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
-      ) {
-        const newId = uuidv4();
-        batchIds[`nonBatching-${newId}`] = [newTokenDetails];
-        return;
-      }
-      const event = transaction.syndicateEvents[0];
-      // Checks if transaction is a Distribution
-      if (event.distributionBatch) {
-        if (last === '' || last !== event.distributionBatch) {
-          last = event.distributionBatch;
-          newBatchIdValue = [];
+
+    transactionEventsState.map(
+      (transaction: {
+        [x: string]: any;
+        transfers?: any;
+        annotation?: any;
+        hash?: any;
+        timestamp?: any;
+        ownerAddress?: any;
+        syndicateEvents?: any;
+        contractAddress?: any;
+      }) => {
+        const {
+          annotation,
+          hash,
+          timestamp,
+          ownerAddress,
+          syndicateEvents,
+          contractAddress,
+          transfers,
+          ...rest
+        } = transaction;
+
+        const [transfer] = transfers;
+
+        const newTokenDetails: DistributionTokenDetails = {
+          ...rest,
+          annotation,
+          hash,
+          timestamp,
+          ownerAddress: ownerAddress,
+          transfers: transfers,
+          syndicateEvents: syndicateEvents,
+          tokenName:
+            contractAddress === ''
+              ? activeNetwork.nativeCurrency.name
+              : transfer.tokenName,
+          tokenSymbol:
+            contractAddress === ''
+              ? activeNetwork.nativeCurrency.symbol
+              : transfer.tokenSymbol,
+          tokenDecimal:
+            contractAddress === ''
+              ? Number(activeNetwork.nativeCurrency.decimals)
+              : transfer.tokenDecimal,
+          icon:
+            contractAddress === ''
+              ? activeNetwork.nativeCurrency.logo
+              : transfer.tokenLogo,
+          tokenAmount:
+            contractAddress === ''
+              ? getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(activeNetwork.nativeCurrency.decimals),
+                  false
+                )
+              : getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(transfer.tokenDecimal),
+                  false
+                )
+        };
+
+        if (
+          syndicateEvents.length === 0 ||
+          syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
+        ) {
+          const newId = uuidv4();
+          batchIds[`nonBatching-${newId}`] = [
+            {
+              ...newTokenDetails,
+              isOutgoingTransaction: ownerAddress === transfers[0].from
+            }
+          ];
+          return;
         }
-        newBatchIdValue.push(newTokenDetails);
+
+        const event = syndicateEvents[0];
+        // Checks if transaction is a Distribution
+        if (event.distributionBatch) {
+          if (last === '' || last !== event.distributionBatch) {
+            last = event.distributionBatch;
+            newBatchIdValue = [];
+          }
+          newBatchIdValue.push(newTokenDetails);
+        }
+        batchIds[event.distributionBatch] = newBatchIdValue;
       }
-      batchIds[event.distributionBatch] = newBatchIdValue;
-    });
+    );
     setBatchIdentifiers(batchIds);
   }, [
     activeNetwork.nativeCurrency.decimals,
@@ -387,7 +430,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
 
   // stuff to filter transactions with in the search input
-  const handleSearchOnChange = (e: any) => {
+  const handleSearchOnChange = (e: any): void => {
     setSearchValue(e.target.value);
   };
 
@@ -398,7 +441,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     // using indexOf here instead of includes because the former has more support browsers-wise.
     return searchParam.toLowerCase().indexOf(searchTerm) > -1;
   };
-  const filterMockTransactions = () => {
+  const filterMockTransactions = (): void => {
     const data = isOpenForDeposits
       ? mockActivityDepositTransactionsData
       : mockActivityTransactionsData;
@@ -440,14 +483,14 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   };
 
   // pagination functions
-  function goToNextPage() {
+  function goToNextPage(): void {
     setPageOffset((_offset) => _offset + DATA_LIMIT);
 
     // clear selected transactions
     unSelectAllTransactions();
   }
 
-  function goToPreviousPage() {
+  function goToPreviousPage(): void {
     setPageOffset((_offset) => _offset - DATA_LIMIT);
 
     // clear selected transactions
@@ -455,11 +498,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   }
 
   // bulk annotate
-  const bulkCategoriseTransactions = (selectedCategory: string) => {
+  const bulkCategoriseTransactions = (selectedCategory: string): void => {
     const outgoingCategories = ['INVESTMENT', 'EXPENSE'];
     const incomingCategories = ['INVESTMENT_TOKEN'];
 
-    let listData;
+    let listData = [];
     if (outgoingCategories.indexOf(selectedCategory) > -1) {
       listData = transactionsChecked.filter(
         (transaction) => transaction.isOutgoingTransaction === true
@@ -472,7 +515,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       listData = transactionsChecked;
     }
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const txnAnnotationListData = listData.map((transaction) => ({
       transactionId: transaction.hash,
       transactionCategory: selectedCategory
@@ -495,42 +537,59 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     }
   };
 
-  const unSelectAllTransactions = () => {
-    setRowCheckboxActiveData([]);
+  const unSelectAllTransactions = (): void => {
     setTransactionsChecked([]);
+    setrowCheckboxActiveData({});
   };
 
   //show/hide row checkboxes
   const toggleRowCheckbox = (
-    checkboxIndex: number,
+    batchId: string,
     checkboxVisible: boolean
-  ) => {
+  ): void => {
     if (!isOwner) return;
-    const data = transactionEventsState.map((item: any, index: any) => {
-      return {
-        ...item,
-        checkboxVisible: rowCheckboxActiveData[index]?.checkboxActive ?? false,
-        checkboxActive: rowCheckboxActiveData[index]?.checkboxActive ?? false
+    if (batchId) {
+      // active batch IDs
+      const _batchIdCopy = rowCheckboxActiveData;
+      _batchIdCopy[batchId] = {
+        ...batchIdentifiers[batchId][0],
+        checkboxVisible:
+          rowCheckboxActiveData[batchId]?.checkboxActive ?? false,
+        checkboxActive: rowCheckboxActiveData[batchId]?.checkboxActive ?? false
       };
-    });
 
-    if (
-      !rowCheckboxActiveData[checkboxIndex]?.checkboxActive &&
-      data?.[checkboxIndex]
-    ) {
-      data[checkboxIndex]['checkboxVisible'] = checkboxVisible;
+      if (
+        !rowCheckboxActiveData[batchId]?.checkboxActive &&
+        rowCheckboxActiveData[batchId]
+      ) {
+        _batchIdCopy[`${batchId}`].checkboxVisible = checkboxVisible;
+      }
+
+      forceUpdate();
+
+      setrowCheckboxActiveData(_batchIdCopy);
     }
-
-    setRowCheckboxActiveData(data);
   };
 
   // checkbox handle check
-  const handleSelect = (e: any, index: number) => {
-    rowCheckboxActiveData[index]['checkboxActive'] = e.target.checked;
+  const handleSelect = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    batchId: string
+  ): void => {
+    const _batchIdCopy = {
+      ...rowCheckboxActiveData,
+      [batchId]: {
+        ...batchIdentifiers[batchId][0],
+        ...rowCheckboxActiveData[batchId],
+        checkboxActive: e.target.checked
+      }
+    };
+
+    setrowCheckboxActiveData(_batchIdCopy);
 
     // track number of transactions selected.
     setTransactionsChecked(
-      rowCheckboxActiveData.filter((row: any) => row.checkboxActive)
+      Object.values(_batchIdCopy).filter((row: any) => row.checkboxActive)
     );
   };
 
@@ -588,6 +647,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           </div>
         ) : null}
       </div>
+
       {/* removed overflow settings here because the categories drop-down gets cut off
       and requires scrolling to reveal.
       Feel free to re-introduce if a better fix is found. */}

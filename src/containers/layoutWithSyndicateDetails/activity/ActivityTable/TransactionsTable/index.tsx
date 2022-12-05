@@ -2,22 +2,22 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
+import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
+import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
-import { getWeiAmount } from '@/utils/conversions';
-import moment from 'moment';
-import Image from 'next/image';
-import { FC, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import {
   CurrentTransaction,
   emptyCurrentTransaction,
   TransactionCategory
 } from '@/state/erc20transactions/types';
-import { BatchIdTokenDetails } from '../index';
+import { getWeiAmount } from '@/utils/conversions';
+import moment from 'moment';
+import Image from 'next/image';
+import { FC, useState } from 'react';
+import { useSelector } from 'react-redux';
 import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
-import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
+import { BatchIdTokenDetails } from '../index';
 
 interface ITransactionsTableProps {
   canNextPage: boolean;
@@ -32,9 +32,9 @@ interface ITransactionsTableProps {
   transactionEvents: Array<TransactionEvents>;
   batchIdentifiers: BatchIdTokenDetails;
   emptyState: JSX.Element;
-  toggleRowCheckbox: (checkboxIndex: number, checkboxVisible: boolean) => void;
-  handleCheckboxSelect: (e: any, index: number) => void;
-  rowCheckboxActiveData: any[];
+  toggleRowCheckbox: (batchKey: string, checkboxVisible: boolean) => void;
+  handleCheckboxSelect: (e: any, key: string) => void;
+  rowCheckboxActiveData: any;
   activeTransactionHashes?: Array<string>;
   setActiveTransactionHashes?: (transactionHashes: Array<string>) => void;
 }
@@ -65,7 +65,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const [pillHover, setPillHover] = useState<any>([]);
+  const [pillHover, setPillHover] = useState<any>({});
   const [currentTransaction, setCurrentTransaction] =
     useState<CurrentTransaction>(emptyCurrentTransaction);
   const [currentBatchIdentifier, setCurrentBatchIdentifier] =
@@ -127,25 +127,25 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
 
   // flip the category pill to drop-down on mouse hover
   const toggleCategoryPillReadOnly = (
-    pillIndex: number,
+    batchId: string,
     categoryReadonlyState: boolean
   ) => {
     if (!isOwner) return;
-    const data = transactionEvents.map((item) => {
-      return {
-        ...item,
-        categoryIsReadonly: true
-      };
-    });
-    data[pillIndex]['categoryIsReadonly'] = categoryReadonlyState;
-    setPillHover(data);
+
+    const _pillHover = pillHover;
+
+    _pillHover[`${batchId}`] = {
+      ...batchIdentifiers[`${batchId}`],
+      categoryIsReadonly: true
+    };
+
+    _pillHover[`${batchId}`]['categoryIsReadonly'] = categoryReadonlyState;
+    setPillHover(_pillHover);
   };
 
   // when to show pagination
   let showPagination = true;
-  console.log('table activityViewLength: ', activityViewLength);
-  console.log('table dataLimit: ', dataLimit);
-  console.log('table offset: ', pageOffset);
+
   if (activityViewLength < dataLimit) {
     showPagination = false;
   } else {
@@ -223,9 +223,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
 
         return (
           <div
-            key={`token-table-row-${index}`}
+            key={`token-table-row-${key}`}
             className="relative grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 cursor-pointer"
-            onClick={() => {
+            onClick={(): void => {
               if (
                 !inlineCategorising &&
                 !checkboxActive &&
@@ -268,9 +268,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   blockTimestamp: timestamp
                 };
                 setCurrentTransaction(selectedTransactionData);
-                setCurrentBatchIdentifier(
-                  syndicateEvents[0]?.distributionBatch
-                );
+                setCurrentBatchIdentifier(key);
                 toggleShowAnnotationsModal();
                 setIsAnnotationsModalShown(true);
                 if (annotation?.memo) {
@@ -279,38 +277,39 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               }
             }}
             aria-hidden={true}
-            onMouseEnter={() => {
-              if (category !== 'DEPOSIT') toggleRowCheckbox(index, true);
+            onMouseEnter={(): void => {
+              if (category !== 'DEPOSIT') toggleRowCheckbox(key, true);
             }}
-            onMouseLeave={() => {
-              if (category !== 'DEPOSIT') toggleRowCheckbox(index, false);
+            onMouseLeave={(): void => {
+              if (category !== 'DEPOSIT') toggleRowCheckbox(key, false);
             }}
           >
             <div
               className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
-              onMouseEnter={() => {
-                if (category !== 'DEPOSIT') toggleRowCheckbox(index, true);
+              onMouseEnter={(): void => {
+                if (category !== 'DEPOSIT') toggleRowCheckbox(key, true);
               }}
-              onMouseLeave={() => {
-                if (category !== 'DEPOSIT') toggleRowCheckbox(index, false);
+              onMouseLeave={(): void => {
+                if (category !== 'DEPOSIT') toggleRowCheckbox(key, false);
               }}
             >
-              {rowCheckboxActiveData[index] &&
-                rowCheckboxActiveData[index].checkboxVisible &&
+              {rowCheckboxActiveData &&
+                rowCheckboxActiveData[key] &&
+                rowCheckboxActiveData[key].checkboxVisible &&
                 category !== 'DISTRIBUTION' && (
                   <div
-                    onMouseEnter={() => {
+                    onMouseEnter={(): void => {
                       setCheckboxActive(true);
                     }}
-                    onMouseLeave={() => {
+                    onMouseLeave={(): void => {
                       setCheckboxActive(false);
                     }}
                   >
                     <input
                       type="checkbox"
                       className="bg-transparent rounded focus:ring-offset-0"
-                      onChange={(e) => handleCheckboxSelect(e, index)}
-                      checked={rowCheckboxActiveData[index].checkboxActive}
+                      onChange={(e): void => handleCheckboxSelect(e, key)}
+                      checked={rowCheckboxActiveData[key].checkboxActive}
                     />
                   </div>
                 )}
@@ -318,13 +317,13 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
             <div className="flex flex-row col-span-3 items-center">
               <div
                 className="w-fit-content py-3"
-                onMouseEnter={() => {
+                onMouseEnter={(): void => {
                   if (category !== 'DISTRIBUTION')
-                    toggleCategoryPillReadOnly(index, false);
+                    toggleCategoryPillReadOnly(key, false);
                 }}
-                onMouseLeave={() => {
+                onMouseLeave={(): void => {
                   if (category !== 'DISTRIBUTION')
-                    toggleCategoryPillReadOnly(index, true);
+                    toggleCategoryPillReadOnly(key, true);
                 }}
               >
                 <CategoryPill
@@ -334,11 +333,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   renderedInline={true}
                   setInlineCategorising={setInlineCategorising}
                   readonly={
-                    pillHover[index]?.categoryIsReadonly === undefined ||
+                    pillHover[key]?.categoryIsReadonly === undefined ||
                     category === 'DEPOSIT' ||
                     category === 'DISTRIBUTION'
                       ? true
-                      : pillHover[index]?.categoryIsReadonly
+                      : pillHover[key]?.categoryIsReadonly
                   }
                   transactionHash={hash}
                   refetchTransactions={refetchTransactions}
@@ -448,7 +447,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:opacity-90'
               }`}
-              onClick={() => goToPreviousPage()}
+              onClick={(): void => goToPreviousPage()}
               disabled={showPagination}
             >
               <Image
@@ -485,7 +484,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         </div>
       ) : (
         <div className="pt-14 flex justify-center items-center flex-col">
-          {emptyState}
+          {transactionsLoading ? loaderContent : emptyState}
         </div>
       )}
       <div>
