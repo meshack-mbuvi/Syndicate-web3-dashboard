@@ -2,37 +2,43 @@
 export const activityDropDownOptions = [
   {
     text: 'Everything',
-    value: 'everything',
+    // null value means all transactions based off legacyTransactions query
+    value: null,
     icon: '/images/activity/everything.svg'
   },
   {
-    text: 'Uncategorised',
-    value: 'uncategorised',
+    text: 'Uncategorized',
+    value: 'UNCATEGORIZED',
     icon: '/images/activity/question.svg'
   },
   {
-    text: 'Deposits',
-    value: 'deposit',
+    text: 'Deposit',
+    value: 'DEPOSIT',
     icon: '/images/activity/deposit-transaction.svg'
   },
   {
-    text: 'Investments',
-    value: 'investment',
+    text: 'Distribution',
+    value: 'MEMBER_DISTRIBUTED',
+    icon: '/images/activity/distribution.svg'
+  },
+  {
+    text: 'Investment',
+    value: 'INVESTMENT',
     icon: '/images/activity/investment-transaction.svg'
   },
   {
     text: 'Investment token',
-    value: 'investment_token',
+    value: 'INVESTMENT_TOKEN',
     icon: '/images/activity/investment-tokens.svg'
   },
   {
-    text: 'Expenses',
-    value: 'expense',
+    text: 'Expense',
+    value: 'EXPENSE',
     icon: '/images/activity/expense-transaction.svg'
   },
   {
     text: 'Other',
-    value: 'other',
+    value: 'OTHER',
     icon: '/images/activity/other-transaction.svg'
   }
 ];
