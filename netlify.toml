@@ -1,9 +1,3 @@
-[build]
-  functions = "functions/build"
-
-[context."ENG-4690/max-call-stack-error"]
-  command = "CI='' npm run build"
-
 [functions]
   directory = "functions/"
 
@@ -16,11 +10,6 @@
     for = "/manifest.json"
     [headers.values]
       Access-Control-Allow-Origin = "*"
-
-[[headers]]
-  for = "/.netlify/functions/getCoinInfoByContractAddress/*"
-  [headers.values]
-    cache-control = "s-maxage=86401"
 
 [build.environment]
   NODE_OPTIONS = "--max_old_space_size=8192"
