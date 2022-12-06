@@ -4,7 +4,7 @@ export type TransactionCategory =
   | 'EXPENSE'
   | 'DEPOSIT'
   | 'OTHER'
-  | 'UNCATEGORISED'
+  | 'UNCATEGORIZED'
   | 'SELECT_CATEGORY'
   | 'TOKEN'
   | 'COLLECTIBLE'
@@ -66,7 +66,7 @@ interface InitialState {
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
-  category: 'UNCATEGORISED',
+  category: 'UNCATEGORIZED',
   note: '',
   hash: '',
   transactionInfo: {

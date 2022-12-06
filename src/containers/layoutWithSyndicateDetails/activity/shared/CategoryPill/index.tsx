@@ -32,7 +32,7 @@ interface ICategoryPill {
   changeAdaptiveBackground?: (selectedCategory: string) => void;
   showLoader?: boolean;
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
-  uncategorisedIcon?: string;
+  uncategorizedIcon?: string;
   disableDropDown?: boolean;
   isOwner: boolean;
   // currentTransaction: CurrentTransaction;
@@ -60,7 +60,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   changeAdaptiveBackground,
   showLoader = false,
   setActiveTransactionHash,
-  uncategorisedIcon,
+  uncategorizedIcon,
   disableDropDown,
   isOwner
   // currentTransaction,
@@ -92,10 +92,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       icon: '/images/activity/other-transaction.svg'
     },
     {
-      text: 'Uncategorised',
+      text: 'Uncategorized',
       value: null,
-      icon: uncategorisedIcon
-        ? uncategorisedIcon
+      icon: uncategorizedIcon
+        ? uncategorizedIcon
         : outgoing
         ? '/images/activity/outgoing-transaction.svg'
         : '/images/activity/incoming-transaction.svg'
@@ -180,7 +180,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           setPillIcon(
             outgoing ? 'outgoing-transaction.svg' : 'incoming-transaction.svg'
           );
-          setPillText('Uncategorised');
+          setPillText('Uncategorized');
         }
 
         break;

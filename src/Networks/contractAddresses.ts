@@ -84,7 +84,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
 
     // Precommit
     ERC20DealFactory: '0x2C74e40B2B2A383C58a48917a48b51835A85b923',
-    AllowancePrecommitModuleERC20: '0xa244f78fa18e74a925483984fec489b68d07f23e',
+    AllowancePrecommitModuleERC20: '0x0a98468cf18DB558B1d6BF831C4895Db0F45837C',
     MinPerMemberERC20Mixin: '0x735150ED24728904B90198D6E4022Bcad6B5dD15',
     DealTimeRequirements: '0x5744686c44d3b9991463e9affba95beb7cbfda69',
     GuardModuleAllowed: '0xC32dF31446770f570c09ed882fEE7a45785dE4a5',

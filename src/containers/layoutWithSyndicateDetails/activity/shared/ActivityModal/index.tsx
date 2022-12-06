@@ -543,7 +543,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
             {/* Note and details section */}
             {category === 'DEPOSIT' ||
-            category === 'UNCATEGORISED' ||
+            category === 'UNCATEGORIZED' ||
             category === null ||
             (!isOwner && !note && !showDetailSection) ? null : (
               <div
