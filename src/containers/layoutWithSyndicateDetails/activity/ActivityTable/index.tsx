@@ -79,7 +79,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     useState<any>([]);
   const [rowCheckboxActiveData, setrowCheckboxActiveData] = useState<any>({});
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
-  const [uncategorisedIcon, setUncategorisedIcon] = useState<string>('');
+  const [uncategorizedIcon, setUncategorizedIcon] = useState<string>('');
   const [searchWidth, setSearchWidth] = useState<number>(48);
   const [mockTransactionsData, setMockTransactionsData] = useState<any>(
     mockActivityDepositTransactionsData
@@ -122,7 +122,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       );
 
       // get transactions outgoing status.
-      // we'll use this to show the correct icon if the "UNCATEGORISED" option is selected
+      // we'll use this to show the correct icon if the "UNCATEGORIZED" option is selected
       // depending on whether all selected transactions are outgoing/incoming or a mix of both.
       const outgoingStatuses = new Set(
         transactionsChecked.map((transaction) => {
@@ -131,10 +131,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       );
 
       if (outgoingStatuses.size > 1) {
-        setUncategorisedIcon('/images/activity/select-category.svg');
+        setUncategorizedIcon('/images/activity/select-category.svg');
       } else if (outgoingStatuses.size === 1) {
         const selectedOutgoingStatus = Array.from(outgoingStatuses)[0];
-        setUncategorisedIcon(
+        setUncategorizedIcon(
           selectedOutgoingStatus
             ? '/images/activity/outgoing-transaction.svg'
             : '/images/activity/incoming-transaction.svg'
@@ -144,6 +144,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       const transactionHashes = transactionsChecked.map((transaction) => {
         return transaction.hash;
       });
+
       // we use these to know where to place in-pill loader state
       // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setActiveTransactionHashes(transactionHashes);
@@ -182,29 +183,18 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   /**
    * Generates the query object to be sent to the API to fetch the transactions.
    */
-  const generateSearchFilter = (filterValue: any, searchValue: any) => {
+  const generateSearchFilter = (filterValue: string, searchValue: string) => {
     let obj = {};
-    if (filterValue && filterValue !== 'everything') {
-      filter === 'uncategorised'
-        ? (obj = { ...obj, annotation: null })
-        : (obj = {
-            ...obj,
-            annotation: { transactionCategory: `${filter?.toUpperCase()}` }
-          });
+    if (filterValue) {
+      obj = {
+        ...obj,
+        category: filterValue
+      };
     }
     if (searchValue) {
       obj = {
         ...obj,
-        // Add more items here to be included in the search
-        OR: [
-          'hash',
-          'fromAddress',
-          'toAddress',
-          'tokenName',
-          'tokenSymbol'
-        ].map((val) => {
-          return { [val]: { contains: searchValue, mode: 'insensitive' } };
-        })
+        search: searchValue
       };
     }
     return obj;
@@ -227,10 +217,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       tokens and symbols, or companies.`;
     }
 
-    if (filter && !searchValue && filter === 'uncategorised') {
-      title = 'No uncategorised transactions';
+    if (filter && !searchValue && filter === 'uncategorized') {
+      title = 'No uncategorized transactions';
       description =
-        'There are currently no uncategorised transactions in this club’s activity.';
+        'There are currently no uncategorized transactions in this club’s activity.';
     } else {
       if (!searchValue && filter) {
         title = `No transactions categorised as “${cleanedFilter}”`;
@@ -383,7 +373,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         };
 
         if (
-          syndicateEvents.length === 0 ||
+          syndicateEvents?.length === 0 ||
           syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
         ) {
           const newId = uuidv4();
@@ -629,7 +619,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
               category={groupCategory}
               outgoing={groupTransactionsDestination}
               bulkCategoriseTransactions={bulkCategoriseTransactions}
-              uncategorisedIcon={uncategorisedIcon}
+              uncategorizedIcon={uncategorizedIcon}
               isOwner={isOwner}
             />
             <div

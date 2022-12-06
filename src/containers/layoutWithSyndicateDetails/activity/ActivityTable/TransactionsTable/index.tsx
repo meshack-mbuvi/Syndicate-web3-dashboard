@@ -205,7 +205,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           'dddd, MMM Do YYYY, h:mm A'
         );
 
-        let category: TransactionCategory = 'UNCATEGORISED';
+        let category: TransactionCategory = 'UNCATEGORIZED';
 
         if (annotation?.transactionCategory) {
           category = annotation?.transactionCategory;

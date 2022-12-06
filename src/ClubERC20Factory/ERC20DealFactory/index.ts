@@ -10,6 +10,8 @@ import { TransactionReceipt } from 'web3-core';
 export interface IDealParams {
   dealName: string;
   dealTokenSymbol: string;
+  dealDestination: string;
+  dealGoal: number;
   minPerMember: number;
   startTime: string;
   endTime: string;
@@ -64,19 +66,39 @@ export class ERC20DealFactory extends ContractBase {
   }> {
     const { startTime, endTime, minPerMember } = dealParams;
 
-    const { dealTimeRequirements, minPerWalletMixin, guardModule } =
-      this.setupContract();
+    const {
+      dealTimeRequirements,
+      minPerWalletMixin,
+      guardModule,
+      preCommitModule
+    } = this.setupContract();
 
     const salt = this.web3.utils.randomHex(32);
     const predictedAddress = await this.predictAddress(account, salt);
 
     const contractAddresses = [
+      this.addresses.AllowancePrecommitModuleERC20,
+      this.addresses.DealTimeRequirements,
       this.addresses.MinPerMemberERC20Mixin,
-      this.addresses.GuardModuleAllowed,
-      this.addresses.DealTimeRequirements
+      this.addresses.GuardModuleAllowed
     ];
 
     const encodedFunctions = [
+      preCommitModule.encodeUpdateDealDetails(
+        predictedAddress,
+        dealParams.dealDestination,
+        this.addresses.usdcContract, // TODO: Make this dynamic, hardcoded to USDC for V0
+        dealParams.dealGoal,
+        [
+          this.addresses.DealTimeRequirements,
+          this.addresses.MinPerMemberERC20Mixin
+        ]
+      ),
+      dealTimeRequirements.encodeSetTimeRequirements(
+        predictedAddress,
+        startTime,
+        endTime
+      ),
       minPerWalletMixin.encodeSetMinPerMemberRequirement(
         predictedAddress,
         minPerMember
@@ -85,11 +107,6 @@ export class ERC20DealFactory extends ContractBase {
         predictedAddress,
         this.addresses.AllowancePrecommitModuleERC20,
         true
-      ),
-      dealTimeRequirements.encodeSetTimeRequirements(
-        predictedAddress,
-        startTime,
-        endTime
       )
     ];
 

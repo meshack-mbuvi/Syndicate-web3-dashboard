@@ -631,7 +631,7 @@ export const mockOffChainTransactionsData = {
         sharesAmount: '',
         toLabel: '',
         tokenAmount: '',
-        transactionCategory: 'UNCATEGORISED',
+        transactionCategory: 'UNCATEGORIZED',
         memo: '',
         companyName: '',
         annotationMetadata: {}
@@ -1062,7 +1062,7 @@ export const mockActivityDepositTransactionsData = {
         sharesAmount: '',
         toLabel: '',
         tokenAmount: '',
-        transactionCategory: 'UNCATEGORISED',
+        transactionCategory: 'UNCATEGORIZED',
         memo: '',
         companyName: '',
         annotationMetadata: {}

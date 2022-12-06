@@ -6,7 +6,7 @@ interface FilterPillProps {
   filter?: string;
   dropDownOptions: {
     text: string;
-    value: string;
+    value: string | null;
     icon: string;
   }[];
   // putting this here because we have 'Show: Everything' under activity but we
