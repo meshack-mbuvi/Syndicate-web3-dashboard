@@ -1,8 +1,5 @@
-[build]
-  functions = "functions/build"
-
 [functions]
-  directory = "functions/build"
+  directory = "functions/"
 
 [[plugins]]
   package = 'netlify-plugin-contextual-env'
@@ -13,11 +10,6 @@
     for = "/manifest.json"
     [headers.values]
       Access-Control-Allow-Origin = "*"
-
-[[headers]]
-  for = "/.netlify/functions/getCoinInfoByContractAddress/*"
-  [headers.values]
-    cache-control = "s-maxage=86401"
 
 [build.environment]
   NODE_OPTIONS = "--max_old_space_size=8192"
