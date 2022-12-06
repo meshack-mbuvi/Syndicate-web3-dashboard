@@ -594,7 +594,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             refetchTransactions={() => {
               refetchTransactions();
             }}
-            transactionEvents={transactionEvents}
             currentTransaction={currentTransaction}
             currentBatchIdentifier={currentBatchIdentifier}
             batchIdentifiers={{}}

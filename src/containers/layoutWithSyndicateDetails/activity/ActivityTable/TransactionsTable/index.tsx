@@ -1,9 +1,9 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import useOnClickOutside from '@/containers/createInvestmentClub/shared/useOnClickOutside';
 import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
-import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import {
@@ -14,7 +14,7 @@ import {
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
 import Image from 'next/image';
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
 import { BatchIdTokenDetails } from '../index';
@@ -29,7 +29,6 @@ interface ITransactionsTableProps {
   goToPreviousPage: () => void;
   goToNextPage: () => void;
   transactionsLoading: boolean;
-  transactionEvents: Array<TransactionEvents>;
   batchIdentifiers: BatchIdTokenDetails;
   emptyState: JSX.Element;
   toggleRowCheckbox: (batchKey: string, checkboxVisible: boolean) => void;
@@ -48,7 +47,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   goToPreviousPage,
   goToNextPage,
   transactionsLoading,
-  transactionEvents,
   batchIdentifiers,
   emptyState,
   toggleRowCheckbox,
@@ -64,6 +62,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
       web3: { web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  const ref = useRef(null);
+  useOnClickOutside(ref, () => setCurrentBatchIdentifier(''));
 
   const [pillHover, setPillHover] = useState<any>({});
   const [currentTransaction, setCurrentTransaction] =
@@ -118,7 +119,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     transactionsLoading &&
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     !activeTransactionHashes.length &&
-    !transactionEvents &&
     !batchIdentifiers &&
     !emptyState
   ) {
@@ -225,6 +225,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           <div
             key={`token-table-row-${key}`}
             className="relative grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 cursor-pointer"
+            ref={ref}
             onClick={(): void => {
               if (
                 !inlineCategorising &&
@@ -501,7 +502,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           currentTransaction={currentTransaction}
           currentBatchIdentifier={currentBatchIdentifier}
           batchIdentifiers={batchIdentifiers}
-          transactionEvents={transactionEvents}
           setCurrentTransaction={setCurrentTransaction}
           showNote={showNote}
           setShowNote={setShowNote}

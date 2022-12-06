@@ -14,7 +14,6 @@ import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
-import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { CurrentTransaction } from '@/state/erc20transactions/types';
@@ -43,7 +42,6 @@ interface IActivityModal {
   currentTransaction: CurrentTransaction;
   currentBatchIdentifier: string;
   batchIdentifiers: BatchIdTokenDetails;
-  transactionEvents: Array<TransactionEvents>;
   setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
@@ -229,10 +227,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
     } else {
       setMemberDetails([]);
     }
-
-    return (): void => {
-      setMemberDetails([]);
-    };
   }, [
     isFetchingMembers,
     JSON.stringify(clubMembers),
