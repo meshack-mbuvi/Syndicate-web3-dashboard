@@ -652,7 +652,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         goToNextPage={goToNextPage}
         transactionsLoading={transactionsLoading}
         numTransactions={numTransactions}
-        transactionEvents={transactionEventsState}
         batchIdentifiers={batchIdentifiers}
         emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
         toggleRowCheckbox={toggleRowCheckbox}

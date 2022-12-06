@@ -1,16 +1,18 @@
 import { gql } from '@apollo/client';
 
 export const ANNOTATE_TRANSACTIONS = gql`
-  mutation annotateTransactions(
+  mutation LegacyAnnotateTransactions(
     $input: String!
     $chainId: Int
-    $transactionAnnotationList: [Financial_TransactionAnnotationInput]
+    $transactionAnnotationList: [TransactionAnnotationInput]!
   ) {
-    Financial_annotateTransactions(
+    legacyAnnotateTransactions(
       input: $input
       chainId: $chainId
       transactionAnnotationList: $transactionAnnotationList
-    )
+    ) {
+      success
+    }
   }
 `;
 
