@@ -100,16 +100,17 @@ const ActivityModal: React.FC<IActivityModal> = ({
   useEffect(() => {
     if (!batchIdentifiers || !currentBatchIdentifier) return;
     const tokenDetailsList: Array<TokenDetailsList> = [];
-    batchIdentifiers[currentBatchIdentifier].map((transaction) => {
-      if (transaction.transfers[0].contractAddress !== '') {
+    batchIdentifiers[currentBatchIdentifier]?.map((transaction) => {
+      const transfer = transaction.transfers[1] ?? transaction.transfers[0];
+      if (transfer.contractAddress !== '') {
         tokenDetailsList.push({
-          name: String(transaction.transfers[0].tokenName),
-          symbol: String(transaction.transfers[0].tokenSymbol),
-          icon: transaction.transfers[0].tokenLogo,
+          name: String(transfer.tokenName),
+          symbol: String(transfer.tokenSymbol),
+          icon: transfer.tokenLogo,
           amount: getWeiAmount(
             web3,
-            String(transaction.transfers[0].value),
-            Number(transaction.transfers[0].tokenDecimal),
+            String(transfer.value),
+            Number(transfer.tokenDecimal),
             false
           )
         });
@@ -120,7 +121,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
           icon: activeNetwork.nativeCurrency.logo,
           amount: getWeiAmount(
             web3,
-            String(transaction.transfers[0].value),
+            String(transfer.value),
             Number(activeNetwork.nativeCurrency.decimals),
             false
           )
@@ -269,7 +270,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     });
   };
 
-  const handleAddDetails = () => {
+  const handleAddDetails = (): void => {
     setShowDetailSection(true);
     setEditMode(true);
   };
@@ -277,24 +278,16 @@ const ActivityModal: React.FC<IActivityModal> = ({
   useEffect(() => {
     // Update with new details as the user selects different transactions
     setStoredInvestmentDetails({
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      companyName: metadata?.companyName,
-      // @ts-expect-error metadata.RoundCategory | undefined' is not assignable to type 'string | number'.
-      investmentRound: metadata?.roundCategory,
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      numberShares: metadata?.numberShares,
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      numberTokens: metadata?.numberTokens,
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      fullyDilutedOwnershipStake: metadata?.fullyDilutedOwnershipStake,
-      // @ts-expect-error TS(2322): Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message
+      companyName: metadata?.companyName || '',
+      investmentRound: metadata?.roundCategory || '',
+      numberShares: metadata?.numberShares || 0,
+      numberTokens: metadata?.numberTokens || 0,
+      fullyDilutedOwnershipStake: metadata?.fullyDilutedOwnershipStake || 0,
       investmentDate: metadata?.acquisitionDate
         ? new Date(metadata?.acquisitionDate).toISOString()
-        : null,
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      currentInvestmentValue: metadata?.preMoneyValuation,
-      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
-      costBasis: metadata?.postMoneyValuation
+        : '',
+      currentInvestmentValue: metadata?.preMoneyValuation || '',
+      costBasis: metadata?.postMoneyValuation || ''
     });
   }, [metadata, blockTimestamp]);
 
@@ -336,7 +329,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   }, [selectedCategory]);
 
-  const changeAdaptiveBackground = (selectedCategory: string) => {
+  const changeAdaptiveBackground = (selectedCategory: string): void => {
     setSelectedCategory(selectedCategory);
   };
 
@@ -394,7 +387,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   };
 
-  const handleSetMemberHasSigned = async (event: any) => {
+  const handleSetMemberHasSigned = async (event: any): Promise<void> => {
     event.preventDefault();
 
     const { data } = await setMemberHasSigned({
@@ -406,11 +399,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
     });
 
     if (data) {
-      refetch();
+      void refetch();
     }
   };
 
-  const toggleDropDown = (value: boolean) => {
+  const toggleDropDown = (value: boolean): void => {
     setDisableDropDown(value);
   };
 

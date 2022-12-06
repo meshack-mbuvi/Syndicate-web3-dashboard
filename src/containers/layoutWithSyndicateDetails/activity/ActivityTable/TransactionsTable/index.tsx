@@ -12,6 +12,7 @@ import {
   TransactionCategory
 } from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import Image from 'next/image';
 import { FC, useRef, useState } from 'react';
@@ -158,30 +159,38 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     const tokensList: any = [];
     if (!(batchIdentifiers[key].length === 1)) {
       batchIdentifiers[key].map((transaction) => {
-        tokensList.push({
-          name: transaction.transfers[0].tokenName
-            ? transaction.transfers[0].tokenName
-            : activeNetwork.nativeCurrency.name,
-          symbol: transaction.transfers[0].tokenSymbol
-            ? transaction.transfers[0].tokenSymbol
-            : activeNetwork.nativeCurrency.symbol,
-          icon: transaction.transfers[0].tokenLogo
-            ? transaction.transfers[0].tokenLogo
-            : activeNetwork.nativeCurrency.logo,
-          amount: transaction.transfers[0].tokenDecimal
-            ? getWeiAmount(
-                web3,
-                String(transaction.transfers[0].value),
-                Number(transaction.transfers[0].tokenDecimal),
-                false
-              )
-            : getWeiAmount(
-                web3,
-                String(transaction.transfers[0].value),
-                Number(activeNetwork.nativeCurrency.decimals),
-                false
-              )
-        });
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const transfer = transaction.transfers[1] ?? transaction.transfers[0];
+
+        if (transfer && !isEmpty(transfer)) {
+          tokensList.push({
+            name: transfer.tokenName
+              ? transfer.tokenName
+              : activeNetwork.nativeCurrency.name,
+            symbol: transfer.tokenSymbol
+              ? transfer.tokenSymbol
+              : activeNetwork.nativeCurrency.symbol,
+            icon: transfer.tokenLogo
+              ? transfer.tokenLogo
+              : activeNetwork.nativeCurrency.logo,
+            amount: transfer.tokenDecimal
+              ? getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(transfer.tokenDecimal),
+                  false
+                )
+              : getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(activeNetwork.nativeCurrency.decimals),
+                  false
+                )
+          });
+        }
       });
     }
     return batchIdentifiers[key].map(
@@ -197,7 +206,14 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         index
       ) => {
         if (!(batchIdentifiers[key].length === 1) && index > 0) return;
-        const currentTransfer = transfers[0];
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const currentTransfer = transfers[1] ?? transfers[0];
+
+        if (!currentTransfer) return;
+
         const isOutgoingTransaction = ownerAddress === currentTransfer.from;
         const timeSinceTransaction = moment(timestamp * 1000).fromNow();
 
@@ -471,7 +487,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:opacity-90'
               }`}
-              onClick={() => goToNextPage()}
+              onClick={(): void => goToNextPage()}
               disabled={!canNextPage}
             >
               <Image
@@ -493,7 +509,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           isOwner={isOwner}
           showModal={showAnnotationsModal}
           isAnnotationsModalShown={isAnnotationsModalShown}
-          closeModal={() => {
+          closeModal={(): void => {
             setShowNote(false);
             toggleShowAnnotationsModal();
             setIsAnnotationsModalShown(false);

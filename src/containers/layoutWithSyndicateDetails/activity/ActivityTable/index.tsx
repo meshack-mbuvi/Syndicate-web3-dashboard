@@ -3,7 +3,6 @@ import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
   getInput,
@@ -240,11 +239,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     );
   };
 
-  const debouncedSearchTerm = useDebounce(searchValue, 700);
-  const memoizedSearchTerm = useMemo(
-    () => debouncedSearchTerm,
-    [debouncedSearchTerm]
-  );
+  const memoizedSearchTerm = useMemo(() => searchValue, [searchValue]);
 
   const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
     {}
@@ -330,7 +325,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           ...rest
         } = transaction;
 
-        const [transfer] = transfers;
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const transfer = transfers[1] ?? transfers[0];
 
         const newTokenDetails: DistributionTokenDetails = {
           ...rest,
@@ -374,13 +373,13 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
 
         if (
           syndicateEvents?.length === 0 ||
-          syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
+          syndicateEvents[0]?.eventType !== 'MEMBER_DISTRIBUTED'
         ) {
           const newId = uuidv4();
           batchIds[`nonBatching-${newId}`] = [
             {
               ...newTokenDetails,
-              isOutgoingTransaction: ownerAddress === transfers[0].from
+              isOutgoingTransaction: ownerAddress === transfer?.from
             }
           ];
           return;
@@ -395,9 +394,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           }
           newBatchIdValue.push(newTokenDetails);
         }
+
         batchIds[event.distributionBatch] = newBatchIdValue;
       }
     );
+
     setBatchIdentifiers(batchIds);
   }, [
     activeNetwork.nativeCurrency.decimals,
@@ -431,6 +432,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     // using indexOf here instead of includes because the former has more support browsers-wise.
     return searchParam.toLowerCase().indexOf(searchTerm) > -1;
   };
+
   const filterMockTransactions = (): void => {
     const data = isOpenForDeposits
       ? mockActivityDepositTransactionsData
@@ -589,7 +591,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
             <FilterPill
-              setFilter={(filter) => setFilter(filter)}
+              setFilter={(filter): void => setFilter(filter)}
               dropDownOptions={activityDropDownOptions}
             />
           </div>
@@ -624,7 +626,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
             />
             <div
               className="flex justify-start cursor-pointer"
-              onClick={() => unSelectAllTransactions()}
+              onClick={(): void => unSelectAllTransactions()}
               aria-hidden={true}
             >
               <Image
