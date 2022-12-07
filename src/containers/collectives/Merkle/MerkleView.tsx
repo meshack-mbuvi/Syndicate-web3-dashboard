@@ -1,9 +1,12 @@
-import { useAsync } from '@react-hook/async';
 import { H1, L1, B1 } from '@/components/typography';
 import { useCallback, useMemo, useState } from 'react';
 import { resolveEnsDomains } from '@/utils/api/ens';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { useMutation } from '@apollo/client';
+import {
+  UseMutateAsyncFunction,
+  useMutation as useRQMutation
+} from '@tanstack/react-query';
 import { CREATE_BASIC_MERKLE_TREE_MUTATION } from '@/graphql/mutations';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { CTAButton, CTAType } from '@/components/CTAButton';
@@ -83,11 +86,13 @@ const prepareAddresses = (
 type MerkleRootHookResponse = {
   merkleRoot: string | undefined;
   isLoading: boolean | undefined;
-  error: Error | undefined;
+  error: Error | null;
   status: string;
-  create: ((addressesOrENSNames: string[]) => Promise<void>) & {
-    cancel: () => void;
-  };
+  create: UseMutateAsyncFunction<
+    { merkleRoot: string },
+    Error,
+    { addressesOrENSNames: string[] }
+  >;
   parsedEnsNames: Record<string, string>;
 };
 
@@ -103,48 +108,48 @@ const useCreateMerkleRoot = (): MerkleRootHookResponse => {
     }
   });
 
-  const [{ value, status, error }, create] = useAsync(
-    async (addressesOrENSNames: string[]) => {
-      let prepared = prepareAddresses(addressesOrENSNames, ensMap);
+  const { mutateAsync, data, status, error } = useRQMutation<
+    { merkleRoot: string },
+    Error,
+    { addressesOrENSNames: string[] }
+  >(async ({ addressesOrENSNames }) => {
+    let prepared = prepareAddresses(addressesOrENSNames, ensMap);
 
-      if (prepared.unresolvedEnsNames.length > 0) {
-        const ensAddresses = await resolveEnsDomains(
-          prepared.unresolvedEnsNames
-        );
+    if (prepared.unresolvedEnsNames.length > 0) {
+      const ensAddresses = await resolveEnsDomains(prepared.unresolvedEnsNames);
 
-        setEnsMap((prev) => ({
-          ...prev,
-          ...ensAddresses
-        }));
+      setEnsMap((prev) => ({
+        ...prev,
+        ...ensAddresses
+      }));
 
-        prepared = prepareAddresses(addressesOrENSNames, {
-          ...ensMap,
-          ...ensAddresses
-        });
-
-        if (prepared.unresolvedEnsNames.length > 0) {
-          throw new Error(`Could not resolve all ENS names`);
-        }
-      }
-
-      const res = await createMerkleTree({
-        variables: { accounts: prepared.dedupedAddresses }
+      prepared = prepareAddresses(addressesOrENSNames, {
+        ...ensMap,
+        ...ensAddresses
       });
 
-      if (errorMerkleTreeMutation) {
-        throw new Error('Error creating merkle tree', errorMerkleTreeMutation);
+      if (prepared.unresolvedEnsNames.length > 0) {
+        throw new Error(`Could not resolve all ENS names`);
       }
-
-      return { merkleRoot: res?.data?.createBasicMerkleTree.merkleRoot };
     }
-  );
+
+    const res = await createMerkleTree({
+      variables: { accounts: prepared.dedupedAddresses }
+    });
+
+    if (errorMerkleTreeMutation) {
+      throw new Error('Error creating merkle tree', errorMerkleTreeMutation);
+    }
+
+    return { merkleRoot: res?.data?.createBasicMerkleTree.merkleRoot };
+  });
 
   return {
-    merkleRoot: value?.merkleRoot,
+    merkleRoot: data?.merkleRoot,
     isLoading: isLoadingMerkleTreeMutation,
     error,
     status,
-    create,
+    create: mutateAsync,
     parsedEnsNames: ensMap
   };
 };
@@ -220,7 +225,7 @@ const MerkleView = ({
     }
 
     const addresses = parseAddressesFromText(addressInput);
-    void create(addresses);
+    create({ addressesOrENSNames: addresses });
   }, [addressInput, create]);
 
   const parsedAddresses = useMemo(
