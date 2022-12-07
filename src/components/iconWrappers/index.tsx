@@ -229,10 +229,10 @@ export const RightArrow = (props: {
 
 export const WalletIcon = (props: {
   className?: string;
-  width?: string;
-  height?: string;
+  width?: number;
+  height?: number;
 }): JSX.Element => {
-  const { className = 'text-green', width = '13', height = '10' } = props;
+  const { className = 'text-green', width = 18, height = 12 } = props;
 
   const isDemoMode = useDemoMode();
 
@@ -240,8 +240,8 @@ export const WalletIcon = (props: {
     return (
       <img
         className="mr-2"
-        width={18}
-        height={12}
+        width={width}
+        height={height}
         src="/images/status/gamecontroller.svg"
         alt="demo icon"
       />

@@ -352,8 +352,8 @@ const Header: React.FC<props> = ({
             ) : null}
 
             {showCloseButton && (
-              <NavButton 
-                type={NavButtonType.CLOSE} 
+              <NavButton
+                type={NavButtonType.CLOSE}
                 onClick={handleExitClick}
                 extraClasses="flex-shrink-0"
               />

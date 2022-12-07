@@ -1,12 +1,12 @@
 import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
+import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 import { formatAddress } from '@/utils/formatAddress';
-import { useRef, useState, useEffect } from 'react';
 
 export enum AddressImageSize {
-  SMALLER = 'w-5 h-5',
-  SMALL = 'w-6 h-6',
-  LARGE = 'w-8 h-8'
+  SMALLER = 'w-5 h-5', // 20px => 1.25rem
+  SMALL = 'w-6 h-6', // 24px => 1.5rem
+  LARGE = 'w-8 h-8' // 32px => 2rem
 }
 
 export enum AddressLayout {
@@ -22,6 +22,7 @@ interface Props {
   image?: string | null | undefined;
   addressAbbreviated?: boolean;
   layout?: AddressLayout;
+  onlyShowOneOfNameOrAddress?: boolean;
   id?: string;
   extraClasses?: string;
   userPlaceholderImg?: string | undefined;
@@ -38,6 +39,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
   image,
   addressAbbreviated = false,
   layout = AddressLayout.TWO_LINES,
+  onlyShowOneOfNameOrAddress,
   extraClasses,
   userPlaceholderImg,
   customTailwindXSpacingUnit,
@@ -45,8 +47,6 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
   disabled,
   ...rest
 }: Props) => {
-  const [addressWidth, setAddressWidth] = useState(84);
-
   const formattedAddress = addressAbbreviated
     ? address
     : formatAddress(
@@ -57,20 +57,14 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
       );
   const TopLineName = (): JSX.Element => {
     return (
-      <div className="truncate" style={{ width: addressWidth }}>
+      <div className="truncate" style={{ maxWidth: '84px' }}>
         {name}
       </div>
     );
   };
   const TopLineAddress = (): JSX.Element => {
-    const addressRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      setAddressWidth(addressRef.current?.getBoundingClientRect().width || 84);
-    }, [addressRef]);
-
     return (
-      <div {...rest} ref={addressRef}>
+      <div {...rest}>
         <span className={`${disabled ? 'text-gray-syn5' : 'text-gray-syn4'}`}>
           0x
         </span>
@@ -119,6 +113,19 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
             imageSize ?? 'w-8 h-8'
           } transition-all rounded-full bg-gray-syn7`}
         />
+      ) : address ? (
+        <JazziconGenerator
+          address={address}
+          diameterRem={
+            imageSize === AddressImageSize.SMALL
+              ? 1.5
+              : imageSize === AddressImageSize.SMALLER
+              ? 1.25
+              : imageSize === AddressImageSize.LARGE
+              ? 2
+              : 0
+          }
+        />
       ) : null}
 
       <div
@@ -131,7 +138,9 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
           top: '-0.0rem'
         }}
       >
-        {/* Top line */}
+        {/* Top line / ens */}
+        {/* With two lines layout this acts as the ens name */}
+        {/* With one line layout this acts as the ens name to the left of the address, or just address if no ens */}
         {image && imageSize === AddressImageSize.SMALL ? (
           <B3 extraClasses="mb-0" {...rest}>
             <TopLine />
@@ -142,9 +151,9 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
           </B2>
         )}
 
-        {/* Bottom line */}
+        {/* Bottom line / address */}
         <div
-          className={`${
+          className={`${onlyShowOneOfNameOrAddress ? 'hidden' : ''} ${
             (!disableTransition && 'transition-all duration-500') || ''
           } ${
             !name && address

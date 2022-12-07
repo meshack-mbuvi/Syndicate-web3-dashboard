@@ -25,6 +25,7 @@ interface Props {
   userPlaceholderImg?: string | undefined;
   disableTransition?: boolean;
   disabled?: boolean;
+  customTailwindXSpacingUnit?: number;
 }
 
 export const AddressWithENS: React.FC<Props> = ({
@@ -38,6 +39,7 @@ export const AddressWithENS: React.FC<Props> = ({
   userPlaceholderImg,
   disableTransition = false,
   disabled = false,
+  customTailwindXSpacingUnit,
   ...rest
 }: Props) => {
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
@@ -55,6 +57,7 @@ export const AddressWithENS: React.FC<Props> = ({
       userPlaceholderImg={userPlaceholderImg}
       disableTransition={disableTransition}
       disabled={disabled}
+      customTailwindXSpacingUnit={customTailwindXSpacingUnit}
       {...rest}
     />
   );

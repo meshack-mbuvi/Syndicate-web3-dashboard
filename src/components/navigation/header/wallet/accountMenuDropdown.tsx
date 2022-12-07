@@ -3,7 +3,6 @@ import { AddressLayout, AddressWithENS } from '@/components/shared/ensAddress';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import {
   setShowNetworkDropdownMenu,
   setShowWalletDropdownMenu
@@ -45,7 +44,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     }
   }, [account, nativeBalance]);
 
-  const { data } = useFetchEnsAssets(account, ethersProvider);
   const dispatch = useDispatch();
 
   const toggleDropdown = () => {
@@ -96,23 +94,13 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                 id={refId}
               >
                 <div className="flex">
-                  <img
-                    width={24}
-                    height={24}
-                    className={`block sm:hidden mr-1 ${
-                      (data?.avatar && 'hidden') || ''
-                    } md:hidden`}
-                    src="/images/wallet-default.svg"
-                    alt="Wallet"
-                  />
                   <AddressWithENS
                     address={account}
                     layout={AddressLayout.ONE_LINE}
                     ethersProvider={ethersProvider}
-                    extraClasses={`${
-                      !data?.avatar && 'ml-1'
-                    } text-gray-syn2 font-mono`}
+                    extraClasses={`text-gray-syn2 font-mono`}
                     id={refId}
+                    customTailwindXSpacingUnit={2}
                   />
                 </div>
                 <div className="flex flex-shrink-0 items-center ml-2">

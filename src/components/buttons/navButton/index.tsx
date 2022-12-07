@@ -36,7 +36,7 @@ export const NavButton: React.FC<Props> = ({
           : 'flex-col md:w-12.5 w-10 space-y-5'
       } items-center justify-center rounded-full bg-gray-syn7 transition-all ${
         type === NavButtonType.VERTICAL ? 'h-23' : 'md:h-12.5 h-10'
-      } ${extraClasses || ""}`}
+      } ${extraClasses || ''}`}
     >
       {type === NavButtonType.CLOSE && (
         <button

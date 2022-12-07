@@ -35,7 +35,7 @@ export const AuthSignInWidget: React.FC<Props> = ({
           >
             {state === AuthSignInWidgetState.CONNECT_WALLET ? (
               <>
-                <WalletIcon width="16" height="16" className="text-black" />
+                <WalletIcon width={16} height={16} className="text-black" />
                 <div>Connect wallet</div>
               </>
             ) : (

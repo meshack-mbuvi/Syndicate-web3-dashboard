@@ -2,6 +2,9 @@ import { RouterContext } from 'next/dist/shared/lib/router-context';
 import '../src/styles/animation.css';
 import '../src/styles/global.css';
 import * as NextImage from 'next/image';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 const OriginalNextImage = NextImage.default;
 
@@ -36,10 +39,19 @@ export const parameters = {
   }
 };
 
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
+
 export const decorators = [
   (Story) => (
     <div className="text-white">
-      <Story />
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      </ApolloProvider>
     </div>
   )
 ];

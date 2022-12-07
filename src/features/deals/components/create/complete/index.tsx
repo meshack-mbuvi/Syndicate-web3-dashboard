@@ -1,6 +1,4 @@
-import { AddressLayout } from '@/components/shared/ensAddress';
-import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
-import { B2, H1, H2 } from '@/components/typography';
+import { DealsOverview } from '../../overview';
 
 interface Props {
   dealName: string;
@@ -190,107 +188,83 @@ export const DealsCreateComplete: React.FC<Props> = ({
   const coinSideWidth = '290px';
   const dealCardPaddingTailwindUnit = 8;
   return (
-    <div className="relative">
-      {/* Deal card */}
-      <a
-        href={dealURL}
-        className={`block relative p-${dealCardPaddingTailwindUnit} bg-black border border-gray-syn6 rounded-custom mx-auto`}
-        style={{
-          width: `calc(100% - ${coinSideWidth})`
-        }}
-      >
-        {/* Flying coins */}
-        <div className="absolute h-full w-full animate-fade_in_double">
-          <div
-            className={`absolute -left-${dealCardPaddingTailwindUnit} -top-${dealCardPaddingTailwindUnit} transform -translate-x-full h-full`}
-            style={{
-              width: `calc(${coinSideWidth} / 2)`
-            }}
-          >
-            <div className="vertically-center space-y-4 flex flex-col items-center">
-              <div className="relative -left-4">
-                <div className="relative animate-deal-coin-top-left">
-                  {leftTopCoin}
-                </div>
-              </div>
-              <div className="relative left-4">
-                <div className="relative animate-deal-coin-middle-left">
-                  {leftMiddleCoin}
-                </div>
-              </div>
-              <div className="relative -left-4">
-                <div className="relative animate-deal-coin-bottom-left">
-                  {leftBottomCoin}
-                </div>
+    <a
+      href={dealURL}
+      className={`block relative mx-auto p-${dealCardPaddingTailwindUnit} bg-black border border-gray-syn6 rounded-custom`}
+      style={{
+        width: `calc(100% - ${coinSideWidth})`
+      }}
+    >
+      <DealsOverview
+        dealName={dealName}
+        dealDetails={dealDetails}
+        ensName={ensName}
+        destinationAddress={destinationAddress}
+        commitmentGoalAmount={commitmentGoalAmount}
+        commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
+        commitmentGoalTokenLogo={commitmentGoalTokenLogo}
+      />
+
+      {/* Flying coins */}
+      <div className="absolute left-0 top-0 h-full w-full animate-fade_in_double">
+        <div
+          className={`absolute left-0 top-0 transform -translate-x-full h-full`}
+          style={{
+            width: `calc(${coinSideWidth} / 2)`
+          }}
+        >
+          <div className="vertically-center space-y-4 flex flex-col items-center">
+            <div className="relative -left-4">
+              <div className="relative animate-deal-coin-top-left">
+                {leftTopCoin}
               </div>
             </div>
-          </div>
-          <div
-            className={`absolute right-${dealCardPaddingTailwindUnit} -top-${dealCardPaddingTailwindUnit} transform translate-x-full h-full`}
-            style={{
-              width: `calc(${coinSideWidth} / 2)`
-            }}
-          >
-            <div className="vertically-center space-y-4 flex flex-col items-center">
-              <div className="relative left-4">
-                <div className="relative animate-deal-coin-top-right">
-                  {rightTopCoin}
-                </div>
+            <div className="relative left-4">
+              <div className="relative animate-deal-coin-middle-left">
+                {leftMiddleCoin}
               </div>
-              <div className="relative -left-4">
-                <div className="relative animate-deal-coin-middle-right">
-                  {rightMiddleCoin}
-                </div>
-              </div>
-              <div className="relative left-4">
-                <div className="relative animate-deal-coin-bottom-right">
-                  {rightBottomCoin}
-                </div>
+            </div>
+            <div className="relative -left-4">
+              <div className="relative animate-deal-coin-bottom-left">
+                {leftBottomCoin}
               </div>
             </div>
           </div>
         </div>
-
-        {/* Chain icon */}
-        <img
-          src="/images/link-chain-gray.svg"
-          alt="Link icon"
-          className={`absolute right-4 top-4 w-4 h-4 ${
-            dealURL ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-
-        {/* Title */}
-        <H1 extraClasses="mb-3">{dealName} Deal</H1>
-
-        {/* Details */}
-        <B2>{dealDetails}</B2>
-
-        {/* Destination & goal */}
-        <div className="md:flex md:space-x-14 space-y-4 md:space-y-0 mt-4">
-          <div>
-            <B2 extraClasses="text-gray-syn4 mb-1">Destination</B2>
-            <DisplayAddressWithENS
-              name={ensName}
-              address={destinationAddress}
-              layout={AddressLayout.ONE_LINE}
-              extraClasses="px-4 py-2.5 rounded-full border border-gray-syn7"
-            />
-          </div>
-          <div>
-            <B2 extraClasses="text-gray-syn4 mb-1">Goal</B2>
-            <div className="flex items-center space-x-1">
-              <img
-                src={commitmentGoalTokenLogo}
-                alt="Token logo"
-                className="w-6 h-6"
-              />
-              <H2>{commitmentGoalAmount}</H2>
-              <B2 extraClasses="text-gray-syn4">{commitmentGoalTokenSymbol}</B2>
+        <div
+          className={`absolute right-0 top-0 transform translate-x-full h-full`}
+          style={{
+            width: `calc(${coinSideWidth} / 2)`
+          }}
+        >
+          <div className="vertically-center space-y-4 flex flex-col items-center">
+            <div className="relative left-4">
+              <div className="relative animate-deal-coin-top-right">
+                {rightTopCoin}
+              </div>
+            </div>
+            <div className="relative -left-4">
+              <div className="relative animate-deal-coin-middle-right">
+                {rightMiddleCoin}
+              </div>
+            </div>
+            <div className="relative left-4">
+              <div className="relative animate-deal-coin-bottom-right">
+                {rightBottomCoin}
+              </div>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+
+      {/* Chain icon */}
+      <img
+        src="/images/link-chain-gray.svg"
+        alt="Link icon"
+        className={`absolute right-4 top-4 w-4 h-4 ${
+          dealURL ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    </a>
   );
 };
