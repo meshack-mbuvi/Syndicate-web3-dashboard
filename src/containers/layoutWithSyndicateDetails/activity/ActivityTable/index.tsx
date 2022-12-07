@@ -3,7 +3,6 @@ import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { useDebounce } from '@/hooks/useDebounce';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
   getInput,
@@ -79,7 +78,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     useState<any>([]);
   const [rowCheckboxActiveData, setrowCheckboxActiveData] = useState<any>({});
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
-  const [uncategorisedIcon, setUncategorisedIcon] = useState<string>('');
+  const [uncategorizedIcon, setUncategorizedIcon] = useState<string>('');
   const [searchWidth, setSearchWidth] = useState<number>(48);
   const [mockTransactionsData, setMockTransactionsData] = useState<any>(
     mockActivityDepositTransactionsData
@@ -122,7 +121,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       );
 
       // get transactions outgoing status.
-      // we'll use this to show the correct icon if the "UNCATEGORISED" option is selected
+      // we'll use this to show the correct icon if the "UNCATEGORIZED" option is selected
       // depending on whether all selected transactions are outgoing/incoming or a mix of both.
       const outgoingStatuses = new Set(
         transactionsChecked.map((transaction) => {
@@ -131,10 +130,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       );
 
       if (outgoingStatuses.size > 1) {
-        setUncategorisedIcon('/images/activity/select-category.svg');
+        setUncategorizedIcon('/images/activity/select-category.svg');
       } else if (outgoingStatuses.size === 1) {
         const selectedOutgoingStatus = Array.from(outgoingStatuses)[0];
-        setUncategorisedIcon(
+        setUncategorizedIcon(
           selectedOutgoingStatus
             ? '/images/activity/outgoing-transaction.svg'
             : '/images/activity/incoming-transaction.svg'
@@ -144,6 +143,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       const transactionHashes = transactionsChecked.map((transaction) => {
         return transaction.hash;
       });
+
       // we use these to know where to place in-pill loader state
       // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setActiveTransactionHashes(transactionHashes);
@@ -182,29 +182,18 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
   /**
    * Generates the query object to be sent to the API to fetch the transactions.
    */
-  const generateSearchFilter = (filterValue: any, searchValue: any) => {
+  const generateSearchFilter = (filterValue: string, searchValue: string) => {
     let obj = {};
-    if (filterValue && filterValue !== 'everything') {
-      filter === 'uncategorised'
-        ? (obj = { ...obj, annotation: null })
-        : (obj = {
-            ...obj,
-            annotation: { transactionCategory: `${filter?.toUpperCase()}` }
-          });
+    if (filterValue) {
+      obj = {
+        ...obj,
+        category: filterValue
+      };
     }
     if (searchValue) {
       obj = {
         ...obj,
-        // Add more items here to be included in the search
-        OR: [
-          'hash',
-          'fromAddress',
-          'toAddress',
-          'tokenName',
-          'tokenSymbol'
-        ].map((val) => {
-          return { [val]: { contains: searchValue, mode: 'insensitive' } };
-        })
+        search: searchValue
       };
     }
     return obj;
@@ -227,10 +216,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       tokens and symbols, or companies.`;
     }
 
-    if (filter && !searchValue && filter === 'uncategorised') {
-      title = 'No uncategorised transactions';
+    if (filter && !searchValue && filter === 'uncategorized') {
+      title = 'No uncategorized transactions';
       description =
-        'There are currently no uncategorised transactions in this club’s activity.';
+        'There are currently no uncategorized transactions in this club’s activity.';
     } else {
       if (!searchValue && filter) {
         title = `No transactions categorised as “${cleanedFilter}”`;
@@ -250,11 +239,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     );
   };
 
-  const debouncedSearchTerm = useDebounce(searchValue, 700);
-  const memoizedSearchTerm = useMemo(
-    () => debouncedSearchTerm,
-    [debouncedSearchTerm]
-  );
+  const memoizedSearchTerm = useMemo(() => searchValue, [searchValue]);
 
   const [batchIdentifiers, setBatchIdentifiers] = useState<BatchIdTokenDetails>(
     {}
@@ -340,7 +325,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           ...rest
         } = transaction;
 
-        const [transfer] = transfers;
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const transfer = transfers[1] ?? transfers[0];
 
         const newTokenDetails: DistributionTokenDetails = {
           ...rest,
@@ -383,14 +372,14 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         };
 
         if (
-          syndicateEvents.length === 0 ||
-          syndicateEvents[0].eventType !== 'MEMBER_DISTRIBUTED'
+          syndicateEvents?.length === 0 ||
+          syndicateEvents[0]?.eventType !== 'MEMBER_DISTRIBUTED'
         ) {
           const newId = uuidv4();
           batchIds[`nonBatching-${newId}`] = [
             {
               ...newTokenDetails,
-              isOutgoingTransaction: ownerAddress === transfers[0].from
+              isOutgoingTransaction: ownerAddress === transfer?.from
             }
           ];
           return;
@@ -405,9 +394,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           }
           newBatchIdValue.push(newTokenDetails);
         }
+
         batchIds[event.distributionBatch] = newBatchIdValue;
       }
     );
+
     setBatchIdentifiers(batchIds);
   }, [
     activeNetwork.nativeCurrency.decimals,
@@ -441,6 +432,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     // using indexOf here instead of includes because the former has more support browsers-wise.
     return searchParam.toLowerCase().indexOf(searchTerm) > -1;
   };
+
   const filterMockTransactions = (): void => {
     const data = isOpenForDeposits
       ? mockActivityDepositTransactionsData
@@ -599,7 +591,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
             <FilterPill
-              setFilter={(filter) => setFilter(filter)}
+              setFilter={(filter): void => setFilter(filter)}
               dropDownOptions={activityDropDownOptions}
             />
           </div>
@@ -629,12 +621,12 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
               category={groupCategory}
               outgoing={groupTransactionsDestination}
               bulkCategoriseTransactions={bulkCategoriseTransactions}
-              uncategorisedIcon={uncategorisedIcon}
+              uncategorizedIcon={uncategorizedIcon}
               isOwner={isOwner}
             />
             <div
               className="flex justify-start cursor-pointer"
-              onClick={() => unSelectAllTransactions()}
+              onClick={(): void => unSelectAllTransactions()}
               aria-hidden={true}
             >
               <Image
@@ -662,7 +654,6 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         goToNextPage={goToNextPage}
         transactionsLoading={transactionsLoading}
         numTransactions={numTransactions}
-        transactionEvents={transactionEventsState}
         batchIdentifiers={batchIdentifiers}
         emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
         toggleRowCheckbox={toggleRowCheckbox}

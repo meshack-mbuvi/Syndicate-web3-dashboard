@@ -1,9 +1,9 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import useOnClickOutside from '@/containers/createInvestmentClub/shared/useOnClickOutside';
 import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
-import { TransactionEvents } from '@/hooks/useLegacyTransactions';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import {
@@ -12,9 +12,10 @@ import {
   TransactionCategory
 } from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import Image from 'next/image';
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
 import { BatchIdTokenDetails } from '../index';
@@ -29,7 +30,6 @@ interface ITransactionsTableProps {
   goToPreviousPage: () => void;
   goToNextPage: () => void;
   transactionsLoading: boolean;
-  transactionEvents: Array<TransactionEvents>;
   batchIdentifiers: BatchIdTokenDetails;
   emptyState: JSX.Element;
   toggleRowCheckbox: (batchKey: string, checkboxVisible: boolean) => void;
@@ -48,7 +48,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   goToPreviousPage,
   goToNextPage,
   transactionsLoading,
-  transactionEvents,
   batchIdentifiers,
   emptyState,
   toggleRowCheckbox,
@@ -64,6 +63,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
       web3: { web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  const ref = useRef(null);
+  useOnClickOutside(ref, () => setCurrentBatchIdentifier(''));
 
   const [pillHover, setPillHover] = useState<any>({});
   const [currentTransaction, setCurrentTransaction] =
@@ -118,7 +120,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     transactionsLoading &&
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     !activeTransactionHashes.length &&
-    !transactionEvents &&
     !batchIdentifiers &&
     !emptyState
   ) {
@@ -158,30 +159,38 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     const tokensList: any = [];
     if (!(batchIdentifiers[key].length === 1)) {
       batchIdentifiers[key].map((transaction) => {
-        tokensList.push({
-          name: transaction.transfers[0].tokenName
-            ? transaction.transfers[0].tokenName
-            : activeNetwork.nativeCurrency.name,
-          symbol: transaction.transfers[0].tokenSymbol
-            ? transaction.transfers[0].tokenSymbol
-            : activeNetwork.nativeCurrency.symbol,
-          icon: transaction.transfers[0].tokenLogo
-            ? transaction.transfers[0].tokenLogo
-            : activeNetwork.nativeCurrency.logo,
-          amount: transaction.transfers[0].tokenDecimal
-            ? getWeiAmount(
-                web3,
-                String(transaction.transfers[0].value),
-                Number(transaction.transfers[0].tokenDecimal),
-                false
-              )
-            : getWeiAmount(
-                web3,
-                String(transaction.transfers[0].value),
-                Number(activeNetwork.nativeCurrency.decimals),
-                false
-              )
-        });
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const transfer = transaction.transfers[1] ?? transaction.transfers[0];
+
+        if (transfer && !isEmpty(transfer)) {
+          tokensList.push({
+            name: transfer.tokenName
+              ? transfer.tokenName
+              : activeNetwork.nativeCurrency.name,
+            symbol: transfer.tokenSymbol
+              ? transfer.tokenSymbol
+              : activeNetwork.nativeCurrency.symbol,
+            icon: transfer.tokenLogo
+              ? transfer.tokenLogo
+              : activeNetwork.nativeCurrency.logo,
+            amount: transfer.tokenDecimal
+              ? getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(transfer.tokenDecimal),
+                  false
+                )
+              : getWeiAmount(
+                  web3,
+                  String(transfer.value),
+                  Number(activeNetwork.nativeCurrency.decimals),
+                  false
+                )
+          });
+        }
       });
     }
     return batchIdentifiers[key].map(
@@ -197,7 +206,14 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         index
       ) => {
         if (!(batchIdentifiers[key].length === 1) && index > 0) return;
-        const currentTransfer = transfers[0];
+        /**
+         * For erc20 token, the first transfer recorded is incorrect.
+         * The second item seems to have the correct data
+         * */
+        const currentTransfer = transfers[1] ?? transfers[0];
+
+        if (!currentTransfer) return;
+
         const isOutgoingTransaction = ownerAddress === currentTransfer.from;
         const timeSinceTransaction = moment(timestamp * 1000).fromNow();
 
@@ -205,7 +221,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           'dddd, MMM Do YYYY, h:mm A'
         );
 
-        let category: TransactionCategory = 'UNCATEGORISED';
+        let category: TransactionCategory = 'UNCATEGORIZED';
 
         if (annotation?.transactionCategory) {
           category = annotation?.transactionCategory;
@@ -225,6 +241,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           <div
             key={`token-table-row-${key}`}
             className="relative grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 cursor-pointer"
+            ref={ref}
             onClick={(): void => {
               if (
                 !inlineCategorising &&
@@ -470,7 +487,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:opacity-90'
               }`}
-              onClick={() => goToNextPage()}
+              onClick={(): void => goToNextPage()}
               disabled={!canNextPage}
             >
               <Image
@@ -492,7 +509,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           isOwner={isOwner}
           showModal={showAnnotationsModal}
           isAnnotationsModalShown={isAnnotationsModalShown}
-          closeModal={() => {
+          closeModal={(): void => {
             setShowNote(false);
             toggleShowAnnotationsModal();
             setIsAnnotationsModalShown(false);
@@ -501,7 +518,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           currentTransaction={currentTransaction}
           currentBatchIdentifier={currentBatchIdentifier}
           batchIdentifiers={batchIdentifiers}
-          transactionEvents={transactionEvents}
           setCurrentTransaction={setCurrentTransaction}
           showNote={showNote}
           setShowNote={setShowNote}

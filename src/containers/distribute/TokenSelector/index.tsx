@@ -30,7 +30,8 @@ const TokenSelector: React.FC<Props> = ({
         <>
           <DistributionHeader
             titleText="What would you like to distribute and what amount?"
-            subTitleText={`Assets are distributed in proportion to members’ ownership of ${symbol} tokens.`}
+            subTitleText={`All assets within your Investment Club’s wallet are displayed for distribution.
+            They will be distributed in proportion to members’ ownership of ${symbol} tokens.`}
           />
           <div className="mt-1">
             <div className="flex">

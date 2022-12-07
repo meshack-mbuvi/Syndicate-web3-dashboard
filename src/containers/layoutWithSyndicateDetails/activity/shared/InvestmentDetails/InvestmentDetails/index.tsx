@@ -110,10 +110,10 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   } = formValues;
 
   useEffect(() => {
-    if (data?.Financial_annotateTransactions) {
+    if (data?.legacyAnnotateTransactions) {
       onSuccessfulAnnotation();
     }
-  }, [data?.Financial_annotateTransactions]);
+  }, [data?.legacyAnnotateTransactions]);
 
   const onSubmit = (values: any) => {
     // fields without values will be sent to the backend as an empty string
