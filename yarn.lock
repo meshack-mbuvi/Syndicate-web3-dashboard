@@ -10400,10 +10400,15 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-linkify-react@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.npmjs.org/linkify-react/-/linkify-react-3.0.4.tgz"
-  integrity sha512-ar/fLlBw4/pbg5BmpH65dSXpGWhts/+BDV8tCdLN8Pd0P/vtHKjaEw9Gf4Za3Utpn5FhWlQyf57SWriPtoBHtw==
+linkify-react@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/linkify-react/-/linkify-react-4.0.2.tgz#96fc81907b653d2de1fa21bfef7f8504114c226d"
+  integrity sha512-WFHnwOUo6EeKwrQQy1d+UjeKsv+SPQ9toPpaRIXHV1CMo+0kgZBSIsEBxQrFQIEy7WD20QD+sPwNNaJJpynN6g==
+
+linkifyjs@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-4.0.2.tgz#5844ea70f4427004e50036d983b66da50fe13389"
+  integrity sha512-/VSoCZiglX0VMsXmL5PN3lRg45M86lrD9PskdkA2abWaTKap1bIcJ11LS4EE55bcUl9ZOR4eZ792UtQ9E/5xLA==
 
 lint-staged@^12.3.5:
   version "12.3.5"
