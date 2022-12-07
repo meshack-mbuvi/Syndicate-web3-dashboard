@@ -55,6 +55,7 @@
     "react-hook-form": "^7.20.2",
     "react-infinite-scroll-component": "^6.1.0",
     "react-is-visible": "^1.1.2",
+    "react-jazzicon": "^1.0.4",
     "react-number-format": "^4.7.3",
     "react-redux": "^7.2.3",
     "react-spring": "^9.3.0",
