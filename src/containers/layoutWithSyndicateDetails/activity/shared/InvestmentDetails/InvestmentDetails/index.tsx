@@ -9,32 +9,49 @@ import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
+import {
+  CurrentTransaction,
+  SyndicateDetailsAnnotation
+} from '@/state/erc20transactions/types';
 import { useMutation } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
-interface Details {
+export interface Details {
   companyName: string;
-  costBasis: string;
-  currentInvestmentValue: string;
-  investmentDate: string;
-  investmentRound: string;
-  fullyDilutedOwnershipStake: string;
-  numberShares: string;
-  numberTokens: string;
+  postMoneyValuation: string;
+  preMoneyValuation: string;
+  acquisitionDate: Date;
+  roundCategory: string;
+  equityStake: string;
+  sharesAmount: string;
+  tokenAmount: string;
 }
+
+export const EmptyDetails = {
+  companyName: '',
+  postMoneyValuation: '',
+  preMoneyValuation: '',
+  acquisitionDate: new Date(0),
+  roundCategory: '',
+  equityStake: '',
+  sharesAmount: '',
+  tokenAmount: ''
+};
 
 interface IInvestmentDetailsModal {
   showModal: boolean;
   readonly: boolean;
   editMode: boolean;
   onClick: (e: any) => void;
-  storedInvestmentDetails: Details | any;
+  currentTransaction: CurrentTransaction;
+  setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
+  storedInvestmentDetails: Details;
   transactionId: string;
-  setStoredInvestmentDetails: (details: any) => void;
+  setStoredInvestmentDetails: (details: Details) => void;
   isManager: boolean;
   blockTimestamp: number;
   onSuccessfulAnnotation: () => void;
@@ -44,6 +61,8 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   showModal,
   editMode,
   onClick,
+  currentTransaction,
+  setCurrentTransaction,
   storedInvestmentDetails,
   transactionId,
   setStoredInvestmentDetails,
@@ -53,6 +72,8 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
 }) => {
   const disabled = !editMode;
   const [hover, setHover] = useState<boolean>(false);
+
+  const { annotation } = currentTransaction;
 
   const {
     web3Reducer: {
@@ -88,11 +109,11 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   }, [storedInvestmentDetails, reset, isDirty, dirtyFields, editMode]);
 
   useEffect(() => {
-    if (!storedInvestmentDetails?.investmentDate) {
+    if (!storedInvestmentDetails?.acquisitionDate) {
       //  Set the date to the current block timestamp
-      setValue('investmentDate', new Date().toISOString());
+      setValue('acquisitionDate', new Date());
     }
-  }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
+  }, [blockTimestamp, storedInvestmentDetails?.acquisitionDate]);
 
   // Annotation
   const [annotationMutation, { data }] = useMutation(ANNOTATE_TRANSACTIONS);
@@ -100,13 +121,13 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   const formValues = getValues();
   const {
     companyName,
-    costBasis,
-    currentInvestmentValue,
-    investmentDate,
-    investmentRound,
-    fullyDilutedOwnershipStake,
-    numberShares,
-    numberTokens
+    postMoneyValuation,
+    preMoneyValuation,
+    acquisitionDate,
+    roundCategory,
+    equityStake,
+    sharesAmount,
+    tokenAmount
   } = formValues;
 
   useEffect(() => {
@@ -115,20 +136,30 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     }
   }, [data?.legacyAnnotateTransactions]);
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: Details): void => {
     // fields without values will be sent to the backend as an empty string
     // this makes it possible to remove a previously set value.
-    const detailsAnnotationData = {
-      transactionId: transactionId,
-      companyName: values?.companyName,
-      postMoneyValuation: values?.costBasis,
-      preMoneyValuation: values?.currentInvestmentValue,
-      acquisitionDate: new Date(values?.investmentDate).toISOString(),
-      equityStake: values?.fullyDilutedOwnershipStake,
-      tokenAmount: values?.numberTokens,
-      sharesAmount: values?.numberShares,
-      roundCategory: values?.investmentRound
+    const detailsAnnotationData: SyndicateDetailsAnnotation = {
+      acquisitionDate: values.acquisitionDate,
+      annotationMetadata: annotation.annotationMetadata,
+      companyName: values.companyName,
+      equityStake: values.equityStake,
+      fromLabel: annotation.fromLabel,
+      memo: annotation.memo,
+      postMoneyValuation: values.postMoneyValuation,
+      preMoneyValuation: values.preMoneyValuation,
+      roundCategory: values.roundCategory,
+      sharesAmount: values.sharesAmount,
+      toLabel: annotation.toLabel,
+      tokenAmount: values.tokenAmount,
+      transactionCategory: annotation.transactionCategory,
+      transactionId: transactionId
     };
+
+    setCurrentTransaction({
+      ...currentTransaction,
+      annotation: detailsAnnotationData
+    });
 
     annotationMutation({
       variables: {
@@ -161,9 +192,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
           className={`border border-none px-5 pb-6 pt-4 rounded-lg ${
             editMode ? `bg-black` : isManager ? `hover:bg-black` : ''
           }`}
-          onMouseOver={() => setHoverState(true)}
-          onMouseLeave={() => setHoverState(false)}
-          onFocus={() => ''}
+          onMouseOver={(): void => setHoverState(true)}
+          onMouseLeave={(): void => setHoverState(false)}
+          onFocus={(): string => ''}
         >
           <div className="w-full flex justify-between mb-4">
             <div className="flex">Details</div>
@@ -202,24 +233,24 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                   />
                 ) : null}
 
-                {editMode || investmentRound ? (
+                {editMode || roundCategory ? (
                   <RoundDropDown
                     editMode={editMode}
-                    name="investmentRound"
+                    name="roundCategory"
                     label="Round"
                     control={control}
                     borderStyles={borderStyles}
                     disabled={disabled}
-                    defaultValue={investmentRound}
-                    resetRound={() => {
-                      setValue('investmentRound', '', { shouldDirty: true });
+                    defaultValue={roundCategory}
+                    resetRound={(): void => {
+                      setValue('roundCategory', '', { shouldDirty: true });
                     }}
                   />
                 ) : null}
 
-                {editMode || numberShares ? (
+                {editMode || sharesAmount ? (
                   <NumberField
-                    name="numberShares"
+                    name="sharesAmount"
                     control={control}
                     label="Number of shares"
                     column={true}
@@ -231,9 +262,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || numberTokens ? (
+                {editMode || tokenAmount ? (
                   <NumberField
-                    name="numberTokens"
+                    name="tokenAmount"
                     control={control}
                     label="Number of tokens"
                     column={true}
@@ -244,9 +275,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || fullyDilutedOwnershipStake ? (
+                {editMode || equityStake ? (
                   <NumberField
-                    name="fullyDilutedOwnershipStake"
+                    name="equityStake"
                     control={control}
                     addOn="%"
                     addOnStyles="pr-4"
@@ -259,21 +290,21 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || investmentDate ? (
+                {editMode || acquisitionDate ? (
                   <ActivityDatePicker
                     control={control}
-                    name={'investmentDate'}
+                    name={'acquisitionDate'}
                     disabled={disabled}
                     borderStyles={dateBorderStyles}
                     label="Investment date"
                     textAlignment="text-right"
                   />
                 ) : null}
-                {editMode || currentInvestmentValue ? (
+                {editMode || preMoneyValuation ? (
                   <NumberField
                     control={control}
-                    name="currentInvestmentValue"
-                    label="Current investment value"
+                    name="preMoneyValuation"
+                    label="Pre-money valuation"
                     addOn="USD"
                     addOnStyles="pr-10"
                     column={true}
@@ -284,12 +315,12 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || costBasis ? (
+                {editMode || postMoneyValuation ? (
                   <NumberField
-                    name="costBasis"
+                    name="postMoneyValuation"
                     addOn="USD"
                     addOnStyles="pr-10"
-                    label="Cost basis"
+                    label="Post-money valuation"
                     control={control}
                     column={true}
                     borderStyles={borderStyles}

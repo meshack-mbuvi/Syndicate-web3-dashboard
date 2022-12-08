@@ -5,7 +5,10 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { SimpleTable } from '@/components/simpleTable';
 import { memberDetail } from '@/containers/distribute/DistributionMembers';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
-import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
+import InvestmentDetailsModal, {
+  Details,
+  EmptyDetails
+} from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
 import {
   ANNOTATE_TRANSACTIONS,
   SET_MEMBER_SIGN_STATUS
@@ -16,7 +19,10 @@ import { useDemoMode } from '@/hooks/useDemoMode';
 import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { CurrentTransaction } from '@/state/erc20transactions/types';
+import {
+  CurrentTransaction,
+  TransactionCategory
+} from '@/state/erc20transactions/types';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   numberWithCommas,
@@ -35,9 +41,12 @@ interface IActivityModal {
   showModal: boolean;
   isAnnotationsModalShown: boolean;
   closeModal: any;
+  assetsView: boolean;
   refetchTransactions: () => void;
   showNote: boolean;
-  setShowNote: any;
+  setShowNote: Dispatch<SetStateAction<boolean>>;
+  showDetails: boolean;
+  setShowDetails: Dispatch<SetStateAction<boolean>>;
   isOwner: boolean;
   currentTransaction: CurrentTransaction;
   currentBatchIdentifier: string;
@@ -62,10 +71,12 @@ type TokenDetailsList = {
 const ActivityModal: React.FC<IActivityModal> = ({
   showModal,
   closeModal,
+  assetsView,
   isAnnotationsModalShown,
   refetchTransactions,
   showNote,
   setShowNote,
+  setShowDetails,
   isOwner,
   currentTransaction,
   currentBatchIdentifier,
@@ -89,7 +100,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     transactionInfo,
     timestamp,
     hash,
-    metadata,
+    annotation,
     blockTimestamp
   } = currentTransaction;
 
@@ -98,7 +109,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   >([]);
 
   useEffect(() => {
-    if (!batchIdentifiers || !currentBatchIdentifier) return;
+    if (!batchIdentifiers || !currentBatchIdentifier || assetsView) return;
     const tokenDetailsList: Array<TokenDetailsList> = [];
     batchIdentifiers[currentBatchIdentifier]?.map((transaction) => {
       const transfer = transaction.transfers[1] ?? transaction.transfers[0];
@@ -136,8 +147,21 @@ const ActivityModal: React.FC<IActivityModal> = ({
     activeNetwork.nativeCurrency.symbol,
     batchIdentifiers,
     currentBatchIdentifier,
+    assetsView,
     web3
   ]);
+
+  useEffect(() => {
+    if (!assetsView || !currentTransaction) return;
+    setTokenDetailsList([
+      {
+        name: String(currentTransaction.tokenName),
+        symbol: String(currentTransaction.tokenSymbol),
+        icon: currentTransaction.tokenLogo,
+        amount: currentTransaction.amount
+      }
+    ]);
+  }, [assetsView, currentTransaction]);
 
   const isDemoMode = useDemoMode();
 
@@ -176,9 +200,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
     useState<boolean>(false);
   const [showDetailSection, setShowDetailSection] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [storedInvestmentDetails, setStoredInvestmentDetails] = useState<
-    Record<string, number | string>
-  >({});
+  const [storedInvestmentDetails, setStoredInvestmentDetails] =
+    useState<Details>(EmptyDetails);
   const [disableDropDown, setDisableDropDown] = useState(false);
   const [isDistributionTableExpanded, setIsDistributionTableExpanded] =
     useState(isDemoMode);
@@ -271,6 +294,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   };
 
   const handleAddDetails = (): void => {
+    setShowDetails(true);
     setShowDetailSection(true);
     setEditMode(true);
   };
@@ -278,18 +302,16 @@ const ActivityModal: React.FC<IActivityModal> = ({
   useEffect(() => {
     // Update with new details as the user selects different transactions
     setStoredInvestmentDetails({
-      companyName: metadata?.companyName || '',
-      investmentRound: metadata?.roundCategory || '',
-      numberShares: metadata?.numberShares || 0,
-      numberTokens: metadata?.numberTokens || 0,
-      fullyDilutedOwnershipStake: metadata?.fullyDilutedOwnershipStake || 0,
-      investmentDate: metadata?.acquisitionDate
-        ? new Date(metadata?.acquisitionDate).toISOString()
-        : '',
-      currentInvestmentValue: metadata?.preMoneyValuation || '',
-      costBasis: metadata?.postMoneyValuation || ''
+      companyName: annotation?.companyName || '',
+      roundCategory: annotation?.roundCategory || '',
+      sharesAmount: annotation?.sharesAmount || '',
+      tokenAmount: annotation?.tokenAmount || '',
+      equityStake: annotation?.equityStake || '',
+      acquisitionDate: annotation?.acquisitionDate || '',
+      preMoneyValuation: annotation?.preMoneyValuation || '',
+      postMoneyValuation: annotation?.postMoneyValuation || ''
     });
-  }, [metadata, blockTimestamp]);
+  }, [annotation, blockTimestamp]);
 
   useEffect(() => {
     setblockExplorerLink(
@@ -414,7 +436,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
       closeModal={() => {
         closeModal();
         setEditMode(false);
-        setShowDetailSection(false);
+        // setShowDetailSection(false);
         setIsDistributionTableExpanded(false);
       }}
       customWidth={`w-full sm:${
@@ -450,7 +472,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         ? transactionInfo.isOutgoingTransaction
                         : false
                     }
-                    readonly={category === 'DISTRIBUTION' ? true : readOnly}
+                    readonly={
+                      category === TransactionCategory.DISTRIBUTION
+                        ? true
+                        : readOnly
+                    }
                     changeAdaptiveBackground={changeAdaptiveBackground}
                     renderedInModal={true}
                     refetchTransactions={refetchTransactions}
@@ -478,13 +504,13 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     ]}
                     onModal={true}
                     category={category}
-                    companyName={metadata?.companyName}
-                    round={metadata?.roundCategory}
+                    companyName={annotation?.companyName}
+                    round={annotation?.roundCategory}
                     numClubMembers={clubMembers.length}
                   />
                 )}
 
-                {category !== 'OFF_CHAIN_INVESTMENT' ? (
+                {category !== TransactionCategory.OFF_CHAIN_INVESTMENT ? (
                   <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
                     <a
                       className="flex cursor-pointer items-center"
@@ -511,7 +537,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
             {!data?.Financial_memberSigned &&
               !loading &&
-              category === 'DEPOSIT' &&
+              category === TransactionCategory.DEPOSIT &&
               isOwner && (
                 <div className="flex flex-col space-y-6 py-6 px-5">
                   <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
@@ -529,8 +555,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
               )}
 
             {/* Note and details section */}
-            {category === 'DEPOSIT' ||
-            category === 'UNCATEGORIZED' ||
+            {category === TransactionCategory.DEPOSIT ||
+            category === TransactionCategory.UNCATEGORIZED ||
             category === null ||
             (!isOwner && !note && !showDetailSection) ? null : (
               <div
@@ -568,8 +594,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 )}
 
                 {/* details */}
-                {(category === 'INVESTMENT' ||
-                  category === 'OFF_CHAIN_INVESTMENT') && (
+                {(category === TransactionCategory.INVESTMENT ||
+                  category === TransactionCategory.OFF_CHAIN_INVESTMENT) && (
                   <div>
                     {/* Checks if the stored investment details has empty values */}
                     {!showDetailSection && !editMode && isOwner && (
@@ -592,6 +618,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         editMode={editMode}
                         readonly={true}
                         onClick={handleClick}
+                        currentTransaction={currentTransaction}
+                        setCurrentTransaction={setCurrentTransaction}
                         storedInvestmentDetails={storedInvestmentDetails}
                         transactionId={hash}
                         setStoredInvestmentDetails={setStoredInvestmentDetails}
@@ -607,7 +635,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               </div>
             )}
 
-            {category === 'DISTRIBUTION' && (
+            {category === TransactionCategory.DISTRIBUTION && (
               <>
                 <div
                   className={`${

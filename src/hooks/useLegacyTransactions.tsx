@@ -1,12 +1,12 @@
 import { LEGACY_TRANSACTIONS_QUERY } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { useQuery } from '@apollo/client';
 import * as CryptoJS from 'crypto-js';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
-// import { RoundCategory, TransactionCategory } from '@/state/erc20transactions/types';
 
 export type SyndicateEvents = {
   eventType: string;
@@ -32,24 +32,25 @@ export type SyndicateTransfers = {
 };
 
 export type SyndicateAnnotation = {
+  acquisitionDate: Date;
+  annotationMetadata: any;
   chainId: number;
-  acquisitionDate?: null;
-  createdAt: string;
-  updatedAt: string;
+  companyName: string;
+  createdAt: Date;
   equityStake: string;
   fromLabel: string;
-  transactionId: string;
-  syndicateAddress: string;
-  preMoneyValuation: string;
+  memo: string;
   postMoneyValuation: string;
-  roundCategory?: any; // Change to RoundCategory
+  preMoneyValuation: string;
+  roundCategory: string;
   sharesAmount: string;
+  syndicateAddress: string;
   toLabel: string;
   tokenAmount: string;
-  transactionCategory: any; // Change to TransactionCategory
-  memo: string;
-  companyName: string;
-  annotationMetadata: any;
+  // TODO: tokenTransfer add in future?
+  transactionCategory: TransactionCategory;
+  transactionId: string;
+  updatedAt: Date;
 };
 
 export type TransactionEvents = {
@@ -94,20 +95,20 @@ export const EmptyTransactionEvent = [
     ],
     annotation: {
       chainId: 1,
-      acquisitionDate: null,
-      createdAt: '',
-      updatedAt: '',
+      acquisitionDate: new Date(0),
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
       equityStake: '',
       fromLabel: '',
       transactionId: '',
       syndicateAddress: '',
       preMoneyValuation: '',
       postMoneyValuation: '',
-      roundCategory: undefined,
+      roundCategory: '',
       sharesAmount: '',
       toLabel: '',
       tokenAmount: '',
-      transactionCategory: '',
+      transactionCategory: TransactionCategory.UNCATEGORIZED,
       memo: '',
       companyName: '',
       annotationMetadata: ''

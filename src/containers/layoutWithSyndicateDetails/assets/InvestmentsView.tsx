@@ -33,8 +33,7 @@ import { SortOrderType } from '@/containers/layoutWithSyndicateDetails/assets';
 import {
   TransactionEvents,
   SyndicateTransfers,
-  SyndicateAnnotation,
-  SyndicateEvents
+  SyndicateAnnotation
 } from '@/hooks/useLegacyTransactions';
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -79,11 +78,10 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
   const [currentTransaction, setCurrentTransaction] =
     useState<CurrentTransaction>(emptyCurrentTransaction);
-  const [currentBatchIdentifier, setCurrentBatchIdentifier] =
-    useState<string>('');
   const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
     useModal();
   const [showNote, setShowNote] = useState(false);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
 
   // show/hide investments table
   const [isInvestmentsTableCollapsed, setIsInvestmentsTableCollapsed] =
@@ -244,8 +242,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     hash: string,
     timestamp: number,
     transfers: Array<SyndicateTransfers>,
-    ownerAddress: string,
-    syndicateEvents: Array<SyndicateEvents>
+    ownerAddress: string
   ) => {
     if (!isMember && !isOwner) return;
     const currentTransfer = transfers[0];
@@ -255,7 +252,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       'dddd, MMM Do YYYY, h:mm A'
     );
 
-    const category = 'OFF_CHAIN_INVESTMENT' as TransactionCategory;
+    const category = TransactionCategory.OFF_CHAIN_INVESTMENT;
     const isOutgoingTransaction = ownerAddress === currentTransfer.from;
 
     const selectedTransactionData = {
@@ -277,7 +274,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       tokenSymbol: currentTransfer.tokenSymbol
         ? currentTransfer.tokenSymbol
         : activeNetwork.nativeCurrency.symbol,
-      tokenLogo: '/images/token-gray-4.svg' /* tokenDetails.logo */,
+      tokenLogo: '/images/token-gray-4.svg',
       tokenName: currentTransfer.tokenName
         ? currentTransfer.tokenName
         : activeNetwork.nativeCurrency.name,
@@ -288,7 +285,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       blockTimestamp: timestamp
     };
     setCurrentTransaction(selectedTransactionData);
-    setCurrentBatchIdentifier(syndicateEvents[0].distributionBatch);
     toggleShowOffChainInvestmentsModal();
   };
 
@@ -326,8 +322,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               subText="If you're a member of this club, connect the same wallet you used to deposit."
             />
           )}
+          {isDemoMode && <LoaderContent animate={false} />}
           {transactionEvents?.[pageOffset]?.length !== 0 &&
-          (isMember || isOwner || isDemoMode) &&
+          (isMember || isOwner) &&
           !transactionsLoading ? (
             <div className="w-full">
               <div className="flex flex-col">
@@ -348,20 +345,14 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               </div>
               {transactionEvents.map(
                 (
-                  {
-                    annotation,
-                    hash,
-                    timestamp,
-                    transfers,
-                    ownerAddress,
-                    syndicateEvents
-                  },
+                  { annotation, hash, timestamp, transfers, ownerAddress },
                   index
                 ) => {
                   // Handles cases where annotations are null or transactions are not investments
                   if (
                     !annotation ||
-                    annotation.transactionCategory !== 'INVESTMENT'
+                    annotation.transactionCategory !==
+                      TransactionCategory.INVESTMENT
                   )
                     return;
                   const currentTransfer = transfers[0];
@@ -422,8 +413,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                           hash,
                           timestamp,
                           transfers,
-                          ownerAddress,
-                          syndicateEvents
+                          ownerAddress
                         )
                       }
                     >
@@ -487,8 +477,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                                     hash,
                                     timestamp,
                                     transfers,
-                                    ownerAddress,
-                                    syndicateEvents
+                                    ownerAddress
                                   )
                                 }
                               >
@@ -514,8 +503,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                                     hash,
                                     timestamp,
                                     transfers,
-                                    ownerAddress,
-                                    syndicateEvents
+                                    ownerAddress
                                   )
                                 }
                               >
@@ -531,10 +519,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               )}
             </div>
           ) : null}
-
-          {transactionEvents?.[pageOffset]?.length !== 0 &&
-            (isMember || isOwner || isDemoMode) &&
-            !transactionsLoading && <LoaderContent animate={false} />}
 
           <div>
             {/* Pagination  */}
@@ -587,6 +571,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             isOwner={isOwner}
             showModal={showOffChainInvestmentsModal}
             isAnnotationsModalShown={false}
+            assetsView={true}
             closeModal={() => {
               setShowNote(false);
               toggleShowOffChainInvestmentsModal();
@@ -595,11 +580,13 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               refetchTransactions();
             }}
             currentTransaction={currentTransaction}
-            currentBatchIdentifier={currentBatchIdentifier}
+            currentBatchIdentifier={''}
             batchIdentifiers={{}}
             setCurrentTransaction={setCurrentTransaction}
             showNote={showNote}
+            showDetails={showDetails}
             setShowNote={setShowNote}
+            setShowDetails={setShowDetails}
           />
         </div>
       </div>

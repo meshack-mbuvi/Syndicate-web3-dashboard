@@ -1,6 +1,7 @@
 /**
 https://developers.amplitude.com/docs/how-amplitude-works
  */
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { isDev } from '@/utils/environment';
 import amplitude from 'amplitude-js';
 import { useEffect } from 'react';
@@ -35,7 +36,7 @@ type EventProperty = {
   deposit_window?: string;
   deposit_token?: string;
   deposit_amount?: string | number;
-  transaction_category?: string;
+  transaction_category?: TransactionCategory;
   distribution_token?: string | (string | undefined)[];
   distribution_amount?: (string | undefined)[];
   file_type?: string;
