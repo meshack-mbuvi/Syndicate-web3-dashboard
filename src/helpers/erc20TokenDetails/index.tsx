@@ -220,14 +220,14 @@ export const getDepositDetails = async (
   }
   let nativeDepositToken = false;
 
-  const NATIVE_MINT_MODULE =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+  const NATIVE_MINT_MODULE: string =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
 
-  if (!depositToken && ERC20tokenContract) {
+  if ((!depositToken && ERC20tokenContract) || isZeroAddress(depositToken)) {
     depositToken = await DepositTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
+
     if (isZeroAddress(depositToken)) {
       depositToken = '';
       mintModule = NATIVE_MINT_MODULE;
@@ -236,6 +236,7 @@ export const getDepositDetails = async (
       depositToken = await SingleTokenMintModule?.depositToken(
         ERC20tokenContract.clubERC20Contract._address
       );
+
       if (!depositToken || isZeroAddress(depositToken)) {
         depositToken = '';
         mintModule = NATIVE_MINT_MODULE;
@@ -256,10 +257,9 @@ export const getDepositDetails = async (
   return {
     mintModule,
     nativeDepositToken,
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
     depositTokenLogo: nativeDepositToken
       ? activeNetwork.nativeCurrency.logo
-      : tokenDetails.logo,
+      : tokenDetails.logo || '',
     depositTokenSymbol: tokenDetails.symbol,
     depositTokenName: tokenDetails.name,
     depositTokenDecimals: tokenDetails.decimals,
@@ -272,7 +272,7 @@ export const isNativeDepositToken = async (
   ERC20tokenContract: any,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract
-) => {
+): Promise<{ _nativeDepositToken: boolean }> => {
   let _nativeDepositToken = false;
 
   let depositToken = await DepositTokenMintModule?.depositToken(
@@ -324,8 +324,10 @@ export const setERC20Token =
       },
       erc20TokenSliceReducer: { activeModuleDetails }
     } = getState();
+
     dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoadingClub(true));
+
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
@@ -337,11 +339,13 @@ export const setERC20Token =
         activeModuleDetails?.activeMintModuleReqs,
         web3
       );
+
       const { _nativeDepositToken } = await isNativeDepositToken(
         ERC20tokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule
       );
+
       dispatch(
         setERC20TokenDetails({
           ...erc20Token,

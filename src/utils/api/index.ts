@@ -32,9 +32,11 @@ export const getTokenDetails = (
   chainId: number
 ): Promise<AxiosResponse<TokenDetails>> => {
   let endpoint = 'token/details';
+
   if (tokenAddress?.length == 0) {
     endpoint = 'token/native_token_details';
   }
+
   return proxyGet(endpoint, {
     tokenAddress: tokenAddress,
     chainId: chainId

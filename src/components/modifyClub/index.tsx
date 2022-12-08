@@ -129,10 +129,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
     activeNetwork.nativeCurrency;
   let showMintingForClosedClubDisclaimer = false;
+
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
-      // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
-      localStorage.getItem('mintingForClosedClub')
+      localStorage.getItem('mintingForClosedClub') || '{}'
     );
 
     if (mintingForClosedClubDetails?.mintingForClosedClub) {

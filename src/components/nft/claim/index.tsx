@@ -126,11 +126,9 @@ const ClaimNFT: React.FC = () => {
       ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.OnePerAddressMintModule;
 
     const PUBLIC_UTILITY_MINT_MODULE =
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.UtilityMintModule;
 
     const tokenPrice = await getNativeTokenPrice(activeNetwork.chainId);

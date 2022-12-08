@@ -270,10 +270,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
       } else if (
         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         currentMintPolicyAddress.toLowerCase() ==
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           CONTRACT_ADDRESSES[activeNetwork.chainId]?.mintPolicy.toLowerCase() ||
         currentMintPolicyAddress?.toLowerCase() ==
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           CONTRACT_ADDRESSES[
             activeNetwork.chainId
           ]?.policyMintERC20.toLowerCase()
