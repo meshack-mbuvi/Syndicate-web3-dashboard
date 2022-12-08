@@ -16,7 +16,7 @@ import {
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {

@@ -2,7 +2,7 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';

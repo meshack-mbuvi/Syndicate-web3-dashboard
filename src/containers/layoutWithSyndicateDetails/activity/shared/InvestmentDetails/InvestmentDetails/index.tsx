@@ -6,7 +6,7 @@ import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activit
 import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown';
 import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
