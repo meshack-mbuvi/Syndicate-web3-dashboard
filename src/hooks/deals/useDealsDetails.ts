@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { DealDetails } from './types';
 
 export interface IDealDetails {
   dealName: string;
@@ -13,9 +14,11 @@ export interface IDealDetails {
   dealToken: string;
   depositToken: string;
   dealDestination: string;
+  goal: string;
+  closed: boolean;
   totalCommitments: string;
   totalCommited: string;
-  createdAt: any;
+  createdAt: string;
 }
 
 const emptyDeal: IDealDetails = {
@@ -24,6 +27,8 @@ const emptyDeal: IDealDetails = {
   dealToken: '',
   depositToken: '',
   dealDestination: '',
+  goal: '',
+  closed: false,
   totalCommitments: '',
   totalCommited: '',
   createdAt: ''
@@ -54,14 +59,11 @@ const useDealsDetails = (): IDealDetailsResponse => {
   const [dealNotFound, setDealNotFound] = useState(false);
 
   // get deal details
-  const { loading, data } = useQuery(GetDealDetails, {
+  const { loading, data } = useQuery<{ deal: DealDetails }>(GetDealDetails, {
     variables: {
-      where: {
-        contractAddress_contains_nocase: dealAddress
-      }
+      dealId: dealAddress
     },
-    // TODO: Remove hardcoded "true" when subgraph is ready
-    skip: !dealAddress || !activeNetwork.chainId || isDemoMode || true,
+    skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
       chainId: activeNetwork.chainId
@@ -73,24 +75,33 @@ const useDealsDetails = (): IDealDetailsResponse => {
     if (loading) {
       return;
     }
+    let isComponentMounted = true;
 
-    if (data) {
-      // TODO: Proccess results from query
-      // setDealDetails({...});
+    //TODO [WINGZ]: should totalCommitted and goal be converted?
+    if (isComponentMounted) {
+      if (data) {
+        const deal = data.deal;
+        setDealDetails({
+          dealName: deal.dealToken.name,
+          ownerAddress: deal.ownerAddress,
+          dealToken: deal.dealToken.contractAddress,
+          depositToken: deal.depositToken,
+          dealDestination: deal.destinationAddress,
+          goal: deal.goal,
+          closed: deal.closed,
+          totalCommitments: deal.numCommits,
+          totalCommited: deal.totalCommitted,
+          createdAt: deal.dealToken.createdAt
+        });
+      } else {
+        setDealDetails(emptyDeal);
+        setDealNotFound(true);
+      }
     }
 
-    // TODO: Remove when subgraph is ready
-    setDealDetails({
-      dealName: 'Dummy Deal',
-      ownerAddress: '0xb6235EAEADfA5839CdA207B454d98b328dFE2F3A',
-      dealToken: '0xdeal',
-      depositToken: '0xb6e77703b036bfb97dd40a22f021a85ae4a6d750', // Dummy USDC
-      dealDestination: '0xb6235EAEADfA5839CdA207B454d98b328dFE2F3A',
-      totalCommitments: '3',
-      totalCommited: '5000',
-      createdAt: '1669731360'
-    });
-    setDealNotFound(false);
+    return () => {
+      isComponentMounted = false;
+    };
   }, [loading, data, activeNetwork?.chainId]);
 
   return {

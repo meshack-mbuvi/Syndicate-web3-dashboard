@@ -6,13 +6,14 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { Precommit } from './types';
 
 export interface IPrecommit {
   dealAddress: string;
   account: string;
   amount: string;
   status: string;
-  createdAt: any;
+  createdAt: string;
 }
 
 export interface IPrecommitResponse {
@@ -37,14 +38,13 @@ const useDealsPrecommits = (): IPrecommitResponse => {
   const [precommits, setPrecommits] = useState<IPrecommit[]>([]);
 
   // get precommits for a deal
-  const { loading, data } = useQuery(GetDealPrecommits, {
+  const { loading, data } = useQuery<{
+    deal: { id: string; precommits: Precommit[] };
+  }>(GetDealPrecommits, {
     variables: {
-      where: {
-        contractAddress_contains_nocase: dealAddress
-      }
+      dealId: dealAddress
     },
-    // TODO: Remove hardcoded "true" when subgraph is ready
-    skip: !dealAddress || !activeNetwork.chainId || isDemoMode || true,
+    skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
       chainId: activeNetwork.chainId
@@ -56,36 +56,25 @@ const useDealsPrecommits = (): IPrecommitResponse => {
     if (loading) {
       return;
     }
+    let isComponentMounted = true;
 
-    if (data) {
-      // TODO: Proccess results from query
-      // setPrecommits({...});
+    if (data && isComponentMounted) {
+      setPrecommits(
+        data.deal.precommits.map((pre: Precommit) => {
+          //TODO [WINGZ]: should amount be converted?
+          return {
+            dealAddress: data.deal.id,
+            account: pre.userAddress,
+            amount: pre.amount,
+            status: pre.status,
+            createdAt: pre.createdAt
+          };
+        })
+      );
     }
-
-    // TODO: Remove when subgraph is ready
-    setPrecommits([
-      {
-        dealAddress: '0xdeal',
-        account: '0xBf33d3f2c623550c48D7063E0Ac233c8De2dB414',
-        amount: '3000',
-        status: 'ACTIVE',
-        createdAt: '1669731360'
-      },
-      {
-        dealAddress: '0xdeal',
-        account: '0x52A4380F691E71ff0015352AB1a450a1dfb689b9',
-        amount: '1500',
-        status: 'ACTIVE',
-        createdAt: '1669731360'
-      },
-      {
-        dealAddress: '0xdeal',
-        account: '0x52A4380F691E71ff0015352AB1a450a1dfb689b9',
-        amount: '500',
-        status: 'ACTIVE',
-        createdAt: '1669731360'
-      }
-    ]);
+    return (): void => {
+      isComponentMounted = false;
+    };
   }, [loading, data, activeNetwork?.chainId]);
 
   return {
