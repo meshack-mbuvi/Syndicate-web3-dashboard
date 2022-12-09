@@ -6,7 +6,7 @@ import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 
 interface Props {
   selectedTimeWindow: SelectedTimeWindow | null;
-  handleSelectedTimeWindowChange: (newWindow: SelectedTimeWindow) => void;
+  handleSelectedTimeWindowChange?: (newWindow: SelectedTimeWindow) => void;
   customDate?: Date;
   handleCustomDateChange?: (newDate: Date) => void;
   customTime?: string;
@@ -44,9 +44,13 @@ export const DealsCreateWindow: React.FC<Props> = ({
               <DetailedTile
                 activeIndex={selectedTimeWindow as number}
                 onClick={(index) => {
-                  handleSelectedTimeWindowChange(index);
+                  handleSelectedTimeWindowChange
+                    ? handleSelectedTimeWindowChange(index)
+                    : null;
                   if (index === SelectedTimeWindow.DAY) {
-                    handleSelectedTimeWindowChange(index);
+                    handleSelectedTimeWindowChange
+                      ? handleSelectedTimeWindowChange(index)
+                      : null;
                   }
                 }}
                 options={[

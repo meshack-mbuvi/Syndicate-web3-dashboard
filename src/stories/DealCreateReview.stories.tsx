@@ -9,7 +9,7 @@ export default {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const Template = (args: any) => {
   // About
-  const [title, handleTitleChange] = useState('Privax Deal');
+  const [name, handleNameChange] = useState('Privax Deal');
   const [details, handleDetailsChange] = useState(
     'Seed round for a zk-identity startup. This will roll up all participants to invest in a privacy focused identity startup called Privax utilizing zero-knowledge shell proofs to allow users to manage their own anonymity.'
   );
@@ -32,8 +32,8 @@ const Template = (args: any) => {
   return (
     <DealsCreateReview
       // About
-      title={title}
-      handleTitleChange={handleTitleChange}
+      name={name}
+      handleNameChange={handleNameChange}
       details={details}
       handleDetailsChange={handleDetailsChange}
       handleShuffle={() => {

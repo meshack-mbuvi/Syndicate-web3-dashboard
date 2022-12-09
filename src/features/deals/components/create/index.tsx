@@ -4,7 +4,7 @@ import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
 import { B2, B3, FL } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useEffect, useRef, useState } from 'react';
-
+import { DealNextButton } from './nextButton';
 /**
  * A UI template for review flow steps.
  * @param title The large title above the whole section
@@ -29,6 +29,9 @@ interface Props {
   hideCallouts?: boolean;
   isReview?: boolean;
   handleCurrentReviewEditingIndex?: (newIndex: number | null) => void;
+
+  // this is specific to deals for now but can be used in another scenario
+  isReviewStep?: boolean;
 }
 
 export enum CreateFlowStepTemplateTitleSize {
@@ -43,7 +46,8 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   activeInputIndex = 0,
   hideCallouts = false,
   isReview = false,
-  handleCurrentReviewEditingIndex
+  handleCurrentReviewEditingIndex,
+  isReviewStep = false
 }) => {
   const windowSize = useWindowSize();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,9 +68,8 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   const [currentReviewEditingIndex, setCurrentEditingIndex] = useState<
     number | null
   >(null);
-  const isInputHidden = (index: number) => {
-    // const allInputsAreHidden = currentReviewEditingIndex === null && isReview;
-    // return (allInputsAreHidden || !(currentReviewEditingIndex === index))
+
+  const isInputHidden = (index: number): boolean => {
     if (!isReview) {
       return false;
     } else {
@@ -77,10 +80,6 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   // Wait until the first render before calculating the
   // callout position
   useEffect(() => {
-    // setShowCallout(true);
-    // setCalloutTopPosition(
-    //     calculateCalloutTopPosition(inputRefs.current[0])
-    // );
     setTimeout(() => {
       setShowCallout(true);
     }, transitionDuration);
@@ -136,11 +135,17 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className={`flex ${hideCallouts ? 'space-x-0' : 'space-x-24'}`}
+      className={`flex ${
+        hideCallouts ? 'space-x-0' : 'space-x-24'
+      } justify-center px-10`}
     >
       <div
         className={`flex-grow ${
-          hideCallouts ? 'w-full' : 'sm:w-1/2'
+          hideCallouts && !isReviewStep
+            ? 'w-full'
+            : hideCallouts && isReviewStep
+            ? 'max-w-640 h-screen pt-10 mb-56'
+            : 'sm:w-1/2'
         } duration-${transitionDuration}`}
       >
         {/* Title */}
@@ -202,7 +207,9 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
 
               {/* Edit button (review mode) */}
               <button
-                className={`absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-syn7 px-3 py-2 rounded-full text-right visibility-hover invisible ${
+                className={`absolute right-0 ${
+                  currentReviewEditingIndex === index ? 'top-8' : 'top-1/2'
+                } transform -translate-y-1/2  px-3 py-2 rounded-full text-right visibility-hover invisible ${
                   !isReview
                     ? 'hidden'
                     : `${hideReviewHoverStyles ? 'opacity-0' : 'opacity-100'}`
@@ -227,6 +234,10 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
               </button>
             </div>
           ))}
+        </div>
+        {/* next page button  */}
+        <div className="pt-10 flex justify-center items-center">
+          <DealNextButton />
         </div>
       </div>
 

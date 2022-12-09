@@ -13,13 +13,13 @@ import { CreateFlowStepTemplate } from '..';
 interface Props {
   commitmentGoal: string;
   commitmentGoalError?: string;
-  handleCommitmentGoalChange: (newCommitmentGoal: string) => void;
+  handleCommitmentGoalChange?: (newCommitmentGoal: string) => void;
   minimumCommitment: string;
   minimumCommitmentError?: string;
-  handleMinimumCommitmentChange: (newMinimumCommitment: string) => void;
+  handleMinimumCommitmentChange?: (newMinimumCommitment: string) => void;
   destinationAddress: string;
   destinationAddressError?: string;
-  handleDestinationAddressChange: (newDestinationAddress: string) => void;
+  handleDestinationAddressChange?: (newDestinationAddress: string) => void;
   tokenSymbol: string;
   tokenLogo: string;
   handleTokenClick: () => void;
@@ -47,6 +47,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
 }) => {
   const [activeInputIndex, setActiveInputIndex] =
     useState<SelectedInput | null>(null);
+
   return (
     <CreateFlowStepTemplate
       title="What’s the raise goal? Who’s it for?"
@@ -59,8 +60,13 @@ export const DealsCreateGoal: React.FC<Props> = ({
               placeholderLabel={`100,000 ${tokenSymbol}`}
               onChange={(e) => {
                 const input = e.target.value;
+                if (isNaN(Number(input.replace(/,/g, '')))) {
+                  return;
+                }
                 const strippedCommasInput = stringNumberRemoveCommas(input);
-                handleCommitmentGoalChange(strippedCommasInput);
+                handleCommitmentGoalChange
+                  ? handleCommitmentGoalChange(strippedCommasInput)
+                  : null;
               }}
               symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
               depositTokenSymbol={tokenSymbol}
@@ -84,8 +90,13 @@ export const DealsCreateGoal: React.FC<Props> = ({
               depositTokenLogo={tokenLogo}
               onChange={(e) => {
                 const input = e.target.value;
+                if (isNaN(Number(input.replace(/,/g, '')))) {
+                  return;
+                }
                 const strippedCommasInput = stringNumberRemoveCommas(input);
-                handleMinimumCommitmentChange(strippedCommasInput);
+                handleMinimumCommitmentChange
+                  ? handleMinimumCommitmentChange(strippedCommasInput)
+                  : null;
               }}
               symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
               handleTokenClick={handleTokenClick}
@@ -106,7 +117,9 @@ export const DealsCreateGoal: React.FC<Props> = ({
             <InputField
               value={destinationAddress}
               onChange={(e) => {
-                handleDestinationAddressChange(e.target.value);
+                handleDestinationAddressChange
+                  ? handleDestinationAddressChange(e.target.value)
+                  : null;
               }}
               onFocus={() => {
                 setActiveInputIndex(SelectedInput.ADDRESS);

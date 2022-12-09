@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { CreateFlowStepTemplate } from '..';
 
 interface Props {
-  title: string;
-  titleError?: string;
-  handleTitleChange: (newTitle: string) => void;
-  handleShuffle: () => void;
-  details: string;
+  name?: string;
+  nameError?: string;
+  handleNameChange?: (name: string) => void;
+  handleShuffle?: (e: any) => void;
+  details?: string;
   detailsError?: string;
-  handleDetailsChange: (newDetails: string) => void;
+  handleDetailsChange?: (details: string) => void;
 }
 
 enum SelectedInput {
@@ -20,9 +20,9 @@ enum SelectedInput {
 }
 
 export const DealsCreateAbout: React.FC<Props> = ({
-  title,
-  titleError,
-  handleTitleChange,
+  name,
+  nameError,
+  handleNameChange,
   handleShuffle,
   details,
   detailsError,
@@ -39,24 +39,24 @@ export const DealsCreateAbout: React.FC<Props> = ({
         {
           input: (
             <InputFieldWithAddOn
-              value={title}
-              onChange={(e) => {
-                handleTitleChange(e.target.value);
+              value={name}
+              onChange={(e): void => {
+                if (handleNameChange) handleNameChange(e.target.value);
               }}
               addOn={
                 <div className="rounded-full px-4 py-1.5 text-black bg-white hover:bg-gray-syn2 active:bg-gray-syn3">
                   <ShuffleIcon />
                 </div>
               }
-              addOnOnClick={() => {
-                handleShuffle();
+              addOnOnClick={(e?: React.MouseEvent<HTMLElement>): void => {
+                if (handleShuffle) handleShuffle(e);
               }}
               placeholderLabel="Name your deal"
               onFocus={() => {
                 setActiveInput(SelectedInput.TITLE);
               }}
-              isInErrorState={titleError ? true : false}
-              infoLabel={titleError ? titleError : null}
+              isInErrorState={nameError ? true : false}
+              infoLabel={nameError ? nameError : null}
             />
           ),
           label: 'Deal title',
@@ -65,7 +65,7 @@ export const DealsCreateAbout: React.FC<Props> = ({
         {
           input: (
             <TextArea
-              value={details}
+              value={details ? details : ''}
               handleValueChange={handleDetailsChange}
               widthClass="w-full"
               placeholderLabel="Give prospective participants as much information as possible to help them understand this deal. Feel free to put links here as well to documents or websites that they may want to look at. This information will be public to anyone who views this page."

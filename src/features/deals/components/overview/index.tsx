@@ -1,7 +1,6 @@
 import { AddressLayout } from '@/components/shared/ensAddress';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
 import { B2, H1, H2 } from '@/components/typography';
-import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 
 interface Props {
   dealName: string;
@@ -51,7 +50,7 @@ export const DealsOverview: React.FC<Props> = ({
               alt="Token logo"
               className="w-6 h-6"
             />
-            <H2>{formatInputValueWithCommas(String(commitmentGoalAmount))}</H2>
+            <H2>{commitmentGoalAmount}</H2>
             <B2 extraClasses="text-gray-syn4">{commitmentGoalTokenSymbol}</B2>
           </div>
         </div>

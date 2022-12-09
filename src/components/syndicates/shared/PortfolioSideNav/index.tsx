@@ -11,6 +11,9 @@ interface IProps {
   handleExitClick: (event?: any) => void;
   nextBtnDisabled?: boolean;
   showDotIndicatorLabels?: boolean;
+  showSideNavButton?: boolean;
+  sideNavLogo?: React.ReactElement;
+  showDotIndicators?: boolean;
 }
 /**
  * Left side navigation on the create club page
@@ -22,15 +25,18 @@ export const PortfolioSideNav: React.FC<IProps> = ({
   nextBtnDisabled,
   handleBack,
   handleNext,
-  showDotIndicatorLabels = true
+  showDotIndicatorLabels = true,
+  showSideNavButton = true,
+  sideNavLogo,
+  showDotIndicators = true
 }) => {
   return (
     <div className="flex flex-col h-full items-start justify-between pl-7.5">
-      <div className="h-1/2 flex flex-col justify-between">
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
-          </div>
+      <div className="flex flex-col">
+        <div className="mb-6">
+          <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+        </div>
+        {showSideNavButton ? (
           <NavButton
             type={NavButtonType.VERTICAL}
             handlePrevious={handleBack}
@@ -38,8 +44,10 @@ export const PortfolioSideNav: React.FC<IProps> = ({
             disabled={nextBtnDisabled}
             currentStep={activeIndex}
           />
-        </div>
-        {/* setting padding left to 32px to center align dots on nav  */}
+        ) : null}
+      </div>
+      {/* setting padding left to 32px to center align dots on nav  */}
+      {showDotIndicators ? (
         <div style={{ paddingLeft: 21 }}>
           <DotIndicators
             {...{
@@ -49,11 +57,9 @@ export const PortfolioSideNav: React.FC<IProps> = ({
             }}
           />
         </div>
-      </div>
+      ) : null}
       <div className="flex w-max items-center" style={{ paddingLeft: 5 }}>
-        <a href="/">
-          <img src="/images/logo.svg" alt="Syndicate Logo" />
-        </a>
+        {sideNavLogo ? sideNavLogo : null}
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import {
   formatInputValueWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
-import { useState } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { CreateFlowStepTemplate } from '..';
 import { InputField } from '@/components/inputs/inputField';
 import { DetailedTile } from '@/components/tile/detailedTile';
@@ -16,40 +16,48 @@ import { SelectedTimeWindow } from '../window';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
 import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 import { InputFieldCreateToken } from '@/components/inputs/create/InputFieldCreateToken';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { default as _moment } from 'moment-timezone';
+import { formatAddress } from '@/utils/formatAddress';
+import { B2 } from '@/components/typography';
+import { SyndicateTokenLogo } from '@/components/icons/syndicateTokenLogo';
 
 interface Props {
   // About
-  title: string;
-  titleError?: string;
-  handleTitleChange: (newTitle: string) => void;
-  handleShuffle: () => void;
+  name: string;
+  nameError?: string;
+  handleNameChange?: (newTitle: string) => void;
+  handleShuffle?: (e: any) => void;
   details: string;
   detailsError?: string;
-  handleDetailsChange: (newDetails: string) => void;
+  handleDetailsChange?: (newDetails: string) => void;
 
   // Goal
   commitmentGoal: string;
   commitmentGoalError?: string;
-  handleCommitmentGoalChange: (newCommitmentGoal: string) => void;
+  handleCommitmentGoalChange?: (newCommitmentGoal: string) => void;
   minimumCommitment: string;
   minimumCommitmentError?: string;
-  handleMinimumCommitmentChange: (newMinimumCommitment: string) => void;
+  handleMinimumCommitmentChange?: (newMinimumCommitment: string) => void;
   destinationAddress: string;
   destinationAddressError?: string;
-  handleDestinationAddressChange: (newDestinationAddress: string) => void;
+  handleDestinationAddressChange?: (newDestinationAddress: string) => void;
   tokenSymbol: string;
   tokenLogo: string;
-  handleTokenClick: () => void;
+  handleTokenClick?: () => void;
+  handleTokenSymbolChange?: (tokenSymbol: string) => void;
 
   // Window
   selectedTimeWindow: SelectedTimeWindow | null;
-  handleSelectedTimeWindowChange: (newWindow: SelectedTimeWindow) => void;
+  handleSelectedTimeWindowChange?: (newWindow: SelectedTimeWindow) => void;
   customDate?: Date;
   handleCustomDateChange?: (newDate: Date) => void;
   customTime?: string;
   handleCustomTimeChange?: (newTime: string) => void;
   formattedWindowEndTime?: string;
 
+  isReviewStep?: boolean;
+  setIsEditingField?: Dispatch<SetStateAction<boolean>> | null;
   // Participation
   // reuses other props (tokenSymbol, handleTokenClick)
 }
@@ -62,13 +70,15 @@ enum SelectedInput {
 
 export const DealsCreateReview: React.FC<Props> = ({
   // About
-  title,
-  titleError,
-  handleTitleChange,
+  name,
+  nameError,
+  handleNameChange,
   handleShuffle,
   details,
   detailsError,
   handleDetailsChange,
+  isReviewStep,
+  setIsEditingField,
 
   // Goal
   commitmentGoal,
@@ -83,6 +93,7 @@ export const DealsCreateReview: React.FC<Props> = ({
   tokenSymbol,
   tokenLogo,
   handleTokenClick,
+  handleTokenSymbolChange,
 
   // Window
   selectedTimeWindow,
@@ -95,26 +106,51 @@ export const DealsCreateReview: React.FC<Props> = ({
 }) => {
   const [activeInputIndex, setActiveInputIndex] =
     useState<SelectedInput | null>(null);
+  const [closeTimeString, setCloseTimeString] = useState('');
   const showCustomTimeSelector =
     selectedTimeWindow === SelectedTimeWindow.CUSTOM;
+
+  const { endTime, ensName } = useCreateDealContext();
+  useEffect(() => {
+    if (endTime) {
+      const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setCloseTimeString(
+        _moment(+endTime)
+          .tz(timeZoneString)
+          .format('MMM D,  YYYY, hh:mmA zz')
+      );
+    }
+  }, [endTime]);
+
+  const hideCallouts = activeInputIndex === null ? true : false;
+
+  // do not show the network component at the bottom when editing is in progress
+  useEffect(() => {
+    if (!hideCallouts && isReviewStep && setIsEditingField) {
+      setIsEditingField(true);
+    } else {
+      setIsEditingField ? setIsEditingField(false) : null;
+    }
+  }, [isReviewStep, hideCallouts, setIsEditingField]);
 
   return (
     <CreateFlowStepTemplate
       title="Review"
       activeInputIndex={activeInputIndex}
       isReview={true}
-      hideCallouts={activeInputIndex === null ? true : false}
+      hideCallouts={hideCallouts}
       handleCurrentReviewEditingIndex={(newIndex) => {
         setActiveInputIndex(newIndex);
       }}
+      isReviewStep={isReviewStep}
       inputs={[
         // About
         {
           input: (
             <InputFieldWithAddOn
-              value={title}
+              value={name}
               onChange={(e) => {
-                handleTitleChange(e.target.value);
+                handleNameChange ? handleNameChange(e.target.value) : null;
               }}
               addOn={
                 <div className="rounded-full px-4 py-1.5 text-black bg-white hover:bg-gray-syn2 active:bg-gray-syn3">
@@ -133,20 +169,20 @@ export const DealsCreateReview: React.FC<Props> = ({
                   </svg>
                 </div>
               }
-              addOnOnClick={() => {
-                handleShuffle();
+              addOnOnClick={(e?: React.MouseEvent<HTMLElement>): void => {
+                handleShuffle ? handleShuffle(e) : null;
               }}
               placeholderLabel="Name your deal"
               onFocus={() => {
                 setActiveInputIndex(0);
               }}
-              isInErrorState={titleError ? true : false}
-              infoLabel={titleError ? titleError : null}
+              isInErrorState={nameError ? true : false}
+              infoLabel={nameError ? nameError : null}
             />
           ),
           label: 'Deal title',
           info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.',
-          reviewValue: title
+          reviewValue: name
         },
         {
           input: (
@@ -173,10 +209,12 @@ export const DealsCreateReview: React.FC<Props> = ({
             <InputFieldWithToken
               value={formatInputValueWithCommas(commitmentGoal)}
               placeholderLabel={`100,000 ${tokenSymbol}`}
-              onChange={(e) => {
+              onChange={(e): void => {
                 const input = e.target.value;
                 const strippedCommasInput = stringNumberRemoveCommas(input);
-                handleCommitmentGoalChange(strippedCommasInput);
+                handleCommitmentGoalChange
+                  ? handleCommitmentGoalChange(strippedCommasInput)
+                  : null;
               }}
               symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
               depositTokenSymbol={tokenSymbol}
@@ -207,7 +245,9 @@ export const DealsCreateReview: React.FC<Props> = ({
               onChange={(e) => {
                 const input = e.target.value;
                 const strippedCommasInput = stringNumberRemoveCommas(input);
-                handleMinimumCommitmentChange(strippedCommasInput);
+                handleMinimumCommitmentChange
+                  ? handleMinimumCommitmentChange(strippedCommasInput)
+                  : null;
               }}
               symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
               handleTokenClick={handleTokenClick}
@@ -234,7 +274,9 @@ export const DealsCreateReview: React.FC<Props> = ({
             <InputField
               value={destinationAddress}
               onChange={(e) => {
-                handleDestinationAddressChange(e.target.value);
+                handleDestinationAddressChange
+                  ? handleDestinationAddressChange(e.target.value)
+                  : null;
               }}
               onFocus={() => {
                 setActiveInputIndex(SelectedInput.ADDRESS);
@@ -248,7 +290,9 @@ export const DealsCreateReview: React.FC<Props> = ({
           ),
           label: 'Deal destination address',
           info: 'This is the address that will receive funds after commitments are received and a deal is executed.',
-          reviewValue: `${destinationAddress}`
+          reviewValue: `${
+            ensName ? ensName : formatAddress(destinationAddress, 6, 4)
+          }`
         },
 
         // Window
@@ -258,9 +302,13 @@ export const DealsCreateReview: React.FC<Props> = ({
               <DetailedTile
                 activeIndex={selectedTimeWindow as number}
                 onClick={(index) => {
-                  handleSelectedTimeWindowChange(index);
+                  handleSelectedTimeWindowChange
+                    ? handleSelectedTimeWindowChange(index)
+                    : null;
                   if (index === SelectedTimeWindow.DAY) {
-                    handleSelectedTimeWindowChange(index);
+                    handleSelectedTimeWindowChange
+                      ? handleSelectedTimeWindowChange(index)
+                      : null;
                   }
                 }}
                 options={[
@@ -317,11 +365,10 @@ export const DealsCreateReview: React.FC<Props> = ({
                     }`}
               </div>
               {formattedWindowEndTime && (
-                <div className="text-gray-syn4">Jan 1, 2023 11:59pm PST</div>
+                <div className="text-gray-syn4">{closeTimeString}</div>
               )}
             </div>
           )
-          // reviewValue: `value`
         },
 
         // Participation
@@ -329,12 +376,20 @@ export const DealsCreateReview: React.FC<Props> = ({
           input: (
             <InputFieldCreateToken
               tokenSymbolValue={tokenSymbol}
-              handleTokenSymbolChange={handleTokenClick}
+              handleTokenSymbolChange={handleTokenSymbolChange}
             />
           ),
-          label: `Token symbol`,
+          label: `Participation Token`,
           info: `This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more`,
-          reviewValue: tokenSymbol
+          reviewValue: (
+            <div className="flex space-x-2 items-center">
+              <B2>{name}</B2>
+              <B2 className="text-gray-syn4 flex items-center">
+                <SyndicateTokenLogo />
+                {tokenSymbol}
+              </B2>
+            </div>
+          )
         }
       ]}
     />
