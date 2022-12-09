@@ -24,6 +24,7 @@ interface ITransactionsTableProps {
   canNextPage: boolean;
   isOwner: boolean;
   dataLimit: number;
+  numTransactions: number;
   pageOffset: number;
   activityViewLength: number;
   refetchTransactions: () => void;
@@ -43,6 +44,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   canNextPage,
   dataLimit,
   pageOffset,
+  numTransactions,
   activityViewLength,
   refetchTransactions,
   goToPreviousPage,
@@ -453,7 +455,12 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         <div>
           {pageOffset === 0
             ? batchTransactionsList.slice(pageOffset, dataLimit)
-            : batchTransactionsList}
+            : pageOffset < numTransactions
+            ? batchTransactionsList.slice(pageOffset, dataLimit + pageOffset)
+            : batchTransactionsList.slice(
+                pageOffset - dataLimit,
+                numTransactions
+              )}
           {/* Pagination  */}
           <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
             <button
@@ -473,8 +480,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
             </button>
             <p className="">
               {pageOffset === 0 ? '1' : pageOffset + 1} -{' '}
-              {activityViewLength < dataLimit
-                ? pageOffset + activityViewLength
+              {activityViewLength < pageOffset + dataLimit
+                ? activityViewLength
                 : pageOffset + dataLimit}
             </p>
 
@@ -484,7 +491,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:opacity-90'
               }`}
-              onClick={(): void => goToNextPage()}
+              onClick={(): void | null =>
+                pageOffset + dataLimit < numTransactions ? goToNextPage() : null
+              }
             >
               <Image
                 src={'/images/arrowNext.svg'}

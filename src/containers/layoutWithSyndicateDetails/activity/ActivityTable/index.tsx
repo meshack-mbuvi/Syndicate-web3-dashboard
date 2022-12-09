@@ -264,7 +264,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     {
       ...generateSearchFilter(filter, memoizedSearchTerm)
     },
-    pageOffset,
+    0,
     100,
     false
   );
