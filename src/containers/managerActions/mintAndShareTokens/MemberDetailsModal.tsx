@@ -1,10 +1,10 @@
 import React from 'react';
 import { numberWithCommas } from '@/utils/formattedNumbers';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
-import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
 import { L2 } from '@/components/typography';
+import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 
 interface IMemberDetails {
   show: boolean;
@@ -77,8 +77,8 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
           </div>
           <div className="mb-8">
             <div className="mb-2 text-white">Amount to mint</div>
-            <InputFieldWithButton
-              buttonLabel="Max"
+            <InputFieldWithAddOn
+              addOn="Max"
               value={
                 amountToMint
                   ? numberWithCommas(
@@ -95,11 +95,11 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               infoLabel={amountToMintError ? amountToMintError : ''}
               extraClasses="border-gray-syn6"
               symbol={symbol}
-              buttonOnClick={setMaxRemainingSupply}
+              addOnOnClick={setMaxRemainingSupply}
               disabled={inputFieldsDisabled}
             />
           </div>
-          <CtaButton
+          <CTAButton
             disabled={
               Boolean(amountToMintError) ||
               Boolean(memberAddressError) ||
@@ -113,7 +113,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
             }}
           >
             <span className="text-black">Continue</span>
-          </CtaButton>
+          </CTAButton>
         </div>
       </div>
     </Modal>

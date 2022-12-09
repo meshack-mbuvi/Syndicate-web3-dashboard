@@ -12,6 +12,7 @@ import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { ContractMapper } from '@/hooks/useGasDetails';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 
 export const SubmitContent: React.FC<{
   isSubmitDisabled?: boolean;
@@ -133,15 +134,12 @@ export const SubmitContent: React.FC<{
           >
             Cancel
           </button>
-          <button
-            disabled={isSubmitDisabled}
+          <CTAButton
+            type={isSubmitDisabled ? CTAType.DISABLED : CTAType.PRIMARY}
             onClick={handleEdit}
-            className={`${
-              isSubmitDisabled ? 'primary-CTA-disabled' : 'primary-CTA'
-            }`}
           >
             Submit
-          </button>
+          </CTAButton>
         </div>
       </div>
     </div>

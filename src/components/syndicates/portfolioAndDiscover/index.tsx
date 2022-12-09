@@ -1,8 +1,5 @@
 import CreateClubButton from '@/components/createClubButton';
-import TabsButton from '@/components/TabsButton';
 import { H3 } from '@/components/typography';
-import useCollectives from '@/hooks/collectives/useGetCollectives';
-import useClubERC20s from '@/hooks/clubs/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
 import React, { useEffect, useState } from 'react';
@@ -15,12 +12,18 @@ import {
   MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
 import CollectivesTable from './portfolio/collectivesTable';
-import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
 import {
   CreateClubOrCollective,
   EmptyStateType
 } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import SegmentedControl from '@/components/segmentedControl/tabs';
+import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
+import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
+import useAdminClubs from '@/hooks/clubs/useAdminClubs';
+import useMemberClubs from '@/hooks/clubs/useMemberClubs';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -49,9 +52,7 @@ const generateSkeletons = (
  */
 const PortfolioAndDiscover: React.FC = () => {
   const {
-    web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s },
-    collectivesSlice: { adminCollectives, memberCollectives }
+    web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -59,35 +60,39 @@ const PortfolioAndDiscover: React.FC = () => {
     account
   } = web3;
 
-  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+  const { isReady, readyClient: readyCollectivesClient } = useFeatureFlag(
+    FEATURE_FLAGS.COLLECTIVES,
+    {
+      collectivesAllowlisted: true
+    }
+  );
 
-  const { isLoading } = useClubERC20s();
+  const { adminClubs, adminClubsLoading } = useAdminClubs();
+  const { memberClubs, memberClubsLoading } = useMemberClubs();
+  const isLoading = memberClubsLoading || adminClubsLoading;
   const { width } = useWindowSize();
 
-  useCollectives();
+  const { adminCollectives } = useAdminCollectives();
+  const { memberCollectives } = useMemberCollectives();
 
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();
 
   enum TabsType {
-    ADMIN = 'ADMIN',
-    MEMBER = 'MEMBER'
+    ADMIN = 0,
+    MEMBER = 1
   }
-  const [activeClubsTab, setActiveClubsTab] = useState<TabsType | string>(
+  const [activeClubsTab, setActiveClubsTab] = useState<number>(TabsType.ADMIN);
+  const [activeCollectivesTab, setActiveCollectivesTab] = useState<number>(
     TabsType.ADMIN
   );
-  const [activeCollectivesTab, setActiveCollectivesTab] = useState<
-    TabsType | string
-  >(TabsType.ADMIN);
 
   const filterOptions = [
     {
-      label: 'Admin',
-      value: TabsType.ADMIN
+      label: 'Admin'
     },
     {
-      label: 'Member',
-      value: TabsType.MEMBER
+      label: 'Member'
     }
   ];
 
@@ -95,9 +100,9 @@ const PortfolioAndDiscover: React.FC = () => {
   // only admin or member clubs/collectives to show
   useEffect(() => {
     //clubs
-    if (otherClubERC20s.length === 0 && myClubERC20s.length !== 0) {
+    if (memberClubs.length === 0 && adminClubs.length !== 0) {
       setActiveClubsTab(TabsType.ADMIN);
-    } else if (otherClubERC20s.length !== 0 && myClubERC20s.length === 0) {
+    } else if (memberClubs.length !== 0 && adminClubs.length === 0) {
       setActiveClubsTab(TabsType.MEMBER);
     }
 
@@ -115,8 +120,8 @@ const PortfolioAndDiscover: React.FC = () => {
   }, [
     adminCollectives.length,
     memberCollectives.length,
-    otherClubERC20s.length,
-    myClubERC20s.length
+    memberClubs.length,
+    adminClubs.length
   ]);
 
   const collectivesIsReady =
@@ -126,8 +131,8 @@ const PortfolioAndDiscover: React.FC = () => {
 
   // connected account does not belong to any collective or club.
   if (
-    (!otherClubERC20s.length &&
-      !myClubERC20s.length &&
+    (!memberClubs.length &&
+      !adminClubs.length &&
       !memberCollectives.length &&
       !adminCollectives.length &&
       !invalidEthereumNetwork &&
@@ -136,7 +141,7 @@ const PortfolioAndDiscover: React.FC = () => {
   ) {
     return (
       <div
-        className="w-full flex justify-center"
+        className="w-full flex justify-center md:h-100"
         style={{ marginTop: '144px' }}
       >
         <CreateClubOrCollective
@@ -277,21 +282,20 @@ const PortfolioAndDiscover: React.FC = () => {
             style={width < 480 ? { paddingRight: '6%' } : null}
           >
             <H3>Clubs</H3>
-            {otherClubERC20s.length !== 0 || myClubERC20s.length !== 0 ? (
+            {memberClubs.length !== 0 || adminClubs.length !== 0 ? (
               <div className="mt-7 sm:mt-0">
                 <CreateClubButton />
               </div>
             ) : null}
           </div>
 
-          {myClubERC20s.length || otherClubERC20s.length ? (
+          {adminClubs.length || memberClubs.length ? (
             <div className="mt-8">
-              {otherClubERC20s.length !== 0 && myClubERC20s.length !== 0 && (
-                <TabsButton
-                  options={filterOptions}
-                  value={TabsType.ADMIN}
-                  onChange={(val) => setActiveClubsTab(val)}
-                  activeTab={activeClubsTab}
+              {memberClubs.length !== 0 && adminClubs.length !== 0 && (
+                <SegmentedControl
+                  tabs={filterOptions}
+                  activeIndex={activeClubsTab}
+                  handleTabChange={setActiveClubsTab}
                 />
               )}
               <div className="mt-6 grid mr-6 sm:mr-0">
@@ -303,7 +307,7 @@ const PortfolioAndDiscover: React.FC = () => {
                   } transition-all duration-700 row-start-1 col-start-1 `}
                 >
                   <ClubERC20Table
-                    tableData={myClubERC20s}
+                    tableData={adminClubs}
                     columns={MyClubERC20TableColumns}
                   />
                 </div>
@@ -316,13 +320,13 @@ const PortfolioAndDiscover: React.FC = () => {
                   } transition-all duration-700 row-start-1 col-start-1`}
                 >
                   <ClubERC20Table
-                    tableData={otherClubERC20s}
+                    tableData={memberClubs}
                     columns={clubERCTableColumns}
                   />
                 </div>
               </div>
             </div>
-          ) : !myClubERC20s.length && !invalidEthereumNetwork ? (
+          ) : !adminClubs.length && !invalidEthereumNetwork ? (
             <div className="w-full flex justify-center">
               <CreateClubOrCollective
                 {...{
@@ -349,11 +353,10 @@ const PortfolioAndDiscover: React.FC = () => {
                 <div className="mt-8">
                   {memberCollectives.length !== 0 &&
                     adminCollectives.length !== 0 && (
-                      <TabsButton
-                        options={filterOptions}
-                        value={TabsType.ADMIN}
-                        onChange={(val) => setActiveCollectivesTab(val)}
-                        activeTab={activeCollectivesTab}
+                      <SegmentedControl
+                        tabs={filterOptions}
+                        activeIndex={activeCollectivesTab}
+                        handleTabChange={setActiveCollectivesTab}
                       />
                     )}
                   <div className="mt-6 grid">

@@ -60,13 +60,14 @@ import AddToCalendar from '../addToCalendar';
 import BackButton from '../buttons/BackButton';
 import { CollapsibleTable } from '../collapsibleTable';
 import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '../inputs/inputFieldWithToken';
 import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
+import { TokenDetails } from '@/types/token';
+import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -805,10 +806,10 @@ const ModifyTokenGatedClub: React.FC = () => {
                   rowIndex: EditRowIndex.MaxMembers,
                   handleDisclaimerConfirmation,
                   inputField: (
-                    <InputFieldWithButton
+                    <InputFieldWithAddOn
                       value={String(maxNumberOfMembers)}
-                      buttonLabel="Max"
-                      buttonOnClick={() => {
+                      addOn="Max"
+                      addOnOnClick={() => {
                         dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
                         setMaxNumberOfMembersError(null);
                       }}
@@ -999,8 +1000,7 @@ const TokenGatedModules: React.FC = () => {
   useEffect(() => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
-      const chainTokens: typeof SUPPORTED_TOKENS[1 | 4 | 137] =
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      const chainTokens: typeof SUPPORTED_TOKENS[1 | 137] =
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];
@@ -1023,7 +1023,7 @@ const TokenGatedModules: React.FC = () => {
             quantity: getWeiAmount(
               web3,
               new BigNumber(_token.quantity).toFixed(),
-              chainToken.decimals,
+              chainToken.decimals || 18,
               false
             ),
             symbol: chainToken.symbol,
@@ -1054,9 +1054,9 @@ const TokenGatedModules: React.FC = () => {
           getTokenDetails(token.contractAddress, activeNetwork.chainId)
         )
       ).then((res) =>
-        res.map((_res) => {
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          const quantity = requiredTokenRules.find(
+        res.map((response) => {
+          const _res = response as { data: TokenDetails };
+          const quantity = requiredTokenRules?.find(
             (t) => t.contractAddress === _res.data.contractAddress
           )?.quantity;
 

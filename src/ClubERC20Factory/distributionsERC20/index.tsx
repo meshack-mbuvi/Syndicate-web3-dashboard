@@ -43,27 +43,33 @@ export class DistributionsERC20 {
     totalDistributionAmount: number,
     members: Array<string>,
     batchIdentifier: string,
-    onResponse: (gas?: any) => void
-  ): Promise<void> {
-    await new Promise(() => {
-      this.distributionERC20.methods
-        .multiMemberDistribute(
-          clubAddress,
-          distributionERC20Address,
-          totalDistributionAmount,
-          members,
-          batchIdentifier
-        )
-        .estimateGas(
-          {
-            from: account
-          },
-          (_error: any, gasAmount: any) => {
-            if (gasAmount) onResponse(gasAmount * numTokensDistributed);
-            if (_error) onResponse(_error);
+    onResponse: (gas?: any) => void,
+    onFailure?: (error: any) => void
+  ): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await this.distributionERC20.methods
+      .multiMemberDistribute(
+        clubAddress,
+        distributionERC20Address,
+        totalDistributionAmount,
+        members,
+        batchIdentifier
+      )
+      .estimateGas(
+        {
+          from: account
+        },
+        (_error: any, gasAmount: any) => {
+          if (gasAmount) return onResponse(gasAmount * numTokensDistributed);
+          if (_error) {
+            if (onFailure) {
+              onFailure(_error);
+            } else {
+              onResponse(_error);
+            }
           }
-        );
-    });
+        }
+      );
   }
 
   /**

@@ -92,7 +92,7 @@ const RaiseTokenAmount = (props: {
           placeholderLabel={placeholder}
           symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
           onChange={(e) => {
-            if (isNaN(e.target.value.replace(/,/g, ''))) {
+            if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
               return;
             }
             onChange(e);

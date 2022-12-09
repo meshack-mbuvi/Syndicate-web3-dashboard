@@ -278,35 +278,87 @@
   /* Button CTAs */
 
   .base-CTA {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium transition-all;
+    @apply font-semibold px-12 py-3.5 rounded-lg focus:outline-none whitespace-nowrap transition-all;
   }
 
-  .primary-CTA {
-    @apply base-CTA bg-white text-black transition-all hover:bg-opacity-90;
+  .focus-CTA {
+    @apply focus:ring focus:ring-blue-nasa-flight-cobalt;
   }
 
-  .green-CTA {
-    @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
+  .primary-CTA.short {
+    @apply py-2;
   }
 
-  .volt-CTA {
-    @apply base-CTA bg-green-volt text-black transition-all hover:bg-green-volt-shine;
+  /* white */
+
+  .base-CTA.regular {
+    @apply bg-white hover:bg-gray-syn2 active:bg-gray-syn3 focus:outline-none focus-CTA text-black transition-all hover:bg-opacity-90;
   }
 
-  .cherenkov-CTA {
-    @apply base-CTA bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
+  /* disabled */
+
+  .base-CTA.disabled {
+    @apply cursor-not-allowed bg-gray-syn7 hover:bg-gray-syn7 text-gray-syn5 hover:bg-opacity-100;
   }
 
-  .cyan-CTA {
-    @apply base-CTA bg-cyan-cherenkov text-black transition-all;
+  /* dark */
+
+  .base-CTA.dark {
+    @apply bg-gray-syn8 border border-gray-syn7 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus-CTA;
   }
 
-  .orange-CTA {
-    @apply base-CTA bg-yellow-warning text-black transition-all;
+  .base-CTA.dark.disabled {
+    @apply cursor-not-allowed bg-gray-syn8 border border-gray-syn7 text-gray-syn5;
   }
 
-  .primary-CTA-disabled {
-    @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
+  /* dark outlined */
+
+  .base-CTA.dark-outlined {
+    @apply bg-gray-syn8 border border-gray-syn5 text-white hover:bg-gray-syn7 active:bg-gray-syn8 focus:outline-none focus-CTA;
+  }
+
+  .base-CTA.dark-outlined.disabled {
+    @apply cursor-not-allowed bg-gray-syn8 border border-gray-syn7 text-gray-syn5;
+  }
+
+  /* blank */
+
+  .base-CTA.blank {
+    @apply hover:bg-gray-syn9 focus:outline-none focus-CTA border-transparent;
+  }
+
+  .base-CTA.blank.disabled {
+    @apply text-gray-syn5 bg-transparent;
+  }
+
+  /* green - transactional */
+
+  .base-CTA.green {
+    @apply bg-green text-black transition-all hover:bg-green-shine;
+  }
+
+  /* volt - investment clubs */
+
+  .base-CTA.volt {
+    @apply bg-green-volt text-black transition-all hover:bg-green-volt-shine;
+  }
+
+  /* cherenkov - collectives */
+
+  .base-CTA.cherenkov {
+    @apply bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
+  }
+
+  /* orange - warning */
+
+  .base-CTA.orange {
+    @apply bg-yellow-warning hover:bg-yellow-warning-shine text-black transition-all;
+  }
+
+  /* red - error */
+
+  .base-CTA.red {
+    @apply bg-red-error hover:bg-red-500 text-white transition-all;
   }
 
   .secondary-CTA {
@@ -340,6 +392,10 @@
 
   .text-input-placeholder::placeholder {
     @apply text-gray-placeholder;
+  }
+
+  .text-placeholder-gray-syn4::placeholder {
+    @apply text-gray-syn4;
   }
 
   .h1 {
@@ -494,6 +550,12 @@
       position: fixed;
     }
 
+    .push-baseline-to-bottom::after {
+      content: '';
+      height: 100%;
+      display: inline-block;
+    }
+
     /*
       For when you dont want to use margins, and can position a
       div relatively.
@@ -631,8 +693,8 @@ input {
 }
 
 .rounded-t-custom {
-  border-bottom-left-radius: 0.625rem;
   border-top-left-radius: 0.625rem;
+  border-top-right-radius: 0.625rem;
 }
 
 .rounded-b-custom {
@@ -916,8 +978,8 @@ input[type='checkbox'] {
   height: auto;
   font-size: 14px !important;
   line-height: 157%;
-  border-radius: 4px !important;
-  color: #90949e !important;
+  border-radius: 8px !important;
+  color: #b8bdc7 !important;
   padding: 12px 16px !important;
   opacity: 1 !important;
   visibility: visible;
@@ -989,6 +1051,11 @@ input[type='checkbox'] {
 *::-webkit-scrollbar-thumb {
   background-color: #3f4147;
   border-radius: 4px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  scrollbar-color: #3f4147;
+  background: transparent;
 }
 
 .react-add-to-calendar {

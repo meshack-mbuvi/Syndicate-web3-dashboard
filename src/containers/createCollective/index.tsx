@@ -4,6 +4,7 @@ import {
   DESIGN_CONTINUE_CLICK
 } from '@/components/amplitude/eventNames';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+import SEO from '@/components/seo';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
 } from '@/components/transitionBetweenChildren';
@@ -103,12 +104,25 @@ const CreateCollectiveContainer: FC = () => {
 
   return (
     <>
+      <SEO
+        title="Create a Collective"
+        image="/images/social/create-collective.png"
+        keywords={[
+          'syndicate',
+          'investment',
+          'club',
+          'fund',
+          'crypto',
+          'collective'
+        ]}
+      />
       <TwoColumnLayout
         managerSettingsOpen={true}
         dotIndicatorOptions={activeIndex == 3 ? [] : dotIndicatorOptions}
         handleExitClick={handleExitClick}
         activeIndex={activeIndex}
-        hideWalletAndEllipsis={false}
+        hideWallet={false}
+        hideEllipsis={false}
         showCloseButton={false}
         headerTitle="Create a Collective"
         type={TwoColumnLayoutType.FLEX}

@@ -1,5 +1,5 @@
 import { useOnboardingContext } from '@/context/OnboardingContext';
-import PrimaryButton from '../buttons/PrimaryButton';
+import { CTAButton } from '../CTAButton';
 import Modal, { ModalStyle } from '../modal';
 import { H4 } from '../typography';
 
@@ -86,13 +86,13 @@ const OnboardingModal: React.FC = () => {
         <p className="mt-6 text-center font-whyte-light">
           and more coming soon...
         </p>
-        <PrimaryButton
-          customClasses="primary-CTA w-full mt-6 mb-4"
-          textColor="text-black"
+        <CTAButton
+          fullWidth={true}
+          extraClasses={`mt-6 mb-4`}
           onClick={hideInvestorOnboarding}
         >
           Get started
-        </PrimaryButton>
+        </CTAButton>
       </>
     </Modal>
   );

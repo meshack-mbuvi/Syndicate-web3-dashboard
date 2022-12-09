@@ -39,7 +39,13 @@ export const BadgeWithMembers: React.FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3, ethersProvider }
+      web3: {
+        account,
+        activeNetwork,
+        web3,
+        ethersProvider,
+        ethereumNetwork: { invalidEthereumNetwork }
+      }
     }
   } = useSelector((state: AppState) => state);
   const {
@@ -87,7 +93,9 @@ export const BadgeWithMembers: React.FC<Props> = ({
 
   return (
     <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
-      {permissionType == PermissionType.ADMIN && isOpen ? (
+      {permissionType == PermissionType.ADMIN &&
+      isOpen &&
+      !invalidEthereumNetwork ? (
         <div className="space-y-4">
           <H4>Invite to join</H4>
           <div className="rounded-2.5xl bg-gray-syn8">
@@ -169,16 +177,19 @@ export const BadgeWithMembers: React.FC<Props> = ({
         <div className="relative w-full h-full">
           <div
             className={`space-y-4 ${
-              permissionType === PermissionType.NON_MEMBER
+              permissionType === PermissionType.NON_MEMBER ||
+              invalidEthereumNetwork
                 ? 'opacity-50 filter blur-md'
                 : ''
             } w-full ${
-              !account || permissionType === PermissionType.NON_MEMBER
+              !account ||
+              permissionType === PermissionType.NON_MEMBER ||
+              invalidEthereumNetwork
                 ? 'min-h-363'
                 : ''
             } h-full rounded-2xl p-6 border border-gray-syn7`}
           >
-            {members && members.length && account ? (
+            {members && members.length && account && !invalidEthereumNetwork ? (
               members?.map((member, index) => {
                 return (
                   <AddressWithENS
@@ -219,7 +230,9 @@ export const BadgeWithMembers: React.FC<Props> = ({
             ) : null}
           </div>
 
-          {permissionType === PermissionType.NON_MEMBER || !account ? (
+          {permissionType === PermissionType.NON_MEMBER ||
+          !account ||
+          invalidEthereumNetwork ? (
             <div className="absolute border border-gray-syn7 top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
               <MembersOnly />
             </div>

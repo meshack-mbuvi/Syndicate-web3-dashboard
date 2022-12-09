@@ -1,4 +1,9 @@
-import { Callout, CalloutType } from '@/components/callout';
+import {
+  Callout,
+  CalloutIconPosition,
+  CalloutType
+} from '@/components/callout';
+import IconSignature from '@/components/icons/signature';
 import React from 'react';
 
 export default {
@@ -25,19 +30,49 @@ export default {
   }
 };
 
-const Template = (args: any) => <Callout {...args}></Callout>;
+const Template = (args: any) => {
+  let icon;
+  if (
+    args.type === CalloutType.REGULAR &&
+    args.iconPosition === CalloutIconPosition.INLINE
+  ) {
+    icon = <IconSignature />;
+  } else if (
+    args.type === CalloutType.WARNING &&
+    args.iconPosition === CalloutIconPosition.INLINE
+  ) {
+    icon = <IconSignature />;
+  } else if (
+    args.type === CalloutType.OUTLINE &&
+    args.iconPosition === CalloutIconPosition.INLINE
+  ) {
+    icon = <IconSignature />;
+  }
+  return <Callout {...args} icon={icon} />;
+};
 
 export const Default = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Default.args = {
+  type: CalloutType.REGULAR,
   children:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
 };
 
-export const Warning = Template.bind({});
+export const Inline = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
-Warning.args = {
-  type: CalloutType.WARNING,
+Inline.args = {
+  type: CalloutType.REGULAR,
+  iconPosition: CalloutIconPosition.INLINE,
+  children:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+};
+
+export const Top = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
+Top.args = {
+  type: CalloutType.REGULAR,
+  iconPosition: CalloutIconPosition.TOP,
   children:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
 };

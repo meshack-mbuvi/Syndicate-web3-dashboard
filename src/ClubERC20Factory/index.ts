@@ -33,6 +33,9 @@ import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { TimeRequirements } from './TimeRequirements';
 import { TokenGatedMixin } from './tokenGatingMixin';
+import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
+import { AllowancePrecommitModuleERC20 } from './AllowancePrecommitModuleERC20';
+import { ERC20DealFactory } from './ERC20DealFactory';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -49,7 +52,6 @@ export const getSyndicateContracts = async (
   activeNetwork: IActiveNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
 
   if (!addresses) {
@@ -258,6 +260,28 @@ export const getSyndicateContracts = async (
     ? new TokenGatedMixin(addresses.tokenGatingMixin, web3, activeNetwork)
     : null;
 
+  const nativeTokenPriceMerkleMintModule =
+    addresses.nativeTokenPriceMerkleMintModule
+      ? new NativeTokenPriceMerkleMintModule(
+          addresses.nativeTokenPriceMerkleMintModule,
+          web3,
+          activeNetwork
+        )
+      : null;
+
+  // Precommit
+  const allowancePrecommitModuleERC20 = addresses.AllowancePrecommitModuleERC20
+    ? new AllowancePrecommitModuleERC20(
+        addresses.AllowancePrecommitModuleERC20,
+        web3,
+        activeNetwork
+      )
+    : null;
+
+  const erc20DealFactory = addresses.ERC20DealFactory
+    ? new ERC20DealFactory(addresses.ERC20DealFactory, web3, activeNetwork)
+    : null;
+
   // return all initialized contracts
   return {
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
@@ -321,6 +345,12 @@ export const getSyndicateContracts = async (
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     maxTotalSupplyMixin,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    tokenGatedMixin
+    tokenGatedMixin,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    allowancePrecommitModuleERC20,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule,
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    erc20DealFactory
   };
 };

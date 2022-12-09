@@ -75,6 +75,7 @@ module.exports = {
         16: '16px'
       },
       transitionDuration: {
+        0: '0ms',
         800: '800ms'
       },
       transitionDelay: {
@@ -85,6 +86,7 @@ module.exports = {
       },
       opacity: {
         25: '.25',
+        15: '.15',
         85: '.85'
       },
       zIndex: {
@@ -101,6 +103,7 @@ module.exports = {
         5.5: '1.375rem',
         12.5: '3.125rem',
         13: '3.25rem',
+        13.5: '3.75rem',
         17.5: '4.375rem',
         18: '4.5rem',
         23: '5.75rem',
@@ -125,6 +128,7 @@ module.exports = {
         '5.21/12': '43.47826%',
         7.5: '1.875rem',
         12.5: '3.125rem',
+        13.5: '3.75rem',
         62: '15.5rem',
         75: '18.75rem',
         88: '22rem',
@@ -173,6 +177,7 @@ module.exports = {
         480: '30rem',
         520: '32.5rem',
         564: '35.25rem',
+        640: '40rem',
         730: '45.625rem',
         868: '54rem',
         1480: '92.5rem',
@@ -261,7 +266,7 @@ module.exports = {
         T3: ['4rem', '4rem'],
         T4: ['3.5rem', '3.5rem'],
         T5: ['3rem', '3rem'],
-        'H1-mobile': ['2rem', '2rem'],
+        'H1-mobile': ['2rem', 'normal'],
         'H2-mobile': ['1.8125rem', '1.8125rem'],
         'H3-mobile': ['1.375rem', '150%'],
         'H4-mobile': ['1.125rem', '150%'],
@@ -284,7 +289,10 @@ module.exports = {
       letterSpacing: {
         '0.1px': '0.1px',
         px: '0.0625rem',
-        '2.5xl': '1.25rem'
+        '2.5xl': '1.25rem',
+        e1: '0.175rem',
+        e2: '0.125rem',
+        e3: '0.03125rem'
       },
       colors: {
         'twitter-blue': '#1DA1F2',
@@ -422,6 +430,7 @@ module.exports = {
           dark: '#FFC83C',
           semantic: '#F9D252',
           warning: '#FFA439',
+          'warning-shine': '#FFAF64',
           highlight: '#FFD252',
           saffron: '#FFA439'
         },
@@ -453,6 +462,8 @@ module.exports = {
         '1px': '1px',
         '9px': '9px',
         '5/12': '41.6666%',
+        1.25: '0.3125rem',
+        2.25: '0.5625rem',
         3.5: '0.875rem',
         5.5: '1.375rem',
         7.5: '1.875rem',
@@ -481,11 +492,19 @@ module.exports = {
       },
       animation: {
         fade_in: 'fade_in 0.5s ease-out 1',
+        fade_in_double: 'fade_in 1s ease-out 1',
+        'fade-in-delay': 'fade-in-delay 1s ease-in-out 1',
         fade_in_bg: 'fade_in_bg 6s ease-out 1',
         'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite',
         float: 'float 8s ease-in-out infinite',
         'move-in': 'move-in 1.2s ease-in-out 1',
-        'move-in-brief': 'move-in-brief 1.4s ease-in-out'
+        'move-in-brief': 'move-in-brief 1.4s ease-in-out',
+        'deal-coin-top-left': 'deal-coin-top-left 0.8s ease-out 1',
+        'deal-coin-middle-left': 'deal-coin-middle-left 0.8s ease-out 1',
+        'deal-coin-bottom-left': 'deal-coin-bottom-left 0.8s ease-out 1',
+        'deal-coin-top-right': 'deal-coin-top-right 0.8s ease-out 1',
+        'deal-coin-middle-right': 'deal-coin-middle-right 0.8s ease-out 1',
+        'deal-coin-bottom-right': 'deal-coin-bottom-right 0.8s ease-out 1'
       },
       keyframes: {
         'move-in': {
@@ -535,6 +554,17 @@ module.exports = {
             opacity: '1'
           }
         },
+        'fade-in-delay': {
+          '0%': {
+            opacity: '0'
+          },
+          '50%': {
+            opacity: '0'
+          },
+          '100%': {
+            opacity: '1'
+          }
+        },
         fade_in_bg: {
           '0%': {
             backgroundOpacity: '0.3'
@@ -555,6 +585,78 @@ module.exports = {
           '100%': {
             transform: 'scale(1)',
             opacity: '1'
+          }
+        },
+        'deal-coin-top-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            opacity: '1',
+            left: '4rem',
+            top: '1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-middle-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '3rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem'
+          }
+        },
+        'deal-coin-bottom-left': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '4rem',
+            top: '-1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-top-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            opacity: '1',
+            left: '-4rem',
+            top: '1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1',
+            left: '0rem',
+            top: '0rem'
+          }
+        },
+        'deal-coin-middle-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '-3rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem'
+          }
+        },
+        'deal-coin-bottom-right': {
+          '0%': {
+            transform: 'scale(0.85)',
+            left: '-4rem',
+            top: '-1rem'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '0rem',
+            top: '0rem'
           }
         }
       },

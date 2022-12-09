@@ -7,6 +7,6 @@ export const investmentRounds: {
   { text: 'Seed', value: 'Seed' },
   { text: 'Series A', value: 'Series A' },
   { text: 'Series B', value: 'Series B' },
-  { text: 'Public', value: 'Public' },
-  { text: 'Custom', value: '', icon: '/images/activity/plus-sign.svg' }
+  { text: 'Public', value: 'Public' } /* ,
+  { text: 'Custom', value: '', icon: '/images/activity/plus-sign.svg' } */
 ];

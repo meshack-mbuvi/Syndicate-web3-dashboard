@@ -145,7 +145,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   const detachedWeb3 = useMemo(() => {
     if (chainId) {
-      // @ts-expect-error TS(2339): Property 'rpcUrl' does not exist on type 'never'.
       const rpcUrl = NETWORKS[chainId]?.rpcUrl;
       if (rpcUrl) return new Web3(`${rpcUrl}`);
 
@@ -200,8 +199,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * Instantiates contract, and adds it together with web3 provider details to
    * store
    */
-  // @ts-expect-error TS(7030): Not all code paths return a value.
-  const initializeWeb3 = async () => {
+  const initializeWeb3 = async (): Promise<void> => {
     try {
       // initialize contract now
       const contracts = await getSyndicateContracts(web3, activeNetwork);
@@ -216,7 +214,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
       if (account) {
-        return dispatch(
+        dispatch(
           setLibrary({
             account,
             web3: web3,
@@ -226,7 +224,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
           })
         );
       } else {
-        return dispatch(
+        dispatch(
           setLibrary({
             account,
             // @ts-expect-error TS(2322): Type 'Web3 | undefined' is not assignable to type 'IWeb3'.
@@ -298,7 +296,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             console.log({ error });
           });
       } else if (!loading && activeNetwork && !account) {
-        initializeWeb3();
+        void initializeWeb3();
       }
     } catch (error) {
       console.log({ error });
@@ -317,7 +315,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       };
 
       const handleChainChanged = async () => {
-        getCurrentEthNetwork();
+        await getCurrentEthNetwork();
         await newWeb3Instance(activeProvider);
         const { network, ethersProvider } = await getProviderAccountAndNetwork(
           activeProvider
@@ -368,7 +366,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     const [address, network] = await Promise.all([
       ethersProvider.getSigner().getAddress(),
       ethersProvider.getNetwork()
-    ]);
+    ]).catch(() => []);
     // if (network.chainId == 1) {
     //   // ens only works for mainnet
     //   const ensName = await p.lookupAddress(address);
@@ -383,12 +381,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     return { address, network, ethersProvider };
   };
 
-  const newWeb3Instance = async (provider: any) => {
+  const newWeb3Instance = async (provider: any): Promise<void> => {
+    const transactionBlockTimeout =
+      NETWORKS[chainId || 1].transactionBlockTimeout;
+
     const newWeb3 = new Web3(provider);
     // hot fix
     // increase default timeout to 48hrs (172800 seconds)
     // this stops transactions from being marked as failed on the UI while still pending on-chain.
     newWeb3.eth.transactionPollingTimeout = 172800;
+    newWeb3.eth.transactionBlockTimeout = transactionBlockTimeout;
 
     setWeb3(newWeb3);
   };
@@ -462,7 +464,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         // @ts-expect-error TS(2571): Object is of type 'unknown'.
         if (error.code === 4902) {
           try {
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             const activeNetwork = NETWORKS[_chainId];
             // @ts-expect-error TS(2339): Property 'request' does not exist on type 'never'.
             await activeProvider?.request({
@@ -489,14 +490,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
     } else {
       setChainId(_chainId);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       setWeb3(new Web3(`${NETWORKS[_chainId].rpcUrl}`));
     }
   };
 
   useEffect(() => {
     // check current network type
-    getCurrentEthNetwork();
+    void getCurrentEthNetwork();
   }, [currentEthereumNetwork]);
 
   // always show the success modal for only 1 second
@@ -504,7 +504,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (showSuccessModal) {
       const timer = setTimeout(() => setShowSuccessModal(false), 1000);
-      return () => clearTimeout(timer);
+      return (): void => clearTimeout(timer);
     }
   }, [showSuccessModal]);
 
@@ -535,7 +535,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [chainId, supportedNetworks]);
 
   // This handles the connect for a wallet
-  const connectWallet = async (providerName: string, walletName?: string) => {
+  const connectWallet = async (
+    providerName: string,
+    walletName?: string
+  ): Promise<void> => {
     closeWalletModal();
     setWalletConnecting(true);
 
@@ -554,18 +557,14 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
-    } catch (error) {
+    } catch (error: any) {
       if (
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         error.code === -32002 ||
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         error.message === 'Already processing eth_requestAccounts. Please wait.'
       ) {
         showWalletConnecting = true;
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
       } else if (error.message === 'User Rejected') {
         connectionRejected = true;
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
       } else if (error.message === 'No Web3 Provider found') {
         providerNotFound = true;
       } else {

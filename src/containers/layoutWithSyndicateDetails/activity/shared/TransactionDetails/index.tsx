@@ -3,45 +3,49 @@ import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfol
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import {
-  RoundCategory,
-  TransactionCategory
-} from '@/state/erc20transactions/types';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { isAddress } from 'ethers/lib/utils';
 
-type Transaction = 'outgoing' | 'incoming';
+export type Transaction = 'outgoing' | 'incoming';
+
+export interface TokenDetails {
+  name: string;
+  symbol: string;
+  icon?: string;
+  amount: string;
+}
 
 interface ITransactionDetails {
-  tokenDetails: {
-    name: string;
-    symbol: string;
-    icon?: string;
-    amount: string;
-  }[];
+  tokenDetails: TokenDetails[];
   transactionType: Transaction;
+  isAnnotationsModalShown: boolean;
   isTransactionAnnotated: boolean;
   addresses: string | string[];
   onModal?: boolean;
   category: TransactionCategory;
   companyName?: string;
-  round: RoundCategory;
+  round?: string | undefined;
   contractAddress: string;
+  numClubMembers?: number;
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
   tokenDetails,
   transactionType,
+  isAnnotationsModalShown,
   isTransactionAnnotated,
   addresses,
   onModal = false,
   category,
   companyName,
   round,
-  contractAddress
+  contractAddress,
+  numClubMembers
 }) => {
   const {
     web3Reducer: {
@@ -55,12 +59,18 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       if (onModal) {
         return 'to';
       }
-      return category === 'INVESTMENT' ? 'invested in' : 'sent to';
+      return category === TransactionCategory.INVESTMENT
+        ? 'invested in'
+        : category === TransactionCategory.DISTRIBUTION
+        ? 'distributed to'
+        : 'sent to';
     } else if (transactionType === 'incoming') {
       if (onModal) {
         return 'from';
       }
-      return category === 'DEPOSIT' ? 'deposited by' : 'received from';
+      return category === TransactionCategory.DEPOSIT
+        ? 'deposited by'
+        : 'received from';
     }
   };
   const addGrayToDecimalInput = (str: any) => {
@@ -89,7 +99,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
 
   return (
     <>
-      {category !== 'OFF_CHAIN_INVESTMENT' ? (
+      {category !== TransactionCategory.OFF_CHAIN_INVESTMENT ? (
         <div className={`flex items-center ${width < 400 ? 'flex-col' : ''}`}>
           {/* Outgoing token(s) */}
           <div className="flex items-center">
@@ -124,7 +134,11 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 </div>
               </>
             ) : (
-              <TokenCollection numberVisible={3} tokenDetails={tokenDetails} />
+              <TokenCollection
+                numberVisible={3}
+                tokenDetails={tokenDetails}
+                isAnnotationsModalShown={isAnnotationsModalShown}
+              />
             )}
           </div>
           {/* Transaction direction: e.g "invested in", "to", "from" ... */}
@@ -153,7 +167,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                     }
                   </>
                 ) : null}
-                {onModal && category === 'DEPOSIT' ? (
+                {onModal && category === TransactionCategory.DEPOSIT ? (
                   <div className="mr-2 flex items-center">
                     <Image
                       src={'/images/User_Icon.svg'}
@@ -162,6 +176,13 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                     />
                   </div>
                 ) : null}
+                {!onModal && category === TransactionCategory.DISTRIBUTION && (
+                  <div className="text-base">
+                    {numClubMembers === 1
+                      ? `${numClubMembers} member`
+                      : `${numClubMembers} members`}
+                  </div>
+                )}
                 <div
                   className={`${
                     onModal ? 'sm:text-2xl text-base' : 'text-base'
@@ -169,7 +190,17 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 >
                   {companyName
                     ? companyName
-                    : !web3.utils.isAddress(addresses[0])
+                    : !onModal && category === TransactionCategory.DISTRIBUTION
+                    ? ''
+                    : onModal &&
+                      category === TransactionCategory.DISTRIBUTION &&
+                      numClubMembers === 1
+                    ? `${numClubMembers} member`
+                    : onModal &&
+                      category === TransactionCategory.DISTRIBUTION &&
+                      numClubMembers !== 1
+                    ? `${numClubMembers} members`
+                    : !isAddress(addresses[0])
                     ? addresses[0]
                     : formatAddress(addresses[0], 6, 4)}
                 </div>
@@ -185,7 +216,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
             <p className="text-xl">
               {companyName
                 ? companyName
-                : !web3.utils.isAddress(addresses[0])
+                : !isAddress(addresses[0])
                 ? addresses[0]
                 : formatAddress(addresses[0], 6, 4)}
             </p>

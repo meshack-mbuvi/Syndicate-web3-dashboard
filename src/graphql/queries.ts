@@ -1,3 +1,4 @@
+import { DocumentNode } from '@apollo/client';
 import gql from 'graphql-tag';
 
 export const MY_CLUBS_QUERY = gql`
@@ -56,13 +57,17 @@ export const CLUBS_HAVE_INVESTED = gql`
 `;
 
 export const CLUB_TOKEN_MEMBERS = gql`
-  query getClubMembers($where: SyndicateDAO_filter) {
+  query getClubMembers(
+    $where: SyndicateDAO_filter
+    $where2: SyndicateEvent_filter
+  ) {
     syndicateDAOs(where: $where) {
       id
       members {
         id
         depositAmount
         tokens
+        createdAt
         member {
           id
           memberAddress
@@ -73,6 +78,21 @@ export const CLUB_TOKEN_MEMBERS = gql`
       contractAddress
       startTime
       endTime
+    }
+
+    syndicateEvents(where: $where2) {
+      ... on MemberMinted {
+        memberAddress
+        createdAt
+      }
+      ... on MemberMintedEth {
+        memberAddress
+        createdAt
+      }
+      ... on OwnerMinted {
+        createdAt
+        memberAddress
+      }
     }
   }
 `;
@@ -104,70 +124,6 @@ export const MERKLE_AIRDROP_CREATED = gql`
       endTime
       startTime
       root
-    }
-  }
-`;
-
-export const RECENT_TRANSACTIONS = gql`
-  query Query(
-    $input: String!
-    $take: Int
-    $where: Financial_JSONObject
-    $skip: Int
-    $chainId: Int!
-  ) {
-    Financial_recentTransactions(
-      input: $input
-      take: $take
-      where: $where
-      skip: $skip
-      chainId: $chainId
-    ) {
-      edges {
-        blockNumber
-        blockTimestamp
-        contractAddress
-        cumulativeGasUsed
-        events {
-          eventType
-          id
-          transactionId
-        }
-        fromAddress
-        gasLimit
-        gasPrice
-        gasUsed
-        hash
-        isError
-        isOutgoingTransaction
-        metadata {
-          acquisitionDate
-          annotationMetadata
-          companyName
-          createdAt
-          fromLabel
-          fullyDilutedOwnershipStake
-          memo
-          numberShares
-          numberTokens
-          postMoneyValuation
-          preMoneyValuation
-          roundCategory
-          toLabel
-          transactionCategory
-          transactionId
-          updatedAt
-        }
-        syndicateAddress
-        toAddress
-        tokenDecimal
-        tokenName
-        tokenLogo
-        tokenSymbol
-        value
-        tokenDescription
-      }
-      totalCount
     }
   }
 `;
@@ -368,6 +324,142 @@ export const GAS_RATE = gql`
           usd
         }
       }
+    }
+  }
+`;
+
+export const LEGACY_TRANSACTIONS_QUERY = gql`
+  query Query(
+    $chainId: Int!
+    $input: String!
+    $order: Order
+    $limit: Int
+    $where: TransactionEventSearchFilter
+    $offset: Int
+  ) {
+    legacyTransactionEvents(
+      chainId: $chainId
+      input: $input
+      order: $order
+      limit: $limit
+      where: $where
+      offset: $offset
+    ) {
+      events {
+        chainId
+        hash
+        blockNumber
+        timestamp
+        ownerAddress
+        contractAddress
+        syndicateEvents {
+          id
+          eventType
+          transactionId
+          distributionBatch
+        }
+        annotation {
+          chainId
+          transactionId
+          syndicateAddress
+          memo
+          companyName
+          transactionCategory
+          roundCategory
+          sharesAmount
+          tokenAmount
+          equityStake
+          acquisitionDate
+          preMoneyValuation
+          postMoneyValuation
+          fromLabel
+          toLabel
+          annotationMetadata
+          createdAt
+          updatedAt
+        }
+        transfers {
+          chainId
+          hash
+          from
+          to
+          contractAddress
+          type
+          value
+          tokenName
+          tokenSymbol
+          tokenDecimal
+          tokenLogo
+        }
+      }
+    }
+  }
+`;
+
+export const graphCurrentBlock = gql`
+  query graphCurrentBlock {
+    _meta {
+      block {
+        hash
+        number
+      }
+      deployment
+    }
+  }
+`;
+
+export const TOKEN_DETAILS = gql`
+  query Token($chainId: Int!, $address: String!) {
+    token(chainId: $chainId, address: $address) {
+      ... on ERC20Token {
+        address
+      }
+      chainId
+      name
+      symbol
+      decimals
+      logo
+    }
+  }
+`;
+
+export const getBasicMerkleProofQuery: DocumentNode = gql`
+  query getBasicMerkleProof($merkleRoot: String!, $account: String!) {
+    getBasicMerkleProof(merkleRoot: $merkleRoot, account: $account) {
+      proof
+    }
+  }
+`;
+
+// TODO: Write proper queries below once the graph is complete
+export const GetAdminDeals = gql`
+  query AdminDeals($where: Deal_filter) {
+    deal(where: $where) {
+      dealName
+    }
+  }
+`;
+
+export const GetMemberDeals = gql`
+  query MemberDeals($where: Deal_filter) {
+    deal(where: $where) {
+      dealName
+    }
+  }
+`;
+
+export const GetDealDetails = gql`
+  query DealDetails($chainId: Int!, $address: String!) {
+    deal(chainId: $chainId, address: $address) {
+      dealName
+    }
+  }
+`;
+
+export const GetDealPrecommits = gql`
+  query Precommits($chainId: Int!, $address: String!) {
+    deal(chainId: $chainId, address: $address) {
+      dealName
     }
   }
 `;

@@ -1,9 +1,23 @@
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import React from 'react';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import ConnectWallet from '@/components/connectWallet';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
   title: '3. Molecules/Club Details/Club Header',
-  component: ClubHeader
+  component: ClubHeader,
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <ConnectWalletProvider>
+          <Story />
+          <ConnectWallet />
+        </ConnectWalletProvider>
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => <ClubHeader {...args} />;

@@ -1,3 +1,4 @@
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { B2, L2 } from '@/components/typography';
 
@@ -33,9 +34,14 @@ export const ChangeSettingsDisclaimerModal: React.FC<Props> = ({
           </B2>
         </div>
         <div className="px-10 mb-10 space-y-6">
-          <button onClick={onClick} className={`green-CTA mt-6 w-full`}>
+          <CTAButton
+            onClick={onClick}
+            fullWidth={true}
+            extraClasses="mt-6"
+            type={CTAType.TRANSACTIONAL}
+          >
             Submit
-          </button>
+          </CTAButton>
         </div>
       </div>
     </Modal>

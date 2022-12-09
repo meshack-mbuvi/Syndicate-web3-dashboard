@@ -6,6 +6,7 @@ import { ContractMapper } from '@/hooks/useGasDetails';
 import { useRouter } from 'next/router';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
+import { CTAButton } from '@/components/CTAButton';
 
 interface IClubStillOpenModal {
   showClubStillOpenModal: boolean;
@@ -99,13 +100,13 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
               />
             </Callout>
             <div className="bg-blue bg-opacity-20 rounded-b-lg">
-              <button
-                className={`w-full primary-CTA hover:opacity-90 transition-all`}
-                type="button"
+              <CTAButton
+                fullWidth={true}
+                buttonType="button"
                 onClick={() => handleCloseClubPostMint()}
               >
                 Yes, close club to deposits
-              </button>
+              </CTAButton>
             </div>
           </div>
         </div>

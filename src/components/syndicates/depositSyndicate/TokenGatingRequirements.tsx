@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showWalletModal } from '@/state/wallet/actions';
 import Image from 'next/image';
 import FadeIn from '@/components/fadeIn/FadeIn';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 
@@ -96,9 +96,9 @@ const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
         </div>
         {!gatingRequirementsMet && (
           <div>
-            <CtaButton onClick={connectWallet}>
+            <CTAButton onClick={connectWallet}>
               Connect a different wallet
-            </CtaButton>
+            </CTAButton>
           </div>
         )}
       </div>

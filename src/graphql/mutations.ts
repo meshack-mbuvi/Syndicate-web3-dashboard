@@ -1,16 +1,18 @@
 import { gql } from '@apollo/client';
 
 export const ANNOTATE_TRANSACTIONS = gql`
-  mutation annotateTransactions(
+  mutation LegacyAnnotateTransactions(
     $input: String!
     $chainId: Int
-    $transactionAnnotationList: [Financial_TransactionAnnotationInput]
+    $transactionAnnotationList: [TransactionAnnotationInput]!
   ) {
-    Financial_annotateTransactions(
+    legacyAnnotateTransactions(
       input: $input
       chainId: $chainId
       transactionAnnotationList: $transactionAnnotationList
-    )
+    ) {
+      success
+    }
   }
 `;
 
@@ -25,5 +27,13 @@ export const SET_MEMBER_SIGN_STATUS = gql`
       address: $address
       hasSigned: $hasSigned
     )
+  }
+`;
+
+export const CREATE_BASIC_MERKLE_TREE_MUTATION = gql`
+  mutation createBasicMerkleTree($accounts: [String!]!) {
+    createBasicMerkleTree(accounts: $accounts) {
+      merkleRoot
+    }
   }
 `;

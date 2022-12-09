@@ -1,10 +1,11 @@
+import { ActionButton, ActionButtonType } from '@/components/actionButton';
 import { SearchInput } from '@/components/inputs';
-import { LinkButton, LinkType } from '@/components/linkButtons';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { SET_MEMBER_SIGN_STATUS } from '@/graphql/mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
@@ -123,7 +124,12 @@ const MembersTable = ({
 
   const [setMemberHasSigned, { loading }] = useMutation(
     SET_MEMBER_SIGN_STATUS,
-    { context: { clientName: 'backend', chainId: activeNetwork.chainId } }
+    {
+      context: {
+        clientName: SUPPORTED_GRAPHS.BACKEND,
+        chainId: activeNetwork.chainId
+      }
+    }
   );
 
   const {
@@ -135,7 +141,10 @@ const MembersTable = ({
       clubAddress,
       address: memberAddress
     },
-    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.BACKEND,
+      chainId: activeNetwork.chainId
+    },
     skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 
@@ -194,8 +203,8 @@ const MembersTable = ({
 
         {isOwner && (
           <div className="inline-flex items-right">
-            <LinkButton
-              type={LinkType.MEMBER}
+            <ActionButton
+              type={ActionButtonType.ADD}
               onClick={() => {
                 if (depositsEnabled) {
                   toggleAddMemberModal();
@@ -203,7 +212,9 @@ const MembersTable = ({
                   setShowMintNavToClubSettings(true);
                 }
               }}
-            />
+            >
+              Add member
+            </ActionButton>
           </div>
         )}
       </div>

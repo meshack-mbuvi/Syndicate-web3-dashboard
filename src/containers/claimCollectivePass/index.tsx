@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { B2, B3, B4, H1, H2, H3, H4, L2 } from '@/components/typography';
 
 export enum WalletState {
@@ -153,9 +153,15 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
       <div className="fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:p-8 bg-gray-syn8 space-y-4 sm:space-y-10 text-center sm:rounded-2.5xl">
         {walletLabel}
-        <CtaButton greenCta={walletState === WalletState.CONNECTED}>
+        <CTAButton
+          type={
+            walletState === WalletState.CONNECTED
+              ? CTAType.TRANSACTIONAL
+              : CTAType.PRIMARY
+          }
+        >
           {walletButtonText}
-        </CtaButton>
+        </CTAButton>
         {walletState === WalletState.CONNECTED && gasEstimate && (
           <B3 extraClasses="text-gray-syn5">
             Est. gas fee: {gasEstimate.tokenAmount} {gasEstimate.tokenSymbol}{' '}

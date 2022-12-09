@@ -2,7 +2,8 @@ import { CollectivesInteractiveBackground } from '@/components/collectives/inter
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
-  title: '3. Molecules/Collectives/Interactive Background'
+  title: '3. Molecules/Collectives/Interactive Background',
+  component: CollectivesInteractiveBackground
 };
 
 const Template = (args: any) => {
@@ -18,7 +19,8 @@ export const Default = Template.bind({});
 Default.args = {
   heightClass: 'h-screen',
   widthClass: 'w-screen',
-  numberOfParticles: 40
+  numberOfParticles: 40,
+  chromatic: { disableSnapshot: true }
 };
 
 export const HalfScreen = Template.bind({});
@@ -26,7 +28,8 @@ export const HalfScreen = Template.bind({});
 HalfScreen.args = {
   heightClass: 'h-screen',
   widthClass: 'w-1/2',
-  numberOfParticles: 40
+  numberOfParticles: 40,
+  chromatic: { disableSnapshot: true }
 };
 
 export const FloatingImage = Template.bind({});
@@ -37,7 +40,8 @@ FloatingImage.args = {
   numberOfParticles: 40,
   floatingIcon:
     'https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA',
-  mediaType: NFTMediaType.IMAGE
+  mediaType: NFTMediaType.IMAGE,
+  chromatic: { disableSnapshot: true }
 };
 
 export const FloatingVideo = Template.bind({});
@@ -48,5 +52,6 @@ FloatingVideo.args = {
   numberOfParticles: 40,
   floatingIcon:
     'https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4',
-  mediaType: NFTMediaType.VIDEO
+  mediaType: NFTMediaType.VIDEO,
+  chromatic: { disableSnapshot: true }
 };

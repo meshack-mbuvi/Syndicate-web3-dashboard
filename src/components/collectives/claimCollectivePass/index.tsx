@@ -1,6 +1,6 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CLAIM_CLICK } from '@/components/amplitude/eventNames';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H3, H4, L2 } from '@/components/typography';
 import { CollectiveHeader } from '@/containers/collectives/shared/collectiveHeader';
@@ -272,8 +272,12 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           {isOpen ? (
             <div className="space-y-4">
               {walletState !== WalletState.MAX_PASSES_REACHED && (
-                <CtaButton
-                  greenCta={walletState === WalletState.CONNECTED}
+                <CTAButton
+                  type={
+                    walletState === WalletState.CONNECTED
+                      ? CTAType.TRANSACTIONAL
+                      : CTAType.PRIMARY
+                  }
                   onClick={() => {
                     if (
                       walletState === WalletState.NOT_CONNECTED ||
@@ -289,7 +293,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
                   }}
                 >
                   {walletButtonText}
-                </CtaButton>
+                </CTAButton>
               )}
               {walletState === WalletState.CONNECTED && gasEstimate && (
                 // Positioned absolutely so it doesn't take up space

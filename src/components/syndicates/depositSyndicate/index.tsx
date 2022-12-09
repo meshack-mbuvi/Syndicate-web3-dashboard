@@ -1,10 +1,17 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import {
+  CLUB_DEPOSIT,
+  DEPOSIT_CONTINUE_CLICK
+} from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import ArrowDown from '@/components/icons/arrowDown';
+import { InfoIcon } from '@/components/iconWrappers';
 import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
@@ -14,11 +21,11 @@ import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
 import { useNativeBalance } from '@/hooks/useNativeBalance';
@@ -28,6 +35,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
@@ -41,20 +49,13 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Floater from 'react-floater';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
-import { InfoIcon } from '@/components/iconWrappers';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import ERC20ABI from '@/utils/abi/erc20.json';
 import { AbiItem } from 'web3-utils';
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  CLUB_DEPOSIT,
-  DEPOSIT_CONTINUE_CLICK
-} from '@/components/amplitude/eventNames';
 
 import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAndDetails';
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
+import { FEATURE_FLAGS } from '@/pages/_app';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -178,8 +179,10 @@ const DepositSyndicate: React.FC = () => {
     useFetchAccountHoldingsAndDetails();
   const { getTokenReqDetails } = useMeetsTokenGatedRequirements();
 
-  const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag();
+  const { isReady, isTreatmentOn: isClubMixinGuardTreatmentOn } =
+    useFeatureFlag(FEATURE_FLAGS.CLUBS_MIXIN_GUARDED, {
+      clubsMixinGuardedAllowlisted: true
+    });
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -207,7 +210,7 @@ const DepositSyndicate: React.FC = () => {
       setMemberTokens(memberTokens);
     }
 
-    return () => {
+    return (): void => {
       setOwnershipShare(0);
     };
   }, [
@@ -302,12 +305,12 @@ const DepositSyndicate: React.FC = () => {
     web3
   ]);
 
-  const onTxConfirm = () => {
+  const onTxConfirm = (): void => {
     setMetamaskConfirmPending(false);
     setSubmitting(true);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     startPolling(1000); // start polling for member stakes
     setMetamaskConfirmPending(false);
     if (claimEnabled) {
@@ -326,13 +329,15 @@ const DepositSyndicate: React.FC = () => {
   useEffect(() => {
     if (!account || !address || isEmpty(web3)) return;
 
-    getMemberBalance(address, account, web3, activeNetwork).then((balance) => {
-      if (balance) {
-        setIsMember(true);
-      } else {
-        setIsMember(false);
+    void getMemberBalance(address, account, web3, activeNetwork).then(
+      (balance) => {
+        if (balance) {
+          setIsMember(true);
+        } else {
+          setIsMember(false);
+        }
       }
-    });
+    );
   }, [account, address]);
 
   // since the subgraph might give us old data on refetch,
@@ -357,7 +362,7 @@ const DepositSyndicate: React.FC = () => {
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
 
-  const onTxFail = (error: any) => {
+  const onTxFail = (error: any): void => {
     // if transaction errored because of a timeout, we do not need to
     // show the error state.
     if (error?.message.includes('Be aware that it might still be mined')) {
@@ -373,7 +378,7 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
-  const claimClubTokens = async () => {
+  const claimClubTokens = async (): Promise<void> => {
     setMetamaskConfirmPending(true);
     setTransactionRejected(false);
     setTransactionFailed(false);
@@ -403,13 +408,10 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.SingleTokenMintModule;
   const NATIVE_MINT_MODULE =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
   const DEPOSIT_TOKEN_MINT_MODULE =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.DepositTokenMintModule;
 
   /**
@@ -419,7 +421,7 @@ const DepositSyndicate: React.FC = () => {
    * The syndicate address is obtained from the page params
    * @param {object} data contains amount, and accredited
    */
-  const investInSyndicate = async (amount: string) => {
+  const investInSyndicate = async (amount: string): Promise<void> => {
     setCurrentTransaction(2);
     setMetamaskConfirmPending(true);
     setTransactionRejected(false);
@@ -488,8 +490,7 @@ const DepositSyndicate: React.FC = () => {
         deposit_token: depositTokenSymbol
       });
     } catch (error) {
-      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
-      const { code, message } = error;
+      const { code, message } = error as { code: number; message: string };
 
       // we don't want to dismiss the modal when the user rejects
       // the transaction.
@@ -570,7 +571,7 @@ const DepositSyndicate: React.FC = () => {
     }
   }, [_erc20Balance, depositAmount, erc20Balance, nativeDepositToken]);
 
-  const handleSetMax = () => {
+  const handleSetMax = (): void => {
     if (
       !nativeDepositToken &&
       erc20Balance &&
@@ -624,7 +625,7 @@ const DepositSyndicate: React.FC = () => {
   useEffect(() => {
     if (depositAmount) {
       if (
-        parseInt(currentMemberAllowance) >= parseInt(depositAmount) ||
+        parseFloat(currentMemberAllowance) >= parseFloat(depositAmount) ||
         nativeDepositToken
       ) {
         // allowance already exists. Proceed with deposit
@@ -823,6 +824,7 @@ const DepositSyndicate: React.FC = () => {
             // was approved successfully or not.
             await checkCurrentMemberAllowance();
             setSubmittingAllowanceApproval(false);
+            setSufficientAllowanceSet(true);
             resolve(receipt);
 
             // update current transaction step

@@ -11,6 +11,9 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
+import { CTAButton, CTAType } from '../CTAButton';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ADMIN_GENERATE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 
 interface FormInputs {
   legalEntityName: string;
@@ -125,7 +128,7 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{
                     text: (
                       <a
-                        href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
+                        href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity"
                         target="_blank"
                         rel="noreferrer"
                         style={{ float: 'right' }}
@@ -228,17 +231,18 @@ const CreateAgreementComponent: React.FC = () => {
                       />
                       <span className="ml-2">Back</span>
                     </button>
-                    <button
-                      className={`${
-                        !isValid
-                          ? 'primary-CTA-disabled text-gray-lightManatee'
-                          : 'primary-CTA hover:opacity-90 transition-all'
-                      }`}
-                      type="submit"
+                    <CTAButton
+                      type={!isValid ? CTAType.DISABLED : CTAType.PRIMARY}
+                      buttonType="submit"
                       disabled={!isValid}
+                      onClick={() => {
+                        amplitudeLogger(ADMIN_GENERATE_DOCS_CLICK, {
+                          flow: Flow.CLUB_LEGAL
+                        });
+                      }}
                     >
                       Generate my documents
-                    </button>
+                    </CTAButton>
                   </div>
                 </div>
               </div>

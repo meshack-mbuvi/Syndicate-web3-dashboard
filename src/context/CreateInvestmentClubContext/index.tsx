@@ -9,7 +9,6 @@ import {
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
 import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
-import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
   resetClubCreationReduxState,
@@ -85,11 +84,10 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork, account }
+      web3: { activeNetwork }
     },
     createInvestmentClubSliceReducer: {
-      mintEndTime: { mintTime },
-      tokenDetails: { depositTokenSymbol, depositTokenLogo }
+      mintEndTime: { mintTime }
     }
   } = useSelector((state: AppState) => state);
 
@@ -225,37 +223,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     dispatch(setTransactionHash(transactionHash));
   };
 
-  const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
   const onTxReceipt = (receipt: any) => {
     amplitudeLogger(CLUB_CREATION, {
       flow: Flow.CLUB_CREATE,
       transaction_status: 'Success'
     });
-    const {
-      tokenAddress,
-      name,
-      symbol,
-      depositToken,
-      endTime,
-      startTime,
-      tokenCap
-    } = receipt.events.ERC20ClubCreated.returnValues;
-
-    // save to local storage
-    saveNewClub({
-      tokenAddress,
-      name,
-      symbol,
-      account,
-      depositToken,
-      endTime,
-      startTime,
-      tokenCap,
-      activeNetwork,
-      depositTokenSymbol,
-      depositTokenLogo
-    });
-
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
     );

@@ -26,7 +26,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import { Dispatch } from 'redux';
 
 export const ERC20TokenDefaultState = {
-  isValidClub: false,
+  isValid: false,
   name: '',
   owner: '',
   address: '',
@@ -104,7 +104,6 @@ export const getERC20TokenDetails = async (
         activeMintReqs,
         mintModule
       );
-
       const [name, owner, tokenDecimals, symbol, memberCount] =
         await Promise.all([
           ERC20tokenContract.name(),
@@ -112,8 +111,14 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.decimals(),
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount()
-        ]);
+        ]).catch(() => {
+          // High chances that this club does not exist in active network
+          return [];
+        });
 
+      if (!name || !owner) return ERC20TokenDefaultState;
+
+      // High likelihood this club does not exist in active network
       const totalSupply = await ERC20tokenContract.totalSupply().then(
         (wei: any) => getWeiAmount(web3, wei, tokenDecimals, false)
       );
@@ -215,14 +220,14 @@ export const getDepositDetails = async (
   }
   let nativeDepositToken = false;
 
-  const NATIVE_MINT_MODULE =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+  const NATIVE_MINT_MODULE: string =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.NativeMintModule;
 
-  if (!depositToken && ERC20tokenContract) {
+  if ((!depositToken && ERC20tokenContract) || isZeroAddress(depositToken)) {
     depositToken = await DepositTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
+
     if (isZeroAddress(depositToken)) {
       depositToken = '';
       mintModule = NATIVE_MINT_MODULE;
@@ -231,6 +236,7 @@ export const getDepositDetails = async (
       depositToken = await SingleTokenMintModule?.depositToken(
         ERC20tokenContract.clubERC20Contract._address
       );
+
       if (!depositToken || isZeroAddress(depositToken)) {
         depositToken = '';
         mintModule = NATIVE_MINT_MODULE;
@@ -251,10 +257,9 @@ export const getDepositDetails = async (
   return {
     mintModule,
     nativeDepositToken,
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
     depositTokenLogo: nativeDepositToken
       ? activeNetwork.nativeCurrency.logo
-      : tokenDetails.logo,
+      : tokenDetails.logo || '',
     depositTokenSymbol: tokenDetails.symbol,
     depositTokenName: tokenDetails.name,
     depositTokenDecimals: tokenDetails.decimals,
@@ -267,7 +272,7 @@ export const isNativeDepositToken = async (
   ERC20tokenContract: any,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract
-) => {
+): Promise<{ _nativeDepositToken: boolean }> => {
   let _nativeDepositToken = false;
 
   let depositToken = await DepositTokenMintModule?.depositToken(
@@ -322,6 +327,7 @@ export const setERC20Token =
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoadingClub(true));
+
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
@@ -354,7 +360,6 @@ export const setERC20Token =
             : erc20Token.maxTotalDeposits
         })
       );
-
       dispatch(setLoadingClub(false));
     } catch (error) {
       console.log({ error });

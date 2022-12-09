@@ -6,8 +6,9 @@ import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useCollectivesFeatureFlag from '@/hooks/collectives/useCollectivesFeatureFlag';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 const CreateCollectivePage: React.FC = () => {
   const {
@@ -18,7 +19,12 @@ const CreateCollectivePage: React.FC = () => {
 
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const { isReady, readyCollectivesClient } = useCollectivesFeatureFlag();
+  const { isReady, readyClient: readyCollectivesClient } = useFeatureFlag(
+    FEATURE_FLAGS.COLLECTIVES,
+    {
+      collectivesAllowlisted: true
+    }
+  );
 
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();
@@ -32,13 +38,16 @@ const CreateCollectivePage: React.FC = () => {
     };
   }, [readyCollectivesClient, web3, isReady]);
 
+  const isCollectivesReady =
+    isReady && readyCollectivesClient?.treatment === 'on' && !isPolygon;
+
   return pageIsLoading ? (
     <Layout>
       <div className="container my-32">
         <Spinner />
       </div>
     </Layout>
-  ) : isReady && readyCollectivesClient.treatment === 'on' && !isPolygon ? (
+  ) : isCollectivesReady ? (
     <CreateCollectiveContainer />
   ) : (
     <NotFoundPage />

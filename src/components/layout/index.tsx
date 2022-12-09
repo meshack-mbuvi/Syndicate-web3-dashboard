@@ -12,8 +12,11 @@ import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
+import useAdminClubs from '@/hooks/clubs/useAdminClubs';
+import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
+import Link from 'next/link';
 
 interface Props {
   showBackButton?: boolean;
@@ -23,16 +26,22 @@ interface Props {
   showNav?: boolean;
   activeIndex?: number;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
-  hideWalletAndEllipsis?: boolean;
+  hideWallet?: boolean;
+  hideEllipsis?: boolean;
   showCloseButton?: boolean;
+  keepLogoCentered?: boolean;
   customClasses?: string;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
   showSideNav?: boolean;
   nextBtnDisabled?: boolean;
+  hideFooter?: boolean;
   handleNext?: (index?: number) => void;
+  showDotIndicators?: boolean;
   showDotIndicatorLabels?: boolean;
   handlePrevious?: (index?: number) => void;
+  showSideNavButton?: boolean;
+  sideNavLogo?: React.ReactElement;
 }
 
 const Layout: FC<Props> = ({
@@ -43,13 +52,16 @@ const Layout: FC<Props> = ({
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
-  hideWalletAndEllipsis = false,
+  hideWallet = false,
+  hideEllipsis = false,
   showCloseButton = false,
+  keepLogoCentered = false,
   showCreateProgressBar = false,
-  customClasses,
+  customClasses = 'items-start',
   showSideNav = false,
   nextBtnDisabled = true,
   showDotIndicatorLabels = true,
+  hideFooter = false,
   handleNext,
   handlePrevious,
   navItems = [
@@ -58,17 +70,30 @@ const Layout: FC<Props> = ({
       navItemText: 'Portfolio'
     }
   ],
-  showNavButton = false
+  showNavButton = false,
+  showSideNavButton = true,
+  sideNavLogo = (
+    <Link href="/" passHref>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+      <a>
+        <img src="/images/logo.svg" alt="Syndicate Logo" />
+      </a>
+    </Link>
+  ),
+  showDotIndicators = true
 }) => {
   const {
     web3Reducer: {
       web3: { account, status, activeNetwork, web3 }
     },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
       erc20Token: { owner, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
+
+  const { adminClubs, adminClubsLoading } = useAdminClubs();
+  const { memberClubs, memberClubsLoading } = useMemberClubs();
+  const loading = adminClubsLoading || memberClubsLoading;
 
   const router = useRouter();
   const { chain } = router.query;
@@ -88,8 +113,8 @@ const Layout: FC<Props> = ({
   // get content to occupy the viewport if we are in these states.
   // this will push the footer down to the bottom of the page to make it uniform
   // across the app
-  const clubsFound = myClubERC20s.length > 0 || otherClubERC20s.length > 0;
-  const fewClubs = myClubERC20s.length + otherClubERC20s.length < 4;
+  const clubsFound = adminClubs.length > 0 || memberClubs.length > 0;
+  const fewClubs = adminClubs.length + memberClubs.length < 4;
   const onPortfolioPage = clubsFound && fewClubs && portfolioPage;
   const pushFooter =
     onPortfolioPage ||
@@ -182,13 +207,16 @@ const Layout: FC<Props> = ({
           showBackButton={showBackButton}
           showNav={showNav}
           navItems={navItems}
+          showDotIndicators={showDotIndicators}
           dotIndicatorOptions={dotIndicatorOptions}
           handleExitClick={handleExitClick}
           activeIndex={activeIndex || 0}
           handlePrevious={handlePrevious}
-          hideWalletAndEllipsis={hideWalletAndEllipsis}
+          hideWallet={hideWallet}
+          hideEllipsis={hideEllipsis}
           showCloseButton={showCloseButton}
           showNavButton={showNavButton}
+          keepLogoCentered={keepLogoCentered}
           showCreateProgressBar={showCreateProgressBar}
           showLogo={!showSideNav}
           showSideNav={showSideNav}
@@ -218,13 +246,16 @@ const Layout: FC<Props> = ({
               activeIndex={activeIndex}
               nextBtnDisabled={nextBtnDisabled}
               showDotIndicatorLabels={showDotIndicatorLabels}
+              showSideNavButton={showSideNavButton}
+              sideNavLogo={sideNavLogo}
+              showDotIndicators={showDotIndicators}
             />
           </div>
         ) : null}
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
-          } z-20 justify-center items-start my-0 mx-auto ${customClasses}`}
+          } z-20 justify-center my-0 mx-auto ${customClasses}`}
         >
           {children}
         </div>
@@ -232,7 +263,8 @@ const Layout: FC<Props> = ({
       </div>
 
       {/* need to add in a check for collectives settings open because it uses Layout component */}
-      {createClubPage ||
+      {hideFooter ||
+      createClubPage ||
       modifyClubPage ||
       managerSettingsOpen ||
       distributionPage ? null : (

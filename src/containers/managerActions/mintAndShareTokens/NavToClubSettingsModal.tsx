@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { useRouter } from 'next/router';
 
 interface INavToClubSettingsModal {
@@ -42,7 +42,7 @@ const NavToClubSettingsModal: React.FC<INavToClubSettingsModal> = ({
           </p>
           <div className="w-full flex justify-center items-center">
             <a
-              href="https://guide.syndicate.io/en/web3-investment-clubs/modify-club-settings"
+              href="https://guide.syndicate.io/en/products/investment-clubs/modify-club-settings"
               className="flex items-center justify-center"
               target="_blank"
               rel="noreferrer"
@@ -56,7 +56,7 @@ const NavToClubSettingsModal: React.FC<INavToClubSettingsModal> = ({
             </a>
           </div>
         </div>
-        <CtaButton
+        <CTAButton
           fullWidth={false}
           onClick={() => {
             // push to localstorage to show specific details on the settings page and also later on in the
@@ -72,7 +72,7 @@ const NavToClubSettingsModal: React.FC<INavToClubSettingsModal> = ({
           }}
         >
           <span className="text-black">Go to club settings</span>
-        </CtaButton>
+        </CTAButton>
       </div>
     </Modal>
   );

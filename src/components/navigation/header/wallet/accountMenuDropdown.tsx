@@ -3,8 +3,6 @@ import { AddressLayout, AddressWithENS } from '@/components/shared/ensAddress';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
-import useWindowSize from '@/hooks/useWindowSize';
 import {
   setShowNetworkDropdownMenu,
   setShowWalletDropdownMenu
@@ -16,6 +14,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 
 import { useDetectClickOutside } from 'react-detect-click-outside';
+import { CTAButton } from '@/components/CTAButton';
 
 interface IAddressMenuDropDown {
   Web3: any;
@@ -27,7 +26,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   showWalletDropdown
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
-  const { width } = useWindowSize();
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [nativeBalance, setNativeBalance] = useState('');
@@ -46,7 +44,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     }
   }, [account, nativeBalance]);
 
-  const { data } = useFetchEnsAssets(account, ethersProvider);
   const dispatch = useDispatch();
 
   const toggleDropdown = () => {
@@ -89,32 +86,24 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
           return (
             <>
               <button
-                className={`flex rounded-full w-auto sm:w-20 md:w-auto pl-5 sm:pl-3 md:pl-3 pr-4 py-3 sm:py-1 items-center ${
+                className={`flex justify-between sm:rounded-full items-center w-full md:w-auto ${
                   showWalletDropdown ? 'bg-gray-syn7' : 'bg-gray-syn8'
-                } h-10 hover:bg-gray-syn7`}
+                } h-12 sm:h-10 sm:hover:bg-gray-syn7 pr-4 py-3 sm:pl-3 w-full`}
                 onClick={toggleDropdown}
                 ref={ref}
                 id={refId}
               >
-                <img
-                  width={24}
-                  height={24}
-                  className={`${
-                    width > 425 ? 'mr-2 block md:hidden' : 'hidden'
-                  }`}
-                  src={data?.avatar || '/images/jazzicon.png'}
-                  alt=""
-                />
-                <div className={`${width <= 425 ? 'flex' : 'hidden md:flex'}`}>
+                <div className="flex">
                   <AddressWithENS
                     address={account}
                     layout={AddressLayout.ONE_LINE}
                     ethersProvider={ethersProvider}
-                    extraClasses={`${!data?.avatar && 'ml-1'}`}
+                    extraClasses={`text-gray-syn2 font-mono`}
                     id={refId}
+                    customTailwindXSpacingUnit={2}
                   />
                 </div>
-                <div className="flex items-center ml-2">
+                <div className="flex flex-shrink-0 items-center ml-2">
                   <img
                     src="/images/chevron-down.svg"
                     width="9"
@@ -135,7 +124,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                 <Popover.Panel
                   static
                   as="ul"
-                  className="absolute sm:right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
+                  className="absolute sm:right-0 w-80 mt-1 md:mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
                 >
                   <div style={{ borderRadius: '0.625rem' }}>
                     <div className="bg-gray-syn8 p-4 rounded-t-1.5lg rounded-b-none">
@@ -193,8 +182,8 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       </div>
 
                       <div className="flex justify-center">
-                        <button
-                          className="primary-CTA rounded-custom w-full"
+                        <CTAButton
+                          fullWidth={true}
                           onClick={() => {
                             dispatch(setShowWalletDropdownMenu(false));
                             // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
@@ -202,7 +191,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                           }}
                         >
                           Disconnect
-                        </button>
+                        </CTAButton>
                       </div>
                     </div>
                   </div>

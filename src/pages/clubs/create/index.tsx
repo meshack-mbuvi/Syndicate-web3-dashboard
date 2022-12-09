@@ -3,7 +3,6 @@ import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import Head from '@/components/syndicates/shared/HeaderTitle';
 import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
 import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
@@ -23,7 +22,7 @@ import router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
-import useCollectives from '@/hooks/collectives/useGetCollectives';
+import SEO from '@/components/seo';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -47,9 +46,6 @@ const CreateInvestmentClub: React.FC = () => {
     nextBtnDisabled,
     resetCreationStates
   } = useCreateInvestmentClubContext();
-
-  // Fetch account collectives to show in token gating step
-  useCollectives();
 
   const parentRef = useRef(null);
 
@@ -151,7 +147,11 @@ const CreateInvestmentClub: React.FC = () => {
       activeIndex={categoryIndex}
       nextBtnDisabled={nextBtnDisabled}
     >
-      <Head title="Create Investment Club" />
+      <SEO
+        title="Create Investment Club"
+        keywords={['syndicate', 'investment', 'club', 'fund', 'crypto']}
+        image="/images/social/create-club.png"
+      />
       <div className="flex flex-col w-full">
         {!isFirstStep && (
           <h4 className={`text-center pb-16 pt-8`}>

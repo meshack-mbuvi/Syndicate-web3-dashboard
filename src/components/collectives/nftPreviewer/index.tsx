@@ -77,7 +77,7 @@ export const NFTPreviewer: React.FC<Props> = ({
         >
           {/* Media */}
           <div
-            className={`perfect-square ${maxHeight} ${maxWidth} bg-gray-syn8 relative`}
+            className={`perfect-square ${maxHeight} ${maxWidth} bg-gray-syn8 relative chromatic-ignore`}
           >
             {loadingMediaSource && (
               <SkeletonLoader

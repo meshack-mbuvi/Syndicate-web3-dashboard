@@ -6,10 +6,16 @@ import { ContractMapper } from '@/hooks/useGasDetails';
 import { store } from '@/state/index';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const client = new ApolloClient({
   uri: '#',
   cache: new InMemoryCache()
+});
+
+// react-query
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5000 } }
 });
 
 export default {
@@ -17,12 +23,14 @@ export default {
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>
-        <Provider store={store}>
-          <ConnectWalletProvider>
-            <Story />
-            <ConnectWallet />
-          </ConnectWalletProvider>
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <ConnectWalletProvider>
+              <Story />
+              <ConnectWallet />
+            </ConnectWalletProvider>
+          </Provider>
+        </QueryClientProvider>
       </ApolloProvider>
     )
   ]

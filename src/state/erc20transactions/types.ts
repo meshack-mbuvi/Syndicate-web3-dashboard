@@ -1,27 +1,19 @@
-enum GraphEventType {
-  MEMBER_MINTED
+export enum TransactionCategory {
+  INVESTMENT = 'INVESTMENT',
+  INVESTMENT_TOKEN = 'INVESTMENT_TOKEN',
+  EXPENSE = 'EXPENSE',
+  DEPOSIT = 'DEPOSIT',
+  OTHER = 'OTHER',
+  UNCATEGORIZED = 'UNCATEGORIZED',
+  SELECT_CATEGORY = 'SELECT_CATEGORY',
+  TOKEN = 'TOKEN',
+  COLLECTIBLE = 'COLLECTIBLE',
+  OFF_CHAIN_INVESTMENT = 'OFF_CHAIN_INVESTMENT',
+  DISTRIBUTION = 'DISTRIBUTION'
 }
-
-export interface GraphEvent {
-  id: string;
-  eventType: GraphEventType;
-  transactionId: string;
-}
-
-export type TransactionCategory =
-  | 'INVESTMENT'
-  | 'INVESTMENT_TOKEN'
-  | 'EXPENSE'
-  | 'DEPOSIT'
-  | 'OTHER'
-  | 'UNCATEGORISED'
-  | 'SELECT_CATEGORY'
-  | 'TOKEN'
-  | 'COLLECTIBLE'
-  | 'OFF_CHAIN_INVESTMENT'
-  | 'DISTRIBUTION';
 
 export enum RoundCategory {
+  PRE_SEED,
   SEED,
   SERIES_A,
   SERIES_B,
@@ -33,42 +25,22 @@ export enum RoundCategory {
   OTHER
 }
 
-export interface TransactionAnnotation {
-  memo: string;
-  transactionCategory: TransactionCategory;
-  roundCategory: RoundCategory;
-  numberShares: string;
-  numberTokens: string;
-  fullyDilutedOwnershipStake: string;
+export type SyndicateDetailsAnnotation = {
   acquisitionDate: Date;
-  preMoneyValuation: string;
-  postMoneyValuation: string;
-  fromLabel: string;
-  toLabel: string;
-  transactionId: string;
-  annotationMetadata: JSON;
-  createdAt: Date;
-  updatedAt: Date;
+  annotationMetadata: any;
   companyName: string;
-}
-
-export interface Transaction {
-  syndicateAddress: string;
-  blockTimestamp: number;
-  contractAddress: string;
-  fromAddress: string;
-  toAddress: string;
-  value: string;
-  tokenName: string;
-  tokenSymbol: string;
-  tokenDecimal: number;
-  events: GraphEvent[];
-  metadata: TransactionAnnotation;
-  isOutgoingTransaction: boolean;
-  hash: string;
-  categoryIsReadonly?: boolean;
-  tokenLogo?: string;
-}
+  equityStake: string;
+  fromLabel: string;
+  memo: string;
+  postMoneyValuation: string;
+  preMoneyValuation: string;
+  roundCategory: string;
+  sharesAmount: string;
+  toLabel: string;
+  tokenAmount: string;
+  transactionCategory: TransactionCategory;
+  transactionId: string;
+};
 
 export interface CurrentTransaction {
   category: TransactionCategory;
@@ -81,45 +53,22 @@ export interface CurrentTransaction {
     isOutgoingTransaction: boolean;
   };
   amount: string;
-  tokenSymbol: string;
-  tokenLogo: string;
-  tokenName: string;
+  tokenSymbol?: string;
+  tokenLogo?: string;
+  tokenName?: string;
   readOnly: boolean;
   timestamp: string;
   transactionId?: string;
-  metadata?: {
-    acquisitionDate?: Date;
-    annotationMetadata?: Record<string, any>;
-    createdAt?: Date;
-    fullyDilutedOwnershipStake?: string;
-    fromLabel?: string;
-    memo?: string;
-    postMoneyValuation?: string;
-    preMoneyValuation?: string;
-    roundCategory?: RoundCategory;
-    numberShares?: string;
-    toLabel?: string;
-    numberTokens?: string;
-    transactionCategory?: string;
-    transactionId?: string;
-    updatedAt?: Date;
-    companyName?: string;
-  };
+  annotation: SyndicateDetailsAnnotation;
   blockTimestamp?: number;
 }
-export type ClubTransactions = Record<number, Transaction[]>;
 
 interface InitialState {
-  myTransactions: ClubTransactions;
   currentTransaction: CurrentTransaction;
-  totalTransactionsCount: number;
-  loading: boolean;
-  investmentTransactions: ClubTransactions;
-  totalInvestmentTransactionsCount: number;
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
-  category: 'UNCATEGORISED',
+  category: TransactionCategory.UNCATEGORIZED,
   note: '',
   hash: '',
   transactionInfo: {
@@ -133,14 +82,25 @@ export const emptyCurrentTransaction: CurrentTransaction = {
   tokenLogo: '',
   tokenName: '',
   readOnly: true,
-  timestamp: ''
+  timestamp: '',
+  annotation: {
+    acquisitionDate: new Date(0),
+    equityStake: '',
+    fromLabel: '',
+    transactionId: '',
+    preMoneyValuation: '',
+    postMoneyValuation: '',
+    roundCategory: '',
+    sharesAmount: '',
+    toLabel: '',
+    tokenAmount: '',
+    transactionCategory: TransactionCategory.UNCATEGORIZED,
+    memo: '',
+    companyName: '',
+    annotationMetadata: ''
+  }
 };
 
 export const initialState: InitialState = {
-  myTransactions: {},
-  currentTransaction: emptyCurrentTransaction,
-  totalTransactionsCount: 0,
-  loading: true,
-  investmentTransactions: {},
-  totalInvestmentTransactionsCount: 0
+  currentTransaction: emptyCurrentTransaction
 };

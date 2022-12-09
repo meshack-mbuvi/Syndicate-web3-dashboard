@@ -1,5 +1,5 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import ArrowDown from '@/components/icons/arrowDown';
 import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -390,16 +390,15 @@ const RedeemRug: React.FC = () => {
       )}
 
       <div className="mt-6">
-        <CtaButton
+        <CTAButton
           onClick={(): void => {
             setRedeemSucceeded(false);
             setShowRedeemProcessingModal(true);
           }}
-          greenCta={false}
           disabled={+amountToRedeem == 0 || hasError}
         >
           {+amountToRedeem == 0 ? 'Enter an amount to redeem' : 'Continue'}
-        </CtaButton>
+        </CTAButton>
       </div>
 
       <div className="text-gray-syn5 text-sm mt-4 flex justify-center">

@@ -1,5 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { MY_CLUBS_QUERY } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
@@ -31,7 +32,10 @@ export const useMyClubs = (): IProps => {
         ownerAddress: account.toLocaleLowerCase()
       }
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     skip: !account || !activeNetwork.chainId
   });
 

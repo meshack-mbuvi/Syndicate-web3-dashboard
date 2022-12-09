@@ -6,34 +6,53 @@ import {
   AddressWithENS
 } from '@/components/shared/ensAddress';
 import { B2, H4 } from '@/components/typography';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import {
+  numberWithCommas,
+  removeTrailingDecimalPoint
+} from '@/utils/formattedNumbers';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   membersDetails: {
     ensName: string;
+    avatar?: string;
     address: string;
+    createdAt: string;
     clubTokenHolding?: number;
     distributionShare: number;
     ownershipShare: number;
-    selected: boolean;
     receivingTokens: {
       amount: number;
       tokenSymbol: string;
       tokenIcon: string;
     }[];
   }[];
-  tokens: { tokenAmount: string; symbol: string; icon: string }[];
+  tokens: any;
   activeAddresses: Array<string>;
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
   handleIsEditingChange: () => void;
   hideSearch?: boolean;
+  hideEdit?: boolean;
   handleSearchChange: (event: any) => void;
   searchValue: string;
   clearSearchValue: (event: any) => void;
   extraClasses?: string;
   ethersProvider?: any;
+  isBlurred?: boolean;
+  fadeGradientColorHEX?: string;
+}
+
+enum SORT_BY {
+  createdAt = 'createdAt',
+  distributionShare = 'distributionShare'
+}
+
+enum SORT_ORDER {
+  ASC = 'ASC',
+  DESC = 'DESC'
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
@@ -43,28 +62,39 @@ export const DistributionMembersTable: React.FC<Props> = ({
   tokens,
   handleIsEditingChange,
   hideSearch = false,
+  hideEdit = false,
   handleSearchChange,
   searchValue,
   clearSearchValue,
   handleActiveAddressesChange,
   extraClasses,
-  ethersProvider
-}) => {
-  const isAddressActive = (address: string) => {
+  ethersProvider,
+  isBlurred = false,
+  fadeGradientColorHEX = '#000000'
+}: Props) => {
+  const isAddressActive = (address: string): boolean => {
     return activeAddresses.includes(address);
   };
 
   const dataLimit = 10;
 
+  const [sortBy, setSortBy] = useState({
+    key: '',
+    order: SORT_ORDER.ASC
+  });
+
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [hoveredHeader, setHoveredHeader] = useState('');
+
   const [_membersDetails, setMemberDetails] = useState<
     {
+      createdAt: string;
       ensName: string;
       address: string;
+      avatar?: string;
       clubTokenHolding?: number;
-      distributionShare: number;
+      distributionShare: string | number;
       ownershipShare: number;
-      selected: boolean;
       receivingTokens: {
         amount: number;
         tokenSymbol: string;
@@ -80,11 +110,38 @@ export const DistributionMembersTable: React.FC<Props> = ({
     [membersDetails.length, currentPage, dataLimit]
   );
 
-  const handleLoadMore = () => {
+  const handleLoadMore = (): void => {
     setCurrentPage(currentPage + 1);
   };
 
   const [loadMoreText, setLoadMoreText] = useState(dataLimit);
+
+  useEffect(() => {
+    const _sortedMembers = membersDetails
+      .map((m) => m)
+      .sort((a, b) => {
+        const { key, order } = sortBy;
+        if (key === SORT_BY.createdAt) {
+          if (order === SORT_ORDER.ASC) return +b.createdAt - +a.createdAt;
+
+          return +a.createdAt - +b.createdAt;
+        }
+
+        if (key === SORT_BY.distributionShare) {
+          const aDistributionShare = parseFloat(a.distributionShare.toString());
+          const bDistributionShare = parseFloat(b.distributionShare.toString());
+
+          if (order === SORT_ORDER.ASC)
+            return bDistributionShare - aDistributionShare;
+
+          return aDistributionShare - bDistributionShare;
+        }
+
+        return 0;
+      });
+
+    setMemberDetails(_sortedMembers);
+  }, [sortBy]);
 
   useEffect(() => {
     const remainingItems = membersDetails.length - _membersDetails.length;
@@ -119,22 +176,48 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
       const memberDetails = membersDetails
         .slice(0, currentPage * dataLimit)
-        .map(({ ownershipShare, ...rest }) => {
+        .map(({ ownershipShare, createdAt, ...rest }) => {
           return {
             ...rest,
+            createdAt,
             ownershipShare,
-            distributionShare:
-              (+ownershipShare * 100) / cumulativeActiveMemberOwnership,
-            receivingTokens: tokens.map(({ tokenAmount, symbol, icon }) => {
-              return {
-                amount:
-                  (ownershipShare / cumulativeActiveMemberOwnership) *
-                  +tokenAmount,
-                tokenSymbol: symbol,
-                tokenIcon: icon || '/images/token-gray.svg'
-              };
-            })
+            distributionShare: (
+              (+ownershipShare * 100) /
+              cumulativeActiveMemberOwnership
+            ).toFixed(4),
+            receivingTokens: tokens.map(
+              ({ tokenAmount, tokenSymbol, icon }: any) => {
+                return {
+                  amount:
+                    (ownershipShare / cumulativeActiveMemberOwnership) *
+                    +tokenAmount,
+                  tokenSymbol,
+                  tokenIcon: icon
+                };
+              }
+            )
           };
+        })
+        .sort((a, b) => {
+          const { key, order } = sortBy;
+          if (key === SORT_BY.createdAt) {
+            if (order === SORT_ORDER.ASC) return +b.createdAt - +a.createdAt;
+
+            return +a.createdAt - +b.createdAt;
+          }
+
+          if (key === SORT_BY.distributionShare) {
+            if (order === SORT_ORDER.ASC)
+              return (
+                parseFloat(b.distributionShare) -
+                parseFloat(a.distributionShare)
+              );
+            return (
+              parseFloat(a.distributionShare) - parseFloat(b.distributionShare)
+            );
+          }
+
+          return 0;
         });
 
       setMemberDetails(memberDetails);
@@ -142,24 +225,49 @@ export const DistributionMembersTable: React.FC<Props> = ({
       setMemberDetails([]);
     }
 
-    return () => {
+    return (): void => {
       setMemberDetails([]);
     };
   }, [activeAddresses]);
 
   const normalCellHeight = 'h-16';
-  const memberCellStyles = (address: any) => {
+  const normalCellWidth = `w-40 md:w-52 lg:w-56 xl:w-60 2xl:w-72`;
+  const memberCellStyles = (address: string): string => {
     return `${
-      hoveredRow === address && 'bg-gray-syn7'
-    } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
-      address === _membersDetails[0].address ? 'border-t-0' : 'border-t-1'
-    } ${!isAddressActive(address) && 'text-gray-syn5'}`;
+      (hoveredRow === address && 'bg-gray-syn8') || ''
+    } transition-all ease-out ${normalCellHeight} border-b-1 border-gray-syn6
+     ${(!isAddressActive(address) && 'text-gray-syn5') || ''} ${
+      (isBlurred && 'opacity-50 filter blur-md') || ''
+    }`;
   };
-  const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
-  const wideCellStyles = `w-60 xl:w-72`;
+  const footerCellStyles = `${normalCellHeight}`;
+  const wideCellStyles = `${normalCellWidth} transition-all pl-1`;
+  const headerCellStyles = `${normalCellWidth} transition-all pl-1`;
   const narrowCellStyles = `w-12`;
-  const headerCellStyles = 'w-60 xl:w-72';
   const amountCellStyles = 'font-mono';
+
+  const rightOffsetForFade = 'pr-6';
+
+  const handleSetSortParams = (_sortBy: SORT_BY): void => {
+    let order = SORT_ORDER.ASC;
+    const _currentSortBy = sortBy.key;
+
+    if (_currentSortBy == _sortBy) {
+      if (sortBy.order === SORT_ORDER.ASC) {
+        order = SORT_ORDER.DESC;
+      } else {
+        order = SORT_ORDER.ASC;
+      }
+    } else {
+      // retain current sort order
+      order = sortBy.order;
+    }
+
+    setSortBy({
+      order,
+      key: _sortBy
+    });
+  };
 
   // This iterates through the rows finding all unique
   // tokens to determine the table columns (e.g "Receiving {tokenSymbol}")
@@ -222,7 +330,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const renderedHeader = (
     <div className="flex text-sm text-gray-syn4">
       {/* Left columns - member, share */}
-      <div className="flex">
+      <div
+        className={`flex ${(isBlurred && 'opacity-50 filter blur-md') || ''}`}
+      >
         {/* Checkbox */}
         {isEditing ? (
           <div className={`flex items-center ${narrowCellStyles}`}>
@@ -257,8 +367,56 @@ export const DistributionMembersTable: React.FC<Props> = ({
           Members ({_membersDetails.length})
         </div>
 
+        <div
+          className={`flex items-center ${headerCellStyles}`}
+          onClick={(): void => handleSetSortParams(SORT_BY.createdAt)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(): void => handleSetSortParams(SORT_BY.createdAt)}
+          onMouseEnter={(): void => setHoveredHeader('date/joined')}
+          onMouseLeave={(): void => setHoveredHeader('')}
+        >
+          {sortBy.key === SORT_BY.createdAt ||
+          hoveredHeader == 'date/joined' ? (
+            <span className="mr-1">
+              <Image
+                src={`/images/${
+                  sortBy.order == SORT_ORDER.ASC
+                    ? 'arrowUpWhite'
+                    : 'arrowDownWhite'
+                }.svg`}
+                width={12}
+                height={12}
+              />
+            </span>
+          ) : null}
+          Date joined/added
+        </div>
+
         {/* Distribution share */}
-        <div className={`flex items-center ${headerCellStyles}`}>
+        <div
+          className={`flex items-center ${headerCellStyles}`}
+          onClick={(): void => handleSetSortParams(SORT_BY.distributionShare)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(): void => handleSetSortParams(SORT_BY.distributionShare)}
+          onMouseEnter={(): void => setHoveredHeader('distributionShare')}
+          onMouseLeave={(): void => setHoveredHeader('')}
+        >
+          {sortBy.key === SORT_BY.distributionShare ||
+          hoveredHeader == 'distributionShare' ? (
+            <span className="mr-1">
+              <Image
+                src={`/images/${
+                  sortBy.order == SORT_ORDER.ASC
+                    ? 'arrowUpWhite'
+                    : 'arrowDownWhite'
+                }.svg`}
+                width={12}
+                height={12}
+              />
+            </span>
+          ) : null}
           Distribution share
         </div>
       </div>
@@ -267,7 +425,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
       <div className="flex-grow" />
 
       {/* Right columns - receiving tokens */}
-      <div className="flex">
+      <div
+        className={`flex ${rightOffsetForFade} ${
+          (isBlurred && 'opacity-50 filter blur-md') || ''
+        }`}
+      >
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <div
@@ -275,11 +437,18 @@ export const DistributionMembersTable: React.FC<Props> = ({
               className={`flex space-x-2 items-center text-right justify-end ${headerCellStyles}`}
             >
               <div>Receiving</div>
-              <img
-                className="w-6 h-6"
-                src={allUniqueReceivingTokens.tokenIcons[index]}
-                alt=""
-              />
+              <div className="flex align-center">
+                <Image
+                  src={
+                    allUniqueReceivingTokens.tokenIcons[index]
+                      ? allUniqueReceivingTokens.tokenIcons[index]
+                      : '/images/token-gray-4.svg'
+                  }
+                  alt=""
+                  width={24}
+                  height={24}
+                />
+              </div>
               <div>{tokenSymbol}</div>
             </div>
           );
@@ -290,7 +459,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   const renderPagination = (
     <div
-      className={`flex justify-center w-full border-t-1 text-blue whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
+      className={`flex ${
+        (isBlurred && 'opacity-50 filter blur-md') || ''
+      } justify-center w-full border-t-1 text-blue whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
     >
       <button onClick={handleLoadMore}>Load {loadMoreText} more</button>
     </div>
@@ -308,7 +479,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   ).map((memberDetails) => {
     return (
       <button
-        onClick={() => {
+        onClick={(): void => {
           if (!isEditing) return;
           // The index was active so make it inactive
           if (isAddressActive(memberDetails.address)) {
@@ -317,7 +488,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
               memberDetails.address
             );
             if (indexToRemove > -1) {
-              const arrayWithoutIndex = (array: any, index: any) =>
+              const arrayWithoutIndex = (array: any, index: any): string[] =>
                 array.filter((_: any, i: any) => i !== index);
               newactiveIndices = arrayWithoutIndex(
                 activeAddresses,
@@ -354,7 +525,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         }}
         className={`w-full flex justify-between ${
           isEditing ? 'cursor-pointer' : 'cursor-text'
-        } transition-all ease-out`}
+        } transition-all ease-out `}
         key={memberDetails.address}
       >
         {/* Left columns - member, share */}
@@ -377,14 +548,30 @@ export const DistributionMembersTable: React.FC<Props> = ({
           <div
             className={`flex items-center space-x-4 ${wideCellStyles} ${memberCellStyles(
               memberDetails.address
-            )} ${!isAddressActive(memberDetails.address) && 'opacity-50'}`}
+            )}`}
           >
             <AddressWithENS
               ethersProvider={ethersProvider}
               userPlaceholderImg={'/images/user.svg'}
               address={memberDetails.address}
               imageSize={AddressImageSize.LARGE}
+              disableTransition={isEditing}
+              disabled={!isAddressActive(memberDetails.address)}
             />
+          </div>
+
+          {/* Date member joined */}
+          <div
+            className={`flex space-x-3 text-left items-center font-mono ${wideCellStyles} ${memberCellStyles(
+              memberDetails.address
+            )}`}
+          >
+            <B2>
+              {getFormattedDateTimeWithTZ(
+                +memberDetails.createdAt * 1000,
+                'MMMM DD YYYY'
+              )}
+            </B2>
           </div>
 
           {/* Share of holdings */}
@@ -394,12 +581,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
             )}`}
           >
             {/* Percentage */}
-            <div>
+            <B2>
               {isAddressActive(memberDetails.address)
-                ? parseFloat(`${memberDetails.distributionShare}`).toFixed(2)
+                ? parseFloat(`${memberDetails.distributionShare}`)
                 : '0'}
               %
-            </div>
+            </B2>
           </div>
         </div>
 
@@ -412,29 +599,26 @@ export const DistributionMembersTable: React.FC<Props> = ({
         />
 
         {/* Right columns - receiving tokens */}
-        <div className={`flex`}>
+        <div className={`flex ${rightOffsetForFade}`}>
           {/* Each column represents a different token a member is receiving */}
-          {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
+          {allUniqueReceivingTokens?.tokenSymbols.map((tokenSymbol, index) => {
+            const amount =
+              memberDetails?.receivingTokens
+                ?.find((receivingToken) => {
+                  return receivingToken?.tokenSymbol === tokenSymbol;
+                })
+                ?.amount.toFixed(4) || 0;
             return (
               // Individual column
-              <div
-                className={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
+              <B2
+                extraClasses={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
                   memberDetails.address
                 )} ${amountCellStyles}`}
                 key={index}
               >
                 <div className="text-right truncate w-full">
-                  {memberDetails.receivingTokens.find((receivingToken) => {
-                    return receivingToken.tokenSymbol === tokenSymbol;
-                  }) && isAddressActive(memberDetails.address)
-                    ? floatedNumberWithCommas(
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        memberDetails.receivingTokens?.find(
-                          (receivingToken) => {
-                            return receivingToken.tokenSymbol === tokenSymbol;
-                          }
-                        ).amount
-                      )
+                  {isAddressActive(memberDetails.address)
+                    ? removeTrailingDecimalPoint(numberWithCommas(amount))
                     : 0}
                 </div>
                 <div
@@ -446,7 +630,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 >
                   {tokenSymbol}
                 </div>
-              </div>
+              </B2>
             );
           })}
         </div>
@@ -456,7 +640,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   // The bottom footer row with aggregate data
   const renderedFooter = (
-    <div className="flex">
+    <div className={`flex ${isBlurred ? 'opacity-70 filter blur-md' : ''}`}>
       {/* Left columns - member, share */}
       <div className="flex">
         <div
@@ -464,10 +648,14 @@ export const DistributionMembersTable: React.FC<Props> = ({
             !isEditing ? 'w-0' : narrowCellStyles
           } ${footerCellStyles}`}
         >
-          Total distributed
+          Total distributing
         </div>
 
         {/* Space reserved for member name column */}
+        <div
+          className={`flex items-center ${wideCellStyles} ${footerCellStyles}`}
+        />
+
         <div
           className={`flex items-center ${wideCellStyles} ${footerCellStyles}`}
         />
@@ -481,16 +669,23 @@ export const DistributionMembersTable: React.FC<Props> = ({
       <div className={`flex-grow ${footerCellStyles}`} />
 
       {/* Right columns - receiving tokens */}
-      <div className="flex">
+      <div className={`flex ${rightOffsetForFade}`}>
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <div
               className={`flex space-x-2 items-center justify-end ${wideCellStyles} ${footerCellStyles} ${amountCellStyles}`}
               key={index}
             >
-              <div>
-                {floatedNumberWithCommas(tokenAmountTotals[index])}{' '}
-                <span className={`text-gray-syn4`}>{tokenSymbol}</span>
+              <div className="pl-1">
+                {parseFloat(tokenAmountTotals[index]) > 0
+                  ? removeTrailingDecimalPoint(
+                      numberWithCommas(
+                        parseFloat(tokenAmountTotals[index]).toFixed(4)
+                      )
+                    )
+                  : '0'}
+
+                <span className={`text-gray-syn4 ml-1`}>{tokenSymbol}</span>
               </div>
             </div>
           );
@@ -500,68 +695,85 @@ export const DistributionMembersTable: React.FC<Props> = ({
   );
 
   return (
-    <div
-      className={`relative overflow-x-auto w-full mb-32 sm:mb-auto ${
-        extraClasses ?? ''
-      }`}
-    >
-      {!hideSearch && _membersDetails.length !== 0 && (
-        <div className="flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center">
-          <SearchInput
-            {...{
-              onChangeHandler: handleSearchChange,
-              searchValue: searchValue || '',
-              itemsCount: _membersDetails.length,
-              clearSearchValue: clearSearchValue,
-              padding: ''
-            }}
-          />
-          {!isEditing ? (
-            <div className="flex sm:space-x-8">
-              <ActionButton
-                label="Edit distribution"
-                icon="/images/edit-circle-blue.svg"
-                onClick={handleIsEditingChange}
-              />
-            </div>
-          ) : null}
-        </div>
-      )}
+    <div className="relative">
+      {/* Table */}
+      <div className={`relative w-full mb-32 sm:mb-auto ${extraClasses ?? ''}`}>
+        {!hideSearch && _membersDetails.length !== 0 && (
+          <div
+            className={`flex md:mt-10 mt-4.5 mb-8 space-y-6 sm:space-y-0 flex-col sm:flex-row col-span-12 sm:space-x-8 sm:justify-between sm:items-center ${
+              isBlurred ? 'opacity-70 filter blur-md' : ''
+            }`}
+          >
+            <SearchInput
+              {...{
+                onChangeHandler: handleSearchChange,
+                searchValue: searchValue || '',
+                itemsCount: _membersDetails.length,
+                clearSearchValue: clearSearchValue,
+                padding: ''
+              }}
+            />
+            {!isEditing && !hideEdit ? (
+              <div className="flex sm:space-x-8">
+                <ActionButton
+                  icon="/images/edit-circle-blue.svg"
+                  onClick={handleIsEditingChange}
+                  extraClasses={`${rightOffsetForFade}`}
+                >
+                  Edit distribution
+                </ActionButton>
+              </div>
+            ) : null}
+          </div>
+        )}
 
-      {searchValue &&
-      _membersDetails.filter(
-        (member) =>
-          member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
-          member.ensName.toLowerCase().includes(searchValue.toLowerCase())
-      ).length === 0 ? (
-        <div className="flex flex-col justify-center">
-          <H4 className="text-xl text-center">
-            No results for {`"${searchValue}"`}
-          </H4>
+        {searchValue &&
+        _membersDetails.filter(
+          (member) =>
+            member.address.toLowerCase().includes(searchValue.toLowerCase()) ||
+            member.ensName.toLowerCase().includes(searchValue.toLowerCase())
+        ).length === 0 ? (
+          <div className="flex flex-col justify-center">
+            <H4 className="text-xl text-center">
+              No results for {`"${searchValue}"`}
+            </H4>
 
-          <B2 className="text-gray-syn4 text-center">
-            Double check the wallet address or try another search
-          </B2>
-        </div>
-      ) : _membersDetails.length ? (
-        <>
-          <div className="mb-2 w-full">{renderedHeader}</div>
-          <div className="w-full">{renderedTable}</div>
-          {canLoadMore ? <div className="w-full">{renderPagination}</div> : ''}
+            <B2 className="text-gray-syn4 text-center">
+              Double check the wallet address or try another search
+            </B2>
+          </div>
+        ) : _membersDetails.length ? (
+          <div className="overflow-x-auto">
+            <div className="mb-2 w-full">{renderedHeader}</div>
+            <div className="w-full">{renderedTable}</div>
+            {canLoadMore ? (
+              <div className="w-full">{renderPagination}</div>
+            ) : (
+              ''
+            )}
 
-          <div className="w-full">{renderedFooter}</div>
-        </>
-      ) : (
-        <div className="flex flex-col justify-center space-y-4 my-11">
-          <H4 className="text-xl text-center">
-            This club does not have members.
-          </H4>
+            <div className="w-full">{renderedFooter}</div>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center space-y-4 my-11">
+            <H4 className="text-xl text-center">
+              This club does not have members.
+            </H4>
 
-          <B2 className="text-gray-syn4 text-center">
-            Distributions can only be made for a club with members.
-          </B2>
-        </div>
-      )}
+            <B2 className="text-gray-syn4 text-center">
+              Distributions can only be made for a club with members.
+            </B2>
+          </div>
+        )}
+      </div>
+
+      {/* Right fade */}
+      <div
+        className="w-6 h-full absolute top-0 right-0 pointer-events-none"
+        style={{
+          background: `linear-gradient(270deg, ${fadeGradientColorHEX} 0%, rgba(0, 0, 0, 0) 100%)`
+        }}
+      />
     </div>
   );
 };

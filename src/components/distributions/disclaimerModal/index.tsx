@@ -1,3 +1,6 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DISTRIBUTION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import Modal, { ModalStyle } from '@/components/modal';
 import { B2, L2 } from '@/components/typography';
@@ -13,8 +16,7 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
   isModalVisible,
   handleModalClose,
   onClick
-}) => {
-  // Checkbox status
+}: Props) => {
   const [isActive, setIsActive] = useState(false);
   return (
     <Modal
@@ -27,12 +29,12 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
     >
       <div className="m-h-screen">
         <L2 extraClasses="mb-4 px-10">Distributions</L2>
-        <div className="mx-10 text-gray-syn4 h-54 overflow-y-scroll no-scroll-bar">
+        <div className="mx-10 text-gray-syn4 h-54 dark-scrollbar overflow-y-auto">
           <B2>
             By proceeding, I agree that I reviewed and confirm the following:
             <ul className="list-disc ml-8 mt-2">
               <li>
-                Distributions cannot be reversed and may create a taxable event
+                Distributions cannot be reversed and may create a taxable event.
               </li>
               <li>
                 Distributing proceeds of an asset to members who did not invest
@@ -71,17 +73,20 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
               I understand that distributions are irreversible.
             </B2>
           </div>
-          <button
-            onClick={onClick}
+          <CTAButton
+            onClick={() => {
+              onClick();
+              amplitudeLogger(DISTRIBUTION_DISCLAIMER_AGREE, {
+                flow: Flow.CLUB_DISTRIBUTE
+              });
+            }}
             disabled={!isActive}
-            className={`${
-              isActive
-                ? 'green-CTA'
-                : 'base-CTA cursor-not-allowed bg-gray-syn7 text-gray-syn4'
-            } mt-6 w-full`}
+            type={isActive ? CTAType.TRANSACTIONAL : CTAType.DISABLED}
+            fullWidth={true}
+            extraClasses="mt-6"
           >
             I confirm
-          </button>
+          </CTAButton>
         </div>
       </div>
     </Modal>

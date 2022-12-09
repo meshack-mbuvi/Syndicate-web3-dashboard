@@ -1,6 +1,6 @@
 import { useDisableBgScrollOnModal } from '@/hooks/useDisableBgScrollOnModal';
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useRef } from 'react';
+import { Fragment, useRef } from 'react';
 
 interface ModalProps {
   title?: string;
@@ -17,6 +17,7 @@ interface ModalProps {
   overflow?: string;
   showBackButton?: boolean;
   closeButtonClassName?: string;
+  closeButtonPosition?: string;
   modalStyle?: ModalStyle;
   opacity?: string;
   titleMarginClassName?: string;
@@ -28,6 +29,7 @@ interface ModalProps {
   alignment?: string;
   margin?: string;
   maxHeight?: boolean;
+  mobileModal?: boolean;
 }
 
 export enum ModalStyle {
@@ -63,6 +65,7 @@ const Modal = (props: ModalProps): JSX.Element => {
     showCloseButton = true,
     customClassName = 'p-2 sm:p-6',
     closeButtonClassName,
+    closeButtonPosition = 'top-9 right-10',
     outsideOnClick,
     titleMarginClassName,
     titleAlignment,
@@ -76,22 +79,26 @@ const Modal = (props: ModalProps): JSX.Element => {
     isMaxHeightScreen = true,
     alignment = 'align-middle',
     margin = 'md:my-14',
-    maxHeight = true
+    maxHeight = true,
+    mobileModal = false
   } = props;
 
-  const bgColor = `${modalStyle === ModalStyle.LIGHT && 'bg-white'} ${
-    modalStyle === ModalStyle.DARK && 'bg-gray-syn8'
-  } ${modalStyle === ModalStyle.SUCCESS && 'bg-green-success'}`;
+  const bgColor = `${(modalStyle === ModalStyle.LIGHT && 'bg-white') || ''} ${
+    (modalStyle === ModalStyle.DARK && 'bg-gray-syn8') || ''
+  } ${(modalStyle === ModalStyle.SUCCESS && 'bg-green-success') || ''}`;
 
-  const textColor = `${modalStyle === ModalStyle.LIGHT && 'text-black'} ${
-    modalStyle === ModalStyle.DARK && 'text-white'
-  }`;
+  const textColor = `${
+    (modalStyle === ModalStyle.LIGHT && 'text-black') || ''
+  } ${(modalStyle === ModalStyle.DARK && 'text-white') || ''}`;
+
+  const modalPosition = mobileModal ? 'items-end' : 'items-center';
+  const modalRadius = mobileModal ? 'rounded-t-2xl' : 'rounded-2xl';
 
   useDisableBgScrollOnModal(show);
 
   const childWrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     if (closeModal) {
       closeModal();
     }
@@ -102,7 +109,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       <Dialog
         initialFocus={childWrapperRef}
         className={`fixed z-50 w-screen h-screen overflow-y-scroll no-scroll-bar justify-center align-middle py-auto inset-0 text-center`}
-        onClose={() => {
+        onClose={(): void => {
           if (outsideOnClick) {
             handleClose();
           }
@@ -111,7 +118,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       >
         <div
           ref={childWrapperRef}
-          className={`flex items-center h-screen my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
+          className={`flex ${modalPosition} h-screen my-auto justify-center text-center ${textColor} sm:px-4 sm:block sm:p-0`}
         >
           <Transition.Child
             as={Fragment}
@@ -149,12 +156,17 @@ const Modal = (props: ModalProps): JSX.Element => {
                 isMaxHeightScreen ? 'max-h-screen' : ''
               } ${
                 bgColor ? bgColor : ''
-              } rounded-2xl text-left shadow-xl transform transition-all ${
+              } ${modalRadius} text-left shadow-xl transform transition-all ${
                 customWidth || ''
               } ${overflow || ''} ${customClassName || ''}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
+              style={{
+                maxHeight: `${
+                  isMaxHeightScreen ? 'calc(100vh - 100px)' : 'auto'
+                }`
+              }}
             >
               <div className="hidden sm:block absolute p-4 top-0 left-0">
                 {/* back button at the left top of the modal */}
@@ -176,7 +188,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="absolute top-9 right-10 z-10">
+              <div className={`absolute z-10 ${closeButtonPosition}`}>
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button

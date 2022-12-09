@@ -1,34 +1,32 @@
-export const BACKEND_LINKS = Object.freeze({
+import { HttpLink } from '@apollo/client';
+
+export enum SUPPORTED_GRAPHS {
+  BACKEND = 'backend',
+  THE_GRAPH = 'theGraph'
+}
+
+export type GraphLinks = {
+  [key: string]: Record<SUPPORTED_GRAPHS, HttpLink>;
+};
+
+export type GraphEndpoints = {
+  [key: number]: Record<SUPPORTED_GRAPHS, string>;
+};
+
+export const GRAPH_ENDPOINTS: GraphEndpoints = Object.freeze({
   // Ethereum Mainnet
   1: {
-    graphs: {
-      backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT
-    },
-    apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
-  },
-  // Rinkeby
-  4: {
-    graphs: {
-      backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT
-    },
-    apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
+    backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT || '',
+    theGraph: process.env.NEXT_PUBLIC_SATSUMA_MAINNET_ENDPOINT || ''
   },
   // Goerli
   5: {
-    graphs: {
-      backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_GRAPHQL_GOERLI_ENDPOINT
-    },
-    apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
+    backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT || '',
+    theGraph: process.env.NEXT_PUBLIC_SATSUMA_GOERLI_ENDPOINT || ''
   },
   // Matic
   137: {
-    graphs: {
-      backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT,
-      theGraph: process.env.NEXT_PUBLIC_SATSUMA_MATIC_ENDPOINT
-    },
-    apiServer: process.env.NEXT_PUBLIC_API_SERVER_URL
+    backend: process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT || '',
+    theGraph: process.env.NEXT_PUBLIC_SATSUMA_MATIC_ENDPOINT || ''
   }
 });

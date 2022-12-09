@@ -99,8 +99,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     // get native details to append to token details
     const nativeBalance = getWeiAmount(
       web3,
-      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-      nativeBalanceResponse,
+      `${nativeBalanceResponse}`,
       activeNetwork.nativeCurrency.decimals,
       false
     );

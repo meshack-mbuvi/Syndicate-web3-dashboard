@@ -1,5 +1,6 @@
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 import { estimateGas } from './shared/getGasEstimate';
 import { getGnosisTxnInfo } from './shared/gnosisTransactionInfo';
@@ -13,7 +14,7 @@ export abstract class ContractBase {
   abiItem: AbiItem[];
   // @ts-expect-error TS(2564): Property 'isGnosisSafe' has no initializer and is ... Remove this comment to see the full error message
   isGnosisSafe: boolean;
-  addresses: typeof CONTRACT_ADDRESSES[1 | 4 | 137];
+  addresses: typeof CONTRACT_ADDRESSES[1 | 137];
 
   constructor(
     address: string,
@@ -25,7 +26,6 @@ export abstract class ContractBase {
     this.activeNetwork = activeNetwork;
     this.address = address;
     this.abiItem = CONTRACT_ABI;
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     this.addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
     this.init();
   }
@@ -43,7 +43,7 @@ export abstract class ContractBase {
     account: string,
     contractMethod: any,
     onTxConfirm: (txHash: string) => void,
-    onTxReceipt: (receipt: string) => void,
+    onTxReceipt: (receipt: TransactionReceipt) => void,
     onTxFail: (err: any) => void,
     value?: string
   ): Promise<void> {
@@ -65,7 +65,7 @@ export abstract class ContractBase {
             onTxConfirm('');
           }
         })
-        .on('receipt', (receipt: any) => {
+        .on('receipt', (receipt: TransactionReceipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })

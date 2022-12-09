@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import IconGas from '@/components/icons/Gas';
 import { B3, B4 } from '@/components/typography';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
@@ -52,7 +52,7 @@ const SharedItem: React.FC<IProps> = ({
       onMouseEnter={toggleDropdown}
       onMouseLeave={toggleDropdown}
     >
-      <div className="flex align-middle ml-4 sm:ml-0">
+      <div className="flex align-middle ml-4 mb-1 sm:ml-0">
         <B4 extraClasses="text-gray-syn4 align-middle">{title}</B4>
       </div>
       <div
@@ -192,10 +192,10 @@ const NetworkComponent: React.FC<NetworkType> = ({
         />
       </div>
       <div className="flex-shrink-1 pt-2 sm:pt-0 w-full sm:max-w-44 sm:w-auto">
-        <CtaButton
-          extraClasses="rounded-full"
+        <CTAButton
+          rounded={true}
+          type={account ? CTAType.TRANSACTIONAL : CTAType.PRIMARY}
           disabled={account ? disabled : false}
-          greenCta={account ? true : false}
           onClick={() => {
             if (account) {
               handleLaunch();
@@ -205,7 +205,7 @@ const NetworkComponent: React.FC<NetworkType> = ({
           }}
         >
           {account ? 'Launch' : 'Connect wallet'}
-        </CtaButton>
+        </CTAButton>
       </div>
     </div>
   );

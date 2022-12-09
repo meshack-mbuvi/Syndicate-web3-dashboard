@@ -3,13 +3,10 @@ import setCollectibleDetailsSliceReducer from '@/state/assets/collectibles/slice
 import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
-import clubERC20sReducer from '@/state/clubERC20';
-import collectivesSlice from '@/state/collectives/slice';
 import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
-import distributeTokensReducer from '@/state/distributions';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
 import transactionsReducer from '@/state/erc20transactions/index';
 import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
@@ -21,8 +18,8 @@ import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
-import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
 import modifyCollectiveSettingsReducer from '@/state/modifyCollectiveSettings';
+import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
 import web3Reducer from '@/state/wallet/reducer';
 import { isDev } from '@/utils/environment';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -30,7 +27,6 @@ import { createWrapper } from 'next-redux-wrapper';
 
 export const store = configureStore({
   reducer: {
-    clubERC20sReducer,
     createInvestmentClubSliceReducer,
     createCollectiveSliceReducer,
     erc20TokenSliceReducer,
@@ -53,9 +49,7 @@ export const store = configureStore({
     utilityNFTSliceReducer,
     modifyClubSettingsReducer,
     connectClubMemberReducer,
-    distributeTokensReducer,
-    modifyCollectiveSettingsReducer,
-    collectivesSlice
+    modifyCollectiveSettingsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

@@ -43,11 +43,11 @@ export const Switch = (props: {
     <button
       ref={containerRef}
       className={`${
-        isOn ? 'bg-blue-500' : 'bg-gray-5'
+        isOn ? 'bg-blue-nasa-flight-cobalt' : 'bg-gray-5'
       } rounded-full cursor-pointer ${transitionStyles} ${extraClasses}`}
       style={{
-        width: '3rem',
-        height: '1.7rem',
+        width: '3.125rem',
+        height: '1.625rem',
         padding: `${containerPaddingRem}rem`
       }}
       onClick={() => {
@@ -60,15 +60,15 @@ export const Switch = (props: {
         ref={knobRef}
         className={`relative rounded-full bg-white ${transitionStyles}`}
         style={{
-          height: '1.41rem',
-          width: '1.41rem',
+          height: '1.25rem',
+          width: '1.25rem',
           left: `${isOn ? leftOffsetRem : 0}rem`
         }}
       >
         {/* Icon */}
         {type === SwitchType.EXPLICIT && (
           <img
-            src={`/images/${isOn ? 'checkmark-blue' : 'xmark-gray'}.svg`}
+            src={`/images/${isOn ? 'checkmark-blue' : 'xmark-gray-small'}.svg`}
             alt="extenal-link"
             className="mx-auto vertically-center"
           />

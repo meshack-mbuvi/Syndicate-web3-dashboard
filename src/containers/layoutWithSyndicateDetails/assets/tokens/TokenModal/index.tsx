@@ -1,5 +1,6 @@
 import Modal, { ModalStyle } from '@/components/modal';
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import React from 'react';
 import { CategoryPill } from '../../../activity/shared/CategoryPill';
@@ -53,7 +54,11 @@ const TokenModal: React.FC<ITokenModal> = ({
       <div>
         <div className="flex rounded-t-2xl items-center flex-col relative py-10 px-5 bg-gray-syn7">
           <div className="mb-8">
-            <CategoryPill category="TOKEN" readonly={true} isOwner={isOwner} />
+            <CategoryPill
+              category={TransactionCategory.TOKEN}
+              readonly={true}
+              isOwner={isOwner}
+            />
           </div>
           <div className="flex items-center">
             {tokenDetails.logo ? (

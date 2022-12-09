@@ -1,4 +1,4 @@
-import { TokenMediaType } from '@/state/collectives/types';
+import { TokenMediaType } from '@/hooks/collectives/utils/types';
 
 interface Props {
   tokenMedia: string;

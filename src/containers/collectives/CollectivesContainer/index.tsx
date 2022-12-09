@@ -3,11 +3,12 @@ import CollectiveNotFound from '@/containers/collectives/shared/collectiveNotFou
 import Layout from '@/components/layout';
 
 const CollectivesContainer: React.FC = ({ children }) => {
-  const { collectiveNotFound } = useERC721Collective();
+  const { collectiveNotFound, correctCollectiveNetwork } =
+    useERC721Collective();
 
   return (
     <div>
-      {collectiveNotFound ? (
+      {collectiveNotFound || !correctCollectiveNetwork ? (
         <Layout>
           <CollectiveNotFound />
         </Layout>

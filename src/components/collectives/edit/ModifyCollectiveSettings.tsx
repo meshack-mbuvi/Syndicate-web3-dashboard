@@ -12,7 +12,7 @@ import {
   OpenUntil,
   RadioButtonsOpenUntil
 } from '@/components/collectives/create/inputs/openUntil/radio';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { GroupSettingsTable } from '@/components/groupSettingsTable';
 import { ExternalLinkColor } from '@/components/iconWrappers';
 import { InputField } from '@/components/inputs/inputField';
@@ -317,9 +317,7 @@ const ModifyCollectiveSettings: React.FC = () => {
 
     // Update progress state
     setProgressDescriptorTitle(`Error updating`);
-    if (
-      error?.message?.indexOf('Transaction was not mined within 50 blocks') > -1
-    ) {
+    if (error?.message?.indexOf('Be aware that it might still be mined') > -1) {
       setProgressDescriptorDescription(
         'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
       );
@@ -1165,7 +1163,7 @@ const ModifyCollectiveSettings: React.FC = () => {
               steps?.[activeIndex].status ==
                 ProgressDescriptorState.FAILURE) && (
               <div className="mt-6">
-                <CtaButton onClick={handleClickAction}>Apply changes</CtaButton>
+                <CTAButton onClick={handleClickAction}>Apply changes</CTAButton>
               </div>
             )}
         </>

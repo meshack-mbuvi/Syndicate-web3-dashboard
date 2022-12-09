@@ -353,135 +353,356 @@ export const mockCollectiblesResult = [
 ];
 
 export const mockOffChainTransactionsData = {
-  edges: [
+  events: [
     {
-      blockNumber: 9748684,
-      blockTimestamp: 1638513806,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 804171,
-      events: [],
-      fromAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      gasLimit: 51804,
-      gasPrice: 1500000009,
-      gasUsed: 34536,
-      hash: '0xcb6159194da765bc699fc1ff563d0c16aff0fa80376085ee39fc84b0288b2b77',
-      isError: false,
-      isOutgoingTransaction: true,
-      metadata: {
-        acquisitionDate: '2022-01-25T00:00:00.000Z',
-        companyName: 'Syndicate Demo Inc.',
-        roundCategory: 'Seed',
-        postMoneyValuation: '50000',
-        memo: "As discussed over Telegram, we've decided to allocate 50,000 USD towards Syndicate Demo Inc. in exchange for 1% share of their governance token.",
-        fullyDilutedOwnershipStake: '1',
-        preMoneyValuation: '50000',
-        numberShares: '',
-        numberTokens: '100000',
-
-        __typename: 'Financial_TransactionAnnotation',
-        annotationMetadata: {},
-        createdAt: '2022-01-25T00:00:00.000Z',
-        fromLabel: '',
-        toLabel: '',
-        transactionCategory: 'INVESTMENT',
-        transactionId:
-          '0xcb6159194da765bc699fc1ff563d0c16aff0fa80376085ee39fc84b0288b2b77',
-        updatedAt: '2022-01-14T11:07:29.954Z'
-      },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '1300000000'
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+      blockNumber: 7892425,
+      timestamp: 1667594316,
+      transactionIndex: 57,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7892425,
+          timestamp: 1667594316,
+          hash: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+          from: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          to: '0xd1b5206bd5f4fdc590d1c65a30a6dacd6476e8e4',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '196080',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '780000'
+        }
+      ],
+      annotation: null,
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_DISTRIBUTED',
+          id: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd-144-0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          transactionId:
+            '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+          distributionBatch: 'c6265f07-b628-4562-b8e3-50abc4b82647'
+        }
+      ]
     },
     {
-      blockNumber: 9737712,
-      blockTimestamp: 1581848807,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 6875298,
-      events: [],
-      fromAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      gasLimit: 77454,
-      gasPrice: 1500011168,
-      gasUsed: 51636,
-      hash: '0x050e59698614b537e82c580c8026236d164356f024f6b531f0bd7511ed40d75d',
-      isError: false,
-      isOutgoingTransaction: true,
-      metadata: {
-        acquisitionDate: '2021-10-20T00:00:00.000Z',
-        companyName: 'Metaverse Company',
-        roundCategory: 'Series B',
-        postMoneyValuation: '100000',
-        memo: '',
-        fullyDilutedOwnershipStake: '1.2',
-        preMoneyValuation: '2000000',
-        numberShares: '23456',
-        numberTokens: '',
-
-        __typename: 'Financial_TransactionAnnotation',
-        annotationMetadata: {},
-        createdAt: '2021-10-28T10:22:11.141Z',
-        fromLabel: '',
-        toLabel: '',
-        transactionCategory: 'INVESTMENT',
-        transactionId:
-          '0x050e59698614b537e82c580c8026236d164356f024f6b531f0bd7511ed40d75d',
-        updatedAt: '2022-01-11T18:20:05.191Z'
-      },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x7cd2d1c36d287f7db66ed74477813f87ef33bf91',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '2000000000'
-    },
-    {
-      blockNumber: 9567323,
-      blockTimestamp: 1579170407,
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+      blockNumber: 7892420,
+      timestamp: 1667594256,
+      transactionIndex: 134,
       contractAddress: '',
-      cumulativeGasUsed: 10150476,
-      events: [],
-      fromAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      gasLimit: 21000,
-      gasPrice: 1501712196,
-      gasUsed: 21000,
-      hash: '0xa5baf7f1fdeabc40e5773f103daa473679d4cf38c39b09fee6500481f851a17e',
-      isError: false,
-      isOutgoingTransaction: true,
-      metadata: {
-        acquisitionDate: '2021-01-05T00:00:00.000Z',
-        companyName: 'NFT DAO',
-        roundCategory: 'Pre-Seed',
-        postMoneyValuation: '10000',
-        memo: '',
-        fullyDilutedOwnershipStake: '8.9',
-        preMoneyValuation: '1000000',
-        numberShares: '',
-        numberTokens: '546789.0123',
-
-        __typename: 'Financial_TransactionAnnotation',
-        annotationMetadata: {},
-        createdAt: '2022-01-01T00:00:00.000Z',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7892420,
+          timestamp: 1667594256,
+          hash: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+          from: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          to: '0xd1261b73ed8ed9cd2551f9c3e97078b8b31b412b',
+          contractAddress: '',
+          gas: '103216',
+          value: '6000000000000000'
+        }
+      ],
+      annotation: null,
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_DISTRIBUTED',
+          id: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d-179-0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          transactionId:
+            '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+          distributionBatch: 'c6265f07-b628-4562-b8e3-50abc4b82647'
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0xd741Bf017d6F97702897803F53E9c81FaF7d5B15',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
         fromLabel: '',
-        toLabel: '',
-        transactionCategory: 'INVESTMENT',
         transactionId:
-          '0xa5baf7f1fdeabc40e5773f103daa473679d4cf38c39b09fee6500481f851a17e',
-        updatedAt: '2022-01-01T00:00:00.000Z'
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'DEPOSIT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
       },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x23cf727486ebc811625ae2664adb3891d2111cb2',
-      tokenDecimal: 18,
-      tokenLogo: '/images/ethereum-logo.svg',
-      tokenName: 'Ether',
-      tokenSymbol: 'ETH',
-      value: '1000000000000000000'
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x110BC6e5fe887beEBB260028D6C95E42a2B5269c',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
+        fromLabel: '',
+        transactionId:
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'INVESTMENT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
+      },
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0xFb1F38d89628A2C12854807a15e7dBe93C84DB03',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
+        fromLabel: '',
+        transactionId:
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'OTHER',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
+      },
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x7cE087be0a01eFD0f09ab8fd7B6e9ca34A3Af39b',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
+        fromLabel: '',
+        transactionId:
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'UNCATEGORIZED',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
+      },
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
+        fromLabel: '',
+        transactionId:
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'DEPOSIT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
+      },
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
     }
-  ],
-  totalCount: 3
+  ]
 };
 
 export const mockClubMembers = [
@@ -535,311 +756,393 @@ export const mockClubMembers = [
   }
 ];
 
+export const mockDataMintEvents = [
+  {
+    memberAddress: '0x005d3f75730cf16e25208bcb27ca941d33db9f8a',
+    createdAt: '1665758104'
+  },
+  {
+    memberAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad',
+    createdAt: '1665718104'
+  },
+  {
+    memberAddress: '0x0cba94a2e458ccace1cc5bac0f05c0c67d9680fd',
+    createdAt: '1665728304'
+  },
+  {
+    memberAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb',
+    createdAt: '1665738304'
+  },
+  {
+    memberAddress: '0x50ccff161ce2751fcfcdc6cf3ec9cc85c933af25',
+    createdAt: '1665748304'
+  },
+  {
+    memberAddress: '0x7cd2d1c36d287f7db66ed74477813f87ef33bf91',
+    createdAt: '1665758304'
+  }
+];
+
 export const mockActivityDepositTransactionsData = {
-  edges: [
+  events: [
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+      blockNumber: 7892425,
+      timestamp: 1667594316,
+      transactionIndex: 57,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7892425,
+          timestamp: 1667594316,
+          hash: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+          from: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          to: '0xd1b5206bd5f4fdc590d1c65a30a6dacd6476e8e4',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '196080',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '780000'
         }
       ],
-      fromAddress: '0x005d3f75730cf16e25208bcb27ca941d33db9f8a',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025975f915605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
-        acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
-        fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
-        transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
-      },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '3812000000'
+      annotation: null,
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_DISTRIBUTED',
+          id: '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd-144-0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          transactionId:
+            '0x78ad7d5b3ec4ac9a5a563974f30018cf15723a0b5db01ae16053c7bd2f2e4acd',
+          distributionBatch: 'c6265f07-b628-4562-b8e3-50abc4b82647'
+        }
+      ]
     },
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+      blockNumber: 7892420,
+      timestamp: 1667594256,
+      transactionIndex: 134,
+      contractAddress: '',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7892420,
+          timestamp: 1667594256,
+          hash: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+          from: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          to: '0xd1261b73ed8ed9cd2551f9c3e97078b8b31b412b',
+          contractAddress: '',
+          gas: '103216',
+          value: '6000000000000000'
         }
       ],
-      fromAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3055675f915605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
-        acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
-        fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
-        transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
-      },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '6302000000'
+      annotation: null,
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_DISTRIBUTED',
+          id: '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d-179-0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          transactionId:
+            '0x469b3937e064ee1bd2a9a5acd60f29e7a17df49b1959f2e93436f5de08ca081d',
+          distributionBatch: 'c6265f07-b628-4562-b8e3-50abc4b82647'
+        }
+      ]
     },
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0xd741Bf017d6F97702897803F53E9c81FaF7d5B15',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
         }
       ],
-      fromAddress: '0x0cba94a2e458ccace1cc5bac0f05c0c67d9680fd',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93f3025675f915605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
+      annotation: {
+        chainId: 5,
         acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
         fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
         transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'DEPOSIT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
       },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '12450000'
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
     },
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x110BC6e5fe887beEBB260028D6C95E42a2B5269c',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
         }
       ],
-      fromAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce68a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
+      annotation: {
+        chainId: 5,
         acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
         fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
         transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'INVESTMENT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
       },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '429000000'
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
     },
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0xFb1F38d89628A2C12854807a15e7dBe93C84DB03',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
         }
       ],
-      fromAddress: '0x50ccff161ce2751fcfcdc6cf3ec9cc85c933af25',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f916605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
+      annotation: {
+        chainId: 5,
         acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
         fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
         transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'OTHER',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
       },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '300000000'
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
     },
     {
-      blockNumber: 9973048,
-      blockTimestamp: 1641908532,
-      contractAddress: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
-      cumulativeGasUsed: 1900506,
-      events: [
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
         {
-          __typename: 'Financial_GraphEvent',
-          eventType: 'MEMBER_MINTED',
-          id: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681-18',
-          transactionId:
-            '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681'
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x7cE087be0a01eFD0f09ab8fd7B6e9ca34A3Af39b',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
         }
       ],
-      fromAddress: '0x7cd2d1c36d287f7db66ed74477813f87ef33bf91',
-      gasLimit: 185121,
-      gasPrice: -1794967283,
-      gasUsed: 118478,
-      hash: '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f415605fbe8518e0f0e05a0e681',
-      isError: false,
-      isOutgoingTransaction: false,
-      metadata: {
-        __typename: 'Financial_TransactionAnnotation',
+      annotation: {
+        chainId: 5,
         acquisitionDate: null,
-        annotationMetadata: {},
-        companyName: '',
-        createdAt: '2022-01-11T14:18:27.662Z',
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
         fromLabel: '',
-        fullyDilutedOwnershipStake: '',
-        memo: '',
-        numberShares: '',
-        numberTokens: '',
-        postMoneyValuation: '',
-        preMoneyValuation: '',
-        roundCategory: null,
-        toLabel: '',
-        transactionCategory: 'DEPOSIT',
         transactionId:
-          '0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681',
-        updatedAt: '2022-01-18T14:45:22.170Z'
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'UNCATEGORIZED',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
       },
-      syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
-      toAddress: '0x2502947319f2166ef46f0a7c081d23c63f88112b',
-      tokenDecimal: 6,
-      tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
-      tokenName: 'USD Coin (rinkeby)',
-      tokenSymbol: 'USDC',
-      value: '1189000000'
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
+    },
+    {
+      chainId: 5,
+      ownerAddress: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+      hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+      blockNumber: 7727841,
+      timestamp: 1665147252,
+      transactionIndex: 106,
+      contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      transfers: [
+        {
+          chainId: 5,
+          blockNumber: 7727841,
+          timestamp: 1665147252,
+          hash: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          from: '0x5b17a1dae9ebf4bc7a04579ae6cedf2afe7601c0',
+          to: '0x1a83c6535d2f0aa701c950c861a43484d2a6e936',
+          contractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+          gas: '329155',
+          tokenName: 'USD//C',
+          tokenSymbol: 'USDC',
+          tokenDecimal: 6,
+          tokenLogo: '/images/TestnetTokenLogos/usdcIcon.svg',
+          value: '10000'
+        }
+      ],
+      annotation: {
+        chainId: 5,
+        acquisitionDate: null,
+        createdAt: '2022-10-07T13:00:38.134Z',
+        updatedAt: '2022-11-07T16:36:49.890Z',
+        equityStake: '',
+        fromLabel: '',
+        transactionId:
+          '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+        syndicateAddress: '0x1a83c6535D2f0aA701c950c861A43484D2a6E936',
+        preMoneyValuation: '',
+        postMoneyValuation: '',
+        roundCategory: null,
+        sharesAmount: '',
+        toLabel: '',
+        tokenAmount: '',
+        transactionCategory: 'DEPOSIT',
+        memo: '',
+        companyName: '',
+        annotationMetadata: {}
+      },
+      syndicateEvents: [
+        {
+          eventType: 'MEMBER_MINTED',
+          id: '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c-244',
+          transactionId:
+            '0x7ea089af2d18c743c6e08ef689b80731aad6e5bb7e88d799a6e71e007a9a578c',
+          distributionBatch: null
+        }
+      ]
     }
-  ],
-  totalCount: 6
+  ]
 };
 
+// TODO [ENG-4613]: Make mock transactions data more detailed moving forward
+
 const combinedActivityTransactions = [
-  ...mockActivityDepositTransactionsData.edges,
-  ...mockOffChainTransactionsData.edges
+  ...mockActivityDepositTransactionsData.events,
+  ...mockOffChainTransactionsData.events
 ];
 export const mockActivityTransactionsData = {
-  edges: combinedActivityTransactions,
+  events: combinedActivityTransactions,
   totalCount: combinedActivityTransactions.length
 };

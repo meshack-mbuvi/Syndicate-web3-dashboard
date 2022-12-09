@@ -4,14 +4,20 @@ import {
 } from '@/components/collectives/activity';
 import { BadgeWithMembers } from '@/components/collectives/badgeWithMembers';
 import { CollectiveCard } from '@/components/collectives/card';
+import MembersOnly from '@/components/collectives/membersOnly';
 import { PermissionType } from '@/components/collectives/shared/types';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B2, B3, H4 } from '@/components/typography';
 import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
-import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import useERC721CollectiveEvents from '@/hooks/collectives/useERC721CollectiveEvents';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { AppState } from '@/state';
+import { getOpenSeaLink } from '@/utils/api/nfts';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -19,12 +25,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
-import { getOpenSeaLink } from '@/utils/api/nfts';
-import MembersOnly from '@/components/collectives/membersOnly';
-import Modal, { ModalStyle } from '@/components/modal';
-import { Spinner } from '@/components/shared/spinner';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import useERC721CollectiveEvents from '@/hooks/collectives/useERC721CollectiveEvents';
 
 interface IProps {
   showModifySettings: boolean;
@@ -91,7 +91,10 @@ const CollectiveDescription = () => {
 const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: {
+        account,
+        ethereumNetwork: { invalidEthereumNetwork }
+      }
     }
   } = useSelector((state: AppState) => state);
 
@@ -132,12 +135,15 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
       <div className={`flex relative flex-col mt-6 space-y-5`}>
         <div
           className={`flex relative flex-col mt-6 w-full space-y-5 ${
-            permissionType === PermissionType.NON_MEMBER || !account
-              ? 'opacity-70 filter blur-md'
+            permissionType === PermissionType.NON_MEMBER ||
+            !account ||
+            invalidEthereumNetwork
+              ? 'opacity-50 filter blur-md'
               : ''
           }`}
         >
-          {permissionType !== PermissionType.NON_MEMBER ? (
+          {permissionType !== PermissionType.NON_MEMBER &&
+          !invalidEthereumNetwork ? (
             activities.length || creationActivity.length ? (
               <div className="space-y-5">
                 {activities.length
@@ -165,7 +171,9 @@ const Activities: React.FC<{ permissionType: any }> = ({ permissionType }) => {
           )}
         </div>
 
-        {permissionType === PermissionType.NON_MEMBER || !account ? (
+        {permissionType === PermissionType.NON_MEMBER ||
+        !account ||
+        invalidEthereumNetwork ? (
           <div className="absolute top-0 left-0 right-0 px-16 rounded-2xl text-center bottom-0 w-full flex flex-col items-center justify-center">
             <MembersOnly />
           </div>
@@ -344,9 +352,10 @@ const Collective: React.FC = () => {
   return (
     <CollectivesContainer>
       <TwoColumnLayout
-        hideWalletAndEllipsis={false}
+        hideWallet={false}
+        hideEllipsis={false}
         showCloseButton={false}
-        headerTitle={'Collective NFT'}
+        headerTitle={collectiveName ? collectiveName : 'Collective NFT'}
         managerSettingsOpen={false}
         dotIndicatorOptions={[]}
         leftColumnComponent={

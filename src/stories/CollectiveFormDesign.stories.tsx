@@ -1,8 +1,17 @@
 import { CollectiveFormDesign } from '@/components/collectives/create/design';
 import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '@/state';
 
 export default {
-  title: '4. Organisms/Collectives/Create/Design'
+  title: '4. Organisms/Collectives/Create/Design',
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

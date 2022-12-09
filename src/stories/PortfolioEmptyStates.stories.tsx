@@ -1,8 +1,17 @@
 import React from 'react';
 import { CreateClubOrCollective } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Portfolio/Empty States'
+  title: '3. Molecules/Portfolio/Empty States',
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

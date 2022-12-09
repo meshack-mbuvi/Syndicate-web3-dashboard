@@ -1,4 +1,4 @@
-import { BACKEND_LINKS } from '@/Networks';
+import { GRAPH_ENDPOINTS } from '@/Networks';
 import { TokenDetails } from '@/types/token';
 import axios, { AxiosResponse } from 'axios';
 
@@ -32,9 +32,11 @@ export const getTokenDetails = (
   chainId: number
 ): Promise<AxiosResponse<TokenDetails>> => {
   let endpoint = 'token/details';
+
   if (tokenAddress?.length == 0) {
     endpoint = 'token/native_token_details';
   }
+
   return proxyGet(endpoint, {
     tokenAddress: tokenAddress,
     chainId: chainId
@@ -60,8 +62,7 @@ export const getSynToken = async (
 
   try {
     return await axios({
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      url: BACKEND_LINKS[chainId].graphs.theGraph,
+      url: GRAPH_ENDPOINTS[chainId].theGraph,
       method: 'POST',
       data: JSON.stringify({
         query,
@@ -112,8 +113,7 @@ export const getCollectivesDetails = async (
 
   try {
     return await axios({
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      url: BACKEND_LINKS[chainId].graphs.theGraph,
+      url: GRAPH_ENDPOINTS[chainId].theGraph,
       method: 'POST',
       data: JSON.stringify({
         query,
@@ -173,8 +173,7 @@ export const getAccountHoldings = async (
   `;
 
   return await axios({
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-    url: BACKEND_LINKS[chainId].graphs.backend,
+    url: GRAPH_ENDPOINTS[chainId].backend,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

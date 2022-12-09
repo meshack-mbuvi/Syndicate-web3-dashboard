@@ -1,5 +1,9 @@
 import { ProgressState } from '@/components/progressCard';
 import { ProgressModal } from '@/components/progressModal';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import ConnectWallet from '@/components/connectWallet';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
   title:
@@ -14,7 +18,17 @@ export default {
       ],
       control: { type: 'select' }
     }
-  }
+  },
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <ConnectWalletProvider>
+          <Story />
+          <ConnectWallet />
+        </ConnectWalletProvider>
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

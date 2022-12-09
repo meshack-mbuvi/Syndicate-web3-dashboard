@@ -13,19 +13,22 @@ export enum SymbolDisplay {
 }
 
 export const InputFieldWithToken = (props: {
+  forwardRef?: React.ForwardedRef<HTMLInputElement>;
   value?: string;
   placeholderLabel?: string;
-  infoLabel?: string | React.ReactElement;
+  infoLabel?: string | React.ReactElement | null;
   isInErrorState?: boolean;
   depositTokenLogo?: string;
   depositTokenSymbol?: string;
   extraClasses?: string;
-  onChange: (e: any) => void;
+  onChange: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   handleTokenClick?: () => void;
   symbolDisplayVariant?: SymbolDisplay;
   symbolColor?: string;
 }): React.ReactElement => {
   const {
+    forwardRef,
     value,
     placeholderLabel = 'Unlimited',
     infoLabel,
@@ -34,6 +37,7 @@ export const InputFieldWithToken = (props: {
     depositTokenSymbol = '',
     extraClasses = '',
     onChange,
+    onFocus,
     handleTokenClick,
     symbolDisplayVariant,
     symbolColor,
@@ -44,11 +48,13 @@ export const InputFieldWithToken = (props: {
     <>
       <div className="relative w-full">
         <InputField
+          ref={forwardRef}
           value={value}
           placeholderLabel={placeholderLabel}
           isInErrorState={isInErrorState}
           extraClasses={extraClasses}
           onChange={onChange}
+          onFocus={onFocus}
           {...rest}
         />
         <div
@@ -60,11 +66,13 @@ export const InputFieldWithToken = (props: {
           ) : symbolDisplayVariant === SymbolDisplay.ONLY_LOGO ? (
             <div className="relative h-5 w-5">
               {depositTokenLogo && (
-                <Image
-                  layout="fill"
-                  src={depositTokenLogo ?? '/images/token-gray-4.svg'}
-                  alt="token icon"
-                />
+                <button onClick={handleTokenClick}>
+                  <Image
+                    layout="fill"
+                    src={depositTokenLogo ?? '/images/token-gray-4.svg'}
+                    alt="token icon"
+                  />
+                </button>
               )}
             </div>
           ) : symbolDisplayVariant === SymbolDisplay.LOGO_AND_SYMBOL ? (

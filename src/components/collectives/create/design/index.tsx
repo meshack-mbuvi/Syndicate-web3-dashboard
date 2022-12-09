@@ -1,3 +1,4 @@
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { TextArea } from '@/components/inputs/simpleTextArea';
 import { Spinner } from '@/components/shared/spinner';
 import { DesignRightPanel } from '@/containers/createCollective/design';
@@ -134,11 +135,9 @@ export const CollectiveFormDesign: React.FC<Props> = ({
         </div>
 
         <div className="mt-8 md:mt-10 pb-20">
-          <button
-            className={`${
-              isContinueButtonActive ? 'primary-CTA' : 'primary-CTA-disabled'
-            } w-full`}
-            // @ts-expect-error TS(2322): Type '((e: any) => void) | null' is not assignable... Remove this comment to see the full error message
+          <CTAButton
+            type={isContinueButtonActive ? CTAType.PRIMARY : CTAType.DISABLED}
+            fullWidth={true}
             onClick={isContinueButtonActive ? handleContinueButton : null}
           >
             {isContinueButtonLoading ? (
@@ -151,7 +150,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             ) : (
               'Continue'
             )}
-          </button>
+          </CTAButton>
           <div className="mt-2 text-sm text-gray-syn4">
             All fields (except token name and symbol) are modifiable later via
             an on-chain transaction with gas.

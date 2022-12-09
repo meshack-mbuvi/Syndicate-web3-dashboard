@@ -1,28 +1,41 @@
+import { TokenDetails } from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
 import ReactTooltip from 'react-tooltip';
 
 interface Props {
   numberVisible: number;
-  tokenDetails: { name: string; symbol: string; icon?: string }[];
+  tokenDetails: TokenDetails[];
+  isAnnotationsModalShown: boolean;
 }
 
 export const TokenCollection: React.FC<Props> = ({
   numberVisible,
-  tokenDetails
+  tokenDetails,
+  isAnnotationsModalShown
 }) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div
+      className={`flex items-center ${
+        isAnnotationsModalShown ? '-space-x-2' : ''
+      }`}
+    >
       {tokenDetails.slice(0, numberVisible).map((token, index) => {
         return (
-          <div
-            key={index}
-            className="w-6 h-6 rounded-full"
-            style={{
-              backgroundImage: `url('${
-                token.icon ? token.icon : '/images/token.svg'
-              }')`,
-              backgroundSize: '100%'
-            }}
-          />
+          <div key={index} className="flex items-center mr-2">
+            <div
+              key={index}
+              className="w-6 h-6 rounded-full mr-2"
+              style={{
+                backgroundImage: `url('${
+                  token.icon ? token.icon : '/images/token.svg'
+                }')`,
+                backgroundSize: '100%'
+              }}
+            />{' '}
+            {!isAnnotationsModalShown
+              ? Number(parseFloat(token.amount).toFixed(4))
+              : null}{' '}
+            {!isAnnotationsModalShown ? token.symbol : null}
+          </div>
         );
       })}
       {tokenDetails.length > numberVisible && (

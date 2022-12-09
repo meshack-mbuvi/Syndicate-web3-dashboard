@@ -57,8 +57,8 @@ export const CollectiveActivity: React.FC<Props> = ({
   offer,
   externalLink
 }) => {
-  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-  const formattedAddress = formatAddress(profile.address, 6, 4);
+  const formattedAddress =
+    profile && profile.address ? formatAddress(profile.address, 6, 4) : '';
 
   return (
     <a href={externalLink} className="flex justify-between items-center">

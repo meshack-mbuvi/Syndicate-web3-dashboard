@@ -6,10 +6,11 @@ import {
 import ProgressBar from '@/components/ProgressBar';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MoreMenu } from './moreMenu';
 import { NavBarNavItem } from './navbarItems';
@@ -25,13 +26,16 @@ interface props {
   handleExitClick?: () => void;
   handlePrevious?: (event?: any) => void;
   handleNext?: (event?: any) => void;
-  hideWalletAndEllipsis?: boolean;
+  hideWallet?: boolean;
+  hideEllipsis?: boolean;
   showCloseButton?: boolean;
   showNavButton?: boolean;
   showCreateProgressBar?: boolean;
   showLogo?: boolean;
+  keepLogoCentered?: boolean;
   showSideNav?: boolean;
   nextBtnDisabled?: boolean;
+  showDotIndicators?: boolean;
 }
 
 const Header: React.FC<props> = ({
@@ -41,29 +45,41 @@ const Header: React.FC<props> = ({
   showBackButton = true,
   showNav = true,
   activeIndex = 0,
-  hideWalletAndEllipsis = false,
+  hideWallet = false,
+  hideEllipsis = false,
   showCloseButton = false,
   dotIndicatorOptions = [],
   showNavButton = false,
   showCreateProgressBar = false,
   showLogo = true,
+  keepLogoCentered = false,
   showSideNav = false,
   handleNext = () => ({}),
-  nextBtnDisabled = true
+  nextBtnDisabled = true,
+  showDotIndicators = true
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
   const [showMobileNav, setShowMobileNav] = React.useState(false);
+  const [menuOverflowClass, setMenuOverflowClass] = useState('overflow-hidden');
+  const transitionDurationMS = 500;
+  const transitionDurationClass = `duration-${transitionDurationMS}`;
 
   // For progress bar
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, status }
     }
   } = useSelector((state: AppState) => state);
   const { currentStep, steps } = useCreateInvestmentClubContext();
 
   useEffect(() => {
+    // Only hide overflow during close/open animations
+    setMenuOverflowClass('overflow-hidden');
+    const timer = setTimeout(() => {
+      setMenuOverflowClass('overflow-visible');
+    }, transitionDurationMS);
+
     if (showMobileNav) {
       // ideally want to add this to the parent element however parent seems to have sibling elements
       // with overflow  -> adding to body for now
@@ -71,6 +87,7 @@ const Header: React.FC<props> = ({
     }
     return () => {
       document.body.classList.remove('overflow-y-hidden');
+      clearTimeout(timer);
     };
   }, [showMobileNav]);
 
@@ -104,19 +121,20 @@ const Header: React.FC<props> = ({
     };
   }, [router.events]);
 
-  const toggleMobileNav = () => {
+  const toggleMobileNav = (): void => {
     setShowMobileNav(!showMobileNav);
   };
 
-  const handleBackButton = () => {
+  const handleBackButton = (): void => {
     const path = router.pathname.split('/');
     //assumes showBackButton only used on ...[DYNAMIC]/currentPath
     const grandParentPath = path.slice(0, path.length - 2).join('/');
-    router.push(grandParentPath || '/');
+    void router.push(grandParentPath || '/');
   };
 
   // do not show the syndicate logo and nav links on the top nav for the create flow.
   const createClubPage = router.pathname === '/clubs/create';
+  const createDealPage = router.pathname === '/deals/create';
 
   return (
     <>
@@ -125,27 +143,36 @@ const Header: React.FC<props> = ({
       ) : null}
       <nav
         className={`${showNav ? 'block' : 'hidden'} ${
-          showMobileNav ? 'bg-gray-syn8 bg-opacity-100' : 'bg-black'
-        } sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
+          showMobileNav
+            ? 'bg-gray-syn8 bg-opacity-100'
+            : 'bg-black bg-opacity-0'
+        } transition-all ${transitionDurationClass} sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
-        {showMobileNav && !createClubPage ? (
-          <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
-            {showSideNav ? (
-              <div className="flex h-11 mb-4 ml-4 space-x-5 mr-3 md:hidden justify-between">
-                <div className="">
-                  <NavButton
-                    type={NavButtonType.CLOSE}
-                    onClick={handleExitClick}
-                  />
-                </div>
+        {/* Mobile nav */}
+        <div
+          className={`${
+            showMobileNav && !createClubPage
+              ? 'max-h-355 opacity-100'
+              : 'max-h-0 opacity-0'
+          } ${menuOverflowClass} transition-all ${transitionDurationClass} fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl`}
+        >
+          {showSideNav ? (
+            <div className="flex h-11 mb-4 ml-4 space-x-5 mr-3 md:hidden justify-between">
+              <div className="">
                 <NavButton
-                  type={NavButtonType.HORIZONTAL}
-                  handlePrevious={handlePrevious}
-                  handleNext={handleNext}
-                  disabled={nextBtnDisabled}
-                  currentStep={activeIndex}
+                  type={NavButtonType.CLOSE}
+                  onClick={handleExitClick}
                 />
+              </div>
+              <NavButton
+                type={NavButtonType.HORIZONTAL}
+                handlePrevious={handlePrevious}
+                handleNext={handleNext}
+                disabled={nextBtnDisabled}
+                currentStep={activeIndex}
+              />
+              {showDotIndicators ? (
                 <div className="flex align-middle">
                   <DotIndicators
                     {...{
@@ -156,28 +183,35 @@ const Header: React.FC<props> = ({
                     }}
                   />
                 </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
+          ) : null}
+          <div className="container items-center divide-y pb-2 md:pb-0">
             {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <React.Fragment key={index}>
-                <div className="container mx-auto items-center">
-                  <NavBarNavItem
-                    navItemText={navItemText}
-                    url={url}
-                    isLegal={isLegal}
-                  />
-                </div>
-                <div className="pl-6-percent">
-                  <div className="border-b-1 border-gray-border" />
-                </div>
-              </React.Fragment>
+              <div key={index}>
+                <NavBarNavItem
+                  navItemText={navItemText}
+                  url={url}
+                  isLegal={isLegal}
+                />
+              </div>
             ))}
-            <NetworkComponent />
-            <WalletComponent />
+            <div className="border-gray-syn7">
+              <NetworkComponent />
+            </div>
+            <div
+              className={`border-gray-syn7 ${
+                (status === Status.DISCONNECTED && 'pt-4') || ''
+              }`}
+            >
+              <WalletComponent />
+            </div>
           </div>
-        ) : null}
+        </div>
 
+        {/* Main nav */}
         <div className="container mx-auto h-full flex">
+          {/* Back button */}
           {showBackButton ? (
             <div className="flex flex-1 sm:hidden items-center -ml-3">
               <button
@@ -194,7 +228,23 @@ const Header: React.FC<props> = ({
               </button>
             </div>
           ) : null}
-          {createClubPage || !navItems.length ? null : (
+
+          {/* Logo tablet screen (left side) */}
+          {!showLogo ? null : (
+            <div className="lg:hidden mr-6 flex w-max items-center">
+              <Link href="/">
+                <img src="/images/logo.svg" alt="Syndicate Logo" />
+              </Link>
+            </div>
+          )}
+
+          {/* Left links */}
+          {!navItems.length && keepLogoCentered && (
+            <div className="hidden sm:block flex-1" />
+          )}
+
+          {/* Nav buttons */}
+          {createClubPage || createDealPage || !navItems.length ? null : (
             <div className="hidden sm:flex flex-1 items-center">
               {navItems.map(({ navItemText, url, isLegal }, index) => (
                 <NavBarNavItem
@@ -206,8 +256,10 @@ const Header: React.FC<props> = ({
               ))}
             </div>
           )}
+
+          {/* Logo desktop */}
           {!showLogo ? null : (
-            <div className="flex w-max items-center">
+            <div className="hidden lg:flex w-max items-center">
               <Link href="/">
                 {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                 <a href="/">
@@ -216,6 +268,8 @@ const Header: React.FC<props> = ({
               </Link>
             </div>
           )}
+
+          {/* Mobile hamburger + close button */}
           <div className="flex flex-1 sm:hidden justify-end items-center -mr-3">
             <button
               type="button"
@@ -239,15 +293,13 @@ const Header: React.FC<props> = ({
               )}
             </button>
           </div>
-          <div className="relative w-full hidden sm:flex sm:space-x-3 flex-1 md:justify-end items-center">
-            <div
-              className={`flex space-x-3 w-full justify-between md:justify-end ${
-                hideWalletAndEllipsis ? 'hidden' : ''
-              }`}
-            >
+
+          {/* Network, wallet, ellipsis */}
+          <div className="lg:flex-1 relative w-full hidden sm:flex sm:space-x-3 md:justify-end items-center">
+            <div className={`flex space-x-3 w-full justify-end`}>
               {showSideNav ? (
                 <div className="flex h-11 space-x-5 mr-3 md:hidden justify-between">
-                  <div className="">
+                  <div>
                     <NavButton
                       type={NavButtonType.CLOSE}
                       onClick={handleExitClick}
@@ -260,26 +312,36 @@ const Header: React.FC<props> = ({
                     disabled={nextBtnDisabled}
                     currentStep={activeIndex}
                   />
-                  <div className="flex align-middle">
-                    <DotIndicators
-                      {...{
-                        options: dotIndicatorOptions,
-                        activeIndex,
-                        showDotIndicatorLabels: false,
-                        orientation: DotIndicatorsOrientation.HORIZONTAL
-                      }}
-                    />
-                  </div>
+                  {showDotIndicators ? (
+                    <div className="flex align-middle">
+                      <DotIndicators
+                        {...{
+                          options: dotIndicatorOptions,
+                          activeIndex,
+                          showDotIndicatorLabels: false,
+                          orientation: DotIndicatorsOrientation.HORIZONTAL
+                        }}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
-              <div className="flex space-x-3">
-                <NetworkComponent />
-                <WalletComponent />
-                <MoreMenu />
+              <div className="flex space-x-1.5 md:space-x-3 transition-all">
+                <div className={`${hideWallet ? 'hidden' : ''}`}>
+                  <NetworkComponent />
+                </div>
+                <div className={`${hideWallet ? 'hidden' : ''}`}>
+                  <WalletComponent />
+                </div>
+                <div className={`${hideEllipsis ? 'hidden' : ''}`}>
+                  <MoreMenu />
+                </div>
               </div>
             </div>
 
-            {dotIndicatorOptions?.length && !showSideNav ? (
+            {dotIndicatorOptions?.length &&
+            !showSideNav &&
+            showDotIndicators ? (
               <>
                 <DotIndicators
                   options={dotIndicatorOptions}
@@ -292,16 +354,23 @@ const Header: React.FC<props> = ({
                   <NavButton
                     handlePrevious={handlePrevious}
                     type={NavButtonType.HORIZONTAL}
+                    extraClasses="flex-shrink-0"
                   />
                 ) : null}
               </>
             ) : null}
 
             {showCloseButton && (
-              <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+              <NavButton
+                type={NavButtonType.CLOSE}
+                onClick={handleExitClick}
+                extraClasses="flex-shrink-0"
+              />
             )}
           </div>
         </div>
+
+        {/* Progress bar */}
         {showCreateProgressBar && account && (
           <ProgressBar
             // @ts-expect-error TS(2532): Object is possibly 'undefined'.

@@ -1,4 +1,4 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React from 'react';
@@ -36,13 +36,13 @@ export const BonusTokenClaim: React.FC<bonusClaimProps> = ({
             separately.
           </p>
         </div>
-        <CtaButton
+        <CTAButton
           onClick={handleClaimBonus}
-          greenCta={!disabled}
+          type={!disabled ? CTAType.TRANSACTIONAL : CTAType.PRIMARY}
           disabled={disabled}
         >
           Claim bonus
-        </CtaButton>
+        </CTAButton>
       </div>
     </div>
   );

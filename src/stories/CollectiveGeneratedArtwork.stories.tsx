@@ -2,14 +2,14 @@ import {
   NFTPreviewer,
   NFTMediaType
 } from '@/components/collectives/nftPreviewer';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
 import { useRef, useState } from 'react';
 import Modal from '@/components/modal';
 import { CollectivesGeneratedArtwork } from '@/components/collectives/generatedArtwork';
 import { elementToImage } from '@/utils/elementToImage';
 
 export default {
-  title: 'Testing/Generated Artwork'
+  title: 'Experiments/Generated Artwork'
 };
 
 const Template = (args: any) => {
@@ -43,7 +43,7 @@ const Template = (args: any) => {
       </div>
       <div className="space-y-5 w-fit-content">
         <div className="flex space-x-2">
-          <CtaButton
+          <CTAButton
             onClick={() => {
               elementToImage(printRef, 2, (imageURI) => {
                 setArtworkURL(imageURI);
@@ -52,7 +52,7 @@ const Template = (args: any) => {
             }}
           >
             Screenshot
-          </CtaButton>
+          </CTAButton>
         </div>
         <hr className="border-gray-syn6" />
         <NFTPreviewer
@@ -91,5 +91,6 @@ const Template = (args: any) => {
 export const Image = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Image.args = {
-  label: 'My label'
+  label: 'My label',
+  chromatic: { disableSnapshot: true }
 };

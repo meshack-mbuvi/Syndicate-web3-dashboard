@@ -1,4 +1,6 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { MBR_FINISH_DOCS_CLICK } from '@/components/amplitude/eventNames';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import Head from '@/components/syndicates/shared/HeaderTitle';
@@ -42,6 +44,9 @@ const MemberAgreementPage: NextPage = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const signHandler = () => {
+    amplitudeLogger(MBR_FINISH_DOCS_CLICK, {
+      flow: Flow.CLUB_LEGAL
+    });
     // Render Final Docs :
     const data = {
       ...memberInfo,
@@ -115,9 +120,9 @@ const MemberAgreementPage: NextPage = () => {
             <Link
               href={`/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`}
             >
-              <CtaButton onClick={() => setShowSuccessModal(false)}>
+              <CTAButton onClick={() => setShowSuccessModal(false)}>
                 Back to club dashboard
-              </CtaButton>
+              </CTAButton>
             </Link>
           </div>
         </div>

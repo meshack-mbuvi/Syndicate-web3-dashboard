@@ -35,9 +35,10 @@ import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import { Callout } from '../callout';
+import { CTAButton, CTAType } from '../CTAButton';
 import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
-import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
+import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import {
   InputFieldWithToken,
@@ -128,10 +129,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
     activeNetwork.nativeCurrency;
   let showMintingForClosedClubDisclaimer = false;
+
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
-      // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
-      localStorage.getItem('mintingForClosedClub')
+      localStorage.getItem('mintingForClosedClub') || '{}'
     );
 
     if (mintingForClosedClubDetails?.mintingForClosedClub) {
@@ -746,10 +747,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         borderRadius="rounded-1.5lg"
                       />
                     ) : (
-                      <InputFieldWithButton
+                      <InputFieldWithAddOn
                         value={String(maxNumberOfMembers)}
-                        buttonLabel="Max"
-                        buttonOnClick={() => {
+                        addOn="Max"
+                        addOnOnClick={() => {
                           setMaxNumberOfMembers(99);
                           setMaxNumberOfMembersError(null);
                         }}
@@ -940,21 +941,21 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
               </div>
 
               {/* Submit button */}
-              <button
-                // @ts-expect-error TS(2322): Type '(() => Promise<void>) | null' is not assigna... Remove this comment to see the full error message
+              <CTAButton
+                type={
+                  areClubChangesAvailable && isOpenToDeposits
+                    ? CTAType.PRIMARY
+                    : CTAType.DISABLED
+                }
                 onClick={
                   areClubChangesAvailable && isOpenToDeposits
                     ? handleTransaction
                     : null
                 }
-                className={`${
-                  areClubChangesAvailable && isOpenToDeposits
-                    ? 'primary-CTA'
-                    : 'primary-CTA-disabled'
-                } transition-all duration-700 w-full lg:w-auto`}
+                extraClasses="transition-all duration-700 w-full lg:w-auto"
               >
                 Submit changes
-              </button>
+              </CTAButton>
             </div>
           </div>{' '}
           <ProgressStates />

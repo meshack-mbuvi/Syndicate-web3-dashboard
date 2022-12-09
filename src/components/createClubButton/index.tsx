@@ -6,6 +6,7 @@ import {
   CREATE_INVESTMENT_CLUB_CLICK,
   CREATE_COLLECTIVE_CLICK
 } from '../amplitude/eventNames';
+import { CTAButton } from '../CTAButton';
 
 /**
  * Component to render button that navigates user to the club/DAO creation page
@@ -27,8 +28,8 @@ const CreateClubButton: React.FC<ICreateClubButton> = ({
   const router = useRouter();
 
   return (
-    <button
-      className="primary-CTA flex justify-center items-center w-full sm:w-auto"
+    <CTAButton
+      extraClasses="flex justify-center items-center w-full sm:w-auto"
       onClick={() => {
         creatingClub
           ? amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
@@ -44,14 +45,14 @@ const CreateClubButton: React.FC<ICreateClubButton> = ({
       }}
     >
       {showIcon ? (
-        <div className="mr-3 flex items-center">
+        <div className="flex items-center">
           <Image src={`/images/add.svg`} height={16} width={16} />
         </div>
       ) : null}
       <p className="ml-3">
         {creatingClub ? 'Create an investment club' : 'Create a collective'}
       </p>
-    </button>
+    </CTAButton>
   );
 };
 

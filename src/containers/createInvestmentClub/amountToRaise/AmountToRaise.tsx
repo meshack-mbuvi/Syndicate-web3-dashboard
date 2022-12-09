@@ -58,13 +58,11 @@ const AmountToRaise: React.FC<{
 
   // catch input field errors
   useEffect(() => {
-    if (!amount || +amount === 0 || editButtonClicked) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
+    if (!amount || editButtonClicked) {
+      setNextBtnDisabled?.(true);
     } else {
       setError('');
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
+      setNextBtnDisabled?.(false);
     }
     amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
   }, [amount, editButtonClicked, setNextBtnDisabled]);
@@ -74,7 +72,6 @@ const AmountToRaise: React.FC<{
     if (!activeNetwork.chainId) return;
 
     setdefaultTokenDetails(
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       SUPPORTED_TOKENS[activeNetwork.chainId].filter(
         (coin: any) => coin.default
       )[0]
@@ -88,7 +85,7 @@ const AmountToRaise: React.FC<{
         depositTokenName: defaultTokenDetails.name,
         depositTokenSymbol: defaultTokenDetails.symbol,
         depositTokenLogo: defaultTokenDetails.logoURI,
-        depositTokenDecimals: defaultTokenDetails.decimals
+        depositTokenDecimals: defaultTokenDetails.decimals || 18
       })
     );
   }, [defaultTokenDetails]);

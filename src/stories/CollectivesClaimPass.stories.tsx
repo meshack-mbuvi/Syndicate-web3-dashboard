@@ -7,17 +7,25 @@ import { ProgressState } from '@/components/progressCard';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import { store } from '@/state/index';
 import { Provider } from 'react-redux';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
 
 export default {
   title: '4. Organisms/Collectives/Claim Pass',
   decorators: [
     (Story: any) => (
-      <Provider store={store}>
-        <ConnectWalletProvider>
-          <Story />
-          <ConnectWallet />
-        </ConnectWalletProvider>
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <ConnectWalletProvider>
+            <Story />
+            <ConnectWallet />
+          </ConnectWalletProvider>
+        </Provider>
+      </ApolloProvider>
     )
   ]
 };

@@ -30,6 +30,9 @@ import { MaxPerMemberERC721 } from '@/ClubERC20Factory/MaxPerMemberERC721';
 import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
 import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
 import { ERC721Collective } from '@/ClubERC20Factory/ERC721Collective';
+import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
+import { AllowancePrecommitModuleERC20 } from '@/ClubERC20Factory/AllowancePrecommitModuleERC20';
+import { ERC20DealFactory } from '@/ClubERC20Factory/ERC20DealFactory';
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
@@ -66,6 +69,9 @@ export interface ISyndicateContracts {
   maxMemberCountMixin: MaxMemberCountMixin;
   maxTotalSupplyMixin: MaxTotalSupplyMixin;
   tokenGatedMixin: TokenGatedMixin;
+  nativeTokenPriceMerkleMintModule: NativeTokenPriceMerkleMintModule;
+  allowancePrecommitModuleERC20: AllowancePrecommitModuleERC20;
+  erc20DealFactory: ERC20DealFactory;
 }
 
 interface InitialState {
@@ -140,7 +146,13 @@ const initialState: InitialState = {
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MaxTotalSup... Remove this comment to see the full error message
     maxTotalSupplyMixin: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
-    tokenGatedMixin: null
+    tokenGatedMixin: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'AllowancePr.... Remove this comment to see the full error message
+    allowancePrecommitModuleERC20: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC20DealFa.... Remove this comment to see the full error message
+    erc20DealFactory: null
   }
 };
 

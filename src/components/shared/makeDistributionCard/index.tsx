@@ -1,4 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { MAKE_DISTRIBUTION_CLICK } from '@/components/amplitude/eventNames';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
@@ -24,6 +26,11 @@ const MakeDistributionCard: React.FC = () => {
           ? undefined
           : `/clubs/${clubAddress}/distribute?chain=${activeNetwork.network}`
       }
+      onClick={() => {
+        amplitudeLogger(MAKE_DISTRIBUTION_CLICK, {
+          flow: Flow.CLUB_DISTRIBUTE
+        });
+      }}
     >
       <div className="rounded-t-2xl space-x-4 flex items-stretch">
         <div className="flex-shrink-0">

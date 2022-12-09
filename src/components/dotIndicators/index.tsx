@@ -83,7 +83,7 @@ export const DotIndicators: React.FC<Props> = ({
         orientation === DotIndicatorsOrientation.VERTICAL
           ? 'justify-start'
           : 'justify-end'
-      } items-center relative ${customClasses}`}
+      } items-center relative ${customClasses ?? ''}`}
     >
       {/* Vertical dots */}
       <div

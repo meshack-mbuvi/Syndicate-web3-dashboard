@@ -6,9 +6,10 @@ import {
   LockIcon
 } from 'src/components/iconWrappers';
 import TokenGateBanner from '@/containers/managerActions/clubTokenMembers/tokenGateBanner';
-import useClubMixinGuardFeatureFlag from '@/hooks/clubs/useClubsMixinGuardFeatureFlag';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
 
 interface Props {
   link: string;
@@ -46,8 +47,10 @@ const CopyLink: FC<Props> = ({
     erc20TokenSliceReducer: { activeModuleDetails }
   } = useSelector((state: AppState) => state);
 
-  const { isReady, isClubMixinGuardTreatmentOn } =
-    useClubMixinGuardFeatureFlag();
+  const { isReady, isTreatmentOn: isClubMixinGuardTreatmentOn } =
+    useFeatureFlag(FEATURE_FLAGS.CLUBS_MIXIN_GUARDED, {
+      clubsMixinGuardedAllowlisted: true
+    });
 
   const isTokenGated = activeModuleDetails?.activeMintModuleReqs?.isTokenGated;
 

@@ -29,16 +29,43 @@ import { RetryLink } from '@apollo/client/link/retry';
 import withApollo from 'next-with-apollo';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
-import { BACKEND_LINKS } from '@/Networks/backendLinks';
-import { SplitFactory } from '@splitsoftware/splitio-react';
+import {
+  GRAPH_ENDPOINTS,
+  GraphLinks,
+  SUPPORTED_GRAPHS
+} from '@/Networks/backendLinks';
 
-//Binding events.
-Router.events.on('routeChangeStart', () => NProgress.start());
-Router.events.on('routeChangeComplete', () => NProgress.done());
-Router.events.on('routeChangeError', () => NProgress.done());
+import { SplitFactory } from '@splitsoftware/splitio-react';
+import Script from 'next/script';
+import router from 'next/router';
+import {
+  GA_TRACKING_ID,
+  GoogleAnalyticsPageView
+} from '@/google-analytics/gtag';
+import useIsInDarkMode from '@/hooks/useDarkMode';
+import CreateDealProvider from '@/context/createDealContext';
+
+const handleRouteChangeGoogleAnalytics = (url: string) => {
+  const isURLForClub = url.split('/').includes('clubs');
+  const isURLForCollective = url.split('/').includes('collectives');
+  if (!isURLForClub && !isURLForCollective) {
+    GoogleAnalyticsPageView(url);
+  }
+};
+
+// Binding events.
+router.events.on('routeChangeStart', () => NProgress.start());
+router.events.on('routeChangeError', () => NProgress.done());
+router.events.on('routeChangeComplete', (url: string) => {
+  NProgress.done();
+  handleRouteChangeGoogleAnalytics(url);
+});
+router.events.on('hashChangeComplete', (url: string) => {
+  NProgress.done();
+  handleRouteChangeGoogleAnalytics(url);
+});
 
 const sdkConfig = {
   core: {
@@ -49,16 +76,21 @@ const sdkConfig = {
   }
 };
 
-// Names of splits here
-export const distributions_feature = 'Distributions';
-export const collectives_feature = 'Collectives';
-export const clubsMixinGuarded_feature = 'ClubsMixinGuarded';
+// Names of splits here should match the names of the feature flags in Split.io
+export enum FEATURE_FLAGS {
+  DISTRIBUTIONS = 'Distributions',
+  COLLECTIVES = 'Collectives',
+  CLUBS_MIXIN_GUARDED = 'ClubsMixinGuarded',
+  DEALS = 'Deals'
+}
 
 const StateProviders: React.FC = ({ children }) => (
   <SplitFactory config={sdkConfig}>
     <OnboardingProvider>
       <BeforeGettingStartedProvider>
-        <CreateInvestmentClubProvider>{children}</CreateInvestmentClubProvider>
+        <CreateInvestmentClubProvider>
+          <CreateDealProvider>{children}</CreateDealProvider>
+        </CreateInvestmentClubProvider>
       </BeforeGettingStartedProvider>
     </OnboardingProvider>
   </SplitFactory>
@@ -81,7 +113,11 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
         {/* Safari favicon */}
         <link rel="icon" href="/favicon.png" sizes="any" />
         {/* Favicon */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>{' '}
+        <link
+          rel="icon"
+          href={useIsInDarkMode() ? '/favicon-white.svg' : 'favicon.svg'}
+          type="image/svg+xml"
+        ></link>{' '}
         <FontsPreloader />
         <meta
           name="viewport"
@@ -91,6 +127,26 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
       <ApolloProvider client={apollo}>
         <Component {...pageProps} />
       </ApolloProvider>
+
+      {/* Google Analytics */}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });
+          `
+        }}
+      />
     </>
   );
 };
@@ -110,19 +166,18 @@ const App = (props: any) => {
 };
 
 // Construct dynamic httpLinks from available networks and graphs
-const constructGraphLinks = () => {
-  const links = {};
-  Object.entries(BACKEND_LINKS).map(([networkId, backendInfo]) => {
-    const graphs = Object.keys(backendInfo.graphs);
-    const httplinks = {};
-    graphs.forEach((value) => {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+const constructGraphLinks = (): GraphLinks => {
+  const links: GraphLinks = {};
+  Object.entries(GRAPH_ENDPOINTS).map(([networkId, graphEndpoints]) => {
+    const httplinks: Record<SUPPORTED_GRAPHS, HttpLink> = {} as Record<
+      SUPPORTED_GRAPHS,
+      HttpLink
+    >;
+    Object.values(SUPPORTED_GRAPHS).map((value) => {
       httplinks[value] = new HttpLink({
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-        uri: backendInfo.graphs[value]
+        uri: graphEndpoints[value]
       });
     });
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     links[networkId] = httplinks;
   });
 
@@ -134,8 +189,9 @@ const httpsLinks = Object.freeze(constructGraphLinks());
 const apolloInitializer = ({ initialState }: any) => {
   const graphLink = new ApolloLink((operation) => {
     const { clientName = 'backend', chainId = 1 } = operation.getContext();
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-    return httpsLinks[chainId][clientName].request(operation);
+    return httpsLinks[(chainId as string) || '1'][
+      (clientName as SUPPORTED_GRAPHS) || SUPPORTED_GRAPHS.BACKEND
+    ].request(operation);
   });
   return new ApolloClient({
     ssrMode: isSSR(),

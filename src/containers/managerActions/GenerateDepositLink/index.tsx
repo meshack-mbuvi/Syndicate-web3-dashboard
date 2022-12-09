@@ -1,4 +1,6 @@
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton } from '@/components/CTAButton';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ADMIN_PREPARE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
 import CopyLink from '@/components/shared/CopyLink';
@@ -295,7 +297,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             <div className="text-sm text-gray-syn4 mt-4 mb-6">
               To adapt these legal documents to your needs,{' '}
               <a
-                href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity/legal-document-examples"
+                href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity/legal-document-examples"
                 className="text-blue cursor-pointer"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -352,7 +354,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             Help me{' '}
             <a
               className="text-blue cursor-pointer"
-              href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
+              href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -385,7 +387,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             <div className="text-sm flex text-gray-syn4 mt-2 mb-6">
               Takes ~5 mins and requires an
               <a
-                href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity"
+                href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity"
                 className="text-gray-syn4 cursor-pointer ml-1 flex align-middle p-0 space-x-2"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -431,7 +433,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               <div className="text-sm text-gray-syn4 mt-4 mb-6">
                 To adapt these documents to your needs,{' '}
                 <a
-                  href="https://guide.syndicate.io/en/web3-investment-clubs/create-a-legal-entity/legal-document-examples"
+                  href="https://guide.syndicate.io/en/products/investment-clubs/create-a-legal-entity/legal-document-examples"
                   className="text-blue cursor-pointer"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -442,15 +444,18 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               </div>
 
               <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
-                <CtaButton
+                <CTAButton
                   onClick={() => {
                     if (depositsEnabled) {
                       startDocumentSigning('yes');
                     }
+                    amplitudeLogger(ADMIN_PREPARE_DOCS_CLICK, {
+                      flow: Flow.CLUB_LEGAL
+                    });
                   }}
                 >
                   Prepare legal documents
-                </CtaButton>
+                </CTAButton>
               </Link>
             </div>
           </div>

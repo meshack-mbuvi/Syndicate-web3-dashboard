@@ -1,4 +1,5 @@
 import { MERKLE_AIRDROP_CREATED } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
   clearAirdropInfo,
@@ -38,7 +39,10 @@ const useFetchAirdropInfo: any = (skipQuery: any) => {
       }
     },
     skip: !account || !activeNetwork.chainId || skipQuery || isDemoMode,
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    }
   });
 
   useEffect(() => {

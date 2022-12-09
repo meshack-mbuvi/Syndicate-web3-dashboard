@@ -3,17 +3,25 @@ import TokenSelectModal, {
   TokenModalVariant
 } from '@/components/tokenSelect/TokenSelectModal';
 import { store } from '@/state/index';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { useArgs } from '@storybook/addons';
 import { Story } from '@storybook/react';
 import { Provider } from 'react-redux';
+
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
 
 export default {
   title: '4. Organisms/Token Select Modal',
   decorators: [
     (Story: React.FC): React.ReactElement => (
-      <Provider store={store}>
-        <Story />
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      </ApolloProvider>
     )
   ]
 };

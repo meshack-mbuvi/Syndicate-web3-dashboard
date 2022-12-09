@@ -1,6 +1,7 @@
 import { AssetList } from '@/components/distributions/assetList';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B3, B4 } from '@/components/typography';
+import { IToken } from '@/state/assets/types';
 import Image from 'next/image';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
@@ -9,35 +10,9 @@ import DistributionHeader from '../DistributionHeader';
 interface Props {
   loading: boolean;
   symbol: string;
-  options: {
-    icon: string;
-    name?: string;
-    symbol?: string;
-    price?: number;
-    tokenAmount?: number;
-    fiatAmount?: number;
-    maximumTokenAmount?: number;
-    isEditingInFiat?: boolean;
-    error?: string;
-    warning?: string;
-    isLoading?: boolean;
-  }[];
+  options: IToken[];
   activeIndices: number[];
-  handleOptionsChange: (
-    options: {
-      icon: string;
-      name?: string;
-      symbol?: string;
-      tokenAmount?: number;
-      fiatAmount?: number;
-      isEditingInFiat?: boolean;
-      error?: string;
-      warning?: string;
-      isLoading?: boolean;
-      maximumTokenAmount?: number;
-      price?: number;
-    }[]
-  ) => void;
+  handleOptionsChange: (options: IToken[]) => void;
   handleActiveIndicesChange: (indices: number[]) => void;
 }
 
@@ -54,8 +29,9 @@ const TokenSelector: React.FC<Props> = ({
       {!loading ? (
         <>
           <DistributionHeader
-            titleText="What would you like to distribute?"
-            subTitleText={`Assets are distributed in proportion to members’ ownership of ${symbol} tokens.`}
+            titleText="What would you like to distribute and what amount?"
+            subTitleText={`All assets within your Investment Club’s wallet are displayed for distribution.
+            They will be distributed in proportion to members’ ownership of ${symbol} tokens.`}
           />
           <div className="mt-1">
             <div className="flex">
@@ -66,16 +42,16 @@ const TokenSelector: React.FC<Props> = ({
                 className="flex space-x-2"
               >
                 <Image
-                  src="/images/question-gray5.svg"
+                  src="/images/question.svg"
                   alt=""
                   className="mr-2"
                   height={16}
                   width={16}
                 />
-                <B3 extraClasses="flex text-gray-syn5 hidden md:flex">
+                <B3 extraClasses="flex text-gray-syn4 hidden md:flex">
                   Why don’t NFTs show up here?
                 </B3>
-                <B4 extraClasses="flex text-gray-syn5 md:hidden">
+                <B4 extraClasses="flex text-gray-syn4 md:hidden">
                   Why don’t NFTs show up here?
                 </B4>
               </div>

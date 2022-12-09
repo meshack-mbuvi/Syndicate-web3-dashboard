@@ -48,16 +48,16 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
       setShowModal(true);
     }
     if (creationStatus.confirmed) {
-      setProcessingModalTitle('Approving');
+      setProcessingModalTitle('Creating Collective');
       setProcessingModalDescription(
-        'This could take anywhere from seconds to hours depending on network congestion and gas fees. You can safely leave this page while you wait.'
+        'This could take a little while. You can safely leave this page while you wait. Once complete, your Collective will appear in your dashboard.'
       );
       setShowModal(true);
     }
     if (creationStatus.transactionTakingTooLong) {
       setProcessingModalTitle('Transaction is taking a while');
       setProcessingModalDescription(
-        'Hold tight, this may take a while. You can speed up the transaction by increasing the gas amount in your wallet'
+        'The network is busy, so this may take a while. Your wallet can speed up this transaction. Once complete, your Collective will appear in your dashboard.'
       );
       setShowModal(true);
     }
@@ -141,7 +141,7 @@ const CreateCollectiveModals: FC<Props> = ({ handleReSubmit }) => {
           <H4 extraClasses="text-center mt-10 mb-4 leading-4 text-white">
             {processingModalTitle}
           </H4>
-          <B2 extraClasses="text-center font-Slussen leading-5 text-gray-lightManatee">
+          <B2 extraClasses="text-center leading-5 text-gray-lightManatee">
             {processingModalDescription}
           </B2>
 

@@ -1,7 +1,16 @@
 import { CollectivesCreateSuccess } from '@/components/collectives/create/success';
+import { Provider } from 'react-redux';
+import { store } from '@/state';
 
 export default {
-  title: '4. Organisms/Collectives/Create/Success'
+  title: '4. Organisms/Collectives/Create/Success',
+  decorators: [
+    (Story: any) => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    )
+  ]
 };
 
 const Template = (args: any) => {

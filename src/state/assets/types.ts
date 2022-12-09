@@ -1,5 +1,28 @@
+export interface IToken {
+  isEditingInFiat?: boolean;
+  isLoading?: boolean;
+  symbol?: string;
+  contractAddress: string;
+  logo?: string;
+  tokenDecimal: string;
+  tokenSymbol?: string;
+  tokenBalance: string;
+  tokenAmount?: string;
+  fiatAmount?: number | string;
+  maximumTokenAmount?: string;
+  tokenName: string;
+  name?: string;
+  icon?: string | undefined;
+  tokenValue: number;
+  isTransferable?: boolean;
+  error?: string;
+  warning?: string;
+  price: {
+    usd?: number;
+  };
+}
 export interface InitialState {
-  tokensResult: any;
+  tokensResult: IToken[];
   collectiblesResult: any;
   loading: boolean;
   loadingCollectibles: boolean;

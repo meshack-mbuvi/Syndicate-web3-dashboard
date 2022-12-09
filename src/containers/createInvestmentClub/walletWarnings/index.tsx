@@ -11,6 +11,7 @@ import { L2 } from '@/components/typography';
 import { AppState } from '@/state';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CONTINUE_WALLET_CLICK } from '@/components/amplitude/eventNames';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 
 const WalletWarnings: React.FC = () => {
   const dispatch = useDispatch();
@@ -124,10 +125,10 @@ const WalletWarnings: React.FC = () => {
               </div>
             </p>
           )}
-          <button
-            className={`${
-              hasExistingClubs ? 'orange-CTA' : 'green-CTA'
-            } w-full flex items-center justify-center space-x-2`}
+          <CTAButton
+            fullWidth={true}
+            type={hasExistingClubs ? CTAType.WARNING : CTAType.TRANSACTIONAL}
+            extraClasses={`flex items-center justify-center space-x-2`}
             onClick={() => {
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               handleCreateInvestmentClub();
@@ -140,7 +141,7 @@ const WalletWarnings: React.FC = () => {
               {hasExistingClubs ? 'C' : 'Yes, c'}ontinue with this wallet
             </span>
             <ArrowRightIcon className="w-5 h-5" />
-          </button>
+          </CTAButton>
           <p className="text-center pt-6 font">
             <button onClick={handleDisconnectWallet}>
               Use a different wallet instead

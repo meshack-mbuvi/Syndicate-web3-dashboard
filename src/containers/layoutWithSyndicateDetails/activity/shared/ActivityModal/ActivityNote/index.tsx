@@ -1,8 +1,7 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_NOTE_ADD } from '@/components/amplitude/eventNames';
 import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
-import { AppState } from '@/state';
-import { setCurrentTransaction } from '@/state/erc20transactions';
+import { CurrentTransaction } from '@/state/erc20transactions/types';
 
 import Linkify from 'linkify-react';
 import Image from 'next/image';
@@ -13,13 +12,14 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { TextArea } from './textArea';
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
   setShowNote: Dispatch<SetStateAction<boolean>>;
   isOwner: boolean;
+  currentTransaction: CurrentTransaction;
+  setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
 /**
@@ -30,12 +30,10 @@ interface IActivityNote {
 const ActivityNote: React.FC<IActivityNote> = ({
   saveTransactionNote,
   setShowNote,
-  isOwner
+  isOwner,
+  currentTransaction,
+  setCurrentTransaction
 }) => {
-  const dispatch = useDispatch();
-  const {
-    transactionsReducer: { currentTransaction }
-  } = useSelector((state: AppState) => state);
   const { note } = currentTransaction;
 
   const [hover, setHover] = useState<boolean>(false);
@@ -60,7 +58,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
     if (!noteValue) {
       setShowNote(false);
     }
-    dispatch(setCurrentTransaction({ ...currentTransaction, note: noteValue }));
+    setCurrentTransaction({ ...currentTransaction, note: noteValue });
     amplitudeLogger(TRANSACTION_NOTE_ADD, {
       flow: Flow.CLUB_MANAGE
     });

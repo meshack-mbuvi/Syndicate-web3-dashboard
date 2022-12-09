@@ -2,22 +2,17 @@ import { tokenTableColumns } from '@/containers/layoutWithSyndicateDetails/asset
 import InvestmentsView from '@/containers/layoutWithSyndicateDetails/assets/InvestmentsView';
 import TokenTable from '@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable';
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
-import { useDemoMode } from '@/hooks/useDemoMode';
-import { useFetchRecentTransactions } from '@/hooks/useFetchRecentTransactions';
+// import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
-import {
-  setInvestmentTransactions,
-  setLoadingTransactions,
-  setTotalInvestmentTransactionsCount
-} from '@/state/erc20transactions';
-import { mockOffChainTransactionsData } from '@/utils/mockdata';
+// import { mockOffChainTransactionsData } from '@/utils/mockdata';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Collectibles } from './collectibles';
 import { SearchInput } from '@/components/inputs';
 import FilterPill from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill';
 import { assetsDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
+import { useLegacyTransactions } from '@/hooks/useLegacyTransactions';
 
 export enum SortOrderType {
   TOKENS = 'TOKENS',
@@ -29,11 +24,10 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     assetsSliceReducer: { tokensResult },
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
-    },
-    transactionsReducer: { totalInvestmentTransactionsCount },
-    erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled }
     }
+    /* erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled }
+    } */
   } = useSelector((state: AppState) => state);
 
   let clubAddress = '';
@@ -41,9 +35,8 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     clubAddress = window?.location?.pathname.split('/')[2];
   }
 
-  const isDemoMode = useDemoMode();
+  // const isDemoMode = useDemoMode();
 
-  const dispatch = useDispatch();
   const DATA_LIMIT = 10;
 
   const [activeAssetTab, setActiveAssetTab] = useState<string>('all');
@@ -70,22 +63,12 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     );
   }, [account, clubAddress, web3, activeNetwork]);
 
-  // fetch off-chain investment transactions
   const {
-    loading: transactionsLoading,
-    data: transactionsData,
-    refetch: refetchTransactions
-  } = useFetchRecentTransactions(pageOffset, false, {
-    metadata: { transactionCategory: 'INVESTMENT' }
-  });
-
-  const processERC20Transactions = async (txns: any) => {
-    const { edges, totalCount } = txns;
-    dispatch(setLoadingTransactions(true));
-    dispatch(setInvestmentTransactions({ txns: edges, skip: pageOffset }));
-    dispatch(setTotalInvestmentTransactionsCount(totalCount));
-    dispatch(setLoadingTransactions(false));
-  };
+    transactionsLoading,
+    numTransactions,
+    transactionEvents,
+    refetchTransactions
+  } = useLegacyTransactions({}, 0, 10, false);
 
   useEffect(() => {
     if (activeNetwork.chainId) {
@@ -93,25 +76,14 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     }
   }, [pageOffset, activeNetwork.chainId]);
 
-  const investmentsTransactionsData = JSON.stringify(
-    transactionsData?.Financial_recentTransactions
-  );
   useEffect(() => {
-    if (transactionsData?.Financial_recentTransactions) {
-      processERC20Transactions(transactionsData.Financial_recentTransactions);
-      // disable next page button if no.of transactions is less than limit.
-      const { edges } = transactionsData.Financial_recentTransactions;
-      const countofTransactions = pageOffset + DATA_LIMIT;
-
-      if (
-        edges.length < DATA_LIMIT ||
-        countofTransactions === totalInvestmentTransactionsCount
-      ) {
-        setCanNextPage(false);
-      } else {
-        setCanNextPage(true);
-      }
-    } else if (isDemoMode) {
+    const countofTransactions = pageOffset + DATA_LIMIT;
+    if (countofTransactions === numTransactions) {
+      setCanNextPage(false);
+    } else {
+      setCanNextPage(true);
+    }
+    /* } else if (isDemoMode) {
       if (depositsEnabled) {
         dispatch(
           setInvestmentTransactions({
@@ -133,8 +105,8 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
           )
         );
       }
-    }
-  }, [investmentsTransactionsData, clubAddress, depositsEnabled]);
+    } */
+  }, [numTransactions, pageOffset]);
 
   // get current state to hide/show hidden assets
   useEffect(() => {
@@ -289,6 +261,8 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
                 pageOffset,
                 canNextPage,
                 transactionsLoading,
+                numTransactions,
+                transactionEvents,
                 dataLimit: DATA_LIMIT,
                 refetchTransactions: () => refetchTransactions(),
                 storeSortColumn
@@ -319,6 +293,8 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
                   pageOffset,
                   canNextPage,
                   transactionsLoading,
+                  numTransactions,
+                  transactionEvents,
                   dataLimit: DATA_LIMIT,
                   refetchTransactions: () => refetchTransactions(),
                   storeSortColumn

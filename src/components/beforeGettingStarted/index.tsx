@@ -1,5 +1,6 @@
 import { useBeforeGettingStartedContext } from '@/context/beforeGettingStartedContext';
 import { animated } from 'react-spring';
+import { CTAButton, CTAType } from '../CTAButton';
 import Modal, { ModalStyle } from '../modal';
 import { L2 } from '../typography';
 
@@ -68,17 +69,13 @@ const BeforeGettingStartedModal: React.FC = () => {
               </a>
             </animated.p>
           </div>
-          <button
-            className={`w-full ${
-              buttonDisabled
-                ? 'primary-CTA-disabled text-gray-lightManatee'
-                : 'green-CTA transition-all'
-            }`}
+          <CTAButton
+            fullWidth={true}
+            type={buttonDisabled ? CTAType.DISABLED : CTAType.TRANSACTIONAL}
             onClick={hideBeforeGettingStarted}
-            disabled={buttonDisabled}
           >
             Get started
-          </button>
+          </CTAButton>
         </div>
       </Modal>
     </>

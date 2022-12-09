@@ -1,3 +1,4 @@
+import { CTAButton } from '@/components/CTAButton';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
@@ -31,13 +32,14 @@ export const Wallet: React.FC = () => {
   };
 
   const NotConnectedButton = () => (
-    <button
+    <CTAButton
       onClick={connectWallet}
-      className={`bg-white text-black flex relative rounded-full px-5 py-1 items-center h-10 primary-CTA`}
+      fullWidth={true}
+      extraClasses={`text-center justify-center flex relative rounded-full px-5 py-1 items-center h-10`}
       id="connectWallet"
     >
       Connect
-    </button>
+    </CTAButton>
   );
 
   const formattedDemoAddress = formatAddress(

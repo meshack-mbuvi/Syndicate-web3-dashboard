@@ -3,21 +3,29 @@ import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 // react-query
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 5000 } }
 });
 
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
+
 export default {
   title: '3. Molecules/Collectives/Card',
   decorators: [
     (Story: any) => (
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <Story />
-        </Provider>
-      </QueryClientProvider>
+      <ApolloProvider client={client}>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <Story />
+          </Provider>
+        </QueryClientProvider>
+      </ApolloProvider>
     )
   ]
 };

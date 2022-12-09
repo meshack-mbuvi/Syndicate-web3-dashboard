@@ -1,16 +1,22 @@
 import PrimaryButton from '@/components/buttons/PrimaryButton';
-import { CtaButton } from '@/components/CTAButton';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { DistributionMembersTable } from '@/components/distributions/membersTable';
 import DistributionHeader from '@/containers/distribute/DistributionHeader';
 import { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// react-query
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5000 } }
+});
 
 export default {
   title: '4. Organisms/Distribution Members Table',
   decorators: [
-    (Story: any): React.ReactElement => (
-      <div style={{ margin: '0rem' }}>
+    (Story: any) => (
+      <QueryClientProvider client={queryClient}>
         <Story />
-      </div>
+      </QueryClientProvider>
     )
   ]
 };
@@ -92,13 +98,13 @@ const Template = (args: any) => {
             </PrimaryButton>
           </div>
         ) : (
-          <CtaButton
-            greenCta={true}
+          <CTAButton
+            type={CTAType.TRANSACTIONAL}
             fullWidth={false}
             onClick={handleDistribute}
           >
             Submit
-          </CtaButton>
+          </CTAButton>
         )}
       </div>
       <DistributionMembersTable
@@ -124,7 +130,7 @@ TwoTokens.args = {
   clubName: 'ABC',
   membersDetails: [
     {
-      memberName: '0x8b94Cbb9a30f5953d93ca9c3dE83FD676D6C0a42',
+      address: '0x8b94Cbb9a30f5953d93ca9c3dE83FD676D6C0a42',
       clubTokenHolding: 1640,
       distributionShare: 40,
       ownershipShare: 40,
@@ -142,7 +148,7 @@ TwoTokens.args = {
       ]
     },
     {
-      memberName: 'bob.eth',
+      address: '0x8b94Cbb9a30f5953d93ca9c3dE83FD676D6C0a43',
       clubTokenHolding: 1230,
       ownershipShare: 30,
       distributionShare: 30,
@@ -155,7 +161,7 @@ TwoTokens.args = {
       ]
     },
     {
-      memberName: 'alex.eth',
+      address: '0x8b94Cbb9a30f5953d93ca9c3dE83FD676D6C0a44',
       clubTokenHolding: 1230,
       ownershipShare: 30,
       distributionShare: 30,

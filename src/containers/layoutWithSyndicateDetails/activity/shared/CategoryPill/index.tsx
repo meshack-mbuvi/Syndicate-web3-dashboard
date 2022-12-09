@@ -2,7 +2,8 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { getInput } from '@/hooks/useLegacyTransactions';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
 import { TransactionCategory } from '@/state/erc20transactions/types';
@@ -25,11 +26,11 @@ interface ICategoryPill {
   setInlineCategorising?: Dispatch<SetStateAction<boolean>>;
   transactionHash?: string;
   refetchTransactions?: () => void;
-  bulkCategoriseTransactions?: (selectedCategory: string) => void;
+  bulkCategoriseTransactions?: (selectedCategory: TransactionCategory) => void;
   changeAdaptiveBackground?: (selectedCategory: string) => void;
   showLoader?: boolean;
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
-  uncategorisedIcon?: string;
+  uncategorizedIcon?: string;
   disableDropDown?: boolean;
   isOwner: boolean;
 }
@@ -55,7 +56,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   changeAdaptiveBackground,
   showLoader = false,
   setActiveTransactionHash,
-  uncategorisedIcon,
+  uncategorizedIcon,
   disableDropDown,
   isOwner
 }) => {
@@ -85,10 +86,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       icon: '/images/activity/other-transaction.svg'
     },
     {
-      text: 'Uncategorised',
+      text: 'Uncategorized',
       value: null,
-      icon: uncategorisedIcon
-        ? uncategorisedIcon
+      icon: uncategorizedIcon
+        ? uncategorizedIcon
         : outgoing
         ? '/images/activity/outgoing-transaction.svg'
         : '/images/activity/incoming-transaction.svg'
@@ -105,7 +106,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       value: 'EXPENSE',
       icon: '/images/activity/expense-transaction.svg'
     },
-
     {
       text: 'Investment tokens',
       value: 'INVESTMENT_TOKEN',
@@ -174,7 +174,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           setPillIcon(
             outgoing ? 'outgoing-transaction.svg' : 'incoming-transaction.svg'
           );
-          setPillText('Uncategorised');
+          setPillText('Uncategorized');
         }
 
         break;
@@ -200,13 +200,13 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     );
   }, [outgoing, selectedCategory]);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     setShowDropdown(!showDropdown);
   };
 
   // close drop down when clicking outside of it.
   useEffect(() => {
-    const onPageClickEvent = (e: any) => {
+    const onPageClickEvent = (e: any): void => {
       if (
         categorySelect.current !== null &&
         // @ts-expect-error TS(2339): Property 'contains' does not exist on type 'never'... Remove this comment to see the full error message
@@ -221,7 +221,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       window.addEventListener('click', onPageClickEvent);
     }
 
-    return () => {
+    return (): void => {
       window.removeEventListener('click', onPageClickEvent);
     };
   }, [showDropdown]);
@@ -265,7 +265,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           chainId: activeNetwork.chainId,
           input: getInput(`${erc20Token.address}:${account}`)
         },
-        context: { clientName: 'backend', chainId: activeNetwork.chainId }
+        context: {
+          clientName: SUPPORTED_GRAPHS.BACKEND,
+          chainId: activeNetwork.chainId
+        }
       });
       // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);
@@ -285,7 +288,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     }
   }, [readonly, renderedInline, showDropdown, disableDropDown]);
 
-  const closeDropDown = () => {
+  const closeDropDown = (): void => {
     if (renderedInline && readonly) {
       setShowDropdown(false);
       return;
@@ -300,15 +303,17 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       }`}
       onClick={() => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
-      onMouseEnter={() => setPillActiveRowState(true)}
-      onMouseLeave={() => setPillActiveRowState(false)}
+      onMouseEnter={(): void => {
+        setPillActiveRowState(true);
+      }}
+      onMouseLeave={(): void => setPillActiveRowState(false)}
       onKeyDown={() => null}
       tabIndex={0}
       role="button"
     >
       <div className="flex justify-start items-center">
         {!showLoader ? (
-          <div className="flex-shrink-0 h-8 w-8 mr-2 my-1 ml-1">
+          <div className="flex-shrink-0 h-8 w-8 mr-2.25 my-1 ml-1">
             <img src={`/images/activity/${pillIcon}`} alt="transaction-icon" />
           </div>
         ) : (
@@ -322,7 +327,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           </div>
         )}
         {!showLoader ? (
-          <div className={`whitespace-nowrap py-2 ${readonly && 'pr-3'}`}>
+          <div className={`whitespace-nowrap py-2 ${readonly && 'pr-4'}`}>
             <span className="text-base">{pillText}</span>
           </div>
         ) : (
@@ -342,7 +347,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       {showDropdown && isOwner && !showLoader ? (
         <div
           className="mt-2 absolute top-10 -left-2 transition-all duration-500 ease-in-out z-10"
-          onMouseLeave={() => closeDropDown()}
+          onMouseLeave={(): void => closeDropDown()}
         >
           <CategoryPillDropDown
             options={dropDownOptions}

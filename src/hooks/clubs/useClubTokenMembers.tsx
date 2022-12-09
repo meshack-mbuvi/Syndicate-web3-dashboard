@@ -1,7 +1,8 @@
 import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
-import { mockClubMembers } from '@/utils/mockdata';
+import { mockClubMembers, mockDataMintEvents } from '@/utils/mockdata';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -18,6 +19,7 @@ type clubMember = {
   totalSupply: string;
   ensName: string;
   avatar: string;
+  createdAt: string;
 };
 
 const useClubTokenMembers = (): {
@@ -46,19 +48,44 @@ const useClubTokenMembers = (): {
     variables: {
       where: {
         contractAddress: clubAddress?.toString().toLowerCase()
+      },
+      where2: {
+        commonId: clubAddress?.toString().toLowerCase()
       }
     },
-    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
     skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 
-  // @ts-expect-error TS(7031): Binding element 'depositAmount' implicitly has an 'any' type.
-  const processMembers = async (syndicate): Promise<void> => {
+  const processMembers = async (syndicateData: {
+    syndicateDAOs: any[];
+    syndicateEvents: { memberAddress: string; createdAt: string }[];
+  }): Promise<void> => {
+    const syndicate = syndicateData?.syndicateDAOs?.[0];
     if (!syndicate || !syndicate?.members || !syndicate.members.length) {
       return;
     }
 
-    const clubTotalSupply: number = getWeiAmount(
+    const mintEvents: { [x: string]: number } = {};
+
+    syndicateData?.syndicateEvents?.forEach(
+      ({
+        memberAddress,
+        createdAt
+      }: {
+        memberAddress: string;
+        createdAt: string;
+      }) => {
+        if (memberAddress && !(memberAddress in mintEvents)) {
+          mintEvents[`${memberAddress}`] = +createdAt;
+        }
+      }
+    );
+
+    const clubTotalSupply: number = +getWeiAmount(
       web3,
       syndicate.totalSupply,
       tokenDecimals,
@@ -90,6 +117,7 @@ const useClubTokenMembers = (): {
             memberAddress,
             symbol,
             clubTokens,
+            createdAt: mintEvents[memberAddress] || 0,
             ensName: data?.name || '',
             avatar: data?.avatar || '',
             ownershipShare: (100 * clubTokens) / clubTotalSupply,
@@ -123,7 +151,10 @@ const useClubTokenMembers = (): {
 
   useEffect(() => {
     if (isDemoMode) {
-      processMembers(mockClubMembers);
+      void processMembers({
+        syndicateDAOs: mockClubMembers,
+        syndicateEvents: mockDataMintEvents
+      });
       setIsFetchingMembers(false);
     }
 
@@ -132,7 +163,7 @@ const useClubTokenMembers = (): {
     if (data?.syndicateDAOs?.[0]?.members?.length) {
       setClubMembers([]);
 
-      processMembers(data?.syndicateDAOs?.[0]);
+      processMembers(data);
     } else {
       setClubMembers([]);
       setIsFetchingMembers(false);
