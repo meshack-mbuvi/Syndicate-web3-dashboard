@@ -2,13 +2,11 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
-import { getInput } from '@/hooks/useFetchRecentTransactions';
+import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
-import {
-  /* CurrentTransaction, */ TransactionCategory
-} from '@/state/erc20transactions/types';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { useMutation } from '@apollo/client';
 import React, {
   Dispatch,
@@ -28,15 +26,13 @@ interface ICategoryPill {
   setInlineCategorising?: Dispatch<SetStateAction<boolean>>;
   transactionHash?: string;
   refetchTransactions?: () => void;
-  bulkCategoriseTransactions?: (selectedCategory: string) => void;
+  bulkCategoriseTransactions?: (selectedCategory: TransactionCategory) => void;
   changeAdaptiveBackground?: (selectedCategory: string) => void;
   showLoader?: boolean;
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
   uncategorizedIcon?: string;
   disableDropDown?: boolean;
   isOwner: boolean;
-  // currentTransaction: CurrentTransaction;
-  // setCurrentTransaction: Dispatch<SetStateAction<CurrentTransaction>>;
 }
 
 /**
@@ -63,8 +59,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   uncategorizedIcon,
   disableDropDown,
   isOwner
-  // currentTransaction,
-  // setCurrentTransaction
 }) => {
   const dispatch = useDispatch();
   const {
@@ -253,7 +247,6 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       dispatch(
         setCurrentTransaction({ ...currentTransaction, category: value })
       );
-      // setCurrentTransaction({ ...currentTransaction, category: value })
     }
     setSelectedCategory(value);
 

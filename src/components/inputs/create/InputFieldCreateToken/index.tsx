@@ -26,7 +26,7 @@ const generateSymbolError = (symbol: string) => {
 
 interface Props {
   tokenSymbolValue: string;
-  handleTokenSymbolChange: (input: string) => void;
+  handleTokenSymbolChange?: (input: string) => void;
 }
 
 export const InputFieldCreateToken: React.FC<Props> = ({
@@ -43,7 +43,9 @@ export const InputFieldCreateToken: React.FC<Props> = ({
         const input: string = e.target.value;
         const value = input.length > 1 ? input.substring(2) : input; // remove the burst symbol
         if (validateSymbol(value)) {
-          handleTokenSymbolChange(value.toUpperCase());
+          handleTokenSymbolChange
+            ? handleTokenSymbolChange(value.toUpperCase())
+            : null;
           setSymbolError(null);
         } else {
           // @ts-expect-error TS(2345): Argument of type '"Only numbers and letters allowe... Remove this comment to see the full error message

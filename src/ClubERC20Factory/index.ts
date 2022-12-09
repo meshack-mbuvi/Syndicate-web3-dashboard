@@ -52,7 +52,6 @@ export const getSyndicateContracts = async (
   activeNetwork: IActiveNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
 
   if (!addresses) {

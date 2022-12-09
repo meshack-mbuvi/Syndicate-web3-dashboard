@@ -72,8 +72,9 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
 
   // Bulk categorization state
   const [transactionsChecked, setTransactionsChecked] = useState<any[]>([]);
-  const [groupCategory, setGroupCategory] =
-    useState<TransactionCategory>('SELECT_CATEGORY');
+  const [groupCategory, setGroupCategory] = useState<TransactionCategory>(
+    TransactionCategory.SELECT_CATEGORY
+  );
   const [groupTransactionsDestination, setGroupTransactionsDestination] =
     useState<any>([]);
   const [rowCheckboxActiveData, setrowCheckboxActiveData] = useState<any>({});
@@ -148,7 +149,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
       setActiveTransactionHashes(transactionHashes);
       if (categories.size > 1) {
-        setGroupCategory('SELECT_CATEGORY');
+        setGroupCategory(TransactionCategory.SELECT_CATEGORY);
       } else if (categories.size === 1 && outgoingStatuses.size === 1) {
         setGroupCategory(Array.from(categories)[0] ?? null);
       } else if (categories.size === 1 && outgoingStatuses.size > 1) {
@@ -263,7 +264,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     {
       ...generateSearchFilter(filter, memoizedSearchTerm)
     },
-    pageOffset,
+    0,
     100,
     false
   );
@@ -373,7 +374,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
 
         if (
           syndicateEvents?.length === 0 ||
-          syndicateEvents[0]?.eventType !== 'MEMBER_DISTRIBUTED'
+          syndicateEvents?.[0]?.eventType !== 'MEMBER_DISTRIBUTED'
         ) {
           const newId = uuidv4();
           batchIds[`nonBatching-${newId}`] = [
@@ -476,23 +477,36 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
 
   // pagination functions
   function goToNextPage(): void {
-    setPageOffset((_offset) => _offset + DATA_LIMIT);
+    if (numTransactions <= DATA_LIMIT) {
+      setPageOffset((_offset) =>
+        _offset < numTransactions - DATA_LIMIT ? _offset + DATA_LIMIT : _offset
+      );
+    } else {
+      setPageOffset((_offset) =>
+        _offset < numTransactions ? _offset + DATA_LIMIT : _offset
+      );
+    }
 
     // clear selected transactions
     unSelectAllTransactions();
   }
 
   function goToPreviousPage(): void {
-    setPageOffset((_offset) => _offset - DATA_LIMIT);
+    setPageOffset((_offset) => (_offset > 0 ? _offset - DATA_LIMIT : _offset));
 
     // clear selected transactions
     unSelectAllTransactions();
   }
 
   // bulk annotate
-  const bulkCategoriseTransactions = (selectedCategory: string): void => {
-    const outgoingCategories = ['INVESTMENT', 'EXPENSE'];
-    const incomingCategories = ['INVESTMENT_TOKEN'];
+  const bulkCategoriseTransactions = (
+    selectedCategory: TransactionCategory
+  ): void => {
+    const outgoingCategories = [
+      TransactionCategory.INVESTMENT,
+      TransactionCategory.EXPENSE
+    ];
+    const incomingCategories = [TransactionCategory.INVESTMENT_TOKEN];
 
     let listData = [];
     if (outgoingCategories.indexOf(selectedCategory) > -1) {
@@ -503,7 +517,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       listData = transactionsChecked.filter(
         (transaction) => transaction.isOutgoingTransaction === false
       );
-    } else if (selectedCategory === 'OTHER' || selectedCategory === null) {
+    } else if (
+      selectedCategory === TransactionCategory.OTHER ||
+      selectedCategory === null
+    ) {
       listData = transactionsChecked;
     }
 

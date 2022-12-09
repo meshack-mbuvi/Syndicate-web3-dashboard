@@ -52,7 +52,7 @@ const SharedItem: React.FC<IProps> = ({
       onMouseEnter={toggleDropdown}
       onMouseLeave={toggleDropdown}
     >
-      <div className="flex align-middle ml-4 sm:ml-0">
+      <div className="flex align-middle ml-4 mb-1 sm:ml-0">
         <B4 extraClasses="text-gray-syn4 align-middle">{title}</B4>
       </div>
       <div

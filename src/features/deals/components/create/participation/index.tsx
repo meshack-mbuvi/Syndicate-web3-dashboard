@@ -3,7 +3,7 @@ import { CreateFlowStepTemplate } from '..';
 
 interface Props {
   tokenSymbol: string;
-  handleTokenSymbolChange: (newTokenSymbol: string) => void;
+  handleTokenSymbolChange?: (newTokenSymbol: string) => void;
 }
 
 export const DealsCreateParticipation: React.FC<Props> = ({

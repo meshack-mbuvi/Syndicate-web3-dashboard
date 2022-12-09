@@ -157,7 +157,6 @@ const SyndicateDetails: FC<{
           activeNetwork
         );
       }
-
       dispatch(
         // @ts-expect-error TS(2345): Argument of type '{ loading: false; mintModule: st... Remove this comment to see the full error message
         setERC20TokenDepositDetails({
@@ -166,7 +165,8 @@ const SyndicateDetails: FC<{
         })
       );
     }
-    fetchDepositDetails();
+
+    void fetchDepositDetails();
   }, [
     data,
     data?.syndicateDAO,
@@ -455,7 +455,7 @@ const SyndicateDetails: FC<{
     }
   }, [router.isReady, account, loading]);
 
-  const dismissDuplicateClubWarning = () => {
+  const dismissDuplicateClubWarning = (): void => {
     if (!duplicateClubWarningExists) {
       // set cookie to expire in a very long time.
       document.cookie =

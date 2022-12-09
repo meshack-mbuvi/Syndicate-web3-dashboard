@@ -1,5 +1,6 @@
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { IDealParams } from '@/ClubERC20Factory/ERC20DealFactory';
 import { GAS_RATE } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
@@ -28,7 +29,8 @@ export enum ContractMapper {
   MaxTotalSupplyMixin,
   TokenGatedMixin,
   CloseClubPostMint,
-  DistributionsERC20
+  DistributionsERC20,
+  ERC20DealFactory
 }
 
 interface IProps {
@@ -64,7 +66,8 @@ const useGasDetails: (props: IProps) => {
         maxMemberCountMixin,
         maxTotalSupplyMixin,
         tokenGatedMixin,
-        distributionsERC20
+        distributionsERC20,
+        erc20DealFactory
       }
     },
     modifyCollectiveSettingsReducer: { activeRow }
@@ -377,6 +380,25 @@ const useGasDetails: (props: IProps) => {
           args.totalDistributionAmount,
           args.members,
           args.batchIdentifier,
+          setGasUnits
+        );
+      }
+    },
+    [ContractMapper.ERC20DealFactory]: {
+      syndicateContract: erc20DealFactory,
+      estimateGas: (): void => {
+        if (
+          !erc20DealFactory ||
+          !args.dealToken ||
+          !args.dealDestination ||
+          !args.commitToken ||
+          !args.dealGoal
+        )
+          return;
+        void erc20DealFactory.getCreateDealGasEstimate(
+          account,
+          args.dealParams as IDealParams,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
       }

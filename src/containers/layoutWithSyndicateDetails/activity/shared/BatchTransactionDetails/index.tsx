@@ -3,10 +3,7 @@ import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfol
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import {
-  RoundCategory,
-  TransactionCategory
-} from '@/state/erc20transactions/types';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
@@ -31,7 +28,7 @@ interface IBatchTransactionDetails {
   onModal?: boolean;
   category: TransactionCategory;
   companyName?: string;
-  round?: RoundCategory | undefined;
+  round?: string | undefined;
   contractAddress: string;
   numClubMembers?: number;
 }
@@ -61,16 +58,18 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
       if (onModal) {
         return 'to';
       }
-      return category === 'INVESTMENT'
+      return category === TransactionCategory.INVESTMENT
         ? 'invested in'
-        : category === 'DISTRIBUTION'
+        : category === TransactionCategory.DISTRIBUTION
         ? 'distributed to'
         : 'sent to';
     } else if (transactionType === 'incoming') {
       if (onModal) {
         return 'from';
       }
-      return category === 'DEPOSIT' ? 'deposited by' : 'received from';
+      return category === TransactionCategory.DEPOSIT
+        ? 'deposited by'
+        : 'received from';
     }
   };
   const addGrayToDecimalInput = (str: any) => {
@@ -99,7 +98,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
 
   return (
     <>
-      {category !== 'OFF_CHAIN_INVESTMENT' ? (
+      {category !== TransactionCategory.OFF_CHAIN_INVESTMENT ? (
         <div className={`flex items-center ${width < 400 ? 'flex-col' : ''}`}>
           {/* Outgoing token(s) */}
           <div className="flex items-center">
@@ -167,7 +166,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     }
                   </>
                 ) : null}
-                {onModal && category === 'DEPOSIT' ? (
+                {onModal && category === TransactionCategory.DEPOSIT ? (
                   <div className="mr-2 flex items-center">
                     <Image
                       src={'/images/User_Icon.svg'}
@@ -176,7 +175,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     />
                   </div>
                 ) : null}
-                {!onModal && category === 'DISTRIBUTION' && (
+                {!onModal && category === TransactionCategory.DISTRIBUTION && (
                   <div className="text-base">
                     {numClubMembers === 1
                       ? `${numClubMembers} member`
@@ -190,14 +189,14 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                 >
                   {companyName
                     ? companyName
-                    : !onModal && category === 'DISTRIBUTION'
+                    : !onModal && category === TransactionCategory.DISTRIBUTION
                     ? ''
                     : onModal &&
-                      category === 'DISTRIBUTION' &&
+                      category === TransactionCategory.DISTRIBUTION &&
                       numClubMembers === 1
                     ? `${numClubMembers} member`
                     : onModal &&
-                      category === 'DISTRIBUTION' &&
+                      category === TransactionCategory.DISTRIBUTION &&
                       numClubMembers !== 1
                     ? `${numClubMembers} members`
                     : !web3.utils.isAddress(addresses[0])

@@ -11,7 +11,7 @@ export const InputFieldWithAddOn = (props: {
   addOn: string | any;
   isButtonActive?: boolean;
   disabled?: boolean;
-  addOnOnClick: () => void;
+  addOnOnClick?: (e?: React.MouseEvent<HTMLElement>) => void;
   onChange: (e: any) => void;
   onFocus?: (e: any) => void;
   symbol?: string;
@@ -52,7 +52,12 @@ export const InputFieldWithAddOn = (props: {
           style={{ transform: 'translateY(-50%)' }}
         >
           {typeof addOn === 'string' ? (
-            <PillButton isActive={isButtonActive} onClick={addOnOnClick}>
+            <PillButton
+              isActive={isButtonActive}
+              onClick={(e?: React.MouseEvent<HTMLElement>): void => {
+                if (addOnOnClick) addOnOnClick(e);
+              }}
+            >
               {addOn}
             </PillButton>
           ) : (

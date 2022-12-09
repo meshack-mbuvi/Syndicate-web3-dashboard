@@ -35,6 +35,7 @@ interface props {
   keepLogoCentered?: boolean;
   showSideNav?: boolean;
   nextBtnDisabled?: boolean;
+  showDotIndicators?: boolean;
 }
 
 const Header: React.FC<props> = ({
@@ -54,7 +55,8 @@ const Header: React.FC<props> = ({
   keepLogoCentered = false,
   showSideNav = false,
   handleNext = () => ({}),
-  nextBtnDisabled = true
+  nextBtnDisabled = true,
+  showDotIndicators = true
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -132,6 +134,7 @@ const Header: React.FC<props> = ({
 
   // do not show the syndicate logo and nav links on the top nav for the create flow.
   const createClubPage = router.pathname === '/clubs/create';
+  const createDealPage = router.pathname === '/deals/create';
 
   return (
     <>
@@ -169,16 +172,18 @@ const Header: React.FC<props> = ({
                 disabled={nextBtnDisabled}
                 currentStep={activeIndex}
               />
-              <div className="flex align-middle">
-                <DotIndicators
-                  {...{
-                    options: dotIndicatorOptions,
-                    activeIndex,
-                    showDotIndicatorLabels: false,
-                    orientation: DotIndicatorsOrientation.HORIZONTAL
-                  }}
-                />
-              </div>
+              {showDotIndicators ? (
+                <div className="flex align-middle">
+                  <DotIndicators
+                    {...{
+                      options: dotIndicatorOptions,
+                      activeIndex,
+                      showDotIndicatorLabels: false,
+                      orientation: DotIndicatorsOrientation.HORIZONTAL
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
           ) : null}
           <div className="container items-center divide-y pb-2 md:pb-0">
@@ -239,7 +244,7 @@ const Header: React.FC<props> = ({
           )}
 
           {/* Nav buttons */}
-          {createClubPage || !navItems.length ? null : (
+          {createClubPage || createDealPage || !navItems.length ? null : (
             <div className="hidden sm:flex flex-1 items-center">
               {navItems.map(({ navItemText, url, isLegal }, index) => (
                 <NavBarNavItem
@@ -264,7 +269,7 @@ const Header: React.FC<props> = ({
             </div>
           )}
 
-          {/* Mobile amburger + close button */}
+          {/* Mobile hamburger + close button */}
           <div className="flex flex-1 sm:hidden justify-end items-center -mr-3">
             <button
               type="button"
@@ -307,16 +312,18 @@ const Header: React.FC<props> = ({
                     disabled={nextBtnDisabled}
                     currentStep={activeIndex}
                   />
-                  <div className="flex align-middle">
-                    <DotIndicators
-                      {...{
-                        options: dotIndicatorOptions,
-                        activeIndex,
-                        showDotIndicatorLabels: false,
-                        orientation: DotIndicatorsOrientation.HORIZONTAL
-                      }}
-                    />
-                  </div>
+                  {showDotIndicators ? (
+                    <div className="flex align-middle">
+                      <DotIndicators
+                        {...{
+                          options: dotIndicatorOptions,
+                          activeIndex,
+                          showDotIndicatorLabels: false,
+                          orientation: DotIndicatorsOrientation.HORIZONTAL
+                        }}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
               <div className="flex space-x-1.5 md:space-x-3 transition-all">
@@ -332,7 +339,9 @@ const Header: React.FC<props> = ({
               </div>
             </div>
 
-            {dotIndicatorOptions?.length && !showSideNav ? (
+            {dotIndicatorOptions?.length &&
+            !showSideNav &&
+            showDotIndicators ? (
               <>
                 <DotIndicators
                   options={dotIndicatorOptions}

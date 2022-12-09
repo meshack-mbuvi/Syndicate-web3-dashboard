@@ -68,7 +68,7 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     numTransactions,
     transactionEvents,
     refetchTransactions
-  } = useLegacyTransactions({}, pageOffset, 10, false);
+  } = useLegacyTransactions({}, 0, 10, false);
 
   useEffect(() => {
     if (activeNetwork.chainId) {

@@ -188,14 +188,16 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     media = (
       <div
         style={{
-          backgroundImage: `url('${
-            image.includes('ipfs://')
-              ? `https://syndicate.mypinata.cloud/ipfs/${image.replace(
-                  'ipfs://',
-                  ''
-                )}`
-              : image
-          }')`,
+          backgroundImage:
+            image &&
+            `url('${
+              image.includes('ipfs://')
+                ? `https://syndicate.mypinata.cloud/ipfs/${image.replace(
+                    'ipfs://',
+                    ''
+                  )}`
+                : image
+            }')`,
           backgroundSize: `${showFullScreen ? 'contain' : 'cover'}`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'

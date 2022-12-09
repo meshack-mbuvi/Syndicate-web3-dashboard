@@ -3,7 +3,7 @@ import React from 'react';
 interface Props {
   forwardRef?: React.LegacyRef<HTMLTextAreaElement>;
   value: string;
-  handleValueChange: (input: string) => void;
+  handleValueChange?: (input: string) => void;
   onFocus?: () => void;
   placeholderLabel?: string;
   helperText?: string;
@@ -37,7 +37,9 @@ export const TextArea: React.FC<Props> = ({
         } ${inputStyles} ${errorStyles}`}
         rows={heightRows}
         value={value}
-        onChange={(e) => handleValueChange(e.target.value)}
+        onChange={(e) => {
+          if (handleValueChange) handleValueChange(e.target.value);
+        }}
         placeholder={placeholderLabel}
         onFocus={onFocus}
       />

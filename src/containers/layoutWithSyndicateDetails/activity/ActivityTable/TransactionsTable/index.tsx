@@ -24,6 +24,7 @@ interface ITransactionsTableProps {
   canNextPage: boolean;
   isOwner: boolean;
   dataLimit: number;
+  numTransactions: number;
   pageOffset: number;
   activityViewLength: number;
   refetchTransactions: () => void;
@@ -43,6 +44,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   canNextPage,
   dataLimit,
   pageOffset,
+  numTransactions,
   activityViewLength,
   refetchTransactions,
   goToPreviousPage,
@@ -79,6 +81,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const [showAnnotationsModal, toggleShowAnnotationsModal] = useModal();
   const [checkboxActive, setCheckboxActive] = useState<boolean>(false);
   const [showNote, setShowNote] = useState<boolean>(false);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const { clubMembers } = useClubTokenMembers();
 
@@ -143,15 +146,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     _pillHover[`${batchId}`]['categoryIsReadonly'] = categoryReadonlyState;
     setPillHover(_pillHover);
   };
-
-  // when to show pagination
-  let showPagination = true;
-
-  if (activityViewLength < dataLimit) {
-    showPagination = false;
-  } else {
-    showPagination = true;
-  }
 
   const batchTransactionsList = Object.keys(batchIdentifiers).map(function (
     key
@@ -221,20 +215,20 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           'dddd, MMM Do YYYY, h:mm A'
         );
 
-        let category: TransactionCategory = 'UNCATEGORIZED';
+        let category: TransactionCategory = TransactionCategory.UNCATEGORIZED;
 
         if (annotation?.transactionCategory) {
           category = annotation?.transactionCategory;
         } else if (
-          syndicateEvents[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
+          syndicateEvents?.[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
           isOutgoingTransaction
         ) {
-          category = 'DISTRIBUTION';
+          category = TransactionCategory.DISTRIBUTION;
         } else if (
-          syndicateEvents[0]?.eventType === 'MEMBER_MINTED' ||
-          syndicateEvents[0]?.eventType === 'MEMBER_MINTED_ETH'
+          syndicateEvents?.[0]?.eventType === 'MEMBER_MINTED' ||
+          syndicateEvents?.[0]?.eventType === 'MEMBER_MINTED_ETH'
         ) {
-          category = 'DEPOSIT';
+          category = TransactionCategory.DEPOSIT;
         }
 
         return (
@@ -278,7 +272,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   tokenName: currentTransfer.tokenName
                     ? currentTransfer.tokenName
                     : activeNetwork.nativeCurrency.name,
-                  readOnly: category === 'DEPOSIT' ? true : false,
+                  readOnly:
+                    category === TransactionCategory.DEPOSIT ? true : false,
                   timestamp: formattedBlockTime,
                   transactionId: annotation?.transactionId,
                   annotation,
@@ -288,6 +283,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                 setCurrentBatchIdentifier(key);
                 toggleShowAnnotationsModal();
                 setIsAnnotationsModalShown(true);
+                setShowDetails(true);
                 if (annotation?.memo) {
                   setShowNote(true);
                 }
@@ -295,25 +291,29 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
             }}
             aria-hidden={true}
             onMouseEnter={(): void => {
-              if (category !== 'DEPOSIT') toggleRowCheckbox(key, true);
+              if (category !== TransactionCategory.DEPOSIT)
+                toggleRowCheckbox(key, true);
             }}
             onMouseLeave={(): void => {
-              if (category !== 'DEPOSIT') toggleRowCheckbox(key, false);
+              if (category !== TransactionCategory.DEPOSIT)
+                toggleRowCheckbox(key, false);
             }}
           >
             <div
               className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
               onMouseEnter={(): void => {
-                if (category !== 'DEPOSIT') toggleRowCheckbox(key, true);
+                if (category !== TransactionCategory.DEPOSIT)
+                  toggleRowCheckbox(key, true);
               }}
               onMouseLeave={(): void => {
-                if (category !== 'DEPOSIT') toggleRowCheckbox(key, false);
+                if (category !== TransactionCategory.DEPOSIT)
+                  toggleRowCheckbox(key, false);
               }}
             >
               {rowCheckboxActiveData &&
                 rowCheckboxActiveData[key] &&
                 rowCheckboxActiveData[key].checkboxVisible &&
-                category !== 'DISTRIBUTION' && (
+                category !== TransactionCategory.DISTRIBUTION && (
                   <div
                     onMouseEnter={(): void => {
                       setCheckboxActive(true);
@@ -335,11 +335,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               <div
                 className="w-fit-content py-3"
                 onMouseEnter={(): void => {
-                  if (category !== 'DISTRIBUTION')
+                  if (category !== TransactionCategory.DISTRIBUTION)
                     toggleCategoryPillReadOnly(key, false);
                 }}
                 onMouseLeave={(): void => {
-                  if (category !== 'DISTRIBUTION')
+                  if (category !== TransactionCategory.DISTRIBUTION)
                     toggleCategoryPillReadOnly(key, true);
                 }}
               >
@@ -351,8 +351,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   setInlineCategorising={setInlineCategorising}
                   readonly={
                     pillHover[key]?.categoryIsReadonly === undefined ||
-                    category === 'DEPOSIT' ||
-                    category === 'DISTRIBUTION'
+                    category === TransactionCategory.DEPOSIT ||
+                    category === TransactionCategory.DISTRIBUTION
                       ? true
                       : pillHover[key]?.categoryIsReadonly
                   }
@@ -455,7 +455,12 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         <div>
           {pageOffset === 0
             ? batchTransactionsList.slice(pageOffset, dataLimit)
-            : batchTransactionsList}
+            : pageOffset < numTransactions
+            ? batchTransactionsList.slice(pageOffset, dataLimit + pageOffset)
+            : batchTransactionsList.slice(
+                pageOffset - dataLimit,
+                numTransactions
+              )}
           {/* Pagination  */}
           <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
             <button
@@ -465,7 +470,6 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   : 'hover:opacity-90'
               }`}
               onClick={(): void => goToPreviousPage()}
-              disabled={showPagination}
             >
               <Image
                 src={'/images/arrowBack.svg'}
@@ -476,8 +480,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
             </button>
             <p className="">
               {pageOffset === 0 ? '1' : pageOffset + 1} -{' '}
-              {activityViewLength < dataLimit
-                ? pageOffset + activityViewLength
+              {activityViewLength < pageOffset + dataLimit
+                ? activityViewLength
                 : pageOffset + dataLimit}
             </p>
 
@@ -487,8 +491,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:opacity-90'
               }`}
-              onClick={(): void => goToNextPage()}
-              disabled={!canNextPage}
+              onClick={(): void | null =>
+                pageOffset + dataLimit < numTransactions ? goToNextPage() : null
+              }
             >
               <Image
                 src={'/images/arrowNext.svg'}
@@ -508,6 +513,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         <ActivityModal
           isOwner={isOwner}
           showModal={showAnnotationsModal}
+          assetsView={false}
           isAnnotationsModalShown={isAnnotationsModalShown}
           closeModal={(): void => {
             setShowNote(false);
@@ -520,7 +526,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           batchIdentifiers={batchIdentifiers}
           setCurrentTransaction={setCurrentTransaction}
           showNote={showNote}
+          showDetails={showDetails}
           setShowNote={setShowNote}
+          setShowDetails={setShowDetails}
         />
       </div>
     </div>

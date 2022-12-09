@@ -82,11 +82,9 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
     useVerifyCollectiveNetwork(collectiveAddress as string);
 
   const MINT_MODULE =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.EthPriceMintModule;
 
   const CUSTOM_MERKLE_MINT =
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeTokenPriceMerkleMintModule;
 
   const [collectiveDetails, setCollectiveDetails] =
@@ -228,7 +226,6 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
         owners,
         isTransferable:
           transferGuardAddress.toString().toLocaleLowerCase() ==
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           CONTRACT_ADDRESSES[
             activeNetwork.chainId
           ]?.GuardAlwaysAllow.toString().toLocaleLowerCase(),

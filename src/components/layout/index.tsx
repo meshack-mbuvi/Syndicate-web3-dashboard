@@ -16,6 +16,7 @@ import useAdminClubs from '@/hooks/clubs/useAdminClubs';
 import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
+import Link from 'next/link';
 
 interface Props {
   showBackButton?: boolean;
@@ -36,8 +37,11 @@ interface Props {
   nextBtnDisabled?: boolean;
   hideFooter?: boolean;
   handleNext?: (index?: number) => void;
+  showDotIndicators?: boolean;
   showDotIndicatorLabels?: boolean;
   handlePrevious?: (index?: number) => void;
+  showSideNavButton?: boolean;
+  sideNavLogo?: React.ReactElement;
 }
 
 const Layout: FC<Props> = ({
@@ -53,7 +57,7 @@ const Layout: FC<Props> = ({
   showCloseButton = false,
   keepLogoCentered = false,
   showCreateProgressBar = false,
-  customClasses,
+  customClasses = 'items-start',
   showSideNav = false,
   nextBtnDisabled = true,
   showDotIndicatorLabels = true,
@@ -66,7 +70,17 @@ const Layout: FC<Props> = ({
       navItemText: 'Portfolio'
     }
   ],
-  showNavButton = false
+  showNavButton = false,
+  showSideNavButton = true,
+  sideNavLogo = (
+    <Link href="/" passHref>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+      <a>
+        <img src="/images/logo.svg" alt="Syndicate Logo" />
+      </a>
+    </Link>
+  ),
+  showDotIndicators = true
 }) => {
   const {
     web3Reducer: {
@@ -193,6 +207,7 @@ const Layout: FC<Props> = ({
           showBackButton={showBackButton}
           showNav={showNav}
           navItems={navItems}
+          showDotIndicators={showDotIndicators}
           dotIndicatorOptions={dotIndicatorOptions}
           handleExitClick={handleExitClick}
           activeIndex={activeIndex || 0}
@@ -231,13 +246,16 @@ const Layout: FC<Props> = ({
               activeIndex={activeIndex}
               nextBtnDisabled={nextBtnDisabled}
               showDotIndicatorLabels={showDotIndicatorLabels}
+              showSideNavButton={showSideNavButton}
+              sideNavLogo={sideNavLogo}
+              showDotIndicators={showDotIndicators}
             />
           </div>
         ) : null}
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
-          } z-20 justify-center items-start my-0 mx-auto ${customClasses}`}
+          } z-20 justify-center my-0 mx-auto ${customClasses}`}
         >
           {children}
         </div>

@@ -4,6 +4,7 @@ import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/col
 import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
 import { AppState } from '@/state';
 import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FullScreenOverlay from './shared/FullscreenOverlay';
@@ -59,7 +60,7 @@ const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
               >
                 <div className="mb-8">
                   <CategoryPill
-                    category="COLLECTIBLE"
+                    category={TransactionCategory.COLLECTIBLE}
                     readonly={true}
                     isOwner={isOwner}
                   />

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import useFeatureFlag from '@/hooks/useFeatureFlag';
 import { FEATURE_FLAGS } from '@/pages/_app';
+import { CreateDealContainer } from '@/containers/createDeal';
 
 const CreateDealsPage: React.FC = () => {
   const {
@@ -45,8 +46,7 @@ const CreateDealsPage: React.FC = () => {
       </div>
     </Layout>
   ) : isDealReady ? (
-    /* TODO: CreateDealContainer */
-    <NotFoundPage />
+    <CreateDealContainer />
   ) : (
     <NotFoundPage />
   );

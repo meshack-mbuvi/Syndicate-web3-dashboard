@@ -78,8 +78,6 @@ class NativeTokenPriceMerkleMintModuleHarness implements MintModuleHarness {
           return res.data?.getBasicMerkleProof.proof;
         })
         .catch(() => []);
-
-      console.log('this proofy', this.proof);
       return this.proof.length == 0
         ? { isEligible: false, reason: 'No proof found' }
         : { isEligible: true };

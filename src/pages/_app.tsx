@@ -45,6 +45,7 @@ import {
   GoogleAnalyticsPageView
 } from '@/google-analytics/gtag';
 import useIsInDarkMode from '@/hooks/useDarkMode';
+import CreateDealProvider from '@/context/createDealContext';
 
 const handleRouteChangeGoogleAnalytics = (url: string) => {
   const isURLForClub = url.split('/').includes('clubs');
@@ -87,7 +88,9 @@ const StateProviders: React.FC = ({ children }) => (
   <SplitFactory config={sdkConfig}>
     <OnboardingProvider>
       <BeforeGettingStartedProvider>
-        <CreateInvestmentClubProvider>{children}</CreateInvestmentClubProvider>
+        <CreateInvestmentClubProvider>
+          <CreateDealProvider>{children}</CreateDealProvider>
+        </CreateInvestmentClubProvider>
       </BeforeGettingStartedProvider>
     </OnboardingProvider>
   </SplitFactory>
