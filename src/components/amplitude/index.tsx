@@ -36,6 +36,7 @@ type EventProperty = {
   deposit_window?: string;
   deposit_token?: string;
   deposit_amount?: string | number;
+  token_gating?: boolean;
   transaction_category?: TransactionCategory;
   distribution_token?: string | (string | undefined)[];
   distribution_amount?: (string | undefined)[];

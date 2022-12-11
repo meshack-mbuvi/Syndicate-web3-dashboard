@@ -31,6 +31,7 @@ import {
   CreateSteps,
   investmentClubSteps
 } from './steps';
+import { TokenGateOption } from '@/state/createInvestmentClub/types';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -160,6 +161,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setCurrentStep(0);
   }, [activeNetwork]);
 
+  const { tokenGateOption } = useSelector(
+    (state: AppState) => state.createInvestmentClubSliceReducer
+  );
+
   const handleNext = () => {
     if (!editingStep) {
       switch (currentStep) {
@@ -183,9 +188,17 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         case 4:
           break;
         case 5:
-          amplitudeLogger(REVIEW_CLICK, {
-            flow: Flow.CLUB_CREATE
-          });
+          if (tokenGateOption === TokenGateOption.UNRESTRICTED) {
+            amplitudeLogger(REVIEW_CLICK, {
+              flow: Flow.CLUB_CREATE,
+              token_gating: false
+            });
+          } else {
+            amplitudeLogger(REVIEW_CLICK, {
+              flow: Flow.CLUB_CREATE,
+              token_gating: true
+            });
+          }
           break;
         default:
       }

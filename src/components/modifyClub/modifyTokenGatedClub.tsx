@@ -35,7 +35,6 @@ import { IRequiredTokenRules } from '@/types/modules';
 import { isZeroAddress } from '@/utils';
 import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
 import { DAY_IN_SECONDS } from '@/utils/constants';
-
 import { getWeiAmount } from '@/utils/conversions';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import {
@@ -68,6 +67,8 @@ import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
 import { TokenDetails } from '@/types/token';
 import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
+import { amplitudeLogger, Flow } from '../amplitude';
+import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -510,6 +511,10 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressTitle('Settings updated');
     setProgressDescription('');
     setProgressState(ProgressState.SUCCESS);
+    amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+      flow: Flow.CLUB_MANAGE,
+      transaction_status: 'Success'
+    });
   };
 
   const onTxReceiptGuardUpdate = () => {
@@ -522,6 +527,10 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressTitle('Update Failed');
     setProgressDescription('');
     setProgressState(ProgressState.FAILURE);
+    amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+      flow: Flow.CLUB_MANAGE,
+      transaction_status: 'Failure'
+    });
   };
 
   const handleTokenGatingUpdates = async () => {

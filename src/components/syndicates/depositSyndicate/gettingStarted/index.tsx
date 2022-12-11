@@ -60,7 +60,7 @@ const GettingStarted: React.FC = () => {
   useEffect(() => {
     setTimeout(() => {
       amplitudeLogger(MBR_DOCS_PAGE_LANDING, {
-        flow: Flow.COLLECTIVE_CLAIM
+        flow: Flow.CLUB_LEGAL
       });
     }, 500);
   }, []);
