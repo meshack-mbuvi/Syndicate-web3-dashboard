@@ -16,7 +16,6 @@ import { SelectedTimeWindow } from '../window';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
 import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 import { InputFieldCreateToken } from '@/components/inputs/create/InputFieldCreateToken';
-import { useCreateDealContext } from '@/context/createDealContext';
 import { default as _moment } from 'moment-timezone';
 import { formatAddress } from '@/utils/formatAddress';
 import { B2 } from '@/components/typography';
@@ -25,6 +24,7 @@ import { SyndicateTokenLogo } from '@/components/icons/syndicateTokenLogo';
 interface Props {
   // About
   name: string;
+  ensName?: string;
   nameError?: string;
   handleNameChange?: (newTitle: string) => void;
   handleShuffle?: (e: any) => void;
@@ -34,6 +34,7 @@ interface Props {
 
   // Goal
   commitmentGoal: string;
+  commitmentGoalTokenSymbol?: string;
   commitmentGoalError?: string;
   handleCommitmentGoalChange?: (newCommitmentGoal: string) => void;
   minimumCommitment: string;
@@ -53,6 +54,7 @@ interface Props {
   customDate?: Date;
   handleCustomDateChange?: (newDate: Date) => void;
   customTime?: string;
+  endTime?: string;
   handleCustomTimeChange?: (newTime: string) => void;
   formattedWindowEndTime?: string;
 
@@ -71,6 +73,7 @@ enum SelectedInput {
 export const DealsCreateReview: React.FC<Props> = ({
   // About
   name,
+  ensName,
   nameError,
   handleNameChange,
   handleShuffle,
@@ -82,6 +85,7 @@ export const DealsCreateReview: React.FC<Props> = ({
 
   // Goal
   commitmentGoal,
+  commitmentGoalTokenSymbol,
   commitmentGoalError,
   handleCommitmentGoalChange,
   minimumCommitment,
@@ -101,6 +105,7 @@ export const DealsCreateReview: React.FC<Props> = ({
   customDate,
   handleCustomDateChange,
   customTime,
+  endTime,
   handleCustomTimeChange,
   formattedWindowEndTime
 }) => {
@@ -110,7 +115,6 @@ export const DealsCreateReview: React.FC<Props> = ({
   const showCustomTimeSelector =
     selectedTimeWindow === SelectedTimeWindow.CUSTOM;
 
-  const { endTime, ensName } = useCreateDealContext();
   useEffect(() => {
     if (endTime) {
       const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -149,7 +153,7 @@ export const DealsCreateReview: React.FC<Props> = ({
           input: (
             <InputFieldWithAddOn
               value={name}
-              onChange={(e) => {
+              onChange={(e): void => {
                 handleNameChange ? handleNameChange(e.target.value) : null;
               }}
               addOn={
@@ -173,7 +177,7 @@ export const DealsCreateReview: React.FC<Props> = ({
                 handleShuffle ? handleShuffle(e) : null;
               }}
               placeholderLabel="Name your deal"
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(0);
               }}
               isInErrorState={nameError ? true : false}
@@ -191,7 +195,7 @@ export const DealsCreateReview: React.FC<Props> = ({
               handleValueChange={handleDetailsChange}
               widthClass="w-full"
               placeholderLabel="Give prospective participants as much information as possible to help them understand this deal. Feel free to put links here as well to documents or websites that they may want to look at. This information will be public to anyone who views this page."
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(1);
               }}
               isInErrorState={detailsError ? true : false}
@@ -220,7 +224,7 @@ export const DealsCreateReview: React.FC<Props> = ({
               depositTokenSymbol={tokenSymbol}
               depositTokenLogo={tokenLogo}
               handleTokenClick={handleTokenClick}
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.GOAL);
               }}
               isInErrorState={commitmentGoalError ? true : false}
@@ -232,7 +236,10 @@ export const DealsCreateReview: React.FC<Props> = ({
           reviewValue: (
             <div className="flex space-x-2 items-center">
               <img src={tokenLogo} className="w-5 h-5" alt="Token logo" />
-              <div>{formatInputValueWithCommas(commitmentGoal)}</div>
+              <div>
+                {formatInputValueWithCommas(commitmentGoal)}{' '}
+                {commitmentGoalTokenSymbol}
+              </div>
             </div>
           )
         },
@@ -242,7 +249,7 @@ export const DealsCreateReview: React.FC<Props> = ({
               value={formatInputValueWithCommas(minimumCommitment)}
               placeholderLabel={`2,000 ${tokenSymbol}`}
               depositTokenLogo={tokenLogo}
-              onChange={(e) => {
+              onChange={(e): void => {
                 const input = e.target.value;
                 const strippedCommasInput = stringNumberRemoveCommas(input);
                 handleMinimumCommitmentChange
@@ -251,7 +258,7 @@ export const DealsCreateReview: React.FC<Props> = ({
               }}
               symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
               handleTokenClick={handleTokenClick}
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.AMOUNT);
               }}
               isInErrorState={minimumCommitmentError ? true : false}
@@ -265,7 +272,10 @@ export const DealsCreateReview: React.FC<Props> = ({
           reviewValue: (
             <div className="flex space-x-2 items-center">
               <img src={tokenLogo} className="w-5 h-5" alt="Token logo" />
-              <div>{formatInputValueWithCommas(minimumCommitment)}</div>
+              <div>
+                {formatInputValueWithCommas(minimumCommitment)}{' '}
+                {commitmentGoalTokenSymbol}
+              </div>
             </div>
           )
         },
@@ -273,12 +283,12 @@ export const DealsCreateReview: React.FC<Props> = ({
           input: (
             <InputField
               value={destinationAddress}
-              onChange={(e) => {
+              onChange={(e): void => {
                 handleDestinationAddressChange
                   ? handleDestinationAddressChange(e.target.value)
                   : null;
               }}
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.ADDRESS);
               }}
               placeholderLabel="0xab123... or ensname.eth"
@@ -332,7 +342,7 @@ export const DealsCreateReview: React.FC<Props> = ({
                 <div className="md:w-1/2">
                   <InputFieldWithTime
                     value={customTime}
-                    onChange={(e) => {
+                    onChange={(e): void => {
                       if (handleCustomTimeChange) {
                         handleCustomTimeChange(e.target.value);
                       }
