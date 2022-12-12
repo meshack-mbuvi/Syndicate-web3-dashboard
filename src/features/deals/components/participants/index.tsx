@@ -5,8 +5,17 @@ import {
 import { H1, H3, H4 } from '@/components/typography';
 import ReactTooltip from 'react-tooltip';
 
+export interface DealParticipant {
+  dealAddress: string;
+  address: string;
+  ensName?: string;
+  createdAt: string;
+  amount: string;
+  status: string;
+}
+
 interface Props {
-  participants: { address: string; ensName?: string; joinedDate: string }[];
+  participants: DealParticipant[];
 }
 
 export const DealsParticipants: React.FC<Props> = ({ participants }) => {
@@ -33,7 +42,7 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
                     index === 3 ? 'mt-4' : 'mt-2'
                   }`}
                   data-tip
-                  data-for="tooltip"
+                  data-for={`deal-participant-${index}`}
                 >
                   <DisplayAddressWithENS
                     name={participant.ensName}
@@ -49,16 +58,16 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
                 <br />
               </>
             )}
-            {participant.joinedDate && (
+            {participant.createdAt && (
               <ReactTooltip
-                id="tooltip"
+                id={`deal-participant-${index}`}
                 place="top"
                 effect="solid"
                 className="actionsTooltip"
                 arrowColor="#222529"
                 backgroundColor="#222529"
               >
-                <span>Joined on</span> <span>{participant.joinedDate}</span>
+                <span>Joined on</span> <span>{participant.createdAt}</span>
               </ReactTooltip>
             )}
           </>
@@ -79,7 +88,7 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
 
 interface LargeBadgeProps {
   num: number;
-  participant?: { address: string; ensName?: string; joinedDate: string };
+  participant?: { address: string; ensName?: string; createdAt: string };
 }
 
 const LargeBadge: React.FC<LargeBadgeProps> = ({ num, participant }) => {
@@ -87,7 +96,7 @@ const LargeBadge: React.FC<LargeBadgeProps> = ({ num, participant }) => {
     <div
       className="inline-flex space-x-4 px-4 py-2 mb-2 bg-gray-syn8 mr-2 rounded-2.5xl"
       data-tip
-      data-for="tooltip"
+      data-for={`deal-participant-${num - 1}`}
     >
       <div className="flex items-end">
         <H1>{num}</H1>

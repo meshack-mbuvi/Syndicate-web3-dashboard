@@ -176,7 +176,7 @@ const StatusBadge = (props: Props): JSX.Element => {
       <div
         className={`h-auto sm:h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
         data-tip
-        data-for="tooltip"
+        data-for="status-tooltip"
       >
         {loading || merkleLoading || claimLoading ? (
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
@@ -222,7 +222,7 @@ const StatusBadge = (props: Props): JSX.Element => {
       !showConfettiSuccess &&
       !hideCountdown ? (
         <ReactTooltip
-          id="tooltip"
+          id="status-tooltip"
           place="top"
           effect="solid"
           className="actionsTooltip"
@@ -233,7 +233,7 @@ const StatusBadge = (props: Props): JSX.Element => {
         </ReactTooltip>
       ) : isDeal && dealEndTime !== undefined ? (
         <ReactTooltip
-          id="tooltip"
+          id="status-tooltip"
           place="top"
           effect="solid"
           className="actionsTooltip"

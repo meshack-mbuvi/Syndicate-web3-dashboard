@@ -179,15 +179,15 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
           return;
         }
 
-        // TODO: Handle the merkle use case correctly below
         if (
           web3.utils.toChecksumAddress(contractAddress) ===
           web3.utils.toChecksumAddress(CUSTOM_MERKLE_MINT)
         ) {
           custom = { merkle: true };
           activeRequirements.map((activeRequirement: any) => {
-            const { requirement } = activeRequirement;
-            const { endTime, requirementType } = requirement;
+            const {
+              requirement: { endTime, requirementType }
+            } = activeRequirement;
 
             if (
               +endTime > 0 &&

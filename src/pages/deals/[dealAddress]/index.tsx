@@ -5,9 +5,10 @@ import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import useFeatureFlag from '@/hooks/useFeatureFlag';
 import { FEATURE_FLAGS } from '@/pages/_app';
+import DealDetails from '@/containers/deals/DealsContainer';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 
 const DealIndexPage: React.FC = () => {
   const {
@@ -44,8 +45,7 @@ const DealIndexPage: React.FC = () => {
       </div>
     </Layout>
   ) : isDealReady ? (
-    /* TODO: DealDashboardPage */
-    <NotFoundPage />
+    <DealDetails />
   ) : (
     <NotFoundPage />
   );

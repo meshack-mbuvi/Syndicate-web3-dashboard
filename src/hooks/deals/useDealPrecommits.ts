@@ -10,7 +10,7 @@ import { Precommit } from './types';
 
 export interface IPrecommit {
   dealAddress: string;
-  account: string;
+  address: string;
   amount: string;
   status: string;
   createdAt: string;
@@ -60,11 +60,11 @@ const useDealsPrecommits = (): IPrecommitResponse => {
 
     if (data && isComponentMounted) {
       setPrecommits(
-        data.deal.precommits.map((pre: Precommit) => {
+        data.deal?.precommits.map((pre: Precommit) => {
           //TODO [WINGZ]: should amount be converted?
           return {
             dealAddress: data.deal.id,
-            account: pre.userAddress,
+            address: pre.userAddress,
             amount: pre.amount,
             status: pre.status,
             createdAt: pre.createdAt

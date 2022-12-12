@@ -10,27 +10,31 @@ import { DealDetails } from './types';
 
 export interface IDealDetails {
   dealName: string;
+  dealDescription: string;
   ownerAddress: string;
   dealToken: string;
+  dealEndTime: string;
   depositToken: string;
   dealDestination: string;
   goal: string;
   closed: boolean;
   totalCommitments: string;
-  totalCommited: string;
+  totalCommitted: string;
   createdAt: string;
 }
 
 const emptyDeal: IDealDetails = {
   dealName: '',
+  dealDescription: '',
   ownerAddress: '',
   dealToken: '',
+  dealEndTime: '',
   depositToken: '',
   dealDestination: '',
   goal: '',
   closed: false,
   totalCommitments: '',
-  totalCommited: '',
+  totalCommitted: '',
   createdAt: ''
 };
 
@@ -79,10 +83,12 @@ const useDealsDetails = (): IDealDetailsResponse => {
 
     //TODO [WINGZ]: should totalCommitted and goal be converted?
     if (isComponentMounted) {
-      if (data) {
-        const deal = data.deal;
+      const deal = data?.deal;
+      if (deal) {
         setDealDetails({
           dealName: deal.dealToken.name,
+          dealDescription: 'This is a placeholder deal description.',
+          dealEndTime: '2022-12-31T00:00:00.000Z',
           ownerAddress: deal.ownerAddress,
           dealToken: deal.dealToken.contractAddress,
           depositToken: deal.depositToken,
@@ -90,7 +96,7 @@ const useDealsDetails = (): IDealDetailsResponse => {
           goal: deal.goal,
           closed: deal.closed,
           totalCommitments: deal.numCommits,
-          totalCommited: deal.totalCommitted,
+          totalCommitted: deal.totalCommitted,
           createdAt: deal.dealToken.createdAt
         });
       } else {
@@ -98,7 +104,6 @@ const useDealsDetails = (): IDealDetailsResponse => {
         setDealNotFound(true);
       }
     }
-
     return () => {
       isComponentMounted = false;
     };
