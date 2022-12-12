@@ -18,7 +18,7 @@ export const ReviewDealDetails: React.FC = () => {
 
   const {
     name,
-    details,
+    // details,
     commitmentGoal,
     minimumCommitment,
     destinationAddress,
@@ -30,7 +30,7 @@ export const ReviewDealDetails: React.FC = () => {
     isEditingField,
     isReviewStep,
     handleNameChange,
-    handleDetailsChange,
+    // handleDetailsChange,
     handleCommitmentGoalChange,
     handleMinimumCommitmentChange,
     handleDestinationAddressChange,
@@ -88,8 +88,8 @@ export const ReviewDealDetails: React.FC = () => {
         // About
         name={name ? name : ''}
         handleNameChange={handleNameChange}
-        details={details ? details : ''}
-        handleDetailsChange={handleDetailsChange}
+        // details={details ? details : ''}
+        // handleDetailsChange={handleDetailsChange}
         handleShuffle={handleShuffle}
         // Goal
         commitmentGoal={commitmentGoal ? commitmentGoal : ''}

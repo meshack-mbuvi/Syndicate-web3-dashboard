@@ -22,7 +22,7 @@ import TransitionBetweenChildren, {
 export const CreateDealContainer: React.FC = () => {
   const {
     name,
-    details,
+    // details,
     destinationAddress,
     commitmentGoal,
     commitmentGoalTokenSymbol,
@@ -93,7 +93,7 @@ export const CreateDealContainer: React.FC = () => {
               <DealsCreateComplete
                 {...{
                   dealName: name ? name : '',
-                  dealDetails: details ? details : '',
+                  dealDetails: /* details ? details :  */ '',
                   ensName,
                   destinationAddress: destinationAddress
                     ? destinationAddress

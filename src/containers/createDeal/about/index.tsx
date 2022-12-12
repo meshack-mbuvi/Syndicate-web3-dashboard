@@ -5,8 +5,8 @@ export const AboutDeal: React.FC = () => {
   const {
     name,
     nameError,
-    details,
-    handleDetailsChange,
+    // details,
+    // handleDetailsChange,
     handleNameChange,
     handleShuffle
   } = useCreateDealContext();
@@ -16,8 +16,8 @@ export const AboutDeal: React.FC = () => {
       {...{
         name,
         handleNameChange,
-        details,
-        handleDetailsChange,
+        // details,
+        // handleDetailsChange,
         nameError,
         handleShuffle
       }}

@@ -21,8 +21,8 @@ type CreateDealProviderProps = {
   name: string;
   handleNameChange: (name: string) => void;
   handleShuffle: (e: any) => void;
-  details: string;
-  handleDetailsChange: (details: string) => void;
+  // details: string;
+  // handleDetailsChange: (details: string) => void;
   commitmentGoal: string;
   handleCommitmentGoalChange: (goal: string) => void;
   minimumCommitment: string;
@@ -108,7 +108,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
   // deal details
   const [name, handleNameChange] = useState('');
-  const [details, handleDetailsChange] = useState('');
+  // const [details, handleDetailsChange] = useState('');
   const [commitmentGoal, handleCommitmentGoalChange] = useState('');
   const [minimumCommitment, handleMinimumCommitmentChange] = useState('');
   const [destinationAddress, setDestinationAddress] = useState('');
@@ -260,7 +260,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
     // disable next button if field values are missing
     if (
-      (currentStep === 0 && (!name || nameError || !details)) ||
+      (currentStep === 0 && (!name || nameError) /*  || !details */) ||
       (currentStep === 1 &&
         (!commitmentGoal ||
           !minimumCommitment ||
@@ -278,7 +278,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
   }, [
     currentStep,
     name,
-    details,
+    // details,
     commitmentGoal,
     minimumCommitment,
     destinationAddressError,
@@ -438,8 +438,8 @@ const CreateDealProvider: React.FC = ({ children }) => {
         name,
         handleNameChange,
         handleShuffle,
-        details,
-        handleDetailsChange,
+        // details,
+        // handleDetailsChange,
         minimumCommitment,
         handleMinimumCommitmentChange,
         commitmentGoal,

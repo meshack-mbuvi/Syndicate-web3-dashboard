@@ -3,7 +3,7 @@ import {
   InputFieldWithToken,
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
-import { TextArea } from '@/components/inputs/simpleTextArea';
+// import { TextArea } from '@/components/inputs/simpleTextArea';
 import {
   formatInputValueWithCommas,
   stringNumberRemoveCommas
@@ -28,9 +28,9 @@ interface Props {
   nameError?: string;
   handleNameChange?: (newTitle: string) => void;
   handleShuffle?: (e: any) => void;
-  details: string;
-  detailsError?: string;
-  handleDetailsChange?: (newDetails: string) => void;
+  // details: string;
+  // detailsError?: string;
+  // handleDetailsChange?: (newDetails: string) => void;
 
   // Goal
   commitmentGoal: string;
@@ -74,9 +74,9 @@ export const DealsCreateReview: React.FC<Props> = ({
   nameError,
   handleNameChange,
   handleShuffle,
-  details,
-  detailsError,
-  handleDetailsChange,
+  // details,
+  // detailsError,
+  // handleDetailsChange,
   isReviewStep,
   setIsEditingField,
 
@@ -184,7 +184,7 @@ export const DealsCreateReview: React.FC<Props> = ({
           info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.',
           reviewValue: name
         },
-        {
+        /* {
           input: (
             <TextArea
               value={details}
@@ -201,7 +201,7 @@ export const DealsCreateReview: React.FC<Props> = ({
           label: 'Details',
           info: 'Describe what this and what a participant needs to know to get more information if needed. This information is to inform potnetial participants and will be public to all viewers.',
           reviewValue: details
-        },
+        }, */
 
         // Goal
         {
