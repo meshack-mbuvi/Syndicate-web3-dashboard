@@ -387,14 +387,7 @@ const useGasDetails: (props: IProps) => {
     [ContractMapper.ERC20DealFactory]: {
       syndicateContract: erc20DealFactory,
       estimateGas: (): void => {
-        if (
-          !erc20DealFactory ||
-          !args.dealToken ||
-          !args.dealDestination ||
-          !args.commitToken ||
-          !args.dealGoal
-        )
-          return;
+        if (!erc20DealFactory || !args.dealParams) return;
         void erc20DealFactory.getCreateDealGasEstimate(
           account,
           args.dealParams as IDealParams,
