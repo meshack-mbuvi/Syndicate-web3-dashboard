@@ -11,7 +11,7 @@ const client = new ApolloClient({
 
 export default {
   title:
-    'Molecules/Cap Table Management/Modals/Add Member/Club Still Open Modal',
+    '3. Molecules/Cap Table Management/Modals/Add Member/Club Still Open Modal',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

@@ -23,7 +23,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   useEffect(() => {
     const textWidth = getTextWidth(
       value || placeholder,
-      `${dynamicFontSize}px 'ABC Whyte Regular', Helvetica, Arial, sans-serif`
+      `${dynamicFontSize}px 'Slussen', Helvetica, Arial, sans-serif`
     );
 
     if (!textWidth) return;
@@ -69,8 +69,8 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         {...rest}
         value={value}
         thousandSeparator={true}
-        className={`bg-transparent border-none outline-none h-full p-0 text-5xl font-whyte-light focus:outline-none focus:border-none focus:ring-0 ${
-          hasError ? 'text-red-error' : ''
+        className={`bg-transparent border-none outline-none h-full p-0 text-5xl focus:outline-none focus:border-none focus:ring-0 ${
+          hasError ? 'text-red-error placeholder-red-error' : ''
         } ${value ? 'text-white' : 'text-gray-syn4'}`}
         style={{
           width: width - extraWidth,

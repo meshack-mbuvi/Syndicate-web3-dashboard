@@ -1,9 +1,10 @@
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, B4 } from '@/components/typography';
 import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 import { formatAddress } from '@/utils/formatAddress';
 
 export enum AddressImageSize {
+  SMALLEST = 'w-4.5 h-4.5',
   SMALLER = 'w-5 h-5', // 20px => 1.25rem
   SMALL = 'w-6 h-6', // 24px => 1.5rem
   LARGE = 'w-8 h-8' // 32px => 2rem

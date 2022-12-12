@@ -60,7 +60,6 @@ export const CollectivesCreateOutline: React.FC<Props> = ({ gasEstimate }) => {
               'Host exclusive events, invest together, and much more...'
           }
         ]}
-        alwaysShowDescriptions={true}
         extraClasses="mt-6"
       />
       <CTAButton

@@ -7,7 +7,7 @@ import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import SEO from '@/components/seo';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
+} from '@/components/transition/transitionBetweenChildren';
 import {
   useCreateState,
   useUpdateState

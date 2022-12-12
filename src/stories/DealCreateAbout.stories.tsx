@@ -2,7 +2,7 @@ import { DealsCreateAbout } from '@/features/deals/components/create/about';
 import { useState } from 'react';
 
 export default {
-  title: '5. Organisms/Deals/Create/About'
+  title: '4. Organisms/Deals/Create/About'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

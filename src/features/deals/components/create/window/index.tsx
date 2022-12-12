@@ -1,7 +1,7 @@
 import { CreateFlowStepTemplate } from '..';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
 import { DetailedTile } from '@/components/tile/detailedTile';
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 
 interface Props {

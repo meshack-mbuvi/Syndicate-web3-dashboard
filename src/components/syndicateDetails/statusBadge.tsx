@@ -148,7 +148,11 @@ const StatusBadge = (props: Props): JSX.Element => {
   } else if (isDeal && isOpenToAllocations) {
     titleText = LABELS.DEAL_OPEN;
   } else if (isDeal && !isOpenToAllocations) {
+    badgeIcon = (
+      <WalletIcon className="text-green-semantic" width={24} height={24} />
+    );
     titleText = LABELS.DEAL_CONCLUDED;
+    badgeBackgroundColor = 'bg-green-phthalo-green';
   }
 
   const badgeIconContent = (

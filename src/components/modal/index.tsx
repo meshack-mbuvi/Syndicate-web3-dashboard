@@ -18,6 +18,7 @@ interface ModalProps {
   showBackButton?: boolean;
   closeButtonClassName?: string;
   closeButtonPosition?: string;
+  radiusClassName?: string;
   modalStyle?: ModalStyle;
   opacity?: string;
   titleMarginClassName?: string;
@@ -33,9 +34,10 @@ interface ModalProps {
 }
 
 export enum ModalStyle {
-  DARK = 'dark',
-  LIGHT = 'light',
-  SUCCESS = 'success'
+  DARK = 'bg-gray-syn8',
+  LIGHT = 'bg-white',
+  SUCCESS = 'bg-green-success',
+  TRANSPARENT = 'bg-transparent'
 }
 
 /**
@@ -66,12 +68,13 @@ const Modal = (props: ModalProps): JSX.Element => {
     customClassName = 'p-2 sm:p-6',
     closeButtonClassName,
     closeButtonPosition = 'top-9 right-10',
+    radiusClassName,
     outsideOnClick,
     titleMarginClassName,
     titleAlignment,
     overflow = 'overflow-hidden',
     showBackButton = false,
-    modalStyle = ModalStyle.LIGHT,
+    modalStyle = ModalStyle.DARK,
     opacity = 'bg-opacity-60',
     showHeader = true,
     overflowYScroll = true,
@@ -83,16 +86,18 @@ const Modal = (props: ModalProps): JSX.Element => {
     mobileModal = false
   } = props;
 
-  const bgColor = `${(modalStyle === ModalStyle.LIGHT && 'bg-white') || ''} ${
-    (modalStyle === ModalStyle.DARK && 'bg-gray-syn8') || ''
-  } ${(modalStyle === ModalStyle.SUCCESS && 'bg-green-success') || ''}`;
+  const bgColor = `${modalStyle}`;
 
   const textColor = `${
     (modalStyle === ModalStyle.LIGHT && 'text-black') || ''
   } ${(modalStyle === ModalStyle.DARK && 'text-white') || ''}`;
 
   const modalPosition = mobileModal ? 'items-end' : 'items-center';
-  const modalRadius = mobileModal ? 'rounded-t-2xl' : 'rounded-2xl';
+  const modalRadius = radiusClassName
+    ? radiusClassName
+    : mobileModal
+    ? 'rounded-t-2xl'
+    : 'rounded-2xl';
 
   useDisableBgScrollOnModal(show);
 

@@ -278,7 +278,7 @@
   /* Button CTAs */
 
   .base-CTA {
-    @apply font-semibold px-12 py-3.5 rounded-lg focus:outline-none whitespace-nowrap transition-all;
+    @apply font-semibold px-8 py-3.5 rounded-lg focus:outline-none whitespace-nowrap transition-all;
   }
 
   .focus-CTA {

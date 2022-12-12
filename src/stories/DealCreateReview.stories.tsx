@@ -3,7 +3,7 @@ import { SelectedTimeWindow } from '@/features/deals/components/create/window';
 import { useState } from 'react';
 
 export default {
-  title: '5. Organisms/Deals/Create/Review'
+  title: '4. Organisms/Deals/Create/Review'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

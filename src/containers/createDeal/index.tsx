@@ -1,7 +1,4 @@
 import Image from 'next/image';
-import TransitionBetweenChildren, {
-  TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
 import router from 'next/router';
 import Layout from '@/components/layout';
 import { useCreateDealContext } from '@/context/createDealContext';
@@ -18,6 +15,9 @@ import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerL
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { H1 } from '@/components/typography';
 import { CTAButton, CTAType } from '@/components/CTAButton';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transition/transitionBetweenChildren';
 
 export const CreateDealContainer: React.FC = () => {
   const {

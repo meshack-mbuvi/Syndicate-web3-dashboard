@@ -1,6 +1,6 @@
 import { Callout, CalloutType } from '@/components/callout';
 import IconInfo from '@/components/icons/info';
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, FL } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useEffect, useRef, useState } from 'react';

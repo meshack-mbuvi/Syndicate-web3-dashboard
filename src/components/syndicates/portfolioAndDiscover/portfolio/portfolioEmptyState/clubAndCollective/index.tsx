@@ -1,5 +1,5 @@
 import { CTAButton, CTAType } from '@/components/CTAButton';
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, H3 } from '@/components/typography';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';

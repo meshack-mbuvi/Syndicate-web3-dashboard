@@ -1,4 +1,4 @@
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { FC } from 'react';
 import SegmentedControl from '../tabs';
 
