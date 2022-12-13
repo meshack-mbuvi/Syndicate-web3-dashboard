@@ -1,6 +1,6 @@
 import { ShuffleIcon } from '@/components/icons/shuffle';
 import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
-import { TextArea } from '@/components/inputs/simpleTextArea';
+// import { TextArea } from '@/components/inputs/simpleTextArea';
 import { useState } from 'react';
 import { CreateFlowStepTemplate } from '..';
 
@@ -9,24 +9,24 @@ interface Props {
   nameError?: string;
   handleNameChange?: (name: string) => void;
   handleShuffle?: (e: any) => void;
-  details?: string;
-  detailsError?: string;
-  handleDetailsChange?: (details: string) => void;
+  // details?: string;
+  // detailsError?: string;
+  // handleDetailsChange?: (details: string) => void;
 }
 
 enum SelectedInput {
-  TITLE = 0,
-  DETAILS = 1
+  TITLE = 0
+  // DETAILS = 1
 }
 
 export const DealsCreateAbout: React.FC<Props> = ({
   name,
   nameError,
   handleNameChange,
-  handleShuffle,
-  details,
-  detailsError,
-  handleDetailsChange
+  handleShuffle
+  // details,
+  // detailsError,
+  // handleDetailsChange
 }) => {
   const [activeInputIndex, setActiveInput] = useState<SelectedInput | null>(
     null
@@ -52,7 +52,7 @@ export const DealsCreateAbout: React.FC<Props> = ({
                 if (handleShuffle) handleShuffle(e);
               }}
               placeholderLabel="Name your deal"
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInput(SelectedInput.TITLE);
               }}
               isInErrorState={nameError ? true : false}
@@ -61,7 +61,7 @@ export const DealsCreateAbout: React.FC<Props> = ({
           ),
           label: 'Deal title',
           info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.'
-        },
+        } /* ,
         {
           input: (
             <TextArea
@@ -78,7 +78,7 @@ export const DealsCreateAbout: React.FC<Props> = ({
           ),
           label: 'Details',
           info: 'Describe what this and what a participant needs to know to get more information if needed. This information is to inform potnetial participants and will be public to all viewers.'
-        }
+        } */
       ]}
     />
   );

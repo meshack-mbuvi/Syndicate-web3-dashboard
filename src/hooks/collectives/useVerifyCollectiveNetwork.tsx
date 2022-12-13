@@ -12,7 +12,7 @@ const useVerifyCollectiveNetwork = (
 } => {
   const {
     web3Reducer: {
-      web3: { activeNetwork, web3 }
+      web3: { activeNetwork, web3, account }
     }
   } = useSelector((state: AppState) => state);
 
@@ -33,16 +33,19 @@ const useVerifyCollectiveNetwork = (
         setCorrectCollectiveNetwork(false);
         return;
       }
-      try {
-        await getCollectiveName(collectiveAddress as string, web3);
-        setCorrectCollectiveNetwork(true);
-      } catch (e) {
-        setCorrectCollectiveNetwork(false);
+      if (account) {
+        try {
+          await getCollectiveName(collectiveAddress as string, web3);
+          setCorrectCollectiveNetwork(true);
+        } catch (e) {
+          setCorrectCollectiveNetwork(false);
+        }
       }
+
       setCheckingNetwork(false);
     };
     void verifyCollectiveNetwork();
-  }, [activeNetwork?.chainId, collectiveAddress, isPolygon]);
+  }, [activeNetwork?.chainId, collectiveAddress, isPolygon, account]);
 
   return { correctCollectiveNetwork, checkingNetwork };
 };

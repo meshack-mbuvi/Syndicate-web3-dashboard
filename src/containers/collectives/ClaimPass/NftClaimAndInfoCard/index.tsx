@@ -127,6 +127,10 @@ const NftClaimAndInfoCard: React.FC = () => {
 
   const onTxReceipt = () => {
     setProgressState(ProgressState.SUCCESS);
+    amplitudeLogger(COLLECTIVE_CLAIM, {
+      flow: Flow.COLLECTIVE_CLAIM,
+      transaction_status: 'Success'
+    });
   };
 
   const onTxFail = (error: any) => {
@@ -150,10 +154,6 @@ const NftClaimAndInfoCard: React.FC = () => {
       setIntervalId(interval);
 
       setProgressState(ProgressState.TAKING_LONG);
-      amplitudeLogger(COLLECTIVE_CLAIM, {
-        flow: Flow.COLLECTIVE_CLAIM,
-        transaction_status: 'Transaction taking longer than expected'
-      });
     } else {
       setProgressState(ProgressState.FAILURE);
       amplitudeLogger(COLLECTIVE_CLAIM, {
@@ -174,10 +174,6 @@ const NftClaimAndInfoCard: React.FC = () => {
         onTxReceipt,
         onTxFail
       );
-      amplitudeLogger(COLLECTIVE_CLAIM, {
-        flow: Flow.COLLECTIVE_CLAIM,
-        transaction_status: 'Success'
-      });
     } catch (error) {
       onTxFail(error);
     }

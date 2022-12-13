@@ -63,6 +63,7 @@ const TwoColumnLayout: FC<{
   const tailwindScreenWidthMd = useTailwindScreenWidth('md').width;
   const windowWidth = useWindowSize().width;
   const displayMobileLayout = windowWidth < tailwindScreenWidthMd;
+
   return (
     <>
       {type === TwoColumnLayoutType.DEFAULT && (

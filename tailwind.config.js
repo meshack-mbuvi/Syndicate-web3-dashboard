@@ -465,6 +465,7 @@ module.exports = {
         1.25: '0.3125rem',
         2.25: '0.5625rem',
         3.5: '0.875rem',
+        4.5: '1.125rem',
         5.5: '1.375rem',
         7.5: '1.875rem',
         18: '4.5rem',
@@ -688,7 +689,8 @@ module.exports = {
         '1.25lg': '0.3125',
         '1.5lg': '0.625rem',
         '2.5xl': '1.25rem',
-        '4xl': '2rem'
+        '4xl': '2rem',
+        '5.5xl': '3.125rem'
       },
       transitionProperty: {
         height: 'height',

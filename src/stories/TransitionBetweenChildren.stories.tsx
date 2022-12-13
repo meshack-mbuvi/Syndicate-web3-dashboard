@@ -1,11 +1,11 @@
+import { Switch } from '@/components/switch';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
-} from '@/components/transitionBetweenChildren';
-import { Switch } from '@/components/switch';
+} from '@/components/transition/transitionBetweenChildren';
 import { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Transition Between Children',
+  title: 'Animations/Transition Between Children',
   argTypes: {
     visibleChildIndex: {
       options: [0, 1, 2],

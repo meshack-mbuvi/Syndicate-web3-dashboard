@@ -32,8 +32,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
-import { amplitudeLogger, Flow } from '../amplitude';
-import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import { Callout } from '../callout';
 import { CTAButton, CTAType } from '../CTAButton';
 import { EmailSupport } from '../emailSupport';
@@ -383,16 +381,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       dispatch(setExistingMaxAmountRaising(maxAmountRaising));
       dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers));
       setProgressState('success');
-      amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
-        flow: Flow.CLUB_MANAGE,
-        transaction_status: 'Success'
-      });
     } catch (error) {
       setProgressState('failure');
-      amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
-        flow: Flow.CLUB_MANAGE,
-        transaction_status: 'Failure'
-      });
     }
   };
 

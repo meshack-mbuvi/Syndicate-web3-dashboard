@@ -14,3 +14,10 @@
 
 -
 -
+
+### Modifies Amplitude events?
+
+- [] Yes
+- [] No
+
+Note: if yes please add amplitude github tag to PR and add Keenan and Jordan as reviewers

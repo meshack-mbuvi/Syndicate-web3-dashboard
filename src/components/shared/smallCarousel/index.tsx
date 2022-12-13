@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { ChevronIcon, ChevronIconDirection } from '@/components/icons/chevron';
 import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
-import TransitionBetweenChildren from '@/components/transitionBetweenChildren';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B4 } from '@/components/typography';
 import { useEffect, useState } from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';

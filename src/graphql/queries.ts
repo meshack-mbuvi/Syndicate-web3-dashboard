@@ -431,35 +431,76 @@ export const getBasicMerkleProofQuery: DocumentNode = gql`
   }
 `;
 
-// TODO: Write proper queries below once the graph is complete
 export const GetAdminDeals = gql`
   query AdminDeals($where: Deal_filter) {
-    deal(where: $where) {
-      dealName
+    deals(where: $where) {
+      id
+      closed
+      numCommits
+      goal
+      totalCommitted
+      depositToken
+      dealToken {
+        id
+        name
+      }
     }
   }
 `;
 
 export const GetMemberDeals = gql`
-  query MemberDeals($where: Deal_filter) {
-    deal(where: $where) {
-      dealName
+  query MemberPrecommits($where: Precommit_filter) {
+    precommits(where: $where) {
+      id
+      status
+      deal {
+        id
+        closed
+        numCommits
+        goal
+        totalCommitted
+        depositToken
+        dealToken {
+          id
+          name
+        }
+      }
     }
   }
 `;
 
 export const GetDealDetails = gql`
-  query DealDetails($chainId: Int!, $address: String!) {
-    deal(chainId: $chainId, address: $address) {
-      dealName
+  query DealDetails($dealId: ID!) {
+    deal(id: $dealId) {
+      id
+      ownerAddress
+      destinationAddress
+      closed
+      numCommits
+      goal
+      totalCommitted
+      depositToken
+      dealToken {
+        id
+        contractAddress
+        createdAt
+        name
+      }
     }
   }
 `;
 
 export const GetDealPrecommits = gql`
-  query Precommits($chainId: Int!, $address: String!) {
-    deal(chainId: $chainId, address: $address) {
-      dealName
+  query Precommits($dealId: ID!) {
+    deal(id: $dealId) {
+      id
+      precommits {
+        id
+        userAddress
+        amount
+        status
+        createdAt
+      }
     }
   }
 `;

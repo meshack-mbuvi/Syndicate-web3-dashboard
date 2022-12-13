@@ -1,6 +1,6 @@
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import React, { useEffect, useRef, useState } from 'react';
-import TransitionBetweenChildren from '../transitionBetweenChildren';
+import TransitionBetweenChildren from '../transition/transitionBetweenChildren';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',

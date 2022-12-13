@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import TransitionInChildren from '../transition/transitionInChildren';
 import { B2 } from '../typography';
 
 interface Step {
@@ -8,14 +9,16 @@ interface Step {
 }
 interface Props {
   steps: Step[];
-  alwaysShowDescriptions?: boolean;
+  onlyShowActiveDescription?: boolean;
+  neverDimText?: boolean;
   activeIndex: number;
-  extraClasses: string;
+  extraClasses?: string;
 }
 
 export const StepsOutline: React.FC<Props> = ({
   steps,
-  alwaysShowDescriptions,
+  onlyShowActiveDescription = false,
+  neverDimText = true,
   activeIndex,
   extraClasses
 }: Props) => {
@@ -55,17 +58,13 @@ export const StepsOutline: React.FC<Props> = ({
 
   const dynamicTitleStyles = (index: number): string => {
     return `${transitionStyles} ${
-      activeIndex >= index ? 'text-white' : 'text-gray-syn5'
+      activeIndex >= index || neverDimText ? 'text-white' : 'text-gray-syn5'
     }`;
   };
 
   const dynamicDescriptionStyles = (index: number): string => {
     return `text-sm ${
-      activeIndex >= index ? 'text-gray-syn4' : 'text-gray-syn6'
-    } ${transitionStyles} ${
-      activeIndex >= index || alwaysShowDescriptions
-        ? 'max-h-50 opacity-100'
-        : 'max-h-0 opacity-0'
+      activeIndex >= index || neverDimText ? 'text-gray-syn4' : 'text-gray-syn6'
     } overflow-hidden`;
   };
 
@@ -92,10 +91,21 @@ export const StepsOutline: React.FC<Props> = ({
       </div>
 
       {/* Text */}
-      <div className="mb-6">
+      <div className={`${index === steps.length - 1 ? 'mb-0' : 'mb-2'}`}>
         <B2 className={`${dynamicTitleStyles(index)}`}>{step.title}</B2>
         <div className={dynamicDescriptionStyles(index)}>
-          {step.description}
+          <TransitionInChildren
+            isChildVisible={
+              onlyShowActiveDescription
+                ? activeIndex === index
+                  ? true
+                  : false
+                : activeIndex >= index
+            }
+            delayMillisecond={800 + 200} // give time to allow children to transition-in if needed
+          >
+            {step.description}
+          </TransitionInChildren>
         </div>
       </div>
     </div>

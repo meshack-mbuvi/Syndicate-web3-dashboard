@@ -18,19 +18,22 @@ export const ReviewDealDetails: React.FC = () => {
 
   const {
     name,
-    details,
+    ensName,
+    // details,
     commitmentGoal,
+    commitmentGoalTokenSymbol,
     minimumCommitment,
     destinationAddress,
     selectedTimeWindow,
     customDate,
     customTime,
+    endTime,
     tokenSymbol,
     destinationAddressError,
     isEditingField,
     isReviewStep,
     handleNameChange,
-    handleDetailsChange,
+    // handleDetailsChange,
     handleCommitmentGoalChange,
     handleMinimumCommitmentChange,
     handleDestinationAddressChange,
@@ -87,17 +90,19 @@ export const ReviewDealDetails: React.FC = () => {
       <DealsCreateReview
         // About
         name={name ? name : ''}
+        ensName={ensName}
         handleNameChange={handleNameChange}
-        details={details ? details : ''}
-        handleDetailsChange={handleDetailsChange}
+        // details={details ? details : ''}
+        // handleDetailsChange={handleDetailsChange}
         handleShuffle={handleShuffle}
         // Goal
         commitmentGoal={commitmentGoal ? commitmentGoal : ''}
         handleCommitmentGoalChange={handleCommitmentGoalChange}
+        commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
         minimumCommitment={minimumCommitment ? minimumCommitment : ''}
         handleMinimumCommitmentChange={handleMinimumCommitmentChange}
         tokenSymbol={tokenSymbol ? tokenSymbol : ''}
-        handleTokenClick={() => {
+        handleTokenClick={(): void => {
           alert('Change token');
         }}
         handleTokenSymbolChange={handleTokenSymbolChange}
@@ -113,6 +118,7 @@ export const ReviewDealDetails: React.FC = () => {
         customDate={customDate}
         handleCustomDateChange={handleCustomDateChange}
         customTime={customTime}
+        endTime={endTime}
         handleCustomTimeChange={handleCustomTimeChange}
         formattedWindowEndTime="Jan 1, 2023 11:59pm PST"
         isReviewStep={isReviewStep}

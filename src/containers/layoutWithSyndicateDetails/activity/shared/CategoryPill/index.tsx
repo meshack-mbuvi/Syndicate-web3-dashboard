@@ -6,6 +6,7 @@ import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
+import { useRouter } from 'next/router';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { useMutation } from '@apollo/client';
 import React, {
@@ -17,6 +18,7 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
+import { getFirstOrString } from '@/utils/stringUtils';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -112,6 +114,9 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       icon: '/images/activity/investment-tokens.svg'
     }
   ];
+
+  const router = useRouter();
+  const clubAddress = getFirstOrString(router.query?.clubAddress);
 
   // initial selected category
   useEffect(() => {
@@ -241,7 +246,8 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   const handleSelect = (value: TransactionCategory) => {
     amplitudeLogger(TRANSACTION_CATEGORIZE, {
       flow: Flow.CLUB_MANAGE,
-      transaction_category: value
+      transaction_category: value,
+      contract_address: clubAddress
     });
     if (Object.keys(currentTransaction).length) {
       dispatch(

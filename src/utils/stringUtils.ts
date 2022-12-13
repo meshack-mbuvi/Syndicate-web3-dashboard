@@ -14,3 +14,12 @@ export const removeSubstring = (
     originalString.substr(start + subString.length)
   );
 };
+
+export const getFirstOrString = (param: string | string[] | undefined) => {
+  if (!param) return;
+  if (typeof param === 'string') {
+    return param;
+  }
+
+  return param[0];
+};

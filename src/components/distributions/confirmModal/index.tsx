@@ -37,7 +37,7 @@ export const ConfirmDistributionsModal: React.FC<Props> = ({
           activeIndex={activeStepIndex}
           extraClasses="px-10"
         />
-        <div className="px-5 pb-5">{children}</div>
+        <div className="px-5 pb-5 mt-6">{children}</div>
       </div>
     </Modal>
   );

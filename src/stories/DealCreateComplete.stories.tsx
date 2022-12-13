@@ -1,7 +1,7 @@
 import { DealsCreateComplete } from '@/features/deals/components/create/complete';
 
 export default {
-  title: '5. Organisms/Deals/Create/Complete'
+  title: '4. Organisms/Deals/Create/Complete'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

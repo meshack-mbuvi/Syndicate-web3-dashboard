@@ -57,6 +57,7 @@ import useFetchAccountHoldingsAndDetails from '@/hooks/useFetchAccountHoldingsAn
 import useMeetsTokenGatedRequirements from '@/hooks/useMeetsTokenGatedRequirements';
 import { FEATURE_FLAGS } from '@/pages/_app';
 import { setTokenGatingDetails } from '@/state/erc20token/slice';
+
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const dispatch = useDispatch();
