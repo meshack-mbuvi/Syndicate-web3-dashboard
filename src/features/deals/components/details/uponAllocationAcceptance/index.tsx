@@ -17,7 +17,7 @@ const UponAllocationAcceptance: React.FC<UponAllocationAcceptanceProps> = ({
   return (
     <div className="rounded-2.5xl bg-gray-syn8 p-8 space-y-4.5 max-w-120">
       {/* title  */}
-      <L2>Upon allocation acceptance</L2>
+      <L2 extraClasses="text-white">After you are accepted into the deal</L2>
 
       <div className="rounded-custom divide-y-1 divide-gray-syn6 border border-gray-syn6">
         <div className="flex py-6 px-4.5 space-x-1 items-center justify-between">

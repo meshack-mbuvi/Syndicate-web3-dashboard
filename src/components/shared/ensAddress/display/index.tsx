@@ -4,7 +4,7 @@ import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator'
 import { formatAddress } from '@/utils/formatAddress';
 
 export enum AddressImageSize {
-  SMALLEST = 'w-4.5 h-4.5',
+  SMALLEST = 'w-4.5 h-4.5', // 18px => 1.125rem
   SMALLER = 'w-5 h-5', // 20px => 1.25rem
   SMALL = 'w-6 h-6', // 24px => 1.5rem
   LARGE = 'w-8 h-8' // 32px => 2rem
@@ -70,7 +70,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
           0x
         </span>
         {address && (
-          <span {...rest}>
+          <span className="text-white" {...rest}>
             {formatAddress(
               address.substring(2),
               maxDigits / 2,
@@ -94,6 +94,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
       </TransitionBetweenChildren>
     );
   };
+
   return (
     <div
       className={`flex items-center space-x-${

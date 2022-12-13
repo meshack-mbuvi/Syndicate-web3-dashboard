@@ -2,7 +2,7 @@ import React from 'react';
 import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
 
 export default {
-  title: '4. Organisms/Deals/Details/DealAccountSwitcher'
+  title: '4. Organisms/Deals/Details/Deal Account Switcher'
 };
 
 const Template = (args: any) => <DealAccountSwitcher {...args} />;

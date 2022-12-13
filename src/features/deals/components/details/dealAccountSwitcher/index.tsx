@@ -8,6 +8,7 @@ import {
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
 import { Wallet } from '@/features/deals/components/details/dealAllocationCard';
+import { Transition } from '@headlessui/react';
 
 interface DealAccountSwitcherProps {
   wallets: Wallet[] | [];
@@ -39,7 +40,7 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
         accountsDropdown.current !== null &&
         !accountsDropdown.current.contains(e.target as Node)
       ) {
-        setIsAccountSwitcherOpen(false);
+        setIsAccountSwitcherOpen(!isAccountSwitcherOpen);
         return;
       }
     };
@@ -86,15 +87,22 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
           )} ${dealCommitTokenSymbol}`}</B3>
         </div>
       </div>
+
       {!disableSwitching && (
         <img src="/images/chevron-down.svg" width="15" alt="down-arrow" />
       )}
 
       {/* account switcher dropdown  */}
-      <div
-        className={`absolute border  z-10 bg-black border-gray-syn7 rounded-1.5lg top-2 left-2 right-2 transition-all duration-300 ${
-          isAccountSwitcherOpen ? 'block' : 'hidden'
-        }`}
+      <Transition
+        show={isAccountSwitcherOpen}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+        className="absolute border z-10 bg-black border-gray-syn7 rounded-1.5lg top-2 left-2
+        right-2"
       >
         {/* current connected account  */}
         <div className="flex flex-col space-y-0.5 m-1">
@@ -141,7 +149,7 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
             })}
           </div>
         ) : null}
-      </div>
+      </Transition>
     </button>
   );
 };

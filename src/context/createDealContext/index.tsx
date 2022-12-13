@@ -260,7 +260,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
     // disable next button if field values are missing
     if (
-      (currentStep === 0 && (!name || nameError) /*  || !details */) ||
+      (currentStep === 0 && (!name || nameError)) /*  || !details */ ||
       (currentStep === 1 &&
         (!commitmentGoal ||
           !minimumCommitment ||

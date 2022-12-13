@@ -2,7 +2,7 @@ import React from 'react';
 import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
 
 export default {
-  title: '4. Organisms/Deals/Details/DealAllocationAcceptance'
+  title: '4. Organisms/Deals/Details/Deal Allocation Acceptance'
 };
 
 const Template = (args: any) => <UponAllocationAcceptance {...args} />;
