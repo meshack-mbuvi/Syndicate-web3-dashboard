@@ -10,7 +10,10 @@ import '../styles/custom-datepicker.css';
 import '../styles/global.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAmplitude } from '@/components/amplitude';
+import {
+  fireAmplitudeRouteChangeEvents,
+  useAmplitude
+} from '@/components/amplitude';
 import FontsPreloader from '@/components/fonts';
 import BeforeGettingStartedProvider from '@/context/beforeGettingStartedContext';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
@@ -36,7 +39,6 @@ import {
   GraphLinks,
   SUPPORTED_GRAPHS
 } from '@/Networks/backendLinks';
-
 import { SplitFactory } from '@splitsoftware/splitio-react';
 import Script from 'next/script';
 import router from 'next/router';
@@ -47,6 +49,7 @@ import {
 import useIsInDarkMode from '@/hooks/useDarkMode';
 import CreateDealProvider from '@/context/createDealContext';
 
+// Google Analytics
 const handleRouteChangeGoogleAnalytics = (url: string) => {
   const isURLForClub = url.split('/').includes('clubs');
   const isURLForCollective = url.split('/').includes('collectives');
@@ -55,18 +58,7 @@ const handleRouteChangeGoogleAnalytics = (url: string) => {
   }
 };
 
-// Binding events.
-router.events.on('routeChangeStart', () => NProgress.start());
-router.events.on('routeChangeError', () => NProgress.done());
-router.events.on('routeChangeComplete', (url: string) => {
-  NProgress.done();
-  handleRouteChangeGoogleAnalytics(url);
-});
-router.events.on('hashChangeComplete', (url: string) => {
-  NProgress.done();
-  handleRouteChangeGoogleAnalytics(url);
-});
-
+// Split
 const sdkConfig = {
   core: {
     authorizationKey: isDev
@@ -106,6 +98,35 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
   pageProps,
   apollo
 }) => {
+  const handleRouteStart = () => {
+    NProgress.start();
+  };
+
+  const handleRouteError = () => {
+    NProgress.done();
+  };
+
+  const handleRouteDone = (url: string) => {
+    NProgress.done();
+    handleRouteChangeGoogleAnalytics(url);
+    fireAmplitudeRouteChangeEvents(url);
+  };
+
+  React.useEffect(() => {
+    // Binding events.
+    router.events.on('routeChangeStart', handleRouteStart);
+    router.events.on('routeChangeError', handleRouteError);
+    router.events.on('routeChangeComplete', handleRouteDone);
+    router.events.on('hashChangeComplete', handleRouteDone);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteStart);
+      router.events.off('routeChangeError', handleRouteError);
+      router.events.off('routeChangeComplete', handleRouteDone);
+      router.events.off('hashChangeComplete', handleRouteDone);
+    };
+  }, []);
+
   return (
     <>
       <Head>

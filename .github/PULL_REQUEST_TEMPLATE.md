@@ -15,7 +15,7 @@
 -
 -
 
-### Modifies amplitude events?
+### Modifies Amplitude events?
 
 - [] Yes
 - [] No

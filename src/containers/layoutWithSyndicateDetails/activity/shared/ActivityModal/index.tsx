@@ -36,6 +36,8 @@ import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
 import { BatchIdTokenDetails } from '../../ActivityTable/index';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
+import { useRouter } from 'next/router';
+import { getFirstOrString } from '@/utils/stringUtils';
 
 interface IActivityModal {
   showModal: boolean;
@@ -285,11 +287,15 @@ const ActivityModal: React.FC<IActivityModal> = ({
     setTokensTableRows(rows);
   }, [batchIdentifiers, currentBatchIdentifier, blockExplorerLink, web3]);
 
+  const router = useRouter();
+  const clubAddress = getFirstOrString(router.query?.clubAddress);
+
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
     setEditMode(!editMode);
     amplitudeLogger(TRANSACTION_DETAIL_ADD, {
-      flow: Flow.CLUB_MANAGE
+      flow: Flow.CLUB_MANAGE,
+      contract_address: clubAddress
     });
   };
 

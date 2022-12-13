@@ -178,19 +178,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       amplitudeLogger(WALLET_CONNECTION, {
         flow: Flow.WEB_APP,
         transaction_status: 'Success',
-        wallet_address: account,
         wallet_network: activeNetwork.displayName
       });
 
-      const wallet_address = new amplitude.Identify().set(
-        'wallet_address',
-        account
-      );
       const wallet_network = new amplitude.Identify().set(
         'wallet_network',
         activeNetwork.displayName
       );
-      amplitude.getInstance().identify(wallet_address);
       amplitude.getInstance().identify(wallet_network);
     }
   }, [account]);

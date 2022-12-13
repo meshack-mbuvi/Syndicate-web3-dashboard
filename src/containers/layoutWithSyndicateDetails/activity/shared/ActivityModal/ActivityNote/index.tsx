@@ -2,7 +2,7 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_NOTE_ADD } from '@/components/amplitude/eventNames';
 import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
 import { CurrentTransaction } from '@/state/erc20transactions/types';
-
+import { useRouter } from 'next/router';
 import Linkify from 'linkify-react';
 import Image from 'next/image';
 import React, {
@@ -13,6 +13,7 @@ import React, {
   useState
 } from 'react';
 import { TextArea } from './textArea';
+import { getFirstOrString } from '@/utils/stringUtils';
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
@@ -52,15 +53,19 @@ const ActivityNote: React.FC<IActivityNote> = ({
     }
   };
 
-  const saveNote = () => {
+  const router = useRouter();
+  const clubAddress = getFirstOrString(router.query?.clubAddress);
+
+  const saveNote = async () => {
     setReadOnly(true);
     saveTransactionNote(noteValue);
     if (!noteValue) {
       setShowNote(false);
     }
     setCurrentTransaction({ ...currentTransaction, note: noteValue });
-    amplitudeLogger(TRANSACTION_NOTE_ADD, {
-      flow: Flow.CLUB_MANAGE
+    await amplitudeLogger(TRANSACTION_NOTE_ADD, {
+      flow: Flow.CLUB_MANAGE,
+      contract_address: clubAddress
     });
   };
 

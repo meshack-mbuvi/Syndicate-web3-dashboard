@@ -1,8 +1,5 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import {
-  COLLECTIVE_SUBMIT_SETTINGS,
-  MANAGE_TRY_AGAIN_CLICK
-} from '@/components/amplitude/eventNames';
+import { COLLECTIVE_SUBMIT_SETTINGS } from '@/components/amplitude/eventNames';
 import BackButton from '@/components/buttons/BackButton';
 import { CollapsibleTable } from '@/components/collapsibleTable/index';
 import { CollapsibleTableNoContractInteraction } from '@/components/collapsibleTable/noContractInteraction';
@@ -277,10 +274,20 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const onTxReceipt = () => {
     setProgressState('success');
+    amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+      flow: Flow.COLLECTIVE_MANAGE,
+      transaction_status: 'Success',
+      contract_address: collectiveAddress
+    });
   };
 
   const onTxFail = () => {
     setProgressState('failure');
+    amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+      flow: Flow.COLLECTIVE_MANAGE,
+      transaction_status: 'Failure',
+      contract_address: collectiveAddress
+    });
   };
 
   const onSwitchTxConfirm = (transactionHash: any) => {
@@ -536,16 +543,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             artworkTypeState,
             artworkUrlState
           );
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Success'
-          });
-        } catch (error) {
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Failure'
-          });
-        }
+        } catch (error) {}
         break;
       case EditRowIndex.MintPrice:
         if (
@@ -564,16 +562,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Success'
-          });
-        } catch (error) {
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Failure'
-          });
-        }
+        } catch (error) {}
         break;
       case EditRowIndex.MaxPerWallet:
         if (
@@ -592,16 +581,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Success'
-          });
-        } catch (error) {
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Failure'
-          });
-        }
+        } catch (error) {}
         break;
       case EditRowIndex.OpenUntil:
         if (!collectiveAddress || !settingsMintEndTime || !web3) return;
@@ -619,16 +599,7 @@ const ModifyCollectiveSettings: React.FC = () => {
               onSwitchTxReceipt,
               onSwitchTxFail
             );
-            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-              flow: Flow.COLLECTIVE_MANAGE,
-              transaction_status: 'Success'
-            });
-          } catch (error) {
-            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-              flow: Flow.COLLECTIVE_MANAGE,
-              transaction_status: 'Failure'
-            });
-          }
+          } catch (error) {}
         }
 
         if (currentOpenUntilState === OpenUntil.MAX_MEMBERS) {
@@ -644,16 +615,7 @@ const ModifyCollectiveSettings: React.FC = () => {
               onSwitchTxReceipt,
               onSwitchTxFail
             );
-            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-              flow: Flow.COLLECTIVE_MANAGE,
-              transaction_status: 'Success'
-            });
-          } catch (error) {
-            amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-              flow: Flow.COLLECTIVE_MANAGE,
-              transaction_status: 'Failure'
-            });
-          }
+          } catch (error) {}
         }
         break;
       case EditRowIndex.Transfer:
@@ -667,15 +629,7 @@ const ModifyCollectiveSettings: React.FC = () => {
             onTxReceipt,
             onTxFail
           );
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Success'
-          });
         } catch (error) {
-          amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
-            flow: Flow.COLLECTIVE_MANAGE,
-            transaction_status: 'Failure'
-          });
           onTxFail();
         }
         break;
@@ -685,9 +639,6 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const handleCloseModal = () => {
-    amplitudeLogger(MANAGE_TRY_AGAIN_CLICK, {
-      flow: Flow.COLLECTIVE_MANAGE
-    });
     setProgressState('');
   };
 

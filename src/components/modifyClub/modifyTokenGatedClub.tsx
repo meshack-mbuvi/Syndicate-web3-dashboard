@@ -69,6 +69,7 @@ import { TokenDetails } from '@/types/token';
 import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
+import { getFirstOrString } from '@/utils/stringUtils';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -513,7 +514,8 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressState(ProgressState.SUCCESS);
     amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
       flow: Flow.CLUB_MANAGE,
-      transaction_status: 'Success'
+      transaction_status: 'Success',
+      contract_address: getFirstOrString(clubAddress)
     });
   };
 
@@ -529,7 +531,8 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressState(ProgressState.FAILURE);
     amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
       flow: Flow.CLUB_MANAGE,
-      transaction_status: 'Failure'
+      transaction_status: 'Failure',
+      contract_address: getFirstOrString(clubAddress)
     });
   };
 
