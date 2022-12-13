@@ -1,4 +1,4 @@
-import { FC, useRef } from 'react';
+import { FC } from 'react';
 
 export enum TransitionBetweenChildrenType {
   FADE = 'FADE', // Add transparent copies of children to take up space in the flow
@@ -21,7 +21,6 @@ const TransitionBetweenChildren: FC<Props> = ({
   transitionType = TransitionBetweenChildrenType.FADE,
   extraClasses
 }) => {
-  const childRefs = useRef<HTMLDivElement[]>([]);
   const renderedTabContent = children.map((child, index) => {
     if (
       transitionType === TransitionBetweenChildrenType.FADE ||
@@ -45,18 +44,8 @@ const TransitionBetweenChildren: FC<Props> = ({
         <div
           key={index}
           className={`${
-            index === visibleChildIndex ? 'h-full' : ''
+            index === visibleChildIndex ? 'max-h-screen h-full' : 'max-h-0'
           } transition-all ease_vertical_move overflow-hidden overflow-y-scroll no-scroll-bar ${transitionDurationClassOverride}`}
-          style={{
-            maxHeight:
-              index === visibleChildIndex
-                ? childRefs.current[index]
-                  ? `${
-                      childRefs.current[index].getBoundingClientRect().height
-                    }px`
-                  : 'max-h-screen'
-                : '0vh'
-          }}
         >
           <div
             className={`${
@@ -66,11 +55,6 @@ const TransitionBetweenChildren: FC<Props> = ({
             } ${
               (visibleChildIndex === index + 1 && 'transform') || ''
             } transition-all ease_vertical_move ${transitionDurationClassOverride} w-full`}
-            ref={(ref) => {
-              if (ref && !childRefs.current.includes(ref)) {
-                childRefs.current.push(ref);
-              }
-            }}
           >
             {child}
           </div>
