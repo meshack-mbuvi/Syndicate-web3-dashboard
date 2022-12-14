@@ -330,9 +330,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
       // create deal url
       setDealUrl(
-        `/deals/${tokenAddress}/manage?source=create${
-          '&chain=' + activeNetwork.network
-        }`
+        `/deals/${tokenAddress.toLowerCase()}?chain=${activeNetwork.network}`
       );
     }
 

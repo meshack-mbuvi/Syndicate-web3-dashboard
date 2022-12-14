@@ -1,6 +1,6 @@
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import ProductTokenNotFound, {
-  TokenType
+  ProductType
 } from '@/containers/collectives/shared/productAddressNotFound';
 import Layout from '@/components/layout';
 
@@ -12,7 +12,7 @@ const CollectivesContainer: React.FC = ({ children }) => {
     <div>
       {collectiveNotFound || !correctCollectiveNetwork ? (
         <Layout>
-          <ProductTokenNotFound tokenTitle={TokenType.COLLECTIVE} />
+          <ProductTokenNotFound tokenTitle={ProductType.COLLECTIVE} />
         </Layout>
       ) : (
         children

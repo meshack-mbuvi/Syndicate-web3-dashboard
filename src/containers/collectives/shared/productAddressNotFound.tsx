@@ -2,13 +2,13 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import TokenEmptyState from '@/containers/layoutWithSyndicateDetails/TokenEmptyState';
 
-export enum TokenType {
+export enum ProductType {
   COLLECTIVE = 'collective',
   DEAL = 'deal'
 }
 
 interface TokenNotFoundProps {
-  tokenTitle: TokenType;
+  tokenTitle: ProductType;
 }
 
 const ProductTokenNotFound: React.FC<TokenNotFoundProps> = ({

@@ -1,6 +1,6 @@
 import Layout from '@/components/layout';
 import ProductTokenNotFound, {
-  TokenType
+  ProductType
 } from '@/containers/collectives/shared/productAddressNotFound';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 
@@ -11,7 +11,7 @@ export const DealsContainer: React.FC = ({ children }) => {
     <div>
       {dealNotFound ? (
         <Layout>
-          <ProductTokenNotFound tokenTitle={TokenType.COLLECTIVE} />
+          <ProductTokenNotFound tokenTitle={ProductType.DEAL} />
         </Layout>
       ) : (
         children
