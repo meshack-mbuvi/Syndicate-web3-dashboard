@@ -109,7 +109,7 @@ export function sortAbiFunction(contractabi: any): Fragment[] {
   const isConstant = ({ stateMutability }: Fragment) =>
     stateMutability === 'view' || stateMutability === 'pure';
   // Sorts the list of ABI entries. Constant functions will appear first,
-  // followed by non-constant functions. Within those t wo groupings, functions
+  // followed by non-constant functions. Within those two groupings, functions
   // will be sorted by their names.
   // @ts-expect-error: Type error: Not all code paths return a value.
   return contractabi.sort(function (a: Fragment, b: Fragment) {

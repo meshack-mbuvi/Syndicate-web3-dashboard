@@ -1,13 +1,15 @@
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
+import { FunctionFragment } from 'ethers/lib/utils';
 import { useSelector } from 'react-redux';
 
 interface RemixDetails {
-  inputValues: any;
-  abiFunction: any;
-  remixContractAddress: any;
+  inputValues: string[] | undefined;
+  abiFunction: FunctionFragment | null;
+  remixContractAddress: string;
   remixAbi: AbiItem[];
 }
+
 interface Props {
   contract: ContractMapper;
   customClasses?: string;

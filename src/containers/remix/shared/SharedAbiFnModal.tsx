@@ -40,7 +40,7 @@ const SharedAbiFnModal: React.FC<SharedAbiFnModalProps> = ({
       <>
         <div className="flex items-center mb-2">
           {showBackButton && (
-            <button className="mr-2" onClick={() => setFnFragment(null)}>
+            <button className="mr-2" onClick={(): void => setFnFragment(null)}>
               {' '}
               <Image
                 src="/images/arrow-left.svg"

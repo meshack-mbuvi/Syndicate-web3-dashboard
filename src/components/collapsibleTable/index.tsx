@@ -126,8 +126,10 @@ export const CollapsibleTable: React.FC<Props> = ({
             onClick={() => {
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setActiveRow(showSubmitCTA ? 0 : switchRowIndex);
-              // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-              dispatch(setActiveRowIdx(showSubmitCTA ? 0 : switchRowIndex));
+              if (isTableHighlightingActive) {
+                // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
+                dispatch(setActiveRowIdx(showSubmitCTA ? 0 : switchRowIndex));
+              }
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setIsExpanded(!isExpanded);
               setEditGroupFieldClicked && setEditGroupFieldClicked(false);
@@ -153,7 +155,9 @@ export const CollapsibleTable: React.FC<Props> = ({
       {/* Rows */}
       <div
         ref={rowsRef}
-        className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
+        className={`space-y-10 transition-all duration-500 overflow-hidden ${
+          isExpanded ? '' : 'hidden'
+        } ${extraClasses}`}
         style={{
           maxHeight: `${
             disableHeightUpdate ? '100%' : isExpanded ? maxHeight : '0px'

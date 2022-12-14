@@ -59,12 +59,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
   encodedFnParams,
   searchValue
 }: ContractUIProps) => {
-  const [abi, setAbi] = useState<any>();
-  const [contractName, setContractName] = useState('');
-  const [validContractAddress, setValidContractAddress] = useState('');
   const [invalidResponse, setInvalidResponse] = useState('');
-  const [isUnverified, setUnverified] = useState<boolean>(false);
-
   // abiFnModal
   const [fnFragment, setFnFragment] = useState<FunctionFragment | null>(null);
   const [isLookupOnly, setLookupOnly] = useState(false);
@@ -124,35 +119,31 @@ export const ContractUI: React.FC<ContractUIProps> = ({
     });
   };
 
-  useEffect(() => {
-    if (loading) return;
+  let abi: any;
+  let contractName = '';
+  let isUnverified = false;
+  const validContractAddress: string = isAddress(contractAddress)
+    ? toChecksumAddress(contractAddress)
+    : '';
 
-    if (!data?.contractDetails && !loading && !supportedAbi) {
-      setInvalidResponse('Unable to find abi');
-    } else {
-      setInvalidResponse('');
-
-      if (typeof supportedAbi !== 'string') {
-        setAbi(supportedAbi.abi);
-        setContractName(supportedAbi.contractName);
-        setUnverified(false);
-      } else {
-        if (data?.contractDetails?.abi == 'Contract source code not verified') {
-          setUnverified(true);
-        } else {
-          setUnverified(false);
-          setContractName(data?.contractDetails?.contractName ?? '');
-          setAbi(
-            data?.contractDetails?.abi &&
-              sortAbiFunction(JSON.parse(data.contractDetails?.abi))
-          );
-        }
-      }
-      if (isAddress(contractAddress)) {
-        setValidContractAddress(toChecksumAddress(contractAddress));
-      }
-    }
-  }, [data, supportedAbi, contractAddress, loading]);
+  if (loading) {
+  } else if (!data?.contractDetails && !loading && !supportedAbi) {
+    setInvalidResponse('Unable to find abi');
+  } else if (typeof supportedAbi !== 'string') {
+    abi = sortAbiFunction(supportedAbi.abi);
+    contractName = supportedAbi.contractName;
+    isUnverified = false;
+  } else if (
+    data?.contractDetails?.abi === 'Contract source code not verified'
+  ) {
+    isUnverified = true;
+  } else {
+    abi = data?.contractDetails?.abi
+      ? sortAbiFunction(JSON.parse(data.contractDetails?.abi))
+      : null;
+    contractName = data?.contractDetails?.contractName ?? '';
+    isUnverified = false;
+  }
 
   useEffect(() => {
     if (!abi || loading || !decodedFnName) return;

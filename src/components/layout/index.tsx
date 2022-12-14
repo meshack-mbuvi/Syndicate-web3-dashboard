@@ -17,8 +17,6 @@ import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
 import Link from 'next/link';
-import qs from 'qs';
-import { isEmpty } from 'lodash';
 
 interface Props {
   showBackButton?: boolean;
@@ -136,29 +134,25 @@ const Layout: FC<Props> = ({
     account
   );
 
-  const handleRouting = () => {
+  const handleRouting = (): void => {
     if (isLoading || !router.isReady) return;
 
     const { chain, clubAddress, ...rest } = router.query;
     const chainName = getNetworkByName(chain);
 
-    const stringy = qs.stringify(rest);
-
     if (pathname.includes('/manage') && !isOwner) {
-      router.replace(
-        `/clubs/${clubAddress}${
-          '?chain=' + chainName?.network || activeNetwork.network
-        }${!isEmpty(rest) ? '&' + stringy : ''}`
-      );
+      void router.replace({
+        pathname: `/clubs/${clubAddress}`,
+        query: { chain: chainName?.network || activeNetwork.network, ...rest }
+      });
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
-      router.replace(
-        `/clubs/${clubAddress}/manage${
-          '?chain=' + chainName?.network || activeNetwork.network
-        }${!isEmpty(rest) ? '&' + stringy : ''}`
-      );
+      void router.replace({
+        pathname: `/clubs/${clubAddress}/manage`,
+        query: { chain: chainName?.network || activeNetwork.network, ...rest }
+      });
     }
   };
 

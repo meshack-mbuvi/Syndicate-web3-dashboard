@@ -39,7 +39,6 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
   clickCallback,
   contractAddress,
   name,
-  // isLoading,
   abi,
   moduleName,
   setFnFragment,
@@ -246,7 +245,7 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
                   description: 'This custom module needs data inputs.'
                 }
               ]}
-              alwaysShowDescriptions={false}
+              onlyShowActiveDescription={true}
               extraClasses="mt-6"
             />
             <div className="flex flex-col mt-2 -space-y-5">

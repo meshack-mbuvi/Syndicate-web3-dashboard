@@ -126,7 +126,7 @@ const AbiUI: React.FC<AbiUIProps> = ({
         }`}
       >
         <button
-          onClick={() => setShowFnModal(!showFnModal)}
+          onClick={(): void => setShowFnModal(!showFnModal)}
           className={`${
             isActive ? 'bg-gray-syn8' : 'border-1 border-gray-syn7'
           } rounded-2.5xl px-8 py-6 mb-5 w-full`}
