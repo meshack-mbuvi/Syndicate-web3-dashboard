@@ -167,15 +167,6 @@ const ReviewDistribution: React.FC<Props> = ({
     syndicateContracts?.DepositTokenMintModule
   ]);
 
-  /**
-   * Get addresses of all club members
-   */
-  useEffect(() => {
-    const activeAddresses: string[] = [];
-    clubMembers.forEach((member) => activeAddresses.push(member.memberAddress));
-    setActiveAddresses(activeAddresses);
-  }, [JSON.stringify(clubMembers)]);
-
   // prepare member data here
   useEffect(() => {
     if (clubMembers.length && tokens.length) {
