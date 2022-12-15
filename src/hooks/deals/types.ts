@@ -11,20 +11,35 @@ export type Deal = {
   };
 };
 
+export enum MixinModuleRequirementType {
+  TIME_WINDOW = 'TIME_WINDOW',
+  MIN_PER_MEMBER = 'MIN_PER_MEMBER'
+}
+
 export type DealDetails = {
   id: string;
-  destinationAddress: string;
-  depositToken: string;
   ownerAddress: string;
+  destinationAddress: string;
   closed: boolean;
+  numCommits: string;
   goal: string;
+  totalCommitted: string;
+  depositToken: string;
   dealToken: {
-    name: string;
+    id: string;
     contractAddress: string;
     createdAt: string;
+    name: string;
   };
-  totalCommitted: string;
-  numCommits: string;
+  mixins: [
+    {
+      id: string;
+      requirementType: MixinModuleRequirementType;
+      minPerMember: string;
+      startTime: string;
+      endTime: string;
+    }
+  ];
 };
 
 export type Precommit = {

@@ -9,14 +9,22 @@ import { DealsParticipants } from '@/features/deals/components/participants';
 import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useTokenDetails from '@/hooks/useTokenDetails';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {
   const {
+    web3Reducer: {
+      web3: { web3 }
+    }
+  } = useSelector((state: AppState) => state);
+  const {
     dealDetails: {
       dealName,
       dealDescription,
-      dealToken,
+      dealTokenAddress,
       depositToken,
       goal,
       dealDestination,
@@ -87,7 +95,10 @@ const DealDetails: React.FC = () => {
             </div>
 
             <div className="flex justify-center mt-4">
-              <BlockExplorerLink resourceId={dealToken} resource="address" />
+              <BlockExplorerLink
+                resourceId={dealTokenAddress}
+                resource="address"
+              />
             </div>
           </div>
         </Modal>
@@ -130,15 +141,25 @@ const DealDetails: React.FC = () => {
                   destinationAddress={dealDestination}
                   commitmentGoalAmount={goal}
                   commitmentGoalTokenSymbol={depositTokenSymbol}
-                  commitmentGoalTokenLogo={depositTokenLogo}
+                  commitmentGoalTokenLogo={
+                    depositTokenLogo
+                      ? depositTokenLogo
+                      : '/images/prodTokenLogos/USDCoin.svg'
+                  }
                 />
                 <DealsAllocations
                   leaderAddress={ownerAddress}
                   numberOfParticipants={parseInt(totalCommitments)}
-                  totalAllocatedAmount={parseInt(totalCommitted)}
+                  totalAllocatedAmount={parseFloat(
+                    getWeiAmount(web3, totalCommitted, 6, false)
+                  )}
                   tokenSymbol={depositTokenSymbol}
-                  tokenIcon={depositTokenLogo}
-                  dealEndTime={parseInt(dealEndTime)}
+                  tokenIcon={
+                    depositTokenLogo
+                      ? depositTokenLogo
+                      : '/images/prodTokenLogos/USDCoin.svg'
+                  }
+                  dealEndTime={Number(dealEndTime) * 1000}
                 />
                 {/* Heat map goes here */}
                 <DealsParticipants participants={participants} />

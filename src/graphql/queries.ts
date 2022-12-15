@@ -486,6 +486,13 @@ export const GetDealDetails = gql`
         createdAt
         name
       }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
+      }
     }
   }
 `;

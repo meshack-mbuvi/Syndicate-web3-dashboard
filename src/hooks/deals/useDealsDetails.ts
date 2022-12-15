@@ -6,13 +6,13 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { DealDetails } from './types';
+import { DealDetails, MixinModuleRequirementType } from './types';
 
 export interface IDealDetails {
   dealName: string;
   dealDescription: string;
   ownerAddress: string;
-  dealToken: string;
+  dealTokenAddress: string;
   dealEndTime: string;
   depositToken: string;
   dealDestination: string;
@@ -21,13 +21,14 @@ export interface IDealDetails {
   totalCommitments: string;
   totalCommitted: string;
   createdAt: string;
+  minPerMember: string;
 }
 
 const emptyDeal: IDealDetails = {
   dealName: '',
   dealDescription: '',
   ownerAddress: '',
-  dealToken: '',
+  dealTokenAddress: '',
   dealEndTime: '',
   depositToken: '',
   dealDestination: '',
@@ -35,7 +36,8 @@ const emptyDeal: IDealDetails = {
   closed: false,
   totalCommitments: '',
   totalCommitted: '',
-  createdAt: ''
+  createdAt: '',
+  minPerMember: ''
 };
 
 export interface IDealDetailsResponse {
@@ -81,23 +83,39 @@ const useDealsDetails = (): IDealDetailsResponse => {
     }
     let isComponentMounted = true;
 
-    //TODO [WINGZ]: should totalCommitted and goal be converted?
+    // TODO [WINGZ]: should totalCommitted and goal be converted?
     if (isComponentMounted) {
       const deal = data?.deal;
       if (deal) {
+        let dealEndTime = '';
+        let minPerMember = '';
+        deal.mixins.map((mixin) => {
+          if (
+            mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
+          ) {
+            dealEndTime = mixin.endTime;
+          }
+
+          if (
+            mixin.minPerMember === MixinModuleRequirementType.MIN_PER_MEMBER
+          ) {
+            minPerMember = mixin.minPerMember;
+          }
+        });
         setDealDetails({
           dealName: deal.dealToken.name,
-          dealDescription: 'This is a placeholder deal description.',
-          dealEndTime: '2022-12-31T00:00:00.000Z',
+          dealDescription: '', // When we add descriptions after v0, pass it in here
+          dealEndTime: dealEndTime,
           ownerAddress: deal.ownerAddress,
-          dealToken: deal.dealToken.contractAddress,
+          dealTokenAddress: deal.dealToken.contractAddress,
           depositToken: deal.depositToken,
           dealDestination: deal.destinationAddress,
           goal: deal.goal,
           closed: deal.closed,
           totalCommitments: deal.numCommits,
           totalCommitted: deal.totalCommitted,
-          createdAt: deal.dealToken.createdAt
+          createdAt: deal.dealToken.createdAt,
+          minPerMember: minPerMember
         });
       } else {
         setDealDetails(emptyDeal);
