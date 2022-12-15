@@ -13,10 +13,13 @@ export interface IDealDetails {
   dealDescription: string;
   ownerAddress: string;
   dealTokenAddress: string;
+  dealTokenSymbol: string;
+  dealStartTime: string;
   dealEndTime: string;
   depositToken: string;
   dealDestination: string;
   goal: string;
+  minCommitAmount: string;
   closed: boolean;
   totalCommitments: string;
   totalCommitted: string;
@@ -29,10 +32,13 @@ const emptyDeal: IDealDetails = {
   dealDescription: '',
   ownerAddress: '',
   dealTokenAddress: '',
+  dealTokenSymbol: '',
+  dealStartTime: '',
   dealEndTime: '',
   depositToken: '',
   dealDestination: '',
   goal: '',
+  minCommitAmount: '',
   closed: false,
   totalCommitments: '',
   totalCommitted: '',
@@ -87,6 +93,7 @@ const useDealsDetails = (): IDealDetailsResponse => {
     if (isComponentMounted) {
       const deal = data?.deal;
       if (deal) {
+        let dealStartTime = '';
         let dealEndTime = '';
         let minPerMember = '';
         deal.mixins.map((mixin) => {
@@ -94,10 +101,11 @@ const useDealsDetails = (): IDealDetailsResponse => {
             mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
           ) {
             dealEndTime = mixin.endTime;
+            dealStartTime = mixin.startTime;
           }
 
           if (
-            mixin.minPerMember === MixinModuleRequirementType.MIN_PER_MEMBER
+            mixin.requirementType === MixinModuleRequirementType.MIN_PER_MEMBER
           ) {
             minPerMember = mixin.minPerMember;
           }
@@ -105,12 +113,15 @@ const useDealsDetails = (): IDealDetailsResponse => {
         setDealDetails({
           dealName: deal.dealToken.name,
           dealDescription: '', // When we add descriptions after v0, pass it in here
+          dealStartTime: dealStartTime,
           dealEndTime: dealEndTime,
           ownerAddress: deal.ownerAddress,
           dealTokenAddress: deal.dealToken.contractAddress,
+          dealTokenSymbol: deal.dealToken.symbol,
           depositToken: deal.depositToken,
           dealDestination: deal.destinationAddress,
           goal: deal.goal,
+          minCommitAmount: minPerMember ?? '',
           closed: deal.closed,
           totalCommitments: deal.numCommits,
           totalCommitted: deal.totalCommitted,

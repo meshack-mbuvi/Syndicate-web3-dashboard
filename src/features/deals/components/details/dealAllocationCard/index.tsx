@@ -8,6 +8,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { formatAddress } from '@/utils/formatAddress';
 import { Callout, CalloutType } from '@/components/callout';
 import { Status } from '@/components/statusChip';
+import { PrecommitStatus } from '@/hooks/deals/types';
 
 export type Wallet = {
   address: string;
@@ -17,19 +18,22 @@ export type Wallet = {
 interface DealAllocationCardProps {
   dealName: string;
   precommitAmount: string;
-  dealCommitTokenLogo: string;
-  dealCommitTokenSymbol: string;
+  dealDepositTokenLogo: string;
+  dealDepositTokenSymbol: string;
   minimumCommitAmount: string;
   wallets: Wallet[] | [];
   walletBalance: string;
   walletProviderName: string;
   connectedWallet: Wallet;
-  allocationStatus: Status;
+  allocationStatus: Status | PrecommitStatus;
   validUntil?: string;
+  handleBackThisDeal: () => void;
+  handleValidAmount: (amount: string) => void;
+  handleCancelPrecommit: (e: React.MouseEvent<HTMLElement>) => void;
 }
 export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
-  dealCommitTokenLogo,
-  dealCommitTokenSymbol,
+  dealDepositTokenLogo = '/images/token-gray-4.svg',
+  dealDepositTokenSymbol,
   minimumCommitAmount,
   wallets,
   walletBalance,
@@ -38,24 +42,18 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   precommitAmount,
   validUntil = 'accepted or withdrawn',
   allocationStatus = Status.ACTION_REQUIRED,
-  connectedWallet
+  connectedWallet,
+  handleBackThisDeal,
+  handleValidAmount,
+  handleCancelPrecommit
 }) => {
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
 
   // switch to a different account
+  // TODO [WINGZ]: get wallets + wallet providers
   const handleAccountSwitch = (account: string): void => {
     console.log(account);
-  };
-
-  // open modal to initiate allocation withdrawal
-  const handleWithdrawAllocation = (): void => {
-    console.log('withdrawing allocation');
-  };
-
-  // TODO: open modal to submit allowance/allocation
-  const handleSubmit = (): void => {
-    console.log('Submit allocation amount');
   };
 
   useEffect(() => {
@@ -65,6 +63,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
       setAmountError(`minimum amount is ${minimumCommitAmount}`);
     } else {
       setAmountError('');
+      handleValidAmount(amount);
     }
   }, [amount, minimumCommitAmount]);
 
@@ -85,8 +84,12 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
                     {floatedNumberWithCommas(precommitAmount)}
                   </H4>
                 </div>
-                <Image src={dealCommitTokenLogo} height={20} width={20} />
-                <B3 extraClasses="ml-2 text-white">{dealCommitTokenSymbol}</B3>
+                <Image
+                  src={dealDepositTokenLogo || '/images/token-gray-4.svg'}
+                  height={20}
+                  width={20}
+                />
+                <B3 extraClasses="ml-2 text-white">{dealDepositTokenSymbol}</B3>
               </div>
               <div className="flex justify-start items-center">
                 {/* use jazz icon generator here once this PR is merged: https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/pull/1858 */}
@@ -124,7 +127,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
             <CTAButton
               style={CTAStyle.DARK_OUTLINED}
               type={CTAType.PRIMARY}
-              onClick={handleWithdrawAllocation}
+              onClick={handleCancelPrecommit}
               fullWidth={true}
             >
               Withdraw from deal
@@ -150,7 +153,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
         <div className="flex items-center justify-start">
           <AutoGrowInputField
             value={amount}
-            onChangeHandler={(value) => setAmount(value)}
+            onChangeHandler={(value): void => setAmount(value)}
             placeholder={'0'}
             decimalSeparator="."
             decimalScale={2}
@@ -178,15 +181,19 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
 
         {/* deal commit token symbol  */}
         <div className="flex items-center justify-start space-x-2">
-          <Image src={dealCommitTokenLogo} height={24} width={24} />
-          <p className="ml-2 text-base text-white">{dealCommitTokenSymbol}</p>
+          <Image
+            src={dealDepositTokenLogo || '/images/token-gray-4.svg'}
+            height={24}
+            width={24}
+          />
+          <p className="ml-2 text-base text-white">{dealDepositTokenSymbol}</p>
         </div>
       </div>
 
       {/* connected wallet  */}
       <DealAccountSwitcher
         {...{
-          dealCommitTokenSymbol,
+          dealDepositTokenSymbol,
           walletBalance,
           walletProviderName,
           connectedWallet,
@@ -197,7 +204,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
 
       {/* allocation CTA  */}
       <CTAButton
-        onClick={handleSubmit}
+        onClick={handleBackThisDeal}
         disabled={Boolean(amountError)}
         fullWidth={true}
         type={CTAType.PRIMARY}

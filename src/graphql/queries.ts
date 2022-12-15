@@ -485,6 +485,13 @@ export const GetDealDetails = gql`
         contractAddress
         createdAt
         name
+        symbol
+      }
+      mixins {
+        requirementType
+        minPerMember
+        startTime
+        endTime
       }
       mixins {
         id
@@ -508,6 +515,21 @@ export const GetDealPrecommits = gql`
         status
         createdAt
       }
+    }
+  }
+`;
+
+export const GetMemberPrecommit = gql`
+  query Precommit($where: Precommit_filter) {
+    precommits(where: $where) {
+      id
+      deal {
+        id
+      }
+      userAddress
+      amount
+      createdAt
+      status
     }
   }
 `;

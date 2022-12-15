@@ -12,6 +12,7 @@ import useTokenDetails from '@/hooks/useTokenDetails';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { useSelector } from 'react-redux';
+import PrecommitContainer from '../precommit/PrecommitContainer';
 import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {
@@ -43,6 +44,9 @@ const DealDetails: React.FC = () => {
 
   //   const permissionType = usePermissionType(collectiveAddress);
   // TODO -- extend this hook to add functionality for deals
+
+  const isOpenToPrecommits =
+    new Date(+dealEndTime * 1000).getTime() > Date.now();
 
   // skeleton loader content for left content
   const leftColumnLoader = (
@@ -168,7 +172,11 @@ const DealDetails: React.FC = () => {
           </div>
         }
         rightColumnComponent={
-          dealDetailsLoading ? rightColumnLoader : <div>TO DO</div>
+          dealDetailsLoading ? (
+            rightColumnLoader
+          ) : (
+            <div>{isOpenToPrecommits && <PrecommitContainer />}</div>
+          )
         }
       />
     </DealsContainer>

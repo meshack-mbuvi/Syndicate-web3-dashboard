@@ -12,27 +12,38 @@ import TransitionInChildren from '@/components/transition/transitionInChildren';
 import { B2, B3, B4, H2, H4 } from '@/components/typography';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 import DealAccountSwitcher from '../../details/dealAccountSwitcher';
+import { Wallet } from '../../details/dealAllocationCard';
 
 interface Props {
   dealName: string;
   tokenAmount: number;
-  tokenLogo: string;
-  tokenSymbol: string;
+  depositTokenLogo: string;
+  depositTokenSymbol: string;
   activeStepIndex: number; // either 0 or 1
+  wallets: Wallet[] | [];
+  walletBalance: string;
+  walletProviderName: string;
+  connectedWallet: Wallet;
   showWaitingOnWalletLoadingState?: boolean;
-  handleCreateAllowanceClick: () => void;
-  handleRequestAllocationClick: () => void;
+  handleCreateAllowanceClick: (e: React.MouseEvent<HTMLElement>) => void;
+  handleRequestAllocationClick: (e: React.MouseEvent<HTMLElement>) => void;
+  toggleModal: () => void;
 }
 
 const DealPrecommitModal: React.FC<Props> = ({
   dealName,
   tokenAmount,
-  tokenLogo,
-  tokenSymbol,
+  depositTokenLogo,
+  depositTokenSymbol,
   activeStepIndex = 0,
+  wallets,
+  walletBalance,
+  walletProviderName,
+  connectedWallet,
   showWaitingOnWalletLoadingState = false,
   handleCreateAllowanceClick,
-  handleRequestAllocationClick
+  handleRequestAllocationClick,
+  toggleModal
 }) => {
   return (
     <Modal
@@ -40,32 +51,19 @@ const DealPrecommitModal: React.FC<Props> = ({
       modalStyle={ModalStyle.DARK}
       customClassName="p-8 max-w-112"
       showHeader={false}
+      outsideOnClick={true}
+      closeModal={toggleModal}
     >
       <>
-        <B3 extraClasses="text-gray-syn4">Allocate to deal</B3>
+        <B3 extraClasses="text-gray-syn4">Back this deal</B3>
         <H2 extraClasses="mb-4.5 mt-1">{dealName} Deal</H2>
         <DealAccountSwitcher
-          wallets={[
-            {
-              address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
-              name: 'first.eth',
-              avatar: '/images/jazzicon.png'
-            },
-            {
-              address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
-              name: 'second.eth',
-              avatar: '/images/jazzicon.png'
-            }
-          ]}
-          dealCommitTokenSymbol="USDC"
-          walletBalance="27555"
-          walletProviderName="MetaMask"
-          connectedWallet={{
-            address: '0xDFSDF09DGFSS8',
-            name: 'alex.eth',
-            avatar: '/images/jazzicon.png'
-          }}
-          handleAccountSwitch={(account) => {
+          wallets={wallets}
+          dealDepositTokenSymbol={depositTokenSymbol}
+          walletBalance={walletBalance}
+          walletProviderName={walletProviderName}
+          connectedWallet={connectedWallet}
+          handleAccountSwitch={(account): void => {
             alert('Switching account to ' + account);
           }}
           disableSwitching={
@@ -76,7 +74,7 @@ const DealPrecommitModal: React.FC<Props> = ({
           extraClasses="mt-4.5"
           steps={[
             {
-              title: 'Allocation allowance',
+              title: 'Backer allowance',
               description: (
                 <div className="pt-1 space-y-2">
                   <B4>
@@ -89,8 +87,12 @@ const DealPrecommitModal: React.FC<Props> = ({
                       {formatInputValueWithCommas(String(tokenAmount))}
                     </H4>
                     <div className="flex-grow items-center flex space-x-2">
-                      <img src={tokenLogo} alt="Logo" className="w-5 h-5" />
-                      <B3 extraClasses="text-white">{tokenSymbol}</B3>
+                      <img
+                        src={depositTokenLogo || '/images/token-gray-4.svg'}
+                        alt="Logo"
+                        className="w-5 h-5"
+                      />
+                      <B3 extraClasses="text-white">{depositTokenSymbol}</B3>
                     </div>
                   </div>
                   <TransitionInChildren
@@ -114,7 +116,7 @@ const DealPrecommitModal: React.FC<Props> = ({
               )
             },
             {
-              title: 'Request allocation',
+              title: 'Offer a contribution',
               description: (
                 <div className="pb-1 space-y-2">
                   <B4>
@@ -124,10 +126,14 @@ const DealPrecommitModal: React.FC<Props> = ({
                   <div className="border border-gray-syn6 rounded-custom divide-y">
                     <div className="flex items-center px-4 py-3 border-gray-syn6">
                       <B3 extraClasses="flex-grow">Allowance</B3>
-                      <H4 extraClasses="flex-grow text-white">3,000</H4>
+                      <H4 extraClasses="flex-grow text-white">{tokenAmount}</H4>
                       <div className="flex-grow items-center flex space-x-2">
-                        <img src={tokenLogo} alt="Logo" className="w-5 h-5" />
-                        <B3 extraClasses="text-white">{tokenSymbol}</B3>
+                        <img
+                          src={depositTokenLogo || '/images/token-gray-4.svg'}
+                          alt="Logo"
+                          className="w-5 h-5"
+                        />
+                        <B3 extraClasses="text-white">{depositTokenSymbol}</B3>
                       </div>
                     </div>
                     <div className="flex items-center px-4 py-3 border-gray-syn6">
@@ -153,12 +159,11 @@ const DealPrecommitModal: React.FC<Props> = ({
                       icon={<Spinner height="h-5" width="w-5" margin="" />}
                     >
                       <B2 extraClasses="mb-1">
-                        Approve allowance from your wallet
+                        Approve request from your wallet
                       </B2>
                       <B4 extraClasses="text-gray-syn3">
-                        Before continuing, you need to allow the protocol
-                        authorize this amount. You only need to do this once
-                        deal.
+                        Before continuing, you need to approve this commitment
+                        from your wallet. You do this everytime you allocate.
                       </B4>
                     </Callout>
                   </TransitionBetweenChildren>
@@ -183,7 +188,7 @@ const DealPrecommitModal: React.FC<Props> = ({
               extraClasses="mt-4.5"
               onClick={handleRequestAllocationClick}
             >
-              Request allocation
+              Offer a contribution
             </CTAButton>
           </TransitionBetweenChildren>
         </TransitionInChildren>
