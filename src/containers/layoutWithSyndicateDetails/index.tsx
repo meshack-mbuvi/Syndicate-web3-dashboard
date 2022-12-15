@@ -16,7 +16,7 @@ import {
 } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
@@ -119,7 +119,7 @@ const LayoutWithSyndicateDetails: FC<{
   }, [web3]);
 
   //  tokens for the connected wallet account
-  const { accountTokens } = useAccountTokens();
+  const { accountTokens } = useConnectedAccountDetails();
 
   const {
     loadingClubDeposits,

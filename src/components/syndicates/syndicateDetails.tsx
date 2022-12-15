@@ -4,7 +4,7 @@ import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubToken
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
@@ -77,7 +77,7 @@ const SyndicateDetails: FC<{
 
   const isDemoMode = useDemoMode();
 
-  const { accountTokens } = useAccountTokens();
+  const { accountTokens } = useConnectedAccountDetails();
 
   const router = useRouter();
   const dispatch = useDispatch();

@@ -22,8 +22,8 @@ import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
 import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
+import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
@@ -174,7 +174,7 @@ const DepositSyndicate: React.FC = () => {
     refetchMemberData,
     startPolling,
     stopPolling
-  } = useAccountTokens();
+  } = useConnectedAccountDetails();
 
   const { loading: loadingTokenHoldings, data: tokenBalanceHoldings } =
     useFetchAccountHoldingsAndDetails();

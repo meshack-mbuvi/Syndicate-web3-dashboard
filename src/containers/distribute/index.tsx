@@ -484,7 +484,7 @@ const Distribute: FC = () => {
       }
     }
 
-    const price = _options[_nativeTokenIndex].price.usd;
+    const price = _options[_nativeTokenIndex]?.price?.usd;
 
     const _currentSetAmount = nativeToken.tokenAmount ?? 0;
 

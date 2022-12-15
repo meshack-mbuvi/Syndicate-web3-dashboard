@@ -27,6 +27,7 @@ import {
   numberInputRemoveCommas,
   numberStringInputRemoveCommas
 } from '@/utils/formattedNumbers';
+import { getFirstOrString } from '@/utils/stringUtils';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -178,11 +179,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   const router = useRouter();
 
-  const {
-    pathname,
-    isReady,
-    query: { clubAddress }
-  } = router;
+  const { pathname, isReady } = router;
+
+  const clubAddress = getFirstOrString(router.query.clubAddress);
 
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress as string,
@@ -191,8 +190,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     account
   );
 
-  const handleExit = () => {
+  const handleExit = (): void => {
     router &&
+      clubAddress &&
       router.push(
         `/clubs/${clubAddress}/manage/${'?chain=' + activeNetwork.network}`
       );
@@ -210,7 +210,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       return;
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
-      router.replace(
+      void router.replace(
         `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }

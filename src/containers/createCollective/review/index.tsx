@@ -1,5 +1,8 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_CREATION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { CollectiveFormReview } from '@/components/collectives/create/review';
+import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 import {
   useCreateState,
   useSubmitCollective,
@@ -13,9 +16,6 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 import CreateCollectiveModals from '../shared/createCollectiveModals';
-import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { COLLECTIVE_CREATION_DISCLAIMER_AGREE } from '@/components/amplitude/eventNames';
 
 interface Props {
   handleNext?: (e: any) => void;
@@ -176,7 +176,7 @@ const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
           isSubmitButtonActive={submitButtonActive}
           handleSubmit={launchCollective}
           hasAgreedToTerms={hasAgreedToTerms}
-          handleAgreedToTerms={() => setAgreedToTerms(!hasAgreedToTerms)}
+          handleAgreedToTerms={(): void => setAgreedToTerms(!hasAgreedToTerms)}
           handleConnectWallet={handleConnectWallet}
           account={account}
         />

@@ -19,6 +19,7 @@
     "@tailwindcss/line-clamp": "^0.2.1",
     "@tanstack/react-query": "^4.0.10",
     "@truffle/hdwallet-provider": "^2.0.0",
+    "@types/ethereumjs-util": "^6.1.0",
     "@walletconnect/web3-provider": "^1.0.8",
     "amplitude-js": "^8.21.1",
     "assert": "^2.0.0",

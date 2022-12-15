@@ -6,6 +6,7 @@ import WalletNotConnected from '@/components/walletNotConnected';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
@@ -14,7 +15,7 @@ import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const SignMemberLegalAgreement: NextPage = () => {
@@ -64,6 +65,9 @@ const SignMemberLegalAgreement: NextPage = () => {
     // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     useClubDepositsAndSupply(clubAddress);
 
+  const { memberDeposits, loadingMemberOwnership } =
+    useConnectedAccountDetails();
+
   useEffect(() => {
     // check for demo mode to make sure correct things render
     if (!isDemoMode) {
@@ -88,6 +92,7 @@ const SignMemberLegalAgreement: NextPage = () => {
     }
 
     const { depositToken } = data.syndicateDAO || {};
+
     async function fetchDepositDetails() {
       let depositDetails;
 
@@ -147,6 +152,7 @@ const SignMemberLegalAgreement: NextPage = () => {
         <WalletNotConnected />
       ) : loading ||
         loadingDepositSymbol ||
+        loadingMemberOwnership ||
         queryLoading ||
         !router.isReady ||
         dataLoading ? (
@@ -154,7 +160,7 @@ const SignMemberLegalAgreement: NextPage = () => {
           <Spinner />
         </div>
       ) : (
-        <MemberLegalAgreement />
+        <MemberLegalAgreement memberDeposits={memberDeposits} />
       )}
     </Layout>
   );

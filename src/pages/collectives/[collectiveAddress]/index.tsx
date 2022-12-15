@@ -1,16 +1,16 @@
 import Layout from '@/components/layout';
 import { Spinner } from '@/components/shared/spinner';
 import CollectiveDetails from '@/containers/collectives';
+import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import NotFoundPage from '@/pages/404';
+import { FEATURE_FLAGS } from '@/pages/_app';
 import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
+import router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useFeatureFlag from '@/hooks/useFeatureFlag';
-import router from 'next/router';
-import useERC721Collective from '@/hooks/collectives/useERC721Collective';
-import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
-import { FEATURE_FLAGS } from '@/pages/_app';
 
 /**
  * This page shows the manager container for a given syndicate address
@@ -34,7 +34,7 @@ const CollectiveIndexPage: React.FC = () => {
     if (!readyCollectivesClient || isEmpty(web3) || !isReady) return;
 
     setPageIsLoading(false);
-    return () => {
+    return (): void => {
       setPageIsLoading(true);
     };
   }, [readyCollectivesClient, isReady, web3]);
