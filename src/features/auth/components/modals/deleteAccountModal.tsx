@@ -1,5 +1,5 @@
+import { Accordion } from '@/components/accordion';
 import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
-import { Drawers } from '@/components/drawers';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { H4 } from '@/components/typography';
@@ -48,7 +48,7 @@ const DeleteAccountModal: React.FC<IDeleteAccountModal> = ({
           Are you sure you want to delete your Syndicate account?
         </H4>
         <div className="my-8">
-          <Drawers
+          <Accordion
             visibleItemIndex={visibleDrawerIndex}
             handleVisibleItemChange={setVisibleDrawerIndex}
             titleClassName="text-sm tracking-0.1px"

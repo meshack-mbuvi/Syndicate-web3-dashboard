@@ -3,8 +3,8 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { H4 } from '@/components/typography';
 import { ArrowLeftIcon } from '@heroicons/react/outline';
 import AccountInfoWithAvatar from '../settings/AccountInfoWithAvatar';
-import { Drawers } from '@/components/drawers';
 import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
+import { Accordion } from '@/components/accordion';
 
 interface IUnlinkAccountModal {
   showModal: boolean;
@@ -49,7 +49,7 @@ const UnlinkAccountModal: React.FC<IUnlinkAccountModal> = ({
           Unlink this wallet from your Syndicate account?
         </H4>
         <div className="my-8">
-          <Drawers
+          <Accordion
             visibleItemIndex={visibleDrawerIndex}
             handleVisibleItemChange={setVisibleDrawerIndex}
             titleClassName="text-sm tracking-0.1px"

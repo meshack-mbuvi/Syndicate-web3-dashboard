@@ -19,7 +19,7 @@ interface Props {
   dealURL?: string;
 }
 
-export const DealsCreateComplete: React.FC<Props> = ({
+export const DealsOverviewSuccess: React.FC<Props> = ({
   dealName,
   dealDetails,
   ensName,

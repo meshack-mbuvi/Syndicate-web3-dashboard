@@ -6,6 +6,8 @@ import { CTAButton, CTAType, CTAStyle } from '@/components/CTAButton';
 import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { formatAddress } from '@/utils/formatAddress';
+import { Callout, CalloutType } from '@/components/callout';
+import { Status } from '@/components/statusChip';
 
 export type Wallet = {
   address: string;
@@ -22,7 +24,8 @@ interface DealAllocationCardProps {
   walletBalance: string;
   walletProviderName: string;
   connectedWallet: Wallet;
-  showPostAllocationContent: boolean;
+  allocationStatus: Status;
+  validUntil?: string;
 }
 export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   dealCommitTokenLogo,
@@ -33,7 +36,8 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   walletProviderName,
   dealName,
   precommitAmount,
-  showPostAllocationContent = false,
+  validUntil = 'accepted or withdrawn',
+  allocationStatus = Status.ACTION_REQUIRED,
   connectedWallet
 }) => {
   const [amount, setAmount] = useState('');
@@ -67,10 +71,9 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   // content to show after allocation has been set
   const postAllocationContent = (
     <>
-      <B3 extraClasses="text-gray-syn4 mb-2">What you backed</B3>
+      <B3 extraClasses="text-gray-syn4 mb-1">What you backed</B3>
+      <H2 extraClasses="text-white mb-4">{dealName}</H2>
       <div className="space-y-4">
-        <H2 extraClasses="text-white">{dealName}</H2>
-
         {/* allocation details  */}
         <div className="rounded-custom divide-y-1 divide-gray-syn6 border border-gray-syn6">
           <div className="flex py-6 px-4.5 space-x-1 items-start justify-between">
@@ -102,28 +105,36 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
           <div className="flex py-6 px-4.5 items-center justify-between">
             <B3 extraClasses="text-gray-syn3 w-1/4">Valid until</B3>
             <div className="flex items-center justify-start space-x-2 w-3/4">
-              <B3 className="ml-2 text-white">accepted or withdrawn</B3>
+              <B3 className="ml-2 text-white">{validUntil}</B3>
             </div>
           </div>
         </div>
 
         {/* info for precommit withdrawal */}
-        <div className="bg-yellow-warning bg-opacity-10 rounded-xl px-5 py-4">
-          <B3 extraClasses="text-white">
-            You may withdraw what you backed at anytime until it is accepted by
-            the deal maker
-          </B3>
-        </div>
+        {allocationStatus === Status.PENDING ? (
+          <>
+            <Callout type={CalloutType.WARNING}>
+              <B3>
+                You may withdraw what you backed at anytime until it is accepted
+                by the deal maker
+              </B3>
+            </Callout>
 
-        {/* cta to withdraw allocation  */}
-        <CTAButton
-          style={CTAStyle.DARK_OUTLINED}
-          type={CTAType.PRIMARY}
-          onClick={handleWithdrawAllocation}
-          fullWidth={true}
-        >
-          Withdraw from deal
-        </CTAButton>
+            {/* cta to withdraw allocation */}
+            <CTAButton
+              style={CTAStyle.DARK_OUTLINED}
+              type={CTAType.PRIMARY}
+              onClick={handleWithdrawAllocation}
+              fullWidth={true}
+            >
+              Withdraw from deal
+            </CTAButton>
+          </>
+        ) : allocationStatus === Status.ACCEPTED ? (
+          <Callout type={CalloutType.TRANSACTIONAL}>
+            <B3>Your allocation was accepted!</B3>
+          </Callout>
+        ) : null}
       </div>
     </>
   );
@@ -196,8 +207,14 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
     </>
   );
 
+  const showPostAllocationContent = allocationStatus !== Status.ACTION_REQUIRED;
+
   return (
-    <div className="rounded-2.5xl bg-gray-syn8 p-8 space-y-4.5 max-w-120">
+    <div
+      className={`rounded-2.5xl bg-gray-syn8 p-8 ${
+        !showPostAllocationContent ? 'space-y-4.5' : ''
+      } max-w-120`}
+    >
       {showPostAllocationContent ? postAllocationContent : preAllocationContent}
     </div>
   );

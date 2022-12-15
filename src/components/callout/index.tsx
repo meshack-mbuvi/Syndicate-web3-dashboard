@@ -5,7 +5,8 @@ import { B3 } from '../typography';
 export enum CalloutType {
   REGULAR = 'REGULAR',
   WARNING = 'WARNING',
-  OUTLINE = 'OUTLINE'
+  OUTLINE = 'OUTLINE',
+  TRANSACTIONAL = 'TRANSACTIONAL'
 }
 
 export enum CalloutIconPosition {
@@ -76,6 +77,12 @@ export const Callout: React.FC<Props> = ({
         );
       }
       styles = `border border-gray-syn6 ${textColor}`;
+      break;
+    case CalloutType.TRANSACTIONAL:
+      if (iconPosition === CalloutIconPosition.TOP) {
+        calloutIcon = icon ? icon : null;
+      }
+      styles = `bg-green-semantic ${backgroundOpacity} ${textColor}`;
       break;
   }
 

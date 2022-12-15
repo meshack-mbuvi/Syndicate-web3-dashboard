@@ -1,4 +1,4 @@
-import { Drawers } from '@/components/drawers';
+import { Accordion } from '@/components/accordion';
 import IconUserPrivacy from '@/components/icons/userPrivacy';
 import Modal, { ModalStyle } from '@/components/modal';
 import { B1, B3, H4 } from '@/components/typography';
@@ -57,7 +57,7 @@ export const DataStoragePrivacyModal: React.FC<Props> = ({
           </a>
           , a third-party provider.
         </B3>
-        <Drawers
+        <Accordion
           titleClassName={`transform transition-font-size ${
             showMobileModal
               ? 'text-base tracking-0.1px'
