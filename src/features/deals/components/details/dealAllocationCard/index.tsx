@@ -58,7 +58,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
 
   useEffect(() => {
     if (!amount) {
-      setAmountError('please input an amount');
+      setAmountError('');
     } else if (+amount < +minimumCommitAmount) {
       setAmountError(`minimum amount is ${minimumCommitAmount}`);
     } else {
@@ -162,7 +162,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
           />
 
           {/* minimum amount pill  */}
-          {!amountError ? (
+          {!amount ? (
             <button
               className="py-1.5 px-4 text-gray-syn4 bg-gray-syn7 text-sm rounded-5.5xl"
               onClick={(): void => setAmount(minimumCommitAmount)}
@@ -205,7 +205,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
       {/* allocation CTA  */}
       <CTAButton
         onClick={handleBackThisDeal}
-        disabled={Boolean(amountError)}
+        disabled={!amount || Boolean(amountError)}
         fullWidth={true}
         type={CTAType.PRIMARY}
       >
