@@ -1,16 +1,3 @@
-export type Deal = {
-  id: string;
-  closed: boolean;
-  goal: string;
-  totalCommitted: string;
-  numCommits: string;
-  depositToken: string;
-  dealToken: {
-    id: string;
-    name: string;
-  };
-};
-
 export enum MixinModuleRequirementType {
   TIME_WINDOW = 'TIME_WINDOW',
   MIN_PER_MEMBER = 'MIN_PER_MEMBER'
@@ -23,7 +10,22 @@ export enum PrecommitStatus {
   PENDING = 'PENDING'
 }
 
-export type DealDetails = {
+export enum DealStatus {
+  OPEN = 'Open to commitments',
+  CLOSED = 'Commitments closed',
+  EXECUTED = 'Deal executed'
+}
+
+export type Precommit = {
+  id: string;
+  userAddress: string;
+  amount: string;
+  status: PrecommitStatus;
+  createdAt: string;
+  deal: Deal;
+};
+
+export type Deal = {
   id: string;
   ownerAddress: string;
   destinationAddress: string;
@@ -50,39 +52,16 @@ export type DealDetails = {
   ];
 };
 
-export type Precommit = {
-  id: string;
-  userAddress: string;
-  amount: string;
-  status: PrecommitStatus;
-  createdAt: string;
-  deal: {
-    id: string;
-  };
-};
-
-export type PrecommitsDeal = {
-  id: string;
-  status: PrecommitStatus;
-  deal: {
-    id: string;
-    closed: boolean;
-    numCommits: string;
-    goal: string;
-    totalCommitted: string;
-    depositToken: string;
-    dealToken: {
-      id: string;
-      name: string;
-    };
-  };
-};
-
 export interface DealPreview {
   dealName: string;
-  status: 'OPEN' | 'CLOSED';
+  contractAddress: string;
+  isOwner: boolean;
+  status: DealStatus;
   goal: string;
   depositToken: string;
   totalCommitments: string;
-  totalCommited: string;
+  totalCommitted: string;
+  dealSymbol: string;
+  depositTokenSymbol: string;
+  goalCompletionPercentage: number;
 }

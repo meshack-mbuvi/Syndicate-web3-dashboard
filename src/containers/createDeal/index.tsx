@@ -81,6 +81,7 @@ export const CreateDealContainer: React.FC = () => {
             visibleChildIndex={currentStep ? currentStep : 0}
             transitionType={TransitionBetweenChildrenType.VERTICAL_MOVE}
             extraClasses="h-full"
+            transitionDurationClassOverride="duration-800"
           >
             <AboutDeal />
             <DealGoal />
@@ -89,7 +90,9 @@ export const CreateDealContainer: React.FC = () => {
             <ReviewDealDetails />
             <div className="space-y-16 flex flex-col justify-center items-center">
               {/* success title  */}
-              <H1 extraClasses="text-white">Your deal is live!</H1>
+              <H1 regular extraClasses="text-white">
+                Your deal is live!
+              </H1>
               <DealsOverviewSuccess
                 {...{
                   dealName: name ? name : '',

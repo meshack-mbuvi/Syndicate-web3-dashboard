@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { DealDetails, MixinModuleRequirementType } from './types';
+import { Deal, MixinModuleRequirementType } from './types';
 
 export interface IDealDetails {
   dealName: string;
@@ -71,7 +71,7 @@ const useDealsDetails = (): IDealDetailsResponse => {
   const [dealNotFound, setDealNotFound] = useState(false);
 
   // get deal details
-  const { loading, data } = useQuery<{ deal: DealDetails }>(GetDealDetails, {
+  const { loading, data } = useQuery<{ deal: Deal }>(GetDealDetails, {
     variables: {
       dealId: dealAddress
     },

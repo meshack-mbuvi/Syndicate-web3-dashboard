@@ -270,7 +270,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
             className="absolute top-1/2 transform -translate-y-1/2 -left-12 bg-opacity-10"
           />
           <Callout
-            extraClasses={`relative`}
+            extraClasses={`relative px-5 py-4 rounded-xl`}
             type={CalloutType.REGULAR}
             icon={
               <IconInfo

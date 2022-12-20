@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreateClubOrCollective } from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/clubAndCollective';
+import CreateEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/createEmptyState';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
@@ -15,7 +15,7 @@ export default {
 };
 
 const Template = (args: any) => {
-  return <CreateClubOrCollective {...args} />;
+  return <CreateEmptyState {...args} />;
 };
 
 export const Default = Template.bind({});

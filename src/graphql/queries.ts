@@ -443,6 +443,14 @@ export const GetAdminDeals = gql`
       dealToken {
         id
         name
+        symbol
+      }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
       }
     }
   }
@@ -463,6 +471,14 @@ export const GetMemberDeals = gql`
         dealToken {
           id
           name
+          symbol
+        }
+        mixins {
+          id
+          requirementType
+          minPerMember
+          startTime
+          endTime
         }
       }
     }
@@ -486,12 +502,6 @@ export const GetDealDetails = gql`
         createdAt
         name
         symbol
-      }
-      mixins {
-        requirementType
-        minPerMember
-        startTime
-        endTime
       }
       mixins {
         id

@@ -12,6 +12,7 @@ export enum CTAType {
   TRANSACTIONAL = 'green',
   INVESTMENT_CLUB = 'volt',
   COLLECTIVE = 'cherenkov',
+  DEAL = 'stratosphere',
   WARNING = 'orange',
   DISABLED = 'disabled',
   ERROR = 'red'
