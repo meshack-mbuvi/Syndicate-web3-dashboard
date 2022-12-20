@@ -63,6 +63,36 @@ If you run into the "heap size limit" error run `export NODE_OPTIONS='--trace-wa
 
 To enable sourcemaps in the local build run `export NEXT_SOURCE_MAPS_ENABLED=1` before running `yarn build`.
 
+## Merging PR's -> Staging
+
+When merging a PR into staging you should always use the **Squash and merge** strategy, this is likely not the default option, so you will have to click the drop down button next to the **Merge pull request** button to verify this.
+
+In the event there is commit history you would like maintained then it should be rebased and merged **only** after ensuring the commit history is clean and descriptive in the branch.
+
+## Merging Staging -> Main
+
+When anything is merged into `V2-main` branch it will cause a production deploy of the syndicate frontend. As a general pattern staging should always be in a state where it can be deployed to main and therefore production without issue. This might mean using Split.io to add feature flags to code that isnt ready to be revealed yet.
+
+To merge into `V2-main`, follow the steps below
+
+- Create a PR from `V2-staging`
+- When its ready to merge use the `Create a merge commit` merge strategy
+- This will mean that `V2-main` now has a extra commit in its history
+- We can then create a PR from `V2-main` into `V2-staging`, this will ensure they are now equal
+
+## Hotfixes
+
+Bugs happen! If after a recent deploy to production we see there is a bug the first step is to ascertain its severity. If it turns out this bug is blocking our users from interacting with our product in a meaningful way, a hotfix will likely be neccessary. To create a hotfix you can follow the steps below
+
+- Check staging and main are in sync.
+- Create a branch prefixed with `HOTFIX/...` and write the code neccessary
+- Create a PR and point it to `V2-main`, (normally this would be `V2-staging`)
+- Get sign off from the team
+- Merge!
+- Verify the fix has worked
+
+After the hotfix has been deployed and verified, you will now need to create a PR from `V2-main` into `V2-staging` to re-sync them.
+
 ## Deployment
 
 Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at:
