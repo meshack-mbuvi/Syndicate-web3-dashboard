@@ -14,6 +14,7 @@ interface Props {
   commitmentGoalAmount: string;
   commitmentGoalTokenSymbol: string;
   commitmentGoalTokenLogo: string;
+  isExecutingDeal?: boolean;
 }
 
 export const DealsOverview: React.FC<Props> = ({
@@ -24,7 +25,8 @@ export const DealsOverview: React.FC<Props> = ({
   destinationAddress,
   commitmentGoalAmount,
   commitmentGoalTokenSymbol,
-  commitmentGoalTokenLogo
+  commitmentGoalTokenLogo,
+  isExecutingDeal = false
 }) => {
   const {
     web3Reducer: {
@@ -42,7 +44,9 @@ export const DealsOverview: React.FC<Props> = ({
       {/* Destination & goal */}
       <div className="md:flex md:space-x-14 space-y-4 md:space-y-0 mt-4">
         <div>
-          <B2 extraClasses="text-gray-syn4 mb-1">Destination</B2>
+          <B2 extraClasses="text-gray-syn4 mb-1">
+            {isExecutingDeal ? 'Recipient' : 'Destination'}
+          </B2>
           <DisplayAddressWithENS
             name={ensName}
             address={destinationAddress}
@@ -51,7 +55,9 @@ export const DealsOverview: React.FC<Props> = ({
           />
         </div>
         <div>
-          <B2 extraClasses="text-gray-syn4 mb-1">Goal</B2>
+          <B2 extraClasses="text-gray-syn4 mb-1">
+            {isExecutingDeal ? 'Transfered' : 'Goal'}
+          </B2>
           <div className="flex items-center space-x-1">
             <img
               src={commitmentGoalTokenLogo}

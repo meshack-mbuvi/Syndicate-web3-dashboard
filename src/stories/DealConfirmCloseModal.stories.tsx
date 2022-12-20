@@ -8,6 +8,7 @@ export default {
 const Template = (args: any) => {
   return (
     <DealCloseConfirmModal
+      show={true}
       handleCancelAndGoBackClick={() => {
         alert('Clicked Cancel and go back');
       }}

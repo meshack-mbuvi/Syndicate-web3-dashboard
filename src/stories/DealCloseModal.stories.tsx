@@ -12,6 +12,7 @@ const Template = (args: any) => {
 export const Default = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Default.args = {
+  show: true,
   dealName: 'Privax Seed',
   showWaitingOnWalletLoadingState: false,
   tokenLogo: 'images/prodTokenLogos/USDCoin.svg',
@@ -24,6 +25,7 @@ Default.args = {
 export const Loading = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '() => Elem... Remove this comment to see the full error message
 Loading.args = {
+  show: true,
   dealName: 'Privax Seed',
   showWaitingOnWalletLoadingState: true,
   tokenLogo: 'images/prodTokenLogos/USDCoin.svg',

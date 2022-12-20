@@ -20,6 +20,7 @@ interface Props {
   commitmentGoalTokenSymbol: string;
   commitmentGoalTokenLogo: string;
   dealURL?: string;
+  isExecutingDeal?: boolean;
 }
 
 export const DealsOverviewSuccess: React.FC<Props> = ({
@@ -30,7 +31,8 @@ export const DealsOverviewSuccess: React.FC<Props> = ({
   commitmentGoalAmount,
   commitmentGoalTokenSymbol,
   commitmentGoalTokenLogo,
-  dealURL
+  dealURL,
+  isExecutingDeal
 }) => {
   const {
     web3Reducer: {
@@ -44,7 +46,8 @@ export const DealsOverviewSuccess: React.FC<Props> = ({
       href={dealURL}
       className={`block relative mx-auto p-${dealCardPaddingTailwindUnit} bg-black border border-gray-syn6 rounded-custom`}
       style={{
-        width: `calc(100% - ${coinSideWidth})`
+        width: `calc(100% - ${coinSideWidth})`,
+        maxWidth: '730px'
       }}
     >
       <DealsOverview
@@ -55,6 +58,7 @@ export const DealsOverviewSuccess: React.FC<Props> = ({
         commitmentGoalAmount={getWeiAmount(web3, commitmentGoalAmount, 6, true)}
         commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
         commitmentGoalTokenLogo={commitmentGoalTokenLogo}
+        isExecutingDeal={isExecutingDeal}
       />
 
       {/* Flying coins */}

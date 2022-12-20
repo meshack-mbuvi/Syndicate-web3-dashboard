@@ -5,11 +5,13 @@ import { H4 } from '@/components/typography';
 import { useState } from 'react';
 
 interface Props {
+  show: boolean;
   handleReviewCommitmentsClick: () => void;
   handleCancelAndGoBackClick: () => void;
 }
 
 const DealCloseConfirmModal: React.FC<Props> = ({
+  show,
   handleReviewCommitmentsClick,
   handleCancelAndGoBackClick
 }) => {
@@ -18,7 +20,7 @@ const DealCloseConfirmModal: React.FC<Props> = ({
   >(null);
   return (
     <Modal
-      show={true}
+      show={show}
       modalStyle={ModalStyle.DARK}
       customClassName="p-8 max-w-112"
       showHeader={false}

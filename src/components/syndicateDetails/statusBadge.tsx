@@ -26,7 +26,8 @@ enum LABELS {
   CREATING_IC_FAILED = 'Club creation failed',
   WAITING_DISTRIBUTION = 'Waiting for selection...',
   DEAL_OPEN = 'Open to allocations',
-  DEAL_CONCLUDED = 'Deal has concluded'
+  DEAL_CONCLUDED = 'Deal has concluded',
+  DEAL_REVIEWING_COMMITTMENTS = 'Choose who can commit to this deal'
 }
 
 interface Props {
@@ -51,6 +52,7 @@ interface Props {
   isDeal?: boolean;
   isOpenToAllocations?: boolean;
   dealEndTime?: number;
+  isReviewingDealCommittments?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -72,7 +74,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     hideCountdown = false,
     isDeal = false,
     isOpenToAllocations = false,
-    dealEndTime
+    dealEndTime,
+    isReviewingDealCommittments = false
   } = props;
 
   const {
@@ -130,7 +133,7 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-blue-midnightExpress';
   }
 
-  // states to track club creating process
+  // states to track club creating process plus deals
   if (creatingSyndicate) {
     badgeBackgroundColor = 'bg-gray-syn8';
     badgeIcon = <Spinner width="w-6" height="h-6" margin="m-0" />;
@@ -146,7 +149,12 @@ const StatusBadge = (props: Props): JSX.Element => {
   } else if (isDistributing && isWaitingForSelection) {
     titleText = LABELS.WAITING_DISTRIBUTION;
   } else if (isDeal && isOpenToAllocations) {
-    titleText = LABELS.DEAL_OPEN;
+    if (!isReviewingDealCommittments) {
+      titleText = LABELS.DEAL_OPEN;
+    } else if (isReviewingDealCommittments) {
+      titleText = LABELS.DEAL_REVIEWING_COMMITTMENTS;
+      badgeIcon = 'shieldWithCheckmark.svg';
+    }
   } else if (isDeal && !isOpenToAllocations) {
     badgeIcon = (
       <WalletIcon className="text-green-semantic" width={24} height={24} />
@@ -202,7 +210,11 @@ const StatusBadge = (props: Props): JSX.Element => {
                     endTime.toString()
                   )}`}</span>
                 ) : null}
-                {isDeal && dealEndTime !== undefined ? (
+
+                {/* deals  */}
+                {isDeal &&
+                dealEndTime !== undefined &&
+                !isReviewingDealCommittments ? (
                   <>
                     <div>
                       {getCountDownDays(dealEndTime.toString())} left to
@@ -231,7 +243,9 @@ const StatusBadge = (props: Props): JSX.Element => {
         >
           {`Closing to deposits on ${getFormattedDateTimeWithTZ(endTime)}`}
         </ReactTooltip>
-      ) : isDeal && dealEndTime !== undefined ? (
+      ) : isDeal &&
+        dealEndTime !== undefined &&
+        !isReviewingDealCommittments ? (
         <ReactTooltip
           id="status-tooltip"
           place="top"

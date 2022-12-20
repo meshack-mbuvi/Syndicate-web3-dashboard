@@ -10,8 +10,13 @@ import { Spinner } from '@/components/shared/spinner';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, B4, H2, H4 } from '@/components/typography';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
+import { EmailSupport } from '@/components/emailSupport';
 
 interface Props {
+  show: boolean;
+  closeModal?: () => void;
+  handleExecuteDeal?: () => Promise<void>;
+  outsideOnClick?: boolean;
   dealName: string;
   showWaitingOnWalletLoadingState?: boolean;
   destinationAddress?: string;
@@ -19,23 +24,33 @@ interface Props {
   tokenLogo: string;
   tokenSymbol: string;
   tokenAmount: string;
+  isExecutingDeal?: boolean;
+  transactionFailed?: boolean;
 }
 
 const DealCloseModal: React.FC<Props> = ({
+  show,
+  closeModal,
+  outsideOnClick,
   dealName,
   showWaitingOnWalletLoadingState = false,
   destinationAddress,
   destinationEnsName,
   tokenLogo,
   tokenSymbol,
-  tokenAmount
+  tokenAmount,
+  handleExecuteDeal,
+  isExecutingDeal,
+  transactionFailed
 }) => {
   return (
     <Modal
-      show={true}
+      show={show}
       modalStyle={ModalStyle.DARK}
       customClassName="p-8 max-w-112"
       showHeader={false}
+      closeModal={closeModal}
+      outsideOnClick={outsideOnClick}
     >
       <>
         <B3 extraClasses="text-gray-syn4">Executing</B3>
@@ -68,7 +83,15 @@ const DealCloseModal: React.FC<Props> = ({
           </div>
         </div>
         <TransitionBetweenChildren
-          visibleChildIndex={showWaitingOnWalletLoadingState ? 1 : 0}
+          visibleChildIndex={
+            transactionFailed
+              ? 3
+              : isExecutingDeal
+              ? 2
+              : showWaitingOnWalletLoadingState
+              ? 1
+              : 0
+          }
         >
           <div>
             <Callout type={CalloutType.WARNING}>
@@ -77,7 +100,11 @@ const DealCloseModal: React.FC<Props> = ({
                 and transfer them to the target address
               </B3>
             </Callout>
-            <CTAButton fullWidth extraClasses="mt-4">
+            <CTAButton
+              fullWidth
+              extraClasses="mt-4"
+              onClick={handleExecuteDeal}
+            >
               Execute deal
             </CTAButton>
           </div>
@@ -88,6 +115,33 @@ const DealCloseModal: React.FC<Props> = ({
             <B2 extraClasses="mb-1">Approve deal execution from your wallet</B2>
             <B4 extraClasses="text-gray-syn3">
               You must execute the deal on chain with your wallet
+            </B4>
+          </Callout>
+
+          {/* Execution in progress: we don't have this state in the designs. needs to be added */}
+          <Callout
+            iconPosition={CalloutIconPosition.INLINE}
+            icon={<Spinner height="h-5" width="w-5" margin="" />}
+          >
+            <B2 extraClasses="mb-1">Executing your deal</B2>
+            <B4 extraClasses="text-gray-syn3">
+              This could take up to a few minutes depending on network
+              congestion and the gas fees you set. Feel free to leave this
+              screen.
+            </B4>
+          </Callout>
+          {/* Execution failed: we don't have this state in the designs. needs to be added */}
+          <Callout type={CalloutType.WARNING}>
+            <B2 extraClasses="mb-1">Deal execution failed</B2>
+            <B4 extraClasses="text-gray-syn3">
+              <span>
+                Please try again and
+                <EmailSupport
+                  linkText="let us know"
+                  className="text-blue focus:outline-none mx-1"
+                />
+                if the issue persists.
+              </span>
             </B4>
           </Callout>
         </TransitionBetweenChildren>

@@ -3,20 +3,25 @@ import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
 import { StatusChip, Status } from '@/components/statusChip';
 import TransitionInChildren from '@/components/transition/transitionInChildren';
 import { H4 } from '@/components/typography';
-import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
+import {
+  floatedNumberWithCommas,
+  formatInputValueWithCommas
+} from '@/utils/formattedNumbers';
 import { useState } from 'react';
+
+export interface Participant {
+  ensName?: string;
+  address?: string;
+  joinedDate: string;
+  status: Status;
+  contributionAmount: number;
+}
 
 interface Props {
   totalParticipantsAmount: number;
   tokenSymbol: string;
   tokenLogo: string;
-  participants: {
-    ensName?: string;
-    address?: string;
-    joinedDate: string;
-    status: Status;
-    contributionAmount: number;
-  }[];
+  participants: Participant[];
   handleParticipantRejectionClick: (index: number) => void;
   handleParticipantAcceptanceClick: (index: number) => void;
 }
@@ -33,6 +38,7 @@ export const DealsParticipantsTable: React.FC<Props> = ({
   const leftColumnClasses = 'flex-grow flex items-center space-x-4';
   const middleColumnClasses = 'w-3/12';
   const rightColumnClasses = 'w-3/12 text-right';
+
   return (
     <div>
       <div className="flex justify-between space-x-2">
@@ -111,7 +117,12 @@ export const DealsParticipantsTable: React.FC<Props> = ({
                     <div>{tokenSymbol}</div>
                   </div>
                   <div className="text-gray-syn4">
-                    {participant.contributionAmount / totalParticipantsAmount}%
+                    {floatedNumberWithCommas(
+                      (participant.contributionAmount /
+                        totalParticipantsAmount) *
+                        100
+                    )}
+                    %
                   </div>
                 </div>
               </div>

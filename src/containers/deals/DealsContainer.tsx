@@ -1,4 +1,5 @@
 import Modal, { ModalStyle } from '@/components/modal';
+import { useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
@@ -12,8 +13,16 @@ import useTokenDetails from '@/hooks/useTokenDetails';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { useSelector } from 'react-redux';
-import PrecommitContainer from '../precommit/PrecommitContainer';
 import TwoColumnLayout from '../twoColumnLayout';
+import { DealSidePanel } from '@/containers/deals/dealSidePanel';
+import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
+import {
+  DealsParticipantsTable,
+  Participant
+} from '@/features/deals/components/participants/table';
+import { Status } from '@/components/statusChip';
+import moment from 'moment';
+import { PermissionType } from '@/components/collectives/shared/types';
 
 const DealDetails: React.FC = () => {
   const {
@@ -37,13 +46,14 @@ const DealDetails: React.FC = () => {
     dealDetailsLoading
   } = useDealsDetails();
 
+  const [isReviewingCommittments, setIsReviewingCommittments] = useState(false);
+
   const { precommits: participants } = useDealsPrecommits();
 
   const { symbol: depositTokenSymbol, logo: depositTokenLogo } =
     useTokenDetails(depositToken);
 
-  //   const permissionType = usePermissionType(collectiveAddress);
-  // TODO -- extend this hook to add functionality for deals
+  const permissionType = useDealPermissionType();
 
   const isOpenToPrecommits =
     new Date(+dealEndTime * 1000).getTime() > Date.now();
@@ -124,6 +134,16 @@ const DealDetails: React.FC = () => {
     </div>
   );
 
+  const currentParticipants: Participant[] = participants.map((participant) => {
+    return {
+      address: participant.address,
+      contributionAmount: getWeiAmount(web3, participant.amount, 6, false),
+      ensName: '',
+      joinedDate: moment.utc(+participant.createdAt * 1000).format('DD/MM/YY'),
+      status: Status.PENDING //TODO: handle accept/reject in a separate ticket
+    };
+  });
+
   return (
     <DealsContainer>
       <TwoColumnLayout
@@ -131,7 +151,7 @@ const DealDetails: React.FC = () => {
         hideEllipsis={false}
         showCloseButton={false}
         headerTitle={dealName ?? 'Deal'}
-        managerSettingsOpen={false}
+        managerSettingsOpen={true}
         dotIndicatorOptions={[]}
         leftColumnComponent={
           <div>
@@ -164,9 +184,36 @@ const DealDetails: React.FC = () => {
                       : '/images/prodTokenLogos/USDCoin.svg'
                   }
                   dealEndTime={Number(dealEndTime) * 1000}
+                  isReviewingCommittments={
+                    isReviewingCommittments &&
+                    permissionType === PermissionType.ADMIN
+                  }
                 />
                 {/* Heat map goes here */}
-                <DealsParticipants participants={participants} />
+                {isReviewingCommittments &&
+                permissionType === PermissionType.ADMIN ? (
+                  <DealsParticipantsTable
+                    handleParticipantAcceptanceClick={(): void =>
+                      //TODO: add functionality to accept commit
+                      console.log('accept')
+                    }
+                    handleParticipantRejectionClick={(): void =>
+                      //TODO: add functionality to reject commit
+                      console.log('reject')
+                    }
+                    participants={currentParticipants}
+                    tokenLogo="/images/prodTokenLogos/USDCoin.svg"
+                    tokenSymbol="USDC"
+                    totalParticipantsAmount={getWeiAmount(
+                      web3,
+                      totalCommitted,
+                      6,
+                      false
+                    )}
+                  />
+                ) : (
+                  <DealsParticipants participants={participants} />
+                )}
               </div>
             )}
           </div>
@@ -175,7 +222,14 @@ const DealDetails: React.FC = () => {
           dealDetailsLoading ? (
             rightColumnLoader
           ) : (
-            <div>{isOpenToPrecommits && <PrecommitContainer />}</div>
+            <DealSidePanel
+              {...{
+                permissionType,
+                isOpenToPrecommits,
+                setIsReviewingCommittments,
+                isReviewingCommittments
+              }}
+            />
           )
         }
       />

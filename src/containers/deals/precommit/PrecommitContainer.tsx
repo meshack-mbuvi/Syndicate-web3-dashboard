@@ -2,7 +2,7 @@ import { DealAllocationCard } from '@/features/deals/components/details/dealAllo
 import DealPrecommitModal from '@/features/deals/components/precommit/allocateModal';
 import DealPrecommitCompleteModal from '@/features/deals/components/precommit/completeModal';
 import ERC20ABI from '@/utils/abi/erc20.json';
-import useDealsDetails from '@/hooks/deals/useDealsDetails';
+import { IDealDetails } from '@/hooks/deals/useDealsDetails';
 import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
 import { AppState } from '@/state';
 import { useState } from 'react';
@@ -14,7 +14,10 @@ import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInf
 import useTokenDetails from '@/hooks/useTokenDetails';
 import { Status } from '@/components/statusChip';
 
-const PrecommitContainer: React.FC = () => {
+const PrecommitContainer: React.FC<{
+  dealDetails: IDealDetails;
+  dealDetailsLoading: boolean;
+}> = ({ dealDetails, dealDetailsLoading }) => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
@@ -23,7 +26,7 @@ const PrecommitContainer: React.FC = () => {
       syndicateContracts: { allowancePrecommitModuleERC20 }
     }
   } = useSelector((state: AppState) => state);
-  const { dealDetails, dealDetailsLoading } = useDealsDetails();
+
   const { precommit, precommitLoading } = useMemberPrecommit();
 
   const {
