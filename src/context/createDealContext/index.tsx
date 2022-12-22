@@ -15,6 +15,7 @@ import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import moment from 'moment';
 import { TransactionReceipt } from 'web3-core';
 import { getWeiAmount } from '@/utils/conversions';
+import { acronymGenerator } from '@/utils/acronymGenerator';
 
 type CreateDealProviderProps = {
   // deal details
@@ -57,7 +58,6 @@ type CreateDealProviderProps = {
   setCurrentStep: Dispatch<SetStateAction<number>>;
   handleNext: () => void;
   handleBack: () => void;
-  isNextButtonDisabled: boolean;
   showNextButton: boolean;
   showBackButton: boolean;
   isReviewStep: boolean;
@@ -66,6 +66,7 @@ type CreateDealProviderProps = {
   setIsEditingField: Dispatch<SetStateAction<boolean>>;
 
   // deal creation progress steps
+  isCreateDealDisabled: boolean;
   handleCreateDeal: () => void;
   transactionHash: string;
   showAwaitingConfirmationModal: boolean;
@@ -107,7 +108,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
   // const dispatch = useDispatch();
 
   // deal details
-  const [name, handleNameChange] = useState('');
+  const [name, setName] = useState('');
   // const [details, handleDetailsChange] = useState('');
   const [commitmentGoal, handleCommitmentGoalChange] = useState('');
   const [minimumCommitment, handleMinimumCommitmentChange] = useState('');
@@ -154,14 +155,22 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
   // navigation
   const [currentStep, setCurrentStep] = useState(0);
-  const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
   const [showNextButton, setShowNextButton] = useState(true);
   const [showBackButton, setShowBackButton] = useState(false);
   const [isEditingField, setIsEditingField] = useState(false);
+  const [isCreateDealDisabled, setIsCreateDealDisabled] = useState(false);
   const isReviewStep = currentStep === 4;
   const isSuccessStep = currentStep > 4;
 
   // change handlers
+
+  const handleNameChange = (name: string): void => {
+    setName(name);
+    if (!isReviewStep) {
+      setTokenSymbol(acronymGenerator(name));
+    }
+  };
+
   const handleDestinationAddressChange = (address: string): void => {
     // check if ens address is valid.
     if (address.endsWith('.eth')) {
@@ -173,13 +182,13 @@ const CreateDealProvider: React.FC = ({ children }) => {
           setDestinationAddressError('');
         })
         .catch(() => {
-          setDestinationAddressError('invalid address');
+          setDestinationAddressError('Invalid address');
         });
     }
 
     // check if non-ens address is valid
     if (!address.endsWith('.eth') && !web3.utils.isAddress(address)) {
-      setDestinationAddressError('invalid address');
+      setDestinationAddressError('Invalid address');
     } else {
       setDestinationAddressError('');
     }
@@ -188,6 +197,9 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
   const handleSelectedTimeWindowChange = (time: SelectedTimeWindow): void => {
     setSelectedTimeWindow(time);
+    if (time != SelectedTimeWindow.CUSTOM && !isReviewStep) {
+      handleNext();
+    }
   };
   const handleCustomDateChange = (date: Date): void => {
     setCustomDate(date);
@@ -258,22 +270,21 @@ const CreateDealProvider: React.FC = ({ children }) => {
       setShowNextButton(true);
     }
 
-    // disable next button if field values are missing
+    // disable create button if field values are missing
     if (
-      (currentStep === 0 && (!name || nameError)) /*  || !details */ ||
-      (currentStep === 1 &&
-        (!commitmentGoal ||
-          !minimumCommitment ||
-          !destinationAddress ||
-          destinationAddressError)) ||
-      (currentStep === 2 &&
-        selectedTimeWindow === SelectedTimeWindow.CUSTOM &&
+      !name ||
+      nameError /*  || !details */ ||
+      !commitmentGoal ||
+      !minimumCommitment ||
+      !destinationAddress ||
+      destinationAddressError ||
+      (selectedTimeWindow === SelectedTimeWindow.CUSTOM &&
         (!customTime || !customDate)) ||
-      (currentStep === 3 && !tokenSymbol)
+      !tokenSymbol
     ) {
-      setIsNextButtonDisabled(true);
+      setIsCreateDealDisabled(true);
     } else {
-      setIsNextButtonDisabled(false);
+      setIsCreateDealDisabled(false);
     }
   }, [
     currentStep,
@@ -419,12 +430,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
   });
 
   const keyPressEnter = (e: any) => {
-    if (
-      !isNextButtonDisabled &&
-      !isReviewStep &&
-      !isSuccessStep &&
-      e.keyCode === 13
-    ) {
+    if (!isReviewStep && !isSuccessStep && e.keyCode === 13) {
       handleNext();
     }
   };
@@ -470,7 +476,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
         // navigation
         handleNext,
         handleBack,
-        isNextButtonDisabled,
         showNextButton,
         showBackButton,
         currentStep,
@@ -481,6 +486,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
         setIsEditingField,
 
         // creation steps
+        isCreateDealDisabled,
         handleCreateDeal,
         showAwaitingConfirmationModal,
         // might not need this

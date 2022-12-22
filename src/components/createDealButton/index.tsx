@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import React from 'react';
-import { amplitudeLogger, Flow } from '../amplitude';
-import { CREATE_INVESTMENT_CLUB_CLICK } from '../amplitude/eventNames';
+// import { amplitudeLogger, Flow } from '../amplitude';
+// import { CREATE_INVESTMENT_CLUB_CLICK } from '../amplitude/eventNames';
 import { CTAButton } from '../CTAButton';
 
 /**
@@ -24,11 +24,11 @@ const CreateDealButton: React.FC<ICreateDealButton> = ({ showIcon = true }) => {
       extraClasses="flex justify-center items-center w-full sm:w-auto"
       onClick={(): void => {
         // TODO: Add create deal click event
-        void amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
-          flow: Flow.CLUB_CREATE
-        });
+        // void amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
+        //   flow: Flow.CLUB_CREATE
+        // });
 
-        void router.push(`/deal/create`);
+        void router.push(`/deals/create`);
       }}
     >
       {showIcon ? (
