@@ -77,29 +77,32 @@ export const WalletProviderList: React.FC<Props> = ({
       icon: '/images/walletConnect.svg',
       providerToActivate: () => activateWalletConnect(),
       hidden: loadedAsSafeApp
-    },
-    {
-      name: 'Coinbase Wallet',
-      icon: '/images/coinbase-wallet.svg',
-      // @ts-expect-error TS(7030): Not all code paths return a value.
-      providerToActivate: () => {
-        // check whether coinbase extension is installed
-        const coinbaseWallet =
-          window?.ethereum?.providers?.filter(
-            (provider: any) => provider?.isCoinbaseWallet
-          )[0] || window?.ethereum?.isCoinbaseWallet;
-
-        if (!coinbaseWallet) {
-          return window.open(
-            'https://www.coinbase.com/wallet/getting-started-extension',
-            '_blank'
-          );
-        }
-
-        activateInjected('Coinbase Wallet');
-      },
-      hidden: loadedAsSafeApp
     }
+    // TODO: This is a temporary workaround due to an infinite loop when trying
+    // to connect to Coinbase Wallet. Once this bug is fixed, we can uncomment
+    // this
+    // {
+    //   name: 'Coinbase Wallet',
+    //   icon: '/images/coinbase-wallet.svg',
+    //   // @ts-expect-error TS(7030): Not all code paths return a value.
+    //   providerToActivate: () => {
+    //     // check whether coinbase extension is installed
+    //     const coinbaseWallet =
+    //       window?.ethereum?.providers?.filter(
+    //         (provider: any) => provider?.isCoinbaseWallet
+    //       )[0] || window?.ethereum?.isCoinbaseWallet;
+
+    //     if (!coinbaseWallet) {
+    //       return window.open(
+    //         'https://www.coinbase.com/wallet/getting-started-extension',
+    //         '_blank'
+    //       );
+    //     }
+
+    //     activateInjected('Coinbase Wallet');
+    //   },
+    //   hidden: loadedAsSafeApp
+    // }
   ];
 
   // Button for each provider
