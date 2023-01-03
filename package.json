@@ -91,6 +91,7 @@
   "scripts": {
     "analyze:lint": "next lint",
     "analyze:prettier": "prettier --list-different \"**/*.{css,js,jsx,json,md}\"",
+    "analyze:check-types": "tsc --noemit",
     "analyze": "npm run analyze:lint && npm run analyze:prettier",
     "cypress": "cypress run",
     "cypress:interactive": "cypress open",

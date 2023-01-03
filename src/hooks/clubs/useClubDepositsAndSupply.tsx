@@ -180,15 +180,10 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     }
 
     setTotalSupply(
-      getWeiAmount(web3, syndicateDAO.totalSupply, tokenDecimals || 18, false)
+      getWeiAmount(syndicateDAO.totalSupply, tokenDecimals || 18, false)
     );
     setTotalDeposits(
-      getWeiAmount(
-        web3,
-        syndicateDAO.totalDeposits,
-        depositTokenDecimals,
-        false
-      )
+      getWeiAmount(syndicateDAO.totalDeposits, depositTokenDecimals, false)
     );
     setStartTime(+startTime * 1000);
     setEndTime(+endTime * 1000);

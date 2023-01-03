@@ -24,7 +24,7 @@ export const validateAndOrderTokenRules = (tokenRules: TokenGateRule[]) => {
  * @param tokenRules
  * @returns
  */
-export const unzipTokenRules = (tokenRules: TokenGateRule[], web3: any) => {
+export const unzipTokenRules = (tokenRules: TokenGateRule[]) => {
   return tokenRules.reduce<ReducedTokenRule>(
     (splitRules, value) => {
       if (value.contractAddress == null) {
@@ -43,7 +43,7 @@ export const unzipTokenRules = (tokenRules: TokenGateRule[], web3: any) => {
         splitRules['tokenGateTokenBalances'].push(value.quantity);
       } else {
         splitRules['tokenGateTokenBalances'].push(
-          getWeiAmount(web3, value.quantity.toString(), value.decimals, true)
+          getWeiAmount(value.quantity.toString(), value.decimals, true)
         );
       }
       return splitRules;

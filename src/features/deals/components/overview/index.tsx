@@ -2,8 +2,6 @@ import { AddressLayout } from '@/components/shared/ensAddress';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
 import { B2, H1, H2 } from '@/components/typography';
 import { getWeiAmount } from '@/utils/conversions';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 interface Props {
   dealName: string;
@@ -28,11 +26,6 @@ export const DealsOverview: React.FC<Props> = ({
   commitmentGoalTokenLogo,
   isExecutingDeal = false
 }) => {
-  const {
-    web3Reducer: {
-      web3: { web3 }
-    }
-  } = useSelector((state: AppState) => state);
   return (
     <div>
       {/* Title */}
@@ -66,7 +59,7 @@ export const DealsOverview: React.FC<Props> = ({
             />
             <H2>
               {formatInputValueWithCommas(
-                getWeiAmount(web3, commitmentGoalAmount, 6, false)
+                getWeiAmount(commitmentGoalAmount, 6, false)
               )}
             </H2>
             <B2 extraClasses="text-gray-syn4">{commitmentGoalTokenSymbol}</B2>

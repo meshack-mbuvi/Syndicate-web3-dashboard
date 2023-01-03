@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
   const {
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account }
     },
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule, RugToken, rugBonusClaimModule }
@@ -27,7 +27,6 @@ const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
     if (!collectiblesResult.length) return;
 
     const totalClaimedTokens = +getWeiAmount(
-      web3,
       await RugToken.balanceOf(account),
       parseInt(await RugToken.decimals()),
       false

@@ -21,7 +21,7 @@ export const useNativeBalance = (account: string): number => {
       web3.eth
         .getBalance(account)
         .then((balance: any) => {
-          setNativeBalance(getWeiAmount(web3, balance, 18, false));
+          setNativeBalance(getWeiAmount(balance, 18, false));
         })
         .catch(() => {
           // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message

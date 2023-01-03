@@ -387,10 +387,10 @@ const CreateDealProvider: React.FC = ({ children }) => {
         dealTokenSymbol: tokenSymbol,
         dealDestination: destinationAddress,
         dealGoal: parseFloat(
-          getWeiAmount(web3, commitmentGoal, commitTokenDecimals, true)
+          getWeiAmount(commitmentGoal, commitTokenDecimals, true)
         ),
         minPerMember: parseFloat(
-          getWeiAmount(web3, minimumCommitment, commitTokenDecimals, true)
+          getWeiAmount(minimumCommitment, commitTokenDecimals, true)
         ),
         startTime: Math.floor(new Date().getTime() / 1000).toString(),
         endTime: Math.floor(+endTime / 1000).toString()

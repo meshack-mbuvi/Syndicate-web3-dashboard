@@ -318,7 +318,6 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeModuleDetails?.activeMintModuleReqs.maxTotalSupply;
 
       let _tokencap = getWeiAmount(
-        web3,
         // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         new BigNumber(maxTotalSupplyMintValue).toFixed(),
         18,
@@ -329,7 +328,6 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeNetwork.nativeCurrency.name
       ) {
         _tokencap = getWeiAmount(
-          web3,
           // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           new BigNumber(maxTotalSupplyMintValue)
             .dividedBy(activeNetwork.nativeCurrency.exchangeRate)
@@ -443,14 +441,13 @@ const ModifyTokenGatedClub: React.FC = () => {
       depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
     const _tokenCap = isNativeDeposit
       ? getWeiAmount(
-          web3,
           new BigNumber(maxAmountRaising)
             .multipliedBy(activeNetwork.nativeCurrency.exchangeRate)
             .toFixed(),
           18,
           true
         )
-      : getWeiAmount(web3, new BigNumber(maxAmountRaising).toFixed(), 18, true);
+      : getWeiAmount(new BigNumber(maxAmountRaising).toFixed(), 18, true);
 
     switch (activeRow) {
       case EditRowIndex.Time:
@@ -580,7 +577,6 @@ const ModifyTokenGatedClub: React.FC = () => {
       balances.push(
         _token.decimals
           ? getWeiAmount(
-              web3,
               new BigNumber(_token.quantity).toFixed(),
               _token.decimals,
               true
@@ -996,7 +992,7 @@ const EditCloseTime: React.FC<{
 const TokenGatedModules: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { web3, activeNetwork }
+      web3: { activeNetwork }
     },
     erc20TokenSliceReducer: {
       activeModuleDetails: {
@@ -1049,7 +1045,6 @@ const TokenGatedModules: React.FC = () => {
           return {
             name: chainToken.name,
             quantity: getWeiAmount(
-              web3,
               new BigNumber(_token.quantity).toFixed(),
               chainToken.decimals || 18,
               false
@@ -1091,7 +1086,6 @@ const TokenGatedModules: React.FC = () => {
           return {
             icon: _res.data.logo,
             quantity: getWeiAmount(
-              web3,
               // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
               new BigNumber(quantity).toFixed(),
               _res.data.decimals,

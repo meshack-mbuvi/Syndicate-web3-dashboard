@@ -60,7 +60,7 @@ const useOwnsGenesisNFT: any = () => {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       // @ts-expect-error TS(2339): Property 'methods' does not exist on type 'never'.
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAccountRugTokens(getWeiAmount(web3, tokens, decimals, false));
+      setAccountRugTokens(getWeiAmount(tokens, decimals, false));
     } catch (error) {
       setAccountRugTokens(0);
     }

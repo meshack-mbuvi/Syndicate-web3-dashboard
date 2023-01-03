@@ -59,7 +59,7 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
       }
     },
     web3Reducer: {
-      web3: { web3, activeNetwork, account }
+      web3: { activeNetwork, account }
     }
   } = useSelector((state: AppState) => state);
 
@@ -359,13 +359,11 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
           tokenAmount:
             contractAddress === ''
               ? getWeiAmount(
-                  web3,
                   String(transfer.value),
                   Number(activeNetwork.nativeCurrency.decimals),
                   false
                 )
               : getWeiAmount(
-                  web3,
                   String(transfer.value),
                   Number(transfer.tokenDecimal),
                   false

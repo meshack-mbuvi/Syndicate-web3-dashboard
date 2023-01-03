@@ -34,7 +34,7 @@ export const DealSidePanel: React.FC<{
 }) => {
   const {
     web3Reducer: {
-      web3: { account, web3, ethersProvider }
+      web3: { account, ethersProvider }
     },
     initializeContractsReducer: {
       syndicateContracts: { allowancePrecommitModuleERC20 }
@@ -209,7 +209,7 @@ export const DealSidePanel: React.FC<{
           tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
           tokenSymbol: 'USDC',
           tokenAmount: floatedNumberWithCommas(
-            getWeiAmount(web3, totalCommitted, 6, false)
+            getWeiAmount(totalCommitted, 6, false)
           ),
           destinationEnsName,
           destinationAddress: dealDestination,
@@ -232,12 +232,7 @@ export const DealSidePanel: React.FC<{
                 dealDetails: /* details ? details :  */ '',
                 ensName: destinationEnsName,
                 destinationAddress: dealDestination,
-                commitmentGoalAmount: getWeiAmount(
-                  web3,
-                  totalCommitted,
-                  6,
-                  false
-                ),
+                commitmentGoalAmount: getWeiAmount(totalCommitted, 6, false),
                 commitmentGoalTokenSymbol: 'USDC',
                 commitmentGoalTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
                 isExecutingDeal: true

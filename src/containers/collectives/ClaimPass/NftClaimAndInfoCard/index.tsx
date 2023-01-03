@@ -104,7 +104,7 @@ const NftClaimAndInfoCard: React.FC = () => {
       );
     } else {
       return new NativePriceMintModuleHarness(
-        getWeiAmount(web3, mintPrice, 18, true),
+        getWeiAmount(mintPrice, 18, true),
         syndicateContracts.ethPriceMintModule
       );
     }

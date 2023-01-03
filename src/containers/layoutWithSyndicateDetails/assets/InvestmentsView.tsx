@@ -67,7 +67,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { web3, activeNetwork }
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -266,7 +266,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
         isOutgoingTransaction: isOutgoingTransaction
       },
       amount: getWeiAmount(
-        web3,
         String(currentTransfer.value),
         Number(currentTransfer.tokenDecimal),
         false
@@ -380,7 +379,6 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                     </span>
                   );
                   const investmentDataValue = getWeiAmount(
-                    web3,
                     String(currentTransfer.value),
                     Number(currentTransfer.tokenDecimal),
                     false

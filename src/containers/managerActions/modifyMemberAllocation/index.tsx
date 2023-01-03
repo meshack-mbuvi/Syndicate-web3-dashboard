@@ -196,12 +196,7 @@ const ModifyClubTokens: React.FC<{
               .ownerMint(
                 erc20TokenContract.address,
                 memberToUpdate.memberAddress,
-                getWeiAmount(
-                  web3,
-                  tokensToMintOrBurn.toString(),
-                  tokenDecimals,
-                  true
-                )
+                getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true)
               )
               .estimateGas({
                 from: account
@@ -212,12 +207,7 @@ const ModifyClubTokens: React.FC<{
 
         if (useOwnerMintModule) {
           await syndicateContracts.OwnerMintModule.ownerMint(
-            getWeiAmount(
-              web3,
-              tokensToMintOrBurn.toString(),
-              tokenDecimals,
-              true
-            ),
+            getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
             erc20TokenContract.address,
             memberToUpdate.memberAddress,
             account,
@@ -231,12 +221,7 @@ const ModifyClubTokens: React.FC<{
           if (isDev) {
             await erc20TokenContract.mintTo(
               memberToUpdate.memberAddress,
-              getWeiAmount(
-                web3,
-                tokensToMintOrBurn.toString(),
-                tokenDecimals,
-                true
-              ),
+              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -252,12 +237,7 @@ const ModifyClubTokens: React.FC<{
 
             await oldErc20TokenContract.controllerMint(
               memberToUpdate.memberAddress,
-              getWeiAmount(
-                web3,
-                tokensToMintOrBurn.toString(),
-                tokenDecimals,
-                true
-              ),
+              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -269,12 +249,7 @@ const ModifyClubTokens: React.FC<{
       } else {
         await erc20TokenContract.controllerRedeem(
           memberToUpdate.memberAddress,
-          getWeiAmount(
-            web3,
-            tokensToMintOrBurn.toString(),
-            tokenDecimals,
-            true
-          ),
+          getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
           account,
           onTxConfirm,
           onTxReceipt,

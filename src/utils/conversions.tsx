@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { isEmpty } from 'lodash';
+import { fromWei, toWei, Unit, unitMap, Units } from 'web3-utils';
 
 /**
  * Takes an ether and converts it to a javascript number.
@@ -41,31 +41,28 @@ export const numberToEther = (value: string, tokenFactor?: string): number =>
  * to and from wei amounts depending on the number of
  * decimal places.
  * @param amount string amount to convert
- * @param web3 we'll use the BN instance from web3.utils
  * @param tokenDecimals number of decimal places for the current token
  * @param multiplication boolean value. can be true(get Wei amount when sending to the contract)
  * or false (convert from Wei amount when fetching from the contract)
  * @returns string amount
  */
 export const getWeiAmount = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  web3: any,
   amount: string,
   tokenDecimals: number,
   multiplication: boolean
 ): any => {
-  if (!amount || isEmpty(web3) || isNaN(+amount)) return 0;
+  if (!amount || isNaN(+amount)) return 0;
 
   // get unit mappings from web3
-  const unitMappings = web3.utils.unitMap;
+  const unitMappings = unitMap as unknown as Units;
 
   // get number of decimal places
   const tokenFactor = 10 ** tokenDecimals;
 
   // get unit
   const tokenUnit = Object.keys(unitMappings).find(
-    (key) => unitMappings[key] === tokenFactor.toString()
-  );
+    (key) => unitMappings[key as keyof Units] === tokenFactor.toString()
+  ) as Unit;
 
   if (!tokenUnit) {
     // We are doing manual conversion for the following reasons:
@@ -79,9 +76,9 @@ export const getWeiAmount = (
   }
 
   if (multiplication) {
-    return web3.utils.toWei(amount.toString(), tokenUnit);
+    return toWei(amount.toString(), tokenUnit).toString();
   } else {
-    return web3.utils.fromWei(amount.toString(), tokenUnit);
+    return fromWei(amount.toString(), tokenUnit);
   }
 };
 

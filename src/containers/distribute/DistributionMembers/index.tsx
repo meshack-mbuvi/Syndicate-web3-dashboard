@@ -357,7 +357,6 @@ const ReviewDistribution: React.FC<Props> = ({
 
     // set amount to approve.
     const amountToApprove = getWeiAmount(
-      web3,
       token.tokenAmount,
       Number(token.tokenDecimal),
       true
@@ -436,7 +435,6 @@ const ReviewDistribution: React.FC<Props> = ({
         .call({ from: account });
 
       const currentAllowanceAmount = getWeiAmount(
-        web3,
         allowanceAmount.toString(),
         token.tokenDecimal,
         false
@@ -588,7 +586,6 @@ const ReviewDistribution: React.FC<Props> = ({
       setTransactionHash('');
 
       const amountToDistribute = getWeiAmount(
-        web3,
         token.tokenAmount,
         +token.tokenDecimal,
         true

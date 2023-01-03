@@ -79,8 +79,7 @@ export const getERC20TokenDetails = async (
   MerkleDistributorModule: MerkleDistributorModuleContract,
   guardMixinManager: GuardMixinManager,
   mintModule: string,
-  activeMintReqs: ModuleReqs,
-  web3: any
+  activeMintReqs: ModuleReqs
   // @ts-expect-error TS(2366): Function lacks ending return statement and return ... Remove this comment to see the full error message
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
@@ -120,7 +119,7 @@ export const getERC20TokenDetails = async (
 
       // High likelihood this club does not exist in active network
       const totalSupply = await ERC20tokenContract.totalSupply().then(
-        (wei: any) => getWeiAmount(web3, wei, tokenDecimals, false)
+        (wei: any) => getWeiAmount(wei, tokenDecimals, false)
       );
 
       //TODO: [TOKEN-GATING] confirm MerkleDistributorModule / contracts that enable claims
@@ -179,23 +178,13 @@ export const getERC20TokenDetails = async (
         memberCount,
         loading: false,
         maxMemberCount,
-        maxTotalSupply: getWeiAmount(
-          web3,
-          maxTotalSupply,
-          tokenDecimals,
-          false
-        ),
+        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
         requiredToken,
         depositsEnabled,
         // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
         claimEnabled,
         requiredTokenMinBalance,
-        maxTotalDeposits: getWeiAmount(
-          web3,
-          maxTotalSupply,
-          tokenDecimals,
-          false
-        ), //should be updated if token prices is not 1:1
+        maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
@@ -320,7 +309,7 @@ export const setERC20Token =
         }
       },
       web3Reducer: {
-        web3: { activeNetwork, web3 }
+        web3: { activeNetwork }
       },
       erc20TokenSliceReducer: { activeModuleDetails }
     } = getState();
@@ -336,8 +325,7 @@ export const setERC20Token =
         MerkleDistributorModule,
         guardMixinManager,
         activeModuleDetails?.mintModule,
-        activeModuleDetails?.activeMintModuleReqs,
-        web3
+        activeModuleDetails?.activeMintModuleReqs
       );
 
       const { _nativeDepositToken } = await isNativeDepositToken(

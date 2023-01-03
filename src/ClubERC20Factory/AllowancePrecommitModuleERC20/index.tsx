@@ -43,7 +43,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
     ownerAddress: string,
     onTxConfirm: (transactionHash?: string) => void,
     onTxReceipt: (receipt?: TransactionReceipt) => void,
-    onTxFail: (error?: any) => void
+    onTxFail: (error?: string) => void
   ): Promise<void> {
     await this.send(
       ownerAddress,
@@ -64,7 +64,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
     account: string,
     onTxConfirm: (transactionHash?: string) => void,
     onTxReceipt: (receipt?: TransactionReceipt) => void,
-    onTxFail: (error?: any) => void
+    onTxFail: (error?: string) => void
   ): Promise<void> {
     await this.send(
       account,
@@ -87,7 +87,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
     addresses: string[],
     onTxConfirm: (transactionHash?: string) => void,
     onTxReceipt: (receipt?: TransactionReceipt) => void,
-    onTxFail: (error?: any) => void
+    onTxFail: (error?: string) => void
   ): Promise<void> {
     await this.send(
       ownerAddress,

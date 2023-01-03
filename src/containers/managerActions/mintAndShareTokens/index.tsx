@@ -257,7 +257,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       /* set max token supply to current total supply.
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
-      const _tokenCap = getWeiAmount(web3, String(totalSupply), 18, true);
+      const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
 
       if (isNewClub) {
         await timeRequirements.closeTimeWindow(
@@ -482,7 +482,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           .ownerMint(
             erc20TokenContract.address,
             memberAddress,
-            getWeiAmount(web3, amountToMint, tokenDecimals, true)
+            getWeiAmount(amountToMint, tokenDecimals, true)
           )
           .estimateGas({
             from: owner
@@ -493,7 +493,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
     if (useOwnerMintModule) {
       await syndicateContracts.OwnerMintModule.ownerMint(
-        getWeiAmount(web3, amountToMint, tokenDecimals, true),
+        getWeiAmount(amountToMint, tokenDecimals, true),
         erc20TokenContract.address,
         memberAddress,
         owner,
@@ -507,7 +507,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       if (isDev) {
         await erc20TokenContract.mintTo(
           memberAddress,
-          getWeiAmount(web3, amountToMint, tokenDecimals, true),
+          getWeiAmount(amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,
@@ -523,7 +523,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
         await oldErc20TokenContract.controllerMint(
           memberAddress,
-          getWeiAmount(web3, amountToMint, tokenDecimals, true),
+          getWeiAmount(amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,

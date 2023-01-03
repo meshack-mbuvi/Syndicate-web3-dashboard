@@ -10,9 +10,7 @@ import { DealsParticipants } from '@/features/deals/components/participants';
 import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useTokenDetails from '@/hooks/useTokenDetails';
-import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
-import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import { DealSidePanel } from '@/containers/deals/dealSidePanel';
 import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
@@ -25,11 +23,6 @@ import moment from 'moment';
 import { PermissionType } from '@/components/collectives/shared/types';
 
 const DealDetails: React.FC = () => {
-  const {
-    web3Reducer: {
-      web3: { web3 }
-    }
-  } = useSelector((state: AppState) => state);
   const {
     dealDetails: {
       dealName,
@@ -137,7 +130,7 @@ const DealDetails: React.FC = () => {
   const currentParticipants: Participant[] = participants.map((participant) => {
     return {
       address: participant.address,
-      contributionAmount: getWeiAmount(web3, participant.amount, 6, false),
+      contributionAmount: getWeiAmount(participant.amount, 6, false),
       ensName: '',
       joinedDate: moment.utc(+participant.createdAt * 1000).format('DD/MM/YY'),
       status: Status.PENDING //TODO: handle accept/reject in a separate ticket
@@ -175,7 +168,7 @@ const DealDetails: React.FC = () => {
                   leaderAddress={ownerAddress}
                   numberOfParticipants={parseInt(totalCommitments)}
                   totalAllocatedAmount={parseFloat(
-                    getWeiAmount(web3, totalCommitted, 6, false)
+                    getWeiAmount(totalCommitted, 6, false)
                   )}
                   tokenSymbol={depositTokenSymbol}
                   tokenIcon={
@@ -205,7 +198,6 @@ const DealDetails: React.FC = () => {
                     tokenLogo="/images/prodTokenLogos/USDCoin.svg"
                     tokenSymbol="USDC"
                     totalParticipantsAmount={getWeiAmount(
-                      web3,
                       totalCommitted,
                       6,
                       false

@@ -20,7 +20,7 @@ const useMemberCollectives = (): {
 } => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3, status }
+      web3: { account, activeNetwork, status }
     }
   } = useSelector((state: AppState) => state);
 
@@ -87,7 +87,6 @@ const useMemberCollectives = (): {
             tokenName: name,
             tokenSymbol: symbol,
             pricePerNft: getWeiAmount(
-              web3,
               mintPrice,
               +activeNetwork.nativeCurrency.decimals,
               false

@@ -11,7 +11,7 @@ interface MintModuleHarness {
     account: string,
     onTxConfirm: (hash: string) => void,
     onTxReceipt: () => void,
-    onTxFail: (error: Error) => void
+    onTxFail: (error: string) => void
   ) => Promise<void>;
 }
 

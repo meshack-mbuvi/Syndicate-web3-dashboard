@@ -40,10 +40,10 @@ export class MerkleDistributorModuleContract {
     index: number,
     treeIndex: number,
     merkleProof: string[],
-    onTxConfirm: (transactionHash?: any) => void,
-    onTxReceipt: (receipt?: any) => void,
-    onTxFail: (error?: any) => void,
-    setTransactionHash: any
+    onTxConfirm: (transactionHash?: string) => void,
+    onTxReceipt: (receipt?: { isSuccessful: boolean }) => void,
+    onTxFail: (error?: string) => void,
+    setTransactionHash: (transactionHash: string) => void
   ): Promise<string> => {
     const gasEstimate = estimateGas(this.web3);
 
@@ -64,7 +64,7 @@ export class MerkleDistributorModuleContract {
               transactionHash,
               this.activeNetwork
             );
-            if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
+            if (!receipt.isSuccessful) {
               return reject('Receipt failed');
             }
 

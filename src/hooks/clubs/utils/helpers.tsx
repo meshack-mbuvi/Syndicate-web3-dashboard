@@ -42,14 +42,12 @@ export const processClubERC20Tokens = async (
           );
 
           const maxTotalSupplyFromWei = getWeiAmount(
-            web3,
             maxTotalSupply,
             +decimals,
             false
           ) as string;
 
           const totalSupplyFromWei = getWeiAmount(
-            web3,
             totalSupply,
             decimals,
             false
@@ -72,7 +70,6 @@ export const processClubERC20Tokens = async (
             +maxTotalSupplyFromWei / activeNetwork.nativeCurrency.exchangeRate;
 
           const memberDeposits = getWeiAmount(
-            web3,
             depositAmount,
             depositERC20TokenDecimals ? depositERC20TokenDecimals : 18,
             false
@@ -81,7 +78,6 @@ export const processClubERC20Tokens = async (
           let clubTotalDeposits = 0;
           if (depositERC20TokenDecimals) {
             clubTotalDeposits = getWeiAmount(
-              web3,
               totalDeposits,
               +depositERC20TokenDecimals,
               false

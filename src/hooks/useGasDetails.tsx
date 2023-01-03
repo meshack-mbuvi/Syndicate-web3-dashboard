@@ -333,12 +333,7 @@ const useGasDetails: (props: IProps) => {
         void maxTotalSupplyMixin.getEstimateGas(
           account,
           args.clubAddress,
-          getWeiAmount(
-            web3,
-            new BigNumber(args.totalSupply).toFixed(),
-            18,
-            true
-          ),
+          getWeiAmount(new BigNumber(args.totalSupply).toFixed(), 18, true),
           // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
@@ -474,12 +469,7 @@ const useGasDetails: (props: IProps) => {
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
-    const estimatedGas = getWeiAmount(
-      web3,
-      estimatedGasInWei.toString(),
-      18,
-      false
-    );
+    const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
     setGas(+estimatedGas);
     if (withFiatCurrency && nativeTokenPrice) {
       setFiatAmount((+estimatedGas * nativeTokenPrice).toFixed(2));

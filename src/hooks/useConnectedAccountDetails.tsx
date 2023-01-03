@@ -26,7 +26,7 @@ export function useConnectedAccountDetails(): {
 } {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3, status }
+      web3: { account, activeNetwork, status }
     },
     erc20TokenSliceReducer: {
       erc20Token: { totalSupply, tokenDecimals, totalDeposits },
@@ -113,9 +113,8 @@ export function useConnectedAccountDetails(): {
             syndicateDAO: { totalSupply = 0 }
           } = clubMemberData;
 
-          const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
+          const clubTokens = getWeiAmount(tokens, tokenDecimals, false);
           const clubTotalSupply = getWeiAmount(
-            web3,
             totalSupply,
             tokenDecimals,
             false
@@ -123,7 +122,7 @@ export function useConnectedAccountDetails(): {
 
           setAccountTokens(clubTokens);
           setMemberDeposits(
-            getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
+            getWeiAmount(depositAmount, depositTokenDecimals, false)
           );
           setMemberOwnership(`${(100 * clubTokens) / clubTotalSupply}`);
         } else {

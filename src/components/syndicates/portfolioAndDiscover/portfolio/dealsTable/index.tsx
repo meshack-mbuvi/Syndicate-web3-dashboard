@@ -21,7 +21,7 @@ interface Props {
 const DealsTable: FC<Props> = ({ columns, tableData }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork, web3 }
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -49,7 +49,7 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
     totalDepositsInWei: any,
     depositERC20TokenSymbol: any
   ): string => {
-    const totalDeposits = getWeiAmount(web3, totalDepositsInWei, 6, false);
+    const totalDeposits = getWeiAmount(totalDepositsInWei, 6, false);
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
           parseFloat(totalDeposits),

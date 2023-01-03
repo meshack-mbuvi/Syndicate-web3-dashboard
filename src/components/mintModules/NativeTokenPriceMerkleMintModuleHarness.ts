@@ -89,7 +89,7 @@ class NativeTokenPriceMerkleMintModuleHarness implements MintModuleHarness {
     account: string,
     onTxConfirm: (hash: string) => void,
     onTxReceipt: () => void,
-    onTxFail: (error: Error) => void
+    onTxFail: (error: string) => void
   ): Promise<void> {
     await this.nativeTokenPriceMerkleMintModule.mint(
       account,

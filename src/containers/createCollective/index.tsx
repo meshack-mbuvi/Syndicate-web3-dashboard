@@ -33,7 +33,7 @@ const CreateCollectiveContainer: FC = () => {
   const [, setShowBackButton] = useState(true);
   const [flipColumns, setFlipColumns] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
-  const captureArtworkRef = useRef(null);
+  const captureArtworkRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {

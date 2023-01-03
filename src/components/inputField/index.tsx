@@ -1,8 +1,10 @@
+import { ChangeEvent } from 'react';
+
 export const InputField = (props: {
   value: string;
   placeholder: string;
   extraClasses?: string;
-  onChange: (e: any) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }): React.ReactElement => {
   const { value, placeholder, extraClasses = '', onChange } = props;
 

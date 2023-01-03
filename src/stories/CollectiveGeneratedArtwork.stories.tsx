@@ -16,7 +16,7 @@ const Template = (args: any) => {
   const [artworkURL, setArtworkURL] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [backgroundColorClass] = useState('bg-red-hal');
-  const printRef = useRef(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const DisplayedArtwork = (
     <CollectivesGeneratedArtwork

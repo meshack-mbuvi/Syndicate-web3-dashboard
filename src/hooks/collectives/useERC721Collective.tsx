@@ -230,7 +230,7 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
             activeNetwork.chainId
           ]?.GuardAlwaysAllow.toString().toLocaleLowerCase(),
         collectiveAddress: address,
-        mintPrice: getWeiAmount(web3, mintPrice, 18, false),
+        mintPrice: getWeiAmount(mintPrice, 18, false),
         isOpen,
         mintEndTime,
         maxSupply,

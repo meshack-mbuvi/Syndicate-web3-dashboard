@@ -42,12 +42,7 @@ const PrecommitContainer: React.FC<{
     decimals,
     logo: depositTokenLogo
   } = useTokenDetails(depositToken);
-  const minCommitAmount = getWeiAmount(
-    web3,
-    minCommitAmountInWei,
-    decimals,
-    false
-  );
+  const minCommitAmount = getWeiAmount(minCommitAmountInWei, decimals, false);
 
   const [isPrecommitModalOpen, setPrecommitModalOpen] =
     useState<boolean>(false);
@@ -80,7 +75,7 @@ const PrecommitContainer: React.FC<{
 
   const handleValidAmount = (amount: string): void => {
     setTokenAmount(amount);
-    setTokenAmountInWei(getWeiAmount(web3, amount, decimals, true));
+    setTokenAmountInWei(getWeiAmount(amount, decimals, true));
   };
 
   const onTxFail = (): void => {
@@ -255,7 +250,7 @@ const PrecommitContainer: React.FC<{
           allocationStatus={precommit?.status ?? Status.ACTION_REQUIRED}
           precommitAmount={
             precommit && precommit?.amount
-              ? getWeiAmount(web3, precommit.amount, decimals, false)
+              ? getWeiAmount(precommit.amount, decimals, false)
               : '0'
           } //TODO [WINGZ]: precommits - a/ should show canceled or new precommit?
           dealDepositTokenLogo={

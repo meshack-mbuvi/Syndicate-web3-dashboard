@@ -8,8 +8,6 @@ import {
   RightTopCoinIcon
 } from '../../icons/coins';
 import { DealsOverview } from '../../overview';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 
 interface Props {
   dealName: string;
@@ -34,11 +32,6 @@ export const DealsOverviewSuccess: React.FC<Props> = ({
   dealURL,
   isExecutingDeal
 }) => {
-  const {
-    web3Reducer: {
-      web3: { web3 }
-    }
-  } = useSelector((state: AppState) => state);
   const coinSideWidth = '290px';
   const dealCardPaddingTailwindUnit = 8;
   return (
@@ -55,7 +48,7 @@ export const DealsOverviewSuccess: React.FC<Props> = ({
         dealDetails={dealDetails}
         ensName={ensName}
         destinationAddress={destinationAddress}
-        commitmentGoalAmount={getWeiAmount(web3, commitmentGoalAmount, 6, true)}
+        commitmentGoalAmount={getWeiAmount(commitmentGoalAmount, 6, true)}
         commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
         commitmentGoalTokenLogo={commitmentGoalTokenLogo}
         isExecutingDeal={isExecutingDeal}
