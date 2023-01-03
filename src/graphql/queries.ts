@@ -518,7 +518,11 @@ export const GetDealPrecommits = gql`
   query Precommits($dealId: ID!) {
     deal(id: $dealId) {
       id
-      precommits {
+      precommits(
+        where: { status_not: CANCELED }
+        orderBy: createdAt
+        orderDirection: asc
+      ) {
         id
         userAddress
         amount
