@@ -408,9 +408,9 @@ export const DealsCreateReview: React.FC<Props> = ({
                       selectedTimeWindow === SelectedTimeWindow.DAY
                         ? '24 hours'
                         : selectedTimeWindow === SelectedTimeWindow.WEEK
-                        ? 'Week'
+                        ? 'One week'
                         : selectedTimeWindow === SelectedTimeWindow.MONTH
-                        ? 'Month'
+                        ? 'One month'
                         : ''
                     }`}
               </div>
