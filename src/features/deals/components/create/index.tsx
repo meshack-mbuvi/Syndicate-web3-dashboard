@@ -1,4 +1,5 @@
 import { Callout, CalloutType } from '@/components/callout';
+import EyeOpenIcon from '@/components/icons/EyeOpen';
 import IconInfo from '@/components/icons/info';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, FL } from '@/components/typography';
@@ -23,6 +24,7 @@ interface Props {
     input: React.ReactNode;
     label: string;
     info: string;
+    iconType?: CreatFlowStepTemplateIconType;
     reviewValue?: string | React.ReactNode;
   }[];
   activeInputIndex: number | null;
@@ -37,6 +39,11 @@ interface Props {
 export enum CreateFlowStepTemplateTitleSize {
   H2 = `font-regular text-H2-mobile sm:text-H2`,
   H4 = `font-regular text-H4-mobile sm:text-H4`
+}
+
+export enum CreatFlowStepTemplateIconType {
+  DEFAULT = 'DEFAULT',
+  EYE_OPEN = 'EYE_OPEN'
 }
 
 export const CreateFlowStepTemplate: React.FC<Props> = ({
@@ -269,25 +276,31 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
             alt="Chevron divider"
             className="absolute top-1/2 transform -translate-y-1/2 -left-12 bg-opacity-10"
           />
-          <Callout
-            extraClasses="relative px-5 py-4 rounded-xl overflow-hidden"
-            type={CalloutType.REGULAR}
-            icon={
-              <IconInfo
-                width={22}
-                height={22}
-                textColorClass="text-blue-stratosphere"
-              />
-            }
+          <TransitionBetweenChildren
+            visibleChildIndex={activeInputIndex ? activeInputIndex : 0}
           >
-            <TransitionBetweenChildren
-              visibleChildIndex={activeInputIndex ? activeInputIndex : 0}
-            >
-              {inputs.map((input, index) => (
+            {inputs.map((input, index) => (
+              <Callout
+                extraClasses={`relative rounded-xl px-5 py-4 overflow-hidden`}
+                type={CalloutType.REGULAR}
+                icon={
+                  input?.iconType === CreatFlowStepTemplateIconType.EYE_OPEN ? (
+                    <div className="mt-1">
+                      <EyeOpenIcon width={20} height={12.5} />
+                    </div>
+                  ) : (
+                    <IconInfo
+                      width={22}
+                      height={22}
+                      textColorClass="text-blue-stratosphere"
+                    />
+                  )
+                }
+              >
                 <div key={index}>{input.info}</div>
-              ))}
-            </TransitionBetweenChildren>
-          </Callout>
+              </Callout>
+            ))}
+          </TransitionBetweenChildren>
         </div>
       </div>
     </div>
