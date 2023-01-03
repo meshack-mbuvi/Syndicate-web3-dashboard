@@ -42,7 +42,10 @@ const useMemberPrecommit = (): PrecommitResponse => {
     }
   });
 
-  const precommit = data?.precommits[0];
+  // should be the first non-canceled pre-commit and falls back to first precommit
+  const precommit =
+    data?.precommits?.find((v) => v.status !== 'CANCELED') ??
+    data?.precommits[0];
 
   return {
     precommit,

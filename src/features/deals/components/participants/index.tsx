@@ -27,7 +27,7 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
       </H4>
       {participants.map((participant, index) => {
         return (
-          <>
+          <div key={`${index}-${participant.address}`}>
             {/* Large participants - 1st, 2nd, 3rd */}
             {index === 0 || index === 1 || index === 2 ? (
               <>
@@ -76,7 +76,7 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
                 </span>
               </ReactTooltip>
             )}
-          </>
+          </div>
         );
       })}
 
