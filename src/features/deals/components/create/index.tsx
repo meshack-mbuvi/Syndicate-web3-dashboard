@@ -89,9 +89,9 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
     setCalloutTopPosition(calculateCalloutTopPosition(inputRefs.current[0]));
   }, [showCallout]);
 
-  // When the title size changes, the callout position
-  // needs to be recalculated. But since the size transition
-  // takes time, we need to delay until it's finished.
+  // When the title size changes, or the callouts are shown, the callout position
+  // needs to be recalculated. But since the size transition takes time, we need
+  // to delay until it's finished.
   useEffect(() => {
     setTimeout(() => {
       if (activeInputIndex !== null && !isInputHidden(activeInputIndex)) {
@@ -100,7 +100,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
         );
       }
     }, transitionDuration);
-  }, [titleSize]);
+  }, [titleSize, hideCallouts]);
 
   // Calculate callout position when the active input changes
   useEffect(() => {
@@ -137,7 +137,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
       ref={containerRef}
       className={`flex ${
         hideCallouts ? 'space-x-0' : 'space-x-24'
-      } justify-center px-10`}
+      } justify-center px-10 overflow-hidden`}
     >
       <div
         className={`flex-grow ${
@@ -270,7 +270,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
             className="absolute top-1/2 transform -translate-y-1/2 -left-12 bg-opacity-10"
           />
           <Callout
-            extraClasses={`relative px-5 py-4 rounded-xl`}
+            extraClasses="relative px-5 py-4 rounded-xl overflow-hidden"
             type={CalloutType.REGULAR}
             icon={
               <IconInfo
