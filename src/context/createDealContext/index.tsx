@@ -64,6 +64,7 @@ type CreateDealProviderProps = {
   isSuccessStep: boolean;
   isEditingField: boolean;
   setIsEditingField: Dispatch<SetStateAction<boolean>>;
+  resetCreateFlowState: () => void;
 
   // deal creation progress steps
   isCreateDealDisabled: boolean;
@@ -435,6 +436,23 @@ const CreateDealProvider: React.FC = ({ children }) => {
     }
   };
 
+  const resetCreateFlowState = (): void => {
+    setCurrentStep(0);
+
+    // reset fields.
+    // feel free to remove these if this is not necessary
+    setName('');
+    handleCommitmentGoalChange('');
+    handleMinimumCommitmentChange('');
+    setDestinationAddress('');
+    setEnsName('');
+    setSelectedTimeWindow(SelectedTimeWindow.DAY);
+    setCustomDate(new Date());
+    setCustomTime('');
+    setTokenSymbol('');
+    setEndTime('');
+  };
+
   return (
     <CreateDealContext.Provider
       value={{
@@ -484,6 +502,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
         isSuccessStep,
         isEditingField,
         setIsEditingField,
+        resetCreateFlowState,
 
         // creation steps
         isCreateDealDisabled,

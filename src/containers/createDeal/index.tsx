@@ -33,6 +33,7 @@ export const CreateDealContainer: React.FC = () => {
     handleBack,
     handleCreateDeal,
     setShowModal,
+    resetCreateFlowState,
     showErrorModal,
     showBackButton,
     processingModalTitle,
@@ -72,7 +73,11 @@ export const CreateDealContainer: React.FC = () => {
         hideFooter: true,
         customClasses: 'h-screen items-center',
         activeIndex: currentStep,
-        handleExitClick: () => router.push('/')
+        handleExitClick: (): void => {
+          router.push('/');
+          // reset state
+          resetCreateFlowState && resetCreateFlowState();
+        }
       }}
     >
       <div className="w-full container mx-auto flex items-center justify-center">
