@@ -199,7 +199,8 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
         image: asset.image,
         animation: asset.animation,
         permalink: asset.permalink,
-        id: asset.id,
+        // combining id and image to eliminate chances of displaying duplicates
+        id: `${asset.id}-${asset.image}`,
         collection: asset.collection,
         description: asset.description,
         floorPrice: floorPrices.find(
@@ -330,7 +331,8 @@ const assetsSlice = createSlice({
             image: `/images/morseCodeNfts/${detail.image}`,
             animation: '',
             permalink: '',
-            id: index,
+            // combining index and image to eliminate chances of duplicates
+            id: `${index}-${detail.image}`,
             collection: { name: '' },
             description: '',
             floorPrice: '',
