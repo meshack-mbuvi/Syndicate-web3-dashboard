@@ -13,6 +13,7 @@ import { SearchInput } from '@/components/inputs';
 import FilterPill from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill';
 import { assetsDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { useLegacyTransactions } from '@/hooks/useLegacyTransactions';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 
 export enum SortOrderType {
   TOKENS = 'TOKENS',
@@ -68,7 +69,12 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     numTransactions,
     transactionEvents,
     refetchTransactions
-  } = useLegacyTransactions({}, 0, 10, false);
+  } = useLegacyTransactions(
+    { category: TransactionCategory.INVESTMENT },
+    0,
+    200,
+    false
+  );
 
   useEffect(() => {
     if (activeNetwork.chainId) {
