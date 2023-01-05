@@ -36,7 +36,9 @@ yarn dev
 
 ## Node Version
 
-[Use NVM to install Node.js 16](https://github.com/nvm-sh/nvm). You can add this script to your `.bashrc` or `.zshrc` to auto-use the right version of Node.
+[Use NVM to install Node.js 16](https://github.com/nvm-sh/nvm). On a Mac, this can be installed via Homebrew with `brew install nvm`.
+
+You can add this script to your `.bashrc` or `.zshrc` to auto-use the right version of Node.
 
 ```sh
 enter_directory() {
@@ -50,6 +52,10 @@ enter_directory() {
 
 export PROMPT_COMMAND=enter_directory
 ```
+
+If you receive a compilation error of `Maximum call stack size exceeded` or the error `ERR_OSSL_EVP_UNSUPPORTED` when running `yarn dev`, it is likely because you are using Node 18 and not Node 16. You can check your node version with `node --version`.
+
+We use Node 16 for compilation because we're running Netlify's Ubuntu Focal 20.04 build image, which [uses Node 16 by default](https://github.com/netlify/build-image/blob/focal/included_software.md).
 
 ## Debugging
 
