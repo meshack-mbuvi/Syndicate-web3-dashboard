@@ -34,7 +34,8 @@ const DealDetails: React.FC = () => {
       ownerAddress,
       totalCommitments,
       totalCommitted,
-      dealEndTime
+      dealEndTime,
+      isClosed
     },
     dealDetailsLoading
   } = useDealsDetails();
@@ -177,6 +178,7 @@ const DealDetails: React.FC = () => {
                       : '/images/prodTokenLogos/USDCoin.svg'
                   }
                   dealEndTime={Number(dealEndTime) * 1000}
+                  isDealExecuted={isClosed}
                   isReviewingCommittments={
                     isReviewingCommittments &&
                     permissionType === PermissionType.ADMIN

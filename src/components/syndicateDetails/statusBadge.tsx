@@ -26,6 +26,7 @@ enum LABELS {
   CREATING_IC_FAILED = 'Club creation failed',
   WAITING_DISTRIBUTION = 'Waiting for selection...',
   DEAL_OPEN = 'Open to allocations',
+  DEAL_WINDOW_CLOSED = 'Backer window closed',
   DEAL_CONCLUDED = 'Deal has concluded',
   DEAL_REVIEWING_COMMITTMENTS = 'Choose who can commit to this deal'
 }
@@ -150,7 +151,15 @@ const StatusBadge = (props: Props): JSX.Element => {
     titleText = LABELS.WAITING_DISTRIBUTION;
   } else if (isDeal && isOpenToAllocations) {
     if (!isReviewingDealCommittments) {
-      titleText = LABELS.DEAL_OPEN;
+      if (dealEndTime && Date.now() > dealEndTime) {
+        titleText = LABELS.DEAL_WINDOW_CLOSED;
+        badgeBackgroundColor = 'bg-orange-burnt bg-opacity-30';
+        badgeIcon = (
+          <WalletIcon className="text-orange-burnt" width={24} height={24} />
+        );
+      } else {
+        titleText = LABELS.DEAL_OPEN;
+      }
     } else if (isReviewingDealCommittments) {
       titleText = LABELS.DEAL_REVIEWING_COMMITTMENTS;
       badgeIcon = 'shieldWithCheckmark.svg';
@@ -214,7 +223,7 @@ const StatusBadge = (props: Props): JSX.Element => {
                 {/* deals  */}
                 {isDeal &&
                 dealEndTime !== undefined &&
-                !isReviewingDealCommittments ? (
+                titleText == LABELS.DEAL_OPEN ? (
                   <>
                     <div>
                       {getCountDownDays(dealEndTime.toString())} left to
@@ -245,7 +254,7 @@ const StatusBadge = (props: Props): JSX.Element => {
         </ReactTooltip>
       ) : isDeal &&
         dealEndTime !== undefined &&
-        !isReviewingDealCommittments ? (
+        titleText == LABELS.DEAL_OPEN ? (
         <ReactTooltip
           id="status-tooltip"
           place="top"

@@ -20,7 +20,7 @@ export interface IDealDetails {
   dealDestination: string;
   goal: string;
   minCommitAmount: string;
-  closed: boolean;
+  isClosed: boolean;
   totalCommitments: string;
   totalCommitted: string;
   createdAt: string;
@@ -39,7 +39,7 @@ const emptyDeal: IDealDetails = {
   dealDestination: '',
   goal: '',
   minCommitAmount: '',
-  closed: false,
+  isClosed: false,
   totalCommitments: '',
   totalCommitted: '',
   createdAt: '',
@@ -122,7 +122,7 @@ const useDealsDetails = (): IDealDetailsResponse => {
           dealDestination: deal.destinationAddress,
           goal: deal.goal,
           minCommitAmount: minPerMember ?? '',
-          closed: deal.closed,
+          isClosed: deal.closed,
           totalCommitments: deal.numCommits,
           totalCommitted: deal.totalCommitted,
           createdAt: deal.dealToken.createdAt,

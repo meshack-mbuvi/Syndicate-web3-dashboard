@@ -14,6 +14,7 @@ interface Props {
   tokenSymbol: string;
   tokenIcon: string;
   dealEndTime: number;
+  isDealExecuted: boolean;
   isReviewingCommittments?: boolean;
 }
 
@@ -25,13 +26,14 @@ export const DealsAllocations: React.FC<Props> = ({
   tokenSymbol,
   tokenIcon,
   dealEndTime,
+  isDealExecuted = true,
   isReviewingCommittments = false
 }) => {
   return (
     <div className="space-y-8">
       <StatusBadge
         isDeal={true}
-        isOpenToAllocations={true}
+        isOpenToAllocations={!isDealExecuted}
         dealEndTime={dealEndTime}
         isReviewingDealCommittments={isReviewingCommittments}
       />
