@@ -57,16 +57,17 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   captureArtworkRef
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
-  const handleContinueButton = (e: any) => {
+  const handleContinueButton = (e: any): void => {
     if (isUsingGeneratedArtwork) {
       setIsContinueButtonLoading(true);
       elementToImage(captureArtworkRef, 2, (imageURI) => {
-        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-        handleCaptureGeneratedArtwork(
-          imageURI,
-          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-          generatedArtworkBackgroundColor
-        );
+        if (handleCaptureGeneratedArtwork && generatedArtworkBackgroundColor) {
+          handleCaptureGeneratedArtwork(
+            imageURI,
+            generatedArtworkBackgroundColor
+          );
+        }
+
         setIsContinueButtonLoading(false);
         handleContinue(e);
       });

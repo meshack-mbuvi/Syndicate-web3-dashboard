@@ -107,7 +107,9 @@ const useClubTokenMembers = (): {
 
           let data;
           try {
-            data = await getAssets(memberAddress, ethersProvider);
+            if (ethersProvider) {
+              data = await getAssets(memberAddress, ethersProvider);
+            }
           } catch (error) {
             data = null;
           }

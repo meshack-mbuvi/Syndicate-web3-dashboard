@@ -44,14 +44,16 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
 
   return (
     <div
-      className={`md:flex space-y-8 md:space-y-0 md:space-x-5 ${extraClasses}`}
+      className={`md:flex space-y-8 md:space-y-0 md:space-x-5 ${
+        extraClasses ?? ''
+      }`}
     >
       <div className="md:w-2/3">
         <div className="mb-2">Name</div>
         <InputField
           value={nameValue}
           placeholderLabel="Name of collective"
-          onChange={(e) => {
+          onChange={(e): void => {
             const input = e.target.value;
             handleNameChange(input);
           }}

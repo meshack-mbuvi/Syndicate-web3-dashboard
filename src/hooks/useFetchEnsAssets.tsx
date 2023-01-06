@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const getAssets = async (
   account: string,
-  ethersProvider: Web3Provider
+  ethersProvider: Web3Provider | null
 ) => {
   if (!ethersProvider) return;
 
@@ -28,7 +28,10 @@ export const getAssets = async (
     });
 };
 
-const useFetchEnsAssets = (account: string, ethersProvider: Web3Provider) => {
+const useFetchEnsAssets = (
+  account: string,
+  ethersProvider: Web3Provider | null
+) => {
   return useQuery(
     [account, ethersProvider?.network?.chainId],
     () => getAssets(account, ethersProvider),

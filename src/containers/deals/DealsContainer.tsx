@@ -1,26 +1,26 @@
+import { PermissionType } from '@/components/collectives/shared/types';
 import Modal, { ModalStyle } from '@/components/modal';
-import { useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { Status } from '@/components/statusChip';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { DealSidePanel } from '@/containers/deals/dealSidePanel';
 import { DealsContainer } from '@/features/deals/components';
 import { DealsAllocations } from '@/features/deals/components/allocations';
 import { DealsOverview } from '@/features/deals/components/overview';
 import { DealsParticipants } from '@/features/deals/components/participants';
-import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
-import useDealsDetails from '@/hooks/deals/useDealsDetails';
-import useTokenDetails from '@/hooks/useTokenDetails';
-import { getWeiAmount } from '@/utils/conversions';
-import TwoColumnLayout from '../twoColumnLayout';
-import { DealSidePanel } from '@/containers/deals/dealSidePanel';
-import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
 import {
   DealsParticipantsTable,
   Participant
 } from '@/features/deals/components/participants/table';
-import { Status } from '@/components/statusChip';
+import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
+import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
+import useDealsDetails from '@/hooks/deals/useDealsDetails';
+import useTokenDetails from '@/hooks/useTokenDetails';
+import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { PermissionType } from '@/components/collectives/shared/types';
+import { useState } from 'react';
+import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {
   const {

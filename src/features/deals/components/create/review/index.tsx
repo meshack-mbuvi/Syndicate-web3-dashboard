@@ -4,23 +4,23 @@ import {
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
 // import { TextArea } from '@/components/inputs/simpleTextArea';
+import { SyndicateTokenLogo } from '@/components/icons/syndicateTokenLogo';
+import { InputFieldCreateToken } from '@/components/inputs/create/InputFieldCreateToken';
+import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
+import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
+import { DetailedTile } from '@/components/tile/detailedTile';
+import { B2 } from '@/components/typography';
+import { AppState } from '@/state';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   formatInputValueWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { CreateFlowStepTemplate } from '..';
-import { DetailedTile } from '@/components/tile/detailedTile';
-import { SelectedTimeWindow } from '../window';
-import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
-import { InputFieldCreateToken } from '@/components/inputs/create/InputFieldCreateToken';
 import { default as _moment } from 'moment-timezone';
-import { formatAddress } from '@/utils/formatAddress';
-import { B2 } from '@/components/typography';
-import { SyndicateTokenLogo } from '@/components/icons/syndicateTokenLogo';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
+import { CreateFlowStepTemplate } from '..';
+import { SelectedTimeWindow } from '../window';
 
 interface Props {
   // About
@@ -152,7 +152,7 @@ export const DealsCreateReview: React.FC<Props> = ({
       activeInputIndex={activeInputIndex}
       isReview={true}
       hideCallouts={hideCallouts}
-      handleCurrentReviewEditingIndex={(newIndex) => {
+      handleCurrentReviewEditingIndex={(newIndex): void => {
         setActiveInputIndex(newIndex);
       }}
       isReviewStep={isReviewStep}

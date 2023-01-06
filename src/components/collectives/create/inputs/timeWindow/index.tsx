@@ -30,8 +30,11 @@ export const InputTimeWindow: React.FC<Props> = ({
     <>
       <DetailedTile
         activeIndex={selectedTimeWindow ?? 0}
-        // @ts-expect-error TS(2322): Type '((newTimeWindowIndex: number) => void) | und... Remove this comment to see the full error message
-        onClick={handleTimeWindowChange}
+        onClick={(newTimeWindowIndex: number): void => {
+          if (handleTimeWindowChange) {
+            handleTimeWindowChange(newTimeWindowIndex);
+          }
+        }}
         options={[
           { title: '24 hours' },
           { title: '1 week' },
@@ -52,9 +55,10 @@ export const InputTimeWindow: React.FC<Props> = ({
           <div>Close date</div>
           <InputFieldWithDate
             selectedDate={closeDate}
-            onChange={(newDate) => {
-              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-              handleCloseDateChange(newDate);
+            onChange={(newDate): void => {
+              if (handleCloseDateChange && newDate) {
+                handleCloseDateChange(newDate);
+              }
             }}
             extraClasses="mt-2"
           />
@@ -63,9 +67,10 @@ export const InputTimeWindow: React.FC<Props> = ({
           <div>Close time</div>
           <InputFieldWithTime
             value={closeTime}
-            onChange={(e) => {
-              // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-              handleCloseTimeChange(e.target.value);
+            onChange={(e): void => {
+              if (handleCloseTimeChange) {
+                handleCloseTimeChange(e.target.value);
+              }
             }}
             extraClasses="mt-2"
           />

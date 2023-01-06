@@ -1,10 +1,24 @@
 import { SimpleTile, TileElevation } from '@/components/tile/simpleTile';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 
+declare let window: any;
+
 interface Props {
   elevation?: TileElevation;
   spaceBetweenYClass?: string;
   extraClasses?: string;
+}
+
+interface IProvider {
+  isMetaMask: boolean;
+  isCoinbaseWallet: boolean;
+}
+
+interface IProviderButtonOptions {
+  name: string;
+  icon: string;
+  providerToActivate: () => void;
+  hidden: boolean;
 }
 
 export const WalletProviderList: React.FC<Props> = ({
@@ -18,9 +32,19 @@ export const WalletProviderList: React.FC<Props> = ({
    * This function is triggered when user clicks metamask button
    * The provider for metamask is named injected
    */
-  const activateInjected = async (walletName?: string) => {
+  const activateInjected = async (walletName?: string): Promise<void> => {
     if (connectWallet !== undefined) {
       await connectWallet('Injected', walletName);
+    }
+  };
+
+  // WalletLink
+  /**
+   * This function is triggered when user clicks Coinbase button
+   */
+  const activateWalletLink = async (walletName?: string): Promise<void> => {
+    if (connectWallet !== undefined) {
+      await connectWallet('WalletLink', walletName);
     }
   };
 
@@ -29,42 +53,44 @@ export const WalletProviderList: React.FC<Props> = ({
    * It calls activateProvider passing gnosisSafeConnect as the parameters.
    *
    */
-  const activateGnosisSafe = async () => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    await connectWallet('GnosisSafe');
+  const activateGnosisSafe = async (): Promise<void> => {
+    if (connectWallet !== undefined) {
+      await connectWallet('GnosisSafe');
+    }
   };
 
   /**
    * This method is triggered when user clicks wallet connect button.
    * It calls activateProvider passing WalletConnect as the parameters.
    */
-  const activateWalletConnect = async () => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    await connectWallet('WalletConnect', 'WalletConnect');
+  const activateWalletConnect = async (): Promise<void> => {
+    if (connectWallet !== undefined) {
+      await connectWallet('WalletConnect', 'WalletConnect');
+    }
   };
 
   // The providers supported are listed in here with their custom details
-  const providersList = [
+  const providersList: IProviderButtonOptions[] = [
     {
       name: 'Metamask',
       icon: '/images/metamaskIcon.svg',
-      // @ts-expect-error TS(7030): Not all code paths return a value.
-      providerToActivate: () => {
+      providerToActivate: (): void => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const providers = window?.ethereum?.providers;
         // check whether coinbase extension is installed
         const metamaskWallet =
           // providers exists when you have more than one extensions installed.
-          window?.ethereum?.providers?.filter(
-            (provider: any) => provider?.isMetaMask
-          )[0] || window?.ethereum?.isMetaMask;
+          providers?.filter((provider: IProvider) => provider?.isMetaMask)[0] ||
+          window?.ethereum?.isMetaMask;
 
         if (!metamaskWallet) {
-          return window.open('https://metamask.io/download/', '_blank');
+          window?.open('https://metamask.io/download/', '_blank');
+          return;
         }
 
-        activateInjected('Metamask');
+        void activateInjected('Metamask');
       },
-      hidden: loadedAsSafeApp
+      hidden: !!loadedAsSafeApp
     },
     {
       name: 'Gnosis Safe',
@@ -76,41 +102,30 @@ export const WalletProviderList: React.FC<Props> = ({
       name: 'WalletConnect',
       icon: '/images/walletConnect.svg',
       providerToActivate: () => activateWalletConnect(),
-      hidden: loadedAsSafeApp
+      hidden: !!loadedAsSafeApp
+    },
+    {
+      name: 'Coinbase Wallet',
+      icon: '/images/coinbase-wallet.svg',
+      providerToActivate: (): void => {
+        void activateWalletLink('CoinbaseWallet');
+      },
+      hidden: !!loadedAsSafeApp
     }
-    // TODO: This is a temporary workaround due to an infinite loop when trying
-    // to connect to Coinbase Wallet. Once this bug is fixed, we can uncomment
-    // this
-    // {
-    //   name: 'Coinbase Wallet',
-    //   icon: '/images/coinbase-wallet.svg',
-    //   // @ts-expect-error TS(7030): Not all code paths return a value.
-    //   providerToActivate: () => {
-    //     // check whether coinbase extension is installed
-    //     const coinbaseWallet =
-    //       window?.ethereum?.providers?.filter(
-    //         (provider: any) => provider?.isCoinbaseWallet
-    //       )[0] || window?.ethereum?.isCoinbaseWallet;
-
-    //     if (!coinbaseWallet) {
-    //       return window.open(
-    //         'https://www.coinbase.com/wallet/getting-started-extension',
-    //         '_blank'
-    //       );
-    //     }
-    //     activateInjected('Coinbase Wallet');
-    //   },
-    //   hidden: loadedAsSafeApp
-    // }
   ];
 
   // Button for each provider
-  const ProviderButton = ({ name, icon, providerToActivate, hidden }: any) => {
+  const ProviderButton = ({
+    name,
+    icon,
+    providerToActivate,
+    hidden
+  }: IProviderButtonOptions): JSX.Element => {
     if (!hidden) {
       return (
         <SimpleTile
           elevation={elevation}
-          onClick={() => providerToActivate()}
+          onClick={(): void => void providerToActivate()}
           addOn={
             <img
               alt="icon"
@@ -123,7 +138,7 @@ export const WalletProviderList: React.FC<Props> = ({
         </SimpleTile>
       );
     }
-    return null;
+    return <></>;
   };
 
   return (

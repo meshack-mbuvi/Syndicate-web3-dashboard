@@ -1,5 +1,5 @@
 import { DetailedTile } from '@/components/tile/detailedTile';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default {
   title: '2. Atoms/Detailed Tile'
