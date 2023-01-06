@@ -1,12 +1,20 @@
 import DealCloseModal from '@/features/deals/components/close/execute';
+import { DealEndType } from '@/features/deals/components/close/types';
 
 export default {
-  title: '4. Organisms/Deals/Close/Execute'
+  title: '4. Organisms/Deals/Close/Dissolve'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const Template = (args: any) => {
-  return <DealCloseModal {...args} />;
+  return (
+    <DealCloseModal
+      {...args}
+      handleDealCloseClick={() => {
+        alert('Clicked close or dissolve deal');
+      }}
+    />
+  );
 };
 
 export const Default = Template.bind({});
@@ -19,7 +27,8 @@ Default.args = {
   tokenSymbol: 'USDC',
   tokenAmount: 6000,
   destinationEnsName: 'startuphuman.eth',
-  destinationAddress: '0xDGFDSFS9F32D3WE'
+  destinationAddress: '0xDGFDSFS9F32D3WE',
+  closeType: DealEndType.DISSOLVE
 };
 
 export const Loading = Template.bind({});
@@ -32,5 +41,6 @@ Loading.args = {
   tokenSymbol: 'USDC',
   tokenAmount: 6000,
   destinationEnsName: 'startuphuman.eth',
-  destinationAddress: '0xDGFDSFS9F32D3WE'
+  destinationAddress: '0xDGFDSFS9F32D3WE',
+  closeType: DealEndType.DISSOLVE
 };

@@ -3,13 +3,17 @@ import {
   CalloutIconPosition,
   CalloutType
 } from '@/components/callout';
-import { CTAButton } from '@/components/CTAButton';
+import { CTAButton, CTAStyle } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
-import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
+import {
+  AddressImageSize,
+  DisplayAddressWithENS
+} from '@/components/shared/ensAddress/display';
 import { Spinner } from '@/components/shared/spinner';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, B4, H2, H4 } from '@/components/typography';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
+import { DealEndType } from '../types';
 import { EmailSupport } from '@/components/emailSupport';
 
 interface Props {
@@ -21,17 +25,23 @@ interface Props {
   showWaitingOnWalletLoadingState?: boolean;
   destinationAddress?: string;
   destinationEnsName?: string;
-  tokenLogo: string;
-  tokenSymbol: string;
-  tokenAmount: string;
-  isExecutingDeal?: boolean;
+  tokenLogo?: string;
+  tokenSymbol?: string;
+  tokenAmount?: string;
+  address?: string;
+  ensName?: string;
+  ensImage?: string;
+  closeType?: DealEndType;
+  handleDealCloseClick?: () => void;
   transactionFailed?: boolean;
+  showWaitingOnExecutionLoadingState?: boolean;
 }
 
 const DealCloseModal: React.FC<Props> = ({
   show,
   closeModal,
   outsideOnClick,
+  transactionFailed,
   dealName,
   showWaitingOnWalletLoadingState = false,
   destinationAddress,
@@ -39,9 +49,12 @@ const DealCloseModal: React.FC<Props> = ({
   tokenLogo,
   tokenSymbol,
   tokenAmount,
-  handleExecuteDeal,
-  isExecutingDeal,
-  transactionFailed
+  address,
+  ensName,
+  ensImage,
+  closeType = DealEndType.EXECUTE,
+  handleDealCloseClick,
+  showWaitingOnExecutionLoadingState
 }) => {
   return (
     <Modal
@@ -53,68 +66,184 @@ const DealCloseModal: React.FC<Props> = ({
       outsideOnClick={outsideOnClick}
     >
       <>
-        <B3 extraClasses="text-gray-syn4">Executing</B3>
+        {/* Titles */}
+        <B3 extraClasses="text-gray-syn4">
+          {closeType === DealEndType.EXECUTE
+            ? 'Executing'
+            : closeType === DealEndType.DISSOLVE
+            ? 'Dissolve'
+            : closeType === DealEndType.WITHDRAW
+            ? 'Withdrawing from'
+            : null}
+        </B3>
         <H2 extraClasses="mb-4.5 mt-1">{dealName} Deal</H2>
+
+        {/* Table */}
         <div className="border border-gray-syn6 divide-y rounded-custom mb-4">
-          <div className="px-5 py-4 flex justify-between items-center">
+          {/* Top row */}
+          <div
+            className={`px-5 py-4 flex justify-between ${
+              closeType === DealEndType.EXECUTE ||
+              closeType === DealEndType.DISSOLVE
+                ? 'items-center'
+                : 'items-start'
+            }`}
+          >
             <div className="w-1/3">
-              <B3 extraClasses="text-gray-syn3">Transfer</B3>
+              {closeType === DealEndType.EXECUTE ? (
+                <B3 extraClasses="text-gray-syn3">Transfer</B3>
+              ) : closeType === DealEndType.DISSOLVE ? (
+                <B3 extraClasses="text-gray-syn3 my-1">Action</B3>
+              ) : closeType === DealEndType.WITHDRAW ? (
+                <B3 extraClasses="text-gray-syn3 my-1">Amount</B3>
+              ) : (
+                ''
+              )}
             </div>
-            <div className="w-2/3 flex space-x-2 items-center">
-              <H4>{formatInputValueWithCommas(String(tokenAmount))}</H4>
-              <div className="space-x-1 flex items-center">
-                <img src={tokenLogo} alt="Token" className="w-5 h-5" />
-                <div>{tokenSymbol}</div>
+            {closeType === DealEndType.EXECUTE ? (
+              <div className="w-2/3 flex space-x-2 items-center">
+                <H4>{formatInputValueWithCommas(String(tokenAmount))}</H4>
+                <div className="space-x-1 flex items-center">
+                  <img src={tokenLogo} alt="Token" className="w-5 h-5" />
+                  <div>{tokenSymbol}</div>
+                </div>
               </div>
-            </div>
+            ) : closeType === DealEndType.WITHDRAW ? (
+              <div className="w-2/3 space-y-1">
+                <div className="flex space-x-2 items-center">
+                  <H4>{formatInputValueWithCommas(String(tokenAmount))}</H4>
+                  <div className="space-x-1 flex items-center">
+                    <img src={tokenLogo} alt="Token" className="w-5 h-5" />
+                    <div>{tokenSymbol}</div>
+                  </div>
+                </div>
+                <DisplayAddressWithENS
+                  address={address}
+                  name={ensName}
+                  image={ensImage}
+                  imageSize={AddressImageSize.SMALLER}
+                  customTailwindXSpacingUnit={2}
+                  onlyShowOneOfNameOrAddress={true}
+                />
+              </div>
+            ) : (
+              <div className="w-2/3">
+                <B3>dissolve deal</B3>
+              </div>
+            )}
           </div>
-          <div className="px-5 py-4 flex items-center justify-between border-gray-syn6">
+
+          {/* Bottom row */}
+          <div
+            className={`px-5 py-4 flex ${
+              closeType === DealEndType.DISSOLVE
+                ? 'items-start'
+                : 'items-center'
+            } justify-between border-gray-syn6`}
+          >
             <div className="w-1/3">
-              <B3 extraClasses="text-gray-syn3">To</B3>
+              <B3 extraClasses="text-gray-syn3">
+                {closeType === DealEndType.EXECUTE ? (
+                  <B3>To</B3>
+                ) : closeType === DealEndType.DISSOLVE ? (
+                  <B3 extraClasses="mt-0.5">Effect</B3>
+                ) : closeType === DealEndType.WITHDRAW ? (
+                  <B3 extraClasses="my-1">Action</B3>
+                ) : (
+                  ''
+                )}
+              </B3>
             </div>
             <div className="w-2/3">
-              <DisplayAddressWithENS
-                name={destinationEnsName}
-                address={destinationAddress}
-                onlyShowOneOfNameOrAddress={true}
-                truncatedNameMaxWidthClass="max-w-full"
-              />
+              {closeType === DealEndType.EXECUTE ? (
+                <div className="w-2/3">
+                  <DisplayAddressWithENS
+                    name={destinationEnsName}
+                    address={destinationAddress}
+                    onlyShowOneOfNameOrAddress={true}
+                    truncatedNameMaxWidthClass="max-w-full"
+                  />
+                </div>
+              ) : closeType === DealEndType.WITHDRAW ? (
+                <div className="w-2/3">
+                  <B3>Withdraw from deal</B3>
+                </div>
+              ) : (
+                <div className="w-2/3">
+                  <B3>set all contributions to zero and close deal</B3>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Actions + warnings */}
         <TransitionBetweenChildren
           visibleChildIndex={
             transactionFailed
               ? 3
-              : isExecutingDeal
+              : showWaitingOnExecutionLoadingState
               ? 2
               : showWaitingOnWalletLoadingState
               ? 1
-              : 0
+              : closeType === DealEndType.EXECUTE ||
+                closeType === DealEndType.DISSOLVE
+              ? 0
+              : -1
           }
         >
           <div>
             <Callout type={CalloutType.WARNING}>
               <B3>
-                Executing this transaction will draw all accepted commitments
-                and transfer them to the target address
+                {closeType === DealEndType.EXECUTE
+                  ? 'Executing this transaction will draw all accepted commitments and transfer them to the target address'
+                  : closeType === DealEndType.DISSOLVE
+                  ? 'This action is irreversible and will close the deal with no backers accepted.'
+                  : ''}
               </B3>
             </Callout>
             <CTAButton
               fullWidth
               extraClasses="mt-4"
-              onClick={handleExecuteDeal}
+              style={
+                closeType === DealEndType.EXECUTE
+                  ? CTAStyle.REGULAR
+                  : closeType === DealEndType.DISSOLVE
+                  ? CTAStyle.DARK_OUTLINED
+                  : undefined
+              }
+              onClick={handleDealCloseClick}
             >
-              Execute deal
+              {closeType === DealEndType.EXECUTE
+                ? 'Execute deal'
+                : closeType === DealEndType.DISSOLVE
+                ? 'Dissolve deal'
+                : ''}
             </CTAButton>
           </div>
+
+          {/* Waiting on wallet */}
           <Callout
             iconPosition={CalloutIconPosition.INLINE}
             icon={<Spinner height="h-5" width="w-5" margin="" />}
           >
-            <B2 extraClasses="mb-1">Approve deal execution from your wallet</B2>
+            <B2 extraClasses="mb-1">
+              {closeType === DealEndType.EXECUTE
+                ? 'Approve deal execution from your wallet'
+                : closeType === DealEndType.DISSOLVE
+                ? 'Withdraw from deal in your wallet'
+                : closeType === DealEndType.WITHDRAW
+                ? 'Withdraw from deal in your wallet'
+                : ''}
+            </B2>
             <B4 extraClasses="text-gray-syn3">
-              You must execute the deal on chain with your wallet
+              {closeType === DealEndType.EXECUTE
+                ? 'You must execute the deal on chain with your wallet'
+                : closeType === DealEndType.DISSOLVE
+                ? 'You must execute the withdrawal from the deal on chain with your wallet'
+                : closeType === DealEndType.WITHDRAW
+                ? 'You must execute the withdrawal from the deal on chain with your wallet'
+                : ''}
             </B4>
           </Callout>
 
@@ -130,6 +259,7 @@ const DealCloseModal: React.FC<Props> = ({
               screen.
             </B4>
           </Callout>
+
           {/* Execution failed: we don't have this state in the designs. needs to be added */}
           <Callout type={CalloutType.WARNING}>
             <B2 extraClasses="mb-1">Deal execution failed</B2>

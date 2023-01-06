@@ -18,8 +18,10 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import { formatAddress } from '@/utils/formatAddress';
 import { H1 } from '@/components/typography';
-import { DealsOverviewSuccess } from '@/features/deals/components/create/success';
 import { CTAButton, CTAType } from '@/components/CTAButton';
+import { DealEndType } from '@/features/deals/components/close/types';
+import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
+import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
@@ -213,8 +215,9 @@ export const DealSidePanel: React.FC<{
           ),
           destinationEnsName,
           destinationAddress: dealDestination,
-          handleExecuteDeal,
-          isExecutingDeal,
+          handleDealCloseClick: handleExecuteDeal,
+          closeType: DealEndType.EXECUTE,
+          showWaitingOnExecutionLoadingState: isExecutingDeal,
           transactionFailed: dealExecutionFailed
         }}
       />
@@ -226,7 +229,7 @@ export const DealSidePanel: React.FC<{
             {/* success title  */}
             <H1 extraClasses="text-white">You closed your deal!</H1>
 
-            <DealsOverviewSuccess
+            <DealsMilestoneOverview
               {...{
                 dealName,
                 dealDetails: /* details ? details :  */ '',
@@ -235,7 +238,7 @@ export const DealSidePanel: React.FC<{
                 commitmentGoalAmount: getWeiAmount(totalCommitted, 6, false),
                 commitmentGoalTokenSymbol: 'USDC',
                 commitmentGoalTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
-                isExecutingDeal: true
+                milestoneType: DealMilestoneType.EXECUTED
               }}
             />
 
@@ -258,7 +261,7 @@ export const DealSidePanel: React.FC<{
         handleCancelAndGoBackClick={(): void => {
           setIsReviewModalOpen(false);
         }}
-        handleReviewCommitmentsClick={(): void => {
+        handleContinueClick={(): void => {
           setIsReviewModalOpen(false);
           setIsReviewingCommittments(true);
         }}

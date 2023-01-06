@@ -8,7 +8,7 @@ import { DealWindow } from '@/containers/createDeal/window';
 import { DealParticipationToken } from '@/containers/createDeal/participationToken';
 import { ReviewDealDetails } from '@/containers/createDeal/review';
 import Modal, { ModalStyle } from '@/components/modal';
-import { DealsOverviewSuccess } from '@/features/deals/components/create/success';
+import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
 import { UpArrowWithLine } from '@/components/icons/upArrowWithLine';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
@@ -95,10 +95,8 @@ export const CreateDealContainer: React.FC = () => {
             <ReviewDealDetails />
             <div className="space-y-16 flex flex-col justify-center items-center">
               {/* success title  */}
-              <H1 regular extraClasses="text-white">
-                Your deal is live!
-              </H1>
-              <DealsOverviewSuccess
+              <H1 extraClasses="text-white">Your deal is live!</H1>
+              <DealsMilestoneOverview
                 {...{
                   dealName: name ? name : '',
                   dealDetails: /* details ? details :  */ '',
