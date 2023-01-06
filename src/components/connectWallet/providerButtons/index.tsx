@@ -98,7 +98,6 @@ export const WalletProviderList: React.FC<Props> = ({
     //         '_blank'
     //       );
     //     }
-
     //     activateInjected('Coinbase Wallet');
     //   },
     //   hidden: loadedAsSafeApp

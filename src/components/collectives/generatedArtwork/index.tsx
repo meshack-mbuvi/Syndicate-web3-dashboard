@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import useWindowSize from '@/hooks/useWindowSize';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CollectivesInteractiveBackground } from '../interactiveBackground';
 
 export const GeneratedArtworkDarkBGColors = [
@@ -20,7 +20,7 @@ export const GeneratedArtworkDarkBGColors = [
 ];
 
 interface Props {
-  captureRef?: any;
+  captureRef?: MutableRefObject<HTMLButtonElement>;
   label?: string;
   backgroundColorClass?: string;
   numberOfNodes?: number;
@@ -30,7 +30,7 @@ interface Props {
 
 export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
   ({ captureRef, label, backgroundColorClass, customId }) => {
-    const continerRef = useRef(null);
+    const containerRef = useRef<HTMLButtonElement>(null);
     const containerPaddingRem = 2;
     const pxPerRem = 16;
     const titleRef = useRef(null);
@@ -48,11 +48,13 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
     const [shouldLabelShrinkIfNeeded, setShouldLabelShrinkIfNeeded] =
       useState(null);
 
+    const ref = captureRef ? captureRef : containerRef;
+
     // Bump up or down the font size
     const adjustFontSize = () => {
+      if (!ref.current) return;
       const heightOfContainer =
-        (captureRef ? captureRef : continerRef).current.getBoundingClientRect()
-          .height -
+        ref.current.getBoundingClientRect().height -
         containerPaddingRem * pxPerRem * 3;
       // @ts-expect-error TS(2531): Object is possibly 'null'.
       const heightOfTitle = titleRef.current.getBoundingClientRect().height;
@@ -103,7 +105,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
 
     return (
       <button
-        ref={captureRef ? captureRef : continerRef}
+        ref={captureRef ? captureRef : containerRef}
         className={`relative w-full h-full ${backgroundColorClass} text-left flex justify-center items-center overflow-hidden chromatic-ignore`}
       >
         <CollectivesInteractiveBackground

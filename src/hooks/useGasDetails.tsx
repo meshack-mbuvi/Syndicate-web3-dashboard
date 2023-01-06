@@ -11,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { RemixActiveModule } from '@/ClubERC20Factory/RemixActiveModule';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -30,11 +31,21 @@ export enum ContractMapper {
   TokenGatedMixin,
   CloseClubPostMint,
   DistributionsERC20,
-  ERC20DealFactory
+  ERC20DealFactory,
+  RemixActiveModule
+}
+
+// props for remix
+interface RemixDetails {
+  inputValues: any;
+  abiFunction: any;
+  remixContractAddress: any;
+  remixAbi: AbiItem[];
 }
 
 interface IProps {
   contract: ContractMapper;
+  remixDetails?: RemixDetails;
   withFiatCurrency?: boolean;
   args?: Record<string, any>;
   skipQuery?: boolean;
@@ -45,7 +56,13 @@ const useGasDetails: (props: IProps) => {
   gas: number;
   fiatAmount: string;
   nativeTokenPrice: number;
-} = ({ contract, withFiatCurrency = false, args = {}, skipQuery = false }) => {
+} = ({
+  contract,
+  withFiatCurrency = false,
+  args = {},
+  skipQuery = false,
+  remixDetails
+}) => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
@@ -316,12 +333,7 @@ const useGasDetails: (props: IProps) => {
         void maxTotalSupplyMixin.getEstimateGas(
           account,
           args.clubAddress,
-          getWeiAmount(
-            web3,
-            new BigNumber(args.totalSupply).toFixed(),
-            18,
-            true
-          ),
+          getWeiAmount(new BigNumber(args.totalSupply).toFixed(), 18, true),
           // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
           setGasUnits
         );
@@ -395,6 +407,35 @@ const useGasDetails: (props: IProps) => {
           setGasUnits
         );
       }
+    },
+    // remix active module contract
+    [ContractMapper.RemixActiveModule]: {
+      estimateGas: (): void => {
+        // initialize active module contract because we cannot
+        // know it before-hand in this case
+        const remixActiveModuleInstance = remixDetails?.remixContractAddress
+          ? new RemixActiveModule(
+              remixDetails?.remixContractAddress,
+              web3,
+              activeNetwork,
+              remixDetails?.remixAbi
+            )
+          : null;
+        // get function name
+        const functionName =
+          remixDetails?.abiFunction.type === 'function'
+            ? remixDetails?.abiFunction.name
+            : `(${remixDetails?.abiFunction.type})`;
+
+        if (!remixActiveModuleInstance || !functionName) return;
+        void remixActiveModuleInstance.getRemixFuncGasEstimate(
+          remixDetails?.inputValues,
+          functionName,
+          account,
+          // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
+          setGasUnits
+        );
+      }
     }
   };
 
@@ -428,12 +469,7 @@ const useGasDetails: (props: IProps) => {
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
-    const estimatedGas = getWeiAmount(
-      web3,
-      estimatedGasInWei.toString(),
-      18,
-      false
-    );
+    const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
     setGas(+estimatedGas);
     if (withFiatCurrency && nativeTokenPrice) {
       setFiatAmount((+estimatedGas * nativeTokenPrice).toFixed(2));

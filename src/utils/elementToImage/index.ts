@@ -1,4 +1,5 @@
 import domtoimage from 'dom-to-image';
+import { MutableRefObject } from 'react';
 
 /** Export a snapshot PNG of a component
  * @param captureRef a reference to the element you want to convert to an image
@@ -6,12 +7,13 @@ import domtoimage from 'dom-to-image';
  * */
 
 export const elementToImage = (
-  captureRef: any,
+  captureRef: MutableRefObject<HTMLButtonElement | HTMLDivElement | null>,
   scale: number,
   handleCapture: (imageURI: string) => void
 ) => {
   const element = captureRef.current;
-  domtoimage
+  if (!element) return;
+  void domtoimage
     .toPng(element, {
       height: element.offsetHeight * scale,
       width: element.offsetWidth * scale,

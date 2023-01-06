@@ -30,7 +30,7 @@ interface IProps {
  */
 export const NumberField: React.FC<IProps> = ({
   control,
-  name,
+  name = '',
   placeholder,
   info,
   addOn,
@@ -42,7 +42,7 @@ export const NumberField: React.FC<IProps> = ({
   textAlignment = '',
   paddingStyles = 'p-4',
   disabled = false,
-  defaultValue = '',
+  defaultValue = '0',
   maximumValue = 0,
   maxButtonEnabled = false,
   thousandSeparator = true
@@ -51,7 +51,6 @@ export const NumberField: React.FC<IProps> = ({
     field: { onChange, ...rest },
     formState: { errors }
   } = useController({
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     defaultValue

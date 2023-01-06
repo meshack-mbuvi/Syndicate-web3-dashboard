@@ -1,4 +1,5 @@
 import Modal, { ModalStyle } from '@/components/modal';
+import { useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
@@ -9,32 +10,47 @@ import { DealsParticipants } from '@/features/deals/components/participants';
 import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useTokenDetails from '@/hooks/useTokenDetails';
+import { getWeiAmount } from '@/utils/conversions';
 import TwoColumnLayout from '../twoColumnLayout';
+import { DealSidePanel } from '@/containers/deals/dealSidePanel';
+import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
+import {
+  DealsParticipantsTable,
+  Participant
+} from '@/features/deals/components/participants/table';
+import { Status } from '@/components/statusChip';
+import moment from 'moment';
+import { PermissionType } from '@/components/collectives/shared/types';
 
 const DealDetails: React.FC = () => {
   const {
     dealDetails: {
       dealName,
       dealDescription,
-      dealToken,
+      dealTokenAddress,
       depositToken,
       goal,
       dealDestination,
       ownerAddress,
       totalCommitments,
       totalCommitted,
-      dealEndTime
+      dealEndTime,
+      isClosed
     },
     dealDetailsLoading
   } = useDealsDetails();
+
+  const [isReviewingCommittments, setIsReviewingCommittments] = useState(false);
 
   const { precommits: participants } = useDealsPrecommits();
 
   const { symbol: depositTokenSymbol, logo: depositTokenLogo } =
     useTokenDetails(depositToken);
 
-  //   const permissionType = usePermissionType(collectiveAddress);
-  // TODO -- extend this hook to add functionality for deals
+  const permissionType = useDealPermissionType();
+
+  const isOpenToPrecommits =
+    new Date(+dealEndTime * 1000).getTime() > Date.now();
 
   // skeleton loader content for left content
   const leftColumnLoader = (
@@ -87,7 +103,10 @@ const DealDetails: React.FC = () => {
             </div>
 
             <div className="flex justify-center mt-4">
-              <BlockExplorerLink resourceId={dealToken} resource="address" />
+              <BlockExplorerLink
+                resourceId={dealTokenAddress}
+                resource="address"
+              />
             </div>
           </div>
         </Modal>
@@ -109,6 +128,16 @@ const DealDetails: React.FC = () => {
     </div>
   );
 
+  const currentParticipants: Participant[] = participants.map((participant) => {
+    return {
+      address: participant.address,
+      contributionAmount: getWeiAmount(participant.amount, 6, false),
+      ensName: '',
+      joinedDate: moment.utc(+participant.createdAt * 1000).format('DD/MM/YY'),
+      status: Status.PENDING //TODO: handle accept/reject in a separate ticket
+    };
+  });
+
   return (
     <DealsContainer>
       <TwoColumnLayout
@@ -116,7 +145,7 @@ const DealDetails: React.FC = () => {
         hideEllipsis={false}
         showCloseButton={false}
         headerTitle={dealName ?? 'Deal'}
-        managerSettingsOpen={false}
+        managerSettingsOpen={true}
         dotIndicatorOptions={[]}
         leftColumnComponent={
           <div>
@@ -130,24 +159,72 @@ const DealDetails: React.FC = () => {
                   destinationAddress={dealDestination}
                   commitmentGoalAmount={goal}
                   commitmentGoalTokenSymbol={depositTokenSymbol}
-                  commitmentGoalTokenLogo={depositTokenLogo}
+                  commitmentGoalTokenLogo={
+                    depositTokenLogo
+                      ? depositTokenLogo
+                      : '/images/prodTokenLogos/USDCoin.svg'
+                  }
                 />
                 <DealsAllocations
                   leaderAddress={ownerAddress}
                   numberOfParticipants={parseInt(totalCommitments)}
-                  totalAllocatedAmount={parseInt(totalCommitted)}
+                  totalAllocatedAmount={parseFloat(
+                    getWeiAmount(totalCommitted, 6, false)
+                  )}
                   tokenSymbol={depositTokenSymbol}
-                  tokenIcon={depositTokenLogo}
-                  dealEndTime={parseInt(dealEndTime)}
+                  tokenIcon={
+                    depositTokenLogo
+                      ? depositTokenLogo
+                      : '/images/prodTokenLogos/USDCoin.svg'
+                  }
+                  dealEndTime={Number(dealEndTime) * 1000}
+                  isDealExecuted={isClosed}
+                  isReviewingCommittments={
+                    isReviewingCommittments &&
+                    permissionType === PermissionType.ADMIN
+                  }
                 />
                 {/* Heat map goes here */}
-                <DealsParticipants participants={participants} />
+                {isReviewingCommittments &&
+                permissionType === PermissionType.ADMIN ? (
+                  <DealsParticipantsTable
+                    handleParticipantAcceptanceClick={(): void =>
+                      //TODO: add functionality to accept commit
+                      console.log('accept')
+                    }
+                    handleParticipantRejectionClick={(): void =>
+                      //TODO: add functionality to reject commit
+                      console.log('reject')
+                    }
+                    participants={currentParticipants}
+                    tokenLogo="/images/prodTokenLogos/USDCoin.svg"
+                    tokenSymbol="USDC"
+                    totalParticipantsAmount={getWeiAmount(
+                      totalCommitted,
+                      6,
+                      false
+                    )}
+                  />
+                ) : (
+                  <DealsParticipants participants={participants} />
+                )}
               </div>
             )}
           </div>
         }
         rightColumnComponent={
-          dealDetailsLoading ? rightColumnLoader : <div>TO DO</div>
+          dealDetailsLoading ? (
+            rightColumnLoader
+          ) : (
+            <DealSidePanel
+              {...{
+                permissionType,
+                isOpenToPrecommits,
+                setIsReviewingCommittments,
+                isReviewingCommittments
+              }}
+            />
+          )
         }
       />
     </DealsContainer>

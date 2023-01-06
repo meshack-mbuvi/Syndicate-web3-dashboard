@@ -9,7 +9,7 @@ const useSubmitReqsToFactory = (
 ): { submitCreateClub: () => Promise<void> } => {
   const {
     web3Reducer: {
-      web3: { web3, account, activeNetwork }
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { erc20ClubFactory }
@@ -38,14 +38,13 @@ const useSubmitReqsToFactory = (
     // tokencap has 18 decimals on protocol
     tokenCap: isNativeDeposit
       ? getWeiAmount(
-          web3,
           (
             +tokenCap * (activeNetwork?.nativeCurrency?.exchangeRate ?? 1)
           ).toString(),
           18,
           true
         )
-      : getWeiAmount(web3, tokenCap, 18, true),
+      : getWeiAmount(tokenCap, 18, true),
     startTime: (~~(new Date().getTime() / 1000)).toString(),
     endTime: endMintTime.toString(),
     membersCount: +membersCount,

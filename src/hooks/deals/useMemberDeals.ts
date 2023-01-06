@@ -6,8 +6,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { DealPreview, PrecommitsDeal } from './types';
-import { processPrecommitDealsToDealPreviews } from './helpers';
+import { DealPreview, Precommit } from './types';
+import { processDealsToDealPreviews } from './helpers';
 
 const useMemberDeals = (): {
   memberDeals: DealPreview[];
@@ -20,12 +20,11 @@ const useMemberDeals = (): {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-
-  const walletAddress = useMemo(() => account.toLowerCase(), [account]);
   const [memberDeals, setMemberDeals] = useState<DealPreview[]>([]);
+  const walletAddress = useMemo(() => account.toLowerCase(), [account]);
 
   // retrieve member deals
-  const { loading, refetch, data } = useQuery<{ precommits: PrecommitsDeal[] }>(
+  const { loading, refetch, data } = useQuery<{ precommits: Precommit[] }>(
     GetMemberDeals,
     {
       variables: {
@@ -56,8 +55,13 @@ const useMemberDeals = (): {
   useEffect(() => {
     if (loading || !data?.precommits) return;
     let isComponentMounted = true;
+
     if (isComponentMounted) {
-      setMemberDeals(processPrecommitDealsToDealPreviews(data.precommits));
+      setMemberDeals(
+        processDealsToDealPreviews(
+          data.precommits.map((precommit) => precommit.deal)
+        )
+      );
     }
 
     return (): void => {

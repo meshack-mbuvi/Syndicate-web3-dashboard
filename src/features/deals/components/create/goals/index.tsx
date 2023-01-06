@@ -1,4 +1,4 @@
-import { InputField } from '@/components/inputs/inputField';
+import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 import {
   InputFieldWithToken,
   SymbolDisplay
@@ -8,7 +8,9 @@ import {
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { CreateFlowStepTemplate } from '..';
+import { AppState } from '@/state';
 
 interface Props {
   commitmentGoal: string;
@@ -45,6 +47,12 @@ export const DealsCreateGoal: React.FC<Props> = ({
   tokenLogo,
   handleTokenClick
 }) => {
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+
   const [activeInputIndex, setActiveInputIndex] =
     useState<SelectedInput | null>(null);
 
@@ -57,7 +65,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
           input: (
             <InputFieldWithToken
               value={formatInputValueWithCommas(commitmentGoal)}
-              placeholderLabel={`100,000 ${tokenSymbol}`}
+              placeholderLabel={`100,000`}
               onChange={(e) => {
                 const input = e.target.value;
                 if (isNaN(Number(input.replace(/,/g, '')))) {
@@ -68,7 +76,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
                   ? handleCommitmentGoalChange(strippedCommasInput)
                   : null;
               }}
-              symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
+              symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
               depositTokenSymbol={tokenSymbol}
               depositTokenLogo={tokenLogo}
               handleTokenClick={handleTokenClick}
@@ -86,7 +94,8 @@ export const DealsCreateGoal: React.FC<Props> = ({
           input: (
             <InputFieldWithToken
               value={formatInputValueWithCommas(minimumCommitment)}
-              placeholderLabel={`2,000 ${tokenSymbol}`}
+              placeholderLabel={`2,000`}
+              depositTokenSymbol={tokenSymbol}
               depositTokenLogo={tokenLogo}
               onChange={(e) => {
                 const input = e.target.value;
@@ -98,7 +107,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
                   ? handleMinimumCommitmentChange(strippedCommasInput)
                   : null;
               }}
-              symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
+              symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
               handleTokenClick={handleTokenClick}
               onFocus={() => {
                 setActiveInputIndex(SelectedInput.AMOUNT);
@@ -114,7 +123,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
         },
         {
           input: (
-            <InputField
+            <InputFieldWithAddOn
               value={destinationAddress}
               onChange={(e) => {
                 handleDestinationAddressChange
@@ -129,6 +138,13 @@ export const DealsCreateGoal: React.FC<Props> = ({
               infoLabel={
                 destinationAddressError ? destinationAddressError : undefined
               }
+              hideButton={!account || !!destinationAddress}
+              addOn={'Use connected address'}
+              addOnOnClick={() => {
+                handleDestinationAddressChange
+                  ? handleDestinationAddressChange(account)
+                  : null;
+              }}
             />
           ),
           label: 'Deal destination address',

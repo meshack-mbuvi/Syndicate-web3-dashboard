@@ -25,7 +25,7 @@ const useSubmitToContracts = () => {
       syndicateContracts: { erc721CollectiveFactory }
     },
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account }
     }
   } = useSelector((state: AppState) => state);
 
@@ -48,7 +48,7 @@ const useSubmitToContracts = () => {
       collectiveName: name,
       collectiveSymbol: symbol,
       ethPrice: !isNaN(pricePerNFT)
-        ? getWeiAmount(web3, String(pricePerNFT), 18, true)
+        ? getWeiAmount(String(pricePerNFT), 18, true)
         : '',
       maxPerMember: +maxPerWallet,
       openUntil: openUntil,

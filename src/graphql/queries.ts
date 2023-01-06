@@ -443,6 +443,14 @@ export const GetAdminDeals = gql`
       dealToken {
         id
         name
+        symbol
+      }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
       }
     }
   }
@@ -463,6 +471,14 @@ export const GetMemberDeals = gql`
         dealToken {
           id
           name
+          symbol
+        }
+        mixins {
+          id
+          requirementType
+          minPerMember
+          startTime
+          endTime
         }
       }
     }
@@ -485,6 +501,14 @@ export const GetDealDetails = gql`
         contractAddress
         createdAt
         name
+        symbol
+      }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
       }
     }
   }
@@ -494,13 +518,32 @@ export const GetDealPrecommits = gql`
   query Precommits($dealId: ID!) {
     deal(id: $dealId) {
       id
-      precommits {
+      precommits(
+        where: { status_not: CANCELED }
+        orderBy: createdAt
+        orderDirection: asc
+      ) {
         id
         userAddress
         amount
         status
         createdAt
       }
+    }
+  }
+`;
+
+export const GetMemberPrecommit = gql`
+  query Precommit($where: Precommit_filter) {
+    precommits(where: $where) {
+      id
+      deal {
+        id
+      }
+      userAddress
+      amount
+      createdAt
+      status
     }
   }
 `;

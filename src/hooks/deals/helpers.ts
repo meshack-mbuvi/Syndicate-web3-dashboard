@@ -1,36 +1,38 @@
-import { Deal, DealPreview, PrecommitsDeal } from './types';
+import {
+  Deal,
+  DealPreview,
+  DealStatus,
+  MixinModuleRequirementType
+} from './types';
+
+const getStatus = (executed: boolean, endTime: string): DealStatus => {
+  if (executed) {
+    return DealStatus.EXECUTED;
+  }
+  if (parseInt((new Date().getTime() / 1000).toString()) > +endTime) {
+    return DealStatus.CLOSED;
+  }
+  return DealStatus.OPEN;
+};
 
 export const processDealsToDealPreviews = (deals: Deal[]): DealPreview[] => {
   //TODO [WINGZ]: should totalCommitted be converted?
   return deals.map((deal: Deal): DealPreview => {
+    const timeMixin = deal.mixins.find(
+      (mixin) => mixin.requirementType == MixinModuleRequirementType.TIME_WINDOW
+    );
     return {
       dealName: deal.dealToken.name,
-      status: deal.closed ? 'CLOSED' : 'OPEN',
+      contractAddress: deal.dealToken.id,
+      status: getStatus(deal.closed, timeMixin?.endTime || '0'),
       goal: deal.goal,
       depositToken: deal.depositToken,
+      depositTokenSymbol: 'USDC',
       totalCommitments: deal.numCommits,
-      totalCommited: deal.totalCommitted
+      totalCommitted: deal.totalCommitted,
+      dealSymbol: deal.dealToken.symbol,
+      isOwner: false,
+      goalCompletionPercentage: Math.round(+deal.totalCommitted / +deal.goal)
     };
   });
-};
-
-export const processPrecommitDealsToDealPreviews = (
-  precommits: PrecommitsDeal[]
-): DealPreview[] => {
-  return precommits.reduce(
-    (filtered: DealPreview[], precommit: PrecommitsDeal) => {
-      if (precommit.status !== 'CANCELED') {
-        filtered.push({
-          dealName: precommit.deal.dealToken.name,
-          status: precommit.deal.closed ? 'CLOSED' : 'OPEN',
-          goal: precommit.deal.goal,
-          depositToken: precommit.deal.depositToken,
-          totalCommitments: precommit.deal.numCommits,
-          totalCommited: precommit.deal.totalCommitted
-        });
-      }
-      return filtered;
-    },
-    []
-  );
 };

@@ -38,12 +38,10 @@ export const DealsCreateWindow: React.FC<Props> = ({
       inputs={[
         {
           input: (
-            <TransitionBetweenChildren
-              visibleChildIndex={showCustomTimeSelector ? 1 : 0}
-            >
+            <div className="space-y-4">
               <DetailedTile
                 activeIndex={selectedTimeWindow as number}
-                onClick={(index) => {
+                onClick={(index): void => {
                   handleSelectedTimeWindowChange
                     ? handleSelectedTimeWindowChange(index)
                     : null;
@@ -59,31 +57,38 @@ export const DealsCreateWindow: React.FC<Props> = ({
                   { title: '1 month' },
                   { title: 'Custom' }
                 ]}
+                minimumButtonWidthPx={120}
               />
-              <div className="flex space-x-2">
-                <div className="md:w-1/2">
-                  <InputFieldWithDate
-                    selectedDate={customDate}
-                    onChange={(newDate) => {
-                      if (handleCustomDateChange && newDate) {
-                        handleCustomDateChange(newDate);
-                      }
-                    }}
-                  />
+              <TransitionBetweenChildren
+                visibleChildIndex={showCustomTimeSelector ? 0 : 1}
+              >
+                <div className="flex space-x-2">
+                  <div className="md:w-1/2">
+                    <InputFieldWithDate
+                      selectedDate={customDate}
+                      onChange={(newDate): void => {
+                        if (handleCustomDateChange && newDate) {
+                          handleCustomDateChange(newDate);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="md:w-1/2">
+                    <InputFieldWithTime
+                      value={customTime}
+                      onChange={(e): void => {
+                        if (handleCustomTimeChange) {
+                          handleCustomTimeChange(e.target.value);
+                        }
+                      }}
+                      placeholderLabel="Time"
+                    />
+                  </div>
                 </div>
-                <div className="md:w-1/2">
-                  <InputFieldWithTime
-                    value={customTime}
-                    onChange={(e) => {
-                      if (handleCustomTimeChange) {
-                        handleCustomTimeChange(e.target.value);
-                      }
-                    }}
-                    placeholderLabel="Time"
-                  />
-                </div>
-              </div>
-            </TransitionBetweenChildren>
+                {/* empty child to not show date picker before custom date is selected  */}
+                <></>
+              </TransitionBetweenChildren>
+            </div>
           ),
           label: `Commitment window ends ${
             showCustomTimeSelector ? 'on' : 'in'

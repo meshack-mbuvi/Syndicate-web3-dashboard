@@ -44,7 +44,7 @@ export abstract class ContractBase {
     contractMethod: any,
     onTxConfirm: (txHash: string) => void,
     onTxReceipt: (receipt: TransactionReceipt) => void,
-    onTxFail: (err: any) => void,
+    onTxFail: (err: string) => void,
     value?: string
   ): Promise<void> {
     let gnosisTxHash;
@@ -53,7 +53,7 @@ export abstract class ContractBase {
     await new Promise((resolve, reject) => {
       contractMethod()
         .send({ from: account, gasPrice: gasEstimate, ...(value && { value }) })
-        .on('transactionHash', (transactionHash: any) => {
+        .on('transactionHash', (transactionHash: string) => {
           onTxConfirm(transactionHash);
 
           if (

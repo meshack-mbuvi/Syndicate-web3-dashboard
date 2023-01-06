@@ -1,10 +1,10 @@
-import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { amplitudeLogger, Flow } from '../amplitude';
 import {
-  CREATE_INVESTMENT_CLUB_CLICK,
-  CREATE_COLLECTIVE_CLICK
+  CREATE_COLLECTIVE_CLICK,
+  CREATE_INVESTMENT_CLUB_CLICK
 } from '../amplitude/eventNames';
 import { CTAButton } from '../CTAButton';
 
@@ -30,18 +30,18 @@ const CreateClubButton: React.FC<ICreateClubButton> = ({
   return (
     <CTAButton
       extraClasses="flex justify-center items-center w-full sm:w-auto"
-      onClick={() => {
+      onClick={(): void => {
         creatingClub
-          ? amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
+          ? void amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
               flow: Flow.CLUB_CREATE
             })
-          : amplitudeLogger(CREATE_COLLECTIVE_CLICK, {
+          : void amplitudeLogger(CREATE_COLLECTIVE_CLICK, {
               flow: Flow.COLLECTIVE_CREATE
             });
 
         creatingClub
-          ? router.push(`/clubs/create`)
-          : router.push(`/collectives/create`);
+          ? void router.push(`/clubs/create`)
+          : void router.push(`/collectives/create`);
       }}
     >
       {showIcon ? (

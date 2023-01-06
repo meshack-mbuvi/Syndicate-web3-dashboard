@@ -5,6 +5,7 @@ import { setClubLegalInfo, setMemberLegalInfo } from '@/state/legalInfo';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 // See this issue to find out why yup is imported this way
 // https://github.com/react-hook-form/resolvers/issues/271
+import { getFirstOrString } from '@/utils/stringUtils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { decode } from 'js-base64';
 import Image from 'next/image';
@@ -13,9 +14,9 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
-import { CTAButton, CTAType } from '../CTAButton';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { MBR_REVIEW_DOCS_CLICK } from '../amplitude/eventNames';
+import { CTAButton, CTAType } from '../CTAButton';
 import ArrowDown from '/public/images/arrowDown.svg';
 
 interface FormInputs {
@@ -45,18 +46,18 @@ const schema = (maxDeposit: number) => {
   });
 };
 
-const LegalAgreement: React.FC = () => {
+const LegalAgreement: React.FC<{ memberDeposits: string }> = ({
+  memberDeposits
+}) => {
   const router = useRouter();
 
-  const { clubAddress } = router.query;
+  const clubAddress = getFirstOrString(router.query.clubAddress);
+
   const dispatch = useDispatch();
 
   const {
     legalInfoReducer: {
       clubInfo: { adminName }
-    },
-    connectClubMemberReducer: {
-      connectedMember: { depositAmount }
     },
     erc20TokenSliceReducer: {
       erc20Token,
@@ -68,7 +69,7 @@ const LegalAgreement: React.FC = () => {
   // Check whether form query param exist when page has loaded
   useEffect(() => {
     if (router.isReady && !form) {
-      router.push('/clubs');
+      void router.push('/clubs');
     }
   }, [router, form]);
 
@@ -82,7 +83,7 @@ const LegalAgreement: React.FC = () => {
           )
         );
       } catch (e) {
-        router.push('/clubs');
+        void router.push('/clubs');
       }
     }
   }, [router.isReady, form]);
@@ -94,15 +95,17 @@ const LegalAgreement: React.FC = () => {
     formState: { isValid }
   } = useForm<FormInputs>({
     mode: 'onChange',
-    defaultValues: { depositAmount: depositAmount || '' },
+    defaultValues: { depositAmount: memberDeposits || '' },
     resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
   });
 
   const { memberName = '' } = watch();
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: FormInputs): void => {
     dispatch(setMemberLegalInfo(values));
-    router.push(`/clubs/${clubAddress}/member/legal/sign`);
+    if (clubAddress) {
+      void router.push(`/clubs/${clubAddress}/member/legal/sign`);
+    }
   };
 
   return (
@@ -118,9 +121,9 @@ const LegalAgreement: React.FC = () => {
               name="memberName"
               control={control}
               placeholder="Member’s full name"
-              // @ts-expect-error TS(2322): Type 'boolean | ""' is not assignable to type 'boo... Remove this comment to see the full error message
               showWarning={
-                memberName && memberName?.trim().split(' ').length < 2
+                (memberName && memberName?.trim().split(' ').length < 2) ||
+                false
               }
               warningText="Member name should have first and last names"
             />
@@ -133,7 +136,7 @@ const LegalAgreement: React.FC = () => {
               control={control}
               info="Amount you intend to deposit into the investment club"
               addOnStyles=""
-              defaultValue={depositAmount}
+              defaultValue={memberDeposits}
             />
 
             <TextField
@@ -177,14 +180,19 @@ const LegalAgreement: React.FC = () => {
           <div className="flex flex-col border-t border-gray-erieBlack mt-10">
             <div className="relative flex items-center my-7.5 justify-between">
               <button className="flex items-center py-3.5 text-gray-lightManatee text-base opacity-80 hover:opacity-100 focus:outline-none">
-                <img className="w-5 h-5" src="/images/arrowBack.svg" alt="" />
+                <Image
+                  height={20}
+                  width={20}
+                  src="/images/arrowBack.svg"
+                  alt=""
+                />
                 <span className="ml-2">Back</span>
               </button>
               <CTAButton
                 type={!isValid ? CTAType.DISABLED : CTAType.PRIMARY}
                 buttonType="submit"
-                onClick={() => {
-                  amplitudeLogger(MBR_REVIEW_DOCS_CLICK, {
+                onClick={(): void => {
+                  void amplitudeLogger(MBR_REVIEW_DOCS_CLICK, {
                     flow: Flow.CLUB_LEGAL
                   });
                 }}

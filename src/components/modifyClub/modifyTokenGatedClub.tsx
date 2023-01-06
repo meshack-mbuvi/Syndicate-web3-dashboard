@@ -70,6 +70,7 @@ import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import { amplitudeLogger, Flow } from '../amplitude';
 import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import { getFirstOrString } from '@/utils/stringUtils';
+import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -120,7 +121,6 @@ const ModifyTokenGatedClub: React.FC = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const { clubAddress } = router.query;
   const { isPolygon } = useIsPolygon();
 
   const [openToDepositsUntil, setOpenToDepositsUntil] = useState<Date>(
@@ -128,6 +128,7 @@ const ModifyTokenGatedClub: React.FC = () => {
   );
 
   // Modal
+  const [clubAddress, setClubAddress] = useState<string>();
   const [progressState, setProgressState] = useState<ProgressState>();
   const [progressTitle, setProgressTitle] = useState('');
   const [progressDescription, setProgressDescription] = useState('');
@@ -154,6 +155,7 @@ const ModifyTokenGatedClub: React.FC = () => {
 
   // Settings change
   const [isSubmitDisabled, setSubmitDisabled] = useState(true);
+  const [activeRemixRow, setActiveRemixRow] = useState<number>(0);
 
   const calendarEvent = {
     title: `${name} closes to deposits on Syndicate`,
@@ -167,7 +169,7 @@ const ModifyTokenGatedClub: React.FC = () => {
 
   const isDemoMode = useDemoMode();
 
-  const { pathname, isReady } = router;
+  const { pathname, isReady, query } = router;
 
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress as string,
@@ -175,6 +177,11 @@ const ModifyTokenGatedClub: React.FC = () => {
     activeNetwork,
     account
   );
+
+  useEffect(() => {
+    if (!isReady) return;
+    setClubAddress(query.clubAddress as string);
+  }, [router]);
 
   useEffect(() => {
     if (
@@ -311,7 +318,6 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeModuleDetails?.activeMintModuleReqs.maxTotalSupply;
 
       let _tokencap = getWeiAmount(
-        web3,
         // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         new BigNumber(maxTotalSupplyMintValue).toFixed(),
         18,
@@ -322,7 +328,6 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeNetwork.nativeCurrency.name
       ) {
         _tokencap = getWeiAmount(
-          web3,
           // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           new BigNumber(maxTotalSupplyMintValue)
             .dividedBy(activeNetwork.nativeCurrency.exchangeRate)
@@ -436,14 +441,13 @@ const ModifyTokenGatedClub: React.FC = () => {
       depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
     const _tokenCap = isNativeDeposit
       ? getWeiAmount(
-          web3,
           new BigNumber(maxAmountRaising)
             .multipliedBy(activeNetwork.nativeCurrency.exchangeRate)
             .toFixed(),
           18,
           true
         )
-      : getWeiAmount(web3, new BigNumber(maxAmountRaising).toFixed(), 18, true);
+      : getWeiAmount(new BigNumber(maxAmountRaising).toFixed(), 18, true);
 
     switch (activeRow) {
       case EditRowIndex.Time:
@@ -573,7 +577,6 @@ const ModifyTokenGatedClub: React.FC = () => {
       balances.push(
         _token.decimals
           ? getWeiAmount(
-              web3,
               new BigNumber(_token.quantity).toFixed(),
               _token.decimals,
               true
@@ -702,151 +705,160 @@ const ModifyTokenGatedClub: React.FC = () => {
       </div>
 
       <div className="py-16 transition-all flex flex-col space-y-18">
-        {loading ? (
+        {loading || !isReady || !clubAddress ? (
           <SkeletonLoader width="50vw" height="50vh" />
         ) : (
-          <CollapsibleTable
-            title="Open to deposits"
-            expander={{
-              isExpanded: isOpenToDeposits,
-              setIsExpanded: handleOpenCollective,
-              showSubmitCTA:
-                existingIsOpenToDeposits &&
-                isOpenToDeposits !== existingIsOpenToDeposits
-            }}
-            isSubmitDisabled={isSubmitDisabled}
-            cancelEdit={cancelEdit}
-            disableHeightUpdate={true}
-            handleDisclaimerConfirmation={handleDisclaimerConfirmation}
-            rows={[
-              {
-                title: 'Until',
-                value: (
-                  <div className="flex flex-col space-y-4">
-                    <div>
-                      {getFormattedDateTimeWithTZ(
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        +activeModuleDetails?.activeMintModuleReqs?.endTime *
-                          1000,
-                        'dddd, MMM D, YYYY h:mma zz'
-                      )
-                        .split(' ')
-                        .map((item, index, arr) => {
-                          return (
-                            <span
-                              key={index}
-                              className={`${
-                                index === arr.length - 1 ? 'text-gray-syn4' : ''
-                              }`}
-                            >
-                              {item}{' '}
-                            </span>
-                          );
-                        })}
+          <>
+            <CollapsibleTable
+              title="Open to deposits"
+              expander={{
+                isExpanded: isOpenToDeposits,
+                setIsExpanded: handleOpenCollective,
+                showSubmitCTA:
+                  existingIsOpenToDeposits &&
+                  isOpenToDeposits !== existingIsOpenToDeposits
+              }}
+              isSubmitDisabled={isSubmitDisabled}
+              cancelEdit={cancelEdit}
+              disableHeightUpdate={true}
+              handleDisclaimerConfirmation={handleDisclaimerConfirmation}
+              rows={[
+                {
+                  title: 'Until',
+                  value: (
+                    <div className="flex flex-col space-y-4">
+                      <div>
+                        {getFormattedDateTimeWithTZ(
+                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                          +activeModuleDetails?.activeMintModuleReqs?.endTime *
+                            1000,
+                          'dddd, MMM D, YYYY h:mma zz'
+                        )
+                          .split(' ')
+                          .map((item, index, arr) => {
+                            return (
+                              <span
+                                key={index}
+                                className={`${
+                                  index === arr.length - 1
+                                    ? 'text-gray-syn4'
+                                    : ''
+                                }`}
+                              >
+                                {item}{' '}
+                              </span>
+                            );
+                          })}
+                      </div>
+                      <div className="text-blue">
+                        <AddToCalendar calEvent={calendarEvent} />
+                      </div>
                     </div>
-                    <div className="text-blue">
-                      <AddToCalendar calEvent={calendarEvent} />
-                    </div>
-                  </div>
-                ),
-                edit: {
-                  isEditable: true,
-                  rowIndex: EditRowIndex.Time,
-                  handleDisclaimerConfirmation,
-                  inputField: (
-                    <EditCloseTime
-                      isInErrorState={Boolean(closeTimeError)}
-                      warning={warning}
-                      closeTimeError={closeTimeError}
-                      setCloseTime={setCloseTime}
-                      setCloseDate={setCloseDate}
-                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
-                      dateWarning={openToDepositsUntilWarning}
-                    />
-                  )
-                }
-              },
-              {
-                title: 'Max amount raising',
-                value: (
-                  <div className="flex space-x-2">
-                    <div>{floatedNumberWithCommas(maxAmountRaising)}</div>
-                    <div>
-                      <Image
-                        width={20}
-                        height={20}
-                        src={depositTokenLogo}
-                        alt={depositTokenSymbol}
+                  ),
+                  edit: {
+                    isEditable: true,
+                    rowIndex: EditRowIndex.Time,
+                    handleDisclaimerConfirmation,
+                    inputField: (
+                      <EditCloseTime
+                        isInErrorState={Boolean(closeTimeError)}
+                        warning={warning}
+                        closeTimeError={closeTimeError}
+                        setCloseTime={setCloseTime}
+                        setCloseDate={setCloseDate}
+                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
+                        dateWarning={openToDepositsUntilWarning}
                       />
+                    )
+                  }
+                },
+                {
+                  title: 'Max amount raising',
+                  value: (
+                    <div className="flex space-x-2">
+                      <div>{floatedNumberWithCommas(maxAmountRaising)}</div>
+                      <div>
+                        <Image
+                          width={20}
+                          height={20}
+                          src={depositTokenLogo}
+                          alt={depositTokenSymbol}
+                        />
+                      </div>
+                      <div>{depositTokenSymbol}</div>
                     </div>
-                    <div>{depositTokenSymbol}</div>
-                  </div>
-                ),
-                edit: {
-                  isEditable: true,
-                  rowIndex: EditRowIndex.TotalSupply,
-                  handleDisclaimerConfirmation,
-                  inputField: (
-                    <InputFieldWithToken
-                      depositTokenSymbol={depositTokenSymbol}
-                      depositTokenLogo={depositTokenLogo}
-                      value={String(maxAmountRaising)}
-                      symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
-                      onChange={handleOnChangeAmountRaising}
-                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
-                      isInErrorState={maxAmountRaisingError}
-                      infoLabel={
-                        maxAmountRaisingError
-                          ? maxAmountRaisingError
-                          : `Upper limit of the club’s raise, corresponding to a club token supply of ${
-                              depositTokenSymbol === nativeSymbol
-                                ? floatedNumberWithCommas(
-                                    maxAmountRaising * nativeEchageRate
-                                  )
-                                : floatedNumberWithCommas(maxAmountRaising)
-                            } ${depositTokenSymbol}.`
+                  ),
+                  edit: {
+                    isEditable: true,
+                    rowIndex: EditRowIndex.TotalSupply,
+                    handleDisclaimerConfirmation,
+                    inputField: (
+                      <InputFieldWithToken
+                        depositTokenSymbol={depositTokenSymbol}
+                        depositTokenLogo={depositTokenLogo}
+                        value={String(maxAmountRaising)}
+                        symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
+                        onChange={handleOnChangeAmountRaising}
+                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
+                        isInErrorState={maxAmountRaisingError}
+                        infoLabel={
+                          maxAmountRaisingError
+                            ? maxAmountRaisingError
+                            : `Upper limit of the club’s raise, corresponding to a club token supply of ${
+                                depositTokenSymbol === nativeSymbol
+                                  ? floatedNumberWithCommas(
+                                      maxAmountRaising * nativeEchageRate
+                                    )
+                                  : floatedNumberWithCommas(maxAmountRaising)
+                              } ${depositTokenSymbol}.`
+                        }
+                      />
+                    )
+                  }
+                },
+                {
+                  title: 'Max number of members',
+                  value: maxNumberOfMembers,
+                  edit: {
+                    isEditable: true,
+                    rowIndex: EditRowIndex.MaxMembers,
+                    handleDisclaimerConfirmation,
+                    inputField: (
+                      <InputFieldWithAddOn
+                        value={String(maxNumberOfMembers)}
+                        addOn="Max"
+                        addOnOnClick={() => {
+                          dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
+                          setMaxNumberOfMembersError(null);
+                        }}
+                        onChange={handleOnChangeMaxMembers}
+                      />
+                    )
+                  }
+                },
+                ...(!isPolygon
+                  ? [
+                      {
+                        title: 'Token-gate membership',
+                        value: <TokenGatedModules />,
+                        edit: {
+                          isEditable: true,
+                          rowIndex: EditRowIndex.TokenGate,
+                          handleDisclaimerConfirmation,
+                          inputField: <AllowedMembers />
+                        }
                       }
-                    />
-                  )
-                }
-              },
-              {
-                title: 'Max number of members',
-                value: maxNumberOfMembers,
-                edit: {
-                  isEditable: true,
-                  rowIndex: EditRowIndex.MaxMembers,
-                  handleDisclaimerConfirmation,
-                  inputField: (
-                    <InputFieldWithAddOn
-                      value={String(maxNumberOfMembers)}
-                      addOn="Max"
-                      addOnOnClick={() => {
-                        dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
-                        setMaxNumberOfMembersError(null);
-                      }}
-                      onChange={handleOnChangeMaxMembers}
-                    />
-                  )
-                }
-              },
-              ...(!isPolygon
-                ? [
-                    {
-                      title: 'Token-gate membership',
-                      value: <TokenGatedModules />,
-                      edit: {
-                        isEditable: true,
-                        rowIndex: EditRowIndex.TokenGate,
-                        handleDisclaimerConfirmation,
-                        inputField: <AllowedMembers />
-                      }
-                    }
-                  ]
-                : [])
-            ]}
-            {...{ activeRow, setActiveRow }}
-          />
+                    ]
+                  : [])
+              ]}
+              {...{ activeRow, setActiveRow }}
+            />
+            <RemixAdminTable
+              activeRow={activeRemixRow}
+              setActiveRow={setActiveRemixRow}
+              contractAddress={clubAddress}
+            />
+          </>
         )}
       </div>
 
@@ -980,7 +992,7 @@ const EditCloseTime: React.FC<{
 const TokenGatedModules: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { web3, activeNetwork }
+      web3: { activeNetwork }
     },
     erc20TokenSliceReducer: {
       activeModuleDetails: {
@@ -1033,7 +1045,6 @@ const TokenGatedModules: React.FC = () => {
           return {
             name: chainToken.name,
             quantity: getWeiAmount(
-              web3,
               new BigNumber(_token.quantity).toFixed(),
               chainToken.decimals || 18,
               false
@@ -1075,7 +1086,6 @@ const TokenGatedModules: React.FC = () => {
           return {
             icon: _res.data.logo,
             quantity: getWeiAmount(
-              web3,
               // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
               new BigNumber(quantity).toFixed(),
               _res.data.decimals,

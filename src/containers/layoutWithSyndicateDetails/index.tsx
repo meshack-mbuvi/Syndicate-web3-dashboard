@@ -16,7 +16,7 @@ import {
 } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
@@ -50,6 +50,7 @@ import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
+import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import ActivityView from './activity';
 import { Assets } from './assets';
 import TabButton from './TabButton';
@@ -118,7 +119,7 @@ const LayoutWithSyndicateDetails: FC<{
   }, [web3]);
 
   //  tokens for the connected wallet account
-  const { accountTokens } = useAccountTokens();
+  const { accountTokens } = useConnectedAccountDetails();
 
   const {
     loadingClubDeposits,
@@ -434,125 +435,150 @@ const LayoutWithSyndicateDetails: FC<{
               !isDemoMode ? (
                 <IClubEmptyState activeNetwork={activeNetwork} />
               ) : (
-                <div className="container mx-auto">
-                  {/* Two Columns (Syndicate Details + Widget Cards) */}
-                  {!managerSettingsOpen && (
-                    <BackButton
-                      /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
-                      transform={transform}
-                      isHidden={isDemoMode}
-                    />
-                  )}
-                  <div className="grid grid-cols-12 gap-5">
-                    {/* Left Column */}
-                    <div
-                      className={`col-start-1 col-end-12 ${
-                        managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
-                      }`}
-                    >
+                <>
+                  <div className="container mx-auto">
+                    {/* Two Columns (Syndicate Details + Widget Cards) */}
+                    {!managerSettingsOpen && (
+                      <BackButton
+                        /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
+                        transform={transform}
+                        isHidden={isDemoMode}
+                      />
+                    )}
+                    <div className="grid grid-cols-12 gap-5">
+                      {/* Left Column */}
                       <div
-                        className={`flex items-center justify-between col-end-6 flex-wrap md:col-start-1 ${
+                        className={`col-start-1 col-end-12 ${
                           managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                         }`}
                       >
-                        {/* Club header */}
-                        {!managerSettingsOpen && (
-                          <ClubHeader
-                            {...{
-                              loading,
-                              name,
-                              symbol,
-                              owner,
-                              loadingClubDeposits,
-                              totalDeposits,
-                              managerSettingsOpen,
-                              clubAddress
-                            }}
-                          />
-                        )}
+                        <div
+                          className={`flex items-center justify-between col-end-6 flex-wrap md:col-start-1 ${
+                            managerSettingsOpen
+                              ? 'md:col-end-8'
+                              : 'md:col-end-7'
+                          }`}
+                        >
+                          {/* Club header */}
+                          {!managerSettingsOpen && (
+                            <ClubHeader
+                              {...{
+                                loading,
+                                name,
+                                symbol,
+                                owner,
+                                loadingClubDeposits,
+                                totalDeposits,
+                                managerSettingsOpen,
+                                clubAddress
+                              }}
+                            />
+                          )}
+                        </div>
+
+                        <SyndicateDetails
+                          managerSettingsOpen={managerSettingsOpen}
+                          isOwner={isOwner}
+                        >
+                          <div className="w-full md:hidden mt-5">
+                            {children}
+                          </div>
+                        </SyndicateDetails>
+                      </div>
+                      {/* Right Column */}
+                      <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
+                        <div className="sticky top-33 w-100">{children}</div>
                       </div>
 
-                      <SyndicateDetails
-                        managerSettingsOpen={managerSettingsOpen}
-                        isOwner={isOwner}
-                      >
-                        <div className="w-full md:hidden mt-5">{children}</div>
-                      </SyndicateDetails>
-                    </div>
-                    {/* Right Column */}
-                    <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                      <div className="sticky top-33 w-100">{children}</div>
-                    </div>
-
-                    {!managerSettingsOpen ? (
-                      <div className="mt-16 col-span-12">
-                        <div
-                          ref={subNav}
-                          className={`${
-                            isSubNavStuck ? 'bg-gray-syn8' : 'bg-black'
-                          } sticky top-0 z-25 transition-all edge-to-edge-with-left-inset`}
-                        >
-                          <nav className="flex space-x-10" aria-label="Tabs">
-                            <button
-                              key="assets"
-                              onClick={() => setActiveTab('assets')}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
-                                activeTab == 'assets'
-                                  ? 'border-white text-white'
-                                  : 'border-transparent text-gray-syn4 hover:text-gray-40'
-                              }`}
-                            >
-                              Assets
-                            </button>
-                            {(renderOnDisconnect || isDemoMode) && (
+                      {!managerSettingsOpen ? (
+                        <div className="mt-16 col-span-12">
+                          <div
+                            ref={subNav}
+                            className={`${
+                              isSubNavStuck ? 'bg-gray-syn8' : 'bg-black'
+                            } sticky top-0 z-25 transition-all edge-to-edge-with-left-inset`}
+                          >
+                            <nav className="flex space-x-10" aria-label="Tabs">
                               <button
-                                key="members"
-                                onClick={() => setActiveTab('members')}
-                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
-                                  activeTab == 'members'
+                                key="assets"
+                                onClick={() => setActiveTab('assets')}
+                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
+                                  activeTab == 'assets'
                                     ? 'border-white text-white'
-                                    : 'border-transparent text-gray-syn4 hover:text-gray-400 '
+                                    : 'border-transparent text-gray-syn4 hover:text-gray-40'
                                 }`}
                               >
-                                {`Members (${memberCount})`}
+                                Assets
                               </button>
-                            )}
-                            {(renderOnDisconnect || isDemoMode) && (
-                              <TabButton
-                                active={activeTab === 'activity'}
-                                label="Activity"
-                                onClick={() => setActiveTab('activity')}
-                              />
-                            )}
-                          </nav>
-                          <div
-                            className={`${
-                              isSubNavStuck ? 'hidden' : 'block'
-                            } border-b-1 border-gray-syn7 absolute w-screen right-0`}
-                          ></div>
-                        </div>
+                              {(renderOnDisconnect || isDemoMode) && (
+                                <button
+                                  key="members"
+                                  onClick={() => setActiveTab('members')}
+                                  className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
+                                    activeTab == 'members'
+                                      ? 'border-white text-white'
+                                      : 'border-transparent text-gray-syn4 hover:text-gray-400 '
+                                  }`}
+                                >
+                                  {`Members (${memberCount})`}
+                                </button>
+                              )}
+                              {(renderOnDisconnect || isDemoMode) && (
+                                <TabButton
+                                  active={activeTab === 'activity'}
+                                  label="Activity"
+                                  onClick={() => setActiveTab('activity')}
+                                />
+                              )}
+                            </nav>
+                            <div
+                              className={`${
+                                isSubNavStuck ? 'hidden' : 'block'
+                              } border-b-1 border-gray-syn7 absolute w-screen right-0`}
+                            ></div>
+                          </div>
 
-                        <div className="text-base grid grid-cols-12 gap-y-5">
-                          <div className="col-span-12">
-                            {activeTab == 'assets' && (
-                              <Assets isOwner={isOwner} />
-                            )}
-                            {activeTab == 'members' &&
-                              (renderOnDisconnect || isDemoMode) && (
-                                <div className="-mr-6 sm:mr-auto">
-                                  <ClubTokenMembers isOwner={isOwner} />
-                                </div>
+                          <div className="text-base grid grid-cols-12 gap-y-5">
+                            <div className="col-span-12">
+                              {activeTab == 'assets' && (
+                                <Assets isOwner={isOwner} />
                               )}
-                            {activeTab == 'activity' &&
-                              (renderOnDisconnect || isDemoMode) && (
-                                <ActivityView isOwner={isOwner} />
-                              )}
+                              {activeTab == 'members' &&
+                                (renderOnDisconnect || isDemoMode) && (
+                                  <div className="-mr-6 sm:mr-auto">
+                                    <ClubTokenMembers isOwner={isOwner} />
+                                  </div>
+                                )}
+                              {activeTab == 'activity' &&
+                                (renderOnDisconnect || isDemoMode) && (
+                                  <ActivityView isOwner={isOwner} />
+                                )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </div>
-                </div>
+                  {!managerSettingsOpen && (
+                    <div className={`${isOwner ? 'pt-20' : ''}`}>
+                      <div
+                        className={`${
+                          isOwner ? 'pt-20 border-t border-gray-syn7' : ''
+                        }`}
+                      >
+                        <div className="mx-auto container">
+                          <RemixContractsContainer
+                            isAdmin={isOwner}
+                            name={name}
+                            entityType={'club'}
+                            contractAddress={clubAddress ?? ''}
+                            activeNetwork={activeNetwork}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </ErrorBoundary>

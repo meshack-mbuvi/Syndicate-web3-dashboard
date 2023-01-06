@@ -23,7 +23,7 @@ const useAdminClubs = (): {
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
+  const accountAddress = useMemo(() => account?.toLocaleLowerCase(), [account]);
   const [adminClubs, setAdminClubs] = useState<IClubERC20[]>([]);
 
   // Retrieve syndicates that I manage

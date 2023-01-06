@@ -17,6 +17,7 @@ interface Props {
   showCopiedState: boolean;
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
+  showBanner?: boolean;
   showConfettiSuccess?: boolean;
   borderColor?: string;
   accentColor?: string;
@@ -33,6 +34,7 @@ const CopyLink: FC<Props> = ({
   showCopiedState,
   creatingSyndicate = false,
   syndicateSuccessfullyCreated = false,
+  showBanner = true,
   showConfettiSuccess = false,
   borderColor = 'border-gray-syn6',
   accentColor = 'green',
@@ -79,7 +81,7 @@ const CopyLink: FC<Props> = ({
 
   // token-gated banner
   const showTokenGatedBanner =
-    isTokenGated && isReady && isClubMixinGuardTreatmentOn;
+    isTokenGated && showBanner && isReady && isClubMixinGuardTreatmentOn;
 
   // content to display after completion of the syndicate creation process.
   const defaultContent = (

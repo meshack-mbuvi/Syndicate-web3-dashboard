@@ -3,7 +3,14 @@ import {
   EditButton,
   SubmitContent
 } from '@/components/collectives/edit/editables';
-import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+  ReactElement
+} from 'react';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
 import { useDispatch } from 'react-redux';
@@ -12,7 +19,7 @@ import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 const transitionSettings = 'transition-all duration-700';
 
 interface Props {
-  title: string;
+  title: string | ReactElement;
   subtitle?: string;
   isExpandable?: boolean;
   rows: {
@@ -33,25 +40,27 @@ interface Props {
     showSubmitCTA?: boolean;
     setIsExpanded?: Dispatch<SetStateAction<boolean>>;
   };
+  activeRow: number;
+  setActiveRow: (arg: number) => void;
   extraClasses?: string;
   showForm?: boolean;
-  activeRow?: number;
-  setActiveRow?: (arg: number) => void;
   setEditGroupFieldClicked?: (arg: boolean) => void;
   handleDisclaimerConfirmation?: () => void;
   cancelEdit?: any;
   switchRowIndex?: number;
   isSubmitDisabled?: boolean;
   disableHeightUpdate?: boolean;
+  isTableHighlightingActive?: boolean;
+  topRowDetails?: React.ReactNode;
 }
 
 export const CollapsibleTable: React.FC<Props> = ({
   title,
   rows,
   subtitle,
-  extraClasses = '',
   activeRow,
   setActiveRow,
+  extraClasses = '',
   setEditGroupFieldClicked,
   handleDisclaimerConfirmation,
   expander: {
@@ -63,7 +72,9 @@ export const CollapsibleTable: React.FC<Props> = ({
   cancelEdit,
   switchRowIndex,
   isSubmitDisabled,
-  disableHeightUpdate = false
+  disableHeightUpdate = false,
+  isTableHighlightingActive = true,
+  topRowDetails
 }) => {
   const rowsRef = useRef<HTMLInputElement>(null);
   const editRef = useRef<HTMLInputElement>(null);
@@ -99,22 +110,26 @@ export const CollapsibleTable: React.FC<Props> = ({
       {/* Top row */}
       <div
         className={`flex justify-between items-center ${
-          activeRow && 'opacity-50'
+          isTableHighlightingActive && activeRow ? 'opacity-50' : ''
         }`}
       >
         <div className="flex flex-col">
           <H3>{title}</H3>
           {subtitle && <B3 extraClasses="text-gray-syn4">{subtitle}</B3>}
+          {topRowDetails && <>{topRowDetails}</>}
         </div>
         {isExpandable && (
           <Switch
             isOn={isExpanded}
             type={SwitchType.EXPLICIT}
+            extraClasses="flex-shrink-0"
             onClick={() => {
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setActiveRow(showSubmitCTA ? 0 : switchRowIndex);
-              // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-              dispatch(setActiveRowIdx(showSubmitCTA ? 0 : switchRowIndex));
+              if (isTableHighlightingActive) {
+                // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
+                dispatch(setActiveRowIdx(showSubmitCTA ? 0 : switchRowIndex));
+              }
               // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
               setIsExpanded(!isExpanded);
               setEditGroupFieldClicked && setEditGroupFieldClicked(false);
@@ -128,7 +143,6 @@ export const CollapsibleTable: React.FC<Props> = ({
           handleEdit={handleDisclaimerConfirmation}
           cancelEdit={() => {
             cancelEdit();
-            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
             setActiveRow(0);
             dispatch(setActiveRowIdx(0));
           }}
@@ -141,12 +155,14 @@ export const CollapsibleTable: React.FC<Props> = ({
       {/* Rows */}
       <div
         ref={rowsRef}
-        className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
+        className={`space-y-10 transition-all duration-500 overflow-hidden ${
+          isExpanded ? '' : 'hidden'
+        } ${extraClasses}`}
         style={{
           maxHeight: `${
             disableHeightUpdate ? '100%' : isExpanded ? maxHeight : '0px'
           }`,
-          opacity: `${isExpanded ? '100' : '0'}`
+          opacity: `${isExpanded || !isTableHighlightingActive ? '100' : '0'}`
         }}
       >
         {rows.map((row, index) => {
@@ -165,7 +181,7 @@ export const CollapsibleTable: React.FC<Props> = ({
             <div
               key={index}
               className={`flex flex-col sm:grid sm:grid-cols-12 sm:gap-5 group ${
-                activeRow && activeRow !== rowIndex
+                isTableHighlightingActive && activeRow && activeRow !== rowIndex
                   ? 'opacity-50'
                   : 'opacity-100'
               } ${transitionSettings}`}
@@ -189,7 +205,6 @@ export const CollapsibleTable: React.FC<Props> = ({
                     handleEdit={handleDisclaimerConfirmation}
                     cancelEdit={() => {
                       cancelEdit();
-                      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                       setActiveRow(0);
                     }}
                   />

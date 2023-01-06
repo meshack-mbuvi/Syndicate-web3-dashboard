@@ -2,7 +2,7 @@ import { ShuffleIcon } from '@/components/icons/shuffle';
 import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 // import { TextArea } from '@/components/inputs/simpleTextArea';
 import { useState } from 'react';
-import { CreateFlowStepTemplate } from '..';
+import { CreateFlowStepTemplate, CreatFlowStepTemplateIconType } from '..';
 
 interface Props {
   name?: string;
@@ -60,7 +60,8 @@ export const DealsCreateAbout: React.FC<Props> = ({
             />
           ),
           label: 'Deal title',
-          info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.'
+          info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.',
+          iconType: CreatFlowStepTemplateIconType.EYE_OPEN
         } /* ,
         {
           input: (

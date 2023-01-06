@@ -7,6 +7,10 @@ interface Props {
   disabledIndices?: number[];
   customClasses?: string;
   onClick: (selectedIndex: number) => void;
+  transitionDurationOverrideClass?: string;
+  minimumButtonWidthPx?: number;
+  animateHighlightRing?: boolean;
+  alwaysUseHorizontalLayout?: boolean;
 }
 
 export const DetailedTile: React.FC<Props> = ({
@@ -14,81 +18,106 @@ export const DetailedTile: React.FC<Props> = ({
   activeIndex,
   disabledIndices,
   customClasses,
-  onClick
+  onClick,
+  transitionDurationOverrideClass = 'duration-500',
+  minimumButtonWidthPx = 240,
+  animateHighlightRing = true,
+  alwaysUseHorizontalLayout = false
 }) => {
-  const buttonRefs = useRef([]);
-  const [highlightDimensions, setHighlightDimensions] = useState({
-    x: 0,
-    y: 0,
-    height: 0
-  });
-  const [highlightTransitionStyles, setHighlightTransitionStyles] =
-    useState('');
+  const windowSize = useWindowSize();
+  const containerRef =
+    useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
+  const buttonRefs = useRef<HTMLDivElement[]>([]);
+  const [highlightRightOffset, setHighlightRightOffset] = useState(0);
+  const [highlightTopOffset, setHighlightTopOffset] = useState(0);
+  const [highlightHeight, setHighlightHeight] = useState<number | null>(0);
+  const initialTransitionClasses = `transition-all ${transitionDurationOverrideClass}`;
+  const [transitionClasses, setTransitionClasses] = useState(
+    initialTransitionClasses
+  );
+  const [useHorizontalLayout, setUseHorizontalLayout] = useState(
+    alwaysUseHorizontalLayout ? true : false
+  );
 
-  const highlightsContainer = useRef(null);
-
-  // The width at which layout changes
-  const mobileBreakpoint = 320;
-
-  // Manually calculated responsive styles:
-  // Ideally we should use Tailwind screen presets, but this case
-  // needed a more finely calculated width which couldn't be done with
-  // presets (i.e responsivelyCalculatedWidth)
-  const { width } = useWindowSize();
-  const responsivelyCalculatedWidth = `${
-    width > mobileBreakpoint ? 100 / options.length : 100
-  }%`;
-  const responsivelyCalculatedDividers = `${
-    width > mobileBreakpoint ? 'divide-x' : 'divide-y'
-  }`;
-  const responsivelyCalculatedContainerPadding = `${
-    width > mobileBreakpoint ? 'py-4' : 'pb-4 px-4'
-  }`;
-  const responsivelyCalculatedButtonPadding = `${
-    width <= mobileBreakpoint && 'pt-4'
-  }`;
-  const responsivelyCalculatedFlex = `${
-    width <= mobileBreakpoint && 'flex-col'
-  }`;
-
-  // Calculate the height + left and right offset for the blue highlight
-  const calculateHighlightDimensions = (buttonIndex: number) => {
-    // Calculate button dimensions
-    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
-    const buttonX = buttonRefs.current[buttonIndex].getBoundingClientRect().x;
-    // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
-    const buttonY = buttonRefs.current[buttonIndex].getBoundingClientRect().y;
-    const buttonHeight =
-      // @ts-expect-error TS(2339): Property 'getBoundingClientRect' does not exist on... Remove this comment to see the full error message
-      buttonRefs.current[buttonIndex].getBoundingClientRect().height;
-
-    // Calculate button container dimensions
-    // @ts-expect-error TS(2531): Object is possibly 'null'.
-    const containerX = highlightsContainer.current.getBoundingClientRect().x;
-    // @ts-expect-error TS(2531): Object is possibly 'null'.
-    const containerY = highlightsContainer.current.getBoundingClientRect().y;
-
-    return {
-      x: buttonX - containerX,
-      y: buttonY - containerY,
-      height: buttonHeight
-    };
+  // Helper functions
+  const turnOnAnimations = () => {
+    setTransitionClasses(initialTransitionClasses);
+  };
+  const turnOffAnimations = () => {
+    setTransitionClasses('');
+  };
+  const calculateAndSetHighlightDimensions = () => {
+    const rightContainerPosition: number = containerRef.current
+      ? windowSize.width - containerRef.current?.getBoundingClientRect().right
+      : 0;
+    const rightButtonPosition: number =
+      activeIndex !== undefined && buttonRefs.current[activeIndex]
+        ? windowSize.width -
+          buttonRefs.current[activeIndex].getBoundingClientRect().right
+        : 0;
+    setHighlightRightOffset(rightButtonPosition - rightContainerPosition);
+    const topContainerPosition: number = containerRef.current
+      ? containerRef.current.getBoundingClientRect().y
+      : 0;
+    const topButtonPosition: number =
+      activeIndex !== undefined
+        ? buttonRefs.current[activeIndex].getBoundingClientRect().y
+        : topContainerPosition;
+    setHighlightTopOffset(topButtonPosition - topContainerPosition);
+    const buttonHeight: number | null =
+      activeIndex !== undefined
+        ? buttonRefs.current[activeIndex].getBoundingClientRect().height
+        : null;
+    setHighlightHeight(buttonHeight);
   };
 
   useEffect(() => {
-    if (activeIndex !== null && activeIndex !== undefined) {
-      setHighlightDimensions(calculateHighlightDimensions(activeIndex));
+    // When the window is resizing we should instantly
+    // readjust the highlight ring, i.e without animation
+    turnOffAnimations();
+    calculateAndSetHighlightDimensions();
+
+    // If each button is getting too small we should change
+    // the layout
+    const numberOfButtons = options.length;
+    const containerWidth: number | undefined = containerRef.current
+      ? containerRef.current.getBoundingClientRect().width
+      : undefined;
+    if (
+      containerWidth !== undefined &&
+      containerWidth / numberOfButtons < minimumButtonWidthPx
+    ) {
+      // buttons are shrinking too much
+      if (!alwaysUseHorizontalLayout) {
+        // check if prohibited from changing the layout
+        setUseHorizontalLayout(false);
+      }
+    } else {
+      // use regular layout
+      setUseHorizontalLayout(true);
     }
-    setHighlightTransitionStyles('');
-  }, [options, width]);
+  }, [windowSize.width]);
+
+  useEffect(() => {
+    calculateAndSetHighlightDimensions();
+  }, [activeIndex, options]);
 
   const renderedButtons = options.map((option, index) => (
     <React.Fragment key={index}>
       <button
-        className={`h-full transition-opacity border-gray-syn6 inline-block text-center ${
-          disabledIndices?.includes(index) && 'cursor-not-allowed'
-        } ${responsivelyCalculatedButtonPadding} ${responsivelyCalculatedContainerPadding}`}
-        style={{ width: responsivelyCalculatedWidth }}
+        className={`relative z-8 block h-full transition-opacity text-center p-4 ${
+          animateHighlightRing
+            ? 'border-gray-syn6'
+            : `border ${
+                activeIndex === index
+                  ? 'border-blue-neptune'
+                  : 'border-transparent'
+              }`
+        }`}
+        style={{
+          width: `${useHorizontalLayout ? 100 / options.length : '100'}%`,
+          borderRadius: '0.3125rem'
+        }}
         // Add each button in a list of refs
         ref={(ref) => {
           // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
@@ -100,11 +129,11 @@ export const DetailedTile: React.FC<Props> = ({
         onClick={() => {
           if (!disabledIndices || !disabledIndices.includes(index)) {
             onClick(index);
-            setHighlightDimensions(calculateHighlightDimensions(index));
-            setHighlightTransitionStyles('transition-all duration-500');
+            turnOnAnimations();
           }
         }}
       >
+        {/* Icon */}
         {option.icon && (
           <img
             src={option.icon}
@@ -114,6 +143,8 @@ export const DetailedTile: React.FC<Props> = ({
             }`}
           />
         )}
+
+        {/* Title */}
         <div
           className={`text-sm mb-0.5 ${
             !option.icon && !option.subTitle && 'text-base'
@@ -121,49 +152,90 @@ export const DetailedTile: React.FC<Props> = ({
         >
           {option.title}
         </div>
+
+        {/* Subtitle */}
         {option.subTitle && (
           <div className="text-xs text-gray-syn4">{option.subTitle}</div>
         )}
       </button>
+
+      {/* Border divider */}
+      {index !== options.length - 1 && options.length > 1 && (
+        <>
+          {useHorizontalLayout ? (
+            <div
+              className="flex-grow relative z-0 py-4"
+              style={{
+                width: '0px',
+                left: '-0.5px'
+              }}
+            >
+              <div
+                className="bg-gray-syn6"
+                style={{
+                  width: '1px',
+                  height: '100%'
+                }}
+              ></div>
+            </div>
+          ) : (
+            <div
+              className="bg-red-500 relative z-0 px-4"
+              style={{
+                height: '0px',
+                top: '-0.5px'
+              }}
+            >
+              <div
+                className="bg-gray-syn6"
+                style={{
+                  width: '100%',
+                  height: '1px'
+                }}
+              ></div>
+            </div>
+          )}
+        </>
+      )}
     </React.Fragment>
   ));
 
   return (
     <div
+      ref={containerRef}
       className={`${customClasses} relative w-full min-h-32 border border-gray-syn6`}
       style={{ borderRadius: '0.3125rem' }}
     >
-      {/* Options */}
+      {/* Buttons */}
       <div
-        className={`h-full border-gray-syn6 relative transform ${responsivelyCalculatedDividers}`}
+        className={`flex ${
+          useHorizontalLayout ? '' : 'flex-col'
+        } h-full border-gray-syn6 relative`}
       >
         {renderedButtons}
       </div>
 
-      {/* Blue highlight ring */}
-      <div
-        ref={highlightsContainer}
-        className={`absolute w-full h-full left-0 top-0 ${responsivelyCalculatedFlex} ${
-          activeIndex === null ? 'opacity-0' : 'opacity-100'
-        }`}
-        style={{ pointerEvents: 'none' }}
-      >
+      {/* Highlight ring */}
+      {animateHighlightRing && (
         <div
-          className={`absolute border border-blue shadow-lg shadow-blue block ${highlightTransitionStyles}`}
+          className={`absolute border pointer-events-none border-blue-neptune ${transitionClasses}`}
           style={{
-            width: responsivelyCalculatedWidth,
             borderRadius: '0.3125rem',
-            left: `calc(${highlightDimensions.x}px)`,
-            top: `calc(${highlightDimensions.y}px - ${
-              width > mobileBreakpoint ? `0.125rem` : '0rem'
-            })`,
-            height: `calc(${highlightDimensions.height}px + ${
-              width > mobileBreakpoint ? `0.2rem` : '0.125rem'
-            })`,
-            pointerEvents: 'none'
+            top: `calc(${highlightTopOffset}px + -1px)`,
+            right: `calc(${highlightRightOffset}px + -1px)`,
+            width: `calc(${
+              useHorizontalLayout ? 100 / options.length : '100'
+            }% + 1px)`,
+            height: `calc(${
+              useHorizontalLayout
+                ? '100%'
+                : highlightHeight
+                ? `${highlightHeight}px`
+                : `${100 / options.length}%`
+            } + 1px)`
           }}
-        />
-      </div>
+        ></div>
+      )}
     </div>
   );
 };

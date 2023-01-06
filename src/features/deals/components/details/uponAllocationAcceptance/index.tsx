@@ -34,7 +34,7 @@ const UponAllocationAcceptance: React.FC<UponAllocationAcceptanceProps> = ({
           </div>
         </div>
         <div className="flex py-6 px-4.5 items-center justify-between">
-          <B3 extraClasses="text-gray-syn3 w-1/4">Recieve</B3>
+          <B3 extraClasses="text-gray-syn3 w-1/4">Receive</B3>
           <div className="flex items-center justify-start space-x-2 w-3/4">
             <Image
               src={dealTokenLogo}

@@ -5,7 +5,7 @@ import React from 'react';
 
 interface IProcessingClaimModal {
   showModal: boolean;
-  closeModal: any;
+  closeModal: () => void;
   successfulClaim: boolean;
   transactionHash: string;
   claimFailed: boolean;

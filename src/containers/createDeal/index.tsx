@@ -8,7 +8,7 @@ import { DealWindow } from '@/containers/createDeal/window';
 import { DealParticipationToken } from '@/containers/createDeal/participationToken';
 import { ReviewDealDetails } from '@/containers/createDeal/review';
 import Modal, { ModalStyle } from '@/components/modal';
-import { DealsCreateComplete } from '@/features/deals/components/create/complete';
+import { DealsOverviewSuccess } from '@/features/deals/components/create/success';
 import { UpArrowWithLine } from '@/components/icons/upArrowWithLine';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
@@ -33,6 +33,7 @@ export const CreateDealContainer: React.FC = () => {
     handleBack,
     handleCreateDeal,
     setShowModal,
+    resetCreateFlowState,
     showErrorModal,
     showBackButton,
     processingModalTitle,
@@ -72,7 +73,11 @@ export const CreateDealContainer: React.FC = () => {
         hideFooter: true,
         customClasses: 'h-screen items-center',
         activeIndex: currentStep,
-        handleExitClick: () => router.push('/')
+        handleExitClick: (): void => {
+          router.push('/');
+          // reset state
+          resetCreateFlowState && resetCreateFlowState();
+        }
       }}
     >
       <div className="w-full container mx-auto flex items-center justify-center">
@@ -81,6 +86,7 @@ export const CreateDealContainer: React.FC = () => {
             visibleChildIndex={currentStep ? currentStep : 0}
             transitionType={TransitionBetweenChildrenType.VERTICAL_MOVE}
             extraClasses="h-full"
+            transitionDurationClassOverride="duration-800"
           >
             <AboutDeal />
             <DealGoal />
@@ -89,8 +95,10 @@ export const CreateDealContainer: React.FC = () => {
             <ReviewDealDetails />
             <div className="space-y-16 flex flex-col justify-center items-center">
               {/* success title  */}
-              <H1 extraClasses="text-white">Your deal is live!</H1>
-              <DealsCreateComplete
+              <H1 regular extraClasses="text-white">
+                Your deal is live!
+              </H1>
+              <DealsOverviewSuccess
                 {...{
                   dealName: name ? name : '',
                   dealDetails: /* details ? details :  */ '',

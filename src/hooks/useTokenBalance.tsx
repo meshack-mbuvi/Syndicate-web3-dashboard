@@ -26,9 +26,7 @@ export const useERC20TokenBalance = (
         .balanceOf(account.toString())
         .call({ from: account })
         .then((balance: any) => {
-          setErc20Balance(
-            getWeiAmount(web3, balance, depositTokenDecimals, false)
-          );
+          setErc20Balance(getWeiAmount(balance, depositTokenDecimals, false));
         })
         .catch(() => {
           // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message

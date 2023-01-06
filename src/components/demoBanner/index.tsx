@@ -1,7 +1,7 @@
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDetails } from '@/state/erc20token/slice';
-import { mockDepositERC20Token, mockActiveERC20Token } from '@/utils/mockdata';
+import { mockActiveERC20Token, mockDepositERC20Token } from '@/utils/mockdata';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,15 +22,15 @@ const DemoBanner: React.FC = () => {
 
   const isDemoMode = useDemoMode();
 
-  const handleSwitchClubStatus = () => {
+  const handleSwitchClubStatus = (): void => {
     const mockData = isOpenForDeposits
       ? mockActiveERC20Token
       : mockDepositERC20Token;
     dispatch(setERC20TokenDetails(mockData));
   };
 
-  const handleSwitchClubViewing = () => {
-    router.push({
+  const handleSwitchClubViewing = (): void => {
+    void router.push({
       pathname: `/clubs/demo/${isManager ? '' : 'manage'}`,
       query: {
         status: isOpenForDeposits ? 'open' : 'active',
@@ -46,7 +46,7 @@ const DemoBanner: React.FC = () => {
           <div className="flex items-center self-center">
             <button
               className="border border-black rounded-4xl ml-2 my-2 flex items-center px-4 py-2"
-              onClick={() => router.push('/clubs')}
+              onClick={(): Promise<boolean> => router.push('/clubs')}
             >
               <div className="flex flex-row space-x-1">
                 <img

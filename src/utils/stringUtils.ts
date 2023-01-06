@@ -15,8 +15,11 @@ export const removeSubstring = (
   );
 };
 
-export const getFirstOrString = (param: string | string[] | undefined) => {
+export const getFirstOrString = (
+  param: string | string[] | undefined
+): string | undefined => {
   if (!param) return;
+
   if (typeof param === 'string') {
     return param;
   }

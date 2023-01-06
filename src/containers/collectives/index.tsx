@@ -23,6 +23,7 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import TwoColumnLayout from '../twoColumnLayout';
 import { CollectiveHeader } from './shared/collectiveHeader';
 
@@ -268,6 +269,11 @@ const MemberSidePanel: React.FC<{ permissionType: any }> = ({
 
 const Collective: React.FC = () => {
   const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+  const {
     collectiveDetails: { collectiveName, collectiveAddress },
     collectiveDetailsLoading
   } = useERC721Collective();
@@ -373,6 +379,31 @@ const Collective: React.FC = () => {
           ) : (
             <MemberSidePanel {...{ permissionType }} />
           )
+        }
+        fullComponent={
+          <div
+            className={`${
+              permissionType === PermissionType.ADMIN
+                ? 'container pt-20 mx-auto'
+                : ''
+            }`}
+          >
+            <div
+              className={`${
+                permissionType === PermissionType.ADMIN
+                  ? 'border-t border-gray-syn7 pt-20'
+                  : ''
+              }`}
+            >
+              <RemixContractsContainer
+                isAdmin={permissionType == PermissionType.ADMIN}
+                name={collectiveName}
+                entityType={'collective'}
+                contractAddress={collectiveAddress ?? ''}
+                activeNetwork={activeNetwork}
+              />
+            </div>
+          </div>
         }
       />
     </CollectivesContainer>

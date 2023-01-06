@@ -17,19 +17,23 @@ import {
 interface Props {
   dealName: string;
   tokenAmount: number;
-  tokenLogo: string;
-  tokenSymbol: string;
-  address: string;
-  ensName: string;
+  dealTokenSymbol: string;
+  depositTokenLogo: string;
+  depositTokenSymbol: string;
+  walletAddress: string;
+  toggleModal: () => void;
+  ensName?: string;
 }
 
 const DealPrecommitCompleteModal: React.FC<Props> = ({
   dealName,
   tokenAmount,
-  tokenLogo,
-  tokenSymbol,
-  address,
-  ensName
+  dealTokenSymbol,
+  depositTokenLogo,
+  depositTokenSymbol,
+  walletAddress,
+  toggleModal,
+  ensName = ''
 }) => {
   const coinSideWidth = '290px';
   return (
@@ -43,6 +47,8 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
       overflowXScroll={false}
       overflowYScroll={false}
       showCloseButton={false}
+      outsideOnClick={true}
+      closeModal={toggleModal}
     >
       <div className="space-y-8 relative overflow-visible">
         {/* Flying coins */}
@@ -108,11 +114,15 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
               <div className="w-2/3">
                 <div className="flex space-x-2 items-center">
                   <H4>{formatInputValueWithCommas(String(tokenAmount))}</H4>
-                  <img src={tokenLogo} alt="Token" className="w-5 h-5" />
-                  <B3>{tokenSymbol}</B3>
+                  <img
+                    src={depositTokenLogo || '/images/token-gray-4.svg'}
+                    alt="Token"
+                    className="w-5 h-5"
+                  />
+                  <B3>{depositTokenSymbol}</B3>
                 </div>
                 <DisplayAddressWithENS
-                  address={address}
+                  address={walletAddress}
                   name={ensName}
                   onlyShowOneOfNameOrAddress={true}
                   imageSize={AddressImageSize.SMALL}
@@ -135,30 +145,41 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
         </div>
         <div className="p-8 bg-gray-syn8 rounded-2.5xl">
           <B3 extraClasses="text-gray-syn4">If your allocation is accepted</B3>
-          <H4 extraClasses="mb-4.5 mt-1">You will recieve mirror tokens</H4>
+          <H4 extraClasses="mb-4.5 mt-1">You will receive mirror tokens</H4>
 
           {/* Table */}
           <div className="divide-y rounded-custom border border-gray-syn6">
             <div className="flex items-center p-5">
               <B3 extraClasses="flex-grow text-gray-syn3">Transfer</B3>
               <div className="w-2/3 flex space-x-2 items-center">
-                <img src={tokenLogo} alt="Token" className="w-5 h-5" />
-                <B2>{tokenSymbol}</B2>
+                <img
+                  src={depositTokenLogo || '/images/token-gray-4.svg'}
+                  alt="Token"
+                  className="w-5 h-5"
+                />
+                <B2>{depositTokenSymbol}</B2>
                 <B3 extraClasses="text-gray-syn4">your allocation</B3>
               </div>
             </div>
             <div className="flex p-5 items-center border-gray-syn6">
-              <B3 extraClasses="flex-grow text-gray-syn3">Recieve</B3>
+              <B3 extraClasses="flex-grow text-gray-syn3">Receive</B3>
               <div className="w-2/3 flex space-x-2 items-center">
-                <img src="images/logo.svg" alt="Token" className="w-5 h-5" />
-                <B2>{tokenSymbol}</B2>
+                {/* TODO [WINGZ]: verify that logo.svg works sometimes logo looks broken */}
+                <img
+                  src={'/images/logo.svg' || '/images/token-gray-4.svg'}
+                  alt="Token"
+                  className="w-5 h-5"
+                />
+                <B2>{dealTokenSymbol}</B2>
                 <B3 extraClasses="text-gray-syn4">deal tokens</B3>
               </div>
             </div>
           </div>
         </div>
 
-        <CTAButton fullWidth>Return to deal page</CTAButton>
+        <CTAButton fullWidth onClick={toggleModal}>
+          Return to deal page
+        </CTAButton>
       </div>
     </Modal>
   );

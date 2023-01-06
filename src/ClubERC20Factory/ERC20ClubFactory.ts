@@ -116,10 +116,8 @@ export class ERC20ClubFactory extends ContractBase {
 
     if (tokenGateOption == TokenGateOption.RESTRICTED) {
       const ordered = validateAndOrderTokenRules(tokenRules);
-      const { tokenGateTokens, tokenGateTokenBalances } = unzipTokenRules(
-        ordered,
-        this.web3
-      );
+      const { tokenGateTokens, tokenGateTokenBalances } =
+        unzipTokenRules(ordered);
       if (
         tokenGateTokens.length > 0 &&
         tokenGateTokenBalances.length > 0 &&
@@ -193,9 +191,9 @@ export class ERC20ClubFactory extends ContractBase {
   public async create(
     account: string,
     clubParams: ClubMixinParams,
-    onTxConfirm: (transactionHash: any) => void,
-    onTxReceipt: (receipt: any) => void,
-    onTxFail: (err: any) => void
+    onTxConfirm: (transactionHash: string) => void,
+    onTxReceipt: (receipt: TransactionReceipt) => void,
+    onTxFail: (err: string) => void
   ): Promise<void> {
     const { clubTokenName, clubTokenSymbol, endTime } = clubParams;
 

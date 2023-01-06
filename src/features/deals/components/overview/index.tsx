@@ -1,7 +1,8 @@
 import { AddressLayout } from '@/components/shared/ensAddress';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
 import { B2, H1, H2 } from '@/components/typography';
-
+import { getWeiAmount } from '@/utils/conversions';
+import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 interface Props {
   dealName: string;
   dealDetails: string;
@@ -11,6 +12,7 @@ interface Props {
   commitmentGoalAmount: string;
   commitmentGoalTokenSymbol: string;
   commitmentGoalTokenLogo: string;
+  isExecutingDeal?: boolean;
 }
 
 export const DealsOverview: React.FC<Props> = ({
@@ -21,7 +23,8 @@ export const DealsOverview: React.FC<Props> = ({
   destinationAddress,
   commitmentGoalAmount,
   commitmentGoalTokenSymbol,
-  commitmentGoalTokenLogo
+  commitmentGoalTokenLogo,
+  isExecutingDeal = false
 }) => {
   return (
     <div>
@@ -34,7 +37,9 @@ export const DealsOverview: React.FC<Props> = ({
       {/* Destination & goal */}
       <div className="md:flex md:space-x-14 space-y-4 md:space-y-0 mt-4">
         <div>
-          <B2 extraClasses="text-gray-syn4 mb-1">Destination</B2>
+          <B2 extraClasses="text-gray-syn4 mb-1">
+            {isExecutingDeal ? 'Recipient' : 'Destination'}
+          </B2>
           <DisplayAddressWithENS
             name={ensName}
             address={destinationAddress}
@@ -43,14 +48,20 @@ export const DealsOverview: React.FC<Props> = ({
           />
         </div>
         <div>
-          <B2 extraClasses="text-gray-syn4 mb-1">Goal</B2>
+          <B2 extraClasses="text-gray-syn4 mb-1">
+            {isExecutingDeal ? 'Transfered' : 'Goal'}
+          </B2>
           <div className="flex items-center space-x-1">
             <img
               src={commitmentGoalTokenLogo}
               alt="Token logo"
               className="w-6 h-6"
             />
-            <H2>{commitmentGoalAmount}</H2>
+            <H2>
+              {formatInputValueWithCommas(
+                getWeiAmount(commitmentGoalAmount, 6, false)
+              )}
+            </H2>
             <B2 extraClasses="text-gray-syn4">{commitmentGoalTokenSymbol}</B2>
           </div>
         </div>

@@ -185,11 +185,11 @@ const useUtilityNFT: any = () => {
         membershipToken,
         totalClaims: balance,
         nativePrice,
-        price: getWeiAmount(web3, nativePrice, 18, false),
+        price: getWeiAmount(nativePrice, 18, false),
         priceUSD: parseFloat(
           (
             parseFloat(String(tokenPrice)) *
-            parseFloat(String(getWeiAmount(web3, nativePrice, 18, false)))
+            parseFloat(String(getWeiAmount(nativePrice, 18, false)))
           ).toFixed(2)
         ),
         membershipPasses: memberships

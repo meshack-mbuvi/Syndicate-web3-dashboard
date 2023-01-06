@@ -32,6 +32,7 @@ export const ReviewDealDetails: React.FC = () => {
     destinationAddressError,
     isEditingField,
     isReviewStep,
+    isCreateDealDisabled,
     handleNameChange,
     // handleDetailsChange,
     handleCommitmentGoalChange,
@@ -67,15 +68,18 @@ export const ReviewDealDetails: React.FC = () => {
     >
       <NetworkComponent
         account={account}
-        disabled={false}
+        disabled={!!isCreateDealDisabled}
         handleLaunch={handleLaunch}
         handleConnectWallet={handleConnectWallet}
         contract={ContractMapper.ERC20DealFactory}
         args={{
           dealParams: {
-            dealName: name,
-            dealTokenSymbol: tokenSymbol,
-            dealDestination: destinationAddress,
+            dealName: name || 'Test Name',
+            dealTokenSymbol: tokenSymbol || 'TN',
+            dealDestination:
+              destinationAddress && !destinationAddressError
+                ? destinationAddress
+                : '0x0000000000000000000000000000000000000001',
             dealGoal: commitmentGoal ? parseInt(commitmentGoal) : 0,
             minPerMember: minimumCommitment ? parseInt(minimumCommitment) : 0,
             startTime: '1670334136',
@@ -96,6 +100,8 @@ export const ReviewDealDetails: React.FC = () => {
         // handleDetailsChange={handleDetailsChange}
         handleShuffle={handleShuffle}
         // Goal
+        depositTokenLogo="/images/prodTokenLogos/USDCoin.svg"
+        depositTokenSymbol="USDC"
         commitmentGoal={commitmentGoal ? commitmentGoal : ''}
         handleCommitmentGoalChange={handleCommitmentGoalChange}
         commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
@@ -106,7 +112,6 @@ export const ReviewDealDetails: React.FC = () => {
           alert('Change token');
         }}
         handleTokenSymbolChange={handleTokenSymbolChange}
-        tokenLogo="/images/prodTokenLogos/USDCoin.svg"
         destinationAddress={destinationAddress ? destinationAddress : ''}
         destinationAddressError={destinationAddressError}
         handleDestinationAddressChange={handleDestinationAddressChange}

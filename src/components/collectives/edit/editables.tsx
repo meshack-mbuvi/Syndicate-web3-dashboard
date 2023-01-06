@@ -1,18 +1,19 @@
+import { Callout, CalloutType } from '@/components/callout';
+import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
+import { CTAButton, CTAType } from '@/components/CTAButton';
+import EstimateGas from '@/components/EstimateGas';
+import EditIcon from '@/components/icons/editIcon';
+import { CopyToClipboardIcon } from '@/components/iconWrappers';
+import { M1 } from '@/components/typography';
+import { useCreateState } from '@/hooks/collectives/useCreateCollective';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { AppState } from '@/state';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
+import { getFirstOrString } from '@/utils/stringUtils';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { Callout, CalloutType } from '@/components/callout';
-import EditIcon from '@/components/icons/editIcon';
-import EstimateGas from '@/components/EstimateGas';
-import { M1 } from '@/components/typography';
-import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { useRouter } from 'next/router';
-import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
-import { useCreateState } from '@/hooks/collectives/useCreateCollective';
-import { CTAButton, CTAType } from '@/components/CTAButton';
 
 export const SubmitContent: React.FC<{
   isSubmitDisabled?: boolean;
@@ -45,7 +46,8 @@ export const SubmitContent: React.FC<{
   const { openUntil } = useCreateState();
 
   const router = useRouter();
-  const { collectiveAddress, clubAddress } = router.query;
+  const clubAddress = getFirstOrString(router.query.clubAddress);
+  const collectiveAddress = getFirstOrString(router.query.collectiveAddress);
 
   const activeContract = useMemo(() => {
     switch (activeRow) {

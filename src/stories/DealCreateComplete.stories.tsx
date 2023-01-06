@@ -1,4 +1,4 @@
-import { DealsCreateComplete } from '@/features/deals/components/create/complete';
+import { DealsOverviewSuccess } from '@/features/deals/components/create/success';
 
 export default {
   title: '4. Organisms/Deals/Create/Complete'
@@ -6,7 +6,7 @@ export default {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const Template = (args: any) => {
-  return <DealsCreateComplete {...args} />;
+  return <DealsOverviewSuccess {...args} />;
 };
 
 export const Default = Template.bind({});

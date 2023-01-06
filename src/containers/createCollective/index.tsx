@@ -33,7 +33,7 @@ const CreateCollectiveContainer: FC = () => {
   const [, setShowBackButton] = useState(true);
   const [flipColumns, setFlipColumns] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
-  const captureArtworkRef = useRef(null);
+  const captureArtworkRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {
@@ -177,7 +177,7 @@ const CreateCollectiveContainer: FC = () => {
                 activeIndex >= 1
                   ? 'overflow-hidden max-w-20 top-5/12 left-1/2 -translate-x-1/2 -translate-y-1/2 p-12 border-gray-syn6 border-8'
                   : 'max-w-520 top-0 left-0 translate-x-0 translate-y-0 border-transparent border-8'
-              } ${activeIndex === 3 && 'hidden'}`}
+              } ${(activeIndex === 3 && 'hidden') || ''}`}
             >
               {/* NFT previewer */}
               <div
@@ -211,7 +211,7 @@ const CreateCollectiveContainer: FC = () => {
               className={`absolute z-0 w-full flex-grow h-full ${
                 activeIndex > 0 ? 'opacity-100' : 'opacity-0'
               } ${
-                activeIndex === 3 && 'hidden'
+                (activeIndex === 3 && 'hidden') || ''
               } delay-700 duration-1000 transition-all relative z-0`}
             >
               <div

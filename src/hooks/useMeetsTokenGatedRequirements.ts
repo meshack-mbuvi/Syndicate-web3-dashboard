@@ -57,14 +57,12 @@ export const useMeetsTokenGatedRequirements = (): {
         const token = tokenDetails?.token;
         const tokenMetRequirements =
           getWeiAmount(
-            web3,
             // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
             tokenDetails?.balance.toString(),
             token?.decimals ?? 18,
             false
           ) >=
           getWeiAmount(
-            web3,
             tokenBalances[i].toString(),
             token?.decimals ?? 18,
             false

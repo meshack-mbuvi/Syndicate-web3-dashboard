@@ -1,3 +1,4 @@
+import { AllowancePrecommitModuleERC20 } from '@/ClubERC20Factory/AllowancePrecommitModuleERC20';
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { ClubERC20Factory } from '@/ClubERC20Factory/clubERC20Factory';
 import { ClubERC20FactoryNative } from '@/ClubERC20Factory/clubERC20FactoryNative';
@@ -5,10 +6,21 @@ import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenM
 import { DistributionsERC20 } from '@/ClubERC20Factory/distributionsERC20';
 import { DistributionsETH } from '@/ClubERC20Factory/distributionsETH';
 import { ERC20ClubFactory } from '@/ClubERC20Factory/ERC20ClubFactory';
+import { ERC20DealFactory } from '@/ClubERC20Factory/ERC20DealFactory';
+import { ERC721Collective } from '@/ClubERC20Factory/ERC721Collective';
+import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { EthPriceMintModule } from '@/ClubERC20Factory/EthPriceMintModule';
+import { FixedRenderer } from '@/ClubERC20Factory/FixedRenderer';
+import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
+import { MaxMemberCountMixin } from '@/ClubERC20Factory/maxMemberMixin';
+import { MaxPerMemberERC721 } from '@/ClubERC20Factory/MaxPerMemberERC721';
+import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
+import { MaxTotalSupplyMixin } from '@/ClubERC20Factory/maxTotalSupplyMixin';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from '@/ClubERC20Factory/merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from '@/ClubERC20Factory/mintPolicyERC721';
 import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
+import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
 import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { PublicMintWithFeeModuleContract } from '@/ClubERC20Factory/publicMintWithFeeModule';
@@ -18,21 +30,9 @@ import { RugBonusTokenModule } from '@/ClubERC20Factory/RugRadio/RugBonusTokenMo
 import { RugERC20ClaimModule } from '@/ClubERC20Factory/RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
-import { MaxMemberCountMixin } from '@/ClubERC20Factory/maxMemberMixin';
-import { MaxTotalSupplyMixin } from '@/ClubERC20Factory/maxTotalSupplyMixin';
+import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
 import { TokenGatedMixin } from '@/ClubERC20Factory/tokenGatingMixin';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
-import { EthPriceMintModule } from '@/ClubERC20Factory/EthPriceMintModule';
-import { FixedRenderer } from '@/ClubERC20Factory/FixedRenderer';
-import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
-import { MaxPerMemberERC721 } from '@/ClubERC20Factory/MaxPerMemberERC721';
-import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
-import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
-import { ERC721Collective } from '@/ClubERC20Factory/ERC721Collective';
-import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
-import { AllowancePrecommitModuleERC20 } from '@/ClubERC20Factory/AllowancePrecommitModuleERC20';
-import { ERC20DealFactory } from '@/ClubERC20Factory/ERC20DealFactory';
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;

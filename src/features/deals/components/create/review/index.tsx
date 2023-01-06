@@ -10,7 +10,6 @@ import {
 } from '@/utils/formattedNumbers';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { CreateFlowStepTemplate } from '..';
-import { InputField } from '@/components/inputs/inputField';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import { SelectedTimeWindow } from '../window';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
@@ -20,6 +19,8 @@ import { default as _moment } from 'moment-timezone';
 import { formatAddress } from '@/utils/formatAddress';
 import { B2 } from '@/components/typography';
 import { SyndicateTokenLogo } from '@/components/icons/syndicateTokenLogo';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 
 interface Props {
   // About
@@ -33,6 +34,8 @@ interface Props {
   // handleDetailsChange?: (newDetails: string) => void;
 
   // Goal
+  depositTokenLogo: string;
+  depositTokenSymbol: string;
   commitmentGoal: string;
   commitmentGoalTokenSymbol?: string;
   commitmentGoalError?: string;
@@ -44,7 +47,6 @@ interface Props {
   destinationAddressError?: string;
   handleDestinationAddressChange?: (newDestinationAddress: string) => void;
   tokenSymbol: string;
-  tokenLogo: string;
   handleTokenClick?: () => void;
   handleTokenSymbolChange?: (tokenSymbol: string) => void;
 
@@ -84,6 +86,8 @@ export const DealsCreateReview: React.FC<Props> = ({
   setIsEditingField,
 
   // Goal
+  depositTokenLogo,
+  depositTokenSymbol,
   commitmentGoal,
   commitmentGoalTokenSymbol,
   commitmentGoalError,
@@ -95,7 +99,6 @@ export const DealsCreateReview: React.FC<Props> = ({
   destinationAddressError,
   handleDestinationAddressChange,
   tokenSymbol,
-  tokenLogo,
   handleTokenClick,
   handleTokenSymbolChange,
 
@@ -109,6 +112,12 @@ export const DealsCreateReview: React.FC<Props> = ({
   handleCustomTimeChange,
   formattedWindowEndTime
 }) => {
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+
   const [activeInputIndex, setActiveInputIndex] =
     useState<SelectedInput | null>(null);
   const [closeTimeString, setCloseTimeString] = useState('');
@@ -186,7 +195,9 @@ export const DealsCreateReview: React.FC<Props> = ({
           ),
           label: 'Deal title',
           info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.',
-          reviewValue: name
+          reviewValue: name || (
+            <div className="text-red-f1-turbo">Please name your deal</div>
+          )
         },
         /* {
           input: (
@@ -212,7 +223,7 @@ export const DealsCreateReview: React.FC<Props> = ({
           input: (
             <InputFieldWithToken
               value={formatInputValueWithCommas(commitmentGoal)}
-              placeholderLabel={`100,000 ${tokenSymbol}`}
+              placeholderLabel={`100,000`}
               onChange={(e): void => {
                 const input = e.target.value;
                 const strippedCommasInput = stringNumberRemoveCommas(input);
@@ -220,9 +231,9 @@ export const DealsCreateReview: React.FC<Props> = ({
                   ? handleCommitmentGoalChange(strippedCommasInput)
                   : null;
               }}
-              symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
-              depositTokenSymbol={tokenSymbol}
-              depositTokenLogo={tokenLogo}
+              symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
+              depositTokenSymbol={depositTokenSymbol}
+              depositTokenLogo={depositTokenLogo}
               handleTokenClick={handleTokenClick}
               onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.GOAL);
@@ -235,11 +246,19 @@ export const DealsCreateReview: React.FC<Props> = ({
           info: 'This is the goal that you are striving to raise for this deal. This is not a cap on how much can be committed',
           reviewValue: (
             <div className="flex space-x-2 items-center">
-              <img src={tokenLogo} className="w-5 h-5" alt="Token logo" />
-              <div>
-                {formatInputValueWithCommas(commitmentGoal)}{' '}
-                {commitmentGoalTokenSymbol}
-              </div>
+              <img
+                src={depositTokenLogo}
+                className="w-5 h-5"
+                alt="Token logo"
+              />
+              {commitmentGoal ? (
+                <div>
+                  {formatInputValueWithCommas(commitmentGoal)}{' '}
+                  {commitmentGoalTokenSymbol}
+                </div>
+              ) : (
+                <div className="text-red-f1-turbo">Please input an amount</div>
+              )}
             </div>
           )
         },
@@ -247,8 +266,9 @@ export const DealsCreateReview: React.FC<Props> = ({
           input: (
             <InputFieldWithToken
               value={formatInputValueWithCommas(minimumCommitment)}
-              placeholderLabel={`2,000 ${tokenSymbol}`}
-              depositTokenLogo={tokenLogo}
+              placeholderLabel={`2,000`}
+              depositTokenSymbol={depositTokenSymbol}
+              depositTokenLogo={depositTokenLogo}
               onChange={(e): void => {
                 const input = e.target.value;
                 const strippedCommasInput = stringNumberRemoveCommas(input);
@@ -256,7 +276,7 @@ export const DealsCreateReview: React.FC<Props> = ({
                   ? handleMinimumCommitmentChange(strippedCommasInput)
                   : null;
               }}
-              symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
+              symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
               handleTokenClick={handleTokenClick}
               onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.AMOUNT);
@@ -271,17 +291,25 @@ export const DealsCreateReview: React.FC<Props> = ({
           info: 'This is the minimum amount that a deal participant can contribute. You can set this to zero if you like',
           reviewValue: (
             <div className="flex space-x-2 items-center">
-              <img src={tokenLogo} className="w-5 h-5" alt="Token logo" />
-              <div>
-                {formatInputValueWithCommas(minimumCommitment)}{' '}
-                {commitmentGoalTokenSymbol}
-              </div>
+              <img
+                src={depositTokenLogo}
+                className="w-5 h-5"
+                alt="Token logo"
+              />
+              {minimumCommitment ? (
+                <div>
+                  {formatInputValueWithCommas(minimumCommitment)}{' '}
+                  {commitmentGoalTokenSymbol}
+                </div>
+              ) : (
+                <div className="text-red-f1-turbo">Please input an amount</div>
+              )}
             </div>
           )
         },
         {
           input: (
-            <InputField
+            <InputFieldWithAddOn
               value={destinationAddress}
               onChange={(e): void => {
                 handleDestinationAddressChange
@@ -296,13 +324,25 @@ export const DealsCreateReview: React.FC<Props> = ({
               infoLabel={
                 destinationAddressError ? destinationAddressError : undefined
               }
+              hideButton={!account || !!destinationAddress}
+              addOn={'Use connected address'}
+              addOnOnClick={() => {
+                handleDestinationAddressChange
+                  ? handleDestinationAddressChange(account)
+                  : null;
+              }}
             />
           ),
           label: 'Deal destination address',
           info: 'This is the address that will receive funds after commitments are received and a deal is executed.',
-          reviewValue: `${
-            ensName ? ensName : formatAddress(destinationAddress, 6, 4)
-          }`
+          reviewValue:
+            destinationAddress && !destinationAddressError ? (
+              `${ensName ? ensName : formatAddress(destinationAddress, 6, 4)}`
+            ) : (
+              <div className="text-red-f1-turbo">
+                Please input a valid destination address
+              </div>
+            )
         },
 
         // Window
@@ -327,6 +367,8 @@ export const DealsCreateReview: React.FC<Props> = ({
                   { title: '1 month' },
                   { title: 'Custom' }
                 ]}
+                minimumButtonWidthPx={120}
+                animateHighlightRing={false}
               />
               <div className="flex space-x-2">
                 <div className="md:w-1/2">
@@ -368,9 +410,9 @@ export const DealsCreateReview: React.FC<Props> = ({
                       selectedTimeWindow === SelectedTimeWindow.DAY
                         ? '24 hours'
                         : selectedTimeWindow === SelectedTimeWindow.WEEK
-                        ? 'Week'
+                        ? 'One week'
                         : selectedTimeWindow === SelectedTimeWindow.MONTH
-                        ? 'Month'
+                        ? 'One month'
                         : ''
                     }`}
               </div>
@@ -393,10 +435,18 @@ export const DealsCreateReview: React.FC<Props> = ({
           info: `This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more`,
           reviewValue: (
             <div className="flex space-x-2 items-center">
-              <B2>{name}</B2>
+              <B2>
+                {name || <div className="text-red-f1-turbo">No deal name</div>}
+              </B2>
               <B2 className="text-gray-syn4 flex items-center">
                 <SyndicateTokenLogo />
-                {tokenSymbol}
+                {tokenSymbol || !name ? (
+                  tokenSymbol
+                ) : (
+                  <div className="text-red-f1-turbo">
+                    Please input a token symbol
+                  </div>
+                )}
               </B2>
             </div>
           )

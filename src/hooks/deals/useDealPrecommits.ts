@@ -79,7 +79,7 @@ const useDealsPrecommits = (): IPrecommitResponse => {
 
   return {
     precommits,
-    precommitsLoading: false
+    precommitsLoading: loading
   };
 };
 

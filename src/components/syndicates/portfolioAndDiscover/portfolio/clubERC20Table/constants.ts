@@ -20,3 +20,10 @@ export const collectivesTableColumns = [
   'Claimed NFTs',
   'Price per NFT'
 ];
+
+export const dealsTableColumns = [
+  'Deal name',
+  'Status',
+  'Participants',
+  'Total Commited'
+];

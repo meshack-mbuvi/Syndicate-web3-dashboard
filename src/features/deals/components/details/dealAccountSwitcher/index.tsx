@@ -12,7 +12,7 @@ import { Transition } from '@headlessui/react';
 
 interface DealAccountSwitcherProps {
   wallets: Wallet[] | [];
-  dealCommitTokenSymbol: string;
+  dealDepositTokenSymbol: string;
   walletBalance: string;
   walletProviderName: string;
   connectedWallet: Wallet;
@@ -22,7 +22,7 @@ interface DealAccountSwitcherProps {
 
 const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
   wallets,
-  dealCommitTokenSymbol,
+  dealDepositTokenSymbol,
   walletBalance,
   walletProviderName,
   connectedWallet,
@@ -84,7 +84,7 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
           />
           <B3 extraClasses="text-gray-syn4">{`${floatedNumberWithCommas(
             walletBalance
-          )} ${dealCommitTokenSymbol}`}</B3>
+          )} ${dealDepositTokenSymbol}`}</B3>
         </div>
       </div>
 

@@ -5,7 +5,8 @@ import { B3 } from '../typography';
 export enum CalloutType {
   REGULAR = 'REGULAR',
   WARNING = 'WARNING',
-  OUTLINE = 'OUTLINE'
+  OUTLINE = 'OUTLINE',
+  TRANSACTIONAL = 'TRANSACTIONAL'
 }
 
 export enum CalloutIconPosition {
@@ -27,7 +28,7 @@ interface Props {
 
 export const Callout: React.FC<Props> = ({
   type = CalloutType.REGULAR,
-  extraClasses = '',
+  extraClasses = 'px-5 py-4 rounded-xl',
   showIcon = true,
   icon = null,
   backgroundOpacity = 'bg-opacity-10',
@@ -77,6 +78,12 @@ export const Callout: React.FC<Props> = ({
       }
       styles = `border border-gray-syn6 ${textColor}`;
       break;
+    case CalloutType.TRANSACTIONAL:
+      if (iconPosition === CalloutIconPosition.TOP) {
+        calloutIcon = icon ? icon : null;
+      }
+      styles = `bg-green-semantic ${backgroundOpacity} ${textColor}`;
+      break;
   }
 
   return (
@@ -87,7 +94,7 @@ export const Callout: React.FC<Props> = ({
           : iconPosition === CalloutIconPosition.TOP
           ? 'space-y-3.5'
           : ''
-      } rounded-xl px-5 py-4 ${extraClasses}`}
+      } ${extraClasses}`}
       {...rest}
     >
       {showIcon && calloutIcon && typeof calloutIcon === 'string' ? (

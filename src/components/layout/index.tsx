@@ -2,21 +2,22 @@ import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
+import { getNetworkByName } from '@/helpers/getNetwork';
+import useAdminClubs from '@/hooks/clubs/useAdminClubs';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
+import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
+import { getFirstOrString } from '@/utils/stringUtils';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
-import useAdminClubs from '@/hooks/clubs/useAdminClubs';
-import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
-import Link from 'next/link';
 
 interface Props {
   showBackButton?: boolean;
@@ -96,17 +97,12 @@ const Layout: FC<Props> = ({
   const loading = adminClubsLoading || memberClubsLoading;
 
   const router = useRouter();
-  const { chain } = router.query;
-  const urlNetwork = useGetNetwork(chain);
-
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
 
-  const {
-    pathname,
-    isReady,
-    query: { clubAddress }
-  } = router;
+  const { pathname, isReady } = router;
+
+  const clubAddress = getFirstOrString(router.query.clubAddress);
 
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
@@ -131,30 +127,35 @@ const Layout: FC<Props> = ({
     router.pathname === `/clubs/[clubAddress]/distribute`;
 
   const { isOwner, isLoading } = useTokenOwner(
-    clubAddress as string,
+    clubAddress || '',
     web3,
     activeNetwork,
     account
   );
 
-  const handleRouting = () => {
-    if (isLoading) return;
+  const handleRouting = (): void => {
+    const { chain, ...rest } = router.query;
+
+    const clubAddress = getFirstOrString(router.query.clubAddress);
+
+    if (isLoading || !router.isReady || !clubAddress) return;
+
+    const chainName = getNetworkByName(chain);
 
     if (pathname.includes('/manage') && !isOwner) {
-      router.replace(
-        `/clubs/${clubAddress}${
-          '?chain=' + urlNetwork?.network || activeNetwork.network
-        }`
-      );
+      void router.replace({
+        pathname: `/clubs/${clubAddress}`,
+        query: { chain: chainName?.network || activeNetwork.network, ...rest }
+      });
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
-      isOwner
+      isOwner &&
+      clubAddress
     ) {
-      router.replace(
-        `/clubs/${clubAddress}/manage${
-          '?chain=' + urlNetwork?.network || activeNetwork.network
-        }`
-      );
+      void router.replace({
+        pathname: `/clubs/${clubAddress}/manage`,
+        query: { chain: chainName?.network || activeNetwork.network, ...rest }
+      });
     }
   };
 

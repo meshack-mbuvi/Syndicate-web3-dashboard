@@ -1,12 +1,13 @@
 import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { setConnectedMember } from '@/state/connectMember';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
 /**
@@ -14,9 +15,8 @@ import { useDemoMode } from './useDemoMode';
  * and club address
  * @returns
  */
-export function useAccountTokens(): {
+export function useConnectedAccountDetails(): {
   accountTokens: any;
-  memberPercentShare: any;
   memberDeposits: any;
   memberOwnership: any;
   loadingMemberOwnership: any;
@@ -26,10 +26,10 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3, status }
+      web3: { account, activeNetwork, status }
     },
     erc20TokenSliceReducer: {
-      erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
+      erc20Token: { totalSupply, tokenDecimals, totalDeposits },
       depositDetails: {
         depositTokenDecimals,
         depositTokenSymbol,
@@ -37,6 +37,10 @@ export function useAccountTokens(): {
       }
     }
   } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
+
+  const clubAddress = getFirstOrString(router.query.clubAddress);
 
   const [accountTokens, setAccountTokens] = useState<string>('0');
   const [memberDeposits, setMemberDeposits] = useState<string>('0');
@@ -56,14 +60,14 @@ export function useAccountTokens(): {
           memberAddress: account.toLocaleLowerCase()
         },
         syndicateDaOsWhere2: {
-          syndicateDAO: address.toLowerCase()
+          syndicateDAO: clubAddress?.toLowerCase()
         }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
       skip:
         !account ||
         !activeNetwork.chainId ||
-        !address ||
+        !clubAddress ||
         isDemoMode ||
         status !== Status.CONNECTED
     }
@@ -82,7 +86,7 @@ export function useAccountTokens(): {
     // adding this block to reset values.
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
-    const resetMemberStats = () => {
+    const resetMemberStats = (): void => {
       setAccountTokens('0');
       setMemberDeposits('0');
       setMemberOwnership('0');
@@ -109,9 +113,8 @@ export function useAccountTokens(): {
             syndicateDAO: { totalSupply = 0 }
           } = clubMemberData;
 
-          const clubTokens = getWeiAmount(web3, tokens, tokenDecimals, false);
+          const clubTokens = getWeiAmount(tokens, tokenDecimals, false);
           const clubTotalSupply = getWeiAmount(
-            web3,
             totalSupply,
             tokenDecimals,
             false
@@ -119,7 +122,7 @@ export function useAccountTokens(): {
 
           setAccountTokens(clubTokens);
           setMemberDeposits(
-            getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
+            getWeiAmount(depositAmount, depositTokenDecimals, false)
           );
           setMemberOwnership(`${(100 * clubTokens) / clubTotalSupply}`);
         } else {
@@ -135,7 +138,7 @@ export function useAccountTokens(): {
     account,
     tokenDecimals,
     loading,
-    address,
+    clubAddress,
     totalSupply,
     totalDeposits,
     depositTokenDecimals,
@@ -145,25 +148,6 @@ export function useAccountTokens(): {
     loadingDepositsDetails
   ]);
 
-  useEffect(() => {
-    if (activeNetwork.chainId && status === Status.CONNECTED) {
-      refetch();
-    }
-  }, [totalSupply, totalDeposits, account, activeNetwork.chainId, status]);
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(
-      setConnectedMember({
-        loading,
-        depositAmount: `${memberDeposits}`
-      })
-    );
-    return () => {
-      dispatch(setConnectedMember({ depositAmount: '', loading: false }));
-    };
-  }, [loading, memberDeposits]);
-
   return {
     memberDeposits,
     accountTokens,
@@ -171,7 +155,6 @@ export function useAccountTokens(): {
     startPolling,
     stopPolling,
     refetchMemberData: refetch,
-    loadingMemberOwnership: loading,
-    memberPercentShare: memberOwnership
+    loadingMemberOwnership: loading
   };
 }

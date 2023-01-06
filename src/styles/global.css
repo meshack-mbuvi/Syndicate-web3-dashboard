@@ -349,6 +349,12 @@
     @apply bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
   }
 
+  /* stratosphere - deals */
+
+  .base-CTA.stratosphere {
+    @apply bg-blue-stratosphere text-black transition-all hover:bg-blue-stratosphere;
+  }
+
   /* orange - warning */
 
   .base-CTA.orange {

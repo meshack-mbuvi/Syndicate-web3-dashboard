@@ -3,7 +3,6 @@ import setCollectibleDetailsSliceReducer from '@/state/assets/collectibles/slice
 import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
-import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
@@ -48,7 +47,6 @@ export const store = configureStore({
     setCollectibleDetailsSliceReducer,
     utilityNFTSliceReducer,
     modifyClubSettingsReducer,
-    connectClubMemberReducer,
     modifyCollectiveSettingsReducer
   },
   middleware: (getDefaultMiddleware) =>

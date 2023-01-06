@@ -30,6 +30,26 @@ Default.args = {
       title: 'Anyone with the link',
       subTitle: 'Unrestricted'
     }
+  ],
+  animateHighlightRing: false
+};
+
+export const LongText = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
+LongText.args = {
+  options: [
+    {
+      icon: '/images/collectibles-gray.svg',
+      title:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt',
+      subTitle: 'Token-gated'
+    },
+    {
+      icon: '/images/link-chain-gray.svg',
+      title:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
+      subTitle: 'Unrestricted'
+    }
   ]
 };
 

@@ -39,8 +39,8 @@ interface Props {
   progressState?: ProgressState;
   transactionHash?: string;
   transactionType?: string;
-  claimCollective: any;
-  tryAgain: any;
+  claimCollective: () => void;
+  tryAgain: () => void;
 }
 
 export const ClaimCollectivePass: React.FC<Props> = ({

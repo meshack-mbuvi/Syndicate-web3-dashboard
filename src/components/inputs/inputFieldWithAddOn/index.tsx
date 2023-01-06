@@ -10,6 +10,7 @@ export const InputFieldWithAddOn = (props: {
   extraClasses?: string;
   addOn: string | any;
   isButtonActive?: boolean;
+  hideButton?: boolean;
   disabled?: boolean;
   addOnOnClick?: (e?: React.MouseEvent<HTMLElement>) => void;
   onChange: (e: any) => void;
@@ -25,6 +26,7 @@ export const InputFieldWithAddOn = (props: {
     extraClasses = '',
     addOn,
     isButtonActive = false,
+    hideButton = false,
     addOnOnClick,
     onChange,
     onFocus,
@@ -47,24 +49,26 @@ export const InputFieldWithAddOn = (props: {
           onFocus={onFocus}
           {...rest}
         />
-        <div
-          className="inline-flex items-center space-x-4 absolute top-1/2 right-4"
-          style={{ transform: 'translateY(-50%)' }}
-        >
-          {typeof addOn === 'string' ? (
-            <PillButton
-              isActive={isButtonActive}
-              onClick={(e?: React.MouseEvent<HTMLElement>): void => {
-                if (addOnOnClick) addOnOnClick(e);
-              }}
-            >
-              {addOn}
-            </PillButton>
-          ) : (
-            <button onClick={addOnOnClick}>{addOn}</button>
-          )}
-          {symbol && <div className="text-white">{symbol}</div>}
-        </div>
+        {!hideButton && (
+          <div
+            className="inline-flex items-center space-x-4 absolute top-1/2 right-4"
+            style={{ transform: 'translateY(-50%)' }}
+          >
+            {typeof addOn === 'string' ? (
+              <PillButton
+                isActive={isButtonActive}
+                onClick={(e?: React.MouseEvent<HTMLElement>): void => {
+                  if (addOnOnClick) addOnOnClick(e);
+                }}
+              >
+                {addOn}
+              </PillButton>
+            ) : (
+              <button onClick={addOnOnClick}>{addOn}</button>
+            )}
+            {symbol && <div className="text-white">{symbol}</div>}
+          </div>
+        )}
       </div>
       {infoLabel && (
         <div

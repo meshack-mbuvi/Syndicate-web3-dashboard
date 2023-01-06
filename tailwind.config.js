@@ -443,7 +443,8 @@ module.exports = {
           'aces-rescue-orange': '#FF4E21',
           terra: '#D96E0B',
           snapshot: '#FCAC18',
-          slik: '#E9724C'
+          slik: '#E9724C',
+          burnt: '#FFA653'
         },
         brown: {
           ...colors.brown,

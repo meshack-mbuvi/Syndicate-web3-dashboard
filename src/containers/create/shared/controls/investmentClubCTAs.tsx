@@ -48,7 +48,7 @@ const InvestmentClubCTAs: React.FC = () => {
     }
   } = useSelector((state: AppState) => state);
 
-  const { account, activeNetwork, web3 } = web3Wallet;
+  const { account, activeNetwork } = web3Wallet;
 
   const dispatch = useDispatch();
   const { providerName } = useProvider();
@@ -128,7 +128,6 @@ const InvestmentClubCTAs: React.FC = () => {
                   isNativeDeposit: true,
                   depositToken: depositToken,
                   tokenCap: getWeiAmount(
-                    web3,
                     (
                       +tokenCap * activeNetwork.nativeCurrency.exchangeRate
                     ).toString(),

@@ -18,9 +18,9 @@ export class NativeTokenPriceMerkleMintModule extends ContractBase {
     collective: string,
     merkleProof: string[],
     amount: string,
-    onTxConfirm: (transactionHash: any) => void,
-    onTxReceipt: (receipt: any) => void,
-    onTxFail: (err: any) => void
+    onTxConfirm: (transactionHash: string) => void,
+    onTxReceipt: (receipt: TransactionReceipt) => void,
+    onTxFail: (err: string) => void
   ): Promise<void> {
     await this.send(
       account,

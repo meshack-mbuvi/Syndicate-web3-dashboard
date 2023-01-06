@@ -26,29 +26,31 @@ import {
   FileUploader,
   UploaderProgressType
 } from '@/components/uploaders/fileUploader';
+import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import useSubmitMetadata from '@/hooks/collectives/create/useSubmitMetadata';
 import { useUpdateState } from '@/hooks/collectives/useCreateCollective';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { AppState } from '@/state';
-import {
-  setCollectiveSettings,
-  setIsCollectiveOpen,
-  setIsTransferable,
-  setMaxPerWallet,
-  setMaxSupply,
-  setMintEndTime,
-  setMintPrice,
-  setOpenUntil,
-  setUpdateEnded,
-  setActiveRowIdx,
-  setMetadataCid
-} from '@/state/modifyCollectiveSettings';
-import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import {
   setCollectiveArtwork,
   setCollectiveSubmittingToIPFS,
   setIpfsError
 } from '@/state/createCollective/slice';
+import {
+  setActiveRowIdx,
+  setCollectiveSettings,
+  setIsCollectiveOpen,
+  setIsTransferable,
+  setMaxPerWallet,
+  setMaxSupply,
+  setMetadataCid,
+  setMintEndTime,
+  setMintPrice,
+  setOpenUntil,
+  setUpdateEnded
+} from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { useRouter } from 'next/router';
@@ -59,7 +61,6 @@ import { NFTMediaType, NFTPreviewer } from '../nftPreviewer';
 import { CopyText } from './editables';
 import EditCollectiveMintTime from './EditCollectiveMintTime';
 import EditMaxSupply from './EditMaxSupply';
-import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
 type step = {
   title: string;
@@ -128,6 +129,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const [artworkTypeState, setArtworkTypeState] = useState(NFTMediaType.CUSTOM);
   const [artworkUrlState, setArtworkUrlState] = useState('');
   const [activeRow, setActiveRow] = useState<number>(0);
+  const [activeRemixRow, setActiveRemixRow] = useState<number>(0);
   const [showImageUploader, setShowImageUploader] = useState<boolean>(false);
   const [exceededUploadLimit, setExceededUploadLimit] = useState('');
   const [progressPercent, setProgressPercent] = useState<number>(
@@ -164,6 +166,7 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   useEffect(() => {
     if (collectiveDetailsLoading) return;
+
     dispatch(
       setCollectiveSettings({
         isTransferable,
@@ -430,7 +433,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setIsTransferable());
   };
 
-  const handleExit = () => {
+  const handleExit = (): void => {
     router &&
       router.push(
         `/collectives/${collectiveAddress}${'?chain=' + activeNetwork.network}`
@@ -1079,6 +1082,15 @@ const ModifyCollectiveSettings: React.FC = () => {
           cancelEdit={handleCancelEdit}
           {...{ activeRow, setActiveRow }}
         />
+
+        {/* Remix toggle */}
+        {collectiveAddress && (
+          <RemixAdminTable
+            activeRow={activeRemixRow}
+            setActiveRow={setActiveRemixRow}
+            contractAddress={collectiveAddress}
+          />
+        )}
       </div>
 
       {/* initial change settings disclaimer modal when clicking Submit after modifying something */}

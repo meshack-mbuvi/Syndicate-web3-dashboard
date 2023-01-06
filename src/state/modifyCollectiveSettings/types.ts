@@ -12,6 +12,7 @@ export enum EditRowIndex {
   TotalSupply,
   MaxMembers,
   TokenGate,
+  Remix,
 
   /* Shared */
   Time,

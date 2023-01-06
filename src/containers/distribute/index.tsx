@@ -11,7 +11,7 @@ import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { getNetworkByName } from '@/helpers/getNetwork';
 import { INetwork } from '@/Networks/networks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -164,7 +164,7 @@ const Distribute: FC = () => {
   }, [chain]);
 
   const GetNetworkByName = (name: string): void => {
-    const network: INetwork = useGetNetwork(name);
+    const network: INetwork = getNetworkByName(name);
     setUrlNetwork(network);
   };
 
@@ -484,7 +484,7 @@ const Distribute: FC = () => {
       }
     }
 
-    const price = _options[_nativeTokenIndex].price.usd;
+    const price = _options[_nativeTokenIndex]?.price?.usd;
 
     const _currentSetAmount = nativeToken.tokenAmount ?? 0;
 

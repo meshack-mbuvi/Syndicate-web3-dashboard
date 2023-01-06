@@ -30,6 +30,7 @@ interface Props {
   customTailwindXSpacingUnit?: number;
   disableTransition?: boolean;
   disabled?: boolean;
+  truncatedNameMaxWidthClass?: string;
 }
 
 export const DisplayAddressWithENS: React.FC<Props> = ({
@@ -46,6 +47,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
   customTailwindXSpacingUnit,
   disableTransition,
   disabled,
+  truncatedNameMaxWidthClass = 'max-w-24',
   ...rest
 }: Props) => {
   const formattedAddress = addressAbbreviated
@@ -58,9 +60,7 @@ export const DisplayAddressWithENS: React.FC<Props> = ({
       );
   const TopLineName = (): JSX.Element => {
     return (
-      <div className="truncate" style={{ maxWidth: '84px' }}>
-        {name}
-      </div>
+      <div className={`truncate ${truncatedNameMaxWidthClass}`}>{name}</div>
     );
   };
   const TopLineAddress = (): JSX.Element => {

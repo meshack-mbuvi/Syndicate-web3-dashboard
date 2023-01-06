@@ -62,7 +62,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const {
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
-      web3: { web3, activeNetwork }
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -172,13 +172,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               : activeNetwork.nativeCurrency.logo,
             amount: transfer.tokenDecimal
               ? getWeiAmount(
-                  web3,
                   String(transfer.value),
                   Number(transfer.tokenDecimal),
                   false
                 )
               : getWeiAmount(
-                  web3,
                   String(transfer.value),
                   Number(activeNetwork.nativeCurrency.decimals),
                   false
@@ -254,13 +252,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   },
                   amount: currentTransfer.tokenDecimal
                     ? getWeiAmount(
-                        web3,
                         String(currentTransfer.value),
                         Number(currentTransfer.tokenDecimal),
                         false
                       )
                     : getWeiAmount(
-                        web3,
                         String(currentTransfer.value),
                         Number(activeNetwork.nativeCurrency.decimals),
                         false
@@ -410,13 +406,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         : activeNetwork.nativeCurrency.logo,
                       amount: currentTransfer.tokenDecimal
                         ? getWeiAmount(
-                            web3,
                             String(currentTransfer.value),
                             Number(currentTransfer.tokenDecimal),
                             false
                           )
                         : getWeiAmount(
-                            web3,
                             String(currentTransfer.value),
                             Number(activeNetwork.nativeCurrency.decimals),
                             false

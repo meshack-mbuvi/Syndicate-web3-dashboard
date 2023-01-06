@@ -17,7 +17,7 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useAccountTokens } from '../useAccountTokens';
+import { useConnectedAccountDetails } from '../useConnectedAccountDetails';
 import { useDemoMode } from '../useDemoMode';
 
 // TODO: [REFACTOR] rename to useSingleClubGraphDetails for readability
@@ -85,7 +85,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     }
   );
 
-  const { memberDeposits, accountTokens } = useAccountTokens();
+  const { memberDeposits, accountTokens } = useConnectedAccountDetails();
 
   /**
    * Retrieve totalDeposits,totalSupply from the thegraph
@@ -180,15 +180,10 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     }
 
     setTotalSupply(
-      getWeiAmount(web3, syndicateDAO.totalSupply, tokenDecimals || 18, false)
+      getWeiAmount(syndicateDAO.totalSupply, tokenDecimals || 18, false)
     );
     setTotalDeposits(
-      getWeiAmount(
-        web3,
-        syndicateDAO.totalDeposits,
-        depositTokenDecimals,
-        false
-      )
+      getWeiAmount(syndicateDAO.totalDeposits, depositTokenDecimals, false)
     );
     setStartTime(+startTime * 1000);
     setEndTime(+endTime * 1000);

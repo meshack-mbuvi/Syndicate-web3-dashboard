@@ -1,15 +1,15 @@
-import { Drawers } from '@/components/drawers';
+import { Accordion } from '@/components/accordion';
 import { useState } from 'react';
 
 export default {
-  title: '3. Molecules/Drawers'
+  title: '3. Molecules/Accordion'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const Template = (args: any) => {
   const [index, setIndex] = useState(null);
   return (
-    <Drawers
+    <Accordion
       visibleItemIndex={index}
       handleVisibleItemChange={setIndex}
       {...args}

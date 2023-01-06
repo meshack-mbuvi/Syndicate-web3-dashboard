@@ -4,6 +4,7 @@ import {
 } from '@/components/shared/ensAddress/display';
 import { H1, H3, H4 } from '@/components/typography';
 import ReactTooltip from 'react-tooltip';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 
 export interface DealParticipant {
   dealAddress: string;
@@ -26,7 +27,7 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
       </H4>
       {participants.map((participant, index) => {
         return (
-          <>
+          <div key={`${index}-${participant.address}`}>
             {/* Large participants - 1st, 2nd, 3rd */}
             {index === 0 || index === 1 || index === 2 ? (
               <>
@@ -67,10 +68,15 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
                 arrowColor="#222529"
                 backgroundColor="#222529"
               >
-                <span>Joined on</span> <span>{participant.createdAt}</span>
+                <span>Joined on</span>{' '}
+                <span>
+                  {getFormattedDateTimeWithTZ(
+                    Number(participant.createdAt) * 1000
+                  )}
+                </span>
               </ReactTooltip>
             )}
-          </>
+          </div>
         );
       })}
 

@@ -121,7 +121,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
           symbol: String(transfer.tokenSymbol),
           icon: transfer.tokenLogo,
           amount: getWeiAmount(
-            web3,
             String(transfer.value),
             Number(transfer.tokenDecimal),
             false
@@ -133,7 +132,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
           symbol: activeNetwork.nativeCurrency.symbol,
           icon: activeNetwork.nativeCurrency.logo,
           amount: getWeiAmount(
-            web3,
             String(transfer.value),
             Number(activeNetwork.nativeCurrency.decimals),
             false

@@ -1,3 +1,4 @@
+import { getWeiAmount } from '@/utils/conversions';
 import {
   LeftBottomCoinIcon,
   LeftMiddleCoinIcon,
@@ -17,9 +18,10 @@ interface Props {
   commitmentGoalTokenSymbol: string;
   commitmentGoalTokenLogo: string;
   dealURL?: string;
+  isExecutingDeal?: boolean;
 }
 
-export const DealsCreateComplete: React.FC<Props> = ({
+export const DealsOverviewSuccess: React.FC<Props> = ({
   dealName,
   dealDetails,
   ensName,
@@ -27,7 +29,8 @@ export const DealsCreateComplete: React.FC<Props> = ({
   commitmentGoalAmount,
   commitmentGoalTokenSymbol,
   commitmentGoalTokenLogo,
-  dealURL
+  dealURL,
+  isExecutingDeal
 }) => {
   const coinSideWidth = '290px';
   const dealCardPaddingTailwindUnit = 8;
@@ -36,7 +39,8 @@ export const DealsCreateComplete: React.FC<Props> = ({
       href={dealURL}
       className={`block relative mx-auto p-${dealCardPaddingTailwindUnit} bg-black border border-gray-syn6 rounded-custom`}
       style={{
-        width: `calc(100% - ${coinSideWidth})`
+        width: `calc(100% - ${coinSideWidth})`,
+        maxWidth: '730px'
       }}
     >
       <DealsOverview
@@ -44,9 +48,10 @@ export const DealsCreateComplete: React.FC<Props> = ({
         dealDetails={dealDetails}
         ensName={ensName}
         destinationAddress={destinationAddress}
-        commitmentGoalAmount={commitmentGoalAmount}
+        commitmentGoalAmount={getWeiAmount(commitmentGoalAmount, 6, true)}
         commitmentGoalTokenSymbol={commitmentGoalTokenSymbol}
         commitmentGoalTokenLogo={commitmentGoalTokenLogo}
+        isExecutingDeal={isExecutingDeal}
       />
 
       {/* Flying coins */}

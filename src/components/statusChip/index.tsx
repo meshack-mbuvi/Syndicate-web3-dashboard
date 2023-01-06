@@ -1,12 +1,14 @@
-export enum ChipState {
+export enum Status {
   PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
-  ACTION_REQUIRED = 'ACTION_REQUIRED'
+  ACTION_REQUIRED = 'ACTION_REQUIRED',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED'
 }
 
 export const StatusChip = (props: {
-  status: ChipState;
-  extraClasses: string;
+  status: Status;
+  extraClasses?: string;
 }) => {
   const { status, extraClasses = '' } = props;
 
@@ -14,20 +16,30 @@ export const StatusChip = (props: {
   let label = '';
   let dotStyles = '';
   switch (status) {
-    case ChipState.PENDING:
+    case Status.PENDING:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Pending approval';
       dotStyles = 'border border-gray-syn3';
       break;
-    case ChipState.SUCCESS:
+    case Status.SUCCESS:
       bgStyles = 'bg-green bg-opacity-25';
       label = 'Complete';
       dotStyles = 'bg-green';
       break;
-    case ChipState.ACTION_REQUIRED:
-      bgStyles = 'bg-white bg-blue-500 bg-opacity-40';
+    case Status.ACTION_REQUIRED:
+      bgStyles = 'bg-blue-500 bg-opacity-40';
       label = 'Action required';
       dotStyles = 'bg-blue-500';
+      break;
+    case Status.ACCEPTED:
+      bgStyles = 'bg-blue-neptune bg-opacity-40';
+      label = 'Accepted';
+      dotStyles = 'bg-blue-neptune';
+      break;
+    case Status.REJECTED:
+      bgStyles = 'bg-white bg-opacity-10';
+      label = 'Rejected';
+      dotStyles = 'border border-gray-syn3';
       break;
   }
 

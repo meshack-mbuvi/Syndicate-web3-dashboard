@@ -19,7 +19,7 @@ class NativePriceMintModuleHarness implements MintModuleHarness {
     account: string,
     onTxConfirm: (hash: string) => void,
     onTxReceipt: () => void,
-    onTxFail: (error: Error) => void
+    onTxFail: (error: string) => void
   ): Promise<void> {
     await this.ethPriceMintModule.mint(
       this.mintPrice,

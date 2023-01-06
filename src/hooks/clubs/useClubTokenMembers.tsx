@@ -41,7 +41,7 @@ const useClubTokenMembers = (): {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, activeNetwork, web3, ethersProvider } = web3Instance;
+  const { account, activeNetwork, ethersProvider } = web3Instance;
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(CLUB_TOKEN_MEMBERS, {
@@ -86,7 +86,6 @@ const useClubTokenMembers = (): {
     );
 
     const clubTotalSupply: number = +getWeiAmount(
-      web3,
       syndicate.totalSupply,
       tokenDecimals,
       false
@@ -104,7 +103,7 @@ const useClubTokenMembers = (): {
           member: { memberAddress: string };
         }) => {
           const clubTokens: number =
-            getWeiAmount(web3, tokens, tokenDecimals, false) || 0;
+            getWeiAmount(tokens, tokenDecimals, false) || 0;
 
           let data;
           try {
@@ -123,7 +122,6 @@ const useClubTokenMembers = (): {
             ownershipShare: (100 * clubTokens) / clubTotalSupply,
             totalSupply: totalSupply,
             depositAmount: getWeiAmount(
-              web3,
               depositAmount,
               depositTokenDecimals,
               false

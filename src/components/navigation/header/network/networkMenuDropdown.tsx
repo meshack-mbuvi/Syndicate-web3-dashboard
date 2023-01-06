@@ -3,7 +3,7 @@ import IconInfo from '@/components/icons/info';
 import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
+import { getNetworkByName, getNetworkById } from '@/helpers/getNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -57,13 +57,13 @@ const NetworkMenuDropDown: FC = () => {
   }, [network, chain]);
 
   const GetChainIdByName = (name: any) => {
-    const network = useGetNetwork(name);
+    const network = getNetworkByName(name);
 
     return network?.chainId;
   };
 
   const VerifyChainId = (chainId: any) => {
-    const network = useGetNetworkById(chainId);
+    const network = getNetworkById(chainId);
     return network?.chainId;
   };
 

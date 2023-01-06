@@ -27,12 +27,15 @@ export interface Requirement {
   requiredTokenBalances?: string[];
 }
 
+export interface Module {
+  contractAddress: string;
+}
 export interface ActiveRequirement {
   id: string;
   requirement: Requirement;
 }
 
-export interface ActiveModule {
+export interface ActiveModule extends Module {
   contractAddress: string;
   activeRequirements: ActiveRequirement[];
 }

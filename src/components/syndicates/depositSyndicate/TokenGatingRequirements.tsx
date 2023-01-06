@@ -11,9 +11,6 @@ const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
   gatingRequirementsMet
 }): React.ReactElement => {
   const {
-    web3Reducer: {
-      web3: { web3 }
-    },
     erc20TokenSliceReducer: { activeModuleDetails, tokenGatingDetails }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -71,7 +68,7 @@ const TokenGatingRequirements: React.FC<{ gatingRequirementsMet: boolean }> = ({
                     <span className="pr-2">{`Own ${
                       decimals == null || decimals === 0
                         ? requiredBalance
-                        : getWeiAmount(web3, requiredBalance, decimals, false)
+                        : getWeiAmount(requiredBalance, decimals, false)
                     } `}</span>{' '}
                     <div className="flex items-center shrink-0">
                       <Image
