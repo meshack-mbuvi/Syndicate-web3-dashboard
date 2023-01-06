@@ -11,7 +11,6 @@ import DealCloseConfirmModal from '@/features/deals/components/close/confirm';
 import PrecommitContainer from '@/containers/deals/precommit/PrecommitContainer';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
-import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import { getWeiAmount } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
@@ -22,17 +21,21 @@ import { CTAButton, CTAType } from '@/components/CTAButton';
 import { DealEndType } from '@/features/deals/components/close/types';
 import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
 import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
+import { Participant } from '@/features/deals/components/participants/table';
+import { Status } from '@/components/statusChip';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
   isOpenToPrecommits: boolean;
   setIsReviewingCommittments: Dispatch<SetStateAction<boolean>>;
   isReviewingCommittments: boolean;
+  currentParticipants: Participant[];
 }> = ({
   permissionType,
   isOpenToPrecommits,
   setIsReviewingCommittments,
-  isReviewingCommittments
+  isReviewingCommittments,
+  currentParticipants
 }) => {
   const {
     web3Reducer: {
@@ -50,7 +53,6 @@ export const DealSidePanel: React.FC<{
   const [openExecuteModal, setOpenExecuteModal] = useState(false);
 
   // executing deal
-
   const [isExecutingDeal, setIsExecutingDeal] = useState<boolean>(false);
   const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -58,7 +60,6 @@ export const DealSidePanel: React.FC<{
     useState(false);
   const [dealExecutionFailed, setDealExecutionFailed] = useState(false);
 
-  const { precommits: participants } = useDealsPrecommits();
   const { dealDetails, dealDetailsLoading } = useDealsDetails();
   const { dealName, dealTokenAddress, dealDestination, totalCommitted } =
     dealDetails;
@@ -118,8 +119,9 @@ export const DealSidePanel: React.FC<{
   const handleExecuteDeal = async (): Promise<void> => {
     setIsConfirmingExecution(true);
 
-    //TODO: add functionality to select/remove participants rather than accepting all
-    const addresses = participants.map((participant) => participant.address);
+    const addresses = currentParticipants
+      .filter((participant) => participant.status === Status.ACCEPTED)
+      .map((_participant) => _participant.address || '');
 
     await allowancePrecommitModuleERC20.executePrecommits(
       dealTokenAddress,
@@ -135,6 +137,12 @@ export const DealSidePanel: React.FC<{
   const dissolveDeal = (): void => {
     console.log('dissolving deal');
   };
+
+  // disable execute button if all commits are rejected
+  const disableExecuteButton =
+    currentParticipants.filter(
+      (participant) => participant.status === Status.ACCEPTED
+    ).length < 1;
 
   return (
     <div className="space-y-8 mt-5">
@@ -165,6 +173,7 @@ export const DealSidePanel: React.FC<{
           }
           handleDissolveDealClick={handleDissolveDealClick}
           hideExecuteButton={false}
+          disableExecuteButton={disableExecuteButton}
         />
       ) : null}
 

@@ -1,5 +1,6 @@
 import { PermissionType } from '@/components/collectives/shared/types';
 import Modal, { ModalStyle } from '@/components/modal';
+import { useEffect, useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { Status } from '@/components/statusChip';
@@ -19,7 +20,6 @@ import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useTokenDetails from '@/hooks/useTokenDetails';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { useState } from 'react';
 import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {
@@ -48,6 +48,38 @@ const DealDetails: React.FC = () => {
     useTokenDetails(depositToken);
 
   const permissionType = useDealPermissionType();
+  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(
+    []
+  );
+
+  // need to have the right object shape for participants and also
+  // handle reject/acceptance of precommits
+  useEffect(() => {
+    const _currentParticipants = participants.map((participant) => {
+      return {
+        address: participant.address,
+        contributionAmount: getWeiAmount(participant.amount, 6, false),
+        ensName: '',
+        joinedDate: moment
+          .utc(+participant.createdAt * 1000)
+          .format('DD/MM/YY'),
+        status: Status.ACCEPTED
+      };
+    });
+
+    setCurrentParticipants(_currentParticipants);
+  }, [participants]);
+
+  const updateParticipantStatus = (idx: number, status: Status): void => {
+    setCurrentParticipants((current) =>
+      current.map((participant, index) => {
+        if (idx === index) {
+          return { ...participant, status };
+        }
+        return participant;
+      })
+    );
+  };
 
   const isOpenToPrecommits =
     new Date(+dealEndTime * 1000).getTime() > Date.now();
@@ -128,16 +160,6 @@ const DealDetails: React.FC = () => {
     </div>
   );
 
-  const currentParticipants: Participant[] = participants.map((participant) => {
-    return {
-      address: participant.address,
-      contributionAmount: getWeiAmount(participant.amount, 6, false),
-      ensName: '',
-      joinedDate: moment.utc(+participant.createdAt * 1000).format('DD/MM/YY'),
-      status: Status.PENDING //TODO: handle accept/reject in a separate ticket
-    };
-  });
-
   return (
     <DealsContainer>
       <TwoColumnLayout
@@ -188,14 +210,12 @@ const DealDetails: React.FC = () => {
                 {isReviewingCommittments &&
                 permissionType === PermissionType.ADMIN ? (
                   <DealsParticipantsTable
-                    handleParticipantAcceptanceClick={(): void =>
-                      //TODO: add functionality to accept commit
-                      console.log('accept')
-                    }
-                    handleParticipantRejectionClick={(): void =>
-                      //TODO: add functionality to reject commit
-                      console.log('reject')
-                    }
+                    handleParticipantAcceptanceClick={(index: number): void => {
+                      updateParticipantStatus(index, Status.ACCEPTED);
+                    }}
+                    handleParticipantRejectionClick={(index: number): void => {
+                      updateParticipantStatus(index, Status.REJECTED);
+                    }}
                     participants={currentParticipants}
                     tokenLogo="/images/prodTokenLogos/USDCoin.svg"
                     tokenSymbol="USDC"
@@ -221,7 +241,8 @@ const DealDetails: React.FC = () => {
                 permissionType,
                 isOpenToPrecommits,
                 setIsReviewingCommittments,
-                isReviewingCommittments
+                isReviewingCommittments,
+                currentParticipants
               }}
             />
           )

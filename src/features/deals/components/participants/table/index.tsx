@@ -147,9 +147,13 @@ export const DealsParticipantsTable: React.FC<Props> = ({
                       if (participant.status === Status.ACCEPTED) {
                         handleParticipantRejectionClick(index);
                       }
-                      if (participant.status === Status.REJECTED) {
+                      if (
+                        participant.status === Status.REJECTED ||
+                        participant.status === Status.PENDING
+                      ) {
                         handleParticipantAcceptanceClick(index);
                       }
+                      setExpandedRowIndex(null);
                     }}
                   >
                     {participant.status === Status.ACCEPTED
