@@ -57,6 +57,7 @@ export const DealsCreateWindow: React.FC<Props> = ({
                   { title: '1 month' },
                   { title: 'Custom' }
                 ]}
+                minimumButtonWidthPx={120}
               />
               <TransitionBetweenChildren
                 visibleChildIndex={showCustomTimeSelector ? 0 : 1}

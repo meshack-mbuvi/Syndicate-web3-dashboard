@@ -367,6 +367,8 @@ export const DealsCreateReview: React.FC<Props> = ({
                   { title: '1 month' },
                   { title: 'Custom' }
                 ]}
+                minimumButtonWidthPx={120}
+                animateHighlightRing={false}
               />
               <div className="flex space-x-2">
                 <div className="md:w-1/2">

@@ -39,6 +39,7 @@ export const InputTimeWindow: React.FC<Props> = ({
           { title: 'Custom' }
         ]}
         customClasses="mt-2"
+        alwaysUseHorizontalLayout={true}
       />
       <div
         className={`${

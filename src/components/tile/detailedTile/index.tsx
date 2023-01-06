@@ -8,6 +8,9 @@ interface Props {
   customClasses?: string;
   onClick: (selectedIndex: number) => void;
   transitionDurationOverrideClass?: string;
+  minimumButtonWidthPx?: number;
+  animateHighlightRing?: boolean;
+  alwaysUseHorizontalLayout?: boolean;
 }
 
 export const DetailedTile: React.FC<Props> = ({
@@ -16,7 +19,10 @@ export const DetailedTile: React.FC<Props> = ({
   disabledIndices,
   customClasses,
   onClick,
-  transitionDurationOverrideClass = 'duration-500'
+  transitionDurationOverrideClass = 'duration-500',
+  minimumButtonWidthPx = 240,
+  animateHighlightRing = true,
+  alwaysUseHorizontalLayout = false
 }) => {
   const windowSize = useWindowSize();
   const containerRef =
@@ -24,11 +30,14 @@ export const DetailedTile: React.FC<Props> = ({
   const buttonRefs = useRef<HTMLDivElement[]>([]);
   const [highlightRightOffset, setHighlightRightOffset] = useState(0);
   const [highlightTopOffset, setHighlightTopOffset] = useState(0);
+  const [highlightHeight, setHighlightHeight] = useState<number | null>(0);
   const initialTransitionClasses = `transition-all ${transitionDurationOverrideClass}`;
   const [transitionClasses, setTransitionClasses] = useState(
     initialTransitionClasses
   );
-  const [useFlexLayout, setUseFlexLayout] = useState(true);
+  const [useHorizontalLayout, setUseHorizontalLayout] = useState(
+    alwaysUseHorizontalLayout ? true : false
+  );
 
   // Helper functions
   const turnOnAnimations = () => {
@@ -37,7 +46,7 @@ export const DetailedTile: React.FC<Props> = ({
   const turnOffAnimations = () => {
     setTransitionClasses('');
   };
-  const calculateAndSetHighlightOffset = () => {
+  const calculateAndSetHighlightDimensions = () => {
     const rightContainerPosition: number = containerRef.current
       ? windowSize.width - containerRef.current?.getBoundingClientRect().right
       : 0;
@@ -50,17 +59,23 @@ export const DetailedTile: React.FC<Props> = ({
     const topContainerPosition: number = containerRef.current
       ? containerRef.current.getBoundingClientRect().y
       : 0;
-    const topButtonPosition: number = activeIndex
-      ? buttonRefs.current[activeIndex].getBoundingClientRect().y
-      : topContainerPosition;
+    const topButtonPosition: number =
+      activeIndex !== undefined
+        ? buttonRefs.current[activeIndex].getBoundingClientRect().y
+        : topContainerPosition;
     setHighlightTopOffset(topButtonPosition - topContainerPosition);
+    const buttonHeight: number | null =
+      activeIndex !== undefined
+        ? buttonRefs.current[activeIndex].getBoundingClientRect().height
+        : null;
+    setHighlightHeight(buttonHeight);
   };
 
   useEffect(() => {
     // When the window is resizing we should instantly
     // readjust the highlight ring, i.e without animation
     turnOffAnimations();
-    calculateAndSetHighlightOffset();
+    calculateAndSetHighlightDimensions();
 
     // If each button is getting too small we should change
     // the layout
@@ -68,29 +83,40 @@ export const DetailedTile: React.FC<Props> = ({
     const containerWidth: number | undefined = containerRef.current
       ? containerRef.current.getBoundingClientRect().width
       : undefined;
-    const minimumButtonWidthPx = 240;
     if (
       containerWidth !== undefined &&
       containerWidth / numberOfButtons < minimumButtonWidthPx
     ) {
       // buttons are shrinking too much
-      setUseFlexLayout(false);
+      if (!alwaysUseHorizontalLayout) {
+        // check if prohibited from changing the layout
+        setUseHorizontalLayout(false);
+      }
     } else {
       // use regular layout
-      setUseFlexLayout(true);
+      setUseHorizontalLayout(true);
     }
   }, [windowSize.width]);
 
   useEffect(() => {
-    calculateAndSetHighlightOffset();
+    calculateAndSetHighlightDimensions();
   }, [activeIndex, options]);
 
   const renderedButtons = options.map((option, index) => (
     <React.Fragment key={index}>
       <button
-        className={`block h-full transition-opacity border-gray-syn6 text-center p-4`}
+        className={`relative z-8 block h-full transition-opacity text-center p-4 ${
+          animateHighlightRing
+            ? 'border-gray-syn6'
+            : `border ${
+                activeIndex === index
+                  ? 'border-blue-neptune'
+                  : 'border-transparent'
+              }`
+        }`}
         style={{
-          width: `${useFlexLayout ? 100 / options.length : '100'}%`
+          width: `${useHorizontalLayout ? 100 / options.length : '100'}%`,
+          borderRadius: '0.3125rem'
         }}
         // Add each button in a list of refs
         ref={(ref) => {
@@ -107,6 +133,7 @@ export const DetailedTile: React.FC<Props> = ({
           }
         }}
       >
+        {/* Icon */}
         {option.icon && (
           <img
             src={option.icon}
@@ -116,6 +143,8 @@ export const DetailedTile: React.FC<Props> = ({
             }`}
           />
         )}
+
+        {/* Title */}
         <div
           className={`text-sm mb-0.5 ${
             !option.icon && !option.subTitle && 'text-base'
@@ -123,10 +152,51 @@ export const DetailedTile: React.FC<Props> = ({
         >
           {option.title}
         </div>
+
+        {/* Subtitle */}
         {option.subTitle && (
           <div className="text-xs text-gray-syn4">{option.subTitle}</div>
         )}
       </button>
+
+      {/* Border divider */}
+      {index !== options.length - 1 && options.length > 1 && (
+        <>
+          {useHorizontalLayout ? (
+            <div
+              className="flex-grow relative z-0 py-4"
+              style={{
+                width: '0px',
+                left: '-0.5px'
+              }}
+            >
+              <div
+                className="bg-gray-syn6"
+                style={{
+                  width: '1px',
+                  height: '100%'
+                }}
+              ></div>
+            </div>
+          ) : (
+            <div
+              className="bg-red-500 relative z-0 px-4"
+              style={{
+                height: '0px',
+                top: '-0.5px'
+              }}
+            >
+              <div
+                className="bg-gray-syn6"
+                style={{
+                  width: '100%',
+                  height: '1px'
+                }}
+              ></div>
+            </div>
+          )}
+        </>
+      )}
     </React.Fragment>
   ));
 
@@ -138,26 +208,34 @@ export const DetailedTile: React.FC<Props> = ({
     >
       {/* Buttons */}
       <div
-        className={`${
-          useFlexLayout ? 'flex' : ''
+        className={`flex ${
+          useHorizontalLayout ? '' : 'flex-col'
         } h-full border-gray-syn6 relative`}
       >
         {renderedButtons}
       </div>
 
       {/* Highlight ring */}
-      <div
-        className={`absolute border pointer-events-none border-blue-neptune ${transitionClasses}`}
-        style={{
-          borderRadius: '0.3125rem',
-          top: `calc(${highlightTopOffset}px + -1px)`,
-          right: `calc(${highlightRightOffset}px + -1px)`,
-          width: `calc(${useFlexLayout ? 100 / options.length : '100'}% + 1px)`,
-          height: `calc(${
-            useFlexLayout ? '100%' : `${100 / options.length}%`
-          } + 1px)`
-        }}
-      ></div>
+      {animateHighlightRing && (
+        <div
+          className={`absolute border pointer-events-none border-blue-neptune ${transitionClasses}`}
+          style={{
+            borderRadius: '0.3125rem',
+            top: `calc(${highlightTopOffset}px + -1px)`,
+            right: `calc(${highlightRightOffset}px + -1px)`,
+            width: `calc(${
+              useHorizontalLayout ? 100 / options.length : '100'
+            }% + 1px)`,
+            height: `calc(${
+              useHorizontalLayout
+                ? '100%'
+                : highlightHeight
+                ? `${highlightHeight}px`
+                : `${100 / options.length}%`
+            } + 1px)`
+          }}
+        ></div>
+      )}
     </div>
   );
 };
