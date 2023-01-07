@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from '@/ClubERC20Factory';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { WALLET_CONNECTION } from '@/components/amplitude/eventNames';
@@ -25,6 +24,7 @@ import {
 } from '@/state/wallet/actions';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { isSSR } from '@/utils/environment';
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { Web3Provider } from '@ethersproject/providers';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import { useClient } from '@splitsoftware/splitio-react';
@@ -86,8 +86,7 @@ const getWalletconnectRPCs = () => {
 };
 const walletconnectRPCs = Object.freeze(getWalletconnectRPCs());
 
-// @ts-expect-error TS(2322): Type 'SafeAppWeb3Modal | null' is not assignable t... Remove this comment to see the full error message
-const web3Modal: SafeAppWeb3Modal = isSSR()
+const web3Modal: SafeAppWeb3Modal | null = isSSR()
   ? null
   : new SafeAppWeb3Modal({
       cacheProvider: true,
@@ -95,6 +94,13 @@ const web3Modal: SafeAppWeb3Modal = isSSR()
         walletconnect: {
           package: WalletConnectProvider, // required
           options: {
+            rpc: walletconnectRPCs
+          }
+        },
+        walletlink: {
+          package: CoinbaseWalletSDK,
+          options: {
+            appName: 'Coinbase wallet',
             rpc: walletconnectRPCs
           }
         }
@@ -115,10 +121,11 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [walletConnecting, setWalletConnecting] = useState(false);
   const [cachedWalletData, setCachedWalletData] = useState(null);
   const [providerName, setProviderName] = useState('');
-  const [chainId, setChainId] = useState(null);
-  const [activeProvider, setActiveProvider] = useState(null);
-  // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to parameter of type 'Web3Provider | (() => Web3Provider)'... Remove this comment to see the full error message
-  const [ethersProvider, setEthersProvider] = useState<Web3Provider>(null);
+  const [chainId, setChainId] = useState(1);
+  const [activeProvider, setActiveProvider] = useState<any>(null);
+  const [ethersProvider, setEthersProvider] = useState<Web3Provider | null>(
+    null
+  );
 
   const [account, setAccount] = useState('');
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
@@ -138,7 +145,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [currentClient]);
 
   const activeNetwork: IActiveNetwork = useMemo(
-    // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
     () => NETWORKS[chainId] ?? NETWORKS[1],
     [chainId]
   );
@@ -147,10 +153,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (chainId) {
       const rpcUrl = NETWORKS[chainId]?.rpcUrl;
       if (rpcUrl) return new Web3(`${rpcUrl}`);
-
       return;
+    } else {
+      return new Web3(`${NETWORKS[1].rpcUrl}`);
     }
-    return new Web3(`${NETWORKS[1].rpcUrl}`);
   }, [chainId]);
 
   const supportedNetworks: number[] = useMemo(() => {
@@ -165,17 +171,17 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * Needs `public/manifest.json` to work.
    */
   useEffect(() => {
-    web3Modal?.isSafeApp()?.then((isSafeApp) => {
+    void web3Modal?.isSafeApp()?.then((isSafeApp) => {
       setLoadedAsSafeApp(isSafeApp);
       if (isSafeApp) {
-        activateProvider('GnosisSafe');
+        void activateProvider('GnosisSafe');
       }
     });
   }, [web3Modal]);
 
   useEffect(() => {
     if (account) {
-      amplitudeLogger(WALLET_CONNECTION, {
+      void amplitudeLogger(WALLET_CONNECTION, {
         flow: Flow.WEB_APP,
         transaction_status: 'Success',
         wallet_network: activeNetwork.displayName
@@ -207,6 +213,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
           stringify({ account, providerName, chainId })
         );
       }
+
+      const _web3 = account ? web3 : detachedWeb3;
+
       if (account) {
         dispatch(
           setLibrary({
@@ -223,6 +232,18 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             account,
             // @ts-expect-error TS(2322): Type 'Web3 | undefined' is not assignable to type 'IWeb3'.
             web3: detachedWeb3,
+            providerName,
+            activeNetwork,
+            ethersProvider
+          })
+        );
+      }
+
+      if (_web3 && ethersProvider) {
+        dispatch(
+          setLibrary({
+            account,
+            web3: _web3,
             providerName,
             activeNetwork,
             ethersProvider
@@ -249,25 +270,27 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     } else {
       setLoading(false);
       if (!chainId) {
-        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
         setChainId(activeNetwork.chainId);
       }
-      initializeWeb3();
+      void initializeWeb3();
     }
   }, []);
 
   // Connect from cached provider info.
   useEffect(() => {
-    if (!isEmpty(cachedWalletData)) {
-      // @ts-expect-error TS(2339): Property 'providerName' does not exist on type 'nu... Remove this comment to see the full error message
+    if (!isEmpty(cachedWalletData) && cachedWalletData !== null) {
       const { providerName, chainId } = cachedWalletData;
-      if (providerName === 'Injected' || providerName === 'WalletConnect') {
-        activateProvider(providerName);
+      if (
+        providerName === 'Injected' ||
+        providerName === 'WalletConnect' ||
+        providerName === 'WalletLink'
+      ) {
+        void activateProvider(providerName);
         setChainId(chainId);
       } else if (chainId && !providerName && !account) {
         setChainId(chainId);
         setLoading(false);
-        initializeWeb3();
+        void initializeWeb3();
       }
     }
   }, [cachedWalletData]);
@@ -301,7 +324,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // allows us to listed for account and chain changes
   // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
-    // @ts-expect-error TS(2339): Property 'on' does not exist on type 'never'.
     if (activeProvider?.on) {
       const handleAccountsChanged = async () => {
         const { address } = await getProviderAccountAndNetwork(activeProvider);
@@ -314,7 +336,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         const { network, ethersProvider } = await getProviderAccountAndNetwork(
           activeProvider
         );
-        // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to para... Remove this comment to see the full error message
         setChainId(network.chainId);
         setEthersProvider(ethersProvider);
       };
@@ -323,25 +344,18 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(setDisConnected());
       };
 
-      // @ts-expect-error TS(2339): Property 'on' does not exist on type 'never'.
       activeProvider.on('accountsChanged', handleAccountsChanged);
-      // @ts-expect-error TS(2339): Property 'on' does not exist on type 'never'.
       activeProvider.on('chainChanged', handleChainChanged);
-      // @ts-expect-error TS(2339): Property 'on' does not exist on type 'never'.
       activeProvider.on('disconnect', handleDisconnect);
 
       // Subscription Cleanup
       return () => {
-        // @ts-expect-error TS(2339): Property 'removeListener' does not exist on type '... Remove this comment to see the full error message
         if (activeProvider.removeListener) {
-          // @ts-expect-error TS(2339): Property 'removeListener' does not exist on type '... Remove this comment to see the full error message
           activeProvider.removeListener(
             'accountsChanged',
             handleAccountsChanged
           );
-          // @ts-expect-error TS(2339): Property 'removeListener' does not exist on type '... Remove this comment to see the full error message
           activeProvider.removeListener('chainChanged', handleChainChanged);
-          // @ts-expect-error TS(2339): Property 'removeListener' does not exist on type '... Remove this comment to see the full error message
           activeProvider.removeListener('disconnect', handleDisconnect);
         }
       };
@@ -394,13 +408,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * provider can be injected provider, walletConnect or gnosis wallet provider
    * @param {*} provider
    */
-  const activateProvider = async (providerName: string) => {
+  const activateProvider = async (providerName: string): Promise<void> => {
     dispatch(setConnectedProviderName(providerName));
     setProviderName(providerName);
 
-    const provider = await (providerName === 'GnosisSafe'
-      ? web3Modal.requestProvider()
-      : web3Modal.connectTo(providerName.toLowerCase()));
+    const provider: any = await (providerName === 'GnosisSafe'
+      ? web3Modal?.requestProvider()
+      : web3Modal?.connectTo(providerName.toLowerCase()));
 
     // This fixes issue with walletConnect transactions not receiving events.
     if (providerName === 'WalletConnect') {
@@ -419,7 +433,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setAccount(address);
     setEthersProvider(ethersProvider);
     setActiveProvider(provider);
-    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
     setChainId(Number(network.chainId));
     setLoading(false);
   };
@@ -449,7 +462,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       TODO: walletConnect variant for wallet switching
             https://github.com/gnosis/safe-react/blob/aad9469e33d3abc7cf0dd8e0e389029f8c9eaa4a/src/logic/wallets/utils/network.ts#L21
       */
-        // @ts-expect-error TS(2339): Property 'request' does not exist on type 'never'.
         await activeProvider?.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: web3.utils.toHex(_chainId) }]
@@ -459,7 +471,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         if (error.code === 4902) {
           try {
             const activeNetwork = NETWORKS[_chainId];
-            // @ts-expect-error TS(2339): Property 'request' does not exist on type 'never'.
             await activeProvider?.request({
               method: 'wallet_addEthereumChain',
               params: [
@@ -544,6 +555,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       if (
         providerName === 'Injected' ||
         providerName === 'WalletConnect' ||
+        providerName === 'WalletLink' ||
         providerName === 'GnosisSafe'
       ) {
         await activateProvider(providerName);
@@ -566,7 +578,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setWalletConnecting(false);
         setShowSuccessModal(false);
         dispatch(showErrorModal(customError));
-        amplitudeLogger(WALLET_CONNECTION, {
+
+        void amplitudeLogger(WALLET_CONNECTION, {
           flow: Flow.WEB_APP,
           transaction_status: 'Failure'
         });
@@ -586,7 +599,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
             window.open('https://metamask.io/download/', '_blank');
             break;
 
-          case 'Coinbase Wallet':
+          case 'CoinbaseWallet':
             window.open(
               'https://www.coinbase.com/wallet/getting-started-extension',
               '_blank'
@@ -612,14 +625,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // Logout section. Handles disconnecting and deletes cache
-  const disconnectWallet = () => {
-    web3Modal.clearCachedProvider();
+  const disconnectWallet = (): void => {
+    web3Modal?.clearCachedProvider();
     setProviderName('');
     dispatch(setDisConnected());
     setWalletConnecting(false);
     setShowSuccessModal(false);
     setAccount('');
-    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to parameter of type 'SetStateAction<Web3Provider>
     setEthersProvider(null);
     dispatch(logout());
     localStorage.removeItem('cache');

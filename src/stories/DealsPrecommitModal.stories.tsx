@@ -17,7 +17,26 @@ Default.args = {
   tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
   tokenSymbol: 'USDC',
   activeStepIndex: 0,
-  showWaitingOnWalletLoadingState: false
+  showWaitingOnWalletLoadingState: false,
+  depositTokenSymbol: 'USDC',
+  depositTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
+  connectedWallet: {
+    address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+    name: 'jillo-syndicate.eth',
+    avatar: '/images/jazzicon.png'
+  },
+  wallets: [
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'first.eth',
+      avatar: '/images/jazzicon.png'
+    },
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'second.eth',
+      avatar: '/images/jazzicon.png'
+    }
+  ]
 };
 
 export const AllowanceWaiting = Template.bind({});
@@ -28,7 +47,26 @@ AllowanceWaiting.args = {
   tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
   tokenSymbol: 'USDC',
   activeStepIndex: 0,
-  showWaitingOnWalletLoadingState: true
+  showWaitingOnWalletLoadingState: true,
+  depositTokenSymbol: 'USDC',
+  depositTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
+  connectedWallet: {
+    address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+    name: 'jillo-syndicate.eth',
+    avatar: '/images/jazzicon.png'
+  },
+  wallets: [
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'first.eth',
+      avatar: '/images/jazzicon.png'
+    },
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'second.eth',
+      avatar: '/images/jazzicon.png'
+    }
+  ]
 };
 
 export const Request = Template.bind({});
@@ -39,7 +77,26 @@ Request.args = {
   tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
   tokenSymbol: 'USDC',
   activeStepIndex: 1,
-  showWaitingOnWalletLoadingState: false
+  showWaitingOnWalletLoadingState: false,
+  depositTokenSymbol: 'USDC',
+  depositTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
+  connectedWallet: {
+    address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+    name: 'jillo-syndicate.eth',
+    avatar: '/images/jazzicon.png'
+  },
+  wallets: [
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'first.eth',
+      avatar: '/images/jazzicon.png'
+    },
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'second.eth',
+      avatar: '/images/jazzicon.png'
+    }
+  ]
 };
 
 export const RequestWaiting = Template.bind({});
@@ -50,5 +107,24 @@ RequestWaiting.args = {
   tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
   tokenSymbol: 'USDC',
   activeStepIndex: 1,
-  showWaitingOnWalletLoadingState: true
+  showWaitingOnWalletLoadingState: true,
+  depositTokenSymbol: 'USDC',
+  depositTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
+  connectedWallet: {
+    address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+    name: 'jillo-syndicate.eth',
+    avatar: '/images/jazzicon.png'
+  },
+  wallets: [
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'first.eth',
+      avatar: '/images/jazzicon.png'
+    },
+    {
+      address: '0x8410B86f3220631D5110a31f966f12C7A4309435',
+      name: 'second.eth',
+      avatar: '/images/jazzicon.png'
+    }
+  ]
 };

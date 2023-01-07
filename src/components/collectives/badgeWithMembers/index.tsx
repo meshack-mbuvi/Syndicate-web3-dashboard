@@ -1,28 +1,28 @@
-import CopyLink from '@/components/shared/CopyLink';
-import {
-  SmallCarousel,
-  collectiveSlides
-} from '@/components/shared/smallCarousel';
-import { B2, B3, H4 } from '@/components/typography';
-import { AppState } from '@/state';
-import Image from 'next/image';
-import router from 'next/router';
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { JoinCollectiveCTA } from '../joinCollectiveButton';
-import {
-  AddressImageSize,
-  AddressWithENS
-} from '@/components/shared/ensAddress';
-import { PermissionType } from '../shared/types';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   INVITE_LINK_COPY,
   JOIN_COLLECTIVE_CLICK
 } from '@/components/amplitude/eventNames';
 import MembersOnly from '@/components/collectives/membersOnly';
-import { getCollectiveBalance } from '@/utils/contracts/collective';
+import CopyLink from '@/components/shared/CopyLink';
+import {
+  AddressImageSize,
+  AddressWithENS
+} from '@/components/shared/ensAddress';
+import {
+  collectiveSlides,
+  SmallCarousel
+} from '@/components/shared/smallCarousel';
+import { B2, B3, H4 } from '@/components/typography';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import { AppState } from '@/state';
+import { getCollectiveBalance } from '@/utils/contracts/collective';
+import Image from 'next/image';
+import router from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { JoinCollectiveCTA } from '../joinCollectiveButton';
+import { PermissionType } from '../shared/types';
 
 interface Props {
   inviteLink?: string;
@@ -146,7 +146,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
         <div>
           <H4 extraClasses="mb-4">Admin</H4>
           <div className="space-y-4 border rounded-2xl p-6 border-gray-syn7">
-            {account ? (
+            {account && ethersProvider ? (
               admins.map((admin, index) => {
                 return (
                   <AddressWithENS
@@ -189,7 +189,11 @@ export const BadgeWithMembers: React.FC<Props> = ({
                 : ''
             } h-full rounded-2xl p-6 border border-gray-syn7`}
           >
-            {members && members.length && account && !invalidEthereumNetwork ? (
+            {members &&
+            members.length &&
+            account &&
+            !invalidEthereumNetwork &&
+            ethersProvider ? (
               members?.map((member, index) => {
                 return (
                   <AddressWithENS
@@ -218,7 +222,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
                   members
                 </B3>
               </div>
-            ) : account ? (
+            ) : account && ethersProvider ? (
               [...Array(8).keys()].map((_, index) => (
                 <AddressWithENS
                   ethersProvider={ethersProvider}

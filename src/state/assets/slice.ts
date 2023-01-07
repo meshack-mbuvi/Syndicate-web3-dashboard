@@ -195,6 +195,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
         lastPurchasePrice.lastPurchasePriceETH = parseInt(eth_price);
       }
       return {
+        assetId: asset.id, // we need this due to line 204 below
         name: asset.name,
         image: asset.image,
         animation: asset.animation,
@@ -325,7 +326,6 @@ const assetsSlice = createSlice({
         let result;
         if (action.payload.allAssets.length < 20) {
           state.allCollectiblesFetched = true;
-
           const morseCodeNfts = morseCodeNftsDetails.map((detail, index) => ({
             name: '',
             image: `/images/morseCodeNfts/${detail.image}`,

@@ -10,8 +10,8 @@ import {
   AddressImageSize,
   AddressWithENS
 } from '@/components/shared/ensAddress';
-import { SignedIcon } from '../shared/signedIcon';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { SignedIcon } from '../shared/signedIcon';
 
 interface IProps {
   memberAddress: string;
@@ -53,12 +53,16 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       onClick={() => setSelectedMember({ memberAddress, ...rest })}
     >
       <p className="flex my-1 items-center ">
-        <AddressWithENS
-          ethersProvider={ethersProvider}
-          userPlaceholderImg={'/images/user.svg'}
-          address={memberAddress}
-          imageSize={AddressImageSize.LARGE}
-        />
+        {ethersProvider ? (
+          <AddressWithENS
+            ethersProvider={ethersProvider}
+            userPlaceholderImg={'/images/user.svg'}
+            address={memberAddress}
+            imageSize={AddressImageSize.LARGE}
+          />
+        ) : (
+          ''
+        )}
         <Tooltip
           content={
             <div className="text-sm text-gray-syn4">

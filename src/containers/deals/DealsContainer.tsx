@@ -1,26 +1,26 @@
+import { PermissionType } from '@/components/collectives/shared/types';
 import Modal, { ModalStyle } from '@/components/modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { Status } from '@/components/statusChip';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { DealSidePanel } from '@/containers/deals/dealSidePanel';
 import { DealsContainer } from '@/features/deals/components';
 import { DealsAllocations } from '@/features/deals/components/allocations';
 import { DealsOverview } from '@/features/deals/components/overview';
 import { DealsParticipants } from '@/features/deals/components/participants';
-import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
-import useDealsDetails from '@/hooks/deals/useDealsDetails';
-import useTokenDetails from '@/hooks/useTokenDetails';
-import { getWeiAmount } from '@/utils/conversions';
-import TwoColumnLayout from '../twoColumnLayout';
-import { DealSidePanel } from '@/containers/deals/dealSidePanel';
-import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
 import {
   DealsParticipantsTable,
   Participant
 } from '@/features/deals/components/participants/table';
-import { Status } from '@/components/statusChip';
+import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
+import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
+import useDealsDetails from '@/hooks/deals/useDealsDetails';
+import useTokenDetails from '@/hooks/useTokenDetails';
+import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
-import { PermissionType } from '@/components/collectives/shared/types';
+import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {
   const {
@@ -48,6 +48,38 @@ const DealDetails: React.FC = () => {
     useTokenDetails(depositToken);
 
   const permissionType = useDealPermissionType();
+  const [currentParticipants, setCurrentParticipants] = useState<Participant[]>(
+    []
+  );
+
+  // need to have the right object shape for participants and also
+  // handle reject/acceptance of precommits
+  useEffect(() => {
+    const _currentParticipants = participants.map((participant) => {
+      return {
+        address: participant.address,
+        contributionAmount: getWeiAmount(participant.amount, 6, false),
+        ensName: '',
+        joinedDate: moment
+          .utc(+participant.createdAt * 1000)
+          .format('DD/MM/YY'),
+        status: Status.ACCEPTED
+      };
+    });
+
+    setCurrentParticipants(_currentParticipants);
+  }, [participants]);
+
+  const updateParticipantStatus = (idx: number, status: Status): void => {
+    setCurrentParticipants((current) =>
+      current.map((participant, index) => {
+        if (idx === index) {
+          return { ...participant, status };
+        }
+        return participant;
+      })
+    );
+  };
 
   const isOpenToPrecommits =
     new Date(+dealEndTime * 1000).getTime() > Date.now();
@@ -128,16 +160,6 @@ const DealDetails: React.FC = () => {
     </div>
   );
 
-  const currentParticipants: Participant[] = participants.map((participant) => {
-    return {
-      address: participant.address,
-      contributionAmount: getWeiAmount(participant.amount, 6, false),
-      ensName: '',
-      joinedDate: moment.utc(+participant.createdAt * 1000).format('DD/MM/YY'),
-      status: Status.PENDING //TODO: handle accept/reject in a separate ticket
-    };
-  });
-
   return (
     <DealsContainer>
       <TwoColumnLayout
@@ -188,14 +210,12 @@ const DealDetails: React.FC = () => {
                 {isReviewingCommittments &&
                 permissionType === PermissionType.ADMIN ? (
                   <DealsParticipantsTable
-                    handleParticipantAcceptanceClick={(): void =>
-                      //TODO: add functionality to accept commit
-                      console.log('accept')
-                    }
-                    handleParticipantRejectionClick={(): void =>
-                      //TODO: add functionality to reject commit
-                      console.log('reject')
-                    }
+                    handleParticipantAcceptanceClick={(index: number): void => {
+                      updateParticipantStatus(index, Status.ACCEPTED);
+                    }}
+                    handleParticipantRejectionClick={(index: number): void => {
+                      updateParticipantStatus(index, Status.REJECTED);
+                    }}
                     participants={currentParticipants}
                     tokenLogo="/images/prodTokenLogos/USDCoin.svg"
                     tokenSymbol="USDC"
@@ -221,7 +241,8 @@ const DealDetails: React.FC = () => {
                 permissionType,
                 isOpenToPrecommits,
                 setIsReviewingCommittments,
-                isReviewingCommittments
+                isReviewingCommittments,
+                currentParticipants
               }}
             />
           )

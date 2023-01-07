@@ -150,64 +150,62 @@ const Header: React.FC<props> = ({
         ref={navRef}
       >
         {/* Mobile nav */}
-        <div
-          className={`${
-            showMobileNav && !createClubPage
-              ? 'max-h-355 opacity-100'
-              : 'max-h-0 opacity-0'
-          } ${menuOverflowClass} transition-all ${transitionDurationClass} fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl`}
-        >
-          {showSideNav ? (
-            <div className="flex h-11 mb-4 ml-4 space-x-5 mr-3 md:hidden justify-between">
-              <div className="">
-                <NavButton
-                  type={NavButtonType.CLOSE}
-                  onClick={handleExitClick}
-                />
-              </div>
-              <NavButton
-                type={NavButtonType.HORIZONTAL}
-                handlePrevious={handlePrevious}
-                handleNext={handleNext}
-                disabled={nextBtnDisabled}
-                currentStep={activeIndex}
-              />
-              {showDotIndicators ? (
-                <div className="flex align-middle">
-                  <DotIndicators
-                    {...{
-                      options: dotIndicatorOptions,
-                      activeIndex,
-                      showDotIndicatorLabels: false,
-                      orientation: DotIndicatorsOrientation.HORIZONTAL
-                    }}
+        {showMobileNav && !createClubPage ? (
+          <div
+            className={`max-h-355 opacity-100 ${menuOverflowClass} transition-all ${transitionDurationClass} fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl`}
+          >
+            {showSideNav ? (
+              <div className="flex h-11 mb-4 ml-4 space-x-5 mr-3 md:hidden justify-between">
+                <div className="">
+                  <NavButton
+                    type={NavButtonType.CLOSE}
+                    onClick={handleExitClick}
                   />
                 </div>
-              ) : null}
-            </div>
-          ) : null}
-          <div className="container items-center divide-y pb-2 md:pb-0">
-            {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <div key={index}>
-                <NavBarNavItem
-                  navItemText={navItemText}
-                  url={url}
-                  isLegal={isLegal}
+                <NavButton
+                  type={NavButtonType.HORIZONTAL}
+                  handlePrevious={handlePrevious}
+                  handleNext={handleNext}
+                  disabled={nextBtnDisabled}
+                  currentStep={activeIndex}
                 />
+                {showDotIndicators ? (
+                  <div className="flex align-middle">
+                    <DotIndicators
+                      {...{
+                        options: dotIndicatorOptions,
+                        activeIndex,
+                        showDotIndicatorLabels: false,
+                        orientation: DotIndicatorsOrientation.HORIZONTAL
+                      }}
+                    />
+                  </div>
+                ) : null}
               </div>
-            ))}
-            <div className="border-gray-syn7">
-              <NetworkComponent />
-            </div>
-            <div
-              className={`border-gray-syn7 ${
-                (status === Status.DISCONNECTED && 'pt-4') || ''
-              }`}
-            >
-              <WalletComponent />
+            ) : null}
+            <div className="container items-center divide-y pb-2 md:pb-0">
+              {navItems.map(({ navItemText, url, isLegal }, index) => (
+                <div key={index}>
+                  <NavBarNavItem
+                    navItemText={navItemText}
+                    url={url}
+                    isLegal={isLegal}
+                  />
+                </div>
+              ))}
+              <div className="border-gray-syn7">
+                <NetworkComponent />
+              </div>
+              <div
+                className={`border-gray-syn7 ${
+                  (status === Status.DISCONNECTED && 'pt-4') || ''
+                }`}
+              >
+                <WalletComponent />
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
 
         {/* Main nav */}
         <div className="container mx-auto h-full flex">

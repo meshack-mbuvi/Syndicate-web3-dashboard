@@ -11,11 +11,11 @@ import { AppState } from '@/state';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { getCountDownDays } from '@/utils/dateUtils';
 import { numberWithCommas } from '@/utils/formattedNumbers';
-import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
+import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 import RedeemRug from '../redeemRug';
 import { BonusTokenClaim } from '../shared/bonusToken';
@@ -59,8 +59,9 @@ export const NFTDetails: React.FC = () => {
     nextClaimTime,
     totalBonusToClaim
   } = useRugRadioTokenCount(collectibles, processed);
+
   const { hasGenesisNFT } = useOwnsGenesisNFT();
-  const handleClose = () => {
+  const handleClose = (): void => {
     setShowNFTchecker(false);
   };
 
@@ -69,7 +70,6 @@ export const NFTDetails: React.FC = () => {
   const genesisNFTContractAddress = process.env.NEXT_PUBLIC_GenesisNFT;
   useEffect(() => {
     if (!account || !genesisNFTContractAddress) return;
-
     dispatch(
       fetchCollectiblesTransactions({
         account,
@@ -110,7 +110,7 @@ export const NFTDetails: React.FC = () => {
     );
   };
 
-  const onTxFail = (error: any) => {
+  const onTxFail = (error: any): void => {
     const { code } = error;
     setClaimBonus(false);
 
@@ -127,7 +127,7 @@ export const NFTDetails: React.FC = () => {
     setShowErrorModal(true);
   };
 
-  const handleCloseErrorModal = () => {
+  const handleCloseErrorModal = (): void => {
     setShowErrorModal(false);
     setShowModal(false);
     setClaimBonus(false);
@@ -136,12 +136,12 @@ export const NFTDetails: React.FC = () => {
   /**
    * Function to claim all NFTs for a give wallet
    */
-  const handleClaimAll = async (event: any) => {
+  const handleClaimAll = async (event: any): Promise<void> => {
     event.preventDefault();
     setClaimBonus(false);
 
     // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
-    const tokenIds = collectibles.map((collectible) => collectible.id);
+    const tokenIds = collectibles.map((collectible) => collectible.assetId);
 
     if (!tokenIds.length) return;
 
@@ -164,7 +164,7 @@ export const NFTDetails: React.FC = () => {
     event.preventDefault();
 
     // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
-    const tokenIds = collectibles.map((collectible) => collectible.id);
+    const tokenIds = collectibles.map((collectible) => collectible.assetId);
 
     if (!tokenIds.length) return;
 
@@ -184,7 +184,7 @@ export const NFTDetails: React.FC = () => {
   /**
    * Function to close transaction modal
    */
-  const handleCloseSuccessModal = () => {
+  const handleCloseSuccessModal = (): void => {
     setClaimBonus(false);
     setConfirm(false);
     setProcessing(false);
@@ -206,7 +206,7 @@ export const NFTDetails: React.FC = () => {
     );
   };
 
-  const fetchMoreCollectibles = () => {
+  const fetchMoreCollectibles = (): void => {
     setPageOffSet(pageOffSet + 20);
     dispatch(
       fetchCollectiblesTransactions({
@@ -553,7 +553,7 @@ export const NFTDetails: React.FC = () => {
                 <div className="grid grid-cols-12 gap-4">
                   {!loading && collectibles.length > 0
                     ? collectibles.map((collectible, index) => {
-                        const { id, image, animation } = collectible;
+                        const { assetId, image, animation } = collectible;
 
                         let mediaType;
 
@@ -579,7 +579,7 @@ export const NFTDetails: React.FC = () => {
                           if (
                             // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.html$/) != null &&
-                            id == '3216'
+                            assetId == '3216'
                           ) {
                             mediaType = 'htmlNFT';
                           }

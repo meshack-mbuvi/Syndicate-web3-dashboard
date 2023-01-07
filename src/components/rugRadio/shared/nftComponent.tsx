@@ -11,6 +11,7 @@ interface INFTComponentProps {
   refresh?: boolean;
   setDetailsOfSelectedCollectible?: (details: any) => void;
   collectible: {
+    assetId: string;
     id: string;
     image: string;
     animation: string;
@@ -31,7 +32,7 @@ const NFTComponent: FC<INFTComponentProps> = ({
   const { image, animation } = collectible;
 
   const { tokenBalance, tokenProduction, loading } = useAvailableToClaim(
-    collectible?.id,
+    collectible?.assetId,
     refresh
   );
 

@@ -1,8 +1,8 @@
-import { CreateFlowStepTemplate } from '..';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
+import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
-import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
+import { CreateFlowStepTemplate } from '..';
 
 interface Props {
   selectedTimeWindow: SelectedTimeWindow | null;

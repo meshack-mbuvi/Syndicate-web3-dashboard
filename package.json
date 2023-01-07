@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
+    "@coinbase/wallet-sdk": "^3.6.3",
     "@ethersproject/contracts": "^5.0.12",
     "@ethersproject/providers": "^5.0.24",
     "@gnosis.pm/safe-apps-sdk": "^6.0.0",

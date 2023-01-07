@@ -58,7 +58,7 @@ export interface IWeb3Library {
   web3: IWeb3;
   providerName: string;
   activeNetwork: IActiveNetwork;
-  ethersProvider: Web3Provider;
+  ethersProvider: Web3Provider | null;
 }
 
 export interface IEthereumNetwork {
@@ -95,7 +95,7 @@ export interface InitialState {
       correctEthereumNetwork: string;
       invalidEthereumNetwork: boolean;
     };
-    ethersProvider: Web3Provider;
+    ethersProvider: Web3Provider | null;
   };
   showWalletModal: boolean;
   dispatchCreateFlow: boolean;
@@ -107,7 +107,6 @@ export const initialState: InitialState = {
   web3: {
     status: Status.DISCONNECTED,
     connect: false,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Web3Provider'.
     ethersProvider: null,
     showConnectionModal: false,
     isErrorModalOpen: false,

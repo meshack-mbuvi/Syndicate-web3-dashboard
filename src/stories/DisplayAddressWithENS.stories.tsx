@@ -33,5 +33,6 @@ Default.args = {
   name: 'first.eth',
   image: '/images/jazzicon.png',
   layout: AddressLayout.TWO_LINES,
-  imageSize: AddressImageSize.SMALL
+  imageSize: AddressImageSize.SMALL,
+  onlyShowOneOfNameOrAddress: false
 };

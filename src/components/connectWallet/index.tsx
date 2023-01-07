@@ -122,7 +122,7 @@ const ConnectWallet: React.FC = () => {
   }
 
   // function to handle error CTA button being clicked
-  const handleErrorButtonAction = () => {
+  const handleErrorButtonAction = (): void => {
     if (metamaskNotInstalledError) {
       window.open('https://metamask.io/');
     } else {
@@ -132,7 +132,7 @@ const ConnectWallet: React.FC = () => {
 
   // provider icon to display on loading state modals
   let providerIcon;
-  if (providerName === 'Injected') {
+  if (providerName === 'Injected' || providerName === 'WalletLink') {
     providerIcon = '/images/wallet.svg'; // could be Metamask or Coinbase Wallet
   } else if (providerName === 'WalletConnect') {
     providerIcon = '/images/walletConnect.svg';
@@ -141,7 +141,7 @@ const ConnectWallet: React.FC = () => {
   }
 
   // open external help links
-  const openExternalLink = (link: string) => {
+  const openExternalLink = (link: string): void => {
     window.open(link, '_blank', 'noopener');
   };
 

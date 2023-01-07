@@ -1,24 +1,25 @@
-import { AddressUploader } from '@/components/uploaders/addressUploader';
-import { AppState } from '@/state';
-import { ethers } from 'ethers';
-import {
-  setMemberAddressesError,
-  setMembershipAddresses,
-  setAmountToMintPerAddress
-} from '@/state/createInvestmentClub/slice';
-import {
-  removeNewLinesAndWhitespace,
-  removeSubstring,
-  countOccurrences
-} from '@/utils/stringUtils';
-import { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { InputFieldWithToken } from '@/components/inputs/inputFieldWithToken';
+import { AddressUploader } from '@/components/uploaders/addressUploader';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
+import {
+  setAmountToMintPerAddress,
+  setMemberAddressesError,
+  setMembershipAddresses
+} from '@/state/createInvestmentClub/slice';
 import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import {
+  countOccurrences,
+  removeNewLinesAndWhitespace,
+  removeSubstring
+} from '@/utils/stringUtils';
+import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers';
+import { ethers } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const InviteMembers: React.FC = () => {
   const {
@@ -195,7 +196,9 @@ const InviteMembers: React.FC = () => {
   const resolveENSAddress = useCallback(async (name: string) => {
     // using ethers here instead of web3.js because the getAddress method for
     // the latter appears to be depracated.
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum as ExternalProvider | JsonRpcFetchFunc
+    );
     const address = await provider.resolveName(name);
     return address;
     // eslint-disable-next-line react-hooks/exhaustive-deps

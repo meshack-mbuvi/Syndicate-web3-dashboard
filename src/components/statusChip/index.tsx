@@ -3,7 +3,8 @@ export enum Status {
   SUCCESS = 'SUCCESS',
   ACTION_REQUIRED = 'ACTION_REQUIRED',
   ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
+  DEAL_DISSOLVED = 'DEAL_DISSOLVED'
 }
 
 export const StatusChip = (props: {
@@ -39,6 +40,11 @@ export const StatusChip = (props: {
     case Status.REJECTED:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Rejected';
+      dotStyles = 'border border-gray-syn3';
+      break;
+    case Status.DEAL_DISSOLVED:
+      bgStyles = 'bg-white bg-opacity-10';
+      label = 'Deal dissolved';
       dotStyles = 'border border-gray-syn3';
       break;
   }

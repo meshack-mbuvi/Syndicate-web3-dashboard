@@ -37,19 +37,15 @@ const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
 
     await await Promise.all([
       ...collectiblesResult.map(async (collectible: any) => {
-        try {
-          const tokenBalance = await RugClaimModule.getClaimAmount(
-            collectible.id
-          );
-          const tokenBonus = await rugBonusClaimModule.getClaimAmount(
-            collectible.id
-          );
+        const tokenBalance = await RugClaimModule.getClaimAmount(
+          collectible.assetId
+        );
+        const tokenBonus = await rugBonusClaimModule.getClaimAmount(
+          collectible.assetId
+        );
 
-          totalYieldTokens += +tokenBalance;
-          totalBonusToClaim += +tokenBonus;
-        } catch (error) {
-          console.log({ error });
-        }
+        totalYieldTokens += +tokenBalance;
+        totalBonusToClaim += +tokenBonus;
       })
     ]);
 
@@ -58,7 +54,7 @@ const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
      */
     const lastClaims = await await Promise.all([
       ...collectiblesResult.map(async (collectible: any) =>
-        parseInt(await RugClaimModule.getLastClaimTime(collectible.id))
+        parseInt(await RugClaimModule.getLastClaimTime(collectible.assetId))
       )
     ]);
 
@@ -80,7 +76,7 @@ const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
   useEffect(() => {
     if (!collectiblesResult.length) return;
 
-    getTokenProperties();
+    void getTokenProperties();
   }, [account, refresh, JSON.stringify(collectiblesResult)]);
 
   return {
