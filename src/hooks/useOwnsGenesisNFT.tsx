@@ -1,9 +1,9 @@
 import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 import { AppState } from '@/state';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import ERC20ABI from '@/utils/abi/erc20.json';
 
 const useOwnsGenesisNFT: any = () => {
   const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
@@ -72,8 +72,9 @@ const useOwnsGenesisNFT: any = () => {
    * Claim is enabled if startTime is greater than 0 or startTime is less
    * than current timestamp.
    */
-  const getClaimEnabled = async () => {
+  const getClaimEnabled = async (): Promise<void> => {
     const startTime = parseInt(await RugClaimModule.getStartTime());
+
     const currentTimestamp = new Date().getTime();
 
     if (startTime !== 0 || startTime < currentTimestamp) {
