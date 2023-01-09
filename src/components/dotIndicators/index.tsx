@@ -1,6 +1,7 @@
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import React, { useEffect, useRef, useState } from 'react';
 import TransitionBetweenChildren from '../transition/transitionBetweenChildren';
+import ReactTooltip from 'react-tooltip';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',
@@ -12,6 +13,8 @@ interface Props {
   customClasses?: string;
   orientation?: DotIndicatorsOrientation;
   showDotIndicatorLabels?: boolean;
+  handleGoToStep?: (index: number) => void;
+  showDotIndicatorsTooltip?: boolean;
 }
 
 export const DotIndicators: React.FC<Props> = ({
@@ -19,7 +22,9 @@ export const DotIndicators: React.FC<Props> = ({
   activeIndex,
   customClasses,
   showDotIndicatorLabels = true,
-  orientation = DotIndicatorsOrientation.VERTICAL
+  orientation = DotIndicatorsOrientation.VERTICAL,
+  handleGoToStep,
+  showDotIndicatorsTooltip = false
 }) => {
   const containerRef = useRef(null);
   const dotRef = useRef(null);
@@ -56,12 +61,42 @@ export const DotIndicators: React.FC<Props> = ({
   const renderedVerticalDots = options.map((option, index) => (
     <React.Fragment key={index}>
       {/* Dot */}
+
       <div
         ref={dotRef}
-        className={`rounded-full w-2 h-2 ${
+        className={`relative rounded-full w-2 h-2 ${
           index === activeIndex ? 'bg-white' : 'bg-gray-syn6'
         } transition-all ${animationTimingStyles}`}
-      ></div>
+        onClick={(): void => handleGoToStep && handleGoToStep(index)}
+      >
+        <div
+          className={`absolute transition-opacity duration-300 opacity-0  w-4 h-4 rounded-full  bg-gray-syn4 -top-1/2 -left-1/2 ${
+            showDotIndicatorsTooltip ? 'flex' : 'hidden'
+          } items-center justify-center  ${
+            index === activeIndex ? '' : 'hover:opacity-100'
+          } ${handleGoToStep ? 'cursor-pointer' : ''}`}
+          data-tip
+          data-for={`step-tooltip-${index}`}
+        >
+          <div
+            className={`w-2 h-2 rounded-full  ${
+              index === activeIndex ? 'bg-white' : 'bg-gray-syn6'
+            }`}
+          ></div>
+          {index !== activeIndex && showDotIndicatorsTooltip ? (
+            <ReactTooltip
+              id={`step-tooltip-${index}`}
+              place="right"
+              effect="solid"
+              className="actionsTooltip space-left"
+              arrowColor="#222529"
+              backgroundColor="#222529"
+            >
+              {option}
+            </ReactTooltip>
+          ) : null}
+        </div>
+      </div>
     </React.Fragment>
   ));
 

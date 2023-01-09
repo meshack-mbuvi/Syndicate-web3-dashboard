@@ -43,6 +43,8 @@ interface Props {
   handlePrevious?: (index?: number) => void;
   showSideNavButton?: boolean;
   sideNavLogo?: React.ReactElement;
+  handleGoToStep?: (step: number) => void;
+  showDotIndicatorsTooltip?: boolean;
 }
 
 const Layout: FC<Props> = ({
@@ -81,7 +83,9 @@ const Layout: FC<Props> = ({
       </a>
     </Link>
   ),
-  showDotIndicators = true
+  showDotIndicators = true,
+  showDotIndicatorsTooltip = false,
+  handleGoToStep
 }) => {
   const {
     web3Reducer: {
@@ -250,6 +254,8 @@ const Layout: FC<Props> = ({
               showSideNavButton={showSideNavButton}
               sideNavLogo={sideNavLogo}
               showDotIndicators={showDotIndicators}
+              handleGoToStep={handleGoToStep}
+              showDotIndicatorsTooltip={showDotIndicatorsTooltip}
             />
           </div>
         ) : null}

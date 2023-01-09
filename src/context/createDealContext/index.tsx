@@ -65,6 +65,7 @@ type CreateDealProviderProps = {
   isEditingField: boolean;
   setIsEditingField: Dispatch<SetStateAction<boolean>>;
   resetCreateFlowState: () => void;
+  handleGoToStep: (step: number) => void;
 
   // deal creation progress steps
   isCreateDealDisabled: boolean;
@@ -253,6 +254,12 @@ const CreateDealProvider: React.FC = ({ children }) => {
   const handleBack = (): void => {
     if (currentStep > 0) {
       setCurrentStep((currentStep) => currentStep - 1);
+    }
+  };
+
+  const handleGoToStep = (step: number): void => {
+    if (currentStep !== step) {
+      setCurrentStep(step);
     }
   };
 
@@ -503,6 +510,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
         isEditingField,
         setIsEditingField,
         resetCreateFlowState,
+        handleGoToStep,
 
         // creation steps
         isCreateDealDisabled,

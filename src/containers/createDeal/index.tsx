@@ -35,6 +35,7 @@ export const CreateDealContainer: React.FC = () => {
     handleCreateDeal,
     setShowModal,
     resetCreateFlowState,
+    handleGoToStep,
     showErrorModal,
     showBackButton,
     processingModalTitle,
@@ -45,7 +46,12 @@ export const CreateDealContainer: React.FC = () => {
     ensName
   } = useCreateDealContext();
 
-  const dotIndicatorOptions = ['about', 'goals', 'window', 'participation'];
+  const dotIndicatorOptions = [
+    'Name and details',
+    'Deal goal',
+    'Backer window',
+    'Deal token'
+  ];
   const goToDealPage = () => {
     if (dealUrl) router.replace(dealUrl);
   };
@@ -53,6 +59,8 @@ export const CreateDealContainer: React.FC = () => {
   return (
     <Layout
       {...{
+        handleGoToStep,
+        showDotIndicatorsTooltip: true,
         dotIndicatorOptions,
         showSideNav: !isSuccessStep,
         showDotIndicators: isReviewStep || isSuccessStep ? false : true,
