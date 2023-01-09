@@ -5,7 +5,6 @@ import TransitionBetweenChildren from '@/components/transition/transitionBetween
 import { B2, B3, FL } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useEffect, useRef, useState } from 'react';
-import { DealNextButton } from './nextButton';
 /**
  * A UI template for review flow steps.
  * @param title The large title above the whole section
@@ -241,10 +240,6 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
               </button>
             </div>
           ))}
-        </div>
-        {/* next page button  */}
-        <div className="pt-10 flex justify-center items-center">
-          <DealNextButton />
         </div>
       </div>
 

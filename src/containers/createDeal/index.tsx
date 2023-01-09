@@ -18,6 +18,7 @@ import { CTAButton, CTAType } from '@/components/CTAButton';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
 } from '@/components/transition/transitionBetweenChildren';
+import { DealNextButton } from '@/features/deals/components/create/nextButton';
 
 export const CreateDealContainer: React.FC = () => {
   const {
@@ -123,6 +124,10 @@ export const CreateDealContainer: React.FC = () => {
               </CTAButton>
             </div>
           </TransitionBetweenChildren>
+          {/* next page button  */}
+          <div className="pt-10 flex justify-center items-center w-1/2">
+            <DealNextButton />
+          </div>
         </div>
 
         {/* Waiting for confirmation Modal */}
