@@ -6,6 +6,7 @@ import {
   useUpdateState
 } from '@/hooks/collectives/useCreateCollective';
 import { AppState } from '@/state';
+import router from 'next/router';
 import React, { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { CreateCollectiveTitle, createHeader } from '../shared';
@@ -140,8 +141,14 @@ export default CreateCollectiveCustomize;
 
 export const CustomizeRightPanel: React.FC = () => {
   const { artworkType } = useCreateState();
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
   return (
-    <div className="bg-black w-full h-full">
+    <div
+      className={`${
+        isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
+      } w-full h-full`}
+    >
       <CollectivesInteractiveBackground
         heightClass="h-full"
         widthClass="w-full"

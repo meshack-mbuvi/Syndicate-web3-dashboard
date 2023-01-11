@@ -130,6 +130,9 @@ const Layout: FC<Props> = ({
   const distributionPage =
     router.pathname === `/clubs/[clubAddress]/distribute`;
 
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
+
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress || '',
     web3,
@@ -260,7 +263,9 @@ const Layout: FC<Props> = ({
           </div>
         ) : null}
         <div
-          className={`flex w-full bg-black flex-col sm:flex-row ${
+          className={`flex w-full ${
+            isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
+          } flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
           } z-20 justify-center my-0 mx-auto ${customClasses}`}
         >
@@ -275,7 +280,7 @@ const Layout: FC<Props> = ({
       modifyClubPage ||
       managerSettingsOpen ||
       distributionPage ? null : (
-        <div>
+        <div className={`${isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'}`}>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
           </div>
