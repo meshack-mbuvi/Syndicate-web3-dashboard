@@ -272,7 +272,8 @@ const CreateDealProvider: React.FC = ({ children }) => {
     }
 
     // do not show next button on the review step
-    if (isReviewStep) {
+    // or the success step.
+    if (isReviewStep || isSuccessStep) {
       setShowNextButton(false);
     } else {
       setShowNextButton(true);
