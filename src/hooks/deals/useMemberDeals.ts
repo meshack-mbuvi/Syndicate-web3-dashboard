@@ -29,7 +29,8 @@ const useMemberDeals = (): {
     {
       variables: {
         where: {
-          userAddress: walletAddress
+          userAddress: walletAddress,
+          status_not: 'CANCELED'
         }
       },
       context: {
@@ -47,7 +48,8 @@ const useMemberDeals = (): {
   useEffect(() => {
     void refetch({
       where: {
-        userAddress: walletAddress
+        userAddress: walletAddress,
+        status_not: 'CANCELED'
       }
     });
   }, [activeNetwork.chainId, walletAddress, refetch]);
