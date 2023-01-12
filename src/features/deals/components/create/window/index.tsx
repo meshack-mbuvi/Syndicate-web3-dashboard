@@ -33,7 +33,7 @@ export const DealsCreateWindow: React.FC<Props> = ({
 
   return (
     <CreateFlowStepTemplate
-      title="What is the pre-commitment window?"
+      title="How long is this deal active?"
       activeInputIndex={0}
       inputs={[
         {
@@ -90,13 +90,11 @@ export const DealsCreateWindow: React.FC<Props> = ({
               </TransitionBetweenChildren>
             </div>
           ),
-          label: `Commitment window ends ${
-            showCustomTimeSelector ? 'on' : 'in'
-          }`,
+          label: `Window ends ${showCustomTimeSelector ? 'on' : 'in'}`,
           info: `${
             showCustomTimeSelector
-              ? 'This is the window when participants are able to pre-commit capital to the deal. You will have to finalize the deal manually though in order to close'
-              : 'Participants are able to pre-commit capital to the deal until this day. You cannot extend this date but you can close early'
+              ? 'This is the window when participants are able to back the deal. You will have to finalize the deal manually though in order to close'
+              : 'Participants are able to back the deal until this day. You cannot extend this date but you can close early'
           }`
         }
       ]}

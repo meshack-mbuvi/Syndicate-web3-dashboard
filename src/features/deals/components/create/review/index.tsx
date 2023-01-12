@@ -242,8 +242,8 @@ export const DealsCreateReview: React.FC<Props> = ({
               infoLabel={commitmentGoalError ? commitmentGoalError : undefined}
             />
           ),
-          label: 'Commitment goal',
-          info: 'This is the goal that you are striving to raise for this deal. This is not a cap on how much can be committed',
+          label: 'Contribution goal',
+          info: 'This is the goal that you are striving to raise for this deal. This is not a cap on how much can be contributed.',
           reviewValue: (
             <div className="flex space-x-2 items-center">
               <img
@@ -287,7 +287,7 @@ export const DealsCreateReview: React.FC<Props> = ({
               }
             />
           ),
-          label: 'Minimum commitment amount',
+          label: 'Minimum contribution amount',
           info: 'This is the minimum amount that a deal participant can contribute. You can set this to zero if you like',
           reviewValue: (
             <div className="flex space-x-2 items-center">
@@ -395,11 +395,11 @@ export const DealsCreateReview: React.FC<Props> = ({
               </div>
             </div>
           ),
-          label: `Commitment window`,
+          label: `Window ends in`,
           info: `${
             showCustomTimeSelector
-              ? 'This is the window when participants are able to pre-commit capital to the deal. You will have to finalize the deal manually though in order to close'
-              : 'Participants are able to pre-commit capital to the deal until this day. You cannot extend this date but you can close early'
+              ? 'This is the window when participants are able to back the deal. You will have to finalize the deal manually though in order to close'
+              : 'Participants are able to back the deal until this day. You cannot extend this date but you can close early'
           }`,
           reviewValue: (
             <div className="flex space-x-2">

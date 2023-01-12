@@ -162,7 +162,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
         </div>
 
         {/* Inputs */}
-        <div className="">
+        <div className="h-full mb-8">
           {inputs.map((input, index) => (
             <div
               key={index}
