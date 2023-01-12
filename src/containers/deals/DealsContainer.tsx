@@ -82,7 +82,7 @@ const DealDetails: React.FC = () => {
   };
 
   const isOpenToPrecommits =
-    new Date(+dealEndTime * 1000).getTime() > Date.now();
+    new Date(+dealEndTime * 1000).getTime() > Date.now() && !isClosed;
 
   // skeleton loader content for left content
   const leftColumnLoader = (
@@ -237,6 +237,7 @@ const DealDetails: React.FC = () => {
             rightColumnLoader
           ) : (
             <DealSidePanel
+              isClosed={isClosed}
               {...{
                 permissionType,
                 isOpenToPrecommits,

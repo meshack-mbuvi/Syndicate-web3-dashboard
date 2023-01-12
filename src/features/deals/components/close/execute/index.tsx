@@ -231,7 +231,7 @@ const DealCloseModal: React.FC<Props> = ({
               {closeType === DealEndType.EXECUTE
                 ? 'Approve deal execution from your wallet'
                 : closeType === DealEndType.DISSOLVE
-                ? 'Withdraw from deal in your wallet'
+                ? 'Approve dissolution from your wallet'
                 : closeType === DealEndType.WITHDRAW
                 ? 'Withdraw from deal in your wallet'
                 : ''}
@@ -240,7 +240,7 @@ const DealCloseModal: React.FC<Props> = ({
               {closeType === DealEndType.EXECUTE
                 ? 'You must execute the deal on chain with your wallet'
                 : closeType === DealEndType.DISSOLVE
-                ? 'You must execute the withdrawal from the deal on chain with your wallet'
+                ? 'You must execute the dissolution of the deal on chain with your wallet'
                 : closeType === DealEndType.WITHDRAW
                 ? 'You must execute the withdrawal from the deal on chain with your wallet'
                 : ''}
@@ -252,7 +252,11 @@ const DealCloseModal: React.FC<Props> = ({
             iconPosition={CalloutIconPosition.INLINE}
             icon={<Spinner height="h-5" width="w-5" margin="" />}
           >
-            <B2 extraClasses="mb-1">Executing your deal</B2>
+            <B2 extraClasses="mb-1">
+              {closeType === DealEndType.DISSOLVE
+                ? 'Processing deal dissolution'
+                : 'Processing deal execution'}
+            </B2>
             <B4 extraClasses="text-gray-syn3">
               This could take up to a few minutes depending on network
               congestion and the gas fees you set. Feel free to leave this
@@ -262,7 +266,11 @@ const DealCloseModal: React.FC<Props> = ({
 
           {/* Execution failed: we don't have this state in the designs. needs to be added */}
           <Callout type={CalloutType.WARNING}>
-            <B2 extraClasses="mb-1">Deal execution failed</B2>
+            <B2 extraClasses="mb-1">
+              {closeType === DealEndType.DISSOLVE
+                ? 'Deal dissolution failed'
+                : 'Deal execution failed'}
+            </B2>
             <B4 extraClasses="text-gray-syn3">
               <span>
                 Please try again and
