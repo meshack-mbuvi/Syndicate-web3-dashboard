@@ -209,7 +209,6 @@ const PrecommitContainer: React.FC<{
   };
 
   const handleCancelPrecommit = async (): Promise<void> => {
-    //TODO [WINGZ]: precommits - a/ withdraw flow: what to render on success / fail
     try {
       if (
         !account ||
@@ -231,37 +230,28 @@ const PrecommitContainer: React.FC<{
     }
   };
 
-  // TODO [WINGZ]: precommits
-  // a/ withdraw flow:
-  //    - what to render when canceling a precommit
-  //    - after success or fail
-  //    - should a user be able to re-commit?
-  // b/ wallets: currently assuming that getting multi wallets + wallet providers is dependent on auth
-  // d/ txn progress display: sharing etherscan link for transaction hash or render on fail errors?
-  // e/ show loading if still processing from the graph(?) / when transaction is taking long
-
   return (
     <>
       {!dealDetailsLoading && !precommitLoading && (
-        //TODO [WINGZ]: precommits - e/ re-render or spinner when processing from graph
+        //TODO [ENG-4868]: precommits - re-render or spinner when processing from graph
         <DealAllocationCard
           dealName={dealName}
-          //TODO [WINGZ]: reconcile types between graph status + type in StatusChip
+          //TODO [ENG-4768]: reconcile types between graph status + type in StatusChip
           allocationStatus={precommit?.status ?? Status.ACTION_REQUIRED}
           precommitAmount={
             precommit && precommit?.amount
               ? getWeiAmount(precommit.amount, decimals, false)
               : '0'
-          } //TODO [WINGZ]: precommits - a/ should show canceled or new precommit?
+          }
           dealDepositTokenLogo={
             depositTokenLogo ?? '/images/prodTokenLogos/USDCoin.svg'
           }
           dealDepositTokenSymbol={depositTokenSymbol ?? ''}
           minimumCommitAmount={minCommitAmount}
-          wallets={[]} // TODO [WINGZ]: precommits - b/auth wallets
-          walletBalance={''} // TODO [WINGZ]: precommits - b/auth wallets
-          walletProviderName={''} // TODO [WINGZ]: precommits - b/auth wallets
-          connectedWallet={{ address: account, avatar: '' }} // TODO [WINGZ]: precommits - b/auth wallets
+          wallets={[]} // TODO [ENG-4869] Auth
+          walletBalance={''} // TODO [ENG-4869] Auth
+          walletProviderName={''} // TODO [ENG-4869] Auth
+          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869] Auth
           handleBackThisDeal={handleBackThisDeal}
           handleValidAmount={handleValidAmount}
           handleCancelPrecommit={handleCancelPrecommit}
@@ -277,10 +267,10 @@ const PrecommitContainer: React.FC<{
           depositTokenSymbol={depositTokenSymbol}
           activeStepIndex={activeStepIndex}
           showWaitingOnWalletLoadingState={showWaitingOnWalletLoadingState}
-          wallets={[]} // TODO [WINGZ]: precommits - b/auth wallets
-          walletBalance={''} // TODO [WINGZ]: precommits - b/auth wallets
-          walletProviderName={''} // TODO [WINGZ]: precommits - b/auth wallets
-          connectedWallet={{ address: account, avatar: '' }} // TODO [WINGZ]: precommits - b/auth wallets
+          wallets={[]} // TODO [ENG-4869] Auth
+          walletBalance={''} // TODO [ENG-4869] Auth
+          walletProviderName={''} // TODO [ENG-4869] Auth
+          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869] Auth
           handleCreateAllowanceClick={handleAllowance}
           handleRequestAllocationClick={handleRequestAllocation}
           toggleModal={toggleModal}
@@ -296,7 +286,7 @@ const PrecommitContainer: React.FC<{
           }
           depositTokenSymbol={depositTokenSymbol}
           walletAddress={account}
-          ensName={''} // TODO [WINGZ]: precommits - b/auth wallets
+          ensName={''} // TODO [ENG-4869] Auth
           toggleModal={toggleSuccesModal}
         />
       )}

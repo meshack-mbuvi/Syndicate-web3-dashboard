@@ -168,7 +168,7 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
             <div className="flex p-5 items-center border-gray-syn6">
               <B3 extraClasses="flex-grow text-gray-syn3">Receive</B3>
               <div className="w-2/3 flex space-x-2 items-center">
-                {/* TODO [WINGZ]: verify that logo.svg works sometimes logo looks broken */}
+                {/* TODO [ENG-4762]: verify that logo.svg works sometimes logo looks broken */}
                 <img
                   src={'/images/logo.svg' || '/images/token-gray-4.svg'}
                   alt="Token"

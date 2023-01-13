@@ -51,7 +51,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   const [amountError, setAmountError] = useState('');
 
   // switch to a different account
-  // TODO [WINGZ]: get wallets + wallet providers
+  // TODO [ENG-4869]: get wallets + wallet providers
   const handleAccountSwitch = (account: string): void => {
     console.log(account);
   };

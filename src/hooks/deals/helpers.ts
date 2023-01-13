@@ -16,7 +16,6 @@ const getStatus = (executed: boolean, endTime: string): DealStatus => {
 };
 
 export const processDealsToDealPreviews = (deals: Deal[]): DealPreview[] => {
-  //TODO [WINGZ]: should totalCommitted be converted?
   return deals.map((deal: Deal): DealPreview => {
     const timeMixin = deal.mixins.find(
       (mixin) => mixin.requirementType == MixinModuleRequirementType.TIME_WINDOW

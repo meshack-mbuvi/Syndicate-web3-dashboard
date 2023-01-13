@@ -27,7 +27,6 @@ export const useDealPermissionType = (): PermissionType | null => {
         web3.utils.toChecksumAddress(account)
       ) {
         setPermissionType(PermissionType.ADMIN);
-        //TODO: add more membership checks for precommits below
       } else {
         setPermissionType(PermissionType.NON_MEMBER);
       }

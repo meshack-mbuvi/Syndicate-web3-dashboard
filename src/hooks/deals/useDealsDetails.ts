@@ -89,7 +89,6 @@ const useDealsDetails = (): IDealDetailsResponse => {
     }
     let isComponentMounted = true;
 
-    // TODO [WINGZ]: should totalCommitted and goal be converted?
     if (isComponentMounted) {
       const deal = data?.deal;
       if (deal) {
