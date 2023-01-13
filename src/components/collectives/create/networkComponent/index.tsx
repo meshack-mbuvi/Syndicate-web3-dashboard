@@ -1,6 +1,7 @@
 import { CTAButton, CTAType } from '@/components/CTAButton';
 import IconGas from '@/components/icons/Gas';
 import { B3, B4 } from '@/components/typography';
+import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
@@ -65,7 +66,7 @@ const SharedItem: React.FC<IProps> = ({
         onKeyPress={onClick}
       >
         {icon ? (
-          <div className="flex-shrink-0 ml-2">
+          <div className="flex-shrink-0 ml-2 flex items-center">
             {typeof icon === 'string' ? (
               <img
                 src={icon}
@@ -154,7 +155,13 @@ const NetworkComponent: React.FC<NetworkType> = ({
               id="accountButton"
               title="Wallet"
               showDropDown={true}
-              icon={data?.avatar || '/images/jazzicon.png'}
+              icon={
+                data?.avatar ? (
+                  data.avatar
+                ) : (
+                  <JazziconGenerator address={account} diameterRem={1.25} />
+                )
+              }
               label={
                 <B3>
                   <span className="text-gray-syn4">
