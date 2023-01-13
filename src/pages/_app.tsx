@@ -62,8 +62,8 @@ const handleRouteChangeGoogleAnalytics = (url: string) => {
 const sdkConfig = {
   core: {
     authorizationKey: isDev
-      ? process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_TEST
-      : process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_PRODUCTION,
+      ? process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_TEST ?? ''
+      : process.env.NEXT_PUBLIC_SPLIT_SDK_CLIENT_PRODUCTION ?? '',
     key: ''
   }
 };

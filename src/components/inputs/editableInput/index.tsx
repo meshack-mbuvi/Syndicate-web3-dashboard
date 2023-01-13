@@ -213,7 +213,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
             </div>
             <p className="text-red-500 text-xs mt-1 mb-1">
               {index === showInputIndex
-                ? errors[`${fieldName}`] && errors[`${fieldName}`]['message']
+                ? errors[`${fieldName}`] && errors[`${fieldName}`]?.message
                 : ''}
             </p>
           </div>
