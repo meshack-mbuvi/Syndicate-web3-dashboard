@@ -33,7 +33,6 @@ export const useMeetsTokenGatedRequirements = (): {
     ) {
       return null;
     }
-    let meetsRequirements = false;
     const operator =
       activeModuleDetails.activeMintModuleReqs?.requiredTokensLogicalOperator;
     const tokenBalances =
@@ -41,12 +40,14 @@ export const useMeetsTokenGatedRequirements = (): {
     const tokenAddresses =
       activeModuleDetails.activeMintModuleReqs?.requiredTokens ?? [];
 
+    let meetsRequirements = operator ?? false;
+
     if (
       tokenBalances.length > 0 &&
       tokenBalances.length == tokenAddresses.length
     ) {
       const tokensMet: TokenReqDetails[] = [];
-      for (let i = 0; i < tokenBalances.length; i++) {
+      tokenBalances.forEach((balance, i) => {
         const address = tokenAddresses[i];
         const isNativeToken = isZeroAddress(address);
         const tokenDetails = tokenHoldings.find(
@@ -61,19 +62,12 @@ export const useMeetsTokenGatedRequirements = (): {
             tokenDetails?.balance.toString(),
             token?.decimals ?? 18,
             false
-          ) >=
-          getWeiAmount(
-            tokenBalances[i].toString(),
-            token?.decimals ?? 18,
-            false
-          );
-        if (
-          (tokenMetRequirements && meetsRequirements && operator) ||
-          (tokenMetRequirements && operator == false)
-        ) {
-          meetsRequirements = true;
-        } else if (!meetsRequirements && operator) {
-          meetsRequirements = false;
+          ) >= getWeiAmount(balance.toString(), token?.decimals ?? 18, false);
+        if (operator) {
+          // Assuming operator being true means AND condition
+          meetsRequirements = meetsRequirements && tokenMetRequirements;
+        } else {
+          meetsRequirements = meetsRequirements || tokenMetRequirements;
         }
         tokensMet.push({
           contractAddress: tokenAddresses[i],
@@ -90,10 +84,13 @@ export const useMeetsTokenGatedRequirements = (): {
             ? activeNetwork?.nativeCurrency?.logo
             : token?.logo,
           requirementMet: tokenMetRequirements ?? false,
-          requiredBalance: tokenBalances[i]
+          requiredBalance: balance
         } as TokenReqDetails);
-      }
-      return { meetsRequirements, requiredTokenDetails: tokensMet };
+      });
+      return {
+        meetsRequirements,
+        requiredTokenDetails: tokensMet
+      };
     }
     return { meetsRequirements: false, requiredTokenDetails: [] };
   };

@@ -87,8 +87,8 @@ export const DealsCreateGoal: React.FC<Props> = ({
               infoLabel={commitmentGoalError ? commitmentGoalError : undefined}
             />
           ),
-          label: 'Commitment goal',
-          info: 'This is the goal that you are striving to raise for this deal. This is not a cap on how much can be committed'
+          label: 'Goal',
+          info: 'This is the goal that you are striving to raise for this deal. This is not a cap on how much can be contributed.'
         },
         {
           input: (
@@ -118,7 +118,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
               }
             />
           ),
-          label: 'Minimum commitment amount',
+          label: 'Minimum contribution amount',
           info: 'This is the minimum amount that a deal participant can contribute. You can set this to zero if you like'
         },
         {

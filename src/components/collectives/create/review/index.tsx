@@ -7,6 +7,7 @@ import {
   floatedNumberWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
+import router from 'next/router';
 import React, { useRef, useState } from 'react';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
@@ -86,6 +87,9 @@ export const CollectiveFormReview: React.FC<Props> = ({
   const [currentlyEditingIndex, setCurrentlyEditingIndex] = useState(null);
   const formRef = useRef(null);
 
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
+
   const {
     name,
     symbol,
@@ -100,7 +104,9 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
   const bottomBar = (
     <div
-      className="flex w-full justify-center items-center bg-black"
+      className={`flex w-full justify-center items-center${
+        isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
+      } `}
       style={{
         borderRadius: '40px 40px 0px 0px'
       }}

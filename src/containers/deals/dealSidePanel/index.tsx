@@ -23,15 +23,18 @@ import { DealsMilestoneOverview } from '@/features/deals/components/create/miles
 import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
 import { Participant } from '@/features/deals/components/participants/table';
 import { Status } from '@/components/statusChip';
+import DealActionConfirmModal from '@/features/deals/components/close/confirm';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
+  isClosed: boolean;
   isOpenToPrecommits: boolean;
   setIsReviewingCommittments: Dispatch<SetStateAction<boolean>>;
   isReviewingCommittments: boolean;
   currentParticipants: Participant[];
 }> = ({
   permissionType,
+  isClosed,
   isOpenToPrecommits,
   setIsReviewingCommittments,
   isReviewingCommittments,
@@ -50,14 +53,17 @@ export const DealSidePanel: React.FC<{
 
   const [copyState, setCopyState] = useState(false);
   const [dealLink, setDealLink] = useState('');
-  const [openExecuteModal, setOpenExecuteModal] = useState(false);
+  const [openActionModal, setOpenActionModal] = useState(false);
+  const [isDealCloseModalOpen, setDealCloseModalOpen] = useState(false);
+  const [closeDealType, setCloseDealType] = useState<DealEndType>(
+    DealEndType.EXECUTE
+  );
 
   // executing deal
   const [isExecutingDeal, setIsExecutingDeal] = useState<boolean>(false);
   const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [successfullyExecutedDeal, setSuccessfullyExecutedDeal] =
-    useState(false);
+  const [successfullyClosedDeal, setSuccessfullyClosedDeal] = useState(false);
   const [dealExecutionFailed, setDealExecutionFailed] = useState(false);
 
   const { dealDetails, dealDetailsLoading } = useDealsDetails();
@@ -84,19 +90,20 @@ export const DealSidePanel: React.FC<{
 
   // open/close modal to initiate executing deal
   const handleExecuteDealClick = (): void => {
-    setOpenExecuteModal(true);
+    setDealCloseModalOpen(true);
   };
   const handleCloseModalClick = (): void => {
-    setOpenExecuteModal(false);
+    setDealCloseModalOpen(false);
     setIsExecutingDeal(false);
-    setSuccessfullyExecutedDeal(false);
+    setSuccessfullyClosedDeal(false);
     setIsConfirmingExecution(false);
     setDealExecutionFailed(false);
   };
 
-  //TODO: open modal to initiate dissolving deal
+  // open modal to validate whether to dissolve deal
   const handleDissolveDealClick = (): void => {
-    dissolveDeal();
+    setCloseDealType(DealEndType.DISSOLVE);
+    setOpenActionModal(true);
   };
 
   /** calls to handle execution of deal */
@@ -109,11 +116,10 @@ export const DealSidePanel: React.FC<{
     setIsExecutingDeal(true);
   };
 
-  const onTxReceipt = (receipt?: TransactionReceipt): void => {
-    console.log('receipt', receipt);
-    setSuccessfullyExecutedDeal(true);
+  const onTxReceipt = (): void => {
+    setSuccessfullyClosedDeal(true);
     setIsExecutingDeal(false);
-    setOpenExecuteModal(false);
+    setDealCloseModalOpen(false);
   };
 
   const handleExecuteDeal = async (): Promise<void> => {
@@ -133,16 +139,25 @@ export const DealSidePanel: React.FC<{
     );
   };
 
-  /** TODO: add functionality to handle dissolving of deal */
-  const dissolveDeal = (): void => {
-    console.log('dissolving deal');
+  const handleDissolveDeal = async (): Promise<void> => {
+    setIsConfirmingExecution(true);
+
+    await allowancePrecommitModuleERC20.executePrecommits(
+      dealTokenAddress,
+      account,
+      [],
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail
+    );
   };
 
   // disable execute button if all commits are rejected
   const disableExecuteButton =
     currentParticipants.filter(
       (participant) => participant.status === Status.ACCEPTED
-    ).length < 1;
+    ).length < 1 || isClosed;
+  const disableDissolveButton = isClosed;
 
   return (
     <div className="space-y-8 mt-5">
@@ -174,6 +189,7 @@ export const DealSidePanel: React.FC<{
           handleDissolveDealClick={handleDissolveDealClick}
           hideExecuteButton={false}
           disableExecuteButton={disableExecuteButton}
+          disableDissolveButton={disableDissolveButton}
         />
       ) : null}
 
@@ -206,11 +222,23 @@ export const DealSidePanel: React.FC<{
           </div>
         </div>
       </div>
-
-      {/* deal execution modal  */}
+      {/* deal action confirm modal*/}
+      <DealActionConfirmModal
+        show={openActionModal}
+        closeType={closeDealType}
+        handleContinueClick={(): void => {
+          setDealCloseModalOpen(true);
+          setOpenActionModal(false);
+        }}
+        handleCancelAndGoBackClick={(): void => {
+          setOpenActionModal(false);
+          setCloseDealType(DealEndType.EXECUTE);
+        }}
+      />
+      {/* deal execution / dissolve modal  */}
       <DealCloseModal
         {...{
-          show: openExecuteModal,
+          show: isDealCloseModalOpen,
           closeModal: (): void => {
             handleCloseModalClick();
           },
@@ -224,19 +252,23 @@ export const DealSidePanel: React.FC<{
           ),
           destinationEnsName,
           destinationAddress: dealDestination,
-          handleDealCloseClick: handleExecuteDeal,
-          closeType: DealEndType.EXECUTE,
+          handleDealCloseClick: isDealCloseModalOpen
+            ? handleExecuteDeal
+            : handleDissolveDeal,
+          closeType: closeDealType,
           showWaitingOnExecutionLoadingState: isExecutingDeal,
           transactionFailed: dealExecutionFailed
         }}
       />
 
       {/* Execution success modal  */}
-      {successfullyExecutedDeal ? (
+      {successfullyClosedDeal ? (
         <div className="fixed inset-0 z-30 bg-black bg-opacity-90">
           <div className="space-y-16 flex flex-col w-full h-full justify-center items-center">
             {/* success title  */}
-            <H1 extraClasses="text-white">You closed your deal!</H1>
+            {closeDealType !== DealEndType.DISSOLVE && (
+              <H1 extraClasses="text-white">You closed your deal!</H1>
+            )}
 
             <DealsMilestoneOverview
               {...{
@@ -247,18 +279,26 @@ export const DealSidePanel: React.FC<{
                 commitmentGoalAmount: getWeiAmount(totalCommitted, 6, false),
                 commitmentGoalTokenSymbol: 'USDC',
                 commitmentGoalTokenLogo: '/images/prodTokenLogos/USDCoin.svg',
-                milestoneType: DealMilestoneType.EXECUTED
+                milestoneType:
+                  closeDealType === DealEndType.DISSOLVE
+                    ? DealMilestoneType.DISSOLVED
+                    : DealMilestoneType.EXECUTED
               }}
             />
 
             <CTAButton
               onClick={(): void => {
-                setSuccessfullyExecutedDeal(false);
+                handleCloseModalClick();
+                if (closeDealType === DealEndType.DISSOLVE) {
+                  router.push('/');
+                }
               }}
               fullWidth={false}
               type={CTAType.PRIMARY}
             >
-              Return to deal page
+              {closeDealType === DealEndType.DISSOLVE
+                ? 'Return to portfolio page'
+                : 'Return to deal page'}
             </CTAButton>
           </div>
         </div>

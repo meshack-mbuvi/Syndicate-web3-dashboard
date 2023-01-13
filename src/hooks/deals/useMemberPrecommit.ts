@@ -32,7 +32,8 @@ const useMemberPrecommit = (): PrecommitResponse => {
         userAddress: account.toLowerCase(),
         deal_: {
           id: dealAddress
-        }
+        },
+        status_not: 'CANCELED'
       }
     },
     skip: !dealAddress || !account || !activeNetwork.chainId,
@@ -42,13 +43,8 @@ const useMemberPrecommit = (): PrecommitResponse => {
     }
   });
 
-  // should be the first non-canceled pre-commit and falls back to first precommit
-  const precommit =
-    data?.precommits?.find((v) => v.status !== 'CANCELED') ??
-    data?.precommits[0];
-
   return {
-    precommit,
+    precommit: data?.precommits[0],
     precommitLoading: loading
   };
 };

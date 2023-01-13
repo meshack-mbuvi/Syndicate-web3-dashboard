@@ -59,7 +59,7 @@ export const ReviewDealDetails: React.FC = () => {
   // bottom bar with gas estimates and launch button
   const launchBar = (
     <div
-      className={`flex w-full justify-center items-center bg-black transition-all duration-700 ${
+      className={`flex w-full justify-center items-center bg-gray-syn9 transition-all duration-700 ${
         isEditingField ? '-mb-40' : 'mb-0'
       }`}
       style={{

@@ -14,6 +14,8 @@ interface IProps {
   showSideNavButton?: boolean;
   sideNavLogo?: React.ReactElement;
   showDotIndicators?: boolean;
+  handleGoToStep?: (step: number) => void;
+  showDotIndicatorsTooltip?: boolean;
 }
 /**
  * Left side navigation on the create club page
@@ -28,7 +30,9 @@ export const PortfolioSideNav: React.FC<IProps> = ({
   showDotIndicatorLabels = true,
   showSideNavButton = true,
   sideNavLogo,
-  showDotIndicators = true
+  showDotIndicators = true,
+  handleGoToStep,
+  showDotIndicatorsTooltip = false
 }) => {
   return (
     <div className="flex flex-col h-full items-start justify-between pl-7.5">
@@ -53,7 +57,9 @@ export const PortfolioSideNav: React.FC<IProps> = ({
             {...{
               options: dotIndicatorOptions,
               activeIndex,
-              showDotIndicatorLabels
+              showDotIndicatorLabels,
+              handleGoToStep,
+              showDotIndicatorsTooltip
             }}
           />
         </div>

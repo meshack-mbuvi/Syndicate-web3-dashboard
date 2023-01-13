@@ -2,6 +2,7 @@ import EditIcon from '@/components/icons/editIcon';
 import Modal, { ModalStyle } from '@/components/modal';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { B2, B3, L1, L2 } from '@/components/typography';
+import router from 'next/router';
 import { useState } from 'react';
 
 export enum NFTMediaType {
@@ -59,6 +60,9 @@ export const NFTPreviewer: React.FC<Props> = ({
   // const [fullscreen, setFullscreen] = useState(false);
   const [muted, setaMuted] = useState(true);
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
 
   //TODO: align waiting copy with design after create header updated
   return (
@@ -254,7 +258,9 @@ export const NFTPreviewer: React.FC<Props> = ({
           {/* Name and description */}
           {!mediaOnly && (description || name) && (
             <div
-              className={`pb-8 p-6 ${description && name ? 'space-y-4' : ''}`}
+              className={`pb-8 p-6  ${
+                isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
+              } ${description && name ? 'space-y-4' : ''}`}
             >
               <div>
                 <div

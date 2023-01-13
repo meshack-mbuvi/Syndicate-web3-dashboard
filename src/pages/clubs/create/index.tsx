@@ -146,13 +146,14 @@ const CreateInvestmentClub: React.FC = () => {
       handlePrevious={handleBack}
       activeIndex={categoryIndex}
       nextBtnDisabled={nextBtnDisabled}
+      customClasses="h-screen"
     >
       <SEO
         title="Create Investment Club"
         keywords={['syndicate', 'investment', 'club', 'fund', 'crypto']}
         image="/images/social/create-club.png"
       />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full bg-gray-syn9">
         {!isFirstStep && (
           <h4 className={`text-center pb-16 pt-8`}>
             {isCreatingInvestmentClub

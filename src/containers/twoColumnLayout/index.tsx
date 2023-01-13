@@ -133,7 +133,7 @@ const TwoColumnLayout: FC<{
           keepLogoCentered={keepLogoCentered}
           activeIndex={activeIndex}
           navItems={[]}
-          customClasses="h-screen "
+          customClasses="h-max-screen"
           showNavButton={showNavButton}
           showSideNav={showSideNav}
           showDotIndicatorLabels={showDotIndicatorLabels}
@@ -143,7 +143,7 @@ const TwoColumnLayout: FC<{
         >
           <Head title={headerTitle || 'Club'} />
           <ErrorBoundary>
-            <div className="w-full h-full flex justify-center md:block">
+            <div className="w-full flex justify-center md:block">
               <div className="container md:mx-auto h-full">
                 <div className="md:flex justify-around space-y-24 md:space-y-0 md:space-x-18 h-full items-center">
                   <div

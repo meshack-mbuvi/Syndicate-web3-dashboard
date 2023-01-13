@@ -5,6 +5,7 @@ interface Props {
   hideExecuteButton: boolean;
   handleExecuteDealClick: () => void;
   handleDissolveDealClick: () => void;
+  disableDissolveButton?: boolean;
   disableExecuteButton?: boolean;
 }
 
@@ -12,6 +13,7 @@ const DealDetailsAdminTools: React.FC<Props> = ({
   hideExecuteButton,
   handleExecuteDealClick,
   handleDissolveDealClick,
+  disableDissolveButton = false,
   disableExecuteButton = false
 }) => {
   return (
@@ -31,6 +33,7 @@ const DealDetailsAdminTools: React.FC<Props> = ({
           style={CTAStyle.DARK_OUTLINED}
           fullWidth
           onClick={handleDissolveDealClick}
+          disabled={disableDissolveButton}
         >
           Dissolve deal
         </CTAButton>

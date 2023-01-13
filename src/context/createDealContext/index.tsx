@@ -65,6 +65,7 @@ type CreateDealProviderProps = {
   isEditingField: boolean;
   setIsEditingField: Dispatch<SetStateAction<boolean>>;
   resetCreateFlowState: () => void;
+  handleGoToStep: (step: number) => void;
 
   // deal creation progress steps
   isCreateDealDisabled: boolean;
@@ -256,6 +257,12 @@ const CreateDealProvider: React.FC = ({ children }) => {
     }
   };
 
+  const handleGoToStep = (step: number): void => {
+    if (currentStep !== step) {
+      setCurrentStep(step);
+    }
+  };
+
   useEffect(() => {
     // do not show/disable back button if on the first step
     if (currentStep === 0 || isReviewStep || isSuccessStep) {
@@ -265,7 +272,8 @@ const CreateDealProvider: React.FC = ({ children }) => {
     }
 
     // do not show next button on the review step
-    if (isReviewStep) {
+    // or the success step.
+    if (isReviewStep || isSuccessStep) {
       setShowNextButton(false);
     } else {
       setShowNextButton(true);
@@ -503,6 +511,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
         isEditingField,
         setIsEditingField,
         resetCreateFlowState,
+        handleGoToStep,
 
         // creation steps
         isCreateDealDisabled,

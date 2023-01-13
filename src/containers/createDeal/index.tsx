@@ -18,6 +18,7 @@ import { CTAButton, CTAType } from '@/components/CTAButton';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
 } from '@/components/transition/transitionBetweenChildren';
+import { DealNextButton } from '@/features/deals/components/create/nextButton';
 
 export const CreateDealContainer: React.FC = () => {
   const {
@@ -34,6 +35,7 @@ export const CreateDealContainer: React.FC = () => {
     handleCreateDeal,
     setShowModal,
     resetCreateFlowState,
+    handleGoToStep,
     showErrorModal,
     showBackButton,
     processingModalTitle,
@@ -44,7 +46,12 @@ export const CreateDealContainer: React.FC = () => {
     ensName
   } = useCreateDealContext();
 
-  const dotIndicatorOptions = ['about', 'goals', 'window', 'participation'];
+  const dotIndicatorOptions = [
+    'Name and details',
+    'Deal goal',
+    'Backer window',
+    'Deal token'
+  ];
   const goToDealPage = () => {
     if (dealUrl) router.replace(dealUrl);
   };
@@ -52,6 +59,8 @@ export const CreateDealContainer: React.FC = () => {
   return (
     <Layout
       {...{
+        handleGoToStep,
+        showDotIndicatorsTooltip: true,
         dotIndicatorOptions,
         showSideNav: !isSuccessStep,
         showDotIndicators: isReviewStep || isSuccessStep ? false : true,
@@ -123,6 +132,10 @@ export const CreateDealContainer: React.FC = () => {
               </CTAButton>
             </div>
           </TransitionBetweenChildren>
+          {/* next page button  */}
+          <div className="pt-10 flex justify-center items-center w-1/2">
+            <DealNextButton />
+          </div>
         </div>
 
         {/* Waiting for confirmation Modal */}

@@ -376,8 +376,8 @@ const PortfolioAndDiscover: React.FC = () => {
                   <div
                     className={`${
                       activeCollectivesTab === TabsType.ADMIN
-                        ? 'opacity-100 z-10'
-                        : 'opacity-0 z-0'
+                        ? 'opacity-100 z-10 h-full'
+                        : 'opacity-0 z-0 h-0'
                     } transition-opacity duration-700 row-start-1 col-start-1`}
                   >
                     <CollectivesTable
@@ -389,8 +389,8 @@ const PortfolioAndDiscover: React.FC = () => {
                   <div
                     className={`${
                       activeCollectivesTab === TabsType.MEMBER
-                        ? 'opacity-100 z-10'
-                        : 'opacity-0 z-0'
+                        ? 'opacity-100 z-10 h-full'
+                        : 'opacity-0 z-0 h-0'
                     } transition-opacity duration-700 row-start-1 col-start-1`}
                   >
                     {activeCollectivesTab === TabsType.MEMBER && (

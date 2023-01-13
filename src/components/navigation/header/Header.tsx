@@ -135,6 +135,8 @@ const Header: React.FC<props> = ({
   // do not show the syndicate logo and nav links on the top nav for the create flow.
   const createClubPage = router.pathname === '/clubs/create';
   const createDealPage = router.pathname === '/deals/create';
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
 
   return (
     <>
@@ -145,8 +147,10 @@ const Header: React.FC<props> = ({
         className={`${showNav ? 'block' : 'hidden'} ${
           showMobileNav
             ? 'bg-gray-syn8 bg-opacity-100'
-            : 'bg-black bg-opacity-0'
-        } transition-all ${transitionDurationClass} sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
+            : `${isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'} bg-opacity-0`
+        } transition-all ${transitionDurationClass} ${
+          isCreateFlowPage ? 'sm:bg-gray-syn9' : 'sm:bg-black'
+        } h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
         {/* Mobile nav */}

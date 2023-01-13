@@ -107,7 +107,7 @@ const InvestmentClubCTAs: React.FC = () => {
 
   return (
     <animated.div
-      className={`bg-black flex-none flex flex-col items-center sm:px-5 ${
+      className={`bg-gray-syn9 flex-none flex flex-col items-center sm:px-5 ${
         isReviewStep ? 'w-full h-10.875' : ''
       }`}
       style={styles}
@@ -147,7 +147,7 @@ const InvestmentClubCTAs: React.FC = () => {
         )}
 
         <div
-          className={`flex flex-col-reverse sm:flex-row py-4 ${
+          className={`flex flex-col-reverse sm:flex-row py-4 bg-gray-syn9 ${
             !showBackButton ? 'justify-end' : 'justify-between'
           }`}
         >

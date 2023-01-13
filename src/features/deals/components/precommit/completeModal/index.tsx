@@ -52,7 +52,7 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
     >
       <div className="space-y-8 relative overflow-visible">
         {/* Flying coins */}
-        <div className="bg-opacity-30 absolute h-full w-full animate-fade_in_double">
+        <div className="bg-opacity-30 h-full w-full animate-fade_in_double">
           <div
             className={`absolute -left-0 -top-0 transform -translate-x-full h-full`}
             style={{
@@ -138,10 +138,14 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <Callout type={CalloutType.WARNING} extraClasses="mt-4">
-            You may withdraw this request at anytime until it is accepted by the
-            deal maker
-          </Callout>
+          <div className="mt-4">
+            <Callout type={CalloutType.WARNING}>
+              <B3>
+                You may withdraw this request at anytime until it is accepted by
+                the deal maker
+              </B3>
+            </Callout>
+          </div>
         </div>
         <div className="p-8 bg-gray-syn8 rounded-2.5xl">
           <B3 extraClasses="text-gray-syn4">If your allocation is accepted</B3>

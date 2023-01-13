@@ -70,7 +70,7 @@ export interface ActiveModuleDetails {
 }
 
 export interface TokenReqDetails extends TokenDetails {
-  requirementMet: false;
+  requirementMet: boolean;
   requiredBalance: string;
 }
 export interface TokenGatedRequirementsDetails {

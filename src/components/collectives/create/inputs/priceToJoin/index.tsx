@@ -9,6 +9,7 @@ import {
 } from '@/utils/formattedNumbers';
 import { useState } from 'react';
 
+// TODO: refactor this field and use strings as input instead of numbers
 interface Props {
   priceToJoin: number;
   handlePriceToJoinChange: (newPriceToJoin: number | string) => void;
@@ -32,14 +33,30 @@ export const InputFieldPriceToJoin: React.FC<Props> = ({
     priceToJoin: null
   });
 
+  // Helpers
+  const getStringBeforePeriod = (str?: string) => {
+    return str ? str.split('.')[0] : '';
+  };
+  const getStringAfterPeriod = (str?: string) => {
+    return str ? str.split('.')[1] : '';
+  };
+  const doesStringHavePeriod = (str?: string) => {
+    return str ? str.indexOf('.') !== -1 : false;
+  };
+
   return (
     <InputFieldWithToken
       value={
         temporaryInputFieldValues.priceToJoin
           ? numberWithCommas(
-              // @ts-expect-error TS(2339): Property 'slice' does not exist on type 'never'.
-              Number(temporaryInputFieldValues.priceToJoin.slice(0, -1))
-            ) + '.'
+              Number(
+                getStringBeforePeriod(temporaryInputFieldValues.priceToJoin)
+              )
+            ) +
+            (doesStringHavePeriod(temporaryInputFieldValues.priceToJoin)
+              ? '.'
+              : '') +
+            getStringAfterPeriod(temporaryInputFieldValues.priceToJoin)
           : priceToJoin || priceToJoin === 0
           ? numberWithCommas(priceToJoin)
           : ''

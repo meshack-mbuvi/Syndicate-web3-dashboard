@@ -43,6 +43,8 @@ interface Props {
   handlePrevious?: (index?: number) => void;
   showSideNavButton?: boolean;
   sideNavLogo?: React.ReactElement;
+  handleGoToStep?: (step: number) => void;
+  showDotIndicatorsTooltip?: boolean;
 }
 
 const Layout: FC<Props> = ({
@@ -81,7 +83,9 @@ const Layout: FC<Props> = ({
       </a>
     </Link>
   ),
-  showDotIndicators = true
+  showDotIndicators = true,
+  showDotIndicatorsTooltip = false,
+  handleGoToStep
 }) => {
   const {
     web3Reducer: {
@@ -125,6 +129,9 @@ const Layout: FC<Props> = ({
     router.pathname === `/collectives/[collectiveAddress]/modify`;
   const distributionPage =
     router.pathname === `/clubs/[clubAddress]/distribute`;
+
+  // show a slightly lighter shade of background color on the create flow pages
+  const isCreateFlowPage = router.pathname.includes('create');
 
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress || '',
@@ -250,11 +257,15 @@ const Layout: FC<Props> = ({
               showSideNavButton={showSideNavButton}
               sideNavLogo={sideNavLogo}
               showDotIndicators={showDotIndicators}
+              handleGoToStep={handleGoToStep}
+              showDotIndicatorsTooltip={showDotIndicatorsTooltip}
             />
           </div>
         ) : null}
         <div
-          className={`flex w-full bg-black flex-col sm:flex-row ${
+          className={`flex w-full ${
+            isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
+          } flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
           } z-20 justify-center my-0 mx-auto ${customClasses}`}
         >
@@ -269,7 +280,7 @@ const Layout: FC<Props> = ({
       modifyClubPage ||
       managerSettingsOpen ||
       distributionPage ? null : (
-        <div>
+        <div className={`${isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'}`}>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
           </div>
