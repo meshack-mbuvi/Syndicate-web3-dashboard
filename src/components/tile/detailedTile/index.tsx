@@ -105,7 +105,7 @@ export const DetailedTile: React.FC<Props> = ({
   const renderedButtons = options.map((option, index) => (
     <React.Fragment key={index}>
       <button
-        className={`relative z-8 block h-full transition-opacity text-center p-4 ${
+        className={`relative block h-full transition-opacity text-center p-4 ${
           animateHighlightRing
             ? 'border-gray-syn6'
             : `border ${
