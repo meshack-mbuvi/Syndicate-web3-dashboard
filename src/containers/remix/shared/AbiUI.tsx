@@ -174,8 +174,7 @@ const AbiUI: React.FC<AbiUIProps> = ({
                 <div className="flex items-center">
                   <RemixLink
                     text="View docs"
-                    //TODO [REMIX][DOCS]: [PRO2-89] add remix docs
-                    link="https://guide.syndicate.io/en/developer-platform/start-here"
+                    link="https://guide.syndicate.io/en/developer-platform/remix-mode"
                     extraClasses="mr-6"
                   />
                   <RemixLink
