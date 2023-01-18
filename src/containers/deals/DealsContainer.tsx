@@ -128,6 +128,10 @@ const DealDetails: React.FC = () => {
       <TwoColumnLayout
         hideWallet={false}
         hideEllipsis={false}
+        showBackButton={!dealDetailsLoading}
+        isReviewingCommittments={isReviewingCommittments}
+        setIsReviewingCommittments={setIsReviewingCommittments}
+        keepLogoCentered={true}
         showCloseButton={false}
         headerTitle={dealName ?? 'Deal'}
         managerSettingsOpen={true}

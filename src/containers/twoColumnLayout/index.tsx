@@ -3,7 +3,9 @@ import Layout from '@/components/layout';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { useTailwindScreenWidth } from '@/helpers/layout';
 import useWindowSize from '@/hooks/useWindowSize';
-import { FC, ReactChild, ReactChildren } from 'react';
+import { Dispatch, FC, ReactChild, ReactChildren, SetStateAction } from 'react';
+import { NavButton, NavButtonType } from '@/components/buttons/navButton';
+import { useRouter } from 'next/router';
 
 export enum TwoColumnLayoutType {
   DEFAULT = 'DEFAULT',
@@ -34,6 +36,11 @@ const TwoColumnLayout: FC<{
   handlePrevious?: (event?: any) => void;
   handleNext?: (event?: any) => void;
   nextBtnDisabled?: boolean;
+
+  // deals only
+  showBackButton?: boolean;
+  isReviewingCommittments?: boolean;
+  setIsReviewingCommittments?: Dispatch<SetStateAction<boolean>>;
 }> = ({
   managerSettingsOpen,
   leftColumnComponent,
@@ -56,7 +63,10 @@ const TwoColumnLayout: FC<{
   showSideNav = false,
   gridGapClass = 'gap-5',
   showDotIndicatorLabels = true,
-  nextBtnDisabled = true
+  nextBtnDisabled = true,
+  showBackButton = false,
+  isReviewingCommittments = false,
+  setIsReviewingCommittments
 }) => {
   const baseColumnStyles = `flex-1 md:h-full flex transition-all duration-800`;
   const leftColumnStyles = `${baseColumnStyles}`;
@@ -65,6 +75,7 @@ const TwoColumnLayout: FC<{
   const tailwindScreenWidthMd = useTailwindScreenWidth('md').width;
   const windowWidth = useWindowSize().width;
   const displayMobileLayout = windowWidth < tailwindScreenWidthMd;
+  const router = useRouter();
 
   return (
     <>
@@ -93,6 +104,27 @@ const TwoColumnLayout: FC<{
           <ErrorBoundary>
             <div className="w-full">
               <div className="container mx-auto">
+                {showBackButton && (
+                  <div className="sticky w-0 h-full z-30 transition-all">
+                    <div className="absolute hidden sm:block -left-9 sm:-left-14 xl:-left-18 top-5">
+                      <NavButton
+                        onClick={(): void => {
+                          if (isReviewingCommittments) {
+                            setIsReviewingCommittments &&
+                              setIsReviewingCommittments(false);
+                          } else {
+                            router && router.push('/');
+                          }
+                        }}
+                        type={
+                          isReviewingCommittments
+                            ? NavButtonType.BACK
+                            : NavButtonType.CLOSE
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
                 {/* Two Columns (Syndicate Details + Widget Cards) */}
                 <div className={`grid grid-cols-12 ${gridGapClass}`}>
                   {/* Left Column */}
