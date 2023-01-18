@@ -9,6 +9,7 @@ import { formatAddress } from '@/utils/formatAddress';
 import { Callout, CalloutType } from '@/components/callout';
 import { Status } from '@/components/statusChip';
 import { PrecommitStatus } from '@/hooks/deals/types';
+import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 
 export type Wallet = {
   address: string;
@@ -92,9 +93,11 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
                 <B3 extraClasses="ml-2 text-white">{dealDepositTokenSymbol}</B3>
               </div>
               <div className="flex justify-start items-center">
-                {/* use jazz icon generator here once this PR is merged: https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/pull/1858 */}
                 <div className="mr-1">
-                  <Image src="/images/jazzicon.png" width={12} height={12} />
+                  <JazziconGenerator
+                    address={connectedWallet.address}
+                    diameterRem={0.75}
+                  />
                 </div>
 
                 <B4 extraClasses="text-gray-syn4">

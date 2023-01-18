@@ -15,6 +15,7 @@ export interface Participant {
   joinedDate: string;
   status: Status;
   contributionAmount: number;
+  precommitStatus?: string;
 }
 
 interface Props {

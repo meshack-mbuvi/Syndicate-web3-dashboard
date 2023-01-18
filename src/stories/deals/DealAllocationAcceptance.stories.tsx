@@ -1,5 +1,6 @@
 import React from 'react';
 import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
+import { PrecommitStatus } from '@/hooks/deals/types';
 
 export default {
   title: '4. Organisms/Deals/Details/Deal Allocation Acceptance'
@@ -13,5 +14,12 @@ Default.args = {
   dealCommitTokenLogo: '/images/usdcIcon.svg',
   dealCommitTokenSymbol: 'USDC',
   dealTokenLogo: '/images/logo.svg',
-  dealTokenSymbol: 'PRVX'
+  dealTokenSymbol: 'PRVX',
+  connectedWallet: {
+    address: '0x0574DB630bb75DBe4310fbd6eB08Dc47048b6fad',
+    avatar: ''
+  },
+  precommitAmount: '20000',
+  dealName: 'Deal Name',
+  status: PrecommitStatus.PENDING
 };

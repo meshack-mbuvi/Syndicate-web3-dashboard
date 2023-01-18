@@ -24,6 +24,9 @@ import { DealMilestoneType } from '@/features/deals/components/create/milestone/
 import { Participant } from '@/features/deals/components/participants/table';
 import { Status } from '@/components/statusChip';
 import DealActionConfirmModal from '@/features/deals/components/close/confirm';
+import { InactiveDealCard } from './inactiveDealCard';
+import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
+import { PrecommitStatus } from '@/hooks/deals/types';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
@@ -159,24 +162,48 @@ export const DealSidePanel: React.FC<{
     ).length < 1 || isClosed;
   const disableDissolveButton = isClosed;
 
+  const { precommit, precommitLoading } = useMemberPrecommit();
+
+  //check if deal was executed or dissolved.
+  const isDealDissolved =
+    !currentParticipants.some(
+      (participant) =>
+        participant.precommitStatus === PrecommitStatus.FAILED ||
+        participant.precommitStatus === PrecommitStatus.EXECUTED
+    ) && isClosed;
+
+  // show inactive deal status if deal is closed (dissolved or executed) for non-members or admin (if admin has no precommit)
+  // precommit object is undefined if connected account has no precommits
+  if (!precommitLoading && !precommit && isClosed) {
+    return (
+      <InactiveDealCard isDealDissolved={isDealDissolved} dealName={dealName} />
+    );
+  }
+
   return (
     <div className="space-y-8 mt-5">
       {/* input field component for precommit amount  */}
-      <div>
+      <>
         {isOpenToPrecommits && (
           <PrecommitContainer {...{ dealDetails, dealDetailsLoading }} />
         )}
-      </div>
+      </>
 
-      {/* card to show amount backed once precommit is accepted  */}
-      <UponAllocationAcceptance
-        {...{
-          dealCommitTokenLogo: '/images/usdcIcon.svg',
-          dealCommitTokenSymbol: 'USDC',
-          dealTokenLogo: '/images/logo.svg',
-          dealTokenSymbol: 'PRVX'
-        }}
-      />
+      {/* card to show amount backed once precommit is accepted  or rejected - meaning deal is closed */}
+      {isClosed && precommit && +precommit?.amount > 0 && (
+        <UponAllocationAcceptance
+          {...{
+            dealCommitTokenLogo: '/images/usdcIcon.svg',
+            dealCommitTokenSymbol: 'USDC',
+            dealTokenLogo: '/images/logo.svg',
+            dealTokenSymbol: 'PRVX',
+            connectedWallet: { address: account, avatar: '' },
+            precommitAmount: precommit ? precommit.amount : '0',
+            dealName,
+            status: precommit ? precommit.status : PrecommitStatus.PENDING
+          }}
+        />
+      )}
 
       {/* admin CTAs to dissolve or execute deal  */}
       {permissionType === PermissionType.ADMIN ? (

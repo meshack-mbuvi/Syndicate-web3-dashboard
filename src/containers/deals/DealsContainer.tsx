@@ -60,7 +60,8 @@ const DealDetails: React.FC = () => {
           joinedDate: moment
             .utc(+participant.createdAt * 1000)
             .format('DD/MM/YY'),
-          status: Status.ACCEPTED
+          status: Status.ACCEPTED,
+          precommitStatus: participant.status
         };
       });
 
