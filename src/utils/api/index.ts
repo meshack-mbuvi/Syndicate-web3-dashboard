@@ -143,8 +143,8 @@ export const getAccountHoldings = async (
           address: string;
           name: string;
           symbol: string;
-          decimals: number | null;
-          logo: string | null;
+          decimals: number | undefined;
+          logo: string | undefined;
         };
       }[];
     };

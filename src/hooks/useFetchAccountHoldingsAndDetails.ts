@@ -29,7 +29,6 @@ export const useFetchAccountHoldingsAndDetails = (): {
       account
     )
       .then((res) => {
-        // @ts-expect-error TS(2345): Argument of type '{ tokenHoldings: { balance: number; token:... Remove this comment to see the full error messag
         setAccountHoldings(res.data.data);
         setLoading(false);
       })

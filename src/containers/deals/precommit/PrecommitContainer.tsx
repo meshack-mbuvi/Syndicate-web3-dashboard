@@ -13,6 +13,7 @@ import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
 import useTokenDetails from '@/hooks/useTokenDetails';
 import { Status } from '@/components/statusChip';
+import useFetchTokenBalance from '@/hooks/useFetchTokenBalance';
 
 const PrecommitContainer: React.FC<{
   dealDetails: IDealDetails;
@@ -20,7 +21,7 @@ const PrecommitContainer: React.FC<{
 }> = ({ dealDetails, dealDetailsLoading }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3 }
+      web3: { account, activeNetwork, web3, providerName }
     },
     initializeContractsReducer: {
       syndicateContracts: { allowancePrecommitModuleERC20 }
@@ -42,7 +43,11 @@ const PrecommitContainer: React.FC<{
     decimals,
     logo: depositTokenLogo
   } = useTokenDetails(depositToken);
-  const minCommitAmount = getWeiAmount(minCommitAmountInWei, decimals, false);
+
+  const { accountHoldings } = useFetchTokenBalance(depositToken);
+
+  const minCommitAmount =
+    getWeiAmount(minCommitAmountInWei, decimals, false) ?? '0';
 
   const [isPrecommitModalOpen, setPrecommitModalOpen] =
     useState<boolean>(false);
@@ -248,10 +253,14 @@ const PrecommitContainer: React.FC<{
           }
           dealDepositTokenSymbol={depositTokenSymbol ?? ''}
           minimumCommitAmount={minCommitAmount}
-          wallets={[]} // TODO [ENG-4869] Auth
-          walletBalance={''} // TODO [ENG-4869] Auth
-          walletProviderName={''} // TODO [ENG-4869] Auth
-          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869] Auth
+          wallets={[{ address: account, avatar: '' }]} // TODO [ENG-4869]: precommits - b/auth wallets
+          walletBalance={getWeiAmount(
+            accountHoldings?.tokenHoldings?.[0].balance.toString() ?? '0',
+            decimals,
+            false
+          )} // TODO [ENG-4869]: precommits - b/auth wallets
+          walletProviderName={providerName} // TODO [ENG-4869]: precommits - b/auth wallets
+          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869]: precommits - b/auth wallets
           handleBackThisDeal={handleBackThisDeal}
           handleValidAmount={handleValidAmount}
           handleCancelPrecommit={handleCancelPrecommit}
@@ -267,10 +276,14 @@ const PrecommitContainer: React.FC<{
           depositTokenSymbol={depositTokenSymbol}
           activeStepIndex={activeStepIndex}
           showWaitingOnWalletLoadingState={showWaitingOnWalletLoadingState}
-          wallets={[]} // TODO [ENG-4869] Auth
-          walletBalance={''} // TODO [ENG-4869] Auth
-          walletProviderName={''} // TODO [ENG-4869] Auth
-          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869] Auth
+          wallets={[{ address: account, avatar: '' }]} // TODO [ENG-4869]: precommits - b/auth wallets
+          walletBalance={getWeiAmount(
+            accountHoldings?.tokenHoldings?.[0].balance.toString() ?? '0',
+            decimals,
+            false
+          )} // TODO [ENG-4869]: precommits - b/auth wallets
+          walletProviderName={providerName} // TODO [ENG-4869: precommits - b/auth wallets
+          connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869]: precommits - b/auth wallets
           handleCreateAllowanceClick={handleAllowance}
           handleRequestAllocationClick={handleRequestAllocation}
           toggleModal={toggleModal}
