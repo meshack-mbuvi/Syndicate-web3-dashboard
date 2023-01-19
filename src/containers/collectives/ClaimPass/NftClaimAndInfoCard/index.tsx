@@ -120,12 +120,12 @@ const NftClaimAndInfoCard: React.FC = () => {
     };
   }, [progressState, interval]);
 
-  const onTxConfirm = (hash: string) => {
+  const onTxConfirm = (hash: string): void => {
     setProgressState(ProgressState.PENDING);
     setTransactionHash(hash);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProgressState(ProgressState.SUCCESS);
     amplitudeLogger(COLLECTIVE_CLAIM, {
       flow: Flow.COLLECTIVE_CLAIM,

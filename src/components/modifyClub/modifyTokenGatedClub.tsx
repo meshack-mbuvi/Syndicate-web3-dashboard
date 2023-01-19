@@ -512,7 +512,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressState(ProgressState.PENDING);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProgressTitle('Settings updated');
     setProgressDescription('');
     setProgressState(ProgressState.SUCCESS);

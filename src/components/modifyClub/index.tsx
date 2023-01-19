@@ -341,7 +341,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     setProgressState('pending');
   };
 
-  const onTxReceipt = (receipt: any) => {
+  const onTxReceipt = (receipt: any): void => {
     dispatch(setClubCreationReceipt(receipt.events.ConfigUpdated.returnValues));
   };
 

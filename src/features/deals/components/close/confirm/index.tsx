@@ -43,20 +43,32 @@ const DealActionConfirmModal: React.FC<Props> = ({
           items={[
             {
               title:
-                closeType === DealEndType.WITHDRAW
+                closeType === DealEndType.DISSOLVE
+                  ? 'What happens to the backer contributions?'
+                  : closeType === DealEndType.WITHDRAW
                   ? 'What happens to my contribution?'
                   : 'What happens to the pre-commits?',
-              content: 'Content TBD'
+              content:
+                closeType === DealEndType.DISSOLVE
+                  ? 'When a deal is dissolved all contributions are rejected and the window, if still open, is closed. This will prevent any transfer of funds of any type from occurring. The deal can still be viewed but will be inactive.'
+                  : closeType === DealEndType.WITHDRAW
+                  ? 'When you withdraw from a deal, you will sign an on-chain event which will prevent any transfer of funds out of your wallet and remove you from the list of backers.'
+                  : ''
             },
             {
               title:
                 closeType === DealEndType.EXECUTE
-                  ? 'What heppens to the deal page?'
+                  ? 'What happens to the deal page?'
                   : closeType === DealEndType.DISSOLVE ||
                     closeType === DealEndType.WITHDRAW
                   ? 'Will this go on chain?'
                   : '',
-              content: 'Content TBD'
+              content:
+                closeType === DealEndType.DISSOLVE
+                  ? 'This is an on-chain event that you as the deal leader must sign in order to perform. After you sign the deal all information attached to it will remain on-chain.'
+                  : closeType === DealEndType.WITHDRAW
+                  ? 'This is an on-chain event and will be visible as withdrawal from the deal you have backed once the deal closes.'
+                  : ''
             },
             {
               title:
@@ -65,9 +77,14 @@ const DealActionConfirmModal: React.FC<Props> = ({
                   : closeType === DealEndType.DISSOLVE
                   ? 'How do I create a new deal?'
                   : closeType === DealEndType.WITHDRAW
-                  ? 'Can I request contribution again later?'
+                  ? 'Can I back this deal again later?'
                   : '',
-              content: 'Content TBD'
+              content:
+                closeType === DealEndType.DISSOLVE
+                  ? 'In order to create a new deal simply return to the portfolio and select create deal which will enable you to begin the process again.'
+                  : closeType === DealEndType.WITHDRAW
+                  ? 'You can always back the deal again if you choose to do so as long as the backer window is still open.'
+                  : ''
             }
           ]}
           visibleItemIndex={activeAccordionIndex}

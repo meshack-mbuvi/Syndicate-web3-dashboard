@@ -342,7 +342,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
     setTransactionHash(transactionHash);
   };
 
-  const onTxReceipt = (receipt: TransactionReceipt) => {
+  const onTxReceipt = (receipt: TransactionReceipt): void => {
     if (receipt.events) {
       const { returnValues } = receipt.events.ERC20ClubCreated;
       const tokenAddress = returnValues?.tokenAddress;

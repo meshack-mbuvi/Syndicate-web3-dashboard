@@ -180,7 +180,7 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
                           objectFit="contain"
                         />
                       </div>
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 pr-3">
                         {processTotalCommitments(totalCommitted, 'USDC')}{' '}
                         {'USDC'}{' '}
                       </div>

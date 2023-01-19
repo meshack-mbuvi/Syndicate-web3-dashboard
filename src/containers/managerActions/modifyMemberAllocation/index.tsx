@@ -144,12 +144,12 @@ const ModifyClubTokens: React.FC<{
     refreshClubDetails();
   };
 
-  const onTxConfirm = () => {
+  const onTxConfirm = (): void => {
     setConfirm(false);
     setUpdatingCapTable(true);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setUpdatingCapTable(false);
     setUpdated();
     refreshClubDetails();

@@ -236,7 +236,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     dispatch(setTransactionHash(transactionHash));
   };
 
-  const onTxReceipt = (receipt: any) => {
+  const onTxReceipt = (receipt: any): void => {
     amplitudeLogger(CLUB_CREATION, {
       flow: Flow.CLUB_CREATE,
       transaction_status: 'Success'

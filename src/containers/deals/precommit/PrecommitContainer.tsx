@@ -13,6 +13,12 @@ import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
 import useTokenDetails from '@/hooks/useTokenDetails';
 import { Status } from '@/components/statusChip';
+import DealActionConfirmModal from '@/features/deals/components/close/confirm';
+import { DealEndType } from '@/features/deals/components/close/types';
+import DealCloseModal from '@/features/deals/components/close/execute';
+import { formatAddress } from '@/utils/formatAddress';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import useFetchTokenBalance from '@/hooks/useFetchTokenBalance';
 
 const PrecommitContainer: React.FC<{
@@ -21,7 +27,7 @@ const PrecommitContainer: React.FC<{
 }> = ({ dealDetails, dealDetailsLoading }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3, providerName }
+      web3: { account, activeNetwork, web3, ethersProvider, providerName }
     },
     initializeContractsReducer: {
       syndicateContracts: { allowancePrecommitModuleERC20 }
@@ -35,8 +41,14 @@ const PrecommitContainer: React.FC<{
     dealTokenAddress,
     dealTokenSymbol,
     depositToken,
+    dealDestination,
     minCommitAmount: minCommitAmountInWei
   } = dealDetails;
+
+  const { data } = useFetchEnsAssets(dealDestination, ethersProvider);
+  const destinationEnsName = data?.name
+    ? data.name
+    : formatAddress(dealDestination, 6, 4);
 
   const {
     symbol: depositTokenSymbol,
@@ -51,6 +63,18 @@ const PrecommitContainer: React.FC<{
 
   const [isPrecommitModalOpen, setPrecommitModalOpen] =
     useState<boolean>(false);
+  const [showDealActionConfirmModal, setShowDealActionConfirmModal] =
+    useState<boolean>(false);
+  const [openWithdrawModal, setOpenWithdrawModal] = useState<boolean>(false);
+
+  // withdrawing deal
+  const [isWithdrawingDeal, setIsWithdrawingDeal] = useState<boolean>(false);
+  const [isConfirmingWithdraw, setIsConfirmingWithdraw] =
+    useState<boolean>(false);
+  const [successfullyWithdrawDeal, setSuccessfullyWithdrawDeal] =
+    useState<boolean>(false);
+  const [dealWithdrawFailed, setDealWithdrawFailed] = useState<boolean>(false);
+
   const [tokenAmountInWei, setTokenAmountInWei] =
     useState<string>(minCommitAmountInWei);
   const [tokenAmount, setTokenAmount] = useState<string>(minCommitAmount);
@@ -74,7 +98,7 @@ const PrecommitContainer: React.FC<{
     setPrecommitModalOpen(!isPrecommitModalOpen);
   };
 
-  const toggleSuccesModal = (): void => {
+  const toggleSuccessModal = (): void => {
     setCompleteModalOpen(!isCompleteModalOpen);
   };
 
@@ -85,21 +109,33 @@ const PrecommitContainer: React.FC<{
 
   const onTxFail = (): void => {
     setShowWaitingOnWallet(false);
+    setDealWithdrawFailed(true);
   };
 
   const onTxConfirm = (transactionHash?: string): void => {
     setTransactionHash(transactionHash ?? '');
+    setIsConfirmingWithdraw(false);
+    setIsWithdrawingDeal(true);
   };
 
   const onTxReceipt = (receipt?: TransactionReceipt): void => {
     console.log('receipt', receipt);
-    // TODO [WINGZ]: precommits - d/txn progress display
     setShowWaitingOnWallet(false);
     if (activeStepIndex === 1) {
-      toggleSuccesModal();
+      toggleSuccessModal();
       setPrecommitModalOpen(false);
     }
     setActiveStep(activeStepIndex + 1);
+    setIsWithdrawingDeal(false);
+    setSuccessfullyWithdrawDeal(true);
+  };
+
+  const onTxWithdrawalReceipt = async (): Promise<void> => {
+    setShowWaitingOnWallet(false);
+    setActiveStep(activeStepIndex + 1);
+    setIsConfirmingWithdraw(true);
+    await cancelAllowance();
+    setIsWithdrawingDeal(false);
   };
 
   const checkAllowanceAllows = async (current: number): Promise<boolean> => {
@@ -127,6 +163,65 @@ const PrecommitContainer: React.FC<{
   const handleBackThisDeal = async (): Promise<void> => {
     await checkAllowanceAllows(+tokenAmountInWei);
     toggleModal();
+  };
+
+  const cancelAllowance = async (): Promise<void> => {
+    setShowWaitingOnWallet(true);
+    const depositTokenContract = new web3.eth.Contract(
+      ERC20ABI as AbiItem[],
+      depositToken
+    );
+    try {
+      const allowanceAmount = await depositTokenContract.methods
+        .allowance(account, precommitAddress)
+        .call({ from: account });
+      if (allowanceAmount > 0) {
+        let gnosisTxHash;
+        const gasEstimate = await estimateGas(web3);
+        await new Promise((resolve, reject) => {
+          depositTokenContract.methods
+            .approve(precommitAddress, 0)
+            .send({ from: account, gasPrice: gasEstimate })
+            .on('transactionHash', (transactionHash: any) => {
+              onTxConfirm(transactionHash);
+              // Stop waiting if we are connected to gnosis safe via walletConnect
+              if (
+                web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
+              ) {
+                setTransactionHash('');
+                gnosisTxHash = transactionHash;
+                resolve(transactionHash);
+              } else {
+                setTransactionHash(transactionHash);
+              }
+            })
+            .on('receipt', (receipt: TransactionReceipt) => {
+              onTxReceipt(receipt);
+              resolve(receipt);
+            })
+            .on('error', (error: any) => {
+              onTxFail();
+              reject(error);
+            });
+        });
+        // fallback for gnosisSafe <> walletConnect
+        if (gnosisTxHash) {
+          const receipt: any = await getGnosisTxnInfo(
+            gnosisTxHash,
+            activeNetwork
+          );
+          setTransactionHash(receipt.transactionHash);
+          if (receipt.isSuccessful) {
+            onTxReceipt(receipt);
+          } else {
+            setError('Transaction failed');
+          }
+        }
+      }
+    } catch {
+      setError('Unable to cancel current allowance');
+      setShowWaitingOnWallet(false);
+    }
   };
 
   // TODO [REFACTOR]: ERC20 base / helpers for allowances
@@ -213,7 +308,7 @@ const PrecommitContainer: React.FC<{
     }
   };
 
-  const handleCancelPrecommit = async (): Promise<void> => {
+  const handleConfirmWithdraw = async (): Promise<void> => {
     try {
       if (
         !account ||
@@ -222,21 +317,72 @@ const PrecommitContainer: React.FC<{
         !dealTokenAddress
       )
         return;
-      setShowWaitingOnWallet(true);
+      setShowDealActionConfirmModal(false);
+      setOpenWithdrawModal(true);
+      setIsConfirmingWithdraw(true);
       await allowancePrecommitModuleERC20.cancelPrecommit(
         dealTokenAddress,
         account,
         onTxConfirm,
-        onTxReceipt,
+        onTxWithdrawalReceipt,
         onTxFail
       );
     } catch {
-      setError('Unable to withdraw allocation');
+      setError('Unable to withdraw precommit');
     }
+  };
+
+  const handleCloseModalClick = (): void => {
+    setOpenWithdrawModal(false);
+    setIsWithdrawingDeal(false);
+    setSuccessfullyWithdrawDeal(false);
+    setIsConfirmingWithdraw(false);
+    setDealWithdrawFailed(false);
+  };
+
+  const handleCancelPrecommitModal = (): void => {
+    setShowWaitingOnWallet(true);
+    setShowDealActionConfirmModal(true);
+  };
+
+  const handleCancelAndGoBackClick = (): void => {
+    setShowDealActionConfirmModal(false);
   };
 
   return (
     <>
+      <DealActionConfirmModal
+        closeType={DealEndType.WITHDRAW}
+        show={showDealActionConfirmModal}
+        handleContinueClick={handleConfirmWithdraw}
+        handleCancelAndGoBackClick={handleCancelAndGoBackClick}
+      />
+      <DealCloseModal
+        {...{
+          show: openWithdrawModal,
+          closeModal: (): void => {
+            handleCloseModalClick();
+          },
+          outsideOnClick: true,
+          dealName,
+          tokenLogo: '/images/prodTokenLogos/USDCoin.svg',
+          tokenSymbol: 'USDC',
+          tokenAmount: precommit
+            ? floatedNumberWithCommas(getWeiAmount(precommit.amount, 6, false))
+            : '0',
+          destinationEnsName,
+          destinationAddress: dealDestination,
+          handleDealCloseClick: handleConfirmWithdraw,
+          handleCancelAllowance: cancelAllowance,
+          closeType: DealEndType.WITHDRAW,
+          showWaitingOnExecutionLoadingState: isWithdrawingDeal,
+          showWaitingOnWalletLoadingState: isConfirmingWithdraw,
+          transactionFailed: dealWithdrawFailed,
+          successfullyWithdrawnDeal: successfullyWithdrawDeal,
+          activeStepIndex: activeStepIndex
+        }}
+      />
+
       {!dealDetailsLoading && !precommitLoading && (
         //TODO [ENG-4868]: precommits - re-render or spinner when processing from graph
         <DealAllocationCard
@@ -245,7 +391,7 @@ const PrecommitContainer: React.FC<{
           allocationStatus={precommit?.status ?? Status.ACTION_REQUIRED}
           precommitAmount={
             precommit && precommit?.amount
-              ? getWeiAmount(precommit.amount, decimals, false)
+              ? String(getWeiAmount(precommit.amount, decimals, false))
               : '0'
           }
           dealDepositTokenLogo={
@@ -263,7 +409,7 @@ const PrecommitContainer: React.FC<{
           connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869]: precommits - b/auth wallets
           handleBackThisDeal={handleBackThisDeal}
           handleValidAmount={handleValidAmount}
-          handleCancelPrecommit={handleCancelPrecommit}
+          handleCancelPrecommit={handleCancelPrecommitModal}
         />
       )}
       {isPrecommitModalOpen && (
@@ -300,7 +446,7 @@ const PrecommitContainer: React.FC<{
           depositTokenSymbol={depositTokenSymbol}
           walletAddress={account}
           ensName={''} // TODO [ENG-4869] Auth
-          toggleModal={toggleSuccesModal}
+          toggleModal={toggleSuccessModal}
         />
       )}
     </>
