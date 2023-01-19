@@ -194,7 +194,10 @@ const DealDetails: React.FC = () => {
                     )}
                   />
                 ) : (
-                  <DealsParticipants participants={participants} />
+                  <DealsParticipants
+                    participants={participants}
+                    addressOfLeader={ownerAddress}
+                  />
                 )}
               </div>
             )}

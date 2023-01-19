@@ -16,6 +16,8 @@ interface LinkProp {
   grouped?: boolean;
   iconcolor?: ExternalLinkColor;
   iconOnlyStyles?: string;
+  noIconOrText?: boolean;
+  children?: React.ReactNode;
 }
 
 /** Link used to redirect the user to the Block Explorer
@@ -31,7 +33,9 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
     prefix = 'View on ',
     suffix = '',
     grouped,
-    iconcolor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE,
+    noIconOrText = false,
+    children
   } = props;
 
   const { activeNetwork } = useConnectWalletContext();
@@ -54,24 +58,32 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
       }`}
       rel="noreferrer"
     >
-      {grouped && iconOnly && <ExternalLinkIcon iconcolor={iconcolor} />}
-      {!iconOnly ? (
-        <div className="flex justify-between items-center w-full">
-          <div
-            className={`${
-              iconcolor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
-            }`}
-          >
-            {prefix} {activeNetwork.blockExplorer.name} {suffix}
-          </div>
-          <ExternalLinkIcon
-            className={`ml-2 w-4 text-blue`}
-            iconcolor={iconcolor}
-          />
-        </div>
-      ) : !grouped ? (
-        <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue`" />
-      ) : null}
+      {noIconOrText ? (
+        children
+      ) : (
+        <>
+          {grouped && iconOnly && <ExternalLinkIcon iconcolor={iconcolor} />}
+          {!iconOnly ? (
+            <div className="flex justify-between items-center w-full">
+              <div
+                className={`${
+                  iconcolor === ExternalLinkColor.BLUE
+                    ? 'text-blue'
+                    : 'text-white'
+                }`}
+              >
+                {prefix} {activeNetwork.blockExplorer.name} {suffix}
+              </div>
+              <ExternalLinkIcon
+                className={`ml-2 w-4 text-blue`}
+                iconcolor={iconcolor}
+              />
+            </div>
+          ) : !grouped ? (
+            <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue`" />
+          ) : null}
+        </>
+      )}
     </a>
   );
 };

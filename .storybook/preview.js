@@ -5,6 +5,8 @@ import * as NextImage from 'next/image';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import ConnectWallet from '@/components/connectWallet';
 
 const OriginalNextImage = NextImage.default;
 
@@ -49,7 +51,10 @@ export const decorators = [
     <div className="text-white">
       <ApolloProvider client={client}>
         <Provider store={store}>
-          <Story />
+          <ConnectWalletProvider>
+            <Story />
+            <ConnectWallet />
+          </ConnectWalletProvider>
         </Provider>
       </ApolloProvider>
     </div>
