@@ -24,7 +24,7 @@ export const TimeInputField = (props: {
 
   // fix to set correct background color on the timezone text
   // to hide icon injected into the time input field in Firefox
-  const isClubCreationPage = router.pathname === '/clubs/create';
+  const isCreationPage = router.pathname.includes('create');
 
   return (
     <>
@@ -44,7 +44,7 @@ export const TimeInputField = (props: {
         >
           <span
             className={`${
-              isClubCreationPage ? 'bg-black' : 'bg-gray-syn8'
+              isCreationPage ? 'bg-gray-syn9' : 'bg-gray-syn8'
             } text-gray-syn4  z-20`}
           >
             {currentTimeZone}

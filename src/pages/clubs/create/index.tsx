@@ -161,7 +161,7 @@ const CreateInvestmentClub: React.FC = () => {
               : 'Set up a dashboard'}
           </h4>
         )}
-        <div className="container mx-auto w-full h-full">
+        <div className="container mx-auto w-full bg-gray-syn9">
           <div className="w-full mx-auto max-w-520" ref={parentRef}>
             <ReviewDetails />
             <div className="w-full sm:px-5">

@@ -1,8 +1,10 @@
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
+
 import { DetailedTile } from '@/components/tile/detailedTile';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { CreateFlowStepTemplate } from '..';
+import { default as _moment } from 'moment-timezone';
+import { TimeInputField } from '@/components/inputs/timeInputField';
 
 interface Props {
   selectedTimeWindow: SelectedTimeWindow | null;
@@ -30,6 +32,10 @@ export const DealsCreateWindow: React.FC<Props> = ({
 }) => {
   const showCustomTimeSelector =
     selectedTimeWindow === SelectedTimeWindow.CUSTOM;
+
+  const now = new Date();
+  const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const tz = _moment(now).tz(timeZoneString).format('zz');
 
   return (
     <CreateFlowStepTemplate
@@ -74,14 +80,16 @@ export const DealsCreateWindow: React.FC<Props> = ({
                     />
                   </div>
                   <div className="md:w-1/2">
-                    <InputFieldWithTime
-                      value={customTime}
+                    <TimeInputField
+                      placeholderLabel="11:59PM"
                       onChange={(e): void => {
                         if (handleCustomTimeChange) {
                           handleCustomTimeChange(e.target.value);
                         }
                       }}
-                      placeholderLabel="Time"
+                      extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced`}
+                      value={customTime}
+                      currentTimeZone={tz}
                     />
                   </div>
                 </div>
