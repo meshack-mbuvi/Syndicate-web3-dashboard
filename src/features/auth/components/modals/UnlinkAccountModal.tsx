@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { Accordion } from '@/components/accordion';
+import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { H4 } from '@/components/typography';
 import { ArrowLeftIcon } from '@heroicons/react/outline';
+import React, { useState } from 'react';
 import AccountInfoWithAvatar from '../settings/AccountInfoWithAvatar';
-import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
-import { Accordion } from '@/components/accordion';
 
 interface IUnlinkAccountModal {
   showModal: boolean;

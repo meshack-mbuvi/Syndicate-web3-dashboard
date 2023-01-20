@@ -1,5 +1,4 @@
-import { StatusChip, Status } from '@/components/statusChip';
-import React from 'react';
+import { Status, StatusChip } from '@/components/statusChip';
 
 export default {
   title: '2. Atoms/Status Chip',

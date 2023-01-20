@@ -95,20 +95,28 @@ const useDealsDetails = (): IDealDetailsResponse => {
         let dealStartTime = '';
         let dealEndTime = '';
         let minPerMember = '';
-        deal.mixins.map((mixin) => {
-          if (
-            mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
-          ) {
-            dealEndTime = mixin.endTime;
-            dealStartTime = mixin.startTime;
-          }
+        deal.mixins?.map(
+          (mixin: {
+            requirementType: MixinModuleRequirementType;
+            endTime: string;
+            startTime: string;
+            minPerMember: string;
+          }) => {
+            if (
+              mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
+            ) {
+              dealEndTime = mixin.endTime;
+              dealStartTime = mixin.startTime;
+            }
 
-          if (
-            mixin.requirementType === MixinModuleRequirementType.MIN_PER_MEMBER
-          ) {
-            minPerMember = mixin.minPerMember;
+            if (
+              mixin.requirementType ===
+              MixinModuleRequirementType.MIN_PER_MEMBER
+            ) {
+              minPerMember = mixin.minPerMember;
+            }
           }
-        });
+        );
         setDealDetails({
           dealName: deal.dealToken.name,
           dealDescription: '', // When we add descriptions after v0, pass it in here

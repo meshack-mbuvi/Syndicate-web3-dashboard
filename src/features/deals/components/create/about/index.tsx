@@ -1,8 +1,12 @@
 import { ShuffleIcon } from '@/components/icons/shuffle';
 import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
+import { useCreateDealContext } from '@/context/createDealContext';
+import {
+  CreateFlowStepTemplate,
+  CreateFlowStepTemplateIconType
+} from '@/templates/createFlowStepTemplate';
 // import { TextArea } from '@/components/inputs/simpleTextArea';
 import { useState } from 'react';
-import { CreateFlowStepTemplate, CreatFlowStepTemplateIconType } from '..';
 
 interface Props {
   name?: string;
@@ -31,10 +35,16 @@ export const DealsCreateAbout: React.FC<Props> = ({
   const [activeInputIndex, setActiveInput] = useState<SelectedInput | null>(
     null
   );
+
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
   return (
     <CreateFlowStepTemplate
       title="What’s this deal about?"
       activeInputIndex={activeInputIndex}
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       inputs={[
         {
           input: (
@@ -56,12 +66,12 @@ export const DealsCreateAbout: React.FC<Props> = ({
                 setActiveInput(SelectedInput.TITLE);
               }}
               isInErrorState={nameError ? true : false}
-              infoLabel={nameError ? nameError : null}
+              infoLabel={nameError ? nameError : ''}
             />
           ),
           label: 'Deal title',
           info: 'Your deal’s name is stored on-chain, so it’s publicly visible. If you’d prefer to obfuscate this deal, generate a random name.',
-          iconType: CreatFlowStepTemplateIconType.EYE_OPEN
+          iconType: CreateFlowStepTemplateIconType.EYE_OPEN
         } /* ,
         {
           input: (

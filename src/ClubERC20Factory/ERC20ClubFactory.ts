@@ -137,7 +137,7 @@ export class ERC20ClubFactory extends ContractBase {
 
     const contractAddresses = [...nonMaxMemberMixinAddresses];
 
-    if (membersCount !== 99) {
+    if (membersCount !== 99 && nextToken && membersCount) {
       contractAddresses.push(this.addresses.maxMemberMixin);
       encodedFunctions.push(
         maxMemberCountMixin.setMemberCountRequirements(nextToken, membersCount)

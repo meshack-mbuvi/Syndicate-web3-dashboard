@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 
-const InvestmentClubCTAs: React.FC = () => {
+const InvestmentClubCTAs: React.FC<{ disabled: boolean }> = ({ disabled }) => {
   const {
     isReviewStep,
     // isCreatingInvestmentClub,
@@ -24,7 +24,6 @@ const InvestmentClubCTAs: React.FC = () => {
     backBtnDisabled,
     nextBtnDisabled,
     setShowModal,
-    showNextButton,
     handleCreateInvestmentClub,
     isWalletConfirmed,
     currentStep,
@@ -107,13 +106,13 @@ const InvestmentClubCTAs: React.FC = () => {
 
   return (
     <animated.div
-      className={`bg-gray-syn9 flex-none flex flex-col items-center sm:px-5 ${
+      className={`bg-gray-syn9 flex-none flex flex-col items-center ${
         isReviewStep ? 'w-full h-10.875' : ''
       }`}
       style={styles}
     >
       <div
-        className={`flex flex-col w-full sm:max-w-520 sm:h-full sm:pt-0
+        className={`flex flex-col w-full sm:h-full sm:pt-0
           ${isReviewStep ? 'sm:border-t border-gray-syn4' : ''}
         }`}
       >
@@ -162,42 +161,41 @@ const InvestmentClubCTAs: React.FC = () => {
               <span className="ml-2">Back</span>
             </button>
           )}
-          {showNextButton && (
-            <CTAButton
-              type={
-                nextBtnDisabled
-                  ? CTAType.DISABLED
-                  : isReviewStep
-                  ? CTAType.TRANSACTIONAL
-                  : CTAType.PRIMARY
-              }
-              extraClasses={`${
-                isReviewStep ? 'transition-all' : ''
-              } w-full sm:w-auto`}
-              onClick={
-                isReviewStep
-                  ? !account
-                    ? connectWallet
-                    : isWalletConfirmed
-                    ? handleCreateInvestmentClub
-                    : confirmWallet
-                  : handleNext
-              }
-              disabled={nextBtnDisabled}
-            >
-              {isReviewStep
+
+          <CTAButton
+            type={
+              nextBtnDisabled
+                ? CTAType.DISABLED
+                : isReviewStep
+                ? CTAType.TRANSACTIONAL
+                : CTAType.PRIMARY
+            }
+            extraClasses={`${
+              isReviewStep ? 'transition-all' : ''
+            } w-full sm:w-auto`}
+            onClick={
+              isReviewStep
                 ? !account
-                  ? 'Connect wallet to create'
+                  ? connectWallet
                   : isWalletConfirmed
-                  ? 'Create investment club'
-                  : 'Confirm wallet'
-                : editingStep
-                ? 'Done'
-                : isMembershipStep
-                ? 'Review'
-                : 'Next'}
-            </CTAButton>
-          )}
+                  ? handleCreateInvestmentClub
+                  : confirmWallet
+                : handleNext
+            }
+            disabled={nextBtnDisabled || disabled}
+          >
+            {isReviewStep
+              ? !account
+                ? 'Connect wallet to create'
+                : isWalletConfirmed
+                ? 'Create investment club'
+                : 'Confirm wallet'
+              : editingStep
+              ? 'Done'
+              : isMembershipStep
+              ? 'Review'
+              : 'Next'}
+          </CTAButton>
         </div>
       </div>
     </animated.div>

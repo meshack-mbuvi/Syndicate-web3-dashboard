@@ -1,21 +1,21 @@
+import { metamaskConstants } from '@/components/syndicates/shared/Constants';
+import { SelectedTimeWindow } from '@/features/deals/components/create/window';
+import { getMetamaskError } from '@/helpers';
+import { AppState } from '@/state';
+import { acronymGenerator } from '@/utils/acronymGenerator';
+import { getWeiAmount } from '@/utils/conversions';
+import moment from 'moment';
+import { generateSlug } from 'random-word-slugs';
 import React, {
   createContext,
   Dispatch,
   SetStateAction,
   useContext,
-  useState,
-  useEffect
+  useEffect,
+  useState
 } from 'react';
-import { SelectedTimeWindow } from '@/features/deals/components/create/window';
-import { generateSlug } from 'random-word-slugs';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { getMetamaskError } from '@/helpers';
-import { metamaskConstants } from '@/components/syndicates/shared/Constants';
-import moment from 'moment';
 import { TransactionReceipt } from 'web3-core';
-import { getWeiAmount } from '@/utils/conversions';
-import { acronymGenerator } from '@/utils/acronymGenerator';
 
 type CreateDealProviderProps = {
   // deal details
@@ -89,6 +89,7 @@ type CreateDealProviderProps = {
   errorModalMessage: string;
   createdDealAddress: string;
   dealUrl: string;
+  isNextButtonDisabled: boolean;
 };
 
 const CreateDealContext = createContext<Partial<CreateDealProviderProps>>({});
@@ -105,9 +106,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
       syndicateContracts: { erc20DealFactory }
     }
   } = useSelector((state: AppState) => state);
-
-  // const router = useRouter();
-  // const dispatch = useDispatch();
 
   // deal details
   const [name, setName] = useState('');

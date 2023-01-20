@@ -15,7 +15,7 @@ const DateCard: FC<IDateCardProps> = ({
   return (
     <div
       className={`flex items-center w-full h-14 rounded-md ${
-        activeIndex === index && `border border-blue-navy`
+        (activeIndex === index && `border border-blue-navy`) || ''
       }`}
     >
       <div

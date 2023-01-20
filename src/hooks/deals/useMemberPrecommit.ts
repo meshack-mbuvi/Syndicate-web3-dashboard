@@ -1,9 +1,9 @@
 import { GetMemberPrecommit } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { Precommit } from './types';
 
 export interface PrecommitResponse {

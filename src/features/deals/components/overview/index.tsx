@@ -1,10 +1,11 @@
 import { AddressLayout } from '@/components/shared/ensAddress';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
+import { Status, StatusChip } from '@/components/statusChip';
 import { B2, H1, H2 } from '@/components/typography';
 import { getWeiAmount } from '@/utils/conversions';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 import { DealMilestoneType } from '../create/milestone/types';
-import { StatusChip, Status } from '@/components/statusChip';
+
 interface Props {
   dealName: string;
   dealDetails: string;

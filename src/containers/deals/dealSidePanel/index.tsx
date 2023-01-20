@@ -1,32 +1,33 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
-import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
-import { B3 } from '@/components/typography';
-import Image from 'next/image';
-import CopyLink from '@/components/shared/CopyLink';
-import { useRouter } from 'next/router';
 import { PermissionType } from '@/components/collectives/shared/types';
-import DealCloseModal from '@/features/deals/components/close/execute';
-import DealCloseConfirmModal from '@/features/deals/components/close/confirm';
-import PrecommitContainer from '@/containers/deals/precommit/PrecommitContainer';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import useDealsDetails from '@/hooks/deals/useDealsDetails';
-import { getWeiAmount } from '@/utils/conversions';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
-import { formatAddress } from '@/utils/formatAddress';
-import { H1 } from '@/components/typography';
 import { CTAButton, CTAType } from '@/components/CTAButton';
+import CopyLink from '@/components/shared/CopyLink';
+import { Status } from '@/components/statusChip';
+import { B3, H1 } from '@/components/typography';
+import {
+  default as DealActionConfirmModal,
+  default as DealCloseConfirmModal
+} from '@/features/deals/components/close/confirm';
+import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
 import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
 import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
+import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
+import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
 import { Participant } from '@/features/deals/components/participants/table';
-import { Status } from '@/components/statusChip';
-import DealActionConfirmModal from '@/features/deals/components/close/confirm';
-import { InactiveDealCard } from './inactiveDealCard';
-import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
 import { PrecommitStatus } from '@/hooks/deals/types';
+import useDealsDetails from '@/hooks/deals/useDealsDetails';
+import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import PrecommitContainer from '../precommit/precommitContainer';
+import { InactiveDealCard } from './inactiveDealCard';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;

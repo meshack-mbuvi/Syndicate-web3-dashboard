@@ -3,8 +3,6 @@ import {
   DotIndicators,
   DotIndicatorsOrientation
 } from '@/components/dotIndicators';
-import ProgressBar from '@/components/ProgressBar';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import Image from 'next/image';
@@ -50,11 +48,10 @@ const Header: React.FC<props> = ({
   showCloseButton = false,
   dotIndicatorOptions = [],
   showNavButton = false,
-  showCreateProgressBar = false,
   showLogo = true,
   keepLogoCentered = false,
   showSideNav = false,
-  handleNext = () => ({}),
+  handleNext = (): Record<string, never> => ({}),
   nextBtnDisabled = true,
   showDotIndicators = true
 }) => {
@@ -68,10 +65,9 @@ const Header: React.FC<props> = ({
   // For progress bar
   const {
     web3Reducer: {
-      web3: { account, status }
+      web3: { status }
     }
   } = useSelector((state: AppState) => state);
-  const { currentStep, steps } = useCreateInvestmentClubContext();
 
   useEffect(() => {
     // Only hide overflow during close/open animations
@@ -371,15 +367,6 @@ const Header: React.FC<props> = ({
             )}
           </div>
         </div>
-
-        {/* Progress bar */}
-        {showCreateProgressBar && account && (
-          <ProgressBar
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-            percentageWidth={((currentStep + 1) / steps.length) * 100}
-            tailwindColor="bg-green"
-          />
-        )}
       </nav>
     </>
   );

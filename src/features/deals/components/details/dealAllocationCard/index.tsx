@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import AutoGrowInputField from '@/components/inputs/autoGrowInput';
-import { L2, B3, H2, B4, H4 } from '@/components/typography';
-import { CTAButton, CTAType, CTAStyle } from '@/components/CTAButton';
-import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { formatAddress } from '@/utils/formatAddress';
 import { Callout, CalloutType } from '@/components/callout';
+import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
+import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import { Status } from '@/components/statusChip';
-import { PrecommitStatus } from '@/hooks/deals/types';
+import { B3, B4, H2, H4, L2 } from '@/components/typography';
 import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
+import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
+import { PrecommitStatus } from '@/hooks/deals/types';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export type Wallet = {
   address: string;

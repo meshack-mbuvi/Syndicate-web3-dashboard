@@ -1,13 +1,5 @@
-import ClubNameSelector from '@/containers/createInvestmentClub/clubNameSelector';
-import AmountToRaise from '@/containers/createInvestmentClub/amountToRaise/AmountToRaise';
-import MintMaxDate from '@/containers/createInvestmentClub/mintMaxDate';
-import MembersCount from '@/containers/createInvestmentClub/membersCount';
-import Membership from '@/containers/createInvestmentClub/membership';
-import GettingStarted from '@/containers/createInvestmentClub/gettingStarted';
-
 // active step to show on the left side nav dot indicator
 export enum CreateActiveSteps {
-  START = 'Start',
   NAME_AND_IDENTITY = 'Name & identity',
   CLUB_DETAILS = 'Club details',
   MEMBERSHIP = 'Membership',
@@ -29,10 +21,6 @@ export interface CategorySteps {
 
 // steps for investment club
 export const investmentClubSteps: CategorySteps[] = [
-  {
-    category: CreateActiveSteps.START,
-    step: CreateSteps.START
-  },
   {
     category: CreateActiveSteps.NAME_AND_IDENTITY,
     step: CreateSteps.NAME_AND_IDENTITY
@@ -58,18 +46,3 @@ export const investmentClubSteps: CategorySteps[] = [
     step: CreateSteps.REVIEW
   }
 ];
-
-export const CreateStep = {
-  Start: <GettingStarted />,
-  'Name & identity': <ClubNameSelector className="w-full" />,
-  Membership: <Membership className="flex flex-col pb-12 w-full" />,
-  Review: <></>,
-  raise: <AmountToRaise className="w-full" />,
-  date: <MintMaxDate className="w-full" />,
-  members_count: <MembersCount className="w-full" />
-};
-
-export const CreateFlowSteps = (step: CreateSteps) => {
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-  return <>{CreateStep[step]}</>;
-};

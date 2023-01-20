@@ -18,7 +18,8 @@ const getStatus = (executed: boolean, endTime: string): DealStatus => {
 export const processDealsToDealPreviews = (deals: Deal[]): DealPreview[] => {
   return deals.map((deal: Deal): DealPreview => {
     const timeMixin = deal.mixins.find(
-      (mixin) => mixin.requirementType == MixinModuleRequirementType.TIME_WINDOW
+      (mixin: { requirementType: MixinModuleRequirementType }) =>
+        mixin.requirementType == MixinModuleRequirementType.TIME_WINDOW
     );
     return {
       dealName: deal.dealToken.name,

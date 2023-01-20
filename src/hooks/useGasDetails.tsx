@@ -1,6 +1,7 @@
 import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
-import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { IDealParams } from '@/ClubERC20Factory/ERC20DealFactory';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { RemixActiveModule } from '@/ClubERC20Factory/RemixActiveModule';
 import { GAS_RATE } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
@@ -8,10 +9,10 @@ import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RemixActiveModule } from '@/ClubERC20Factory/RemixActiveModule';
 
 export enum ContractMapper {
   ClubERC20Factory,
@@ -101,7 +102,7 @@ const useGasDetails: (props: IProps) => {
   const contracts = {
     [ContractMapper.ClubERC20Factory]: {
       syndicateContract: clubERC20Factory,
-      estimateGas: () => {
+      estimateGas: (): void => {
         if (!clubERC20Factory) return;
         // @ts-expect-error TS(2345): Argument of type 'Dispatch<SetStateAction<number>>' is not assignable t... Remove this comment to see the full error message
         void clubERC20Factory.getEstimateGas(account, setGasUnits);
@@ -109,8 +110,8 @@ const useGasDetails: (props: IProps) => {
     },
     [ContractMapper.ERC20ClubFactory]: {
       syndicateContract: erc20ClubFactory,
-      estimateGas: () => {
-        if (!erc20ClubFactory) return;
+      estimateGas: (): void => {
+        if (!erc20ClubFactory || isEmpty(args.clubParams)) return;
         void erc20ClubFactory.getEstimateGas(
           account,
           args.clubParams as ClubMixinParams,

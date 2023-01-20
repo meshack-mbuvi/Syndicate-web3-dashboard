@@ -739,11 +739,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       <InputFieldWithAddOn
                         value={String(maxNumberOfMembers)}
                         addOn="Max"
-                        addOnOnClick={() => {
+                        addOnOnClick={(): void => {
                           setMaxNumberOfMembers(99);
                           setMaxNumberOfMembersError(null);
                         }}
-                        onChange={(e) => {
+                        onChange={(e): void => {
                           const numberOfMembers = e.target.value;
                           if (Number(numberOfMembers) < 0) {
                             setMaxNumberOfMembersError(
@@ -751,7 +751,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                               `Number can't be negative`
                             );
                           } else if (
-                            isNaN(numberOfMembers) ||
+                            isNaN(+numberOfMembers) ||
                             Number(numberOfMembers) == 0
                           ) {
                             setMaxNumberOfMembersError(
@@ -788,7 +788,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                           setMaxNumberOfMembers(
                             Number(
                               `${
-                                numberOfMembers > 0 && !isNaN(numberOfMembers)
+                                +numberOfMembers > 0 && !isNaN(+numberOfMembers)
                                   ? numberOfMembers
                                   : ''
                               }`

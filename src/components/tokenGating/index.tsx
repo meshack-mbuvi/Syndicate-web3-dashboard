@@ -6,7 +6,7 @@ import {
 import { RULES_LESS_THAN } from '@/utils/mixins/mixinHelpers';
 import React from 'react';
 import { PillButtonOutlined } from '../pillButtons/pillButtonOutlined';
-import { TokenLogicList as TokenLogicList } from './tokenLogic';
+import { TokenLogicList } from './tokenLogic';
 
 interface Props {
   tokenRules: TokenGateRule[];
@@ -49,7 +49,7 @@ export const TokenLogicBuilder: React.FC<Props> = ({
         }
         logicalOperator={logicalOperator}
         handleLogicalOperatorChange={handleLogicalOperatorChange}
-        handleRulesChange={(rules) => {
+        handleRulesChange={(rules): void => {
           handleRulesChange(rules);
         }}
         isInErrorState={isInErrorState}
@@ -60,7 +60,7 @@ export const TokenLogicBuilder: React.FC<Props> = ({
       {/* Button to add a rule */}
       {tokenRules?.length < maxNumberRules && !isInErrorState && (
         <PillButtonOutlined
-          onClick={() => {
+          onClick={(): void => {
             handleRulesChange([
               ...tokenRules,
               {

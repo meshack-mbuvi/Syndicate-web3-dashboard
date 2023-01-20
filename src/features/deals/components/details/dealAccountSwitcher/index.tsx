@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { B3 } from '@/components/typography';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import {
   AddressImageSize,
   AddressLayout,
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
+import { B3 } from '@/components/typography';
 import { Wallet } from '@/features/deals/components/details/dealAllocationCard';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { Transition } from '@headlessui/react';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 
 interface DealAccountSwitcherProps {
   wallets: Wallet[] | [];

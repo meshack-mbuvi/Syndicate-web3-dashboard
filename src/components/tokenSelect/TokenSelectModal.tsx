@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { TokenSelectSearch } from '@/components/tokenSelect/TokenSelectSearch';
 import { Token } from '@/types/token';
+import React, { useEffect, useState } from 'react';
 
 export interface ITokenModal {
   showModal: boolean;
@@ -110,7 +110,7 @@ const TokenSelectModal: React.FC<ITokenModal> = ({
     <Modal
       modalStyle={ModalStyle.DARK}
       show={showModal}
-      closeModal={() => closeModal()}
+      closeModal={(): void => closeModal()}
       customWidth="sm:w-564 w-full"
       customClassName="p-0"
       showCloseButton={false}

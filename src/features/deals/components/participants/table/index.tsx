@@ -1,6 +1,6 @@
 import { CTAButton, CTAStyle } from '@/components/CTAButton';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
-import { StatusChip, Status } from '@/components/statusChip';
+import { Status, StatusChip } from '@/components/statusChip';
 import TransitionInChildren from '@/components/transition/transitionInChildren';
 import { H4 } from '@/components/typography';
 import {

@@ -1,7 +1,6 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   CLUB_CREATION,
-  CREATE_ON_CHAIN_CLUB_CLICK,
   DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK,
   NAME_SYMBOL_NEXT_CLICK,
   REVIEW_CLICK
@@ -15,6 +14,7 @@ import {
   setClubCreationReceipt,
   setTransactionHash
 } from '@/state/createInvestmentClub/slice';
+import { TokenGateOption } from '@/state/createInvestmentClub/types';
 import { useRouter } from 'next/router';
 import React, {
   createContext,
@@ -25,19 +25,12 @@ import React, {
   useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  CategorySteps,
-  CreateActiveSteps,
-  CreateSteps,
-  investmentClubSteps
-} from './steps';
-import { TokenGateOption } from '@/state/createInvestmentClub/types';
+import { CreateActiveSteps, CreateSteps, investmentClubSteps } from './steps';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
   handleBack: () => void;
   currentStep: number;
-  steps: CategorySteps[];
   stepsCategories: CreateActiveSteps[];
   stepsNames: CreateSteps[];
   isReviewStep: boolean;
@@ -68,10 +61,13 @@ type CreateInvestmentClubProviderProps = {
   showSaveButton: boolean;
   isCustomDate: boolean;
   setIsCustomDate: Dispatch<SetStateAction<boolean>>;
+  handleGoToStep: (step: number) => void;
 
   // states to distinguish between Invesment Club and DAO
   isCreatingInvestmentClub: boolean;
   setIsCreatingInvestmentClub: Dispatch<SetStateAction<boolean>>;
+
+  hasErrors: boolean;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -89,6 +85,16 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     },
     createInvestmentClubSliceReducer: {
       mintEndTime: { mintTime }
+    },
+    createInvestmentClubSliceReducer: {
+      investmentClubName,
+      investmentClubSymbol,
+      membersCount,
+      tokenDetails: { depositToken, depositTokenSymbol },
+      tokenCap,
+      tokenRules,
+      tokenGateOption,
+      logicalOperator
     }
   } = useSelector((state: AppState) => state);
 
@@ -116,6 +122,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   );
   const [stepsNames, setStepNames] = useState<CreateSteps[]>([]);
   const [isCustomDate, setIsCustomDate] = useState(false);
+  const [hasErrors, setHasErrors] = useState(true);
 
   const [
     { waitingConfirmationModal, transactionModal, errorModal, warningModal },
@@ -127,7 +134,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     warningModal: false
   });
 
-  const resetCreationStates = () => {
+  const resetCreationStates = (): void => {
     dispatch(resetClubCreationReduxState());
     setCurrentStep(0);
     setShowModal(() => ({
@@ -151,6 +158,36 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
   });
 
+  // Check whether all fields have been filled in.
+  useEffect(() => {
+    if (
+      investmentClubName &&
+      investmentClubSymbol &&
+      mintTime &&
+      membersCount &&
+      depositTokenSymbol &&
+      tokenCap &&
+      tokenRules
+    ) {
+      setHasErrors(false);
+    } else {
+      setHasErrors(true);
+    }
+    return () => {
+      setHasErrors(true);
+    };
+  }, [
+    investmentClubName,
+    investmentClubSymbol,
+    membersCount,
+    depositToken,
+    depositTokenSymbol,
+    tokenCap,
+    tokenRules,
+    tokenGateOption,
+    logicalOperator
+  ]);
+
   useEffect(() => {
     setStepCategories(investmentClubSteps.map((step) => step.category));
     setStepNames(investmentClubSteps.map((s) => s.step));
@@ -161,40 +198,31 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setCurrentStep(0);
   }, [activeNetwork]);
 
-  const { tokenGateOption } = useSelector(
-    (state: AppState) => state.createInvestmentClubSliceReducer
-  );
-
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (!editingStep) {
       switch (currentStep) {
         case 0:
-          amplitudeLogger(CREATE_ON_CHAIN_CLUB_CLICK, {
+          void amplitudeLogger(NAME_SYMBOL_NEXT_CLICK, {
             flow: Flow.CLUB_CREATE
           });
           break;
         case 1:
-          amplitudeLogger(NAME_SYMBOL_NEXT_CLICK, {
+          void amplitudeLogger(DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK, {
             flow: Flow.CLUB_CREATE
           });
           break;
         case 2:
-          amplitudeLogger(DEPOSIT_TOKEN_AMOUNT_NEXT_CLICK, {
-            flow: Flow.CLUB_CREATE
-          });
           break;
         case 3:
           break;
         case 4:
-          break;
-        case 5:
           if (tokenGateOption === TokenGateOption.UNRESTRICTED) {
-            amplitudeLogger(REVIEW_CLICK, {
+            void amplitudeLogger(REVIEW_CLICK, {
               flow: Flow.CLUB_CREATE,
               token_gating: false
             });
           } else {
-            amplitudeLogger(REVIEW_CLICK, {
+            void amplitudeLogger(REVIEW_CLICK, {
               flow: Flow.CLUB_CREATE,
               token_gating: true
             });
@@ -203,31 +231,32 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         default:
       }
     }
+
     if (editingStep && mintTime !== 'Custom') {
       setShowNextButton(false);
     } else {
       setShowNextButton(true);
     }
+
     if (editingStep) {
-      setCurrentStep(editingStep);
-      // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
-      setEditingStep(null);
-      setShowNextButton(true);
     } else if (currentStep < investmentClubSteps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
 
-  const handleBack = () => {
-    setShowNextButton(true);
-
-    if (currentStep > 1) {
-      setNextBtnDisabled(false);
-      setCurrentStep((prev) => prev - 1);
+  const handleBack = (): void => {
+    if (currentStep > 0) {
+      setCurrentStep((currentStep) => currentStep - 1);
     }
   };
 
-  const onTxConfirm = (transactionHash: string) => {
+  const handleGoToStep = (step: number): void => {
+    if (currentStep !== step) {
+      setCurrentStep(step);
+    }
+  };
+
+  const onTxConfirm = (transactionHash: string): void => {
     // Change modal title and description after confirming tx
     setProcessingTitle('Pending confirmation');
     setProcessingDescription(
@@ -237,10 +266,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const onTxReceipt = (receipt: any): void => {
-    amplitudeLogger(CLUB_CREATION, {
+    void amplitudeLogger(CLUB_CREATION, {
       flow: Flow.CLUB_CREATE,
       transaction_status: 'Success'
     });
+
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
     );
@@ -254,8 +284,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     setConfirmWallet(false);
   };
 
-  const onTxFail = () => {
-    amplitudeLogger(CLUB_CREATION, {
+  const onTxFail = (): void => {
+    void amplitudeLogger(CLUB_CREATION, {
       flow: Flow.CLUB_CREATE,
       transaction_status: 'Failure'
     });
@@ -273,7 +303,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     onTxFail
   );
 
-  const handleCreateInvestmentClub = async () => {
+  const handleCreateInvestmentClub = async (): Promise<void> => {
     try {
       setProcessingTitle('Confirm in wallet');
       setProcessingDescription(
@@ -286,8 +316,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         warningModal: false
       }));
       return await submitCreateClub();
-    } catch (error) {
-      // @ts-expect-error TS(2339): Property 'code' does not exist on type 'unknown'.
+    } catch (error: any) {
       const { code } = error;
       if (code) {
         const errorMessage = getMetamaskError(code, 'Club creation');
@@ -305,14 +334,14 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     }
   };
 
-  const keyPressEnter = (e: any) => {
+  const keyPressEnter = (e: any): void => {
     // This should work only when in create IC(Investment club)
     if (!router.pathname.endsWith('clubprivatebetainvite')) return;
 
     // it triggers by pressing the enter key
     if ((nextBtnDisabled || showNextButton) && e.keyCode === 13) {
       if (isReviewStep) {
-        handleCreateInvestmentClub();
+        void handleCreateInvestmentClub();
       } else {
         handleNext();
       }
@@ -325,7 +354,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         handleNext,
         handleBack,
         currentStep,
-        steps: investmentClubSteps,
         stepsCategories,
         stepsNames,
         isReviewStep,
@@ -333,7 +361,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         editingStep,
         setEditingStep,
         backBtnDisabled,
-        nextBtnDisabled,
         handleCreateInvestmentClub,
         setBackBtnDisabled,
         setNextBtnDisabled,
@@ -357,7 +384,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         isCreatingInvestmentClub,
         setIsCreatingInvestmentClub,
         isCustomDate,
-        setIsCustomDate
+        setIsCustomDate,
+        handleGoToStep,
+        hasErrors
       }}
     >
       {children}

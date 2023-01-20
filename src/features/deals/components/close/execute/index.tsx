@@ -4,18 +4,18 @@ import {
   CalloutType
 } from '@/components/callout';
 import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
+import { EmailSupport } from '@/components/emailSupport';
 import Modal, { ModalStyle } from '@/components/modal';
 import {
   AddressImageSize,
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
 import { Spinner } from '@/components/shared/spinner';
+import { StepsOutline } from '@/components/stepsOutline';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, B4, H2, H4 } from '@/components/typography';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 import { DealEndType } from '../types';
-import { EmailSupport } from '@/components/emailSupport';
-import { StepsOutline } from '@/components/stepsOutline';
 
 interface Props {
   show: boolean;

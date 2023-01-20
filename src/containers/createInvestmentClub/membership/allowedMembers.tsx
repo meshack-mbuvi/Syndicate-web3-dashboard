@@ -1,41 +1,39 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
-import React, { useEffect, useState } from 'react';
 import { TokenLogicBuilder } from '@/components/tokenGating';
+import TokenSelectModal, {
+  TokenModalVariant
+} from '@/components/tokenSelect/TokenSelectModal';
+import { B3, B4 } from '@/components/typography';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  setActiveTokenGateOption,
+  setCurrentSelectedToken,
+  setDuplicateRulesError,
+  setLogicalOperator,
+  setMoreThanFiveRules,
+  setNullRulesError,
+  setShowTokenGateModal,
+  setTokenRules
+} from '@/state/createInvestmentClub/slice';
 import {
   ICurrentSelectedToken,
   LogicalOperator,
   TokenGateOption,
   TokenGateRule
 } from '@/state/createInvestmentClub/types';
-import {
-  setActiveTokenGateOption,
-  setDuplicateRulesError,
-  setCurrentSelectedToken,
-  setNullRulesError,
-  setMoreThanFiveRules,
-  setShowTokenGateModal,
-  setTokenRules,
-  setLogicalOperator
-} from '@/state/createInvestmentClub/slice';
-import TokenSelectModal, {
-  TokenModalVariant
-} from '@/components/tokenSelect/TokenSelectModal';
-import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { RULES_LESS_THAN } from '@/utils/mixins/mixinHelpers';
+import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CREATE_COLLECTIVE_TEXT = ' To create membership passes for the club, ';
-import { B3, B4 } from '@/components/typography';
 
 const AllowedMembers: React.FC = () => {
   const {
     createInvestmentClubSliceReducer: {
-      // investmentClubSymbol,
       tokenGateOption: active,
       tokenRules,
-      showTokenGateModal,
       errors: { duplicateRules, nullRules, hasMoreThanFiveRules },
       logicalOperator
     },
@@ -45,6 +43,7 @@ const AllowedMembers: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
+  const [showModal, setShowModal] = useState(false);
 
   const dispatch = useDispatch();
   const [hasErrors, setHasErrors] = useState(false);
@@ -55,17 +54,15 @@ const AllowedMembers: React.FC = () => {
       nullRules?.length < 1 &&
       !hasMoreThanFiveRules
     ) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-      setNextBtnDisabled(false);
+      setNextBtnDisabled?.(false);
       setHasErrors(false);
     } else {
       setHasErrors(true);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-      setNextBtnDisabled(true);
+      setNextBtnDisabled?.(true);
     }
   }, [duplicateRules, nullRules, hasMoreThanFiveRules]);
 
-  const setTokenGateRules = (rules: TokenGateRule[]) => {
+  const setTokenGateRules = (rules: TokenGateRule[]): void => {
     dispatch(setTokenRules(rules));
 
     // Handle duplicate validation
@@ -83,19 +80,20 @@ const AllowedMembers: React.FC = () => {
     );
   };
 
-  const setActive = (option: TokenGateOption) => {
+  const setActive = (option: TokenGateOption): void => {
     dispatch(setActiveTokenGateOption(option));
   };
 
   const showTokenSelectModal = (
     option: boolean,
     currentSelectedToken: ICurrentSelectedToken
-  ) => {
+  ): void => {
     dispatch(setShowTokenGateModal(option));
+    setShowModal(option);
     dispatch(setCurrentSelectedToken(currentSelectedToken));
   };
 
-  const handleLogicalOperatorChange = (operator: LogicalOperator) => {
+  const handleLogicalOperatorChange = (operator: LogicalOperator): void => {
     dispatch(setLogicalOperator(operator));
 
     // Handle duplicate validation
@@ -128,7 +126,7 @@ const AllowedMembers: React.FC = () => {
               ? 'ring-blue ring-1'
               : 'ring-transparent ring-0'
           }`}
-          onClick={() => {
+          onClick={(): void => {
             setActive(TokenGateOption.RESTRICTED);
           }}
         >
@@ -154,7 +152,7 @@ const AllowedMembers: React.FC = () => {
               ? 'ring-blue ring-1'
               : 'ring-transparent ring-0'
           }`}
-          onClick={() => {
+          onClick={(): void => {
             setActive(TokenGateOption.UNRESTRICTED);
           }}
         >
@@ -183,7 +181,7 @@ const AllowedMembers: React.FC = () => {
             tokenRules={tokenRules}
             ruleErrors={Array.from(new Set([...duplicateRules, ...nullRules]))}
             isInErrorState={hasErrors}
-            handleShowTokenSelector={(placeholder) =>
+            handleShowTokenSelector={(placeholder): void =>
               showTokenSelectModal(true, placeholder)
             }
             maxNumberRules={RULES_LESS_THAN}
@@ -192,8 +190,10 @@ const AllowedMembers: React.FC = () => {
       )}
 
       <TokenSelectModal
-        showModal={showTokenGateModal}
-        closeModal={() => dispatch(setShowTokenGateModal(false))}
+        showModal={showModal}
+        closeModal={(): void => {
+          setShowModal(false);
+        }}
         variant={TokenModalVariant.RecentlyUsed}
         chainId={activeNetwork.chainId}
       />

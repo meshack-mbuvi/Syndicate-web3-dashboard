@@ -14,7 +14,7 @@ export const StatusChip = (props: {
   extraClasses?: string;
   customLabel?: string;
   customIcon?: string | React.ReactNode;
-}) => {
+}): JSX.Element => {
   const { status, extraClasses = '', customIcon, customLabel } = props;
 
   let bgStyles = '';
@@ -32,7 +32,7 @@ export const StatusChip = (props: {
       dotStyles = 'bg-green';
       break;
     case Status.ACTION_REQUIRED:
-      bgStyles = 'bg-blue-500 bg-opacity-40';
+      bgStyles = 'bg-white bg-blue-500 bg-opacity-40';
       label = 'Action required';
       dotStyles = 'bg-blue-500';
       break;

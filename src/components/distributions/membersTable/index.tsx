@@ -390,7 +390,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
               />
             </span>
           ) : null}
-          Date joined
+          Date joined/added
         </div>
 
         {/* Distribution share */}

@@ -16,7 +16,7 @@ export const InputFieldWithToken = (props: {
   forwardRef?: React.ForwardedRef<HTMLInputElement>;
   value?: string;
   placeholderLabel?: string;
-  infoLabel?: string | React.ReactElement | null;
+  infoLabel?: string | React.ReactElement | null | undefined;
   isInErrorState?: boolean;
   depositTokenLogo?: string;
   depositTokenSymbol?: string;

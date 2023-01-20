@@ -1,13 +1,14 @@
-import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
-import cn from 'classnames';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
+import { FL } from '@/components/typography';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import Image from 'next/image';
-import { H4 } from '@/components/typography';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Raise token amount component with select token button and input field for amount
@@ -26,19 +27,22 @@ const RaiseTokenAmount = (props: {
   moreInfo?: string;
   addSettingDisclaimer?: boolean;
   className?: string;
+  nextBtnDisabled: boolean;
+  onFocus?: () => void;
+  isReview?: boolean;
 }): JSX.Element => {
   const {
-    title,
     onChange,
     handleButtonClick,
     placeholder,
     error,
+    isReview,
     value,
-    depositTokenLogo = '/images/token-gray-4.svg',
-    moreInfo,
-    addSettingDisclaimer,
-    className
+    className = 'w-full',
+    depositTokenLogo = '/images/token-gray-4.svg'
   } = props;
+
+  const { handleNext } = useCreateInvestmentClubContext();
 
   const {
     createInvestmentClubSliceReducer: {
@@ -49,88 +53,142 @@ const RaiseTokenAmount = (props: {
       web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-
+  const [activeInputIndex, setActiveInputIndex] = useState(0);
   return (
     <div className={className}>
-      <H4 extraClasses="mb-1">{title}</H4>
-      <span className="text-sm text-gray-syn4 font-whyte">{moreInfo}</span>
-      <label className="mt-5 block text-base text-white font-whyte leading-5 mb-2">
-        {'Raise in'}
-      </label>
-      <button
-        className="flex w-full justify-center items-center cursor-pointer"
-        onClick={handleButtonClick}
-      >
-        <div
-          className={
-            'p-4 flex w-full border rounded-md overflow-hidden justify-between items-center border-gray-24 hover:border-gray-syn3'
-          }
-        >
-          <div className="flex items-center">
-            <div className="relative w-5 h-5">
-              <Image
-                layout="fill"
-                src={depositTokenLogo || '/images/token-gray-4.svg'}
-              />
-            </div>
-            <span className="ml-2 uppercase">{depositTokenSymbol}</span>
+      {isReview ? (
+        <div className="w-full space-y-8">
+          <div className="">
+            <FL extraClasses="mb-2.5">Accepts deposits in</FL>
+
+            <button
+              className="flex w-full justify-center items-center cursor-pointer"
+              onClick={handleButtonClick}
+              onFocus={(): void => setActiveInputIndex(0)}
+            >
+              <div
+                className={
+                  'p-4 flex w-full border rounded-md overflow-hidden justify-between items-center border-gray-24 hover:border-gray-syn3'
+                }
+              >
+                <div className="flex items-center">
+                  <div className="relative w-5 h-5">
+                    <Image layout="fill" src={depositTokenLogo} />
+                  </div>
+                  <span className="ml-2 uppercase">{depositTokenSymbol}</span>
+                </div>
+                <div className="flex relative h-5 w-5">
+                  <Image
+                    layout="fill"
+                    src="/images/double-chevron.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </button>
           </div>
-          <div className="flex relative h-5 w-5">
-            <Image layout="fill" src="/images/double-chevron.svg" alt="" />
+
+          <div className="w-full">
+            <FL extraClasses="mb-2.5">Upper limit</FL>
+            <InputFieldWithToken
+              infoLabel={''}
+              placeholderLabel={placeholder}
+              symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
+              onChange={(e): void => {
+                if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
+                  return;
+                }
+                onChange(e);
+              }}
+              extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced ${
+                error ? 'border border-red-500 focus:border-red-500' : ''
+              }`}
+              value={value}
+              depositTokenLogo={depositTokenLogo}
+              onFocus={(): void => setActiveInputIndex(1)}
+            />
           </div>
         </div>
-      </button>
-      <p className="mt-6">Upper limit</p>
-      <div
-        className={cn('mt-2 w-full', {
-          'border-red-error': error
-        })}
-        data-tip
-        data-for="disclaimer-tip"
-      >
-        <InputFieldWithToken
-          placeholderLabel={placeholder}
-          symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
-          onChange={(e) => {
-            if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
-              return;
+      ) : (
+        <CreateFlowStepTemplate
+          hideCallouts={false}
+          title={'What’s your fundraising goal?'}
+          activeInputIndex={activeInputIndex}
+          showNextButton={true}
+          isNextButtonDisabled={false}
+          handleNext={handleNext}
+          inputs={[
+            {
+              label: 'Accepts deposits in',
+              info: 'By default, this token is non-transferable, but you can change this to allow your members to transfer their holdings. Changing this later will require an on-chain transaction with gas.',
+              input: (
+                <div>
+                  <button
+                    className="flex w-full justify-center items-center cursor-pointer"
+                    onClick={handleButtonClick}
+                    onFocus={(): void => setActiveInputIndex(0)}
+                  >
+                    <div
+                      className={
+                        'p-4 flex w-full border rounded-md overflow-hidden justify-between items-center border-gray-24 hover:border-gray-syn3'
+                      }
+                    >
+                      <div className="flex items-center">
+                        <div className="relative w-5 h-5">
+                          <Image layout="fill" src={depositTokenLogo} />
+                        </div>
+                        <span className="ml-2 uppercase">
+                          {depositTokenSymbol}
+                        </span>
+                      </div>
+                      <div className="flex relative h-5 w-5">
+                        <Image
+                          layout="fill"
+                          src="/images/double-chevron.svg"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )
+            },
+            {
+              label: 'Upper limit',
+              info: `Deposits collected in ${depositTokenSymbol}. Members will receive 
+                ${
+                  depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                    ? '10,000'
+                    : '1'
+                }
+                ✺${investmentClubSymbol}${
+                depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                  ? 's'
+                  : ''
+              } 
+                for every 1 ${depositTokenSymbol} deposited.`,
+              input: (
+                <InputFieldWithToken
+                  placeholderLabel={placeholder}
+                  symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
+                  onChange={(e): void => {
+                    if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
+                      return;
+                    }
+                    onChange(e);
+                  }}
+                  extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced ${
+                    error ? 'border border-red-500 focus:border-red-500' : ''
+                  }`}
+                  value={value}
+                  depositTokenLogo={depositTokenLogo}
+                  onFocus={(): void => setActiveInputIndex(1)}
+                />
+              )
             }
-            onChange(e);
-          }}
-          extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced ${
-            error ? 'border border-red-500 focus:border-red-500' : ''
-          }`}
-          value={value}
-          depositTokenLogo={depositTokenLogo || '/images/token-gray-4.svg'}
+          ]}
         />
-      </div>
-      {addSettingDisclaimer ? (
-        <div className="hidden lg:flex pl-4 justify-center items-center w-1/3 absolute">
-          <SettingsDisclaimerTooltip
-            id="disclaimer-tip"
-            tip={
-              <span className=" text-white font-whyte text-sm">
-                Deposits collected in {depositTokenSymbol}. Members
-                <br />
-                will receive{' '}
-                {depositTokenSymbol === activeNetwork.nativeCurrency.symbol
-                  ? '10,000'
-                  : '1'}{' '}
-                ✺{investmentClubSymbol} club token
-                {depositTokenSymbol === activeNetwork.nativeCurrency.symbol &&
-                  's'}{' '}
-                <br />
-                for every 1 {depositTokenSymbol} deposited.
-              </span>
-            }
-          />
-        </div>
-      ) : null}
-      {error ? (
-        <div className="w-full">
-          <p className="text-red-500 text-sm mb-1">{error}</p>
-        </div>
-      ) : null}
+      )}
     </div>
   );
 };

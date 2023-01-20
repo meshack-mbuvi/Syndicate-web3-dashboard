@@ -1,24 +1,23 @@
-import Image from 'next/image';
-import router from 'next/router';
-import Layout from '@/components/layout';
-import { useCreateDealContext } from '@/context/createDealContext';
-import { AboutDeal } from '@/containers/createDeal/about';
-import { DealGoal } from '@/containers/createDeal/goal';
-import { DealWindow } from '@/containers/createDeal/window';
-import { DealParticipationToken } from '@/containers/createDeal/participationToken';
-import { ReviewDealDetails } from '@/containers/createDeal/review';
-import Modal, { ModalStyle } from '@/components/modal';
-import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { UpArrowWithLine } from '@/components/icons/upArrowWithLine';
+import Layout from '@/components/layout';
+import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { H1 } from '@/components/typography';
-import { CTAButton, CTAType } from '@/components/CTAButton';
 import TransitionBetweenChildren, {
   TransitionBetweenChildrenType
 } from '@/components/transition/transitionBetweenChildren';
-import { DealNextButton } from '@/features/deals/components/create/nextButton';
+import { H1 } from '@/components/typography';
+import { AboutDeal } from '@/containers/createDeal/about';
+import { DealGoal } from '@/containers/createDeal/goal';
+import { DealParticipationToken } from '@/containers/createDeal/participationToken';
+import { ReviewDealDetails } from '@/containers/createDeal/review';
+import { DealWindow } from '@/containers/createDeal/window';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import router from 'next/router';
 
 export const CreateDealContainer: React.FC = () => {
   const {
@@ -52,8 +51,8 @@ export const CreateDealContainer: React.FC = () => {
     'Backer window',
     'Deal token'
   ];
-  const goToDealPage = () => {
-    if (dealUrl) router.replace(dealUrl);
+  const goToDealPage = (): void => {
+    if (dealUrl) void router.replace(dealUrl);
   };
 
   return (
@@ -83,7 +82,7 @@ export const CreateDealContainer: React.FC = () => {
         customClasses: 'h-screen items-center',
         activeIndex: currentStep,
         handleExitClick: (): void => {
-          router.push('/');
+          void router.push('/');
           // reset state
           resetCreateFlowState && resetCreateFlowState();
         }
@@ -132,10 +131,6 @@ export const CreateDealContainer: React.FC = () => {
               </CTAButton>
             </div>
           </TransitionBetweenChildren>
-          {/* next page button  */}
-          <div className="pt-10 flex justify-center items-center w-1/2">
-            <DealNextButton />
-          </div>
         </div>
 
         {/* Waiting for confirmation Modal */}

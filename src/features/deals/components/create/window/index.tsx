@@ -2,9 +2,11 @@ import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
 
 import { DetailedTile } from '@/components/tile/detailedTile';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
-import { CreateFlowStepTemplate } from '..';
-import { default as _moment } from 'moment-timezone';
+
 import { TimeInputField } from '@/components/inputs/timeInputField';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
+import { default as _moment } from 'moment-timezone';
 
 interface Props {
   selectedTimeWindow: SelectedTimeWindow | null;
@@ -37,10 +39,15 @@ export const DealsCreateWindow: React.FC<Props> = ({
   const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const tz = _moment(now).tz(timeZoneString).format('zz');
 
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
   return (
     <CreateFlowStepTemplate
       title="How long is this deal active?"
       activeInputIndex={0}
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       inputs={[
         {
           input: (

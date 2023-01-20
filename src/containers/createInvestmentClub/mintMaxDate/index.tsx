@@ -1,11 +1,15 @@
-import Fade from '@/components/Fade';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { DEPOSIT_WINDOW_CLICK } from '@/components/amplitude/eventNames';
+import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { DetailsSteps } from '@/context/CreateInvestmentClubContext/steps';
 import { AppState } from '@/state';
 import {
   setMintEndTime,
   setMintSpecificEndTime
 } from '@/state/createInvestmentClub/slice';
 import { mintEndTime } from '@/state/createInvestmentClub/types';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import { DAY_IN_SECONDS } from '@/utils/constants';
 import moment from 'moment';
 import { FC, useEffect, useState } from 'react';
@@ -13,13 +17,11 @@ import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
-import { H4 } from '@/components/typography';
-import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
-import { DetailsSteps } from '@/context/CreateInvestmentClubContext/steps';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { DEPOSIT_WINDOW_CLICK } from '@/components/amplitude/eventNames';
 
-const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
+const MintMaxDate: FC<{ className?: string; isReview?: boolean }> = ({
+  className,
+  isReview
+}) => {
   const dispatch = useDispatch();
 
   const {
@@ -47,10 +49,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const [closeTimeError, setCloseTimeError] = useState('');
   // hide next button
   useEffect(() => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    if (currentStep <= 2) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowNextButton(false);
+    if (currentStep && currentStep <= 2) {
+      setShowNextButton?.(false);
       setDisableButtons(false);
     }
   }, [setShowNextButton, currentStep]);
@@ -104,7 +104,6 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
       value: null
     }
   ];
-
   // get last element of array
   // use it to hide right border
   const lastMintTime = mintTimes[mintTimes.length - 1];
@@ -118,8 +117,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setIsCustomDate(false);
+      setIsCustomDate?.(false);
       // push amount to the redux store.
       dispatch(
         setMintEndTime({
@@ -130,21 +128,16 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
 
       if (currentStep == stepsNames?.indexOf(DetailsSteps.DATE)) {
         setTimeout(() => {
-          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-          handleNext();
-          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-          setShowNextButton(true);
+          handleNext?.();
+          setShowNextButton?.(true);
         }, 400);
       }
     } else {
       // Show custom date picker
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowNextButton(true);
+      setNextBtnDisabled?.(false);
+      setShowNextButton?.(true);
       setShowCustomDatePicker(true);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setIsCustomDate(true);
+      setIsCustomDate?.(true);
     }
   };
 
@@ -178,16 +171,12 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     if (mintEndTime?.value * 1000 < currentTime) {
       setCloseTimeError('Close date cannot be in the past.');
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowSaveButton(false);
+      setNextBtnDisabled?.(true);
+      setShowSaveButton?.(false);
     } else {
       setCloseTimeError('');
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowSaveButton(true);
+      setNextBtnDisabled?.(false);
+      setShowSaveButton?.(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mintEndTime?.value, currentTime]);
@@ -217,110 +206,213 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     if (mintEndTime.mintTime === 'Custom') {
       setShowCustomDatePicker(true);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setIsCustomDate(true);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowNextButton(true);
+      setIsCustomDate?.(true);
+      setShowNextButton?.(true);
       setActiveDateCard(3);
     }
   }, []);
 
   return (
-    <Fade delay={500}>
-      <div className={className}>
-        <H4 extraClasses="pb-1">When will deposits close?</H4>
-        <div className="text-sm text-gray-syn4 pb-4">
-          {' '}
-          Extending the close date will require an on-chain transaction with
-          gas, so aim for further in the future to leave ample time for
-          collection. You can close deposits early if needed.
-        </div>
-        <div className="pb-4">
-          <div
-            className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
-            data-tip
-            data-for="disclaimer-tip"
-          >
-            {mintTimes.map(({ mintTime, value }, index) => (
-              <button
-                className="flex items-center w-full h-full"
-                key={index}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSetMintTime(index, { mintTime, value });
-                  amplitudeLogger(DEPOSIT_WINDOW_CLICK, {
-                    flow: Flow.CLUB_CREATE,
-                    deposit_window: mintTime
-                  });
-                }}
-                disabled={disableButtons}
-              >
-                <DateCard
-                  mintTime={mintTime}
-                  isLastItem={mintTime === lastMintTime.mintTime}
-                  index={index}
-                  // @ts-expect-error TS(2345): Argument of type 'number | null |  undefined' is not assig... Remove this comment to see the full error message
-                  activeIndex={activeDateCard}
-                />
-              </button>
-            ))}
-          </div>
-
-          {showCustomDatePicker && (
-            <div>
-              <animated.div
-                // @ts-expect-error TS(2322): Type 'SpringValue<number | false>' is not assign... Remove this comment to see the full error message
-                style={styles}
-                className="pb-2 mt-6 flex items-center justify-between"
-              >
-                <div style={{ width: '48%' }}>
-                  <div className="pb-2">Close date</div>
-                  <div className="">
-                    <DatePicker
-                      minDate={new Date()}
-                      popperProps={{
-                        positionFixed: true // use this to make the popper position: fixed
-                      }}
-                      closeOnScroll={(e) => e.target === document}
-                      selected={new Date(mintEndTime?.value * 1000)}
-                      onChange={(date: Date | null) =>
-                        // @ts-expect-error TS(2531): Object is possibly 'null'.
-                        handleDateChange(+date as any)
-                      }
-                      todayButton="Go to Today"
-                      dateFormat="P"
-                      formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                      showPopperArrow={false}
-                      dropdownMode="select"
-                      className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
-                    />
-                  </div>
-                </div>
-                <div style={{ width: '48%' }}>
-                  <div className="w-full">
-                    <div className="pb-2">Time</div>
-
-                    <TimeField
-                      handleTimeChange={handleTimeChange}
-                      isInErrorState={Boolean(closeTimeError)}
-                    />
-                  </div>
-                </div>
-              </animated.div>
-              {(warning || closeTimeError) && (
-                <div
-                  className={`${
-                    warning && !closeTimeError && 'text-yellow-warning'
-                  } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full`}
+    <>
+      {isReview ? (
+        <div className={className}>
+          <div className="pb-4">
+            <div
+              className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
+              data-tip
+              data-for="disclaimer-tip"
+            >
+              {mintTimes.map(({ mintTime, value }, index) => (
+                <button
+                  className="flex items-center w-full h-full"
+                  key={index}
+                  onClick={(e: React.MouseEvent): void => {
+                    e.preventDefault();
+                    handleSetMintTime(index, { mintTime, value });
+                    void amplitudeLogger(DEPOSIT_WINDOW_CLICK, {
+                      flow: Flow.CLUB_CREATE,
+                      deposit_window: mintTime
+                    });
+                  }}
+                  disabled={disableButtons}
                 >
-                  {closeTimeError ? closeTimeError : warning ? warning : ''}
-                </div>
-              )}
+                  <DateCard
+                    mintTime={mintTime}
+                    isLastItem={mintTime === lastMintTime.mintTime}
+                    index={index}
+                    activeIndex={activeDateCard ?? 0}
+                  />
+                </button>
+              ))}
             </div>
-          )}
+
+            {showCustomDatePicker && (
+              <div>
+                <animated.div
+                  // @ts-expect-error TS(2322): Type 'SpringValue<number | false>' is not assign... Remove this comment to see the full error message
+                  style={styles}
+                  className="pb-2 mt-6 flex items-center justify-between"
+                >
+                  <div style={{ width: '48%' }}>
+                    <div className="pb-2">Close date</div>
+                    <div className="">
+                      <DatePicker
+                        minDate={new Date()}
+                        popperProps={{
+                          positionFixed: true // use this to make the popper position: fixed
+                        }}
+                        closeOnScroll={(e) => e.target === document}
+                        selected={new Date(mintEndTime?.value * 1000)}
+                        onChange={(date: Date | null): void => {
+                          if (handleDateChange && date !== null)
+                            handleDateChange(+date);
+                        }}
+                        todayButton="Go to Today"
+                        dateFormat="P"
+                        formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                        showPopperArrow={false}
+                        dropdownMode="select"
+                        className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
+                      />
+                    </div>
+                  </div>
+                  <div style={{ width: '48%' }}>
+                    <div className="w-full">
+                      <div className="pb-2">Time</div>
+
+                      <TimeField
+                        handleTimeChange={handleTimeChange}
+                        isInErrorState={Boolean(closeTimeError)}
+                      />
+                    </div>
+                  </div>
+                </animated.div>
+                {(warning || closeTimeError) && (
+                  <div
+                    className={`${
+                      warning && !closeTimeError && 'text-yellow-warning'
+                    } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full`}
+                  >
+                    {closeTimeError ? closeTimeError : warning ? warning : ''}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </Fade>
+      ) : (
+        <CreateFlowStepTemplate
+          hideCallouts={false}
+          title={'When will deposits close?'}
+          activeInputIndex={0}
+          showNextButton={true}
+          isNextButtonDisabled={false}
+          handleNext={handleNext}
+          inputs={[
+            {
+              label: '',
+              info: 'Extending the close date will require an on-chain transaction with gas, so aim for further in the future to leave ample time for collection. You can close deposits early if needed.',
+              input: (
+                <div className={className}>
+                  <div className="pb-4">
+                    <div className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14">
+                      {mintTimes.map(({ mintTime, value }, index) => (
+                        <button
+                          className="flex items-center w-full h-full"
+                          key={index}
+                          onClick={(e: React.MouseEvent): void => {
+                            e.preventDefault();
+                            handleSetMintTime(index, { mintTime, value });
+                            void amplitudeLogger(DEPOSIT_WINDOW_CLICK, {
+                              flow: Flow.CLUB_CREATE,
+                              deposit_window: mintTime
+                            });
+                          }}
+                          disabled={disableButtons}
+                        >
+                          <DateCard
+                            mintTime={mintTime}
+                            isLastItem={mintTime === lastMintTime.mintTime}
+                            index={index}
+                            activeIndex={activeDateCard ?? 0}
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    {showCustomDatePicker && (
+                      <div>
+                        <animated.div
+                          // @ts-expect-error TS(2322): Type 'SpringValue<number | false>' is not assign... Remove this comment to see the full error message
+                          style={styles}
+                          className="pb-2 mt-6 flex items-center justify-between"
+                        >
+                          <div style={{ width: '48%' }}>
+                            <div className="pb-2">Close date</div>
+                            <div className="">
+                              <DatePicker
+                                minDate={new Date()}
+                                popperProps={{
+                                  positionFixed: true // use this to make the popper position: fixed
+                                }}
+                                closeOnScroll={(e): boolean =>
+                                  e.target === document
+                                }
+                                selected={new Date(mintEndTime?.value * 1000)}
+                                onChange={(date: Date | null): void => {
+                                  if (handleDateChange && date !== null)
+                                    handleDateChange(+date);
+                                }}
+                                todayButton="Go to Today"
+                                dateFormat="P"
+                                formatWeekDay={(nameOfDay) =>
+                                  nameOfDay.substr(0, 1)
+                                }
+                                showPopperArrow={false}
+                                dropdownMode="select"
+                                className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
+                              />
+                            </div>
+                          </div>
+                          <div style={{ width: '48%' }}>
+                            <div className="w-full">
+                              <div className="pb-2">Time</div>
+
+                              <TimeField
+                                handleTimeChange={handleTimeChange}
+                                isInErrorState={Boolean(closeTimeError)}
+                              />
+                            </div>
+                          </div>
+                        </animated.div>
+                        {(warning || closeTimeError) && (
+                          <div
+                            className={`${
+                              (warning &&
+                                !closeTimeError &&
+                                'text-yellow-warning') ||
+                              ''
+                            } ${
+                              closeTimeError ? 'text-red-error' : ''
+                            } text-sm w-full`}
+                          >
+                            {closeTimeError
+                              ? closeTimeError
+                              : warning
+                              ? warning
+                              : ''}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            }
+          ]}
+        />
+      )}
+    </>
   );
 };
 

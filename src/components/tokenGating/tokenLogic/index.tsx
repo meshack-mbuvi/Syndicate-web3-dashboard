@@ -66,7 +66,7 @@ export const TokenLogicList: React.FC<Props> = ({
                   ? 'text-black'
                   : 'text-gray-syn3'
               } transition-all relative z-10 w-1/2 text-center py-2.5`}
-              onClick={() => {
+              onClick={(): void => {
                 handleLogicalOperatorChange(LogicalOperator.AND);
               }}
             >
@@ -78,7 +78,7 @@ export const TokenLogicList: React.FC<Props> = ({
                   ? 'text-black'
                   : 'text-gray-syn3'
               } transition-all relative z-10 w-1/2 text-center py-2.5`}
-              onClick={() => {
+              onClick={(): void => {
                 handleLogicalOperatorChange(LogicalOperator.OR);
               }}
             >
@@ -149,7 +149,7 @@ export const TokenLogicList: React.FC<Props> = ({
         {/* Token name / button */}
         <button
           className="w-8/12 relative flex-grow flex space-x-3 items-center"
-          onClick={() => {
+          onClick={(): void => {
             handleTokenSelection({ idx: index, quantity: rule.quantity });
           }}
         >
@@ -211,7 +211,7 @@ export const TokenLogicList: React.FC<Props> = ({
             className={`${
               tokenRules.length <= 1 && !rule.name && 'hidden'
             } hover:bg-gray-syn8 transition-all ease-out p-3 -m-3 rounded-full`}
-            onClick={() => {
+            onClick={(): void => {
               // Remove current rule
               handleRulesChange(removeArrayElement(tokenRules, index));
             }}

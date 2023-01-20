@@ -3,9 +3,12 @@ import {
   IndexReducerActionType
 } from '@/components/tokenSelect/indexReducer';
 import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
-import { useDebounce } from '@/hooks/useDebounce';
-import { AppState } from '@/state';
+import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
+import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 import { ICollective } from '@/hooks/collectives/utils/types';
+import { useDebounce } from '@/hooks/useDebounce';
+import { SUPPORTED_TOKENS } from '@/Networks';
+import { AppState } from '@/state';
 import {
   setDepositTokenDetails,
   setDuplicateRulesError,
@@ -21,19 +24,16 @@ import { validateDuplicateRules, validateNullRules } from '@/utils/validators';
 import {
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
-  useState,
-  useMemo
+  useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputField, InputFieldStyle } from '../inputs/inputField';
 import { ImportTokenModal } from './ImportToken';
 import TokenSection from './TokenSection';
 import { TokenModalVariant } from './TokenSelectModal';
-import { SUPPORTED_TOKENS } from '@/Networks';
-import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
-import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
 
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;

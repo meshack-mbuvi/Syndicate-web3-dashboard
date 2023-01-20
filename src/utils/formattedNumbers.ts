@@ -79,7 +79,7 @@ export const floatedNumberWithCommas = (
 
 export const numberInputRemoveCommas = (
   event: React.ChangeEvent<HTMLInputElement>
-) => {
+): string => {
   let newVal;
   const { value } = event.target;
   newVal = value;

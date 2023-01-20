@@ -1,5 +1,4 @@
 import { PermissionType } from '@/components/collectives/shared/types';
-import { useEffect, useState } from 'react';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { Status } from '@/components/statusChip';
 import { DealSidePanel } from '@/containers/deals/dealSidePanel';
@@ -17,6 +16,7 @@ import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useTokenDetails from '@/hooks/useTokenDetails';
 import { getWeiAmount } from '@/utils/conversions';
 import moment from 'moment';
+import { useEffect, useState } from 'react';
 import TwoColumnLayout from '../twoColumnLayout';
 
 const DealDetails: React.FC = () => {

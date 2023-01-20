@@ -1,8 +1,10 @@
 export { Checkbox } from './checkbox';
 export { EditableInput } from './editableInput';
+export { InputWithLeadingAddon } from './inputFieldWithLeadingAddon';
+export type { InputWithLeadingAddonProps } from './inputFieldWithLeadingAddon';
 export { InputWithTrailingIcon } from './inputWithTrailingIcon';
 export { NumberField } from './numberField';
+export { SearchInput } from './searchInput/SearchInput';
 export { TextArea } from './textArea';
 export { TextField } from './textField';
 export { Toggle } from './toggle';
-export { SearchInput } from './searchInput/SearchInput';
