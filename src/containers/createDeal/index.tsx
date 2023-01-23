@@ -42,7 +42,8 @@ export const CreateDealContainer: React.FC = () => {
     transactionHash,
     showAwaitingConfirmationModal,
     dealUrl,
-    ensName
+    ensName,
+    createTnxTooLong
   } = useCreateDealContext();
 
   const dotIndicatorOptions = [
@@ -53,6 +54,9 @@ export const CreateDealContainer: React.FC = () => {
   ];
   const goToDealPage = (): void => {
     if (dealUrl) void router.replace(dealUrl);
+
+    // reset states
+    resetCreateFlowState && resetCreateFlowState();
   };
 
   return (
@@ -150,10 +154,17 @@ export const CreateDealContainer: React.FC = () => {
             <p className="text-xl text-center mt-10 mb-4 leading-4 text-white font-whyte">
               {processingModalTitle}
             </p>
-            <div className="font-whyte text-center leading-5 text-base text-gray-lightManatee">
+            <div
+              className={`font-whyte text-center leading-5 text-base ${
+                createTnxTooLong
+                  ? 'text-yellow-warning'
+                  : 'text-gray-lightManatee'
+              }`}
+            >
               {processingModalDescription}
             </div>
 
+            {/* transactionHash will change once the transaction is sped up on Metamask */}
             {transactionHash ? (
               <div className="flex justify-center mt-4">
                 <BlockExplorerLink
