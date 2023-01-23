@@ -11,8 +11,8 @@ interface UponAllocationAcceptanceProps {
   dealName: string;
   dealCommitTokenLogo: string;
   dealCommitTokenSymbol: string;
-  dealTokenLogo: string;
   dealTokenSymbol: string;
+  dealTokenLogo: string;
   connectedWallet: Wallet;
   precommitAmount: string;
   status: PrecommitStatus;
@@ -42,7 +42,7 @@ const UponAllocationAcceptance: React.FC<UponAllocationAcceptanceProps> = ({
         <div
           className={`rounded-custom divide-y-1 divide-gray-syn6 border border-gray-syn6 `}
         >
-          <div className="flex py-6 px-4.5 space-x-1 items-start justify-between">
+          <div className="flex py-6 px-4.5 items-start justify-between">
             <B3 extraClasses="text-gray-syn3 w-1/4 ">
               {commitAccepted ? 'Transfer' : 'Proposal'}
             </B3>
@@ -82,16 +82,22 @@ const UponAllocationAcceptance: React.FC<UponAllocationAcceptanceProps> = ({
             <div className="flex py-6 px-4.5 items-center justify-between">
               <B3 extraClasses="text-gray-syn3 w-1/4">Receive</B3>
               <div className="flex items-center justify-start space-x-2 w-3/4">
-                <B3 className="mr-2 text-white">
-                  {getWeiAmount(precommitAmount, 6, false)}
-                </B3>
+                <div className="mr-2">
+                  <H4 extraclasses="text-white">
+                    {getWeiAmount(precommitAmount, 6, false)}
+                  </H4>
+                </div>
                 <Image
                   src={dealTokenLogo}
                   height={20}
                   width={20}
                   className="pr-1"
                 />
-                <B3 className="ml-2 text-white">{dealTokenSymbol}</B3>
+                <B3 className="ml-2 text-white">
+                  {dealTokenSymbol[0] === '✺'
+                    ? dealTokenSymbol.slice(1)
+                    : dealTokenSymbol}
+                </B3>
               </div>
             </div>
           )}

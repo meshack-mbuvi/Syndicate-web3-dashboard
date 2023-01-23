@@ -71,8 +71,13 @@ export const DealSidePanel: React.FC<{
   const [dealExecutionFailed, setDealExecutionFailed] = useState(false);
 
   const { dealDetails, dealDetailsLoading } = useDealsDetails();
-  const { dealName, dealTokenAddress, dealDestination, totalCommitted } =
-    dealDetails;
+  const {
+    dealName,
+    dealTokenAddress,
+    dealDestination,
+    totalCommitted,
+    dealTokenSymbol
+  } = dealDetails;
   const { data } = useFetchEnsAssets(dealDestination, ethersProvider);
   const destinationEnsName = data?.name
     ? data.name
@@ -96,6 +101,7 @@ export const DealSidePanel: React.FC<{
   const handleExecuteDealClick = (): void => {
     setDealCloseModalOpen(true);
   };
+
   const handleCloseModalClick = (): void => {
     setDealCloseModalOpen(false);
     setIsExecutingDeal(false);
@@ -197,7 +203,7 @@ export const DealSidePanel: React.FC<{
             dealCommitTokenLogo: '/images/usdcIcon.svg',
             dealCommitTokenSymbol: 'USDC',
             dealTokenLogo: '/images/logo.svg',
-            dealTokenSymbol: 'PRVX',
+            dealTokenSymbol,
             connectedWallet: { address: account, avatar: '' },
             precommitAmount: precommit ? precommit.amount : '0',
             dealName,
