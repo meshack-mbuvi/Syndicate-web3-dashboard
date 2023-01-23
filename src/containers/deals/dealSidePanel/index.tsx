@@ -1,7 +1,6 @@
 import { PermissionType } from '@/components/collectives/shared/types';
 import { CTAButton, CTAType } from '@/components/CTAButton';
 import CopyLink from '@/components/shared/CopyLink';
-import { Status } from '@/components/statusChip';
 import { B3, H1 } from '@/components/typography';
 import {
   default as DealActionConfirmModal,
@@ -14,7 +13,8 @@ import { DealMilestoneType } from '@/features/deals/components/create/milestone/
 import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
 import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
 import { Participant } from '@/features/deals/components/participants/table';
-import { PrecommitStatus } from '@/hooks/deals/types';
+import { InactiveDealCard } from './inactiveDealCard';
+import { PrecommitStatus, ParticipantStatus } from '@/hooks/deals/types';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
@@ -27,7 +27,6 @@ import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PrecommitContainer from '../precommit/precommitContainer';
-import { InactiveDealCard } from './inactiveDealCard';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
@@ -136,7 +135,9 @@ export const DealSidePanel: React.FC<{
     setIsConfirmingExecution(true);
 
     const addresses = currentParticipants
-      .filter((participant) => participant.status === Status.ACCEPTED)
+      .filter(
+        (participant) => participant.status === ParticipantStatus.ACCEPTED
+      )
       .map((_participant) => _participant.address || '');
 
     await allowancePrecommitModuleERC20.executePrecommits(
@@ -165,7 +166,7 @@ export const DealSidePanel: React.FC<{
   // disable execute button if all commits are rejected
   const disableExecuteButton =
     currentParticipants.filter(
-      (participant) => participant.status === Status.ACCEPTED
+      (participant) => participant.status === ParticipantStatus.ACCEPTED
     ).length < 1 || isClosed;
   const disableDissolveButton = isClosed;
 

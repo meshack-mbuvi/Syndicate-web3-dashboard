@@ -1,5 +1,6 @@
 import React from 'react';
 import { DealAllocationCard } from '@/features/deals/components/details/dealAllocationCard';
+import { PrecommitStatus } from '@/hooks/deals/types';
 
 export default {
   title: '4. Organisms/Deals/Details/Deal Allocation Card'
@@ -36,6 +37,7 @@ Default.args = {
       avatar: '/images/jazzicon.png'
     }
   ],
+  precommitStatus: PrecommitStatus.FAILED, // [ENG-4926]: confirm if failed is same as ACTION_REQUIRED
   showPostAllocationContent: false
 };
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message

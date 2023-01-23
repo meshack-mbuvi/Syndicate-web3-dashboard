@@ -1,7 +1,6 @@
 import { Callout, CalloutType } from '@/components/callout';
 import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
 import AutoGrowInputField from '@/components/inputs/autoGrowInput';
-import { Status } from '@/components/statusChip';
 import { B3, B4, H2, H4, L2 } from '@/components/typography';
 import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
@@ -26,7 +25,8 @@ interface DealAllocationCardProps {
   walletBalance: string;
   walletProviderName: string;
   connectedWallet: Wallet;
-  allocationStatus: Status | PrecommitStatus;
+  precommitStatus: PrecommitStatus;
+  isDealClosed: boolean;
   validUntil?: string;
   handleBackThisDeal: () => void;
   handleValidAmount: (amount: string) => void;
@@ -42,7 +42,8 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   dealName,
   precommitAmount,
   validUntil = 'accepted or withdrawn',
-  allocationStatus = Status.ACTION_REQUIRED,
+  precommitStatus = PrecommitStatus.PENDING,
+  // isDealClosed = false, // TODO [WINGZ]: add has precommit been rejected for statuschip
   connectedWallet,
   handleBackThisDeal,
   handleValidAmount,
@@ -117,7 +118,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
         </div>
 
         {/* info for precommit withdrawal */}
-        {allocationStatus === Status.PENDING ? (
+        {precommitStatus === PrecommitStatus.PENDING ? (
           <>
             <Callout type={CalloutType.WARNING}>
               <B3>
@@ -136,11 +137,14 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
               Withdraw from deal
             </CTAButton>
           </>
-        ) : allocationStatus === Status.ACCEPTED ? (
+        ) : precommitStatus === PrecommitStatus.EXECUTED ? (
           <Callout type={CalloutType.TRANSACTIONAL}>
             <B3>Your allocation was accepted!</B3>
           </Callout>
         ) : null}
+
+        {/* //[ENG-4926]: precommit failed state or what is action required state - and what to render?*/}
+        {/* //[ENG-4926]: precommit rejected - what to render?*/}
       </div>
     </>
   );
@@ -217,7 +221,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
     </>
   );
 
-  const showPostAllocationContent = allocationStatus !== Status.ACTION_REQUIRED;
+  const showPostAllocationContent = precommitStatus !== PrecommitStatus.FAILED;
 
   return (
     <div

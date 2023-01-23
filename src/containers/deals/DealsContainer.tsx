@@ -1,6 +1,6 @@
 import { PermissionType } from '@/components/collectives/shared/types';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { Status } from '@/components/statusChip';
+import { ParticipantStatus } from '@/hooks/deals/types';
 import { DealSidePanel } from '@/containers/deals/dealSidePanel';
 import { DealsContainer } from '@/features/deals/components';
 import { DealsAllocations } from '@/features/deals/components/allocations';
@@ -60,7 +60,7 @@ const DealDetails: React.FC = () => {
           joinedDate: moment
             .utc(+participant.createdAt * 1000)
             .format('DD/MM/YY'),
-          status: Status.ACCEPTED,
+          status: ParticipantStatus.ACCEPTED,
           precommitStatus: participant.status
         };
       });
@@ -69,7 +69,10 @@ const DealDetails: React.FC = () => {
     }
   }, [participants]);
 
-  const updateParticipantStatus = (idx: number, status: Status): void => {
+  const updateParticipantStatus = (
+    idx: number,
+    status: ParticipantStatus
+  ): void => {
     setCurrentParticipants((current) =>
       current.map((participant, index) => {
         if (idx === index) {
@@ -179,10 +182,16 @@ const DealDetails: React.FC = () => {
                 permissionType === PermissionType.ADMIN ? (
                   <DealsParticipantsTable
                     handleParticipantAcceptanceClick={(index: number): void => {
-                      updateParticipantStatus(index, Status.ACCEPTED);
+                      updateParticipantStatus(
+                        index,
+                        ParticipantStatus.ACCEPTED
+                      );
                     }}
                     handleParticipantRejectionClick={(index: number): void => {
-                      updateParticipantStatus(index, Status.REJECTED);
+                      updateParticipantStatus(
+                        index,
+                        ParticipantStatus.REJECTED
+                      );
                     }}
                     participants={currentParticipants}
                     tokenLogo="/images/prodTokenLogos/USDCoin.svg"

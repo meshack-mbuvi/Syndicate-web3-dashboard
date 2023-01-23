@@ -1,6 +1,5 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
-import { Status } from '@/components/statusChip';
 import DealActionConfirmModal from '@/features/deals/components/close/confirm';
 import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
@@ -20,6 +19,7 @@ import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { PrecommitStatus } from '@/hooks/deals/types';
 
 const PrecommitContainer: React.FC<{
   dealDetails: IDealDetails;
@@ -388,12 +388,13 @@ const PrecommitContainer: React.FC<{
         <DealAllocationCard
           dealName={dealName}
           //TODO [ENG-4768]: reconcile types between graph status + type in StatusChip
-          allocationStatus={precommit?.status ?? Status.ACTION_REQUIRED}
+          precommitStatus={precommit?.status ?? PrecommitStatus.NONE}
           precommitAmount={
             precommit && precommit?.amount
               ? String(getWeiAmount(precommit.amount, decimals, false))
               : '0'
           }
+          isDealClosed={dealDetails.isClosed}
           dealDepositTokenLogo={
             depositTokenLogo ?? '/images/prodTokenLogos/USDCoin.svg'
           }

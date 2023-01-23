@@ -1,16 +1,7 @@
-export enum Status {
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  ACTION_REQUIRED = 'ACTION_REQUIRED',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  DEAL_DISSOLVED = 'DEAL_DISSOLVED',
-  WITHDRAWN = 'WITHDRAWN',
-  CUSTOM = 'CUSTOM'
-}
+import { DealStatus, ParticipantStatus } from '@/hooks/deals/types';
 
 export const StatusChip = (props: {
-  status: Status;
+  status: ParticipantStatus | DealStatus;
   extraClasses?: string;
   customLabel?: string;
   customIcon?: string | React.ReactNode;
@@ -21,37 +12,37 @@ export const StatusChip = (props: {
   let label = '';
   let dotStyles = '';
   switch (status) {
-    case Status.PENDING:
+    case ParticipantStatus.PENDING:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Pending approval';
       dotStyles = 'border border-gray-syn3';
       break;
-    case Status.SUCCESS:
-      bgStyles = 'bg-green bg-opacity-25';
-      label = 'Complete';
-      dotStyles = 'bg-green';
-      break;
-    case Status.ACTION_REQUIRED:
-      bgStyles = 'bg-white bg-blue-500 bg-opacity-40';
+    case ParticipantStatus.ACTION_REQUIRED: // TODO [WINGZ]: is this equivalent to when a precommit fails? still in designs?
+      bgStyles = 'bg-blue-500 bg-opacity-40';
       label = 'Action required';
       dotStyles = 'bg-blue-500';
       break;
-    case Status.ACCEPTED:
+    case ParticipantStatus.ACCEPTED:
       bgStyles = 'bg-blue-neptune bg-opacity-40';
       label = 'Accepted';
       dotStyles = 'bg-blue-neptune';
       break;
-    case Status.REJECTED:
+    case ParticipantStatus.REJECTED:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Rejected';
       dotStyles = 'border border-gray-syn3';
       break;
-    case Status.DEAL_DISSOLVED:
+    case DealStatus.CLOSED: // TODO: does it need deal executed and deal open states?
+      bgStyles = 'bg-white bg-opacity-10';
+      label = 'Deal closed';
+      dotStyles = 'border border-gray-syn3';
+      break;
+    case DealStatus.DISSOLVED:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Deal dissolved';
       dotStyles = 'border border-gray-syn3';
       break;
-    case Status.CUSTOM:
+    case ParticipantStatus.CUSTOM:
       bgStyles = 'bg-white bg-opacity-10';
       label = 'Pending approval';
       dotStyles = 'border border-gray-syn3';

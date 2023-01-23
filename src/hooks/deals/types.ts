@@ -7,13 +7,23 @@ export enum PrecommitStatus {
   CANCELED = 'CANCELED',
   EXECUTED = 'EXECUTED',
   FAILED = 'FAILED',
-  PENDING = 'PENDING'
+  PENDING = 'PENDING',
+  NONE = 'NONE'
 }
 
 export enum DealStatus {
   OPEN = 'Open to commitments',
   CLOSED = 'Commitments closed',
+  DISSOLVED = 'Deal dissolved',
   EXECUTED = 'Deal executed'
+}
+
+export enum ParticipantStatus {
+  PENDING = 'PENDING',
+  ACTION_REQUIRED = 'ACTION_REQUIRED',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  CUSTOM = 'CUSTOM'
 }
 
 export type Precommit = {

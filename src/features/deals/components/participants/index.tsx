@@ -5,12 +5,13 @@ import {
 import { B2 } from '@/components/typography';
 import ReactTooltip from 'react-tooltip';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
-import { StatusChip, Status } from '@/components/statusChip';
+import { StatusChip } from '@/components/statusChip';
 import IconVerified from '@/components/icons/verified';
 import IconRosette from '@/components/icons/rosette';
 import IconInvest from '@/components/icons/invest';
 import IconEtherscan from '@/components/icons/etherscan';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ParticipantStatus } from '@/hooks/deals/types';
 
 export interface DealParticipant {
   dealAddress: string;
@@ -98,21 +99,21 @@ export const DealsParticipants: React.FC<Props> = ({
                 <div className="flex space-x-1 items-center -my-1">
                   {showDealLeaderBadge && (
                     <StatusChip
-                      status={Status.CUSTOM}
+                      status={ParticipantStatus.CUSTOM}
                       customLabel="Deal leader"
                       customIcon={<IconVerified textColorClass="text-white" />}
                     />
                   )}
                   {showFirstBackerBadge && (
                     <StatusChip
-                      status={Status.CUSTOM}
+                      status={ParticipantStatus.CUSTOM}
                       customLabel="First backer"
                       customIcon={<IconRosette textColorClass="text-white" />}
                     />
                   )}
                   {showLargestBackerBadge && (
                     <StatusChip
-                      status={Status.CUSTOM}
+                      status={ParticipantStatus.CUSTOM}
                       customLabel="Largest backer"
                       customIcon={<IconInvest textColorClass="text-white" />}
                     />

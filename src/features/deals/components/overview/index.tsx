@@ -1,11 +1,11 @@
 import { AddressLayout } from '@/components/shared/ensAddress';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
-import { Status, StatusChip } from '@/components/statusChip';
 import { B2, H1, H2 } from '@/components/typography';
 import { getWeiAmount } from '@/utils/conversions';
 import { formatInputValueWithCommas } from '@/utils/formattedNumbers';
 import { DealMilestoneType } from '../create/milestone/types';
-
+import { StatusChip } from '@/components/statusChip';
+import { DealStatus } from '@/hooks/deals/types';
 interface Props {
   dealName: string;
   dealDetails: string;
@@ -84,7 +84,7 @@ export const DealsOverview: React.FC<Props> = ({
         {milestoneType === DealMilestoneType.DISSOLVED && (
           <div className="flex flex-col">
             <B2 extraClasses="text-gray-syn4 mb-1">Status</B2>
-            <StatusChip status={Status.DEAL_DISSOLVED} />
+            <StatusChip status={DealStatus.DISSOLVED} />
           </div>
         )}
       </div>
