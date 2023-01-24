@@ -149,7 +149,7 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
         </div>
         <div className="p-8 bg-gray-syn8 rounded-2.5xl">
           <B3 extraClasses="text-gray-syn4">If your allocation is accepted</B3>
-          <H4 extraClasses="mb-4.5 mt-1">You will receive mirror tokens</H4>
+          <H4 extraClasses="mb-4.5 mt-1">You will receive deal tokens</H4>
 
           {/* Table */}
           <div className="divide-y rounded-custom border border-gray-syn6">
