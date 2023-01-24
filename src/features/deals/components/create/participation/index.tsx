@@ -30,7 +30,7 @@ export const DealsCreateParticipation: React.FC<Props> = ({
             />
           ),
           label: 'Token symbol',
-          info: 'This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more'
+          info: 'This is the symbol of the non-transferable token that will be distributed proportionally to those who you accept into the deal when you execute.'
         }
       ]}
     />

@@ -440,7 +440,7 @@ export const DealsCreateReview: React.FC<Props> = ({
             />
           ),
           label: `Participation Token`,
-          info: `This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more`,
+          info: `This is the symbol of the non-transferable token that will be distributed proportionally to those who you accept into the deal when you execute.`,
           reviewValue: (
             <div className="flex space-x-2 items-center">
               <B2>
