@@ -221,7 +221,8 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
     </>
   );
 
-  const showPostAllocationContent = precommitStatus !== PrecommitStatus.FAILED;
+  const showPostAllocationContent =
+    precommitStatus !== PrecommitStatus.FAILED && +precommitAmount > 0;
 
   return (
     <div
