@@ -25,7 +25,12 @@ const moreOptions: React.FC<{
     >
       {({ open }) => (
         <>
-          <Menu.Button className="relative text-right justify-end flex space-x-2 items-center text-end">
+          <Menu.Button
+            className="relative text-right justify-end flex space-x-2 items-center text-end"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>): void =>
+              e.stopPropagation()
+            }
+          >
             <img
               src="/images/more_horiz.svg"
               height={16}
