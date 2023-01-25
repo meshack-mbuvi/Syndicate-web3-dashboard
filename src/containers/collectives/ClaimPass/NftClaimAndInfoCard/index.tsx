@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
 import { useApolloClient } from '@apollo/client';
 import useMintModuleEligibility from '@/hooks/useMintModuleEligibility';
+import useGasEstimate from '@/hooks/useGasEstimate';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -78,6 +79,17 @@ const NftClaimAndInfoCard: React.FC = () => {
     },
     skipQuery: !mintPrice || !collectiveAddress
   });
+
+  const { data } = useGasEstimate({
+    contract: syndicateContracts.ethPriceMintModule,
+    functionName: 'mint',
+    args: [collectiveAddress, 1],
+    value: mintPrice,
+    withFiat: true
+  });
+
+  // TODO: Remove in follow up PR when integrating
+  console.log(data);
 
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
