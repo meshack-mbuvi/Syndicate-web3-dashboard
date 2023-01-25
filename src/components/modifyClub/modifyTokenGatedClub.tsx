@@ -1025,7 +1025,7 @@ const TokenGatedModules: React.FC = () => {
   useEffect(() => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
-      const chainTokens: typeof SUPPORTED_TOKENS[1 | 137] =
+      const chainTokens: (typeof SUPPORTED_TOKENS)[1 | 137] =
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];

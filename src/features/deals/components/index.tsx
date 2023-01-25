@@ -5,7 +5,7 @@ import ProductTokenNotFound, {
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 
 export const DealsContainer: React.FC = ({ children }) => {
-  const { dealNotFound } = useDealsDetails();
+  const { dealNotFound } = useDealsDetails(false);
 
   return (
     <div>

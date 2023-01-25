@@ -13,7 +13,7 @@ export const useDealPermissionType = (): PermissionType | null => {
 
   const {
     dealDetails: { ownerAddress }
-  } = useDealsDetails();
+  } = useDealsDetails(false);
 
   const [permissionType, setPermissionType] = useState<PermissionType | null>(
     null

@@ -133,9 +133,7 @@ export const DealsCreateReview: React.FC<Props> = ({
     if (endTime) {
       const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
       setCloseTimeString(
-        _moment(+endTime)
-          .tz(timeZoneString)
-          .format('MMM D,  YYYY, hh:mmA zz')
+        _moment(+endTime).tz(timeZoneString).format('MMM D,  YYYY, hh:mmA zz')
       );
     }
   }, [endTime]);

@@ -7,7 +7,6 @@ import { DealAllocationCard } from '@/features/deals/components/details/dealAllo
 import DealPrecommitModal from '@/features/deals/components/precommit/allocateModal';
 import DealPrecommitCompleteModal from '@/features/deals/components/precommit/completeModal';
 import { IDealDetails } from '@/hooks/deals/useDealsDetails';
-import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useFetchTokenBalance from '@/hooks/useFetchTokenBalance';
 import useTokenDetails from '@/hooks/useTokenDetails';
@@ -19,12 +18,24 @@ import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { PrecommitStatus } from '@/hooks/deals/types';
+import { Precommit, PrecommitStatus } from '@/hooks/deals/types';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 
 const PrecommitContainer: React.FC<{
   dealDetails: IDealDetails;
   dealDetailsLoading: boolean;
-}> = ({ dealDetails, dealDetailsLoading }) => {
+  precommit: Precommit | undefined;
+  precommitLoading: boolean;
+  setPrePollingPrecommitStatus: (state: PrecommitStatus) => void;
+  setWaitingOnPrecommitGraph: (state: boolean) => void;
+}> = ({
+  dealDetails,
+  dealDetailsLoading,
+  precommit,
+  precommitLoading,
+  setPrePollingPrecommitStatus,
+  setWaitingOnPrecommitGraph
+}) => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3, ethersProvider, providerName }
@@ -33,8 +44,6 @@ const PrecommitContainer: React.FC<{
       syndicateContracts: { allowancePrecommitModuleERC20 }
     }
   } = useSelector((state: AppState) => state);
-
-  const { precommit, precommitLoading } = useMemberPrecommit();
 
   const {
     dealName,
@@ -89,6 +98,7 @@ const PrecommitContainer: React.FC<{
 
   const precommitAddress =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.AllowancePrecommitModuleERC20;
+  const currentPrecommitStatus = precommit?.status ?? PrecommitStatus.NONE;
 
   const toggleModal = (): void => {
     if (isPrecommitModalOpen) {
@@ -118,14 +128,21 @@ const PrecommitContainer: React.FC<{
     setIsWithdrawingDeal(true);
   };
 
-  const onTxReceipt = (receipt?: TransactionReceipt): void => {
-    console.log('receipt', receipt);
+  const onTxPrecommitReceipt = (): void => {
     setShowWaitingOnWallet(false);
-    if (activeStepIndex === 1) {
-      toggleSuccessModal();
-      setPrecommitModalOpen(false);
-    }
+    setPrePollingPrecommitStatus(currentPrecommitStatus);
+    toggleSuccessModal();
+    setPrecommitModalOpen(false);
+    // start polling
+    setWaitingOnPrecommitGraph(true);
+  };
+
+  const onTxAllowance = (): void => {
+    setShowWaitingOnWallet(false);
     setActiveStep(activeStepIndex + 1);
+  };
+
+  const onCancelAllowanceTxReceipt = (): void => {
     setIsWithdrawingDeal(false);
     setSuccessfullyWithdrawDeal(true);
   };
@@ -134,6 +151,8 @@ const PrecommitContainer: React.FC<{
     setShowWaitingOnWallet(false);
     setActiveStep(activeStepIndex + 1);
     setIsConfirmingWithdraw(true);
+    // start polling
+    setWaitingOnPrecommitGraph(true);
     await cancelAllowance();
     setIsWithdrawingDeal(false);
   };
@@ -162,7 +181,7 @@ const PrecommitContainer: React.FC<{
 
   const handleBackThisDeal = async (): Promise<void> => {
     await checkAllowanceAllows(+tokenAmountInWei);
-    toggleModal();
+    setPrecommitModalOpen(!isPrecommitModalOpen);
   };
 
   const cancelAllowance = async (): Promise<void> => {
@@ -196,7 +215,7 @@ const PrecommitContainer: React.FC<{
               }
             })
             .on('receipt', (receipt: TransactionReceipt) => {
-              onTxReceipt(receipt);
+              onCancelAllowanceTxReceipt();
               resolve(receipt);
             })
             .on('error', (error: any) => {
@@ -212,7 +231,7 @@ const PrecommitContainer: React.FC<{
           );
           setTransactionHash(receipt.transactionHash);
           if (receipt.isSuccessful) {
-            onTxReceipt(receipt);
+            onCancelAllowanceTxReceipt();
           } else {
             setError('Transaction failed');
           }
@@ -256,7 +275,7 @@ const PrecommitContainer: React.FC<{
             }
           })
           .on('receipt', (receipt: TransactionReceipt) => {
-            onTxReceipt(receipt);
+            onTxAllowance();
             resolve(receipt);
           })
           .on('error', (error: any) => {
@@ -273,7 +292,7 @@ const PrecommitContainer: React.FC<{
         );
         setTransactionHash(receipt.transactionHash);
         if (receipt.isSuccessful) {
-          onTxReceipt(receipt);
+          onTxAllowance();
         } else {
           setError('Transaction failed');
         }
@@ -295,12 +314,13 @@ const PrecommitContainer: React.FC<{
       )
         return;
       setShowWaitingOnWallet(true);
+      setPrePollingPrecommitStatus(currentPrecommitStatus);
       await allowancePrecommitModuleERC20.precommit(
         dealTokenAddress,
         tokenAmountInWei,
         account,
         onTxConfirm,
-        onTxReceipt,
+        onTxPrecommitReceipt,
         onTxFail
       );
     } catch {
@@ -320,6 +340,7 @@ const PrecommitContainer: React.FC<{
       setShowDealActionConfirmModal(false);
       setOpenWithdrawModal(true);
       setIsConfirmingWithdraw(true);
+      setPrePollingPrecommitStatus(currentPrecommitStatus);
       await allowancePrecommitModuleERC20.cancelPrecommit(
         dealTokenAddress,
         account,
@@ -341,6 +362,7 @@ const PrecommitContainer: React.FC<{
   };
 
   const handleCancelPrecommitModal = (): void => {
+    setActiveStep(0);
     setShowWaitingOnWallet(true);
     setShowDealActionConfirmModal(true);
   };
@@ -383,8 +405,18 @@ const PrecommitContainer: React.FC<{
         }}
       />
 
-      {!dealDetailsLoading && !precommitLoading && (
-        //TODO [ENG-4868]: precommits - re-render or spinner when processing from graph
+      {dealDetailsLoading || precommitLoading ? (
+        <div className="space-y-12 mt-7">
+          <div className="space-y-4">
+            <SkeletonLoader width="1/3" height="5" />
+            <SkeletonLoader width="full" height="12" />
+          </div>
+          <div className="space-y-4">
+            <SkeletonLoader width="1/3" height="5" />
+            <SkeletonLoader width="full" height="48" />
+          </div>
+        </div>
+      ) : (
         <DealAllocationCard
           dealName={dealName}
           //TODO [ENG-4768]: reconcile types between graph status + type in StatusChip

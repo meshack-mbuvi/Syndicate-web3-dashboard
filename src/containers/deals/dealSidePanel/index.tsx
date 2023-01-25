@@ -62,6 +62,18 @@ export const DealSidePanel: React.FC<{
     DealEndType.EXECUTE
   );
 
+  // precommit polling values
+  const [isWaitingOnPrecommitGraph, setWaitingOnPrecommitGraph] =
+    useState(false);
+  const [isWaitingOnDealGraph, setWaitingOnDealGraph] = useState(false);
+  const [prePollingDealState, setPrePollingDealState] = useState(false);
+
+  const [prePollingPrecommitStatus, setPrePollingPrecommitStatus] =
+    useState<PrecommitStatus>(PrecommitStatus.NONE);
+  const [currentPrecommitStatus, setCurrentPrecommitStatus] = useState(
+    PrecommitStatus.NONE
+  );
+
   // executing deal
   const [isExecutingDeal, setIsExecutingDeal] = useState<boolean>(false);
   const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
@@ -69,7 +81,9 @@ export const DealSidePanel: React.FC<{
   const [successfullyClosedDeal, setSuccessfullyClosedDeal] = useState(false);
   const [dealExecutionFailed, setDealExecutionFailed] = useState(false);
 
-  const { dealDetails, dealDetailsLoading } = useDealsDetails();
+  const { dealDetails, dealDetailsLoading } = useDealsDetails(
+    isWaitingOnPrecommitGraph || isWaitingOnDealGraph
+  );
   const {
     dealName,
     dealTokenAddress,
@@ -82,11 +96,32 @@ export const DealSidePanel: React.FC<{
     ? data.name
     : formatAddress(dealDestination, 6, 4);
 
+  const { precommit, precommitLoading } = useMemberPrecommit(
+    isWaitingOnPrecommitGraph
+  );
+
   useEffect(() => {
     if (isReady) {
       setDealLink(window.location.href);
     }
   }, [isReady]);
+
+  useEffect(() => {
+    if (isClosed !== prePollingDealState) {
+      setWaitingOnDealGraph(false);
+    }
+  }, [isClosed]);
+
+  useEffect(() => {
+    setCurrentPrecommitStatus(precommit?.status ?? PrecommitStatus.NONE);
+  }, [precommit?.status]);
+
+  useEffect(() => {
+    if (currentPrecommitStatus !== prePollingPrecommitStatus) {
+      setWaitingOnPrecommitGraph(false);
+      setPrePollingPrecommitStatus(currentPrecommitStatus);
+    }
+  }, [currentPrecommitStatus]);
 
   const handleUpdateCopyState = (): void => {
     setCopyState(true);
@@ -127,6 +162,8 @@ export const DealSidePanel: React.FC<{
 
   const onTxReceipt = (): void => {
     setSuccessfullyClosedDeal(true);
+    setPrePollingDealState(isClosed);
+    setWaitingOnDealGraph(true);
     setIsExecutingDeal(false);
     setDealCloseModalOpen(false);
   };
@@ -170,8 +207,6 @@ export const DealSidePanel: React.FC<{
     ).length < 1 || isClosed;
   const disableDissolveButton = isClosed;
 
-  const { precommit, precommitLoading } = useMemberPrecommit();
-
   //check if deal was executed or dissolved.
   const isDealDissolved =
     !currentParticipants.some(
@@ -193,7 +228,16 @@ export const DealSidePanel: React.FC<{
       {/* input field component for precommit amount  */}
       <>
         {isOpenToPrecommits && (
-          <PrecommitContainer {...{ dealDetails, dealDetailsLoading }} />
+          <PrecommitContainer
+            {...{
+              dealDetails,
+              dealDetailsLoading,
+              precommit,
+              precommitLoading,
+              setPrePollingPrecommitStatus,
+              setWaitingOnPrecommitGraph
+            }}
+          />
         )}
       </>
 
