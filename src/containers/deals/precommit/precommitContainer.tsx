@@ -434,7 +434,7 @@ const PrecommitContainer: React.FC<{
           minimumCommitAmount={minCommitAmount}
           wallets={[{ address: account, avatar: '' }]} // TODO [ENG-4869]: precommits - b/auth wallets
           walletBalance={getWeiAmount(
-            accountHoldings?.tokenHoldings?.[0].balance.toString() ?? '0',
+            accountHoldings?.tokenHoldings?.[0]?.balance?.toString() ?? '0',
             decimals,
             false
           )} // TODO [ENG-4869]: precommits - b/auth wallets
@@ -457,7 +457,7 @@ const PrecommitContainer: React.FC<{
           showWaitingOnWalletLoadingState={showWaitingOnWalletLoadingState}
           wallets={[{ address: account, avatar: '' }]} // TODO [ENG-4869]: precommits - b/auth wallets
           walletBalance={getWeiAmount(
-            accountHoldings?.tokenHoldings?.[0].balance.toString() ?? '0',
+            accountHoldings?.tokenHoldings?.[0]?.balance?.toString() ?? '0',
             decimals,
             false
           )} // TODO [ENG-4869]: precommits - b/auth wallets
