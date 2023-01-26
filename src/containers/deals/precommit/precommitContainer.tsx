@@ -1,5 +1,6 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
+import { translateProviderName } from '@/components/navigation/header/wallet/accountMenuDropdown';
 import DealActionConfirmModal from '@/features/deals/components/close/confirm';
 import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
@@ -44,6 +45,8 @@ const PrecommitContainer: React.FC<{
       syndicateContracts: { allowancePrecommitModuleERC20 }
     }
   } = useSelector((state: AppState) => state);
+
+  const [walletProviderName] = translateProviderName(providerName);
 
   const {
     dealName,
@@ -438,7 +441,7 @@ const PrecommitContainer: React.FC<{
             decimals,
             false
           )} // TODO [ENG-4869]: precommits - b/auth wallets
-          walletProviderName={providerName} // TODO [ENG-4869]: precommits - b/auth wallets
+          walletProviderName={walletProviderName} // TODO [ENG-4869]: precommits - b/auth wallets
           connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869]: precommits - b/auth wallets
           handleBackThisDeal={handleBackThisDeal}
           handleValidAmount={handleValidAmount}
@@ -461,7 +464,7 @@ const PrecommitContainer: React.FC<{
             decimals,
             false
           )} // TODO [ENG-4869]: precommits - b/auth wallets
-          walletProviderName={providerName} // TODO [ENG-4869: precommits - b/auth wallets
+          walletProviderName={walletProviderName} // TODO [ENG-4869: precommits - b/auth wallets
           connectedWallet={{ address: account, avatar: '' }} // TODO [ENG-4869]: precommits - b/auth wallets
           handleCreateAllowanceClick={handleAllowance}
           handleRequestAllocationClick={handleRequestAllocation}
