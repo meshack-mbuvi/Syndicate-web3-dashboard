@@ -91,7 +91,7 @@ export const StepsOutline: React.FC<Props> = ({
       </div>
 
       {/* Text */}
-      <div className={`${index === steps.length - 1 ? 'mb-0' : 'mb-2'}`}>
+      <div className={`${index === steps.length - 1 ? 'mb-0' : 'mb-2'} w-full`}>
         <B2 className={`${dynamicTitleStyles(index)}`}>{step.title}</B2>
         <div className={dynamicDescriptionStyles(index)}>
           <TransitionInChildren

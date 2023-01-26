@@ -3,13 +3,12 @@ import { TimeInputField } from '@/components/inputs/timeInputField';
 import Modal, { ModalStyle } from '@/components/modal';
 import { B2, H4, T5 } from '@/components/typography';
 import AllowedMembers from '@/containers/createInvestmentClub/membership/allowedMembers';
+import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { SUPPORTED_TOKENS } from '@/Networks';
 import { AppState } from '@/state';
-import { setActiveRowIdx } from '@/state/modifyCollectiveSettings';
-import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import {
   resetClubCreationReduxState,
   setActiveTokenGateOption,
@@ -30,8 +29,11 @@ import {
   setMaxAmountRaising,
   setMaxNumberOfMembers
 } from '@/state/modifyClubSettings/slice';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings';
+import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { Status } from '@/state/wallet/types';
 import { IRequiredTokenRules } from '@/types/modules';
+import { TokenDetails } from '@/types/token';
 import { isZeroAddress } from '@/utils';
 import { getCollectivesDetails, getTokenDetails } from '@/utils/api';
 import { DAY_IN_SECONDS } from '@/utils/constants';
@@ -42,6 +44,7 @@ import {
   numberInputRemoveCommas
 } from '@/utils/formattedNumbers';
 import { validateAndOrderTokenRules } from '@/utils/mixins/mixinHelpers';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { BigNumber } from 'bignumber.js';
 import moment from 'moment';
 import { default as _moment } from 'moment-timezone';
@@ -56,21 +59,18 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AddToCalendar from '../addToCalendar';
+import { amplitudeLogger, Flow } from '../amplitude';
+import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
 import BackButton from '../buttons/BackButton';
 import { CollapsibleTable } from '../collapsibleTable';
 import { ChangeSettingsDisclaimerModal } from '../collectives/changeSettingsDisclaimerModal';
+import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '../inputs/inputFieldWithToken';
 import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
-import { TokenDetails } from '@/types/token';
-import { InputFieldWithAddOn } from '../inputs/inputFieldWithAddOn';
-import { amplitudeLogger, Flow } from '../amplitude';
-import { CLUB_SUBMIT_SETTINGS } from '../amplitude/eventNames';
-import { getFirstOrString } from '@/utils/stringUtils';
-import { RemixAdminTable } from '@/containers/remix/settings/RemixAdminTable';
 
 const MAX_MEMBERS_ALLOWED = 99;
 
@@ -512,7 +512,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressState(ProgressState.PENDING);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProgressTitle('Settings updated');
     setProgressDescription('');
     setProgressState(ProgressState.SUCCESS);
@@ -827,7 +827,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                       <InputFieldWithAddOn
                         value={String(maxNumberOfMembers)}
                         addOn="Max"
-                        addOnOnClick={() => {
+                        addOnOnClick={(): void => {
                           dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
                           setMaxNumberOfMembersError(null);
                         }}
@@ -892,12 +892,13 @@ const ModifyTokenGatedClub: React.FC = () => {
               : ''
           }
           buttonFullWidth={true}
-          buttonOnClick={() => {
+          buttonOnClick={(): void => {
             if (progressState === ProgressState.FAILURE) {
               setProgressModal(false);
             } else {
-              router.push(
-                `/clubs/${clubAddress}/manage?chain=${activeNetwork.network}`
+              const _clubAddress = getFirstOrString(clubAddress) || '';
+              void router.push(
+                `/clubs/${_clubAddress}/manage?chain=${activeNetwork.network}`
               );
               dispatch(resetClubCreationReduxState());
             }
@@ -1024,7 +1025,7 @@ const TokenGatedModules: React.FC = () => {
   useEffect(() => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (requiredTokenRules.length) {
-      const chainTokens: typeof SUPPORTED_TOKENS[1 | 137] =
+      const chainTokens: (typeof SUPPORTED_TOKENS)[1 | 137] =
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];

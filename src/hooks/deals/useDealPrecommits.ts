@@ -61,7 +61,6 @@ const useDealsPrecommits = (): IPrecommitResponse => {
     if (data && isComponentMounted) {
       setPrecommits(
         data.deal?.precommits.map((pre: Precommit) => {
-          //TODO [WINGZ]: should amount be converted?
           return {
             dealAddress: data.deal.id,
             address: pre.userAddress,
@@ -79,7 +78,7 @@ const useDealsPrecommits = (): IPrecommitResponse => {
 
   return {
     precommits,
-    precommitsLoading: loading
+    precommitsLoading: false
   };
 };
 

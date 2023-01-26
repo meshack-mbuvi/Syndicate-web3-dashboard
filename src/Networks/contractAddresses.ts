@@ -39,12 +39,13 @@ export const CONTRACT_ADDRESSES: { [key: number]: { [key: string]: string } } =
         '0xd200c8bca3ee5f264547489ed025a22e6aff88b4',
 
       // Precommit
-      ERC20DealFactory: '', // TODO
-      AllowancePrecommitModuleERC20: '', // TODO: add contract address for mainnet
-      MinPerMemberERC20Mixin: '', // TODO
-      DealTimeRequirements: '', // TODO
-      GuardModuleAllowed: '', // TODO
-      usdcContract: '' // TODO: add contract address for mainnet
+      ERC20DealFactory: '0x5744686c44d3b9991463e9affba95beb7cbfda69',
+      AllowancePrecommitModuleERC20:
+        '0x9ab56512755c9b022b1a41d948de9bd322f4b44b',
+      MinPerMemberERC20Mixin: '0xc32df31446770f570c09ed882fee7a45785de4a5',
+      DealTimeRequirements: '0x2c74e40b2b2a383c58a48917a48b51835a85b923',
+      GuardModuleAllowed: '0x0a98468cf18db558b1d6bf831c4895db0f45837c',
+      usdcContract: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
     },
 
     // Goerli

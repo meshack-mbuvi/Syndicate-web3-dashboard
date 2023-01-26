@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import AutoGrowInputField from '@/components/inputs/autoGrowInput';
-import { L2, B3, H2, B4, H4 } from '@/components/typography';
-import { CTAButton, CTAType, CTAStyle } from '@/components/CTAButton';
-import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { formatAddress } from '@/utils/formatAddress';
 import { Callout, CalloutType } from '@/components/callout';
-import { Status } from '@/components/statusChip';
+import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
+import AutoGrowInputField from '@/components/inputs/autoGrowInput';
+import { B3, B4, H2, H4, L2 } from '@/components/typography';
+import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
+import DealAccountSwitcher from '@/features/deals/components/details/dealAccountSwitcher';
 import { PrecommitStatus } from '@/hooks/deals/types';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export type Wallet = {
   address: string;
@@ -25,7 +25,8 @@ interface DealAllocationCardProps {
   walletBalance: string;
   walletProviderName: string;
   connectedWallet: Wallet;
-  allocationStatus: Status | PrecommitStatus;
+  precommitStatus: PrecommitStatus;
+  isDealClosed: boolean;
   validUntil?: string;
   handleBackThisDeal: () => void;
   handleValidAmount: (amount: string) => void;
@@ -41,7 +42,8 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   dealName,
   precommitAmount,
   validUntil = 'accepted or withdrawn',
-  allocationStatus = Status.ACTION_REQUIRED,
+  precommitStatus = PrecommitStatus.PENDING,
+  // isDealClosed = false, // TODO [WINGZ]: add has precommit been rejected for statuschip
   connectedWallet,
   handleBackThisDeal,
   handleValidAmount,
@@ -51,7 +53,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
   const [amountError, setAmountError] = useState('');
 
   // switch to a different account
-  // TODO [WINGZ]: get wallets + wallet providers
+  // TODO [ENG-4869]: get wallets + wallet providers
   const handleAccountSwitch = (account: string): void => {
     console.log(account);
   };
@@ -92,9 +94,11 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
                 <B3 extraClasses="ml-2 text-white">{dealDepositTokenSymbol}</B3>
               </div>
               <div className="flex justify-start items-center">
-                {/* use jazz icon generator here once this PR is merged: https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/pull/1858 */}
                 <div className="mr-1">
-                  <Image src="/images/jazzicon.png" width={12} height={12} />
+                  <JazziconGenerator
+                    address={connectedWallet.address}
+                    diameterRem={0.75}
+                  />
                 </div>
 
                 <B4 extraClasses="text-gray-syn4">
@@ -114,7 +118,7 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
         </div>
 
         {/* info for precommit withdrawal */}
-        {allocationStatus === Status.PENDING ? (
+        {precommitStatus === PrecommitStatus.PENDING ? (
           <>
             <Callout type={CalloutType.WARNING}>
               <B3>
@@ -133,11 +137,14 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
               Withdraw from deal
             </CTAButton>
           </>
-        ) : allocationStatus === Status.ACCEPTED ? (
+        ) : precommitStatus === PrecommitStatus.EXECUTED ? (
           <Callout type={CalloutType.TRANSACTIONAL}>
             <B3>Your allocation was accepted!</B3>
           </Callout>
         ) : null}
+
+        {/* //[ENG-4926]: precommit failed state or what is action required state - and what to render?*/}
+        {/* //[ENG-4926]: precommit rejected - what to render?*/}
       </div>
     </>
   );
@@ -214,7 +221,8 @@ export const DealAllocationCard: React.FC<DealAllocationCardProps> = ({
     </>
   );
 
-  const showPostAllocationContent = allocationStatus !== Status.ACTION_REQUIRED;
+  const showPostAllocationContent =
+    precommitStatus !== PrecommitStatus.FAILED && +precommitAmount > 0;
 
   return (
     <div

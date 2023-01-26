@@ -65,9 +65,10 @@ const CreateEmptyState: React.FC<Props> = ({
       {emptyDeals && (
         <EmptyEntity
           goToCreateFlow={(): void => {
+            // TODO [ENG-4866]: Add create deal click event
             // void amplitudeLogger(CREATE_DEAL_CLICK, {
             //   flow: Flow.DEAL_CREATE
-            // }); TODO: Add this amplitude log
+            // });
             void router.push({
               pathname: 'deals/create'
             });

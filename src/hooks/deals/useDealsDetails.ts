@@ -3,7 +3,7 @@ import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { Deal, MixinModuleRequirementType } from './types';
@@ -53,7 +53,7 @@ export interface IDealDetailsResponse {
   //   dealNetwork: boolean;
 }
 
-const useDealsDetails = (): IDealDetailsResponse => {
+const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   const {
     web3Reducer: {
       web3: { activeNetwork }
@@ -67,36 +67,46 @@ const useDealsDetails = (): IDealDetailsResponse => {
 
   const isDemoMode = useDemoMode();
 
-  const [dealDetails, setDealDetails] = useState<IDealDetails>(emptyDeal);
-  const [dealNotFound, setDealNotFound] = useState(false);
+  let dealDetails = emptyDeal;
+  let dealNotFound = false;
 
   // get deal details
-  const { loading, data } = useQuery<{ deal: Deal }>(GetDealDetails, {
-    variables: {
-      dealId: dealAddress
-    },
-    skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
-    context: {
-      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-      chainId: activeNetwork.chainId
+  const { loading, data, startPolling, stopPolling } = useQuery<{ deal: Deal }>(
+    GetDealDetails,
+    {
+      variables: {
+        dealId: dealAddress
+      },
+      skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
+      context: {
+        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+        chainId: activeNetwork.chainId
+      }
     }
-  });
+  );
+
+  useEffect(() => {
+    if (overridePoll) {
+      startPolling(2000);
+    } else {
+      stopPolling;
+    }
+  }, [overridePoll]);
 
   // process deal details
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    let isComponentMounted = true;
-
-    // TODO [WINGZ]: should totalCommitted and goal be converted?
-    if (isComponentMounted) {
-      const deal = data?.deal;
-      if (deal) {
-        let dealStartTime = '';
-        let dealEndTime = '';
-        let minPerMember = '';
-        deal.mixins.map((mixin) => {
+  if (!loading) {
+    const deal = data?.deal;
+    if (deal) {
+      let dealStartTime = '';
+      let dealEndTime = '';
+      let minPerMember = '';
+      deal.mixins?.map(
+        (mixin: {
+          requirementType: MixinModuleRequirementType;
+          endTime: string;
+          startTime: string;
+          minPerMember: string;
+        }) => {
           if (
             mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
           ) {
@@ -109,38 +119,38 @@ const useDealsDetails = (): IDealDetailsResponse => {
           ) {
             minPerMember = mixin.minPerMember;
           }
-        });
-        setDealDetails({
-          dealName: deal.dealToken.name,
-          dealDescription: '', // When we add descriptions after v0, pass it in here
-          dealStartTime: dealStartTime,
-          dealEndTime: dealEndTime,
-          ownerAddress: deal.ownerAddress,
-          dealTokenAddress: deal.dealToken.contractAddress,
-          dealTokenSymbol: deal.dealToken.symbol,
-          depositToken: deal.depositToken,
-          dealDestination: deal.destinationAddress,
-          goal: deal.goal,
-          minCommitAmount: minPerMember ?? '',
-          isClosed: deal.closed,
-          totalCommitments: deal.numCommits,
-          totalCommitted: deal.totalCommitted,
-          createdAt: deal.dealToken.createdAt,
-          minPerMember: minPerMember
-        });
-      } else {
-        setDealDetails(emptyDeal);
-        setDealNotFound(true);
+        }
+      );
+      dealDetails = {
+        dealName: deal.dealToken.name,
+        dealDescription: '', // When we add descriptions after v0, pass it in here
+        dealStartTime: dealStartTime,
+        dealEndTime: dealEndTime,
+        ownerAddress: deal.ownerAddress,
+        dealTokenAddress: deal.dealToken.contractAddress,
+        dealTokenSymbol: deal.dealToken.symbol,
+        depositToken: deal.depositToken,
+        dealDestination: deal.destinationAddress,
+        goal: deal.goal,
+        minCommitAmount: minPerMember ?? '',
+        isClosed: deal.closed,
+        totalCommitments: deal.numCommits,
+        totalCommitted: deal.totalCommitted,
+        createdAt: deal.dealToken.createdAt,
+        minPerMember: minPerMember
+      };
+    } else {
+      if (!overridePoll) {
+        dealNotFound = true;
       }
+      dealDetails = emptyDeal;
     }
-    return () => {
-      isComponentMounted = false;
-    };
-  }, [loading, data, activeNetwork?.chainId]);
+  }
 
   return {
     dealDetails,
-    dealDetailsLoading: !dealNotFound && dealDetails.dealName === '',
+    dealDetailsLoading:
+      !dealNotFound && dealDetails.dealName === '' && !overridePoll,
     dealNotFound
     // correctDealNetwork
   };

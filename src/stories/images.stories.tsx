@@ -121,6 +121,7 @@ const images = [
   '/images/externalLink.svg',
   '/images/externalLinkGray.svg',
   '/images/eye-open.svg',
+  '/images/eye-open-white.svg',
   '/images/file-icon-gray.svg',
   '/images/file-icon-white.svg',
   '/images/file-upload.svg',

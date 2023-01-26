@@ -1,13 +1,12 @@
 import { EmailSupport } from '@/components/emailSupport';
-import Fade from '@/components/Fade';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
 import { setMembersCount } from '@/state/createInvestmentClub/slice';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputFieldWithMax } from '../shared/InputFieldWithMax';
 import MaxButton from '../shared/MaxButton';
-import { H4 } from '@/components/typography';
 
 const ERROR_MESSAGE = (
   <span>
@@ -21,10 +20,11 @@ const ERROR_MESSAGE = (
 const MAX_MEMBERS_ALLOWED = '99';
 
 const MembersCount: React.FC<{
+  isReview?: boolean;
   className?: string;
   editButtonClicked?: boolean;
   setInputHasError?: (state: boolean) => void;
-}> = ({ editButtonClicked, setInputHasError }) => {
+}> = ({ editButtonClicked, setInputHasError, isReview }) => {
   const {
     createInvestmentClubSliceReducer: { membersCount }
   } = useSelector((state: AppState) => state);
@@ -35,8 +35,7 @@ const MembersCount: React.FC<{
   const [isInputError, setIsInputError] = useState(false);
   const dispatch = useDispatch();
 
-  const { setNextBtnDisabled, setShowNextButton, handleNext } =
-    useCreateInvestmentClubContext();
+  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   useEffect(() => {
     if (setInputHasError) {
@@ -46,21 +45,13 @@ const MembersCount: React.FC<{
 
   useEffect(() => {
     if (!membersNumCount) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
       setMemberCountError('');
       setIsInputError(false);
     } else if (+membersNumCount < 0 || +membersNumCount === 0) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
       // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
     } else if (+membersNumCount > 99) {
-      // Adding hard cap of 99 for launch
-      // setMemberCountWarning(MEMBER_COUNT_WARNING);
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
       // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
@@ -68,40 +59,35 @@ const MembersCount: React.FC<{
       setMemberCountError('');
       setMemberCountWarning('');
       setIsInputError(false);
-      if (editButtonClicked) {
-        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-        setNextBtnDisabled(true);
-      } else {
-        // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-        setNextBtnDisabled(false);
-      }
     }
     membersNumCount
       ? dispatch(setMembersCount(membersNumCount))
       : dispatch(setMembersCount('1'));
-  }, [membersNumCount, dispatch, editButtonClicked, setNextBtnDisabled]);
+  }, [membersNumCount, dispatch, editButtonClicked]);
 
-  const handleSetMax = () => {
+  const handleSetMax = (): void => {
     setMembersNumCount(MAX_MEMBERS_ALLOWED);
     setTimeout(() => {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      handleNext();
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowNextButton(true);
+      if (handleNext) handleNext();
+
+      if (setShowNextButton) setShowNextButton(true);
     }, 400);
   };
 
-  const handleSetMembersCount = (event: any) => {
+  const handleSetMembersCount = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setMembersNumCount(event.target.value);
   };
 
   return (
-    <Fade>
-      <H4 extraClasses="mr-10">What’s the maximum number of members?</H4>
-      <div className="flex pb-6">
+    <>
+      {isReview ? (
         <InputFieldWithMax
           value={
-            membersNumCount
+            membersCount
+              ? membersCount
+              : membersNumCount
               ? parseInt(membersNumCount.replace(/^0+/, ''))
               : parseInt('')
           }
@@ -112,24 +98,54 @@ const MembersCount: React.FC<{
           hasError={Boolean(isInputError)}
           type={'number'}
           addSettingDisclaimer={false}
-          moreInfo={
-            <div>
-              Investment clubs may have up to 99 members{' '}
-              <a
-                className="cursor-pointer underline"
-                href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                according to the SEC.
-              </a>{' '}
-              Syndicate encourages all users to consult with their own legal and
-              tax counsel.
-            </div>
-          }
         />
-      </div>
-    </Fade>
+      ) : (
+        <CreateFlowStepTemplate
+          hideCallouts={false}
+          title={'What’s the maximum number of members?'}
+          activeInputIndex={0}
+          showNextButton={true}
+          isNextButtonDisabled={false}
+          handleNext={handleNext}
+          inputs={[
+            {
+              label: 'Member count',
+              info: (
+                <div>
+                  Investment clubs may have up to 99 members{' '}
+                  <a
+                    className="cursor-pointer underline"
+                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    according to the SEC.
+                  </a>{' '}
+                  Syndicate encourages all users to consult with their own legal
+                  and tax counsel.
+                </div>
+              ),
+              input: (
+                <InputFieldWithMax
+                  value={
+                    membersNumCount
+                      ? parseInt(membersNumCount.replace(/^0+/, ''))
+                      : parseInt('')
+                  }
+                  addOn={<MaxButton handleClick={(): void => handleSetMax()} />}
+                  onChange={handleSetMembersCount}
+                  error={memberCountError}
+                  warning={memberCountWarning}
+                  hasError={Boolean(isInputError)}
+                  type={'number'}
+                  addSettingDisclaimer={false}
+                />
+              )
+            }
+          ]}
+        />
+      )}
+    </>
   );
 };
 

@@ -106,7 +106,7 @@ const useSubmitToContracts = () => {
     }
   };
 
-  const onTxReceipt = (receipt: any) => {
+  const onTxReceipt = (receipt: any): void => {
     if (receipt?.events?.ERC721CollectiveCreated?.returnValues?.collective) {
       dispatch(
         setCollectiveCreationReceipt({

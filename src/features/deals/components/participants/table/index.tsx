@@ -1,6 +1,7 @@
 import { CTAButton, CTAStyle } from '@/components/CTAButton';
 import { DisplayAddressWithENS } from '@/components/shared/ensAddress/display';
-import { StatusChip, Status } from '@/components/statusChip';
+import { StatusChip } from '@/components/statusChip';
+import { ParticipantStatus } from '@/hooks/deals/types';
 import TransitionInChildren from '@/components/transition/transitionInChildren';
 import { H4 } from '@/components/typography';
 import {
@@ -13,8 +14,9 @@ export interface Participant {
   ensName?: string;
   address?: string;
   joinedDate: string;
-  status: Status;
+  status: ParticipantStatus;
   contributionAmount: number;
+  precommitStatus?: string;
 }
 
 interface Props {
@@ -102,7 +104,7 @@ export const DealsParticipantsTable: React.FC<Props> = ({
                 {/* Right column */}
                 <div
                   className={`${rightColumnClasses} ${
-                    participant.status === Status.REJECTED
+                    participant.status === ParticipantStatus.REJECTED
                       ? 'opacity-50'
                       : 'opacity-100'
                   } flex justify-end items-center space-x-2`}
@@ -139,24 +141,24 @@ export const DealsParticipantsTable: React.FC<Props> = ({
                   <CTAButton
                     rounded
                     style={
-                      participant.status === Status.ACCEPTED
+                      participant.status === ParticipantStatus.ACCEPTED
                         ? CTAStyle.DARK_OUTLINED
                         : CTAStyle.REGULAR
                     }
                     onClick={() => {
-                      if (participant.status === Status.ACCEPTED) {
+                      if (participant.status === ParticipantStatus.ACCEPTED) {
                         handleParticipantRejectionClick(index);
                       }
                       if (
-                        participant.status === Status.REJECTED ||
-                        participant.status === Status.PENDING
+                        participant.status === ParticipantStatus.REJECTED ||
+                        participant.status === ParticipantStatus.PENDING
                       ) {
                         handleParticipantAcceptanceClick(index);
                       }
                       setExpandedRowIndex(null);
                     }}
                   >
-                    {participant.status === Status.ACCEPTED
+                    {participant.status === ParticipantStatus.ACCEPTED
                       ? 'Reject'
                       : 'Accept'}{' '}
                     backer

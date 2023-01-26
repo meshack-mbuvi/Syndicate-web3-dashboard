@@ -1,10 +1,10 @@
-import Fade from '@/components/Fade';
 import Modal, { ModalStyle } from '@/components/modal';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
+import { SUPPORTED_TOKENS } from '@/Networks';
 import { AppState } from '@/state';
 import {
-  setTokenCap,
-  setDepositTokenDetails
+  setDepositTokenDetails,
+  setTokenCap
 } from '@/state/createInvestmentClub/slice';
 import {
   numberInputRemoveCommas,
@@ -12,14 +12,13 @@ import {
 } from '@/utils/formattedNumbers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
-import { SUPPORTED_TOKENS } from '@/Networks';
 import RaiseTokenAmount from './RaiseTokenAmount';
 
 const AmountToRaise: React.FC<{
   className?: string;
   editButtonClicked?: boolean;
-}> = ({ className, editButtonClicked }) => {
+  isReview?: boolean;
+}> = ({ className, editButtonClicked, isReview }) => {
   const {
     createInvestmentClubSliceReducer: {
       tokenCap,
@@ -39,12 +38,12 @@ const AmountToRaise: React.FC<{
 
   const dispatch = useDispatch();
 
-  const { setNextBtnDisabled } = useCreateInvestmentClubContext();
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
 
   const [showTokenSelectModal, setShowTokenSelectModal] = useState(false);
 
   // get input value
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     const value = numberInputRemoveCommas(e);
     setAmount(value);
@@ -52,7 +51,7 @@ const AmountToRaise: React.FC<{
     dispatch(setTokenCap(value));
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
     setShowTokenSelectModal(true);
   };
 
@@ -96,7 +95,7 @@ const AmountToRaise: React.FC<{
         {...{
           modalStyle: ModalStyle.DARK,
           show: showDisclaimerModal,
-          closeModal: () => {
+          closeModal: (): void => {
             setShowDisclaimerModal(false);
           },
           showCloseButton: false,
@@ -118,41 +117,41 @@ const AmountToRaise: React.FC<{
           </p>
           <button
             className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
-            onClick={() => setShowDisclaimerModal(false)}
+            onClick={(): void => setShowDisclaimerModal(false)}
           >
             <p className="text-black whitespace-nowrap text-base">Back</p>
           </button>
         </div>
       </Modal>
-      <Fade delay={500}>
-        <div className="flex pb-6">
-          <RaiseTokenAmount
-            value={
-              amount
-                ? numberWithCommas(
-                    // Checks if there are unnecessary zeros in the amount
-                    amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
-                  )
-                : ''
-            }
-            title={'What’s the upper limit of the club’s raise?'}
-            onChange={handleChange}
-            handleButtonClick={handleButtonClick}
-            error={error}
-            placeholder={'1,000,000'}
-            type={'text'}
-            depositTokenLogo={depositTokenLogo}
-            addSettingDisclaimer={true}
-            moreInfo={
-              'Accepting deposits beyond this amount will require an on-chain transaction with gas, so aim high.'
-            }
-            className={className}
-          />
-        </div>
-      </Fade>
+      <div className="flex pb-6">
+        <RaiseTokenAmount
+          value={
+            tokenCap
+              ? tokenCap
+              : amount
+              ? numberWithCommas(
+                  // Checks if there are unnecessary zeros in the amount
+                  amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
+                )
+              : ''
+          }
+          title={'What’s your fundraising goal?'}
+          onChange={handleChange}
+          handleButtonClick={handleButtonClick}
+          error={error}
+          placeholder={'1,000,000'}
+          type={'text'}
+          depositTokenLogo={depositTokenLogo}
+          addSettingDisclaimer={false}
+          className={className}
+          nextBtnDisabled={nextBtnDisabled}
+          isReview={isReview}
+        />
+      </div>
+
       <TokenSelectModal
         showModal={showTokenSelectModal}
-        closeModal={() => setShowTokenSelectModal(false)}
+        closeModal={(): void => setShowTokenSelectModal(false)}
         chainId={activeNetwork.chainId}
       />
     </>

@@ -71,16 +71,18 @@ export interface InitialState {
   tokenRules: TokenGateRule[];
   logicalOperator: LogicalOperator;
 }
-
+const now = new Date();
+// 1 week from now
+now.setDate(now.getDate() + 1 * 7);
 export const initialState: InitialState = {
   investmentClubName: '',
   investmentClubSymbol: '',
   investmentClubSymbolPlaceHolder: '', // Don't send this to backend. use investmentClubSymbol above
   tokenCap: '', // How much are you raising?
   mintEndTime: {
-    mintTime: '',
+    mintTime: '1 week',
     value: parseInt(
-      (new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000).toString()
+      (new Date(now.setHours(23, 59, 0, 0)).getTime() / 1000).toString()
     )
   }, // How long will deposits be accepted?
   mintSpecificEndTime: '23:59',

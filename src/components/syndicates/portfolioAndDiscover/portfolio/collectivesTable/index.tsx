@@ -71,7 +71,7 @@ const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
   }, [currentPage, dataLimit, tableData]);
 
   return (
-    <div className="overflow-x-scroll no-scroll-bar">
+    <div className="overflow-x-scroll h-full no-scroll-bar">
       {tableData.length ? (
         <div className="w-full">
           <div className="flex flex-col">

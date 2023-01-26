@@ -130,7 +130,7 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
                             <Image
                               src={
                                 '/images/prodTokenLogos/USDCoin.svg' ||
-                                '/images/token-gray-4.svg' // TODO: Hardcoded to USDC for now
+                                '/images/token-gray-4.svg' // TODO [ENG-4867]: Hardcoded to USDC for now
                               }
                               width={20}
                               height={20}
@@ -172,7 +172,7 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
                       <div className="flex items-center mr-1 flex-shrink-0">
                         <Image
                           src={
-                            '/images/prodTokenLogos/USDCoin.svg' || // TODO: Hardcoded to USDC for now
+                            '/images/prodTokenLogos/USDCoin.svg' || // TODO [ENG-4867]: Hardcoded to USDC for now
                             '/images/token-gray-4.svg'
                           }
                           width={20}
@@ -180,7 +180,7 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
                           objectFit="contain"
                         />
                       </div>
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 pr-3">
                         {processTotalCommitments(totalCommitted, 'USDC')}{' '}
                         {'USDC'}{' '}
                       </div>

@@ -89,12 +89,12 @@ export const NFTDetails: React.FC = () => {
   }, [JSON.stringify(collectiblesResult)]);
 
   // Show processing transaction when user confirms transaction on wallet.
-  const onTxConfirm = () => {
+  const onTxConfirm = (): void => {
     setProcessing(true);
     setConfirm(false);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProcessing(false);
     setConfirm(false);
     setProcessed(true);

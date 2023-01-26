@@ -52,7 +52,7 @@ export const InputFieldWithMax = (props: {
       <span className="text-sm text-gray-syn4">{moreInfo}</span>
       <div className="flex">
         <div
-          className="mt-4 mb-2 flex rounded-md shadow-sm w-full lg:w-full"
+          className="mb-2 flex rounded-md shadow-sm w-full lg:w-full"
           data-tip
           data-for="disclaimer-tip"
         >
@@ -68,7 +68,7 @@ export const InputFieldWithMax = (props: {
               type={type}
               name={name}
               id={id}
-              onChange={(event) => {
+              onChange={(event): void => {
                 onChange(event);
               }}
               value={value}

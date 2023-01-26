@@ -1,32 +1,35 @@
 import AddToCalendar from '@/components/addToCalendar';
+import { UpArrowWithLine } from '@/components/icons/upArrowWithLine';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
+import SEO from '@/components/seo';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
-import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
+import TransitionBetweenChildren, {
+  TransitionBetweenChildrenType
+} from '@/components/transition/transitionBetweenChildren';
+import AmountToRaise from '@/containers/createInvestmentClub/amountToRaise/AmountToRaise';
+import ClubNameSelector from '@/containers/createInvestmentClub/clubNameSelector';
+import MembersCount from '@/containers/createInvestmentClub/membersCount';
+import Membership from '@/containers/createInvestmentClub/membership';
+import MintMaxDate from '@/containers/createInvestmentClub/mintMaxDate';
 import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-import { resetClubCreationReduxState } from '@/state/createInvestmentClub/slice';
-import {
-  CreateActiveSteps,
-  CreateFlowSteps,
-  DetailsSteps
-} from '@/context/CreateInvestmentClubContext/steps';
+import { SUPPORTED_TOKENS } from '@/Networks';
 import { AppState } from '@/state';
+import { setDepositTokenDetails } from '@/state/createInvestmentClub/slice';
 import { setDispatchCreateFlow } from '@/state/wallet/actions';
 import moment from 'moment';
 import Image from 'next/image';
 import Link from 'next/link';
 import router from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
-import SEO from '@/components/seo';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
-    steps,
     currentStep,
     waitingConfirmationModal,
     transactionModal,
@@ -36,18 +39,12 @@ const CreateInvestmentClub: React.FC = () => {
     warningModal,
     setShowModal,
     handleCreateInvestmentClub,
-    isCreatingInvestmentClub,
-    isFirstStep,
-    stepsNames,
-    isCustomDate,
     handleBack,
     handleNext,
-    stepsCategories,
     nextBtnDisabled,
-    resetCreationStates
+    resetCreationStates,
+    handleGoToStep
   } = useCreateInvestmentClubContext();
-
-  const parentRef = useRef(null);
 
   const {
     createInvestmentClubSliceReducer: {
@@ -80,109 +77,105 @@ const CreateInvestmentClub: React.FC = () => {
 
   useEffect(() => {
     if (dispatchCreateFlow && account) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setShowModal((prev) => ({
+      setShowModal?.((prev) => ({
         ...prev,
         warningModal: true
       }));
     }
   }, [dispatchCreateFlow, account]);
 
-  const hideInvestmentClubCTAs =
-    currentStep === 0 ||
-    (currentStep === stepsNames?.indexOf(DetailsSteps.DATE) && !isCustomDate);
-
-  const [currCategory, setCurrentCategory] = useState<CreateActiveSteps>();
-  const [uniqueCategories, setUniqueCategories] = useState<CreateActiveSteps[]>(
-    []
-  );
-  const [categoryIndex, setCategoryIndex] = useState(0);
-
   useEffect(() => {
-    // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
-    const uniqueCategories = stepsCategories.reduce(
-      (unique: CreateActiveSteps[], curr) => {
-        if (!unique.includes(curr)) {
-          unique.push(curr);
-        }
-        return unique;
-      },
-      []
+    if (!activeNetwork.chainId) return;
+    const defaultTokenDetails = SUPPORTED_TOKENS[activeNetwork.chainId].filter(
+      (coin: any) => coin.default
+    )[0];
+
+    dispatch(
+      setDepositTokenDetails({
+        depositToken: defaultTokenDetails.address,
+        depositTokenName: defaultTokenDetails.name,
+        depositTokenSymbol: defaultTokenDetails.symbol,
+        depositTokenLogo: defaultTokenDetails.logoURI,
+        depositTokenDecimals: defaultTokenDetails.decimals || 18
+      })
     );
+  }, [activeNetwork.chainId]);
 
-    setUniqueCategories(uniqueCategories);
-    // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
-    if (currCategory !== steps[currentStep].category) {
-      // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
-      setCurrentCategory(steps[currentStep].category);
-    }
-  }, [steps, currentStep, currCategory, stepsCategories]);
-
-  useEffect(() => {
-    // @ts-expect-error TS(2345): Argument of type 'CreateActiveSteps | undefined' is not assig... Remove this comment to see the full error message
-    const index = uniqueCategories.indexOf(currCategory);
-    setCategoryIndex(index);
-  }, [stepsCategories, currCategory, uniqueCategories]);
-
-  useEffect(() => {
-    if (currentStep == 0) {
-      dispatch(resetClubCreationReduxState());
-    }
-  }, [currentStep]);
-
-  const handleExit = () => {
-    router.replace('/');
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-    resetCreationStates();
+  const handleExit = (): void => {
+    void router.replace('/');
+    resetCreationStates?.();
   };
+
+  const dotIndicatorOptions = [
+    'Name & identity',
+    'Raise amount',
+    'Mint end date',
+    'Members count',
+    'Membership',
+    'Review'
+  ];
+
+  const showBackButton = true;
 
   return (
     <Layout
       showCreateProgressBar={false}
-      showSideNav={true}
-      dotIndicatorOptions={uniqueCategories}
-      handleExitClick={handleExit}
       handleNext={handleNext}
       handlePrevious={handleBack}
-      activeIndex={categoryIndex}
       nextBtnDisabled={nextBtnDisabled}
-      customClasses="h-screen"
+      {...{
+        handleGoToStep,
+        showDotIndicatorsTooltip: true,
+        dotIndicatorOptions,
+        showSideNav: true,
+        showDotIndicators: true,
+        showDotIndicatorLabels: false,
+        showSideNavButton: false,
+        sideNavLogo: showBackButton ? (
+          <button
+            className={`flex rounded-full items-center justify-center w-10 h-10 bg-gray-syn7 hover:text-white`}
+            onClick={handleBack}
+          >
+            <UpArrowWithLine
+              textColorClass="text-gray-syn4"
+              extraClasses="hover:text-white"
+            />
+          </button>
+        ) : (
+          <></>
+        ),
+        hideFooter: true,
+        customClasses: 'h-screen items-center',
+        activeIndex: currentStep,
+        handleExitClick: (): void => handleExit()
+      }}
     >
       <SEO
         title="Create Investment Club"
         keywords={['syndicate', 'investment', 'club', 'fund', 'crypto']}
         image="/images/social/create-club.png"
       />
-      <div className="flex flex-col w-full bg-gray-syn9">
-        {!isFirstStep && (
-          <h4 className={`text-center pb-16 pt-8`}>
-            {isCreatingInvestmentClub
-              ? 'Start an investment club'
-              : 'Set up a dashboard'}
-          </h4>
-        )}
-        <div className="container mx-auto w-full h-full">
-          <div className="w-full mx-auto max-w-520" ref={parentRef}>
+      <div className="w-full container mx-auto flex items-center justify-center">
+        <div className="px-16">
+          <TransitionBetweenChildren
+            visibleChildIndex={currentStep ? currentStep : 0}
+            transitionType={TransitionBetweenChildrenType.VERTICAL_MOVE}
+            extraClasses="h-full"
+            transitionDurationClassOverride="duration-800"
+          >
+            <ClubNameSelector />
+            <AmountToRaise />
+            <MintMaxDate />
+            <MembersCount />
+            <Membership />
             <ReviewDetails />
-            <div className="w-full sm:px-5">
-              {
-                // @ts-expect-error TS(2538): Type 'undefined' cannot be used as an index type.
-                CreateFlowSteps(steps[currentStep].step)
-              }
-            </div>
-            {!hideInvestmentClubCTAs ? (
-              <div className="w-full">
-                <InvestmentClubCTAs key={currentStep} />
-              </div>
-            ) : null}
-          </div>
+          </TransitionBetweenChildren>
         </div>
       </div>
 
       {/* Waiting for confirmation Modal */}
       <Modal
-        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
-        show={waitingConfirmationModal}
+        show={waitingConfirmationModal ?? false}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
         customWidth="w-11/12 md:w-1/2 lg:w-1/3"
@@ -213,8 +206,7 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Transaction submitted Modal */}
       <Modal
-        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
-        show={transactionModal}
+        show={transactionModal ?? false}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
         customWidth="w-11/12 md:w-1/2 lg:w-1/3"
@@ -232,6 +224,7 @@ const CreateInvestmentClub: React.FC = () => {
               src="/images/checkCircleGreen.svg"
               alt=""
             />
+
             <p className="text-xl text-center mt-8 mb-2 text-white font-whyte leading-8">
               Welcome on-chain, {investmentClubName}
             </p>
@@ -258,12 +251,10 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Error modal */}
       <Modal
-        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
-        show={errorModal}
+        show={errorModal ?? false}
         modalStyle={ModalStyle.DARK}
         closeModal={() =>
-          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-          setShowModal(() => ({
+          setShowModal?.(() => ({
             waitingConfirmationModal: false,
             transactionModal: false,
             errorModal: false,
@@ -326,12 +317,10 @@ const CreateInvestmentClub: React.FC = () => {
 
       {/* Wallet warning modals */}
       <Modal
-        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
-        show={warningModal}
+        show={warningModal ?? false}
         modalStyle={ModalStyle.DARK}
         closeModal={() => {
-          // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-          setShowModal(() => ({
+          setShowModal?.(() => ({
             waitingConfirmationModal: false,
             transactionModal: false,
             errorModal: false,

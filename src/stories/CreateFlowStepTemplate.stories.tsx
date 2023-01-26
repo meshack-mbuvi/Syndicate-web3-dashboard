@@ -1,4 +1,4 @@
-import { CreateFlowStepTemplate } from '@/features/deals/components/create';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import { useState } from 'react';
 
 export default {
@@ -24,7 +24,8 @@ export const Default = Template.bind({});
 Default.args = {
   isReview: false,
   hideCallouts: false,
-  title: 'Title'
+  title: 'Title',
+  showNextButton: false
 };
 
 // Storybook hangs if not wrapping it in a component
@@ -35,6 +36,7 @@ interface Props {
   isReview: boolean;
   hideCallouts: boolean;
   title: string;
+  showNextButton: boolean;
 }
 
 const DemoCreateFlowStepTemplate: React.FC<Props> = ({
@@ -42,7 +44,8 @@ const DemoCreateFlowStepTemplate: React.FC<Props> = ({
   handleInputIndexChange,
   isReview,
   hideCallouts,
-  title
+  title,
+  showNextButton
 }) => {
   const inputClasses =
     'hover:border-gray-syn3 transition-all text-left text-gray-syn5 w-full uppercase px-4 py-5 bg-gray-syn8 border border-gray-syn7 rounded-lg';
@@ -83,7 +86,9 @@ const DemoCreateFlowStepTemplate: React.FC<Props> = ({
         }
       ]}
       isReview={isReview}
+      showNextButton={showNextButton}
       hideCallouts={hideCallouts}
+      isNextButtonDisabled={false}
     />
   );
 };

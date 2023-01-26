@@ -77,5 +77,6 @@ export const DealClosed = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 DealClosed.args = {
   isDeal: true,
-  isOpenToAllocations: false
+  isOpenToAllocations: false,
+  dealEndTime: 1645092424000
 };

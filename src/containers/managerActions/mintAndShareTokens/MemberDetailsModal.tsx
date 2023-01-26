@@ -1,10 +1,10 @@
-import React from 'react';
-import { numberWithCommas } from '@/utils/formattedNumbers';
 import { CTAButton } from '@/components/CTAButton';
-import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
-import { L2 } from '@/components/typography';
 import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
+import Modal, { ModalStyle } from '@/components/modal';
+import { L2 } from '@/components/typography';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import React from 'react';
 
 interface IMemberDetails {
   show: boolean;

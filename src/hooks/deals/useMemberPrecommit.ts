@@ -1,17 +1,18 @@
 import { GetMemberPrecommit } from '@/graphql/queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { Precommit } from './types';
+import { useEffect } from 'react';
 
 export interface PrecommitResponse {
   precommitLoading: boolean;
   precommit?: Precommit;
 }
 
-const useMemberPrecommit = (): PrecommitResponse => {
+const useMemberPrecommit = (overridePoll: boolean): PrecommitResponse => {
   const {
     web3Reducer: {
       web3: { activeNetwork, account }
@@ -24,7 +25,7 @@ const useMemberPrecommit = (): PrecommitResponse => {
   } = router;
 
   // get precommit for a specific member
-  const { loading, data } = useQuery<{
+  const { loading, data, startPolling, stopPolling } = useQuery<{
     precommits: Precommit[];
   }>(GetMemberPrecommit, {
     variables: {
@@ -43,9 +44,17 @@ const useMemberPrecommit = (): PrecommitResponse => {
     }
   });
 
+  useEffect(() => {
+    if (overridePoll) {
+      startPolling(2000);
+    } else {
+      stopPolling;
+    }
+  }, [overridePoll]);
+
   return {
     precommit: data?.precommits[0],
-    precommitLoading: loading
+    precommitLoading: loading || overridePoll
   };
 };
 

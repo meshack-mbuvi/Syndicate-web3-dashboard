@@ -11,6 +11,7 @@ import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
 import { DetailedTile } from '@/components/tile/detailedTile';
 import { B2 } from '@/components/typography';
 import { AppState } from '@/state';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   formatInputValueWithCommas,
@@ -19,7 +20,8 @@ import {
 import { default as _moment } from 'moment-timezone';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { CreateFlowStepTemplate } from '..';
+
+import { useCreateDealContext } from '@/context/createDealContext';
 import { SelectedTimeWindow } from '../window';
 
 interface Props {
@@ -124,13 +126,14 @@ export const DealsCreateReview: React.FC<Props> = ({
   const showCustomTimeSelector =
     selectedTimeWindow === SelectedTimeWindow.CUSTOM;
 
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
+
   useEffect(() => {
     if (endTime) {
       const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
       setCloseTimeString(
-        _moment(+endTime)
-          .tz(timeZoneString)
-          .format('MMM D,  YYYY, hh:mmA zz')
+        _moment(+endTime).tz(timeZoneString).format('MMM D,  YYYY, hh:mmA zz')
       );
     }
   }, [endTime]);
@@ -149,6 +152,9 @@ export const DealsCreateReview: React.FC<Props> = ({
   return (
     <CreateFlowStepTemplate
       title="Review"
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       activeInputIndex={activeInputIndex}
       isReview={true}
       hideCallouts={hideCallouts}
@@ -190,7 +196,7 @@ export const DealsCreateReview: React.FC<Props> = ({
                 setActiveInputIndex(0);
               }}
               isInErrorState={nameError ? true : false}
-              infoLabel={nameError ? nameError : null}
+              infoLabel={nameError ? nameError : ''}
             />
           ),
           label: 'Deal title',
@@ -432,7 +438,7 @@ export const DealsCreateReview: React.FC<Props> = ({
             />
           ),
           label: `Participation Token`,
-          info: `This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more`,
+          info: `This is the symbol of the non-transferable token that will be distributed proportionally to those who you accept into the deal when you execute.`,
           reviewValue: (
             <div className="flex space-x-2 items-center">
               <B2>

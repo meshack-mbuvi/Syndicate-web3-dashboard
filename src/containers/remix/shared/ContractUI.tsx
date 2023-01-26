@@ -148,9 +148,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
   useEffect(() => {
     if (!abi || loading || !decodedFnName) return;
 
-    const abiLeaf = abi?.find(
-      (leaf: FunctionFragment) => leaf.name === decodedFnName
-    );
+    const abiLeaf = abi.find((leaf: any) => leaf.name === decodedFnName);
 
     if (abiLeaf) {
       setFnFragment(abiLeaf);
@@ -162,7 +160,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         isConstant;
       setLookupOnly(isLookupOnly);
     }
-  }, [decodedFnName, loading, data, supportedAbi]);
+  }, [decodedFnName, abi, loading]);
 
   const resetProgress = (): void => {
     setProgressDescription('');

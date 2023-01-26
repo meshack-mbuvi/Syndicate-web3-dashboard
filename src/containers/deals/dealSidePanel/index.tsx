@@ -1,29 +1,32 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
-import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
-import { B3 } from '@/components/typography';
-import Image from 'next/image';
-import CopyLink from '@/components/shared/CopyLink';
-import { useRouter } from 'next/router';
 import { PermissionType } from '@/components/collectives/shared/types';
-import DealCloseModal from '@/features/deals/components/close/execute';
-import DealCloseConfirmModal from '@/features/deals/components/close/confirm';
-import PrecommitContainer from '@/containers/deals/precommit/PrecommitContainer';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import useDealsDetails from '@/hooks/deals/useDealsDetails';
-import { getWeiAmount } from '@/utils/conversions';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
-import { formatAddress } from '@/utils/formatAddress';
-import { H1 } from '@/components/typography';
 import { CTAButton, CTAType } from '@/components/CTAButton';
+import CopyLink from '@/components/shared/CopyLink';
+import { B3, H1 } from '@/components/typography';
+import {
+  default as DealActionConfirmModal,
+  default as DealCloseConfirmModal
+} from '@/features/deals/components/close/confirm';
+import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
 import { DealsMilestoneOverview } from '@/features/deals/components/create/milestone';
 import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
+import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
+import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
 import { Participant } from '@/features/deals/components/participants/table';
-import { Status } from '@/components/statusChip';
-import DealActionConfirmModal from '@/features/deals/components/close/confirm';
+import { InactiveDealCard } from './inactiveDealCard';
+import { PrecommitStatus, ParticipantStatus } from '@/hooks/deals/types';
+import useDealsDetails from '@/hooks/deals/useDealsDetails';
+import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
+import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import PrecommitContainer from '../precommit/precommitContainer';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
@@ -59,6 +62,18 @@ export const DealSidePanel: React.FC<{
     DealEndType.EXECUTE
   );
 
+  // precommit polling values
+  const [isWaitingOnPrecommitGraph, setWaitingOnPrecommitGraph] =
+    useState(false);
+  const [isWaitingOnDealGraph, setWaitingOnDealGraph] = useState(false);
+  const [prePollingDealState, setPrePollingDealState] = useState(false);
+
+  const [prePollingPrecommitStatus, setPrePollingPrecommitStatus] =
+    useState<PrecommitStatus>(PrecommitStatus.NONE);
+  const [currentPrecommitStatus, setCurrentPrecommitStatus] = useState(
+    PrecommitStatus.NONE
+  );
+
   // executing deal
   const [isExecutingDeal, setIsExecutingDeal] = useState<boolean>(false);
   const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
@@ -66,19 +81,47 @@ export const DealSidePanel: React.FC<{
   const [successfullyClosedDeal, setSuccessfullyClosedDeal] = useState(false);
   const [dealExecutionFailed, setDealExecutionFailed] = useState(false);
 
-  const { dealDetails, dealDetailsLoading } = useDealsDetails();
-  const { dealName, dealTokenAddress, dealDestination, totalCommitted } =
-    dealDetails;
+  const { dealDetails, dealDetailsLoading } = useDealsDetails(
+    isWaitingOnPrecommitGraph || isWaitingOnDealGraph
+  );
+  const {
+    dealName,
+    dealTokenAddress,
+    dealDestination,
+    totalCommitted,
+    dealTokenSymbol
+  } = dealDetails;
   const { data } = useFetchEnsAssets(dealDestination, ethersProvider);
   const destinationEnsName = data?.name
     ? data.name
     : formatAddress(dealDestination, 6, 4);
+
+  const { precommit, precommitLoading } = useMemberPrecommit(
+    isWaitingOnPrecommitGraph
+  );
 
   useEffect(() => {
     if (isReady) {
       setDealLink(window.location.href);
     }
   }, [isReady]);
+
+  useEffect(() => {
+    if (isClosed !== prePollingDealState) {
+      setWaitingOnDealGraph(false);
+    }
+  }, [isClosed]);
+
+  useEffect(() => {
+    setCurrentPrecommitStatus(precommit?.status ?? PrecommitStatus.NONE);
+  }, [precommit?.status]);
+
+  useEffect(() => {
+    if (currentPrecommitStatus !== prePollingPrecommitStatus) {
+      setWaitingOnPrecommitGraph(false);
+      setPrePollingPrecommitStatus(currentPrecommitStatus);
+    }
+  }, [currentPrecommitStatus]);
 
   const handleUpdateCopyState = (): void => {
     setCopyState(true);
@@ -92,6 +135,7 @@ export const DealSidePanel: React.FC<{
   const handleExecuteDealClick = (): void => {
     setDealCloseModalOpen(true);
   };
+
   const handleCloseModalClick = (): void => {
     setDealCloseModalOpen(false);
     setIsExecutingDeal(false);
@@ -118,6 +162,8 @@ export const DealSidePanel: React.FC<{
 
   const onTxReceipt = (): void => {
     setSuccessfullyClosedDeal(true);
+    setPrePollingDealState(isClosed);
+    setWaitingOnDealGraph(true);
     setIsExecutingDeal(false);
     setDealCloseModalOpen(false);
   };
@@ -126,7 +172,9 @@ export const DealSidePanel: React.FC<{
     setIsConfirmingExecution(true);
 
     const addresses = currentParticipants
-      .filter((participant) => participant.status === Status.ACCEPTED)
+      .filter(
+        (participant) => participant.status === ParticipantStatus.ACCEPTED
+      )
       .map((_participant) => _participant.address || '');
 
     await allowancePrecommitModuleERC20.executePrecommits(
@@ -155,28 +203,59 @@ export const DealSidePanel: React.FC<{
   // disable execute button if all commits are rejected
   const disableExecuteButton =
     currentParticipants.filter(
-      (participant) => participant.status === Status.ACCEPTED
+      (participant) => participant.status === ParticipantStatus.ACCEPTED
     ).length < 1 || isClosed;
   const disableDissolveButton = isClosed;
+
+  //check if deal was executed or dissolved.
+  const isDealDissolved =
+    !currentParticipants.some(
+      (participant) =>
+        participant.precommitStatus === PrecommitStatus.FAILED ||
+        participant.precommitStatus === PrecommitStatus.EXECUTED
+    ) && isClosed;
+
+  // show inactive deal status if deal is closed (dissolved or executed) for non-members or admin (if admin has no precommit)
+  // precommit object is undefined if connected account has no precommits
+  if (!precommitLoading && !precommit && isClosed) {
+    return (
+      <InactiveDealCard isDealDissolved={isDealDissolved} dealName={dealName} />
+    );
+  }
 
   return (
     <div className="space-y-8 mt-5">
       {/* input field component for precommit amount  */}
-      <div>
+      <>
         {isOpenToPrecommits && (
-          <PrecommitContainer {...{ dealDetails, dealDetailsLoading }} />
+          <PrecommitContainer
+            {...{
+              dealDetails,
+              dealDetailsLoading,
+              precommit,
+              precommitLoading,
+              setPrePollingPrecommitStatus,
+              setWaitingOnPrecommitGraph
+            }}
+          />
         )}
-      </div>
+      </>
 
-      {/* card to show amount backed once precommit is accepted  */}
-      <UponAllocationAcceptance
-        {...{
-          dealCommitTokenLogo: '/images/usdcIcon.svg',
-          dealCommitTokenSymbol: 'USDC',
-          dealTokenLogo: '/images/logo.svg',
-          dealTokenSymbol: 'PRVX'
-        }}
-      />
+      {/* card to show amount backed once precommit is accepted  or rejected - meaning deal is closed */}
+      {isClosed && precommit && +precommit?.amount > 0 && (
+        <UponAllocationAcceptance
+          {...{
+            dealCommitTokenLogo: '/images/usdcIcon.svg',
+            dealCommitTokenSymbol: 'USDC',
+            dealTokenLogo: '/images/logo.svg',
+            dealTokenSymbol,
+            connectedWallet: { address: account, avatar: '' },
+            precommitAmount: precommit ? precommit.amount : '0',
+            dealName,
+            status: precommit ? precommit.status : PrecommitStatus.PENDING
+          }}
+        />
+      )}
 
       {/* admin CTAs to dissolve or execute deal  */}
       {permissionType === PermissionType.ADMIN ? (

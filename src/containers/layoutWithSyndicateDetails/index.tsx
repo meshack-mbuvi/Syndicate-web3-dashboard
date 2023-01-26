@@ -1,4 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ACTIVITY_CLICK } from '@/components/amplitude/eventNames';
 import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
@@ -527,7 +529,12 @@ const LayoutWithSyndicateDetails: FC<{
                                 <TabButton
                                   active={activeTab === 'activity'}
                                   label="Activity"
-                                  onClick={() => setActiveTab('activity')}
+                                  onClick={() => {
+                                    setActiveTab('activity');
+                                    amplitudeLogger(ACTIVITY_CLICK, {
+                                      flow: Flow.CLUB_MANAGE
+                                    });
+                                  }}
                                 />
                               )}
                             </nav>

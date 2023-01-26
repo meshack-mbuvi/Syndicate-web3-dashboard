@@ -126,12 +126,14 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const [description, setDescription] = useState(nftMetadata?.description);
   const [artworkState, setArtworkState] = useState({});
-  const [artworkTypeState, setArtworkTypeState] = useState(NFTMediaType.CUSTOM);
-  const [artworkUrlState, setArtworkUrlState] = useState('');
+  const [artworkTypeState, setArtworkTypeState] = useState<NFTMediaType>(
+    NFTMediaType.CUSTOM
+  );
+  const [artworkUrlState, setArtworkUrlState] = useState<string>('');
   const [activeRow, setActiveRow] = useState<number>(0);
   const [activeRemixRow, setActiveRemixRow] = useState<number>(0);
   const [showImageUploader, setShowImageUploader] = useState<boolean>(false);
-  const [exceededUploadLimit, setExceededUploadLimit] = useState('');
+  const [exceededUploadLimit, setExceededUploadLimit] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(
     artworkUrlState ? 100 : 0
   );
@@ -162,7 +164,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     useState<boolean>(false);
   const [currentOpenUntilState, setCurrentOpenUntilState] = useState(null);
 
-  const [subfieldEditing, setSubfieldEditing] = useState(false);
+  const [subfieldEditing, setSubfieldEditing] = useState<boolean>(false);
 
   useEffect(() => {
     if (collectiveDetailsLoading) return;
@@ -232,7 +234,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   }, [nftMetadata]);
 
   useEffect(() => {
-    async function updateURI() {
+    async function updateURI(): Promise<void> {
       try {
         await fixedRenderer.updateTokenURI(
           account,
@@ -259,11 +261,11 @@ const ModifyCollectiveSettings: React.FC = () => {
     updateEnded
   ]);
 
-  const handleModalClose = () => {
+  const handleModalClose = (): void => {
     setIsModalVisible(false);
   };
 
-  const onTxConfirm = (transactionHash: string) => {
+  const onTxConfirm = (transactionHash: string): void => {
     setActiveRow(0);
     dispatch(setActiveRowIdx(0));
     setSubfieldEditing(false);
@@ -275,7 +277,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProgressState('success');
     amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
       flow: Flow.COLLECTIVE_MANAGE,
@@ -304,7 +306,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setTransactionHash(transactionHash);
   };
 
-  const onSwitchTxReceipt = () => {
+  const onSwitchTxReceipt = (): void => {
     setOpenUntilStepModalVisible(true);
 
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
@@ -346,14 +348,14 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const updateSteps = (key: any, value: any) => {
+  const updateSteps = (key: string, value: any): void => {
     const updatedSteps = steps;
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     updatedSteps[activeIndex][`${key}`] = value;
     setSteps(updatedSteps);
   };
 
-  const updateMixin = async () => {
+  const updateMixin = async (): Promise<void> => {
     try {
       setIsTransactionPending(true);
       const mixin = [maxPerMemberERC721.address];
@@ -381,7 +383,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const handleClickAction = async (e: any) => {
+  const handleClickAction = async (e: any): Promise<void> => {
     e.preventDefault();
 
     updateSteps('status', ProgressDescriptorState.PENDING);
@@ -395,12 +397,12 @@ const ModifyCollectiveSettings: React.FC = () => {
     await updateMixin();
   };
 
-  const handleDisclaimerConfirmation = (e?: any) => {
+  const handleDisclaimerConfirmation = (e?: any): void => {
     e.preventDefault();
     setIsModalVisible(true);
   };
 
-  const clearErrorStepErrorStates = () => {
+  const clearErrorStepErrorStates = (): void => {
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const updatedSteps = steps.map((step) => ({
       ...step,
@@ -413,7 +415,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setProgressDescriptorDescription('');
   };
 
-  const handleCloseConfirmModal = () => {
+  const handleCloseConfirmModal = (): void => {
     // should not close modal if there is pending transaction.
     if (isTransactionPending) return;
 
@@ -421,15 +423,15 @@ const ModifyCollectiveSettings: React.FC = () => {
     clearErrorStepErrorStates();
   };
 
-  const handleSubfieldEditing = (boolean: boolean) => {
+  const handleSubfieldEditing = (boolean: boolean): void => {
     setSubfieldEditing(boolean);
   };
 
-  const handleOpenCollective = () => {
+  const handleOpenCollective = (): void => {
     dispatch(setIsCollectiveOpen());
   };
 
-  const handleTransferable = () => {
+  const handleTransferable = (): void => {
     dispatch(setIsTransferable());
   };
 
@@ -440,7 +442,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       );
   };
 
-  const handleCancelUpload = () => {
+  const handleCancelUpload = (): void => {
     setArtworkState({});
     setArtworkTypeState(NFTMediaType.CUSTOM);
     setArtworkUrlState('');
@@ -449,7 +451,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setFileName('');
   };
 
-  const handleFileUpload = async (e: any) => {
+  const handleFileUpload = async (e: any): Promise<void> => {
     const fileLimit = 50;
     const fileObject = e.target.files[0];
 
@@ -468,22 +470,22 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const currentOpenUntilChange = (openUntil: OpenUntil) => {
+  const currentOpenUntilChange = (openUntil: OpenUntil): void => {
     setOpenUntilSettingsChanged(!openUntilSettingsChanged);
     // @ts-expect-error TS(2345): Argument of type 'OpenUntil' is not assignable to par... Remove this comment to see the full error message
     setCurrentOpenUntilState(openUntil);
   };
 
-  const beforeMetadataSubmission = () => {
+  const beforeMetadataSubmission = (): void => {
     dispatch(setCollectiveSubmittingToIPFS(true));
   };
 
-  const onIpfsHash = (hash: string) => {
+  const onIpfsHash = (hash: string): void => {
     dispatch(setMetadataCid(hash));
     dispatch(setUpdateEnded(false));
   };
 
-  const onIpfsError = () => {
+  const onIpfsError = (): void => {
     dispatch(setIpfsError(true));
   };
 
@@ -495,7 +497,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     onIpfsError
   );
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (): void => {
     switch (activeRowRedux) {
       case EditRowIndex.ImageDescriptionGroup:
         dispatch(
@@ -530,7 +532,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
   };
 
-  const handleEdit = async (e: any) => {
+  const handleEdit = async (e: any): Promise<void> => {
     e.preventDefault();
     setIsModalVisible(false);
     setProgressState('confirm');
@@ -641,7 +643,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setProgressState('');
   };
 

@@ -25,5 +25,5 @@ export const dealsTableColumns = [
   'Deal name',
   'Status',
   'Participants',
-  'Total Commited'
+  'Total Committed'
 ];

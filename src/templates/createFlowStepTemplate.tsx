@@ -4,7 +4,8 @@ import IconInfo from '@/components/icons/info';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
 import { B2, B3, FL } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { NextButton } from './nextButton';
 /**
  * A UI template for review flow steps.
  * @param title The large title above the whole section
@@ -22,14 +23,18 @@ interface Props {
   inputs: {
     input: React.ReactNode;
     label: string;
-    info: string;
-    iconType?: CreatFlowStepTemplateIconType;
+    info: string | React.ReactNode;
+    iconType?: CreateFlowStepTemplateIconType;
     reviewValue?: string | React.ReactNode;
   }[];
   activeInputIndex: number | null;
   hideCallouts?: boolean;
   isReview?: boolean;
+  showNextButton: boolean;
+  calloutIcon?: ReactNode;
   handleCurrentReviewEditingIndex?: (newIndex: number | null) => void;
+  handleNext?: (e: React.MouseEvent<HTMLElement>) => void;
+  isNextButtonDisabled: boolean;
 
   // this is specific to deals for now but can be used in another scenario
   isReviewStep?: boolean;
@@ -40,7 +45,7 @@ export enum CreateFlowStepTemplateTitleSize {
   H4 = `font-regular text-H4-mobile sm:text-H4`
 }
 
-export enum CreatFlowStepTemplateIconType {
+export enum CreateFlowStepTemplateIconType {
   DEFAULT = 'DEFAULT',
   EYE_OPEN = 'EYE_OPEN'
 }
@@ -49,11 +54,14 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   title,
   titleSize = CreateFlowStepTemplateTitleSize.H2,
   inputs,
+  isNextButtonDisabled = false,
   activeInputIndex = 0,
   hideCallouts = false,
   isReview = false,
   handleCurrentReviewEditingIndex,
-  isReviewStep = false
+  handleNext,
+  isReviewStep = false,
+  showNextButton = false
 }) => {
   const windowSize = useWindowSize();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,8 +73,8 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   const calculateCalloutTopPosition = (input: HTMLDivElement) => {
     const containerTopOffset =
       containerRef.current?.getBoundingClientRect().top;
-    const inputHeight = input.getBoundingClientRect().height;
-    const inputTop = input.getBoundingClientRect().top;
+    const inputHeight = input?.getBoundingClientRect().height || 0;
+    const inputTop = input?.getBoundingClientRect().top;
     const topOffset = inputTop! + inputHeight! / 2;
     return topOffset! - containerTopOffset!;
   };
@@ -92,6 +100,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
+    if (!showCallout) return;
     setCalloutTopPosition(calculateCalloutTopPosition(inputRefs.current[0]));
   }, [showCallout]);
 
@@ -143,7 +152,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
       ref={containerRef}
       className={`flex ${
         hideCallouts ? 'space-x-0' : 'space-x-24'
-      } justify-center px-10 overflow-hidden`}
+      } justify-center px-10 pb-10 ${hideCallouts ? 'overflow-hidden' : ''}`}
     >
       <div
         className={`flex-grow ${
@@ -162,7 +171,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
         </div>
 
         {/* Inputs */}
-        <div className="h-full mb-8">
+        <div className="mb-8">
           {inputs.map((input, index) => (
             <div
               key={index}
@@ -186,7 +195,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
 
                 {/* Input & review value */}
                 <div
-                  ref={(ref) => {
+                  ref={(ref): void => {
                     // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
                     if (ref && !inputRefs.current.includes(ref)) {
                       // @ts-expect-error TS(2345): Argument of type 'HTMLButtonElement' is not assign... Remove this comment to see the full error message
@@ -220,7 +229,7 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
                     ? 'hidden'
                     : `${hideReviewHoverStyles ? 'opacity-0' : 'opacity-100'}`
                 }`}
-                onClick={() => {
+                onClick={(): void => {
                   if (currentReviewEditingIndex === index) {
                     setCurrentEditingIndex(null);
                     if (handleCurrentReviewEditingIndex) {
@@ -241,6 +250,17 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
             </div>
           ))}
         </div>
+
+        {showNextButton ? (
+          <div className="pt-10 mb-8 flex justify-center items-center">
+            {/* next page button  */}
+            <NextButton
+              handleNext={handleNext}
+              showNextButton={showNextButton}
+              isNextButtonDisabled={isNextButtonDisabled}
+            />
+          </div>
+        ) : null}
       </div>
 
       {/* Moving callout */}
@@ -279,7 +299,8 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
                 extraClasses={`relative rounded-xl px-5 py-4 overflow-hidden`}
                 type={CalloutType.REGULAR}
                 icon={
-                  input?.iconType === CreatFlowStepTemplateIconType.EYE_OPEN ? (
+                  input?.iconType ===
+                  CreateFlowStepTemplateIconType.EYE_OPEN ? (
                     <div className="mt-1">
                       <EyeOpenIcon width={20} height={12.5} />
                     </div>

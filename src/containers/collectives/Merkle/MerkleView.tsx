@@ -161,7 +161,7 @@ const formatUpdateModuleRemixUrl = (
   module: string,
   allowed: string
 ): string => {
-  return `https://deploy-preview-1743--staging-app-syndicate-io.netlify.app/collectives/${collectiveAddress}?chain=${chain}&mode=remix&contractAddress=${contractAddress}&fn=updateModule&fnParams=0=${collectiveAddress};1=${module};2=${allowed}`;
+  return `https://app.syndicate.io/collectives/${collectiveAddress}?chain=${chain}&mode=remix&contractAddress=${contractAddress}&fn=updateModule&fnParams=0=${collectiveAddress};1=${module};2=${allowed}`;
 };
 
 const formatUpdateMerkleRootUrl = (
@@ -170,7 +170,7 @@ const formatUpdateMerkleRootUrl = (
   chain: string,
   merkleRoot: string
 ): string => {
-  return `https://deploy-preview-1743--staging-app-syndicate-io.netlify.app/collectives/${collectiveAddress}?chain=${chain}&mode=remix&contractAddress=${contractAddress}&fn=updateMerkleRoot&fnParams=0=${collectiveAddress};1=${merkleRoot}`;
+  return `https://app.syndicate.io/collectives/${collectiveAddress}?chain=${chain}&mode=remix&contractAddress=${contractAddress}&fn=updateMerkleRoot&fnParams=0=${collectiveAddress};1=${merkleRoot}`;
 };
 
 export interface MerkleViewProps {

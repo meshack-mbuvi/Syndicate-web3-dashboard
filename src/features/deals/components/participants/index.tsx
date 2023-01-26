@@ -2,9 +2,16 @@ import {
   AddressLayout,
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
-import { H1, H3, H4 } from '@/components/typography';
+import { B2 } from '@/components/typography';
 import ReactTooltip from 'react-tooltip';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import { StatusChip } from '@/components/statusChip';
+import IconVerified from '@/components/icons/verified';
+import IconRosette from '@/components/icons/rosette';
+import IconInvest from '@/components/icons/invest';
+import IconEtherscan from '@/components/icons/etherscan';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ParticipantStatus } from '@/hooks/deals/types';
 
 export interface DealParticipant {
   dealAddress: string;
@@ -17,48 +24,117 @@ export interface DealParticipant {
 
 interface Props {
   participants: DealParticipant[];
+  addressOfLeader?: string;
 }
 
-export const DealsParticipants: React.FC<Props> = ({ participants }) => {
+export const DealsParticipants: React.FC<Props> = ({
+  participants,
+  addressOfLeader
+}) => {
+  // Deal leader
+  const filteredParticipantsByLeader = addressOfLeader
+    ? participants.map((participant: DealParticipant, index) => {
+        if (participant.address === addressOfLeader) {
+          return index;
+        } else {
+          return undefined;
+        }
+      })
+    : undefined;
+  const indexOfDealLeader: number | undefined = filteredParticipantsByLeader
+    ? filteredParticipantsByLeader[0]
+    : undefined;
+
+  // Largest backer
+  let indexOfLargestBacker = 0;
+  let largestBackingAmountHasDuplicates = false; // if this is true we don't want to show the badge
+  // Find the largest backer
+  for (let index = 0; index < participants.length; index++) {
+    const currentParticipant = participants[index];
+    const largestParticipant = participants[indexOfLargestBacker];
+    if (currentParticipant.amount > largestParticipant.amount) {
+      indexOfLargestBacker = index;
+      largestBackingAmountHasDuplicates = false;
+    }
+    if (
+      currentParticipant.amount === largestParticipant.amount &&
+      index !== 0
+    ) {
+      largestBackingAmountHasDuplicates = true;
+    }
+  }
   return (
     <div>
-      <H4 regular extraClasses="text-gray-syn4 mb-4">
-        {participants.length > 0 ? 'Participants' : 'No participants yet'}
-      </H4>
+      <B2 extraClasses="text-gray-syn4 mb-2">
+        {participants.length > 0 ? 'Backers' : 'No backers yet'}
+      </B2>
       {participants.map((participant, index) => {
+        const showFirstBackerBadge =
+          indexOfDealLeader === 0 ? index === 1 : index === 0;
+        const showDealLeaderBadge =
+          participants[index].address === addressOfLeader;
+        const showLargestBackerBadge =
+          indexOfLargestBacker !== undefined &&
+          index === indexOfLargestBacker &&
+          !largestBackingAmountHasDuplicates;
+        const isAnyBadgeVisible =
+          showFirstBackerBadge || showDealLeaderBadge || showLargestBackerBadge;
         return (
           <div key={`${index}-${participant.address}`}>
-            {/* Large participants - 1st, 2nd, 3rd */}
-            {index === 0 || index === 1 || index === 2 ? (
-              <>
-                <LargeBadge num={index + 1} participant={participant} />
-                {index === 2 && <br />}
-              </>
-            ) : (
-              <>
-                {/* Small participants - 4th, 5th, ... */}
-                <div
-                  key={index}
-                  className={`inline-flex space-x-2 ${
-                    index === 3 ? 'mt-4' : 'mt-2'
-                  }`}
-                  data-tip
-                  data-for={`deal-participant-${index}`}
-                >
-                  <DisplayAddressWithENS
-                    name={participant.ensName}
-                    address={participant.address}
-                    layout={AddressLayout.ONE_LINE}
-                    onlyShowOneOfNameOrAddress={true}
-                  />
-                  <div>
-                    <span className="text-gray-syn4">joined </span>
-                    {index + 1}th
-                  </div>
+            <div
+              key={index}
+              className={`inline-flex space-x-2 mt-2 visibility-container`}
+              data-tip
+              data-for={`deal-participant-${index}`}
+            >
+              <DisplayAddressWithENS
+                name={participant.ensName}
+                address={participant.address}
+                layout={AddressLayout.ONE_LINE}
+                onlyShowOneOfNameOrAddress={true}
+              />
+
+              {/* Badges */}
+              {isAnyBadgeVisible && (
+                <div className="flex space-x-1 items-center -my-1">
+                  {showDealLeaderBadge && (
+                    <StatusChip
+                      status={ParticipantStatus.CUSTOM}
+                      customLabel="Deal leader"
+                      customIcon={<IconVerified textColorClass="text-white" />}
+                    />
+                  )}
+                  {showFirstBackerBadge && (
+                    <StatusChip
+                      status={ParticipantStatus.CUSTOM}
+                      customLabel="First backer"
+                      customIcon={<IconRosette textColorClass="text-white" />}
+                    />
+                  )}
+                  {showLargestBackerBadge && (
+                    <StatusChip
+                      status={ParticipantStatus.CUSTOM}
+                      customLabel="Largest backer"
+                      customIcon={<IconInvest textColorClass="text-white" />}
+                    />
+                  )}
                 </div>
-                <br />
-              </>
-            )}
+              )}
+
+              <BlockExplorerLink
+                resourceId={participant.address}
+                noIconOrText={true}
+              >
+                <div
+                  className="w-7.5 h-7.5 rounded-full bg-white bg-opacity-10 flex items-center justify-center invisible visibility-hover"
+                  style={{}}
+                >
+                  <IconEtherscan textColorClass="text-white" />
+                </div>
+              </BlockExplorerLink>
+            </div>
+            <br />
+
             {participant.createdAt && (
               <ReactTooltip
                 id={`deal-participant-${index}`}
@@ -79,46 +155,6 @@ export const DealsParticipants: React.FC<Props> = ({ participants }) => {
           </div>
         );
       })}
-
-      {/* Empty badges if no participants */}
-      {participants.length === 0 && (
-        <div>
-          <LargeBadge num={1} />
-          <LargeBadge num={2} />
-          <LargeBadge num={3} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface LargeBadgeProps {
-  num: number;
-  participant?: { address: string; ensName?: string; createdAt: string };
-}
-
-const LargeBadge: React.FC<LargeBadgeProps> = ({ num, participant }) => {
-  return (
-    <div
-      className="inline-flex space-x-4 px-4 py-2 mb-2 bg-gray-syn8 mr-2 rounded-2.5xl"
-      data-tip
-      data-for={`deal-participant-${num - 1}`}
-    >
-      <div className="flex items-end">
-        <H1>{num}</H1>
-        <H3 extraClasses="relative -top-1 text-gray-syn4">
-          {num === 1 ? 'st' : num === 2 ? 'nd' : num === 3 ? 'rd' : ''}
-        </H3>
-      </div>
-      {participant && (
-        <DisplayAddressWithENS
-          name={participant.ensName}
-          address={participant.address}
-          layout={AddressLayout.ONE_LINE}
-          customTailwindXSpacingUnit={2}
-          onlyShowOneOfNameOrAddress={true}
-        />
-      )}
     </div>
   );
 };

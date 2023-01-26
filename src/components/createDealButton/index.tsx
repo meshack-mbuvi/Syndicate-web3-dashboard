@@ -23,7 +23,8 @@ const CreateDealButton: React.FC<ICreateDealButton> = ({ showIcon = true }) => {
     <CTAButton
       extraClasses="flex justify-center items-center w-full sm:w-auto"
       onClick={(): void => {
-        // TODO: Add create deal click event
+        // TODO [ENG-4866]: Add create deal click event
+
         // void amplitudeLogger(CREATE_INVESTMENT_CLUB_CLICK, {
         //   flow: Flow.CLUB_CREATE
         // });

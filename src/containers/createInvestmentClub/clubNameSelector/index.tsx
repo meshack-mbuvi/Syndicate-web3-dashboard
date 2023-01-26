@@ -1,4 +1,8 @@
-import Fade from '@/components/Fade';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { RANDOMIZE_NAME_CLICK } from '@/components/amplitude/eventNames';
+import { ShuffleIcon } from '@/components/icons/shuffle';
+import { InputWithLeadingAddon } from '@/components/inputs';
+import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import { AppState } from '@/state';
@@ -6,22 +10,20 @@ import {
   setInvestmentClubName,
   setInvestmentClubSymbolPlaceHolder
 } from '@/state/createInvestmentClub/slice';
+import {
+  CreateFlowStepTemplate,
+  CreateFlowStepTemplateIconType
+} from '@/templates/createFlowStepTemplate';
 import { acronymGenerator } from '@/utils/acronymGenerator';
+import { handleRandomizer } from '@/utils/randomizer';
 import { symbolValidation } from '@/utils/validators';
-import { generateSlug } from 'random-word-slugs';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useOnClickOutside from '../shared/useOnClickOutside';
-import { H4 } from '@/components/typography';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { RANDOMIZE_NAME_CLICK } from '@/components/amplitude/eventNames';
 
 const ClubNameSelector: React.FC<{
-  className?: string;
+  isReview?: boolean;
   editButtonClicked?: boolean;
-}> = ({ className, editButtonClicked }) => {
-  const ref = useRef();
-
+}> = ({ isReview }) => {
   const {
     createInvestmentClubSliceReducer: {
       investmentClubName,
@@ -30,13 +32,11 @@ const ClubNameSelector: React.FC<{
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
-  const { setNextBtnDisabled, editingStep } = useCreateInvestmentClubContext();
+  const { handleNext, editingStep } = useCreateInvestmentClubContext();
 
   const [errors, setErrors] = useState('');
   const [hasSymbolBeenEdited, setSymbolEditState] = useState(false);
-  const [isButtonActive, setIsButtonActive] = useState(false);
-
-  useOnClickOutside(ref, () => setIsButtonActive(false));
+  const [activeInputIndex, setActiveInputIndex] = useState(0);
 
   const debouncedSymbol = useDebounce(investmentClubName, 500);
 
@@ -59,26 +59,7 @@ const ClubNameSelector: React.FC<{
     }
   }, [errors]);
 
-  useEffect(() => {
-    if (
-      investmentClubName &&
-      investmentClubSymbolPlaceHolder &&
-      !editButtonClicked
-    ) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
-    } else {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
-    }
-  }, [
-    investmentClubName,
-    investmentClubSymbolPlaceHolder,
-    editButtonClicked,
-    setNextBtnDisabled
-  ]);
-
-  const handleSymbolChange = (e: any) => {
+  const handleSymbolChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const _sym = (e.target.value as string).trim().toUpperCase();
     const { validSym, errorMsg } = symbolValidation(_sym);
     dispatch(setInvestmentClubSymbolPlaceHolder(validSym));
@@ -91,119 +72,112 @@ const ClubNameSelector: React.FC<{
     }
   };
 
-  const handleRandomizer = (e: any) => {
-    amplitudeLogger(RANDOMIZE_NAME_CLICK, {
+  const randomize = (e: React.MouseEvent<HTMLElement>): void => {
+    e.preventDefault();
+
+    const slug = handleRandomizer();
+    void amplitudeLogger(RANDOMIZE_NAME_CLICK, {
       flow: Flow.CLUB_CREATE
     });
-    e.preventDefault();
-    setIsButtonActive(true);
-    const slug = generateSlug(2, {
-      format: 'title',
-      categories: {
-        noun: [
-          'media',
-          'science',
-          'sports',
-          'technology',
-          'thing',
-          'time',
-          'transportation',
-          'animals'
-        ],
-        adjective: [
-          'appearance',
-          'color',
-          'quantity',
-          'shapes',
-          'size',
-          'sounds',
-          'taste',
-          'touch'
-        ]
-      }
-    });
+
     dispatch(setInvestmentClubName(slug));
   };
 
-  const activeClasses = 'ring-1 ring-blue-navy';
-
   return (
-    <Fade>
-      <div className={`${editingStep ? 'pt-11' : ''}`}>
-        <div className={className}>
-          <H4 extraClasses={`pb-6 ${editButtonClicked ? 'w-80' : 'w-full'}`}>
-            What should we call this investment club?
-          </H4>
-          <div>
-            <div className="relative" data-tip data-for="change-settings-tip">
-              <input
-                className="block text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-                placeholder="Name (e.g. Alpha DAO)"
-                value={investmentClubName}
-                onChange={(e) =>
-                  dispatch(setInvestmentClubName(e.target.value))
-                }
-              />
-
-              <button
-                // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
-                ref={ref}
-                onClick={handleRandomizer}
-                className="absolute inset-y-0 right-0 pr-4 py-3.5"
-              >
-                <div
-                  className={`flex flex-row items-center space-x-1 text-sm px-4 py-1.5 bg-gray-syn7 rounded-full text-center text-gray-syn4 hover:ring-1 hover:ring-blue-navy ${
-                    isButtonActive && activeClasses
-                  }`}
-                >
-                  <img src="/images/shuffle.svg" alt="" className="w-4 h-4" />
-                  <span>Randomize</span>
+    <div className={`${editingStep ? 'pt-11' : ''}`}>
+      {isReview ? (
+        <>
+          <div className="mb-8">
+            <InputFieldWithAddOn
+              value={investmentClubName}
+              onChange={(e): void => {
+                dispatch(setInvestmentClubName(e.target.value));
+              }}
+              addOn={
+                <div className="rounded-full px-4 py-1.5 text-black bg-white hover:bg-gray-syn2 active:bg-gray-syn3">
+                  <ShuffleIcon />
                 </div>
-              </button>
-            </div>
-            <div className="rounded-xl bg-blue-navy bg-opacity-20 flex flex-row text-blue-navy items-center p-4 mt-4 space-x-3">
-              <img className="w-5 h-5" src="/images/eye-open.svg" alt="" />
-              <div className="text-sm">
-                Stored on-chain publicly. If you do not wish to publicize your
-                club’s name, generate a random one.
-              </div>
-            </div>
+              }
+              addOnOnClick={(e: React.MouseEvent<HTMLElement>): void => {
+                randomize(e);
+              }}
+              placeholderLabel="Name (e.g. Alpha DAO)"
+              isInErrorState={false}
+              infoLabel={''}
+            />
           </div>
-          <H4 extraClasses="pb-6 pt-6">{'Club token'}</H4>
-          <div>
-            <div className="relative mb-2">
-              <span
-                className="absolute inset-y-0 left-0 text-3xl pl-4"
-                style={{ marginTop: '11.5px' }}
-              >
-                ✺
-              </span>
-              <input
-                data-tip
-                data-for="change-settings-tip"
-                className="text-base bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-                placeholder="(e.g. ALDA)"
-                value={investmentClubSymbolPlaceHolder}
-                onChange={handleSymbolChange}
-              />
-            </div>
-            <div className="text-sm">
-              {errors ? (
-                <span className="text-red-error text-sm">{errors}</span>
-              ) : (
-                <span className="text-gray-3 text-sm">
-                  Set an easily recognizable symbol for your investment club
-                  token that powers the club&apos;s cap table management and
-                  governance infrastructure. Members receive this investment
-                  club token (initially defaults to non-transferable) as proof
-                  of their deposit.
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Fade>
+
+          <InputWithLeadingAddon
+            label=""
+            addon="✺"
+            value={investmentClubSymbolPlaceHolder}
+            onChange={handleSymbolChange}
+            isInErrorState={errors ? true : false}
+            error={errors}
+            placeholder="ABC"
+            infoLabel="This token name should be readily recognizable. Members receive this token as proof of their deposit."
+          />
+        </>
+      ) : (
+        <CreateFlowStepTemplate
+          hideCallouts={false}
+          title={'Start an investment club'}
+          activeInputIndex={activeInputIndex}
+          showNextButton={true}
+          isNextButtonDisabled={false}
+          handleNext={handleNext}
+          calloutIcon={<img src="/images/eye-open-white.svg" alt="Preview" />}
+          inputs={[
+            {
+              input: (
+                <InputFieldWithAddOn
+                  value={investmentClubName}
+                  onChange={(e): void => {
+                    dispatch(setInvestmentClubName(e.target.value));
+                  }}
+                  addOn={
+                    <div className="rounded-full px-4 py-1.5 text-black bg-white hover:bg-gray-syn2 active:bg-gray-syn3">
+                      <ShuffleIcon />
+                    </div>
+                  }
+                  addOnOnClick={(e: React.MouseEvent<HTMLElement>): void => {
+                    randomize(e);
+                  }}
+                  placeholderLabel="Name (e.g. Alpha DAO)"
+                  isInErrorState={false}
+                  infoLabel={''}
+                  onFocus={(): void => {
+                    setActiveInputIndex(0);
+                  }}
+                />
+              ),
+              iconType: CreateFlowStepTemplateIconType.EYE_OPEN,
+              label: 'Club name',
+              info: 'Your club’s name is stored on-chain, so it’s publicly visible. If you’d prefer to be anonymous, generate a random name.'
+            },
+            {
+              input: (
+                <InputWithLeadingAddon
+                  label=""
+                  addon="✺"
+                  value={investmentClubSymbolPlaceHolder}
+                  onChange={handleSymbolChange}
+                  isInErrorState={errors ? true : false}
+                  error={errors}
+                  onFocus={(): void => {
+                    setActiveInputIndex(1);
+                  }}
+                  placeholder="ABC"
+                  infoLabel="This token name should be readily recognizable. Members receive this token as proof of their deposit."
+                />
+              ),
+              label: 'Club token',
+              info: `Set an easily recognizable symbol for your investment club token that powers the club's cap table management and governance infrastructure. Members receive this investment club token (initially defaults to non-transferable) as proof of their deposit.`
+            }
+          ]}
+        />
+      )}
+    </div>
   );
 };
 

@@ -1,21 +1,21 @@
+import { metamaskConstants } from '@/components/syndicates/shared/Constants';
+import { SelectedTimeWindow } from '@/features/deals/components/create/window';
+import { getMetamaskError } from '@/helpers';
+import { AppState } from '@/state';
+import { acronymGenerator } from '@/utils/acronymGenerator';
+import { getWeiAmount } from '@/utils/conversions';
+import moment from 'moment';
+import { generateSlug } from 'random-word-slugs';
 import React, {
   createContext,
   Dispatch,
   SetStateAction,
   useContext,
-  useState,
-  useEffect
+  useEffect,
+  useState
 } from 'react';
-import { SelectedTimeWindow } from '@/features/deals/components/create/window';
-import { generateSlug } from 'random-word-slugs';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { getMetamaskError } from '@/helpers';
-import { metamaskConstants } from '@/components/syndicates/shared/Constants';
-import moment from 'moment';
 import { TransactionReceipt } from 'web3-core';
-import { getWeiAmount } from '@/utils/conversions';
-import { acronymGenerator } from '@/utils/acronymGenerator';
 
 type CreateDealProviderProps = {
   // deal details
@@ -72,7 +72,6 @@ type CreateDealProviderProps = {
   handleCreateDeal: () => void;
   transactionHash: string;
   showAwaitingConfirmationModal: boolean;
-
   showTransactionModal: boolean;
   showErrorModal: boolean;
   showWarningModal: boolean;
@@ -89,6 +88,8 @@ type CreateDealProviderProps = {
   errorModalMessage: string;
   createdDealAddress: string;
   dealUrl: string;
+  createTnxTooLong: boolean;
+  isNextButtonDisabled: boolean;
 };
 
 const CreateDealContext = createContext<Partial<CreateDealProviderProps>>({});
@@ -105,9 +106,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
       syndicateContracts: { erc20DealFactory }
     }
   } = useSelector((state: AppState) => state);
-
-  // const router = useRouter();
-  // const dispatch = useDispatch();
 
   // deal details
   const [name, setName] = useState('');
@@ -137,6 +135,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
   const [processingModalDescription, setProcessingDescription] = useState('');
   const [transactionHash, setTransactionHash] = useState('');
   const [errorModalMessage, setErrorModalMessage] = useState('');
+  const [createTnxTooLong, setCreateTnxTooLong] = useState(false);
 
   const [
     {
@@ -165,7 +164,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
   const isSuccessStep = currentStep > 4;
 
   // change handlers
-
   const handleNameChange = (name: string): void => {
     setName(name);
     if (!isReviewStep) {
@@ -335,14 +333,14 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
   const onTxConfirm = (transactionHash: string): void => {
     // Change modal title and description after confirming tx
-    setProcessingTitle('Pending confirmation');
+    setProcessingTitle('Creating your deal');
     setProcessingDescription(
       'This could take up to a few minutes depending on network congestion and the gas fees you set.'
     );
     setTransactionHash(transactionHash);
   };
 
-  const onTxReceipt = (receipt: TransactionReceipt) => {
+  const onTxReceipt = (receipt: TransactionReceipt): void => {
     if (receipt.events) {
       const { returnValues } = receipt.events.ERC20ClubCreated;
       const tokenAddress = returnValues?.tokenAddress;
@@ -413,7 +411,24 @@ const CreateDealProvider: React.FC = ({ children }) => {
         onTxFail
       );
     } catch (error: any) {
-      const { code } = error;
+      const { code, message } = error;
+
+      if (message?.includes('Be aware that it might still be mined')) {
+        setProcessingDescription(
+          'This transaction is taking a while. You can speed it up by spending more gas via your wallet.'
+        );
+
+        setCreateTnxTooLong(true);
+
+        setShowModal({
+          showAwaitingConfirmationModal: true,
+          showTransactionModal: false,
+          showErrorModal: false,
+          showWarningModal: false
+        });
+        return;
+      }
+
       if (code) {
         const errorMessage = getMetamaskError(code, 'Deal creation');
         setErrorModalMessage(errorMessage);
@@ -448,7 +463,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
     setCurrentStep(0);
 
     // reset fields.
-    // feel free to remove these if this is not necessary
     setName('');
     handleCommitmentGoalChange('');
     handleMinimumCommitmentChange('');
@@ -459,6 +473,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
     setCustomTime('');
     setTokenSymbol('');
     setEndTime('');
+    setCreateTnxTooLong(false);
   };
 
   return (
@@ -517,7 +532,6 @@ const CreateDealProvider: React.FC = ({ children }) => {
         isCreateDealDisabled,
         handleCreateDeal,
         showAwaitingConfirmationModal,
-        // might not need this
         showTransactionModal,
         showWarningModal,
         processingModalDescription,
@@ -527,7 +541,8 @@ const CreateDealProvider: React.FC = ({ children }) => {
         showErrorModal,
         setShowModal,
         createdDealAddress,
-        dealUrl
+        dealUrl,
+        createTnxTooLong
       }}
     >
       {children}

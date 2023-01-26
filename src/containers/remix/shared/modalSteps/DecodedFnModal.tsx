@@ -188,7 +188,7 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
           <>
             {activeStepIndex === 1 &&
               (isSyndicateSupported ? (
-                <div className="pt-0.5"></div>
+                <div className="pt-3"></div>
               ) : (
                 <button
                   className="w-full pt-3"
@@ -248,7 +248,7 @@ const DecodedFnModal: React.FC<DecodedFnModalProps> = ({
               onlyShowActiveDescription={true}
               extraClasses="mt-6"
             />
-            <div className="flex flex-col mt-10 -space-y-5">
+            <div className="flex flex-col mt-2 -space-y-5">
               {!isLookupOnly && activeStepIndex > 1 && (
                 <div className="mt-3">
                   <Callout

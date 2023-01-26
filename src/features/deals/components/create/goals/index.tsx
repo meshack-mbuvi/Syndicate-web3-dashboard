@@ -3,14 +3,15 @@ import {
   InputFieldWithToken,
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { AppState } from '@/state';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 import {
   formatInputValueWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { CreateFlowStepTemplate } from '..';
-import { AppState } from '@/state';
 
 interface Props {
   commitmentGoal: string;
@@ -55,11 +56,15 @@ export const DealsCreateGoal: React.FC<Props> = ({
 
   const [activeInputIndex, setActiveInputIndex] =
     useState<SelectedInput | null>(null);
-
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
   return (
     <CreateFlowStepTemplate
       title="What’s the raise goal? Who’s it for?"
       activeInputIndex={activeInputIndex}
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       inputs={[
         {
           input: (
@@ -80,7 +85,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
               depositTokenSymbol={tokenSymbol}
               depositTokenLogo={tokenLogo}
               handleTokenClick={handleTokenClick}
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.GOAL);
               }}
               isInErrorState={commitmentGoalError ? true : false}
@@ -97,7 +102,7 @@ export const DealsCreateGoal: React.FC<Props> = ({
               placeholderLabel={`2,000`}
               depositTokenSymbol={tokenSymbol}
               depositTokenLogo={tokenLogo}
-              onChange={(e) => {
+              onChange={(e): void => {
                 const input = e.target.value;
                 if (isNaN(Number(input.replace(/,/g, '')))) {
                   return;
@@ -125,12 +130,12 @@ export const DealsCreateGoal: React.FC<Props> = ({
           input: (
             <InputFieldWithAddOn
               value={destinationAddress}
-              onChange={(e) => {
+              onChange={(e): void => {
                 handleDestinationAddressChange
                   ? handleDestinationAddressChange(e.target.value)
                   : null;
               }}
-              onFocus={() => {
+              onFocus={(): void => {
                 setActiveInputIndex(SelectedInput.ADDRESS);
               }}
               placeholderLabel="0xab123... or ensname.eth"

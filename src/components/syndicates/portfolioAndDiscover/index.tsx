@@ -378,7 +378,7 @@ const PortfolioAndDiscover: React.FC = () => {
                       activeCollectivesTab === TabsType.ADMIN
                         ? 'opacity-100 z-10 h-full'
                         : 'opacity-0 z-0 h-0'
-                    } transition-opacity duration-700 row-start-1 col-start-1`}
+                    } transition-all duration-700 row-start-1 col-start-1`}
                   >
                     <CollectivesTable
                       tableData={adminCollectives}

@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
 import { useApolloClient } from '@apollo/client';
 import useMintModuleEligibility from '@/hooks/useMintModuleEligibility';
+import useGasEstimate from '@/hooks/useGasEstimate';
 
 const NftClaimAndInfoCard: React.FC = () => {
   const {
@@ -79,6 +80,17 @@ const NftClaimAndInfoCard: React.FC = () => {
     skipQuery: !mintPrice || !collectiveAddress
   });
 
+  const { data } = useGasEstimate({
+    contract: syndicateContracts.ethPriceMintModule,
+    functionName: 'mint',
+    args: [collectiveAddress, 1],
+    value: mintPrice,
+    withFiat: true
+  });
+
+  // TODO: Remove in follow up PR when integrating
+  console.log(data);
+
   const [isAccountEligible, setIsAccountEligible] = useState(true);
   const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
     useState(false);
@@ -120,12 +132,12 @@ const NftClaimAndInfoCard: React.FC = () => {
     };
   }, [progressState, interval]);
 
-  const onTxConfirm = (hash: string) => {
+  const onTxConfirm = (hash: string): void => {
     setProgressState(ProgressState.PENDING);
     setTransactionHash(hash);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setProgressState(ProgressState.SUCCESS);
     amplitudeLogger(COLLECTIVE_CLAIM, {
       flow: Flow.COLLECTIVE_CLAIM,

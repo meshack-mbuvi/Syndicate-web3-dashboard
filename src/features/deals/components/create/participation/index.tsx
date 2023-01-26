@@ -1,5 +1,6 @@
 import { InputFieldCreateToken } from '@/components/inputs/create/InputFieldCreateToken';
-import { CreateFlowStepTemplate } from '..';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
 
 interface Props {
   tokenSymbol: string;
@@ -10,10 +11,16 @@ export const DealsCreateParticipation: React.FC<Props> = ({
   tokenSymbol,
   handleTokenSymbolChange
 }) => {
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
+
   return (
     <CreateFlowStepTemplate
       title="Create participation token"
       activeInputIndex={0}
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       inputs={[
         {
           input: (
@@ -23,7 +30,7 @@ export const DealsCreateParticipation: React.FC<Props> = ({
             />
           ),
           label: 'Token symbol',
-          info: 'This is the symbol of the non-tranferable token that will be distributed proportionally to those who you accept into the deal when you execute. Learn more'
+          info: 'This is the symbol of the non-transferable token that will be distributed proportionally to those who you accept into the deal when you execute.'
         }
       ]}
     />

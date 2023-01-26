@@ -441,12 +441,12 @@ export const MintAndShareTokens: React.FC<Props> = ({
     );
   }
 
-  const onTxConfirm = () => {
+  const onTxConfirm = (): void => {
     setMinting(true);
     setConfirm(false);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setMinting(false);
     setMinted(true);
     refreshClubDetails();

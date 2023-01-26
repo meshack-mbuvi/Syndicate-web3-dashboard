@@ -149,7 +149,7 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
         </div>
         <div className="p-8 bg-gray-syn8 rounded-2.5xl">
           <B3 extraClasses="text-gray-syn4">If your allocation is accepted</B3>
-          <H4 extraClasses="mb-4.5 mt-1">You will receive mirror tokens</H4>
+          <H4 extraClasses="mb-4.5 mt-1">You will receive deal tokens</H4>
 
           {/* Table */}
           <div className="divide-y rounded-custom border border-gray-syn6">
@@ -168,7 +168,7 @@ const DealPrecommitCompleteModal: React.FC<Props> = ({
             <div className="flex p-5 items-center border-gray-syn6">
               <B3 extraClasses="flex-grow text-gray-syn3">Receive</B3>
               <div className="w-2/3 flex space-x-2 items-center">
-                {/* TODO [WINGZ]: verify that logo.svg works sometimes logo looks broken */}
+                {/* TODO [ENG-4762]: verify that logo.svg works sometimes logo looks broken */}
                 <img
                   src={'/images/logo.svg' || '/images/token-gray-4.svg'}
                   alt="Token"

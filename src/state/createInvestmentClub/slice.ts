@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  initialState,
-  mintEndTime,
   ICurrentSelectedToken,
+  initialState,
   LogicalOperator,
+  mintEndTime,
   tokenDetails,
   TokenGateOption,
   TokenGateRule

@@ -1,8 +1,12 @@
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { InputFieldWithTime } from '@/components/inputs/inputFieldWithTime';
+
 import { DetailedTile } from '@/components/tile/detailedTile';
 import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
-import { CreateFlowStepTemplate } from '..';
+
+import { TimeInputField } from '@/components/inputs/timeInputField';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { CreateFlowStepTemplate } from '@/templates/createFlowStepTemplate';
+import { default as _moment } from 'moment-timezone';
 
 interface Props {
   selectedTimeWindow: SelectedTimeWindow | null;
@@ -31,10 +35,19 @@ export const DealsCreateWindow: React.FC<Props> = ({
   const showCustomTimeSelector =
     selectedTimeWindow === SelectedTimeWindow.CUSTOM;
 
+  const now = new Date();
+  const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const tz = _moment(now).tz(timeZoneString).format('zz');
+
+  const { handleNext, isNextButtonDisabled, showNextButton } =
+    useCreateDealContext();
   return (
     <CreateFlowStepTemplate
       title="How long is this deal active?"
       activeInputIndex={0}
+      handleNext={handleNext}
+      isNextButtonDisabled={isNextButtonDisabled ?? false}
+      showNextButton={showNextButton ?? false}
       inputs={[
         {
           input: (
@@ -74,14 +87,16 @@ export const DealsCreateWindow: React.FC<Props> = ({
                     />
                   </div>
                   <div className="md:w-1/2">
-                    <InputFieldWithTime
-                      value={customTime}
+                    <TimeInputField
+                      placeholderLabel="11:59PM"
                       onChange={(e): void => {
                         if (handleCustomTimeChange) {
                           handleCustomTimeChange(e.target.value);
                         }
                       }}
-                      placeholderLabel="Time"
+                      extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced`}
+                      value={customTime}
+                      currentTimeZone={tz}
                     />
                   </div>
                 </div>

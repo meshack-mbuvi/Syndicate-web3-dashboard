@@ -182,7 +182,7 @@ const RedeemRug: React.FC = () => {
     setSubmitting(true);
   };
 
-  const onTxReceipt = () => {
+  const onTxReceipt = (): void => {
     setSubmitting(false);
     setRedeemSucceeded(true);
     setTransactionRejected(false);

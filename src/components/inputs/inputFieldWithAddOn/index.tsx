@@ -1,20 +1,21 @@
 import { PillButton } from '@/components/pillButtons';
+import { MouseEvent } from 'react';
 import { InputField } from '../inputField';
 
 export const InputFieldWithAddOn = (props: {
   forwardRef?: any;
   value?: string;
   placeholderLabel?: string;
-  infoLabel?: string | any;
+  infoLabel?: string | React.ReactElement;
   isInErrorState?: boolean;
   extraClasses?: string;
-  addOn: string | any;
+  addOn: string | JSX.Element;
   isButtonActive?: boolean;
   hideButton?: boolean;
   disabled?: boolean;
-  addOnOnClick?: (e?: React.MouseEvent<HTMLElement>) => void;
-  onChange: (e: any) => void;
-  onFocus?: (e: any) => void;
+  addOnOnClick?: (e: MouseEvent<HTMLElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   symbol?: string;
 }): React.ReactElement => {
   const {
@@ -57,7 +58,7 @@ export const InputFieldWithAddOn = (props: {
             {typeof addOn === 'string' ? (
               <PillButton
                 isActive={isButtonActive}
-                onClick={(e?: React.MouseEvent<HTMLElement>): void => {
+                onClick={(e: React.MouseEvent<HTMLElement>): void => {
                   if (addOnOnClick) addOnOnClick(e);
                 }}
               >
