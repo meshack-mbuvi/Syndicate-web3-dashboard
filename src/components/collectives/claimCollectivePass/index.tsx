@@ -11,9 +11,9 @@ import { useDispatch } from 'react-redux';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
-  WRONG_WALLET = 'WRONG_WALLET',
   CONNECTED = 'CONNECTED',
-  MAX_PASSES_REACHED = 'MAX_PASSES_REACHED'
+  ELIGIBLE = 'ELIGIBLE',
+  NOT_ELIGIBLE = 'NOT_ELIGIBLE'
 }
 
 interface Props {
@@ -34,8 +34,8 @@ interface Props {
   gasEstimate?: {
     tokenAmount: number;
     tokenSymbol: string;
-    fiatAmount: number;
-  };
+    fiatAmount: number | null;
+  } | null;
   progressState?: ProgressState;
   transactionHash?: string;
   transactionType?: string;
@@ -84,16 +84,14 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   );
 
   const walletText =
-    walletState === WalletState.CONNECTED
+    walletState === WalletState.ELIGIBLE
       ? 'Your wallet is eligible to claim this NFT'
-      : walletState === WalletState.WRONG_WALLET
+      : walletState === WalletState.NOT_ELIGIBLE
       ? `Your connected wallet${
           walletAddress ? `, ${walletAddress}, ` : ' '
         }is not eligible to claim this NFT`
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect your wallet to claim a pass'
-      : walletState === WalletState.MAX_PASSES_REACHED
-      ? 'You have reached the maximum number of NFTs per wallet'
       : null;
 
   const walletLabel = (
@@ -110,10 +108,9 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   );
 
   const walletButtonText =
-    walletState === WalletState.CONNECTED
+    walletState === WalletState.ELIGIBLE
       ? 'Claim'
-      : walletState === WalletState.WRONG_WALLET ||
-        walletState === WalletState.MAX_PASSES_REACHED
+      : walletState === WalletState.NOT_ELIGIBLE
       ? `Connect a different wallet`
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect wallet'
@@ -203,7 +200,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
       {progressState &&
       progressState === ProgressState.PENDING &&
-      walletState === WalletState.CONNECTED ? (
+      walletState === WalletState.ELIGIBLE ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
             title="Claiming NFT"
@@ -214,7 +211,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         </div>
       ) : progressState &&
         progressState === ProgressState.CONFIRM &&
-        walletState === WalletState.CONNECTED ? (
+        walletState === WalletState.ELIGIBLE ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
             title="Confirm in wallet"
@@ -226,7 +223,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         </div>
       ) : progressState &&
         progressState === ProgressState.FAILURE &&
-        walletState === WalletState.CONNECTED ? (
+        walletState === WalletState.ELIGIBLE ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
             title="Claim failed"
@@ -240,7 +237,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
         </div>
       ) : progressState &&
         progressState === ProgressState.TAKING_LONG &&
-        walletState === WalletState.CONNECTED ? (
+        walletState === WalletState.ELIGIBLE ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
             title="Transaction is taking a while"
@@ -257,7 +254,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       ) : (
         <div
           className={`fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:px-8 sm:py-10 bg-gray-syn8 ${
-            walletState !== WalletState.MAX_PASSES_REACHED
+            walletState !== WalletState.NOT_ELIGIBLE
               ? 'space-y-4 sm:space-y-10'
               : ''
           }text-center sm:rounded-2.5xl`}
@@ -271,20 +268,17 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           )}
           {isOpen ? (
             <div className="space-y-4">
-              {walletState !== WalletState.MAX_PASSES_REACHED && (
+              {walletState !== WalletState.NOT_ELIGIBLE && (
                 <CTAButton
                   type={
-                    walletState === WalletState.CONNECTED
-                      ? CTAType.TRANSACTIONAL
-                      : CTAType.PRIMARY
+                    walletState === WalletState.NOT_CONNECTED
+                      ? CTAType.PRIMARY
+                      : CTAType.TRANSACTIONAL
                   }
                   onClick={() => {
-                    if (
-                      walletState === WalletState.NOT_CONNECTED ||
-                      walletState === WalletState.WRONG_WALLET
-                    ) {
+                    if (walletState === WalletState.NOT_CONNECTED) {
                       dispatch(showWalletModal());
-                    } else if (walletState === WalletState.CONNECTED) {
+                    } else if (walletState === WalletState.ELIGIBLE) {
                       claimCollective();
                       amplitudeLogger(CLAIM_CLICK, {
                         flow: Flow.COLLECTIVE_CLAIM
@@ -295,17 +289,21 @@ export const ClaimCollectivePass: React.FC<Props> = ({
                   {walletButtonText}
                 </CTAButton>
               )}
-              {walletState === WalletState.CONNECTED && gasEstimate && (
+              {walletState === WalletState.ELIGIBLE && gasEstimate && (
                 // Positioned absolutely so it doesn't take up space
                 <div className="relative">
                   <B3 extraClasses="absolute top-0 left-0 w-full text-gray-syn5">
                     Est. gas fee: {gasEstimate.tokenAmount.toFixed(6)}{' '}
                     {gasEstimate.tokenSymbol}{' '}
-                    {Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    }).format(gasEstimate.fiatAmount)}{' '}
-                    USD
+                    {gasEstimate.fiatAmount && (
+                      <>
+                        {Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(gasEstimate.fiatAmount)}{' '}
+                        USD
+                      </>
+                    )}
                   </B3>
                 </div>
               )}

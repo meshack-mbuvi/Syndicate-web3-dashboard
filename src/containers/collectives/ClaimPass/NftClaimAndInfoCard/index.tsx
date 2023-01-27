@@ -1,3 +1,5 @@
+import { utils } from 'ethers';
+
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   CLAIM_TRY_AGAIN_CLICK,
@@ -18,16 +20,13 @@ import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
-import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
-import { getCollectiveBalance } from '@/utils/contracts/collective';
 import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
 import { useApolloClient } from '@apollo/client';
-import useMintModuleEligibility from '@/hooks/useMintModuleEligibility';
 import useGasEstimate from '@/hooks/useGasEstimate';
 
 const NftClaimAndInfoCard: React.FC = () => {
@@ -59,53 +58,11 @@ const NftClaimAndInfoCard: React.FC = () => {
       ownerAddress,
       collectiveAddress,
       numOwners,
-      maxPerWallet,
       metadataCid,
       custom
     },
     collectiveDetailsLoading
   } = useERC721Collective();
-
-  const {
-    gas: gasPrice,
-    fiatAmount,
-    nativeTokenPrice
-  } = useGasDetails({
-    contract: ContractMapper.EthPriceMintModuleMint,
-    withFiatCurrency: true,
-    args: {
-      mintPrice,
-      collectiveAddress
-    },
-    skipQuery: !mintPrice || !collectiveAddress
-  });
-
-  const { data } = useGasEstimate({
-    contract: syndicateContracts.ethPriceMintModule,
-    functionName: 'mint',
-    args: [collectiveAddress, 1],
-    value: mintPrice,
-    withFiat: true
-  });
-
-  // TODO: Remove in follow up PR when integrating
-  console.log(data);
-
-  const [isAccountEligible, setIsAccountEligible] = useState(true);
-  const [hasAccountReachedMaxPasses, setHasAccountReachedMaxPasses] =
-    useState(false);
-  const [interval, setIntervalId] = useState(null);
-
-  const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
-  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
-
-  const [walletState, setWalletState] = useState<WalletState>(
-    WalletState.NOT_CONNECTED
-  );
-
-  const [transactionHash, setTransactionHash] = useState('');
-  const [progressState, setProgressState] = useState<ProgressState>();
-  const [openSeaLink, setOpenSeaLink] = useState<string>();
 
   const mintModule: MintModuleHarness = useMemo(() => {
     if (custom?.merkle) {
@@ -121,7 +78,35 @@ const NftClaimAndInfoCard: React.FC = () => {
       );
     }
   }, [account, collectiveAddress, syndicateContracts]);
-  const { isEligible } = useMintModuleEligibility(mintModule);
+
+  const mintModuleType = custom?.merkle
+    ? syndicateContracts.nativeTokenPriceMerkleMintModule
+    : syndicateContracts.ethPriceMintModule;
+
+  const { data: gasEstimateData, isLoading: isGasEstimateLoading } =
+    useGasEstimate({
+      contract: mintModuleType,
+      functionName: 'mint',
+      args: [collectiveAddress, 1],
+      value: mintPrice,
+      withFiat: true
+    });
+
+  const gasEstimate = gasEstimateData?.gasEstimate;
+
+  const [interval, setIntervalId] = useState(null);
+
+  const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+
+  const [walletState, setWalletState] = useState<WalletState>(
+    WalletState.NOT_CONNECTED
+  );
+
+  const [transactionHash, setTransactionHash] = useState('');
+  const [progressState, setProgressState] = useState<ProgressState>();
+  const [openSeaLink, setOpenSeaLink] = useState<string>();
+
   useEffect(() => {
     if (progressState == ProgressState.TAKING_LONG || !interval) return;
 
@@ -192,20 +177,6 @@ const NftClaimAndInfoCard: React.FC = () => {
   };
 
   useEffect(() => {
-    getCollectiveBalance(collectiveAddress, account, web3).then((balance) => {
-      setHasAccountReachedMaxPasses(balance >= +maxPerWallet);
-    });
-  }, [account, collectiveAddress, maxPerWallet, web3, progressState]);
-
-  useEffect(() => {
-    if (+maxTotalSupply > 0) {
-      setIsAccountEligible(+maxTotalSupply > +totalSupply);
-    } else {
-      setIsAccountEligible(true);
-    }
-  }, [maxTotalSupply, totalSupply]);
-
-  useEffect(() => {
     if (collectiveDetailsLoading) return;
     getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
       setOpenSeaLink(link);
@@ -217,18 +188,15 @@ const NftClaimAndInfoCard: React.FC = () => {
     if (!account) {
       _walletState = WalletState.NOT_CONNECTED;
     } else {
-      if (hasAccountReachedMaxPasses) {
-        _walletState = WalletState.MAX_PASSES_REACHED;
-      } else if (!isAccountEligible || !isEligible) {
-        _walletState = WalletState.WRONG_WALLET;
-      } else {
-        _walletState = WalletState.CONNECTED;
-      }
+      gasEstimateData?.isValidTx;
+      _walletState = gasEstimateData?.isValidTx
+        ? WalletState.ELIGIBLE
+        : WalletState.NOT_ELIGIBLE;
     }
 
     // check whether connected account can claim and update _walletState
     setWalletState(_walletState);
-  }, [isEligible, account, isAccountEligible, hasAccountReachedMaxPasses]);
+  }, [account, gasEstimateData?.isValidTx]);
 
   const shortenOwnerAddress = (address: string) => {
     if (!address) return '';
@@ -252,10 +220,12 @@ const NftClaimAndInfoCard: React.FC = () => {
     setProgressState(null);
   };
 
+  const isDataLoading = collectiveDetailsLoading || isGasEstimateLoading;
+
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
       <div className="w-full">
-        {collectiveDetailsLoading ? (
+        {isDataLoading ? (
           <div className="space-y-12">
             <div className="space-y-2">
               <SkeletonLoader width="48" height="4" />
@@ -307,16 +277,24 @@ const NftClaimAndInfoCard: React.FC = () => {
             }}
             numberOfExistingMembers={+numOwners}
             priceToJoin={{
-              fiatAmount: +mintPrice * nativeTokenPrice,
+              fiatAmount:
+                +mintPrice * (gasEstimate?.nativeTokenPriceInUSD ?? 0),
               tokenAmount: +mintPrice,
               tokenSymbol: symbol
             }}
-            //@ts-expect-error TS(2322): Type '{ fiatAmount: number; tokenAmount: number; tokenSymbol: string; } | null' is not
             gasEstimate={
-              gasPrice
+              gasEstimate
                 ? {
-                    fiatAmount: +fiatAmount,
-                    tokenAmount: gasPrice,
+                    fiatAmount: gasEstimate?.gasEstimateCostInUSD,
+                    tokenAmount: Number(
+                      utils.formatUnits(
+                        utils.parseUnits(
+                          gasEstimate?.gasEstimateCostInGwei,
+                          'gwei'
+                        ),
+                        'ether'
+                      )
+                    ),
                     tokenSymbol: symbol
                   }
                 : null
