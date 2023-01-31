@@ -1,11 +1,11 @@
-import { GetDealPrecommits } from '@/graphql/queries';
+import { GetDealPrecommits } from '@/graphql/satsuma_queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { Precommit } from './types';
 
 export interface IPrecommit {

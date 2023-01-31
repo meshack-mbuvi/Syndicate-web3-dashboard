@@ -1,4 +1,4 @@
-import { SINGLE_CLUB_DETAILS } from '@/graphql/queries';
+import { SINGLE_CLUB_DETAILS } from '@/graphql/subgraph_queries';
 import { SingleClubData } from '@/graphql/types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';

@@ -1,4 +1,4 @@
-import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
+import { CLUB_MEMBER_QUERY } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';

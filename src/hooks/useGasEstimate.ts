@@ -1,12 +1,12 @@
+import { useQuery as useApolloQuery } from '@apollo/client';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { ethers, utils } from 'ethers';
 import { useSelector } from 'react-redux';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useQuery as useApolloQuery } from '@apollo/client';
 
-import { AppState } from '@/state';
 import { ContractBase } from '@/ClubERC20Factory/ContractBase';
-import { GAS_RATE } from '@/graphql/queries';
+import { GAS_RATE } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
 
 interface UseGasEstimateData {
   isValidTx: boolean;

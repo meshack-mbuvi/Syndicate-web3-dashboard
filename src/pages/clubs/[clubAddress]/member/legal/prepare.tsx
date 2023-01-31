@@ -3,7 +3,7 @@ import { Spinner } from '@/components/shared/spinner';
 import MemberLegalAgreement from '@/components/syndicates/memberLegalAgreement';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import WalletNotConnected from '@/components/walletNotConnected';
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { CLUB_TOKEN_QUERY } from '@/graphql/subgraph_queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';

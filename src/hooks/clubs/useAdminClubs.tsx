@@ -1,13 +1,13 @@
-import { MY_CLUBS_QUERY } from '@/graphql/queries';
+import { MY_CLUBS_QUERY } from '@/graphql/subgraph_queries';
+import { processClubERC20Tokens } from '@/hooks/clubs/utils/helpers';
+import { IClubERC20 } from '@/hooks/clubs/utils/types';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { useApolloClient, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { IClubERC20 } from '@/hooks/clubs/utils/types';
-import { processClubERC20Tokens } from '@/hooks/clubs/utils/helpers';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 const useAdminClubs = (): {
   adminClubs: IClubERC20[];

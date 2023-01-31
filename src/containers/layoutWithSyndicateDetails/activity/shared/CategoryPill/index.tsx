@@ -1,14 +1,15 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { TRANSACTION_CATEGORIZE } from '@/components/amplitude/eventNames';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
 import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
-import { useRouter } from 'next/router';
 import { TransactionCategory } from '@/state/erc20transactions/types';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   SetStateAction,
@@ -18,7 +19,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
-import { getFirstOrString } from '@/utils/stringUtils';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;

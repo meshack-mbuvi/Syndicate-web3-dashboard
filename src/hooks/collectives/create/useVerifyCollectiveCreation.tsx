@@ -1,4 +1,4 @@
-import { GetAdminCollectives } from '@/graphql/queries';
+import { GetAdminCollectives } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { NetworkStatus, useQuery } from '@apollo/client';

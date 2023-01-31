@@ -1,8 +1,8 @@
-import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
+import { MEMBER_SIGNED_QUERY } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
+import { useQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
 
 const useHasMemberSigned = (props: {
   clubAddress: string;

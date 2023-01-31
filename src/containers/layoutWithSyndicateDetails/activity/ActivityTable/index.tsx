@@ -2,7 +2,8 @@ import { SearchInput } from '@/components/inputs';
 import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
-import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
+
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
   getInput,

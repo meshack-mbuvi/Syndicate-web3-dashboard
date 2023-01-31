@@ -1,4 +1,4 @@
-import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
+import { CLUB_TOKEN_MEMBERS } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';

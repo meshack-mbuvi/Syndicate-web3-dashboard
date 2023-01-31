@@ -1,4 +1,4 @@
-import { TOKEN_DETAILS } from '@/graphql/queries';
+import { TOKEN_DETAILS } from '@/graphql/backend_queries';
 import { NETWORKS } from '@/Networks';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { ApolloClient } from '@apollo/client';

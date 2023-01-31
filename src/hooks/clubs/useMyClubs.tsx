@@ -1,5 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
-import { MY_CLUBS_QUERY } from '@/graphql/queries';
+import { MY_CLUBS_QUERY } from '@/graphql/subgraph_queries';
+
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';

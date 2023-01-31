@@ -12,8 +12,8 @@ import InvestmentDetailsModal, {
 import {
   ANNOTATE_TRANSACTIONS,
   SET_MEMBER_SIGN_STATUS
-} from '@/graphql/mutations';
-import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
+} from '@/graphql/backend_mutations';
+import { MEMBER_SIGNED_QUERY } from '@/graphql/backend_queries';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getInput } from '@/hooks/useLegacyTransactions';
@@ -28,16 +28,16 @@ import {
   numberWithCommas,
   removeTrailingDecimalPoint
 } from '@/utils/formattedNumbers';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
 import { BatchIdTokenDetails } from '../../ActivityTable/index';
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
-import { useRouter } from 'next/router';
-import { getFirstOrString } from '@/utils/stringUtils';
 
 interface IActivityModal {
   showModal: boolean;

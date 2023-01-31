@@ -1,7 +1,7 @@
-import { TokenDetails, EmptyTokenDetails } from '@/hooks/useTokenDetails';
-import { TOKEN_DETAILS } from '@/graphql/queries';
-import { ApolloClient } from '@apollo/client';
+import { TOKEN_DETAILS } from '@/graphql/backend_queries';
+import { EmptyTokenDetails, TokenDetails } from '@/hooks/useTokenDetails';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { ApolloClient } from '@apollo/client';
 
 export type TokenDetailsQuery = {
   data: { token?: TokenDetails };
