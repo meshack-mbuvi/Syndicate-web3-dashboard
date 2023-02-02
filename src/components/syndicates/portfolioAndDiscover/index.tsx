@@ -33,7 +33,8 @@ const generateSkeletons = (
   width: string,
   height: string,
   borderRadius?: string
-) =>
+): React.ReactNode[] =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   [...Array(num)].map((_, i) => (
     <div className="px-2 w-full" key={i}>
       <SkeletonLoader
@@ -103,6 +104,25 @@ const PortfolioAndDiscover: React.FC = () => {
     }
   ];
 
+  const showIClubsTabs = memberClubs.length !== 0 && adminClubs.length !== 0;
+  const showingNonEmptyAdminIClubs =
+    adminClubs.length !== 0 && activeClubsTab === TabsType.ADMIN;
+  const showingNonEmptyMemberIClubs =
+    memberClubs.length !== 0 && activeClubsTab === TabsType.MEMBER;
+
+  const showCollectivesTabs =
+    memberCollectives.length !== 0 && adminCollectives.length !== 0;
+  const showingNonEmptyAdminCollectives =
+    adminCollectives.length !== 0 && activeDealsTab === TabsType.ADMIN;
+  const showingNonEmptyMemberCollectives =
+    memberCollectives.length !== 0 && activeClubsTab === TabsType.MEMBER;
+
+  const showDealsTabs = memberDeals.length !== 0 && adminDeals.length !== 0;
+  const showingNonEmptyAdminDeals =
+    adminDeals.length !== 0 && activeDealsTab === TabsType.ADMIN;
+  const showingNonEmptyMemberDeals =
+    memberDeals.length !== 0 && activeClubsTab === TabsType.MEMBER;
+
   // show only the available section when there's either
   // only admin or member clubs/collectives to show
   useEffect(() => {
@@ -170,10 +190,7 @@ const PortfolioAndDiscover: React.FC = () => {
     !account
   ) {
     return (
-      <div
-        className="w-full flex justify-center md:h-100"
-        style={{ marginTop: '144px' }}
-      >
+      <div className="w-full flex justify-center md:h-100 mt-16 lg:mt-24">
         <CreateEmptyState
           {...{
             emptyClubs,
@@ -215,6 +232,7 @@ const PortfolioAndDiscover: React.FC = () => {
                 {generateSkeletons(4, '28', '5', 'rounded-md')}
               </div>
               <div className="mt-6 w-full divide-y-1 divide-gray-steelGrey">
+                {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
                 {[...Array(3)].map((_, index) => {
                   return (
                     <div
@@ -263,6 +281,7 @@ const PortfolioAndDiscover: React.FC = () => {
             </div>
 
             <div className="w-full divide-y-1 divide-gray-steelGrey ">
+              {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
               {[...Array(4)].map((_, index) => {
                 return (
                   <div
@@ -317,15 +336,25 @@ const PortfolioAndDiscover: React.FC = () => {
                   <CreateClubButton />
                 </div>
               </div>
-              <div className="mt-8">
-                {memberClubs.length !== 0 && adminClubs.length !== 0 && (
+              {/* "mt-3" : "mt-8" */}
+              <div
+                className={`${
+                  showingNonEmptyAdminIClubs || showingNonEmptyMemberIClubs
+                    ? showIClubsTabs
+                      ? 'mt-6'
+                      : 'mt-3'
+                    : ''
+                }`}
+              >
+                {showIClubsTabs && (
                   <SegmentedControl
                     tabs={filterOptions}
                     activeIndex={activeClubsTab}
                     handleTabChange={setActiveClubsTab}
+                    extraClasses="md:mb-6"
                   />
                 )}
-                <div className="mt-6 grid mr-6 sm:mr-0">
+                <div className="grid mr-6 sm:mr-0">
                   <div
                     className={`${
                       activeClubsTab === TabsType.ADMIN
@@ -355,73 +384,93 @@ const PortfolioAndDiscover: React.FC = () => {
             </>
           )}
           {/* Collectives  */}
-          {collectivesIsReady && !invalidEthereumNetwork && !emptyCollectives && (
-            <div className="mt-24 mr-6 sm:mr-0">
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6">
-                <H3>Collectives</H3>
-                <div className="mt-7 sm:mt-0">
-                  <CreateClubButton creatingClub={false} />
+          {collectivesIsReady &&
+            !invalidEthereumNetwork &&
+            !emptyCollectives && (
+              <div className="mt-24 mr-6 sm:mr-0">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14">
+                  <H3>Collectives</H3>
+                  <div className="mt-7 sm:mt-0">
+                    <CreateClubButton creatingClub={false} />
+                  </div>
                 </div>
-              </div>
-              <div className="mt-8">
-                {memberCollectives.length !== 0 &&
-                  adminCollectives.length !== 0 && (
+                <div
+                  className={`${
+                    showingNonEmptyAdminCollectives ||
+                    showingNonEmptyMemberCollectives
+                      ? showCollectivesTabs
+                        ? 'mt-6'
+                        : 'mt-3'
+                      : ''
+                  }`}
+                >
+                  {showCollectivesTabs && (
                     <SegmentedControl
                       tabs={filterOptions}
                       activeIndex={activeCollectivesTab}
                       handleTabChange={setActiveCollectivesTab}
+                      extraClasses="md:mb-6"
                     />
                   )}
-                <div className="mt-6 grid">
-                  <div
-                    className={`${
-                      activeCollectivesTab === TabsType.ADMIN
-                        ? 'opacity-100 z-10 h-full'
-                        : 'opacity-0 z-0 h-0'
-                    } transition-all duration-700 row-start-1 col-start-1`}
-                  >
-                    <CollectivesTable
-                      tableData={adminCollectives}
-                      columns={collectivesTableColumns}
-                    />
-                  </div>
-
-                  <div
-                    className={`${
-                      activeCollectivesTab === TabsType.MEMBER
-                        ? 'opacity-100 z-10 h-full'
-                        : 'opacity-0 z-0 h-0'
-                    } transition-opacity duration-700 row-start-1 col-start-1`}
-                  >
-                    {activeCollectivesTab === TabsType.MEMBER && (
+                  <div className="grid">
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.ADMIN
+                          ? 'opacity-100 z-10 h-full'
+                          : 'opacity-0 z-0 h-0'
+                      } transition-all duration-700 row-start-1 col-start-1`}
+                    >
                       <CollectivesTable
-                        tableData={memberCollectives}
+                        tableData={adminCollectives}
                         columns={collectivesTableColumns}
                       />
-                    )}
+                    </div>
+
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.MEMBER
+                          ? 'opacity-100 z-10 h-full'
+                          : 'opacity-0 z-0 h-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      {activeCollectivesTab === TabsType.MEMBER && (
+                        <CollectivesTable
+                          tableData={memberCollectives}
+                          columns={collectivesTableColumns}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
           {/* Deals  */}
           {dealsIsReady && !invalidEthereumNetwork && !emptyDeals && (
             <div className="mt-24 mr-6 sm:mr-0">
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14">
                 <H3>Deals</H3>
                 <div className="mt-7 sm:mt-0">
                   <CreateDealButton />
                 </div>
               </div>
-              <div className="mt-8">
-                {memberDeals.length !== 0 && adminDeals.length !== 0 && (
+              <div
+                className={`${
+                  showingNonEmptyAdminDeals || showingNonEmptyMemberDeals
+                    ? showDealsTabs
+                      ? 'mt-6'
+                      : 'mt-3'
+                    : ''
+                }`}
+              >
+                {showDealsTabs && (
                   <SegmentedControl
                     tabs={filterOptions}
                     activeIndex={activeDealsTab}
                     handleTabChange={setActiveDealsTab}
+                    extraClasses="md:mb-6"
                   />
                 )}
-                <div className="mt-6 grid">
+                <div className="grid">
                   <div
                     className={`${
                       activeDealsTab === TabsType.ADMIN
@@ -459,10 +508,7 @@ const PortfolioAndDiscover: React.FC = () => {
               emptyCollectives ||
               emptyDeals ||
               invalidEthereumNetwork) && (
-              <div
-                className={'w-full flex justify-center'}
-                style={{ marginTop: '144px' }}
-              >
+              <div className="w-full flex justify-center mt-16 lg:mt-24">
                 <CreateEmptyState
                   {...{
                     emptyClubs,

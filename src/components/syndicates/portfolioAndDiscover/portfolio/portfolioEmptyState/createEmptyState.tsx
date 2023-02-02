@@ -30,7 +30,7 @@ const CreateEmptyState: React.FC<Props> = ({
     (emptyClubs ? 1 : 0) + (emptyCollectives ? 1 : 0) + (emptyDeals ? 1 : 0);
 
   return (
-    <div className="flex flex-col md:flex-row md:divide-x md:justify-center space-y-36 md:space-y-0">
+    <div className="flex flex-col md:flex-row md:divide-x md:justify-center space-y-24 md:space-y-0">
       {emptyClubs && (
         <EmptyEntity
           goToCreateFlow={(): void => {

@@ -152,11 +152,7 @@ const EmptyEntity: React.FC<Props> = ({
         <CTAButton
           type={ctaType}
           fullWidth={true}
-          extraClasses={`opacity-100 mt-6 ${
-            hoverIndex === HoverState.HOVERING
-              ? 'mt-6 opacity-100'
-              : 'sm:mt-5 sm:opacity-0'
-          } ${animationDuration} transition-all`}
+          extraClasses={`mt-6 sm:mt-12`}
           onClick={() => (window.location.pathname = ctaPath)}
         >
           {cta}
