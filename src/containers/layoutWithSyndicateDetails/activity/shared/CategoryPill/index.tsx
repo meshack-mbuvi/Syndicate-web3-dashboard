@@ -5,7 +5,6 @@ import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
 import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { setCurrentTransaction } from '@/state/erc20transactions';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { getFirstOrString } from '@/utils/stringUtils';
 import { useMutation } from '@apollo/client';
@@ -17,7 +16,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import CategoryPillDropDown from './CategoryPillDropdown';
 interface ICategoryPill {
   outgoing?: boolean;
@@ -62,9 +61,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   disableDropDown,
   isOwner
 }) => {
-  const dispatch = useDispatch();
   const {
-    transactionsReducer: { currentTransaction },
     web3Reducer: {
       web3: { activeNetwork, account }
     },
@@ -233,7 +230,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 
   // when the pill is rendered inside the transactions table, we want to
   // distinguish between when the row is clicked and when the pill is selected
-  const setPillActiveRowState = (pillState: boolean) => {
+  const setPillActiveRowState = (pillState: boolean): void => {
     if (renderedInline) {
       // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
       setInlineCategorising(pillState);
@@ -243,19 +240,13 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   // inline-categorising mutation
   const [annotationMutation] = useMutation(ANNOTATE_TRANSACTIONS);
 
-  const handleSelect = (value: TransactionCategory) => {
+  const handleSelect = (value: TransactionCategory): void => {
     amplitudeLogger(TRANSACTION_CATEGORIZE, {
       flow: Flow.CLUB_MANAGE,
       transaction_category: value,
       contract_address: clubAddress
     });
-    if (Object.keys(currentTransaction).length) {
-      dispatch(
-        setCurrentTransaction({ ...currentTransaction, category: value })
-      );
-    }
     setSelectedCategory(value);
-
     // annotate selected transaction and refetch.
     if ((renderedInline || renderedInModal) && refetchTransactions) {
       if (renderedInline) setPillActiveRowState(false);
@@ -307,13 +298,13 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 ${
         !readonly && isOwner ? 'cursor-pointer' : 'cursor-default'
       }`}
-      onClick={() => (readonly ? null : toggleDropdown())}
+      onClick={(): void | null => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
       onMouseEnter={(): void => {
         setPillActiveRowState(true);
       }}
       onMouseLeave={(): void => setPillActiveRowState(false)}
-      onKeyDown={() => null}
+      onKeyDown={(): null => null}
       tabIndex={0}
       role="button"
     >
