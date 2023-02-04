@@ -2,7 +2,6 @@
 import NumberTreatment from '@/components/NumberTreatment';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
-import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
 import { AppState } from '@/state';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { divideIfNotByZero } from '@/utils/conversions';
@@ -11,6 +10,14 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { ProgressIndicatorTooltip } from '../progressIndicatorTooltip';
+
+type TokenDetails = {
+  contractAddress: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logo: string;
+};
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;

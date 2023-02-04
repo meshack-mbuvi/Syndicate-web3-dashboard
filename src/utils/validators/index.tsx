@@ -4,11 +4,6 @@ import {
 } from '@/state/createInvestmentClub/types';
 import { NON_WORD_CHAR_REGEX, SYM_MAX_LENGTH } from '../constants';
 
-export const validateEmail = (email: string): boolean => {
-  const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,}$/;
-  return regexp.test(email);
-};
-
 export const symbolValidation = (sym: string): Record<string, string> => {
   const errorText = {
     invalidChar: 'Only letters and numbers allowed',

@@ -43,38 +43,6 @@ export const getTokenDetails = (
   });
 };
 
-/**
- * A token will return something
- *
- * @param tokenAddress
- * @param chainId
- * @returns
- */
-export const getSynToken = async (
-  tokenAddress: string,
-  chainId: number
-): Promise<AxiosResponse> => {
-  const query = `query GetSynToken($chainId: Int, $where: SyndicateDAO_filter) {
-    syndicateDAOs(chainId: $chainId, where: $where) {
-      contractAddress
-    }
-  }`;
-
-  try {
-    return await axios({
-      url: GRAPH_ENDPOINTS[chainId].theGraph,
-      method: 'POST',
-      data: JSON.stringify({
-        query,
-        variables: { chainId, where: { contractAddress: tokenAddress } }
-      })
-    });
-  } catch (error) {
-    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type 'AxiosR... Remove this comment to see the full error message
-    return;
-  }
-};
-
 export const getCollectivesDetails = async (
   tokenAddresses: string[],
   chainId: number

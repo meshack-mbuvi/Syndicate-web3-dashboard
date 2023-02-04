@@ -2,6 +2,7 @@ import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { useSelector } from 'react-redux';
+
 const useSubmitReqsToFactory = (
   onTxConfirm: (transactionHash: any) => void,
   onTxReceipt: (receipt: any) => void,
