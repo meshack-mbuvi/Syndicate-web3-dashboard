@@ -167,7 +167,7 @@ export const EditButton: React.FC<{ handleClick: () => void }> = ({
 export const CopyText: React.FC<{ txt: string }> = ({ txt }) => {
   const [showCopyState, setShowCopyState] = useState(false);
 
-  const updateAddressCopyState = () => {
+  const updateAddressCopyState = (): void => {
     setShowCopyState(true);
     setTimeout(() => setShowCopyState(false), 1000);
   };
