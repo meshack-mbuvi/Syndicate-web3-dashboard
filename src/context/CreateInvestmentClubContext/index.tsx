@@ -6,7 +6,7 @@ import {
   REVIEW_CLICK
 } from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
-import { getMetamaskError } from '@/helpers';
+import { getMetamaskError } from '@/helpers/metamaskError/index';
 import useSubmitReqsToFactory from '@/hooks/clubs/useSubmitReqsToFactory';
 import { AppState } from '@/state';
 import {

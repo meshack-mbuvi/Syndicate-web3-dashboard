@@ -1,5 +1,19 @@
 import { gql } from '@apollo/client';
 
+export const SET_MEMBER_SIGN_STATUS = gql`
+  mutation Financial_signLegalDocuments(
+    $clubAddress: String!
+    $address: String!
+    $hasSigned: Boolean!
+  ) {
+    Financial_signLegalDocuments(
+      clubAddress: $clubAddress
+      address: $address
+      hasSigned: $hasSigned
+    )
+  }
+`;
+
 export const ANNOTATE_TRANSACTIONS = gql`
   mutation LegacyAnnotateTransactions(
     $input: String!
@@ -13,20 +27,6 @@ export const ANNOTATE_TRANSACTIONS = gql`
     ) {
       success
     }
-  }
-`;
-
-export const SET_MEMBER_SIGN_STATUS = gql`
-  mutation Financial_signLegalDocuments(
-    $clubAddress: String!
-    $address: String!
-    $hasSigned: Boolean!
-  ) {
-    Financial_signLegalDocuments(
-      clubAddress: $clubAddress
-      address: $address
-      hasSigned: $hasSigned
-    )
   }
 `;
 

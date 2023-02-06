@@ -94,13 +94,13 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const investmentsTableRef = useRef(null);
 
   // pagination functions
-  function goToNextPage() {
+  function goToNextPage(): void {
     // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset + dataLimit);
   }
 
-  function goToPreviousPage() {
+  function goToPreviousPage(): void {
     // @ts-expect-error TS(2531): Object is possibly 'null'.
     investmentsTableRef.current.focus();
     setPageOffset((_offset) => _offset - dataLimit);
@@ -405,7 +405,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
                         isMember || isOwner ? 'cursor-pointer' : ''
                       }`}
-                      onClick={() =>
+                      onClick={(): void =>
                         viewInvestmentDetails(
                           annotation,
                           hash,
@@ -469,7 +469,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                             <div className="cursor-pointer flex items-center text-blue">
                               <span
                                 aria-hidden={true}
-                                onClick={() =>
+                                onClick={(): void =>
                                   viewInvestmentDetails(
                                     annotation,
                                     hash,
@@ -495,7 +495,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                               <span
                                 className="text-gray-syn4"
                                 aria-hidden={true}
-                                onClick={() =>
+                                onClick={(): void =>
                                   viewInvestmentDetails(
                                     annotation,
                                     hash,
@@ -528,7 +528,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:opacity-90'
                   }`}
-                  onClick={() => goToPreviousPage()}
+                  onClick={(): void => goToPreviousPage()}
                   disabled={pageOffset === 0}
                 >
                   <Image
@@ -552,7 +552,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:opacity-90'
                   }`}
-                  onClick={() => goToNextPage()}
+                  onClick={(): void => goToNextPage()}
                   disabled={!canNextPage}
                 >
                   <Image
@@ -570,11 +570,11 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             showModal={showOffChainInvestmentsModal}
             isAnnotationsModalShown={false}
             assetsView={true}
-            closeModal={() => {
+            closeModal={(): void => {
               setShowNote(false);
               toggleShowOffChainInvestmentsModal();
             }}
-            refetchTransactions={() => {
+            refetchTransactions={(): void => {
               refetchTransactions();
             }}
             currentTransaction={currentTransaction}

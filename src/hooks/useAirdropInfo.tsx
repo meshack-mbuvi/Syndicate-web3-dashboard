@@ -1,4 +1,4 @@
-import { MERKLE_AIRDROP_CREATED } from '@/graphql/queries';
+import { MERKLE_AIRDROP_CREATED } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {

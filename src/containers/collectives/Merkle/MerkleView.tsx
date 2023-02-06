@@ -7,12 +7,12 @@ import {
   UseMutateAsyncFunction,
   useMutation as useRQMutation
 } from '@tanstack/react-query';
-import { CREATE_BASIC_MERKLE_TREE_MUTATION } from '@/graphql/mutations';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { CTAButton, CTAType } from '@/components/CTAButton';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 import { TextArea } from '@/components/inputs/simpleTextArea';
+import { CREATE_BASIC_MERKLE_TREE_MUTATION } from '@/graphql/backend_mutations';
 
 export type MerkleLeafBase = {
   account: string;

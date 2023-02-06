@@ -12,6 +12,8 @@
     "@ethersproject/providers": "^5.0.24",
     "@gnosis.pm/safe-apps-sdk": "^6.0.0",
     "@gnosis.pm/safe-apps-web3modal": "^6.0.1",
+    "@graphql-codegen/cli": "^2.16.5",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@headlessui/react": "^1.0.0",
     "@heroicons/react": "^1.0.1",
     "@hookform/resolvers": "^2.8.3",
@@ -26,6 +28,7 @@
     "assert": "^2.0.0",
     "axios": "^0.21.4",
     "bignumber.js": "^7.2.1",
+    "clsx": "^1.2.1",
     "crypto-js": "^4.1.1",
     "date-fns-tz": "^1.1.6",
     "dom-to-image": "^2.6.0",
@@ -109,9 +112,11 @@
     "generate-types": "typechain --target=truffle-v5 'src/contracts/*.json' --out-dir='src/@types/contracts'",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "chromatic": "npx chromatic --project-token=f6d7eb9d5271"
+    "chromatic": "npx chromatic --project-token=f6d7eb9d5271",
+    "codegen": "export NEXT_PUBLIC_SATSUMA_KEY=1c670bde8301 && export NEXT_PUBLIC_SCHEMA_SERVER=thegraph && graphql-codegen --config codegen.ts && export NEXT_PUBLIC_SCHEMA_SERVER=backend && graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
+    "@graphql-codegen/typescript-operations": "^2.5.13",
     "@storybook/addon-actions": "^6.4.17",
     "@storybook/addon-essentials": "^6.4.17",
     "@storybook/addon-links": "^6.4.17",

@@ -1,4 +1,4 @@
-import { CLAIMED_TOKEN } from '@/graphql/queries';
+import { CLAIMED_TOKEN } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {

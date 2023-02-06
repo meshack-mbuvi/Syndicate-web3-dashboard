@@ -1,4 +1,3 @@
-import { CLUBS_HAVE_INVESTED } from '@/graphql/queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
@@ -13,6 +12,7 @@ import {
   IMemberResponse
 } from '@/hooks/clubs/utils/types';
 import { processClubERC20Tokens } from '@/hooks/clubs/utils/helpers';
+import { CLUBS_HAVE_INVESTED } from '@/graphql/subgraph_queries';
 
 const useMemberClubs = (): {
   memberClubs: IClubERC20[];

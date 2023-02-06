@@ -1,16 +1,16 @@
-import { GetAdminCollectives } from '@/graphql/queries';
+import { GetAdminCollectives } from '@/graphql/subgraph_queries';
+import useVerifyCollectiveNetwork from '@/hooks/collectives/useVerifyCollectiveNetwork';
+import { CONTRACT_ADDRESSES } from '@/Networks';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
+import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
+import { getCollectiveName } from '@/utils/contracts/collective';
 import { getWeiAmount } from '@/utils/conversions';
 import { NetworkStatus, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
-import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
-import { CONTRACT_ADDRESSES } from '@/Networks';
-import { getCollectiveName } from '@/utils/contracts/collective';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import useVerifyCollectiveNetwork from '@/hooks/collectives/useVerifyCollectiveNetwork';
 
 export interface ICollectiveDetails {
   collectiveName: string;

@@ -1,7 +1,7 @@
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
 import { B1, B3 } from '@/components/typography';
 import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { CLUB_TOKEN_QUERY } from '@/graphql/subgraph_queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';

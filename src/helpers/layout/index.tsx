@@ -15,9 +15,3 @@ export const useTailwindScreenWidth = (
     unit: screenData.match(/[a-z*]/g).join('') // e.g "px"
   };
 };
-
-export const useTailwindContainer = () => {
-  const containerData = tailwindConfig.corePlugins.container;
-
-  return containerData;
-};

@@ -1,5 +1,6 @@
 import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
-import { getBasicMerkleProofQuery } from '@/graphql/queries';
+import { getBasicMerkleProofQuery } from '@/graphql/backend_queries';
+
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import MintModuleHarness from './MintModuleHarness';
 

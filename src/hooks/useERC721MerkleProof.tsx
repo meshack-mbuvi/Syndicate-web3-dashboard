@@ -56,7 +56,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   useEffect(() => {
     if (
       router.isReady &&
-      web3.utils.isAddress(nftAddress) &&
+      web3?.utils?.isAddress(nftAddress) &&
       activeNetwork.chainId
     ) {
       refetchMerkle();

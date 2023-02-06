@@ -1,4 +1,4 @@
-import { LEGACY_TRANSACTIONS_QUERY } from '@/graphql/queries';
+import { LEGACY_TRANSACTIONS_QUERY } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { TransactionCategory } from '@/state/erc20transactions/types';

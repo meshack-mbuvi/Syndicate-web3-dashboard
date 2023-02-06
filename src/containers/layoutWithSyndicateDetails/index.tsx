@@ -10,7 +10,7 @@ import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import { GoogleAnalyticsPageView } from '@/google-analytics/gtag';
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { CLUB_TOKEN_QUERY } from '@/graphql/subgraph_queries';
 import {
   getDepositDetails,
   resetClubState,

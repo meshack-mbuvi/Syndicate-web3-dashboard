@@ -5,7 +5,8 @@ import ActivityDatePicker from '@/containers/layoutWithSyndicateDetails/activity
 import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
 import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown';
 import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
-import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
+
 import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';

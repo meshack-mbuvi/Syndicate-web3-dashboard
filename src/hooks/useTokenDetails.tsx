@@ -1,11 +1,11 @@
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { useQuery } from '@apollo/client';
-import { TOKEN_DETAILS } from '@/graphql/queries';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { useRouter } from 'next/router';
 import { Status } from '@/state/wallet/types';
+import { TOKEN_DETAILS } from '@/graphql/backend_queries';
 
 export type TokenDetails = {
   chainId: number;

@@ -1,13 +1,13 @@
-import { GetMemberDeals } from '@/graphql/queries';
+import { GetMemberDeals } from '@/graphql/satsuma_queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { DealPreview, Precommit } from './types';
 import { processDealsToDealPreviews } from './helpers';
+import { DealPreview, Precommit } from './types';
 
 const useMemberDeals = (): {
   memberDeals: DealPreview[];

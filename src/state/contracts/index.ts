@@ -28,6 +28,7 @@ import { PublicOnePerAddressModuleContract } from '@/ClubERC20Factory/publicOneP
 import { DepositExchangeMintModule } from '@/ClubERC20Factory/RugRadio/DepositExchangeTokenMintModule';
 import { RugBonusTokenModule } from '@/ClubERC20Factory/RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from '@/ClubERC20Factory/RugRadio/RugERC20ClaimModule';
+import { RugPFPClaimModuleContract } from '@/ClubERC20Factory/RugRadio/RugPFPClaimModule';
 import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
 import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
@@ -56,6 +57,7 @@ export interface ISyndicateContracts {
   RugToken: ClubERC20Contract;
   GenesisNFTContract: any;
   rugBonusClaimModule: RugBonusTokenModule;
+  rugPFPClaimModule: RugPFPClaimModuleContract;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
   erc721Collective: ERC721Collective;
@@ -121,6 +123,8 @@ const initialState: InitialState = {
     GenesisNFTContract: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
     rugBonusClaimModule: null,
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
+    rugPFPClaimModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OwnerMintMo... Remove this comment to see the full error message
     OwnerMintModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'DepositExch... Remove this comment to see the full error message

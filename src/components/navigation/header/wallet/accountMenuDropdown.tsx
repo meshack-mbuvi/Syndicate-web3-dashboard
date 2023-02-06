@@ -210,15 +210,11 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   );
 };
 
-const renderConnectedWith = (providerName: string) => {
+export const translateProviderName = (providerName: string): Array<string> => {
   let currentProvider;
   let imageLink;
 
   switch (providerName) {
-    // case "Injected":
-    //   currentProvider = "Metamask";
-    //   imageLink = "/images/metamaskIcon.svg";
-    //   break;
     case 'WalletConnect':
       currentProvider = 'WalletConnect';
       imageLink = '/images/walletConnect.svg';
@@ -227,11 +223,20 @@ const renderConnectedWith = (providerName: string) => {
       currentProvider = 'Gnosis Safe';
       imageLink = '/images/gnosisSafe.png';
       break;
+    case 'WalletLink':
+      currentProvider = 'Coinbase Wallet';
+      imageLink = '/images/coinbase-wallet.svg';
+      break;
     default:
       currentProvider = 'Metamask';
       imageLink = '/images/metamaskIcon.svg';
       break;
   }
+  return [currentProvider, imageLink];
+};
+
+const renderConnectedWith = (providerName: string): JSX.Element => {
+  const [currentProvider, imageLink] = translateProviderName(providerName);
   return (
     <>
       <p className="text-sm text-gray-300">Connected with {currentProvider}</p>

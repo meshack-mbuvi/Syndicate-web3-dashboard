@@ -1,4 +1,4 @@
-import { GetDealDetails } from '@/graphql/queries';
+import { GetDealDetails } from '@/graphql/satsuma_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';

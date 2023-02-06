@@ -36,6 +36,7 @@ import { TokenGatedMixin } from './tokenGatingMixin';
 import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
 import { AllowancePrecommitModuleERC20 } from './AllowancePrecommitModuleERC20';
 import { ERC20DealFactory } from './ERC20DealFactory';
+import { RugPFPClaimModuleContract } from './RugRadio/RugPFPClaimModule';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -46,6 +47,8 @@ const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
 const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
+const RUG_PFP_CLAIM_MODULE = '0x6dfdf07b941c91d1d58d08d5918374c922d647a1';
+const RUG_PFP = '0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962';
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -187,6 +190,13 @@ export const getSyndicateContracts = async (
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const GenesisNFTContract = new ERC721Contract(GENESIS_NFT, web3);
 
+  const rugPFPClaimModule = new RugPFPClaimModuleContract(
+    RUG_PFP_CLAIM_MODULE as string,
+    RUG_PFP as string,
+    web3,
+    activeNetwork
+  );
+
   const rugBonusClaimModule = new RugBonusTokenModule(
     // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     RUG_BONUS_CLAIM_MODULE,
@@ -321,6 +331,7 @@ export const getSyndicateContracts = async (
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
+    rugPFPClaimModule,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     OwnerMintModule,
     depositExchangeMintModule,

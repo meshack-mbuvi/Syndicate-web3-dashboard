@@ -1,12 +1,12 @@
-import { GetERC721MemberEvents } from '@/graphql/queries';
-import { AppState } from '@/state';
 import { CollectiveActivityType } from '@/components/collectives/activity';
+import { GetERC721MemberEvents } from '@/graphql/subgraph_queries';
+import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
-import { useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
-import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 
 export interface IEvent {
   activityType: CollectiveActivityType;

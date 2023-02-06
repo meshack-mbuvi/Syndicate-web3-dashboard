@@ -1,4 +1,3 @@
-import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
@@ -12,6 +11,7 @@ import {
 } from '@/components/shared/ensAddress';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { SignedIcon } from '../shared/signedIcon';
+import { MEMBER_SIGNED_QUERY } from '@/graphql/backend_queries';
 
 interface IProps {
   memberAddress: string;

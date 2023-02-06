@@ -1,6 +1,7 @@
 import ClubERC20 from 'src/contracts/ERC20Club.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
+import { ethers } from 'ethers';
 
 export class ClubERC20Contract {
   web3;
@@ -86,6 +87,69 @@ export class ClubERC20Contract {
       return this.clubERC20Contract.methods.memberCount().call();
     } catch (error) {
       return 0;
+    }
+  }
+
+  async allowance(owner: string, spender: string): Promise<string> {
+    try {
+      return this.clubERC20Contract.methods.allowance(owner, spender).call();
+    } catch (error) {
+      return '0';
+    }
+  }
+
+  async setUnlimitedAllowance(
+    owner: string,
+    spender: string,
+    onTxConfirm: (transactionHash?: any) => void,
+    onTxReceipt: (receipt?: any) => void,
+    onTxFail: (error?: any) => void,
+    setTransactionHash: (txHas: any) => void
+  ): Promise<void> {
+    let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
+    await new Promise((resolve, reject) => {
+      this.clubERC20Contract.methods
+        .increaseAllowance(spender, ethers.constants.MaxUint256.sub(1))
+        .send({ from: owner, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash: any) => {
+          onTxConfirm(transactionHash);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
+          ) {
+            setTransactionHash('');
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          } else {
+            console.log(transactionHash, 'txHash');
+            setTransactionHash(transactionHash);
+          }
+        })
+        .on('receipt', (receipt: any) => {
+          console.log(receipt, 'receipt');
+          onTxReceipt(receipt);
+          resolve(receipt);
+        })
+        .on('error', (error: any) => {
+          onTxFail(error);
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
+      setTransactionHash(receipt.transactionHash);
+      if (receipt.isSuccessful) {
+        onTxReceipt(receipt);
+      } else {
+        onTxFail('Transaction failed');
+      }
     }
   }
 

@@ -1,11 +1,4 @@
-import { GetMemberCollectives } from '@/graphql/queries';
-import { AppState } from '@/state';
-import { Status } from '@/state/wallet/types';
-import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { GetMemberCollectives } from '@/graphql/subgraph_queries';
 import { getCollectiveMedia } from '@/hooks/collectives/utils/helpers';
 import {
   ICollective,
@@ -13,6 +6,13 @@ import {
   TokenMediaType
 } from '@/hooks/collectives/utils/types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const useMemberCollectives = (): {
   memberCollectives: ICollective[];

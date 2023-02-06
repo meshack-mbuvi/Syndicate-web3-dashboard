@@ -66,7 +66,7 @@ WrongWallet.args = {
   nameOfCreator: '0x1a2b...3c4d',
   remainingPasses: 2000,
   priceToJoin: { tokenAmount: 0.08, tokenSymbol: 'ETH', fiatAmount: 141.78 },
-  walletState: WalletState.WRONG_WALLET,
+  walletState: WalletState.NOT_ELIGIBLE,
   walletAddress: '0x1a2b...3c4d'
 };
 
@@ -110,5 +110,5 @@ MaxReached.args = {
   nameOfCreator: '0x1a2b...3c4d',
   remainingPasses: 2000,
   priceToJoin: { tokenAmount: 0.08, tokenSymbol: 'ETH', fiatAmount: 141.78 },
-  walletState: WalletState.MAX_PASSES_REACHED
+  walletState: WalletState.NOT_ELIGIBLE
 };

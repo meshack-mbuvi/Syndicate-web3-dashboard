@@ -7,14 +7,12 @@ import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
-import transactionsReducer from '@/state/erc20transactions/index';
 import erc721AirdropInfoSliceReducer from '@/state/erc721AirdropInfo/slice';
 import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
 import featureFlagClientSliceReducer from '@/state/featureFlagClient/slice';
 import legalInfoReducer from '@/state/legalInfo';
 import merkleProofSliceReducer from '@/state/merkleProofs/slice';
-import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
 import modifyCollectiveSettingsReducer from '@/state/modifyCollectiveSettings';
@@ -31,11 +29,9 @@ export const store = configureStore({
     erc20TokenSliceReducer,
     erc721TokenSliceReducer,
     featureFlagClientSliceReducer,
-    modalsReducer,
     web3Reducer,
     initializeContractsReducer,
     assetsSliceReducer,
-    transactionsReducer,
     legalInfoReducer,
     merkleProofSliceReducer,
     tokenClaimedSliceReducer,

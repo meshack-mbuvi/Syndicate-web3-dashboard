@@ -6,12 +6,14 @@ interface Props {
   tabs: { label?: string | JSX.Element; icon?: string }[];
   activeIndex: number;
   handleTabChange: (index: any) => void;
+  extraClasses?: string;
 }
 
 const SegmentedControl: FC<Props> = ({
   tabs,
   activeIndex,
-  handleTabChange
+  handleTabChange,
+  extraClasses
 }) => {
   const { width } = useWindowSize();
   const [tabHighlightDimensions, setTabHighlightDimensions] = useState({
@@ -80,7 +82,11 @@ const SegmentedControl: FC<Props> = ({
   ));
 
   return (
-    <div className="border border-gray-syn6 rounded-full p-1 inline-flex">
+    <div
+      className={`border border-gray-syn6 rounded-full p-1 inline-flex ${
+        extraClasses ?? ''
+      }`}
+    >
       <div
         ref={tabContainer}
         className="relative inline-flex space-x-4 justify-center"

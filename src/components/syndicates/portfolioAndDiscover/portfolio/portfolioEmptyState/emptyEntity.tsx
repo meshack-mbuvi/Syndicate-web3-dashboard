@@ -76,10 +76,10 @@ const EmptyEntity: React.FC<Props> = ({
     divClasses = 'w-full md:max-w-88 pr-6 sm:pr-0 md:pr-14';
   } else if (numEmpty == 3 && index == 2) {
     // 3 empty states and middle card
-    divClasses = 'w-full md:max-w-88 pl-3 sm:pl-0 md:pl-7 pr-3 sm:pr-0 md:pr-7';
+    divClasses = 'w-full md:max-w-88 sm:pl-3 md:pl-7 pr-6 sm:pr-3 md:pr-7';
   } else {
     // Multiple empty states but last card
-    divClasses = 'w-full md:max-w-88 pl-6 sm:pl-0 md:pl-14';
+    divClasses = 'w-full md:max-w-88 pr-6 sm:pr-0 sm:px-6 md:pl-14';
   }
 
   const {
@@ -123,7 +123,7 @@ const EmptyEntity: React.FC<Props> = ({
         <TransitionBetweenChildren
           visibleChildIndex={hoverIndex}
           extraClasses={`${
-            numEmpty == 1 && 'w-fit-content mx-auto'
+            numEmpty == 1 ? 'w-fit-content mx-auto' : ''
           } w-52 md:w-60 h-64`}
         >
           <img
@@ -152,11 +152,7 @@ const EmptyEntity: React.FC<Props> = ({
         <CTAButton
           type={ctaType}
           fullWidth={true}
-          extraClasses={`opacity-100 mt-6 ${
-            hoverIndex === HoverState.HOVERING
-              ? 'mt-6 opacity-100'
-              : 'sm:mt-5 sm:opacity-0'
-          } ${animationDuration} transition-all`}
+          extraClasses={`mt-6 sm:mt-12`}
           onClick={() => (window.location.pathname = ctaPath)}
         >
           {cta}

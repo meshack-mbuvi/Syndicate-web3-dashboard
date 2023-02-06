@@ -352,7 +352,7 @@
   /* stratosphere - deals */
 
   .base-CTA.stratosphere {
-    @apply bg-blue-stratosphere text-black transition-all hover:bg-blue-stratosphere;
+    @apply bg-blue-stratosphere hover:bg-blue-stratosphere-shine text-black transition-all;
   }
 
   /* orange - warning */

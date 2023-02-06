@@ -408,7 +408,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setOpenToDepositsUntilWarning(null); // clear error if any
   }, [closeDate, closeTime]);
 
-  const handleOpenCollective = () => {
+  const handleOpenCollective = (): void => {
     let row = EditRowIndex.Default;
 
     if (activeRow === EditRowIndex.CloseTimeWindow) {
@@ -423,7 +423,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setIsOpenToDeposits(!isOpenToDeposits);
   };
 
-  const handleDisclaimerConfirmation = () => {
+  const handleDisclaimerConfirmation = (): void => {
     setDisclaimerModal(true);
   };
 
@@ -503,7 +503,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     }
   };
 
-  const onTxConfirm = (txn: string) => {
+  const onTxConfirm = (txn: string): void => {
     setTransactionHash(txn);
     setProgressTitle('Approving');
     setProgressDescription(
@@ -523,13 +523,13 @@ const ModifyTokenGatedClub: React.FC = () => {
     });
   };
 
-  const onTxReceiptGuardUpdate = () => {
+  const onTxReceiptGuardUpdate = (): void => {
     setProgressTitle('Confirm in wallet');
     setProgressDescription('Please confirm the changes in your wallet');
     setProgressState(ProgressState.CONFIRM);
   };
 
-  const onTxFail = () => {
+  const onTxFail = (): void => {
     setProgressTitle('Update Failed');
     setProgressDescription('');
     setProgressState(ProgressState.FAILURE);
@@ -613,11 +613,11 @@ const ModifyTokenGatedClub: React.FC = () => {
     );
   };
 
-  const setActiveRow = (rowIdx: EditRowIndex) => {
+  const setActiveRow = (rowIdx: EditRowIndex): void => {
     dispatch(setActiveRowIdx(rowIdx));
   };
 
-  const handleOnChangeAmountRaising = (e: any) => {
+  const handleOnChangeAmountRaising = (e: any): void => {
     const amount = numberInputRemoveCommas(e);
     if (Number(amount) < existingAmountRaised && Number(amount) >= 0) {
       setMaxAmountRaisingError(
@@ -635,7 +635,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     dispatch(setMaxAmountRaising(amount >= 0 ? amount : 0));
   };
 
-  const cancelEdit = () => {
+  const cancelEdit = (): void => {
     dispatch(setMaxAmountRaising(maxTotalSupply));
     dispatch(setMaxNumberOfMembers(maxMemberCount));
     if (activeRow === EditRowIndex.CloseTimeWindow) {
@@ -644,7 +644,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     }
   };
 
-  const handleOnChangeMaxMembers = (e: any) => {
+  const handleOnChangeMaxMembers = (e: any): void => {
     const numberOfMembers = e.target.value;
     if (Number(numberOfMembers) < 0) {
       // @ts-expect-error TS(2345): Argument of type '"Number can't be negative"' is not assig... Remove this comment to see the full error message
@@ -864,13 +864,13 @@ const ModifyTokenGatedClub: React.FC = () => {
 
       <ChangeSettingsDisclaimerModal
         isModalVisible={isDisclaimerModalVisible}
-        handleModalClose={() => setDisclaimerModal(false)}
-        onClick={() => handleSubmit()}
+        handleModalClose={(): void => setDisclaimerModal(false)}
+        onClick={(): Promise<void> => handleSubmit()}
       />
 
       <Modal
         show={isProgressModalVisible}
-        closeModal={() => setProgressModal(false)}
+        closeModal={(): void => setProgressModal(false)}
         showCloseButton={false}
         modalStyle={ModalStyle.DARK}
         customWidth="w-102"
@@ -937,12 +937,12 @@ const EditCloseTime: React.FC<{
     new Date(endTime)
   );
 
-  const onTimeChange = (timeValue: string) => {
+  const onTimeChange = (timeValue: string): void => {
     setTime(timeValue);
     setCloseTime(timeValue);
   };
 
-  const handleDateChange = (targetDate: any) => {
+  const handleDateChange = (targetDate: any): void => {
     setCloseDate(targetDate);
     setOpenToDepositsUntil(targetDate);
   };
@@ -956,7 +956,7 @@ const EditCloseTime: React.FC<{
       <div className="flex flex-col sm:flex-row flex-shrink-0 sm:space-x-5">
         <div className="sm:w-1/2 flex-shrink-0">
           <InputFieldWithDate
-            onChange={(targetDate) => handleDateChange(targetDate)}
+            onChange={(targetDate): void => handleDateChange(targetDate)}
             isInErrorState={isInErrorState}
             // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assignable t... Remove this comment to see the full error message
             selectedDate={dateWarning ? null : openToDepositsUntil}
@@ -966,7 +966,7 @@ const EditCloseTime: React.FC<{
         <div className="mt-4 sm:mt-0 sm:w-1/2">
           <TimeInputField
             placeholderLabel="11:59PM"
-            onChange={(e) => {
+            onChange={(e): void => {
               onTimeChange(e.target.value);
             }}
             extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced`}

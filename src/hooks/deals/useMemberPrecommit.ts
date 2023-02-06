@@ -1,11 +1,11 @@
-import { GetMemberPrecommit } from '@/graphql/queries';
+import { GetMemberPrecommit } from '@/graphql/satsuma_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Precommit } from './types';
-import { useEffect } from 'react';
 
 export interface PrecommitResponse {
   precommitLoading: boolean;

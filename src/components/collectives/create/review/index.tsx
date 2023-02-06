@@ -176,7 +176,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
           <button
             className={editButtonStyles}
-            onClick={() => {
+            onClick={(): void => {
               if (currentlyEditingIndex !== 0) {
                 // @ts-expect-error TS(2345): Argument of type '0' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(0);
@@ -247,7 +247,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
 
           <button
             className={editButtonStyles}
-            onClick={() => {
+            onClick={(): void => {
               if (currentlyEditingIndex !== 2) {
                 // @ts-expect-error TS(2345): Argument of type '2' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(2);
@@ -290,7 +290,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
           <button
             className={editButtonStyles}
-            onClick={() => {
+            onClick={(): void => {
               if (currentlyEditingIndex !== 3) {
                 // @ts-expect-error TS(2345): Argument of type '3' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(3);
@@ -341,7 +341,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
           <button
             className={editButtonStyles}
-            onClick={() => {
+            onClick={(): void => {
               if (currentlyEditingIndex !== 4) {
                 // @ts-expect-error TS(2345): Argument of type '4' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(4);
@@ -395,7 +395,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             </div>
             <button
               className={editButtonStyles}
-              onClick={() => {
+              onClick={(): void => {
                 if (currentlyEditingIndex !== 5) {
                   // @ts-expect-error TS(2345): Argument of type '5' is not assignable to paramete... Remove this comment to see the full error message
                   setCurrentlyEditingIndex(5);
@@ -430,7 +430,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                           })
                         : ''
                     }
-                    onChange={(e) => {
+                    onChange={(e): void => {
                       const amount = stringNumberRemoveCommas(e.target.value);
                       if (Number(amount)) {
                         handleMaxSupplyChange(Number(amount));
@@ -456,7 +456,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             </div>
             <button
               className={editButtonStyles}
-              onClick={() => {
+              onClick={(): void => {
                 if (currentlyEditingIndex !== 6) {
                   // @ts-expect-error TS(2345): Argument of type '6' is not assignable to paramete... Remove this comment to see the full error message
                   setCurrentlyEditingIndex(6);
@@ -484,7 +484,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
               >
                 <Switch
                   isOn={allowOwnershipTransfer}
-                  onClick={() => {
+                  onClick={(): void => {
                     handleChangeAllowOwnershipTransfer(!allowOwnershipTransfer);
                   }}
                   type={SwitchType.EXPLICIT}
@@ -503,7 +503,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
           </div>
           <button
             className={editButtonStyles}
-            onClick={() => {
+            onClick={(): void => {
               if (currentlyEditingIndex !== 7) {
                 // @ts-expect-error TS(2345): Argument of type '7' is not assignable to paramete... Remove this comment to see the full error message
                 setCurrentlyEditingIndex(7);

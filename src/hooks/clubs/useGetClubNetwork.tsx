@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+
+import { CLUB_TOKEN_QUERY } from '@/graphql/subgraph_queries';
 import { NETWORKS } from '@/Networks';
 import { GRAPH_ENDPOINTS, SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { INetwork } from '@/Networks/networks';

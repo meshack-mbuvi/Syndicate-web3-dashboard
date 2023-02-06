@@ -17,7 +17,7 @@ const NotAvailable: React.FC = () => {
         ]}
         title="Not Available"
       />
-      <div className="w-full lg:w-1/3" style={{ marginTop: '144px' }}>
+      <div className="w-full lg:w-1/3 mt-16 lg:mt-24">
         <div className="mx-auto" style={{ width: '488px' }}>
           <div className="flex items-center justify-center mb-9">
             <Image src={`/images/pinLocation.svg`} height={95} width={62} />

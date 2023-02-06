@@ -146,6 +146,7 @@ const CreateAgreementComponent: React.FC = () => {
                   control={control}
                   name="isSeriesLLC"
                   label={'This is a series of a master LLC'}
+                  className="pt-4"
                 />
 
                 {isSeriesLLC && (

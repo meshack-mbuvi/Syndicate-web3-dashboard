@@ -2,7 +2,7 @@ import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { IDealParams } from '@/ClubERC20Factory/ERC20DealFactory';
 import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { RemixActiveModule } from '@/ClubERC20Factory/RemixActiveModule';
-import { GAS_RATE } from '@/graphql/queries';
+import { GAS_RATE } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';

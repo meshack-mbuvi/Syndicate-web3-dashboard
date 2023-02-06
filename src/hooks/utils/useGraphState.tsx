@@ -1,4 +1,4 @@
-import { graphCurrentBlock } from '@/graphql/queries';
+import { graphCurrentBlock } from '@/graphql/subgraph_queries';
 import { AppState } from '@/state';
 import { getCountDownDays } from '@/utils/dateUtils';
 import { useQuery } from '@apollo/client';

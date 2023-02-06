@@ -1,6 +1,6 @@
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { SelectedTimeWindow } from '@/features/deals/components/create/window';
-import { getMetamaskError } from '@/helpers';
+import { getMetamaskError } from '@/helpers/metamaskError/index';
 import { AppState } from '@/state';
 import { acronymGenerator } from '@/utils/acronymGenerator';
 import { getWeiAmount } from '@/utils/conversions';

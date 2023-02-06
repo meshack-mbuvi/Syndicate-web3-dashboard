@@ -1,12 +1,12 @@
+import { useQuery as useApolloQuery } from '@apollo/client';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { ethers, utils } from 'ethers';
 import { useSelector } from 'react-redux';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useQuery as useApolloQuery } from '@apollo/client';
 
-import { AppState } from '@/state';
 import { ContractBase } from '@/ClubERC20Factory/ContractBase';
-import { GAS_RATE } from '@/graphql/queries';
+import { GAS_RATE } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { AppState } from '@/state';
 
 interface UseGasEstimateData {
   isValidTx: boolean;
@@ -16,6 +16,8 @@ interface UseGasEstimateData {
         currentGasInGwei: string;
         gasEstimateCostInGwei: string;
         gasInUSD: number | null;
+        gasEstimateCostInUSD: number | null;
+        nativeTokenPriceInUSD: number | null;
       }
     | undefined;
 }
@@ -118,7 +120,8 @@ export default function useGasEstimate(
                 parseFloat(
                   utils.formatEther(gasEstimate.mul(gasPrice).toNumber())
                 )
-              : null
+              : null,
+            nativeTokenPriceInUSD: usdGasPrice
           }
         };
       } catch (error) {
@@ -130,9 +133,9 @@ export default function useGasEstimate(
       }
     },
     enabled: Boolean(
-      (args ? args.length : true) &&
+      (args ? args.length > 0 : true) &&
         activeNetwork &&
-        account &&
+        account.length > 0 &&
         contract &&
         functionName &&
         (withFiat ? gasData : true)
