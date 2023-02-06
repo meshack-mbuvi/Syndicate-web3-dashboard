@@ -73,6 +73,9 @@ class NativeTokenPriceMerkleMintModuleHarness implements MintModuleHarness {
       return { isEligible: false, reason: 'Merkle root not set on contract' };
     } else {
       await this.getContractValues(this.collectiveAddress);
+      if (this.merkleRoot == '') {
+        return { isEligible: false, reason: 'Merkle root not set on contract' };
+      }
 
       this.proof = await this.getProof(memberAddress)
         .then((res) => {
@@ -85,19 +88,28 @@ class NativeTokenPriceMerkleMintModuleHarness implements MintModuleHarness {
     }
   }
 
+  public async args(account: string): Promise<any[]> {
+    if (await this.isEligible(account)) {
+      return [this.collectiveAddress, this.proof, 1];
+    }
+
+    return [this.collectiveAddress, [], 1];
+  }
+
   public async mint(
     tokenAddress: string,
     account: string,
     onTxConfirm: (hash: string) => void,
     onTxReceipt: () => void,
-    onTxFail: (error: string) => void
+    onTxFail: (error: string) => void,
+    amount?: string
   ): Promise<void> {
     await this.nativeTokenPriceMerkleMintModule.mint(
       account,
       this.mintPrice,
       tokenAddress,
       this.proof,
-      '1', // Hardcode to mint a single token
+      amount ? amount : '1', // Default to mint a single token
       onTxConfirm,
       onTxReceipt,
       onTxFail

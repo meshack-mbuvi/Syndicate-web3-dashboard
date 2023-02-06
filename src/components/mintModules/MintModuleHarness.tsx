@@ -11,8 +11,10 @@ interface MintModuleHarness {
     account: string,
     onTxConfirm: (hash: string) => void,
     onTxReceipt: () => void,
-    onTxFail: (error: string) => void
+    onTxFail: (error: string) => void,
+    amount?: string
   ) => Promise<void>;
+  args?: (account: string) => Promise<any[]>;
 }
 
 export default MintModuleHarness;
