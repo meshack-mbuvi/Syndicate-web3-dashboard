@@ -51,7 +51,7 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
       fetchCollectiblesTransactions({
         account,
         offset: '0',
-        contractAddress: '0x8DD4C3A93af6D2c3821bcB441C2A6a7b454DFf1a',
+        contractAddress: process.env.NEXT_PUBLIC_GenesisNFT,
         chainId: activeNetwork.chainId
       })
     );
