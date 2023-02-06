@@ -245,10 +245,17 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
 
           {/* No collectibles found */}
           {!loadingCollectibles && collectiblesWithRemaining?.length === 0 && (
-            <p className="text-yellow-warning leading-6 mt-2">
-              No Genesis NFTs found. Please make sure you have connected your
-              wallet and have Genesis NFTs in your wallet.
-            </p>
+            <>
+              <p className="text-yellow-warning leading-6 mt-2">
+                No unclaimed Genesis NFTs found. Please make sure you have
+                connected your wallet and have unclaimed Genesis NFTs in your
+                wallet.
+              </p>
+              <p className="text-yellow-warning leading-6 mt-2">
+                If you have double checked your wallet and your Genesis NFTs,
+                check back soon! We're hard at work fixing some bugs.
+              </p>
+            </>
           )}
 
           {collectiblesWithRemaining &&
