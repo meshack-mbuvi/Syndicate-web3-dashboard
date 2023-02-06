@@ -126,7 +126,7 @@ export const NFTChecker: React.FC = () => {
   return (
     <div className="bg-gray-syn8">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <p className="h4">check genesis nft</p>
+        <p className="h4 px-1">check genesis nft</p>
         <div className="space-y-4 px-1">
           <p className="text-gray-syn4 leading-6 mt-2">
             To find out how many RUG tokens are available to claim for any
