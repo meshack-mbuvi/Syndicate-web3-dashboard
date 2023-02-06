@@ -266,7 +266,7 @@ export const NFTDetails: React.FC<NFTDetailsProps> = (props) => {
           </div>
           <div>
             <p className="h4 text-center leading-4 mb-4">
-              {totalClaims} RugRadio Genesis NFT claims
+              {totalClaims} RugRadio Genesis NFT claim
               {totalClaims === 1 ? '' : 's'}
             </p>
             <p className="h4 text-center leading-4">{formatEther(cost)} $RUG</p>

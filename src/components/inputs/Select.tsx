@@ -13,7 +13,7 @@ export default function Select(props: SelectProps) {
   const { field } = useController({
     name,
     control,
-    defaultValue: options[0][0]
+    defaultValue: options[options.length > 1 ? options.length - 1 : 0][0]
   });
 
   return (

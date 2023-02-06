@@ -75,14 +75,14 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
     collectibles &&
     remainingNFTsData &&
     collectibles
-      .filter((c, id) => {
-        return Number(remainingNFTsData[id]) > 0;
-      })
       .map((c, id) => {
         return {
           ...c,
           remaining: remainingNFTsData[id]
         };
+      })
+      .filter((c) => {
+        return Number(c.remaining) > 0;
       });
 
   const { control, handleSubmit, watch } = useForm({
@@ -109,7 +109,10 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
         return chosenTokenIds.includes(claimAmount.tokenId);
       });
 
-      const totals = finalValues?.reduce((acc, curr) => acc + curr.amount, 0);
+      const totals = finalValues?.reduce(
+        (acc, curr) => Number(acc) + Number(curr.amount),
+        0
+      );
 
       setCollectibleTotals(totals);
     });
@@ -123,7 +126,7 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
       .map(([key, value]) => {
         return {
           tokenId: key.split('-')[1],
-          amount: value as number
+          amount: Number(value)
         };
       });
 
@@ -201,9 +204,9 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
                         <Select
                           name={`amount-${collectible.assetId}`}
                           control={control}
-                          options={[...Array(collectible.remaining)].map(
-                            (_, idx) => [idx + 1, idx + 1]
-                          )}
+                          options={[
+                            ...Array(Number(collectible.remaining))
+                          ].map((_, idx) => [idx + 1, idx + 1])}
                           extraClasses="mb-4"
                         />
                       </div>
