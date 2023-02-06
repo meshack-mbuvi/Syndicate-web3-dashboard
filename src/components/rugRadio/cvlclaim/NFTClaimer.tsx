@@ -213,20 +213,20 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
                     );
                   })}
                 </div>
-                {!allCollectiblesFetched && (
-                  <div className="flex">
-                    <CTAButton
-                      onClick={fetchMoreCollectibles}
-                      disabled={allCollectiblesFetched}
-                      extraClasses="w-full"
-                      style={CTAStyle.DARK_OUTLINED}
-                    >
-                      Load more
-                    </CTAButton>
-                  </div>
-                )}
               </>
             )}
+          {!allCollectiblesFetched && (
+            <div className="flex">
+              <CTAButton
+                onClick={fetchMoreCollectibles}
+                disabled={allCollectiblesFetched}
+                extraClasses="w-full"
+                style={CTAStyle.DARK_OUTLINED}
+              >
+                Load more
+              </CTAButton>
+            </div>
+          )}
           {/* Loading state for the collectibles */}
           {loadingCollectibles && (
             <div className="grid grid-cols-4 gap-4">
