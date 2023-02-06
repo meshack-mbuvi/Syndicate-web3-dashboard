@@ -11,6 +11,7 @@ import useRugGenesisClaimAmount from '@/hooks/useRugGenesisClaimAmount';
 import Select from '@/components/inputs/Select';
 import useRugRadioBalance from '@/hooks/useRugRadioBalance';
 import { getWeiAmount } from 'src/utils/conversions';
+import Link from 'next/link';
 
 interface NFTCheckerProps {
   onSubmit: (
@@ -159,10 +160,29 @@ export const NFTClaimer = (props: NFTCheckerProps) => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <p className="h4 px-1">Redeem Genesis NFTs</p>
         <div className="space-y-4 px-1">
-          <p className="text-gray-syn4 leading-6 mt-2">
+          <p className="text-gray-syn3 leading-6 mt-2">
             To claim your RugRadio x Cory Van Lew PFP, select the eligible
             Genesis NFTs you would like to redeem claims from below. Note that
             you must hold 690 $RUG for each PFP you would like to mint.
+          </p>
+          <p className="text-gray-syn3 leading-6 mt-2">
+            If you held $RDAO at the time of the snapshot or are a Rug Radio
+            contributor,{' '}
+            <span className="text-blue">
+              <Link href="/rugradio/0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962/rug-contributors-claim">
+                click here
+              </Link>
+            </span>{' '}
+            for your 1 free PFP claim.
+          </p>
+          <p className="text-gray-syn3 leading-6 my-2">
+            If you held a Cory Van Lew 1 of 1 NFT at the time of the snapshot,{' '}
+            <span className="text-blue">
+              <Link href="/rugradio/0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962/cory-van-lew-holders-claim">
+                click here
+              </Link>
+            </span>{' '}
+            for your 5 free PFP claims.
           </p>
           {!loadingCollectibles &&
             collectiblesWithRemaining &&

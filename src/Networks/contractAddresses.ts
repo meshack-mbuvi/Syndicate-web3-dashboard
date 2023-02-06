@@ -37,6 +37,10 @@ export const CONTRACT_ADDRESSES: { [key: number]: { [key: string]: string } } =
       GuardNeverAllow: '0x00C327dBd884662080A8eD3FD84f0e9bc39ccbF4',
       nativeTokenPriceMerkleMintModule:
         '0xd200c8bca3ee5f264547489ed025a22e6aff88b4',
+      nativeTokenPriceMerkleMintModule_copy1:
+        '0xafA858a0FC01E58E3bd00eE241b4b32A028d319d',
+      nativeTokenPriceMerkleMintModule_copy2:
+        '0xccea5ca18091fff2ace56aa665058db812fe7d13',
 
       // Precommit
       ERC20DealFactory: '0x5744686c44d3b9991463e9affba95beb7cbfda69',
@@ -85,6 +89,8 @@ export const CONTRACT_ADDRESSES: { [key: number]: { [key: string]: string } } =
       GuardNeverAllow: '0xab5390d3708c78e84b82de12d3e07d94145a3c0b',
       nativeTokenPriceMerkleMintModule:
         '0x124D5DcF3575b528de9c85dae6afA43bB7ba736b',
+      nativeTokenPriceMerkleMintModule_copy1: '',
+      nativeTokenPriceMerkleMintModule_copy2: '',
 
       // Precommit
       ERC20DealFactory: '0x2C74e40B2B2A383C58a48917a48b51835A85b923',
@@ -119,6 +125,8 @@ export const CONTRACT_ADDRESSES: { [key: number]: { [key: string]: string } } =
       maxMemberMixin: '0x0efa30750e655f20c6e16248eb283b972e370c28',
       maxTotalSupplyMixin: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3',
       tokenGatingMixin: '0x22a3d80299d4f2437611e1ca0b7c8d50f4816c6e',
+      nativeTokenPriceMerkleMintModule_copy1: '',
+      nativeTokenPriceMerkleMintModule_copy2: '',
 
       // Collectives
       ERC721Collective: '', // TODO

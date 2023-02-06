@@ -72,6 +72,11 @@ export interface ISyndicateContracts {
   maxTotalSupplyMixin: MaxTotalSupplyMixin;
   tokenGatedMixin: TokenGatedMixin;
   nativeTokenPriceMerkleMintModule: NativeTokenPriceMerkleMintModule;
+
+  // TODO: REMOVE AFTER RR PFP LAUNCH
+  nativeTokenPriceMerkleMintModule_copy1: NativeTokenPriceMerkleMintModule;
+  nativeTokenPriceMerkleMintModule_copy2: NativeTokenPriceMerkleMintModule;
+
   allowancePrecommitModuleERC20: AllowancePrecommitModuleERC20;
   erc20DealFactory: ERC20DealFactory;
 }
@@ -153,6 +158,14 @@ const initialState: InitialState = {
     tokenGatedMixin: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
     nativeTokenPriceMerkleMintModule: null,
+
+    // TODO: REMOVE AFTER RR PFP LAUNCH
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule_copy1: null,
+    // TODO: REMOVE AFTER RR PFP LAUNCH
+    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule_copy2: null,
+
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'AllowancePr.... Remove this comment to see the full error message
     allowancePrecommitModuleERC20: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC20DealFa.... Remove this comment to see the full error message

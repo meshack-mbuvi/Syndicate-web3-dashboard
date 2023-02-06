@@ -279,6 +279,28 @@ export const getSyndicateContracts = async (
         )
       : null;
 
+  // Duplicate 1
+  // TODO: REMOVE AFTER RR PFP LAUNCH
+  const nativeTokenPriceMerkleMintModule_copy1 =
+    addresses.nativeTokenPriceMerkleMintModule
+      ? new NativeTokenPriceMerkleMintModule(
+          addresses.nativeTokenPriceMerkleMintModule_copy1,
+          web3,
+          activeNetwork
+        )
+      : null;
+
+  // Duplicate 2
+  // TODO: REMOVE AFTER RR PFP LAUNCH
+  const nativeTokenPriceMerkleMintModule_copy2 =
+    addresses.nativeTokenPriceMerkleMintModule
+      ? new NativeTokenPriceMerkleMintModule(
+          addresses.nativeTokenPriceMerkleMintModule_copy2,
+          web3,
+          activeNetwork
+        )
+      : null;
+
   // Precommit
   const allowancePrecommitModuleERC20 = addresses.AllowancePrecommitModuleERC20
     ? new AllowancePrecommitModuleERC20(
@@ -361,6 +383,14 @@ export const getSyndicateContracts = async (
     allowancePrecommitModuleERC20,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     nativeTokenPriceMerkleMintModule,
+
+    // TODO: REMOVE AFTER RR PFP LAUNCH
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule_copy1,
+    // TODO: REMOVE AFTER RR PFP LAUNCH
+    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
+    nativeTokenPriceMerkleMintModule_copy2,
+
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     erc20DealFactory
   };
