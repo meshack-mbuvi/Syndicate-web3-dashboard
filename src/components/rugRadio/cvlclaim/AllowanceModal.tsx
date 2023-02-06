@@ -9,8 +9,7 @@ import { ExternalLinkColor } from '@/components/iconWrappers';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 
-const RUG_PFP_CLAIM_MODULE = process.env
-  .NEXT_PUBLIC_RUG_PFP_CLAIM_MODULE as string;
+const RUG_PFP_CLAIM_MODULE = '0x6dfdf07b941c91d1d58d08d5918374c922d647a1';
 
 export default function AllowanceModal() {
   const {

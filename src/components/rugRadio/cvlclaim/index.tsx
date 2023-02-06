@@ -56,7 +56,7 @@ export const ClaimComponent: React.FC = () => {
     { account: nftTokenIds?.length ? account : null }
   );
 
-  const RUG_PFP_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_PFP_CLAIM_MODULE;
+  const RUG_PFP_CLAIM_MODULE = '0x6dfdf07b941c91d1d58d08d5918374c922d647a1';
   const { data: allowanceData, isSuccess: isAllowanceDataSuccess } =
     useRugRadioAllowance({
       account,

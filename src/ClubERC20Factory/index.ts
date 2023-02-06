@@ -47,8 +47,8 @@ const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
 const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
-const RUG_PFP_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_PFP_CLAIM_MODULE;
-const RUG_PFP = process.env.NEXT_PUBLIC_RUG_PFP;
+const RUG_PFP_CLAIM_MODULE = '0x6dfdf07b941c91d1d58d08d5918374c922d647a1';
+const RUG_PFP = '0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962';
 
 export const getSyndicateContracts = async (
   web3: Web3,
