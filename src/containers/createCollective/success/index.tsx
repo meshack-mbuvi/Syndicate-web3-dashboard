@@ -17,7 +17,7 @@ export const CreateCollectiveSuccess: FC = () => {
   const { creationReceipt } = useCreateState();
 
   return (
-    <div className="bg-black w-full h-full pb-38">
+    <div className="bg-gray-syn9 w-full h-full pb-38">
       <CollectivesInteractiveBackground
         heightClass="h-full"
         mediaType={creationReceipt.artworkType}

@@ -125,6 +125,7 @@ const Layout: FC<Props> = ({
   // we don't need to render the footer on the creation/modification and
   // distribution pages.
   const createClubPage = router.pathname === '/clubs/create';
+  const isCreateCollectivePage = router.pathname === '/collectives/create';
   const modifyClubPage =
     router.pathname === `/collectives/[collectiveAddress]/modify`;
   const distributionPage =
@@ -195,7 +196,9 @@ const Layout: FC<Props> = ({
         pushFooter ? 'h-screen' : ''
       }`}
     >
-      <div>
+      <div
+        className={`${isCreateCollectivePage ? 'h-screen bg-gray-syn9' : ''}`}
+      >
         <SEO
           keywords={[
             `syndicate`,
