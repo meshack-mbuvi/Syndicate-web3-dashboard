@@ -190,7 +190,7 @@ const PortfolioAndDiscover: React.FC = () => {
     !account
   ) {
     return (
-      <div className="w-full flex justify-center md:h-100 mt-16 lg:mt-24">
+      <div className="w-full flex justify-center mt-16 lg:mt-24">
         <CreateEmptyState
           {...{
             emptyClubs,
