@@ -193,7 +193,7 @@ const NftClaimAndInfoCard: React.FC = () => {
       gasEstimateData?.isValidTx;
       _walletState = gasEstimateData?.isValidTx
         ? WalletState.ELIGIBLE
-        : WalletState.ELIGIBLE;
+        : WalletState.NOT_ELIGIBLE;
     }
 
     // check whether connected account can claim and update _walletState
