@@ -116,9 +116,7 @@ export default function useGasEstimate(
 
             gasEstimateCostInUSD: usdGasPrice
               ? usdGasPrice *
-                parseFloat(
-                  utils.formatEther(gasEstimate.mul(gasPrice).toNumber())
-                )
+                parseFloat(utils.formatEther(gasEstimate.mul(gasPrice)))
               : null,
             nativeTokenPriceInUSD: usdGasPrice
           }
