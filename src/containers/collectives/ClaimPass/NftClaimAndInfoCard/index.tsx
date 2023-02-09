@@ -103,6 +103,8 @@ const NftClaimAndInfoCard: React.FC = () => {
     WalletState.NOT_CONNECTED
   );
 
+  console.log(walletState);
+
   const [transactionHash, setTransactionHash] = useState('');
   const [progressState, setProgressState] = useState<ProgressState>();
   const [openSeaLink, setOpenSeaLink] = useState<string>();
@@ -191,7 +193,7 @@ const NftClaimAndInfoCard: React.FC = () => {
       gasEstimateData?.isValidTx;
       _walletState = gasEstimateData?.isValidTx
         ? WalletState.ELIGIBLE
-        : WalletState.NOT_ELIGIBLE;
+        : WalletState.ELIGIBLE;
     }
 
     // check whether connected account can claim and update _walletState
