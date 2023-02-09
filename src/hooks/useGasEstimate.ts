@@ -15,7 +15,6 @@ interface UseGasEstimateData {
         gasUsed: string;
         currentGasInGwei: string;
         gasEstimateCostInGwei: string;
-        gasInUSD: number | null;
         gasEstimateCostInUSD: number | null;
         nativeTokenPriceInUSD: number | null;
       }

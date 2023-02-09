@@ -84,7 +84,7 @@ To merge into `V2-main`, follow the steps below
 - Create a PR from `V2-staging`
 - When its ready to merge use the `Create a merge commit` merge strategy
 - This will mean that `V2-main` now has a extra commit in its history
-- We can then create a PR from `V2-main` into `V2-staging`, this will ensure they are now equal
+- We can then create a PR from `V2-main` into `V2-staging`, this will ensure they are now equal. Use the `Create a merge commit` merge strategy.
 
 ## Hotfixes
 

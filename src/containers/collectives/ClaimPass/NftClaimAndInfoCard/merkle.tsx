@@ -27,11 +27,13 @@ import { formatUnix } from 'src/utils/dateUtils';
 import { useApolloClient } from '@apollo/client';
 import useGasEstimate from '@/hooks/useGasEstimate';
 import { CONTRACT_ADDRESSES } from '@/Networks';
+import useGasPrice from '@/hooks/useGasPrice';
 
 // TODO: REMOVE AFTER RR PFP LAUNCH
 const NftClaimAndInfoCard: React.FC<{
   merkleMintModule: NativeTokenPriceMerkleMintModule;
-}> = ({ merkleMintModule }) => {
+  isCommunityMint?: boolean;
+}> = ({ merkleMintModule, isCommunityMint }) => {
   const {
     web3Reducer: {
       web3: {
@@ -100,9 +102,11 @@ const NftClaimAndInfoCard: React.FC<{
       contract: merkleMintModule,
       functionName: 'mint',
       args,
-      value: '0',
+      value: isCommunityMint ? '0.069' : '0',
       withFiat: true
     });
+
+  const { data: gasPriceData } = useGasPrice({ enabled: true });
 
   const gasEstimate = gasEstimateData?.gasEstimate;
 
@@ -291,9 +295,11 @@ const NftClaimAndInfoCard: React.FC<{
             }}
             numberOfExistingMembers={+numOwners}
             priceToJoin={{
-              fiatAmount: 0,
-              tokenAmount: 0,
-              tokenSymbol: ''
+              fiatAmount: gasPriceData?.nativeTokenPriceInUSD
+                ? gasPriceData?.nativeTokenPriceInUSD * 0.069
+                : 0,
+              tokenAmount: isCommunityMint ? 0.069 : 0,
+              tokenSymbol: 'ETH'
             }}
             gasEstimate={
               gasEstimate

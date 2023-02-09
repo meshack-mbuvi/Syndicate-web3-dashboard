@@ -442,7 +442,7 @@ const LayoutWithSyndicateDetails: FC<{
                     {/* Two Columns (Syndicate Details + Widget Cards) */}
                     {!managerSettingsOpen && (
                       <BackButton
-                        /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
+                        customClasses="sm:mt-12"
                         transform={transform}
                         isHidden={isDemoMode}
                       />
