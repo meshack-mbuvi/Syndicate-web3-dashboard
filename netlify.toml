@@ -17,6 +17,10 @@
 [[redirects]]
   from = "/syndicates/*"
   to = "https://v1.syndicate.io/syndicates/:splat"
+  
+[[redirects]]
+  from = "/rugradio/0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962/rug-community-mint"
+  to = "https://app.syndicate.io/collectives/0xc28313a1080322cd4a23a89b71ba5632d1fc8962?chain=mainnet"
 
 # The following is intended to Redirect users from sanctioned countries to Unavailable page
 # Based on Coinbase list of countries ie Cuba(CU), Iran(IR), North Korea(KP), Sudan(SD), Syria(SY)
