@@ -85,7 +85,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
   const walletText =
     walletState === WalletState.ELIGIBLE
-      ? 'Your wallet is eligible to claim this NFT'
+      ? 'Press button below to mint'
       : walletState === WalletState.NOT_ELIGIBLE
       ? `Your connected wallet${
           walletAddress ? `, ${walletAddress}, ` : ' '
@@ -268,26 +268,27 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           )}
           {isOpen ? (
             <div className="space-y-4">
-              <CTAButton
-                type={
-                  walletState === WalletState.NOT_CONNECTED
-                    ? CTAType.PRIMARY
-                    : CTAType.TRANSACTIONAL
-                }
-                onClick={() => {
-                  if (walletState === WalletState.NOT_CONNECTED) {
-                    dispatch(showWalletModal());
-                  } else if (walletState === WalletState.ELIGIBLE) {
-                    claimCollective();
-                    amplitudeLogger(CLAIM_CLICK, {
-                      flow: Flow.COLLECTIVE_CLAIM
-                    });
+              {walletState !== WalletState.NOT_ELIGIBLE && (
+                <CTAButton
+                  type={
+                    walletState === WalletState.NOT_CONNECTED
+                      ? CTAType.PRIMARY
+                      : CTAType.TRANSACTIONAL
                   }
-                }}
-              >
-                {walletButtonText}
-              </CTAButton>
-
+                  onClick={() => {
+                    if (walletState === WalletState.NOT_CONNECTED) {
+                      dispatch(showWalletModal());
+                    } else if (walletState === WalletState.ELIGIBLE) {
+                      claimCollective();
+                      amplitudeLogger(CLAIM_CLICK, {
+                        flow: Flow.COLLECTIVE_CLAIM
+                      });
+                    }
+                  }}
+                >
+                  {walletButtonText}
+                </CTAButton>
+              )}
               {walletState === WalletState.ELIGIBLE && gasEstimate && (
                 // Positioned absolutely so it doesn't take up space
                 <div className="relative">
