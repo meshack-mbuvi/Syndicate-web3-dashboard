@@ -268,27 +268,26 @@ export const ClaimCollectivePass: React.FC<Props> = ({
           )}
           {isOpen ? (
             <div className="space-y-4">
-              {walletState !== WalletState.NOT_ELIGIBLE && (
-                <CTAButton
-                  type={
-                    walletState === WalletState.NOT_CONNECTED
-                      ? CTAType.PRIMARY
-                      : CTAType.TRANSACTIONAL
+              <CTAButton
+                type={
+                  walletState === WalletState.NOT_CONNECTED
+                    ? CTAType.PRIMARY
+                    : CTAType.TRANSACTIONAL
+                }
+                onClick={() => {
+                  if (walletState === WalletState.NOT_CONNECTED) {
+                    dispatch(showWalletModal());
+                  } else if (walletState === WalletState.ELIGIBLE) {
+                    claimCollective();
+                    amplitudeLogger(CLAIM_CLICK, {
+                      flow: Flow.COLLECTIVE_CLAIM
+                    });
                   }
-                  onClick={() => {
-                    if (walletState === WalletState.NOT_CONNECTED) {
-                      dispatch(showWalletModal());
-                    } else if (walletState === WalletState.ELIGIBLE) {
-                      claimCollective();
-                      amplitudeLogger(CLAIM_CLICK, {
-                        flow: Flow.COLLECTIVE_CLAIM
-                      });
-                    }
-                  }}
-                >
-                  {walletButtonText}
-                </CTAButton>
-              )}
+                }}
+              >
+                {walletButtonText}
+              </CTAButton>
+
               {walletState === WalletState.ELIGIBLE && gasEstimate && (
                 // Positioned absolutely so it doesn't take up space
                 <div className="relative">
