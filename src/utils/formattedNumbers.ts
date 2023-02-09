@@ -54,7 +54,7 @@ export const floatedNumberWithCommas = (
   }
 
   try {
-    // avoid rounding up the number when converting to 2 decimal places
+    // avoid rounding up the number when converting to 3 decimal places
     // show 4 decimal places for Native values only.
     let numberTo2decimalsWithoutRoundingUp;
     if (nativeValue) {
@@ -64,7 +64,7 @@ export const floatedNumberWithCommas = (
     } else {
       numberTo2decimalsWithoutRoundingUp = number
         .toString()
-        .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+        .match(/^-?\d+(?:\.\d{0,3})?/)[0];
     }
 
     // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it

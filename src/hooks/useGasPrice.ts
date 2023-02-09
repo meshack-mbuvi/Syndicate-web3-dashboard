@@ -51,8 +51,6 @@ export default function useGasPrice(
 
   const usdGasPrice = gasData?.gas.nativeToken.price.usd as number;
 
-  console.log(usdGasPrice);
-
   return useQuery({
     queryKey: ['gasPrice'],
     queryFn: async () => {
