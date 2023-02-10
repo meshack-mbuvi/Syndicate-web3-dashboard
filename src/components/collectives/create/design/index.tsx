@@ -25,9 +25,9 @@ interface Props {
   fileName?: string;
   acceptFileTypes?: string;
   isUsingGeneratedArtwork?: boolean;
-  generatedArtworkBackgroundColor?: string;
+  generatedArtworkBackgroundColor: string;
   handleCreateGeneratedArtwork?: (backgroundColorClass: string) => void;
-  handleCaptureGeneratedArtwork?: (
+  handleCaptureGeneratedArtwork: (
     imageURI: string,
     backgroundColorClass: string
   ) => void;
@@ -57,20 +57,21 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   captureArtworkRef
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
-  const handleContinueButton = (e: any): void => {
+  const handleContinueButton = async (e: any): Promise<void> => {
     if (isUsingGeneratedArtwork) {
       setIsContinueButtonLoading(true);
-      elementToImage(captureArtworkRef, 2, (imageURI) => {
-        if (handleCaptureGeneratedArtwork && generatedArtworkBackgroundColor) {
-          handleCaptureGeneratedArtwork(
-            imageURI,
-            generatedArtworkBackgroundColor
-          );
-        }
-
+      try {
+        const imageString = await elementToImage(captureArtworkRef, 2);
+        handleCaptureGeneratedArtwork(
+          imageString,
+          generatedArtworkBackgroundColor
+        );
         setIsContinueButtonLoading(false);
         handleContinue(e);
-      });
+      } catch (error) {
+        // add error handling
+        console.error(error);
+      }
     } else {
       handleContinue(e);
     }

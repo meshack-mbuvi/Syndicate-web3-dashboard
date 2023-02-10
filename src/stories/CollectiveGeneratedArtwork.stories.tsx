@@ -44,11 +44,15 @@ const Template = (args: any) => {
       <div className="space-y-5 w-fit-content">
         <div className="flex space-x-2">
           <CTAButton
-            onClick={() => {
-              elementToImage(printRef, 2, (imageURI) => {
-                setArtworkURL(imageURI);
+            onClick={async () => {
+              try {
+                const stringy = await elementToImage(printRef, 2);
+                setArtworkURL(stringy);
                 setShowModal(true);
-              });
+              } catch (error) {
+                // add error handling
+                console.error(error);
+              }
             }}
           >
             Screenshot
