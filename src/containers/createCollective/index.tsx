@@ -88,13 +88,20 @@ const CreateCollectiveContainer: FC = () => {
 
   // This saves the artwork so that in the event user clicks the next button on
   // the navbar, the artwork will be already saved in store
-  const handleNavNextButton = (): void => {
+  const handleNavNextButton = async (): Promise<void> => {
     // captureArtworkRef is only available on index 0
     if (artworkType === NFTMediaType.CUSTOM && activeIndex == 0) {
-      elementToImage(captureArtworkRef, 2, (imageURI) => {
-        handleCaptureGeneratedArtwork(imageURI, artwork.backgroundColorClass);
+      try {
+        const stringyImage = await elementToImage(captureArtworkRef, 2);
+        handleCaptureGeneratedArtwork(
+          stringyImage,
+          artwork?.backgroundColorClass
+        );
         handleNext();
-      });
+      } catch (error) {
+        // add error handling
+        console.error(error);
+      }
     } else {
       handleNext();
     }

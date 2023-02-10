@@ -6,23 +6,20 @@ import { MutableRefObject } from 'react';
  * @param scale multiply the image size
  * */
 
-export const elementToImage = (
+export const elementToImage = async (
   captureRef: MutableRefObject<HTMLButtonElement | HTMLDivElement | null>,
-  scale: number,
-  handleCapture: (imageURI: string) => void
-) => {
+  scale: number
+): Promise<string> => {
   const element = captureRef.current;
-  if (!element) return;
-  void domtoimage
-    .toPng(element, {
-      height: element.offsetHeight * scale,
-      width: element.offsetWidth * scale,
-      style: {
-        transform: 'scale(' + scale + ')',
-        transformOrigin: 'top left',
-        width: element.offsetWidth + 'px',
-        height: element.offsetHeight + 'px'
-      }
-    })
-    .then(handleCapture);
+  if (!element) throw new Error('No element to capture');
+  return domtoimage.toPng(element, {
+    height: element.offsetHeight * scale,
+    width: element.offsetWidth * scale,
+    style: {
+      transform: 'scale(' + scale + ')',
+      transformOrigin: 'top left',
+      width: element.offsetWidth + 'px',
+      height: element.offsetHeight + 'px'
+    }
+  });
 };
