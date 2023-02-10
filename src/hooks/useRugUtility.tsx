@@ -18,7 +18,7 @@ const useRugUtility: any = (tokenId: any, refresh: any) => {
   });
   const [loading, setLoading] = useState(true);
 
-  const checkTokenAmount = async () => {
+  const checkTokenAmount = async (): Promise<void> => {
     if (!tokenId) return;
 
     const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
@@ -31,7 +31,7 @@ const useRugUtility: any = (tokenId: any, refresh: any) => {
   useEffect(() => {
     if (!account || !tokenId) return;
 
-    checkTokenAmount();
+    void checkTokenAmount();
   }, [account, tokenId, refresh]);
 
   return {

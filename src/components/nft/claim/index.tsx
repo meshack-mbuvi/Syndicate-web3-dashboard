@@ -1,27 +1,28 @@
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+import useFetchERC721Claim from '@/hooks/useClaimedERC721';
+import useFetchAirdropInfo from '@/hooks/useERC721AirdropInfo';
+import useFetchERC721MerkleProof from '@/hooks/useERC721MerkleProof';
+import useFetchERC721PublicClaim from '@/hooks/usePublicClaimedERC721';
+import { CONTRACT_ADDRESSES } from '@/Networks';
+import { AppState } from '@/state';
+import {
+  clearERC721TokenDetails,
+  setERC721Loading,
+  setERC721TokenContract,
+  setERC721TokenDetails
+} from '@/state/erc721token/slice';
+import { ERC721Token } from '@/state/erc721token/types';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
+import { getWeiAmount } from '@/utils/conversions';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { getFirstOrString } from '@/utils/stringUtils';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@/state';
+import Tooltip from 'react-tooltip-lite';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
 import ClaimCard from './claimCard';
 import NFTCard from './nftCard';
-import { ERC721Token } from '@/state/erc721token/types';
-import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
-import {
-  setERC721TokenDetails,
-  setERC721TokenContract,
-  setERC721Loading,
-  clearERC721TokenDetails
-} from '@/state/erc721token/slice';
-import useFetchERC721MerkleProof from '@/hooks/useERC721MerkleProof';
-import useFetchERC721Claim from '@/hooks/useClaimedERC721';
-import useFetchERC721PublicClaim from '@/hooks/usePublicClaimedERC721';
-import useFetchAirdropInfo from '@/hooks/useERC721AirdropInfo';
-import { SkeletonLoader } from 'src/components/skeletonLoader';
-import { useRouter } from 'next/router';
-import Tooltip from 'react-tooltip-lite';
-import { numberWithCommas } from '@/utils/formattedNumbers';
-import { getWeiAmount } from '@/utils/conversions';
-import { getNativeTokenPrice } from '@/utils/api/transactions';
-import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -52,9 +53,9 @@ const ClaimNFT: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [loading721, setLoading721] = useState<boolean>(true);
 
-  const { nftAddress } = router.query;
+  const nftAddress = getFirstOrString(router.query.nftAddress) || '';
 
-  const updateMinted = (amount: any) => {
+  const updateMinted = (amount: number): void => {
     setUnMinted(unMinted - amount);
   };
 
@@ -99,8 +100,8 @@ const ClaimNFT: React.FC = () => {
     }
   }, [erc721Token.address, nftAddress, erc721Token.publicUtilityClaimEnabled]);
 
-  const getNativeBalance = async () => {
-    if (account) {
+  const getNativeBalance = async (): Promise<void> => {
+    if (account && web3) {
       const balance = await web3.eth.getBalance(account);
       const nativeBalance = await web3.utils.fromWei(balance, 'ether');
       setNativeBalance(nativeBalance);
@@ -109,10 +110,10 @@ const ClaimNFT: React.FC = () => {
   };
 
   useEffect(() => {
-    getNativeBalance();
+    void getNativeBalance();
   }, [account]);
 
-  const getERC721TokenDetails = async (ERC721tokenContract: any) => {
+  const getERC721TokenDetails = async (ERC721tokenContract: ERC721Contract) => {
     const { address } = ERC721tokenContract;
     const { mintPolicyERC721, PublicMintWithFeeModule } = syndicateContracts;
 
@@ -123,7 +124,7 @@ const ClaimNFT: React.FC = () => {
         ERC721tokenContract.symbol(),
         ERC721tokenContract.rendererAddr(),
         ERC721tokenContract.currentSupply()
-      ]);
+      ]).catch(() => Array(5).fill('') as string[]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.OnePerAddressMintModule;
@@ -188,7 +189,7 @@ const ClaimNFT: React.FC = () => {
       symbol,
       owner,
       maxSupply: publicSupply,
-      currentSupply,
+      currentSupply: Number(currentSupply),
       publicSupply,
       rendererAddr,
       loading: false,
@@ -216,8 +217,8 @@ const ClaimNFT: React.FC = () => {
     if (
       account !== currentAccount &&
       router.isReady &&
-      web3.utils &&
-      web3.utils.isAddress(nftAddress) &&
+      web3?.utils &&
+      web3?.utils.isAddress(nftAddress) &&
       syndicateContracts?.MerkleDistributorModuleERC721 &&
       // @ts-expect-error TS(2341): Property '_address' is private and only accessible... Remove this comment to see the full error message
       syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address &&
@@ -233,7 +234,7 @@ const ClaimNFT: React.FC = () => {
       setLoading721(true);
       // get token details
       try {
-        getERC721TokenDetails(ERC721tokenContract);
+        void getERC721TokenDetails(ERC721tokenContract);
         return;
       } catch (error) {
         return () => {
@@ -254,7 +255,7 @@ const ClaimNFT: React.FC = () => {
     // @ts-expect-error TS(2341): Property '_address' is private and only accessible... Remove this comment to see the full error message
     syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address,
     syndicateContracts?.PublicMintWithFeeModule,
-    web3.utils
+    web3?.utils
   ]);
 
   useEffect(() => {

@@ -1,6 +1,18 @@
 import CreateClubButton from '@/components/createClubButton';
+import CreateDealButton from '@/components/createDealButton';
+import SegmentedControl from '@/components/segmentedControl/tabs';
+import CreateEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/createEmptyState';
 import { H3 } from '@/components/typography';
+import useAdminClubs from '@/hooks/clubs/useAdminClubs';
+import useMemberClubs from '@/hooks/clubs/useMemberClubs';
+import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
+import useAdminDeals from '@/hooks/deals/useAdminDeals';
+import useMemberDeals from '@/hooks/deals/useMemberDeals';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import useWindowSize from '@/hooks/useWindowSize';
+import { FEATURE_FLAGS } from '@/pages/_app';
 import { AppState } from '@/state';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,18 +25,6 @@ import {
   MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
 import CollectivesTable from './portfolio/collectivesTable';
-import CreateEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/createEmptyState';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
-import SegmentedControl from '@/components/segmentedControl/tabs';
-import useAdminCollectives from '@/hooks/collectives/useAdminCollectives';
-import useMemberCollectives from '@/hooks/collectives/useMemberCollectives';
-import useAdminClubs from '@/hooks/clubs/useAdminClubs';
-import useMemberClubs from '@/hooks/clubs/useMemberClubs';
-import useMemberDeals from '@/hooks/deals/useMemberDeals';
-import useAdminDeals from '@/hooks/deals/useAdminDeals';
-import useFeatureFlag from '@/hooks/useFeatureFlag';
-import { FEATURE_FLAGS } from '@/pages/_app';
-import CreateDealButton from '@/components/createDealButton';
 import DealsTable from './portfolio/dealsTable';
 
 // generate multiple skeleton loader components
@@ -71,7 +71,7 @@ const PortfolioAndDiscover: React.FC = () => {
   const { isReady: isDealsReady, readyClient: readyDealsClient } =
     useFeatureFlag(FEATURE_FLAGS.DEALS, {});
 
-  const { adminClubs, adminClubsLoading } = useAdminClubs();
+  const { adminClubs, loading: adminClubsLoading } = useAdminClubs();
   const { memberClubs, memberClubsLoading } = useMemberClubs();
   const isLoading = memberClubsLoading || adminClubsLoading;
   const { width } = useWindowSize();
@@ -127,9 +127,9 @@ const PortfolioAndDiscover: React.FC = () => {
   // only admin or member clubs/collectives to show
   useEffect(() => {
     //clubs
-    if (memberClubs.length === 0 && adminClubs.length !== 0) {
+    if (memberClubs?.length === 0 && adminClubs.length !== 0) {
       setActiveClubsTab(TabsType.ADMIN);
-    } else if (memberClubs.length !== 0 && adminClubs.length === 0) {
+    } else if (memberClubs?.length !== 0 && adminClubs.length === 0) {
       setActiveClubsTab(TabsType.MEMBER);
     }
 
@@ -155,7 +155,7 @@ const PortfolioAndDiscover: React.FC = () => {
   }, [
     adminCollectives.length,
     memberCollectives.length,
-    memberClubs.length,
+    memberClubs?.length,
     adminClubs.length,
     adminDeals.length,
     memberDeals.length
@@ -175,7 +175,7 @@ const PortfolioAndDiscover: React.FC = () => {
       readyDealsClient.treatment === 'on') ||
     false;
 
-  const emptyClubs = !memberClubs.length && !adminClubs.length;
+  const emptyClubs = !memberClubs?.length && !adminClubs.length;
   const emptyCollectives =
     !memberCollectives.length && !adminCollectives.length;
   const emptyDeals = !adminDeals.length && !memberDeals.length;

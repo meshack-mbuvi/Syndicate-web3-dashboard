@@ -1,12 +1,12 @@
-import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import {
-  setLoadingERC721Claimed,
-  setERC721Claimed,
-  clearERC721Claimed
-} from '@/state/claimedERC721/slice';
 import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+import { AppState } from '@/state';
+import {
+  clearERC721Claimed,
+  setERC721Claimed,
+  setLoadingERC721Claimed
+} from '@/state/claimedERC721/slice';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchERC721PublicClaim: any = () => {
   const dispatch = useDispatch();
@@ -66,7 +66,6 @@ const useFetchERC721PublicClaim: any = () => {
         })
       );
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
 

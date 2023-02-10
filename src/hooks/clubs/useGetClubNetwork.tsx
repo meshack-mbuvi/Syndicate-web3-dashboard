@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { CLUB_TOKEN_QUERY } from '@/graphql/subgraph_queries';
+import {
+  SyndicateDaoByIdQuery,
+  useSyndicateDaoByIdQuery
+} from '@/hooks/data-fetching/thegraph/generated-types';
 import { NETWORKS } from '@/Networks';
 import { GRAPH_ENDPOINTS, SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { INetwork } from '@/Networks/networks';
 import { AppState } from '@/state';
-import { useApolloClient, useQuery } from '@apollo/client';
+import { getFirstOrString } from '@/utils/stringUtils';
+import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -41,10 +46,11 @@ export const useGetClubNetwork = (): {
   } = useRouter();
 
   const apolloClient = useApolloClient();
+  const _clubAddress = getFirstOrString(clubAddress) || '';
 
-  const { loading: graphLoading, data } = useQuery(CLUB_TOKEN_QUERY, {
+  const { loading: graphLoading, data } = useSyndicateDaoByIdQuery({
     variables: {
-      syndicateDaoId: clubAddress
+      syndicateDaoId: _clubAddress
     },
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
@@ -63,7 +69,7 @@ export const useGetClubNetwork = (): {
     ];
 
     for (const _chainId of _otherChainIds) {
-      const { data } = await apolloClient.query({
+      const { data } = await apolloClient.query<SyndicateDaoByIdQuery>({
         query: CLUB_TOKEN_QUERY,
         variables: {
           syndicateDaoId: clubAddress

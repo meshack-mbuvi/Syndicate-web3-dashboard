@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TokenClaimed, initialState } from './types';
+import { initialState, TokenClaimed } from './types';
 
 const setTokenClaimedSlice = createSlice({
   name: 'tokenClaimed',
@@ -12,8 +12,7 @@ const setTokenClaimedSlice = createSlice({
     setLoadingTokenClaimed(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    clearTokenClaimed(state, action: PayloadAction<boolean>) {
+    clearTokenClaimed(state) {
       state.isTokenClaimed = initialState.isTokenClaimed;
     }
   }

@@ -1,15 +1,14 @@
-import { GetAdminCollectives } from '@/graphql/subgraph_queries';
 import { getCollectiveMedia } from '@/hooks/collectives/utils/helpers';
 import {
   ICollective,
   IGraphCollectiveResponse,
   TokenMediaType
 } from '@/hooks/collectives/utils/types';
+import { useSyndicateCollectivesQuery } from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -31,7 +30,7 @@ const useAdminCollectives = (): {
   const [adminCollectives, setAdminCollectives] = useState<ICollective[]>([]);
 
   // retrieve admin collectives
-  const { loading, refetch, data } = useQuery(GetAdminCollectives, {
+  const { loading, data } = useSyndicateCollectivesQuery({
     variables: {
       where: { ownerAddress: walletAddress }
     },
@@ -45,12 +44,6 @@ const useAdminCollectives = (): {
       !activeNetwork.chainId ||
       status !== Status.CONNECTED
   });
-
-  useEffect(() => {
-    refetch({
-      where: { ownerAddress: walletAddress }
-    });
-  }, [activeNetwork.chainId, walletAddress]);
 
   useEffect(() => {
     if (loading || !data?.syndicateCollectives) return;
@@ -102,11 +95,11 @@ const useAdminCollectives = (): {
             address: contractAddress,
             tokenName: name,
             tokenSymbol: symbol,
-            pricePerNft: getWeiAmount(
+            pricePerNft: +getWeiAmount(
               mintPrice,
               +activeNetwork.nativeCurrency.decimals,
               false
-            ) as number,
+            ),
             totalClaimed: +totalSupply,
             tokenMedia,
             tokenMediaType,

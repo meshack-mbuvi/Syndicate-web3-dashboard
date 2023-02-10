@@ -28,7 +28,7 @@ const useFetchERC721Claim: any = () => {
   const [loading, setLoading] = useState(false);
   const [claimData, setClaimData] = useState([]);
 
-  const getClaim = async () => {
+  const getClaim = async (): Promise<void> => {
     setLoading(true);
     const { MerkleDistributorModuleERC721 } = syndicateContracts;
     const events = await MerkleDistributorModuleERC721.getPastEvents(
@@ -38,13 +38,16 @@ const useFetchERC721Claim: any = () => {
         claimant: account.toLowerCase()
       }
     );
-    setClaimData(events);
+    if (events) {
+      setClaimData(events);
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
     if (erc721MerkleProof.accountIndex >= 0 && account && nftAddress) {
-      getClaim();
+      void getClaim();
     }
   }, [erc721MerkleProof.accountIndex, account, nftAddress]);
 
@@ -59,7 +62,7 @@ const useFetchERC721Claim: any = () => {
       const claim = claimData.filter(
         (_claim) =>
           // @ts-expect-error TS(2339): Property 'returnValues' does not exist on type 'ne... Remove this comment to see the full error message
-          _claim.returnValues?.treeIndex ===
+          _claim?.returnValues?.treeIndex ===
           erc721MerkleProof?.treeIndex?.toString()
       );
 
@@ -77,13 +80,11 @@ const useFetchERC721Claim: any = () => {
           })
         );
       } else {
-        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         dispatch(clearERC721Claimed());
       }
 
       dispatch(setLoadingERC721Claimed(false));
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
   }, [loading, publicSingleClaimEnabled, publicUtilityClaimEnabled]);

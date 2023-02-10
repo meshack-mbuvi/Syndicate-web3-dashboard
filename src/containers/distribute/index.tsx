@@ -6,12 +6,12 @@ import Layout from '@/components/layout';
 import SyndicateEmptyState from '@/components/shared/SyndicateEmptyState';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
+import { getNetworkByName } from '@/helpers/getNetwork';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
-import { getNetworkByName } from '@/helpers/getNetwork';
 import { INetwork } from '@/Networks/networks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -578,6 +578,7 @@ const Distribute: FC = () => {
 
     if (
       !isZeroAddress(clubAddress as string) &&
+      web3 &&
       web3.utils?.isAddress(clubAddress as string) &&
       DepositTokenMintModule
     ) {

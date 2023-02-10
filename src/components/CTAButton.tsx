@@ -27,7 +27,9 @@ interface Props {
   type?: CTAType;
   id?: string;
   extraClasses?: string;
-  onClick?: any;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
   onMouseOver?: any;
   onMouseOut?: any;
   onBlur?: any;

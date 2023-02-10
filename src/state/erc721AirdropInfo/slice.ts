@@ -13,7 +13,7 @@ const setERC721AirdropInfoSlice = createSlice({
       state.loading = action.payload;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    clearERC721AirdropInfo(state, action: PayloadAction<boolean>) {
+    clearERC721AirdropInfo(state) {
       state.erc721AirdropInfo = initialState.erc721AirdropInfo;
     }
   }

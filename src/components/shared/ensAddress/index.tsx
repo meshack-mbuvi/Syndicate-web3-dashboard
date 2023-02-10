@@ -14,7 +14,7 @@ export enum AddressLayout {
 }
 
 interface Props {
-  ethersProvider: Web3Provider;
+  ethersProvider: Web3Provider | null;
   address?: string;
   maxDigits?: number;
   imageSize?: AddressImageSize;

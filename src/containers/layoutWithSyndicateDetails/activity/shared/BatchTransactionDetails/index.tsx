@@ -72,11 +72,12 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
         : 'received from';
     }
   };
-  const addGrayToDecimalInput = (str: any) => {
+  const addGrayToDecimalInput = (str: any): JSX.Element => {
     if (typeof str !== 'string') {
       str.toString();
     }
-    const [wholeNumber, decimalPart] = str.split('.');
+    const [wholeNumber, decimalPart] = (str as string).split('.');
+
     return (
       <div className="flex">
         {wholeNumber ? <p className="text-white">{wholeNumber}</p> : null}
@@ -85,7 +86,9 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
     );
   };
 
-  const AddressIsMember = async (address: string) => {
+  const AddressIsMember = async (address: string): Promise<boolean> => {
+    if (!web3) return false;
+
     return await getMemberBalance(
       contractAddress,
       address,
@@ -198,8 +201,8 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     : onModal &&
                       category === TransactionCategory.DISTRIBUTION &&
                       numClubMembers !== 1
-                    ? `${numClubMembers} members`
-                    : !web3.utils.isAddress(addresses[0])
+                    ? `${numClubMembers ?? '0'} members`
+                    : web3 && !web3.utils.isAddress(addresses[0])
                     ? addresses[0]
                     : formatAddress(addresses[0], 6, 4)}
                 </div>
@@ -215,7 +218,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
             <p className="text-xl">
               {companyName
                 ? companyName
-                : !web3.utils.isAddress(addresses[0])
+                : web3 && !web3.utils.isAddress(addresses[0])
                 ? addresses[0]
                 : formatAddress(addresses[0], 6, 4)}
             </p>

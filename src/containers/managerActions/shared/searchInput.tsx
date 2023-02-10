@@ -1,23 +1,23 @@
-import { useRef, useEffect, Dispatch, SetStateAction } from 'react';
-import { formatAddress } from 'src/utils/formatAddress';
 import { isAddress } from 'ethers/lib/utils';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { formatAddress } from 'src/utils/formatAddress';
 
 // component to set filter term for data.
 export const SearchInput: React.FC<{
   setSearchTerm: Dispatch<SetStateAction<string>>;
   searchTerm: string;
-  // web3: any;
   placeholder?: string;
 }> = ({ setSearchTerm, searchTerm, placeholder = 'Search members' }) => {
-  const searchInput = useRef(null);
+  const searchInput = useRef<HTMLInputElement>(null);
 
-  const clearInputField = () => {
+  const clearInputField = (): void => {
     setSearchTerm('');
   };
 
   useEffect(() => {
-    // @ts-expect-error TS(2531): Object is possibly 'null'.
-    searchInput.current.focus();
+    if (searchInput?.current) {
+      searchInput.current.focus();
+    }
   });
 
   return (
@@ -33,7 +33,7 @@ export const SearchInput: React.FC<{
           className="font-whyte focus:ring-gray-4 block w-full pl-9 text-base sm:text-sm text-gray-3 focus:text-white bg-gray-4 border-none"
           style={{ borderRadius: '5px' }}
           placeholder={placeholder}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e): void => setSearchTerm(e.target.value)}
           value={
             isAddress(searchTerm)
               ? formatAddress(searchTerm, 18, 17)
@@ -45,7 +45,7 @@ export const SearchInput: React.FC<{
         {searchTerm && (
           <button
             className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-            onClick={() => clearInputField()}
+            onClick={(): void => clearInputField()}
           >
             <img
               src="/images/close-circle.svg"

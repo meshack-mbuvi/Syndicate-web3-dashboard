@@ -1,17 +1,17 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { MANAGE_DASHBOARD_CLICK } from '@/components/amplitude/eventNames';
 import { CollectivesCreateSuccess } from '@/components/collectives/create/success';
+import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
 import { useCreateState } from '@/hooks/collectives/useCreateCollective';
-import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { partialCollectiveCreationStateReset } from '@/state/createCollective/slice';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface SuccessRightPanelProps {
   extraClasses?: string;
 }
-import { CollectivesInteractiveBackground } from '@/components/collectives/interactiveBackground';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { MANAGE_DASHBOARD_CLICK } from '@/components/amplitude/eventNames';
 
 export const CreateCollectiveSuccess: FC = () => {
   const { creationReceipt } = useCreateState();
@@ -43,12 +43,10 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
   } = useSelector((state: AppState) => state);
 
   const { creationReceipt } = useCreateState();
-  const [collectiveAddress, setCollectiveAddress] = useState<string | null>(
-    null
-  );
-  const [collectiveName, setCollectiveName] = useState<string | null>('');
+  const [collectiveAddress, setCollectiveAddress] = useState<string>('');
+  const [collectiveName, setCollectiveName] = useState<string>('');
 
-  const onCollectiveCreated = async () => {
+  const onCollectiveCreated = async (): Promise<void> => {
     await setCollectiveAddress(creationReceipt.collective);
     await setCollectiveName(creationReceipt.name);
     dispatch(partialCollectiveCreationStateReset());
@@ -56,7 +54,7 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
 
   useEffect(() => {
     if (creationReceipt.collective) {
-      onCollectiveCreated();
+      void onCollectiveCreated();
     }
   }, [creationReceipt.collective]);
 
@@ -64,11 +62,11 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
     return `${window.location.origin}/collectives/${collectiveAddress}?chain=${activeNetwork.network}`;
   }, [collectiveAddress]);
 
-  const CTAOnClick = () => {
-    router.push(
+  const CTAOnClick = (): void => {
+    void router.push(
       `/collectives/${collectiveAddress}${'?chain=' + activeNetwork.network}`
     );
-    amplitudeLogger(MANAGE_DASHBOARD_CLICK, {
+    void amplitudeLogger(MANAGE_DASHBOARD_CLICK, {
       flow: Flow.COLLECTIVE_CREATE
     });
   };
@@ -78,7 +76,6 @@ export const SuccessRightPanel: React.FC<SuccessRightPanelProps> = ({
       className={`flex w-full h-full items-center justify-center ${extraClasses}`}
     >
       <CollectivesCreateSuccess
-        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'st... Remove this comment to see the full error message
         name={collectiveName}
         inviteLink={collectiveURL}
         CTAonClick={CTAOnClick}

@@ -2,7 +2,7 @@
 // ==============================================================
 
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useCreateState from './useCreateState';
 // import { acronymGenerator } from '@/utils/acronymGenerator';
@@ -36,11 +36,16 @@ const useUpdateState = () => {
   const [ContinueButtonActive, setContinueButtonActive] = useState(false);
   const [submitButtonActive, setSubmitButtonActive] = useState(false);
   const [progressPercent, setProgressPercent] = useState(artworkUrl ? 100 : 0);
-  const [fileName, setFileName] = useState(artwork?.name);
+  const [fileName, setFileName] = useState(artwork?.name || '');
   const [hasAgreedToTerms, setAgreedToTerms] = useState(false);
   const [exceededUploadLimit, setExceededUploadLimit] = useState('');
 
-  const getArtworkType = (fileObject: any) => {
+  const getArtworkType = (
+    fileObject: File
+  ): {
+    mediaType: NFTMediaType;
+    mediaSource: string;
+  } => {
     let mediaType: NFTMediaType = NFTMediaType.IMAGE;
     let mediaSource = '';
     if (fileObject?.type) {
@@ -66,22 +71,24 @@ const useUpdateState = () => {
   // State update handlers
   // ==============================================================
 
-  const handleNameChange = (input: string) => {
+  const handleNameChange = (input: string): void => {
     dispatch(setIpfsHash(''));
     dispatch(setCollectiveName(input));
   };
 
-  const handleTokenSymbolChange = (input: string) => {
+  const handleTokenSymbolChange = (input: string): void => {
     dispatch(setIpfsHash(''));
     dispatch(setCollectiveSymbol(input));
   };
 
-  const handleDescriptionChange = (input: string) => {
+  const handleDescriptionChange = (input: string): void => {
     dispatch(setIpfsHash(''));
     dispatch(setCollectiveDescription(input));
   };
 
-  const handleCreateGeneratedArtwork = async (backgroundColorClass: string) => {
+  const handleCreateGeneratedArtwork = async (
+    backgroundColorClass: string
+  ): Promise<void> => {
     dispatch(
       setCollectiveArtwork({
         artwork: {
@@ -96,7 +103,7 @@ const useUpdateState = () => {
   const handleCaptureGeneratedArtwork = (
     imageURI: string,
     backgroundColorClass: string
-  ) => {
+  ): void => {
     dispatch(
       setCollectiveArtwork({
         artwork: {
@@ -108,10 +115,12 @@ const useUpdateState = () => {
     );
   };
 
-  const handleFileUpload = async (e: any) => {
+  const handleFileUpload = async (
+    e: ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     dispatch(setIpfsHash(''));
     const fileLimit = 50;
-    const fileObject = e.target.files[0];
+    const fileObject = e.target?.files?.[0];
 
     await dispatch(
       setCollectiveArtwork({
@@ -120,7 +129,7 @@ const useUpdateState = () => {
         artworkUrl: ''
       })
     );
-    if (e.target.files.length) {
+    if (e.target.files?.length && fileObject) {
       const { mediaType, mediaSource } = getArtworkType(fileObject);
       dispatch(
         setCollectiveArtwork({
@@ -129,7 +138,7 @@ const useUpdateState = () => {
           artworkUrl: mediaSource
         })
       );
-      setFileName(fileObject.name);
+      setFileName(fileObject?.name);
       setExceededUploadLimit(
         fileObject.size / 1024 / 1024 > fileLimit
           ? 'File exceeds size limit of ' + fileLimit + ' MB'
@@ -137,14 +146,15 @@ const useUpdateState = () => {
       );
       setProgressPercent(100);
     }
-    amplitudeLogger(ARTWORK_UPLOAD, {
+
+    void amplitudeLogger(ARTWORK_UPLOAD, {
       flow: Flow.COLLECTIVE_CREATE,
-      file_type: fileObject.type,
-      file_size: fileObject.size + ' MB'
+      file_type: fileObject?.type,
+      file_size: fileObject?.size + ' MB'
     });
   };
 
-  const handleCancelUpload = () => {
+  const handleCancelUpload = (): void => {
     dispatch(setIpfsHash(''));
     dispatch(
       setCollectiveArtwork({
@@ -157,7 +167,7 @@ const useUpdateState = () => {
     setFileName('');
   };
 
-  const handleTimeWindowChange = (timeWindow: TimeWindow) => {
+  const handleTimeWindowChange = (timeWindow: TimeWindow): void => {
     dispatch(setCollectiveTimeWindow(timeWindow));
     const now = new Date();
     const time = `${now.getHours()}:${now.getMinutes()}`;
@@ -176,33 +186,36 @@ const useUpdateState = () => {
       handleCloseTimeChange(time);
     }
   };
-  const handlePriceToJoinChange = (priceToJoin: number) => {
+  const handlePriceToJoinChange = (priceToJoin: number): void => {
     dispatch(setCollectivePricePerNFT(priceToJoin));
   };
-  const handleMaxPerWalletChange = (maxPerWallet: number) => {
+  const handleMaxPerWalletChange = (maxPerWallet: number): void => {
     dispatch(setCollectiveMaxPerWallet(maxPerWallet));
   };
-  const handleMaxSupplyChange = (maxSupply: number) => {
+  const handleMaxSupplyChange = (maxSupply: number): void => {
     dispatch(setCollectiveMaxSupply(maxSupply));
   };
-  const handleClickToChangeToken = () => {
+  const handleClickToChangeToken = (): void => {
     return;
   };
-  const handleTokenDetailsChange = (tokenDetails: any) => {
+  const handleTokenDetailsChange = (tokenDetails: {
+    symbol: string;
+    icon: string;
+  }): void => {
     dispatch(setColectiveTokenDetails(tokenDetails));
   };
-  const handleOpenUntilChange = (openUntil: OpenUntil) => {
+  const handleOpenUntilChange = (openUntil: OpenUntil): void => {
     dispatch(setCollectiveOpenUntil(openUntil));
   };
-  const handleCloseDateChange = (closeDate: Date) => {
+  const handleCloseDateChange = (closeDate: Date): void => {
     dispatch(setCollectiveCloseDate(closeDate));
   };
-  const handleCloseTimeChange = (closeTime: string) => {
+  const handleCloseTimeChange = (closeTime: string): void => {
     dispatch(setCollectiveCloseTime(closeTime || '00:00'));
   };
   const handleChangeAllowOwnershipTransfer = (
     allowOwnershipTransfer: boolean
-  ) => {
+  ): void => {
     dispatch(setCollectiveTransferrable(allowOwnershipTransfer));
   };
 

@@ -1,26 +1,27 @@
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import { getInputs, sortAbiFunction } from '@/utils/remix';
-import { toChecksumAddress } from 'ethereumjs-util';
-import { FunctionFragment, isAddress } from 'ethers/lib/utils';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { useQuery, gql } from '@apollo/client';
-import AbiUI from './AbiUI';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { isEmpty } from 'lodash';
-import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
+import { ProgressState } from '@/components/progressCard';
+import { ProgressModal } from '@/components/progressModal';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { M2 } from '@/components/typography';
 import getSupportedAbi, {
   SupportedAbiDetails,
   SupportedAbiError
 } from '@/helpers/getSupportedAbi';
-import { ProgressState } from '@/components/progressCard';
-import DecodedFnModal from './modalSteps/DecodedFnModal';
-import { ProgressModal } from '@/components/progressModal';
-import { M2 } from '@/components/typography';
 import { CONTRACT_ADDRESSES } from '@/Networks';
+import { AppState } from '@/state';
+import { getInputs, sortAbiFunction } from '@/utils/remix';
+import { gql, useQuery } from '@apollo/client';
+import { toChecksumAddress } from 'ethereumjs-util';
+import { FunctionFragment, isAddress } from 'ethers/lib/utils';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { AbiItem } from 'web3-utils';
+import AbiUI from './AbiUI';
 import { parseValue } from './encodeParams';
+import DecodedFnModal from './modalSteps/DecodedFnModal';
 
 interface ContractUIProps {
   contractAddress: string;
@@ -252,7 +253,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
 
   // TODO [REMIX]: [PRO2-79] refactor and move to contract
   const runTransaction = async (
-    abi: JSON,
+    abi: AbiItem | AbiItem[],
     abiFunction: FunctionFragment | null,
     inputsValues: string[] | undefined,
     callCb: (res: any, isError?: boolean) => void,
@@ -260,7 +261,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
     receiptCb: (receipt: any) => void,
     failCb: (err: any) => void,
     isLookupOnly?: boolean
-  ) => {
+  ): Promise<void> => {
     if (isEmpty(web3) || !account || !abiFunction) {
       return;
     }

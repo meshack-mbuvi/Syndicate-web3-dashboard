@@ -707,52 +707,98 @@ export const mockOffChainTransactionsData = {
 
 export const mockClubMembers = [
   {
+    id: '0x563c573144798fff330207b32d37537dbb517503',
     ownershipShare: '316494',
     depositAmount: '3812000000',
     tokens: '3812000000000000000000',
-    member: {
-      memberAddress: '0x005d3f75730cf16e25208bcb27ca941d33db9f8a'
-    }
+    members: [
+      {
+        id: '0x0563a7ab3da117e694c6b85f80a20ad5dbbad6b9-0x563c573144798fff330207b32d37537dbb517503',
+        depositAmount: '20000000000000000',
+        tokens: 200000000000000000000,
+        createdAt: '0',
+        member: {
+          id: '',
+          memberAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad'
+        }
+      }
+    ],
+    totalSupply: '200000000000000000000',
+    totalDeposits: '20000000000000000',
+    contractAddress: '0x563c573144798fff330207b32d37537dbb517503',
+    startTime: '1670502092',
+    endTime: '1673180480'
   },
   {
+    id: '0x563c573144798fff330207b32d37537dbb5rtehd',
     ownershipShare: '523228',
     depositAmount: '6302000000',
     tokens: '6302000000000000000000',
-    member: {
-      memberAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad'
-    }
+    members: [
+      {
+        id: '0x0563a7ab3da117e694c6b85f80a20ad5dbbad6b9-0x563c573144798fff330207b32d37537dbb517503',
+        depositAmount: '20000000000000000',
+        tokens: 200000000000000000000,
+        createdAt: '0',
+        member: {
+          id: '',
+          memberAddress: '0x0574db630bb75dbe4310fbd6eb08dc47048b6fad'
+        }
+      }
+    ],
+    totalSupply: '200000000000000000000',
+    totalDeposits: '20000000000000000',
+    contractAddress: '0x563c573144798fff330207b32d37537dbb517503',
+    startTime: '1670502092',
+    endTime: '1673180480'
   },
   {
-    ownershipShare: '1033',
-    depositAmount: '12450000',
-    tokens: '12450000000000000000',
-    member: {
-      memberAddress: '0x0cba94a2e458ccace1cc5bac0f05c0c67d9680fd'
-    }
+    id: '0x563c573144798fff330207b32d37537dbb5rtehd',
+    ownershipShare: '523228',
+    depositAmount: '6302000000',
+    tokens: '6302000000000000000000',
+    members: [
+      {
+        id: '0x0563a7ab3da117e694c6b85f80hgfhjfhgfhnfjh-0x563c573144798fff330207b32d37537dbb517503',
+        ownershipShare: '1033',
+        depositAmount: '12450000',
+        tokens: '12450000000000000000',
+        createdAt: '0',
+        member: {
+          id: '',
+          memberAddress: '0x0cba94a2e458ccace1cc5bac0f05c0c67d9680fd'
+        }
+      }
+    ],
+    totalSupply: '200000000000000000000',
+    totalDeposits: '20000000000000000',
+    contractAddress: '0x563c573144798fff330207b32d37537dbb517503',
+    startTime: '1670502092',
+    endTime: '1673180480'
   },
   {
-    ownershipShare: '35618',
-    depositAmount: '429000000',
-    tokens: '429000000000000000000',
-    member: {
-      memberAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb'
-    }
-  },
-  {
-    ownershipShare: '24907',
-    depositAmount: '300000000',
-    tokens: '300000000000000000000',
-    member: {
-      memberAddress: '0x50ccff161ce2751fcfcdc6cf3ec9cc85c933af25'
-    }
-  },
-  {
-    ownershipShare: '98717',
-    depositAmount: '1189000000',
-    tokens: '1189000000000000000000',
-    member: {
-      memberAddress: '0x7cd2d1c36d287f7db66ed74477813f87ef33bf91'
-    }
+    id: '0x563c573144798fff330207b32d37537dbb5rtehd',
+    ownershipShare: '523228',
+    depositAmount: '6302000000',
+    tokens: '6302000000000000000000',
+    members: [
+      {
+        id: '0x0563a7ab3da117e694c6b85f80hgfhjfhgfhnfjh-0x563c573144798fff330207b32d37537dbb517503',
+        ownershipShare: '35618',
+        depositAmount: '429000000',
+        tokens: '429000000000000000000',
+        createdAt: '0',
+        member: {
+          id: '',
+          memberAddress: '0x3b01acd0e53f7c3a636758cb19044325959f96cb'
+        }
+      }
+    ],
+    totalSupply: '200000000000000000000',
+    totalDeposits: '20000000000000000',
+    contractAddress: '0x563c573144798fff330207b32d37537dbb517503',
+    startTime: '1670502092',
+    endTime: '1673180480'
   }
 ];
 

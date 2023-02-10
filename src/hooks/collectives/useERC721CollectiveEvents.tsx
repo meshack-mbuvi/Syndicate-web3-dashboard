@@ -1,11 +1,10 @@
 import { CollectiveActivityType } from '@/components/collectives/activity';
-import { GetERC721MemberEvents } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useGetEventsQuery } from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
 
 export interface IEvent {
@@ -17,7 +16,7 @@ export interface IEvent {
 }
 
 export interface ICollectiveEventsResponse {
-  collectiveEvents: IEvent[];
+  collectiveEvents: IEvent[] | undefined;
   collectiveEventsLoading: boolean;
 }
 
@@ -36,10 +35,10 @@ const useERC721CollectiveEvents = (): ICollectiveEventsResponse => {
   const isDemoMode = useDemoMode();
 
   // get collective member joined events
-  const { loading, data } = useQuery(GetERC721MemberEvents, {
+  const { loading, data } = useGetEventsQuery({
     variables: {
       where: {
-        collective_contains_nocase: collectiveAddress
+        collective_contains_nocase: collectiveAddress as string
       }
     },
     skip:
@@ -56,7 +55,7 @@ const useERC721CollectiveEvents = (): ICollectiveEventsResponse => {
     }
 
     if (data && data.mintERC721S.length) {
-      return data.mintERC721S.map((event: any) => {
+      return data.mintERC721S.map((event) => {
         const { to, createdAt } = event;
         return {
           activityType: CollectiveActivityType.RECEIVED,
@@ -67,6 +66,7 @@ const useERC721CollectiveEvents = (): ICollectiveEventsResponse => {
         };
       });
     }
+    return [];
   }, [loading, data]);
 
   return {

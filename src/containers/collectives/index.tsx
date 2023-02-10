@@ -32,7 +32,7 @@ interface IProps {
 }
 
 interface ICollectiveDetails {
-  permissionType: PermissionType;
+  permissionType: PermissionType | null;
 }
 
 const HeaderComponent: React.FC<IProps> = (args) => {
@@ -45,7 +45,10 @@ const HeaderComponent: React.FC<IProps> = (args) => {
   } = useSelector((state: AppState) => state);
 
   const {
-    collectiveDetails: { collectiveName, collectiveAddress },
+    collectiveDetails: {
+      collectiveName = '',
+      contractAddress: collectiveAddress
+    },
     collectiveDetailsLoading
   } = useERC721Collective();
 
@@ -53,26 +56,22 @@ const HeaderComponent: React.FC<IProps> = (args) => {
 
   useEffect(() => {
     if (collectiveDetailsLoading) return;
-    async function getLink() {
+    async function getLink(): Promise<void> {
+      if (!collectiveAddress) return;
       await getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
         setOpenSeaLink(link);
       });
     }
-    getLink();
+    void getLink();
   }, [collectiveDetailsLoading, collectiveAddress, chainId]);
 
   const links = {
     externalLink: '/',
-    openSea: openSeaLink
+    openSea: openSeaLink || ''
   };
 
   return (
-    <CollectiveHeader
-      collectiveName={collectiveName}
-      // @ts-expect-error TS(2322): Type '{ externalLink: string; openSea: string | undefined; } is not assignable ... Remove this comment to see the full error message
-      links={links}
-      {...args}
-    />
+    <CollectiveHeader collectiveName={collectiveName} links={links} {...args} />
   );
 };
 
@@ -211,28 +210,32 @@ const CollectiveDetails: React.FC<ICollectiveDetails> = (details) => {
           showModifySettings={permissionType == PermissionType.ADMIN}
         />
         <CollectiveDescription />
-        <CollectiveCard
-          cardType={collectiveCardType}
-          closeDate={moment
-            .unix(parseInt(mintEndTime))
-            .format('MMMM DD[,] YYYY')}
-          passes={{
-            available: parseInt(maxTotalSupply),
-            total: parseInt(totalSupply)
-          }}
-          price={{
-            tokenAmount: floatedNumberWithCommas(mintPrice),
-            tokenSymbol: nativeCurrency.symbol,
-            tokenIcon: nativeCurrency.logo
-          }}
-        />
+        {collectiveCardType ? (
+          <CollectiveCard
+            cardType={collectiveCardType}
+            closeDate={moment
+              .unix(parseInt(mintEndTime || ''))
+              .format('MMMM DD[,] YYYY')}
+            passes={{
+              available: parseInt(maxTotalSupply),
+              total: parseInt(totalSupply)
+            }}
+            price={{
+              tokenAmount: floatedNumberWithCommas(mintPrice),
+              tokenSymbol: nativeCurrency.symbol,
+              tokenIcon: nativeCurrency.logo
+            }}
+          />
+        ) : (
+          <></>
+        )}
       </div>
       <Activities permissionType={permissionType} />
     </div>
   );
 };
 
-const MemberSidePanel: React.FC<{ permissionType: any }> = ({
+const MemberSidePanel: React.FC<{ permissionType: PermissionType | null }> = ({
   permissionType
 }) => {
   const {
@@ -242,7 +245,7 @@ const MemberSidePanel: React.FC<{ permissionType: any }> = ({
   const { isReady } = router;
 
   const members = owners
-    ? owners.map((member: any) => {
+    ? owners.map((member) => {
         return member?.owner?.walletAddress;
       })
     : [];
@@ -258,12 +261,18 @@ const MemberSidePanel: React.FC<{ permissionType: any }> = ({
   }, [isReady]);
 
   return (
-    <BadgeWithMembers
-      admins={admins}
-      members={members}
-      inviteLink={collectiveLink}
-      permissionType={permissionType}
-    />
+    <>
+      {permissionType ? (
+        <BadgeWithMembers
+          admins={admins}
+          members={members}
+          inviteLink={collectiveLink}
+          permissionType={permissionType}
+        />
+      ) : (
+        ''
+      )}
+    </>
   );
 };
 
@@ -274,7 +283,10 @@ const Collective: React.FC = () => {
     }
   } = useSelector((state: AppState) => state);
   const {
-    collectiveDetails: { collectiveName, collectiveAddress },
+    collectiveDetails: {
+      collectiveName,
+      contractAddress: collectiveAddress = ''
+    },
     collectiveDetailsLoading
   } = useERC721Collective();
 
@@ -397,7 +409,7 @@ const Collective: React.FC = () => {
             >
               <RemixContractsContainer
                 isAdmin={permissionType == PermissionType.ADMIN}
-                name={collectiveName}
+                name={collectiveName || 'Collective NFT'}
                 entityType={'collective'}
                 contractAddress={collectiveAddress ?? ''}
                 activeNetwork={activeNetwork}

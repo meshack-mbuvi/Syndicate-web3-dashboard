@@ -181,13 +181,15 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     }
 
     const isValid: boolean =
-      web3.utils.isAddress(token.address) &&
-      token.name &&
-      token.name.length > 0 &&
-      token.symbol &&
-      token.symbol.length > 0 &&
-      token.chainId &&
-      token.chainId > 0;
+      (web3 &&
+        web3.utils.isAddress(token.address) &&
+        token.name &&
+        token.name.length > 0 &&
+        token.symbol &&
+        token.symbol.length > 0 &&
+        token.chainId &&
+        token.chainId > 0) ||
+      false;
 
     // We don't need to validate for 'decimals' in NFT tokens
     if (showTokenGateModal) return isValid;
@@ -200,7 +202,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       setShowImportBtn(false);
       const matchedTokens: Token[] = [];
       // token contractAddress
-      if (web3.utils && web3.utils.isAddress(debouncedSearchTerm)) {
+      if (web3 && web3.utils.isAddress(debouncedSearchTerm)) {
         const _token = [
           ...(defaultTokenList || []),
           ...(suggestionList || []),

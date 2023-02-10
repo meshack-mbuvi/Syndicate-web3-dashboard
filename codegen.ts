@@ -1,18 +1,19 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const graphConfig = {
-  satsuma: {
+  thegraph: {
     schema:
       `https://subgraph.satsuma-prod.com/${
-        process.env.NEXT_PUBLIC_SATSUMA_KEY || ''
+        process.env.NEXT_PUBLIC_SATSUMA_BACKEND_KEY || ''
       }/syndicate/goerli/api` ||
       'https://subgraph.satsuma-prod.com/syndicate/goerli/api',
     documents: [
       'src/graphql/subgraph_queries.ts',
+      'src/graphql/subgraph_queries.ts',
       'src/graphql/satsuma_mutations.ts',
       'src/graphql/subgraph_mutations.ts'
     ],
-    generates: 'src/@types/subgraph/satsuma/generated-types.ts'
+    generates: 'src/hooks/data-fetching/thegraph/generated-types.ts'
   },
   backend: {
     schema: 'https://graphql-api-usvsm2urta-uc.a.run.app/',
@@ -21,26 +22,17 @@ const graphConfig = {
       'src/graphql/backend_mutations.ts',
       'src/graphql/merkleDistributor.ts'
     ],
-    generates: 'src/@types/subgraph/backend/generated-types.ts'
-  },
-  thegraph: {
-    schema:
-      'https://api.thegraph.com/subgraphs/name/jewei1997/syndicate-dao-subgraph',
-    documents: [
-      'src/graphql/subgraph_queries.ts',
-      'src/graphql/subgraph_mutations.ts'
-    ],
-    generates: 'src/@types/subgraph/thegraph/generated-types.ts'
+    generates: 'src/hooks/data-fetching/backend/generated-types.ts'
   }
 };
 
-type schemaEnv = 'backend' | 'satsuma';
+type schemaEnv = 'backend' | 'thegraph';
 
 const schemaServer: string = process.env.NEXT_PUBLIC_SCHEMA_SERVER || '';
 
 const SCHEMA_SERVER: schemaEnv = schemaServer
   ? (schemaServer as schemaEnv)
-  : 'satsuma';
+  : 'thegraph';
 
 const config: CodegenConfig = {
   overwrite: true,

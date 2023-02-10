@@ -1,3 +1,5 @@
+import { B2, B3 } from '@/components/typography';
+import { CustomSyndicateDao } from '@/hooks/clubs/utils/types';
 import { AppState } from '@/state';
 import {
   floatedNumberWithCommas,
@@ -9,11 +11,10 @@ import Link from 'next/link';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import GradientAvatar from '../GradientAvatar';
-import { B2, B3 } from '@/components/typography';
 
 interface Props {
   columns: string[];
-  tableData: any[];
+  tableData: Partial<CustomSyndicateDao>[];
 }
 
 const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
@@ -92,8 +93,8 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
             {paginatedData.map(
               (
                 {
-                  address,
-                  clubName,
+                  contractAddress,
+                  name: clubName,
                   status,
                   ownershipShare,
                   depositERC20TokenSymbol,
@@ -102,15 +103,15 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   totalDeposits,
                   memberDeposits,
                   isOwner,
-                  clubSymbol
+                  symbol
                 },
                 index
               ) => (
                 <Link
                   key={`token-table-row-${index}`}
-                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}${
-                    '?chain=' + activeNetwork.network
-                  }`}
+                  href={`/clubs/${contractAddress as string}/${
+                    isOwner ? 'manage' : ''
+                  }${'?chain=' + activeNetwork.network}`}
                 >
                   <div
                     className={`grid gap-2 grid-cols-5 auto-cols-fr md:grid-cols-7 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
@@ -147,7 +148,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                         </div>
 
                         <div className="hidden md:flex text-base items-center text-gray-syn4">
-                          {clubSymbol}
+                          {symbol}
                         </div>
                       </div>
                     </div>
@@ -179,9 +180,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                     {/* right-most column with club status and symbol - only on mobile  */}
                     <div className="flex md:hidden flex-col items-end space-y-2 col-span-2">
                       <B2 extraClasses="text-gray-syn4 line-clamp-1">
-                        {clubSymbol.length > 6
-                          ? `${clubSymbol.slice(0, 6)}...`
-                          : clubSymbol}
+                        {symbol.length > 6
+                          ? `${symbol.slice(0, 6)}...`
+                          : symbol}
                       </B2>
                       <B3 extraClasses="text-gray-syn4 flex-shrink-0">
                         {status}

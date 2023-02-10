@@ -47,7 +47,14 @@ import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import { ProgressState } from '../progressCard';
 import { Spinner } from '../shared/spinner';
 
-const progressModalStates = {
+const progressModalStates: {
+  [x: string]: {
+    title: string;
+    description: string | JSX.Element;
+    state: ProgressState;
+    buttonLabel: string;
+  };
+} = {
   confirm: {
     title: 'Confirm in wallet',
     description: 'Confirm the modification of club settings in your wallet',
@@ -84,7 +91,9 @@ const progressModalStates = {
   }
 };
 
-export const ModifyClubSettings = (props: { isVisible: boolean }) => {
+export const ModifyClubSettings = (props: {
+  isVisible: boolean;
+}): JSX.Element => {
   const { isVisible } = props;
 
   const dispatch = useDispatch();
@@ -132,7 +141,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
       localStorage.getItem('mintingForClosedClub') || '{}'
-    );
+    ) as {
+      mintingForClosedClub: boolean;
+      clubAddress: string;
+    };
 
     if (mintingForClosedClubDetails?.mintingForClosedClub) {
       const { mintingForClosedClub, clubAddress } = mintingForClosedClubDetails;
@@ -158,9 +170,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // Errors
   const [openToDepositsUntilWarning, setOpenToDepositsUntilWarning] =
-    useState(null);
-  const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null);
-  const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null);
+    useState<string>('');
+  const [maxAmountRaisingError, setMaxAmountRaisingError] =
+    useState<string>('');
+  const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState<
+    string | JSX.Element
+  >('');
 
   // Settings change
   const [areClubChangesAvailable, setAreClubChangesAvailable] =
@@ -170,7 +185,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // time check states
   const [closeTime, setCloseTime] = useState('');
-  const [closeDate, setCloseDate] = useState(0);
+  const [closeDate, setCloseDate] = useState<Date | null | number>(0);
   const [closeTimeError, setCloseTimeError] = useState('');
   const [warning, setWarning] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
@@ -229,6 +244,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
+    const _totalSupply = totalSupply || 0;
     if (name && depositTokenLogo) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
@@ -238,7 +254,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         if (new Date(endTime).getTime() < eodToday.getTime()) {
           setIsOpenToDeposits(false);
         } else {
-          setOpenToDepositsUntilWarning(null);
+          setOpenToDepositsUntilWarning('');
           setIsOpenToDeposits(true);
         }
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
@@ -246,20 +262,16 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
         if (depositTokenSymbol === nativeSymbol) {
           setMaxAmountRaising(maxTotalSupply / nativeEchageRate);
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          setTotalDepositsAmount(totalSupply / nativeEchageRate);
+          setTotalDepositsAmount(_totalSupply / nativeEchageRate);
           dispatch(
             setExistingMaxAmountRaising(maxTotalSupply / nativeEchageRate)
           );
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
+          dispatch(setExistingAmountRaised(_totalSupply / nativeEchageRate));
         } else {
           setMaxAmountRaising(maxTotalSupply);
-          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-          setTotalDepositsAmount(totalSupply);
+          setTotalDepositsAmount(_totalSupply);
           dispatch(setExistingMaxAmountRaising(maxTotalSupply));
-          // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-          dispatch(setExistingAmountRaised(totalSupply));
+          dispatch(setExistingAmountRaised(_totalSupply));
         }
       }
       if (existingMaxNumberOfMembers === 0) {
@@ -295,11 +307,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       openToDepositsUntil < eodToday
     ) {
       setOpenToDepositsUntilWarning(
-        // @ts-expect-error TS(2345): Argument of type '"You'll need a new date to reope... Remove this comment to see the full error message
         "You'll need a new date to reopen for deposits"
       );
     } else {
-      setOpenToDepositsUntilWarning(null);
+      setOpenToDepositsUntilWarning('');
     }
 
     // Make sure there's a settings change and that there are no errors
@@ -336,7 +347,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     closeTimeError
   ]);
 
-  const onTxConfirm = (transactionHash: string) => {
+  const onTxConfirm = (transactionHash: string): void => {
     setTransactionHash(transactionHash);
     setProgressState('pending');
   };
@@ -345,22 +356,23 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     dispatch(setClubCreationReceipt(receipt.events.ConfigUpdated.returnValues));
   };
 
-  const handleTransaction = async () => {
+  const handleTransaction = async (): Promise<void> => {
+    if (!web3) return;
+
     setProgressState('confirm');
     try {
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
-        ? getWeiAmount(
+        ? +getWeiAmount(
             (maxAmountRaising * nativeEchageRate).toString(),
             18,
             true
           )
-        : getWeiAmount(String(maxAmountRaising), 18, true);
+        : +getWeiAmount(String(maxAmountRaising), 18, true);
 
       const mintPolicy = new MintPolicyContract(
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        currentMintPolicyAddress,
+        currentMintPolicyAddress ?? '',
         web3,
         activeNetwork
       );
@@ -385,7 +397,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     }
   };
 
-  const ProgressStates = () => {
+  const ProgressStates = (): null | JSX.Element => {
     if (!progressState) return null;
 
     if (progressState === 'success' || progressState === 'failure') {
@@ -395,15 +407,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     return (
       <ProgressModal
         {...{
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           ...progressModalStates[progressState],
           isVisible: true,
           txHash: transactionHash,
           buttonOnClick:
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             progressModalStates[progressState].buttonLabel == 'Try again'
-              ? () => setProgressState('')
-              : () => handleExit(),
+              ? (): void => setProgressState('')
+              : (): void => handleExit(),
           explorerLinkText: 'View on ',
           iconcolor: ExternalLinkColor.BLUE,
           transactionType: 'transaction'
@@ -423,12 +433,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   };
 
   // get specific time changes
-  const handleTimeChange = (time: string) => {
+  const handleTimeChange = (time: string): void => {
     // dispatch new time from here.
     setCloseTime(time);
   };
 
-  const handleDateChange = (targetDate: any) => {
+  const handleDateChange = (targetDate: Date | null): void => {
     setCloseDate(targetDate);
   };
 
@@ -472,8 +482,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       targetDate = moment(dateString + ' ' + closeTime).valueOf();
     }
 
-    setOpenToDepositsUntil(new Date(targetDate));
-    setOpenToDepositsUntilWarning(null); // clear error if any
+    if (targetDate) {
+      setOpenToDepositsUntil(new Date(targetDate.toString()));
+    }
+
+    setOpenToDepositsUntilWarning(''); // clear error if any
   }, [closeDate, closeTime]);
 
   // add relevant warnings for close time.
@@ -614,16 +627,14 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     ) : (
                       <div>
                         <InputFieldWithDate
-                          // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assignable t... Remove this comment to see the full error message
                           selectedDate={
                             openToDepositsUntilWarning
-                              ? null
+                              ? undefined
                               : openToDepositsUntil
                           }
-                          onChange={(targetDate) =>
+                          onChange={(targetDate): void =>
                             handleDateChange(targetDate)
                           }
-                          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
                           infoLabel={
                             openToDepositsUntilWarning &&
                             openToDepositsUntilWarning
@@ -644,9 +655,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         {(warning || closeTimeError) && (
                           <div
                             className={`${
-                              warning &&
-                              !closeTimeError &&
-                              'text-yellow-warning'
+                              warning && !closeTimeError
+                                ? 'text-yellow-warning'
+                                : ''
                             } ${
                               closeTimeError ? 'text-red-error' : ''
                             } text-sm w-full mt-2`}
@@ -683,28 +694,28 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         depositTokenLogo={depositTokenLogo}
                         value={String(maxAmountRaising)}
                         symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
-                        onChange={(e) => {
+                        onChange={(e): void => {
                           const amount = numberInputRemoveCommas(e);
                           if (
                             Number(amount) < existingAmountRaised &&
                             Number(amount) >= 0
                           ) {
                             setMaxAmountRaisingError(
-                              // @ts-expect-error TS(2345): Argument of type '"Below the current amount raised"'... Remove this comment to see the full error message
                               'Below the current amount raised. Please withdraw funds first before setting a lower limit.'
                             );
-                            // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
-                          } else if (amount < 0 || isNaN(amount)) {
-                            // @ts-expect-error TS(2345): Argument of type '"Max amount is required"' is not assignable to par... Remove this comment to see the full error message
+                          } else if (
+                            Number(amount) < 0 ||
+                            isNaN(Number(amount))
+                          ) {
                             setMaxAmountRaisingError('Max amount is required');
                           } else {
-                            setMaxAmountRaisingError(null);
+                            setMaxAmountRaisingError('');
                           }
-                          // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
-                          setMaxAmountRaising(amount >= 0 ? amount : 0);
+                          setMaxAmountRaising(
+                            Number(amount) >= 0 ? Number(amount) : 0
+                          );
                         }}
-                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | un... Remove this comment to see the full error message
-                        isInErrorState={maxAmountRaisingError}
+                        isInErrorState={maxAmountRaisingError ? true : false}
                         infoLabel={
                           maxAmountRaisingError
                             ? maxAmountRaisingError
@@ -741,13 +752,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         addOn="Max"
                         addOnOnClick={(): void => {
                           setMaxNumberOfMembers(99);
-                          setMaxNumberOfMembersError(null);
+                          setMaxNumberOfMembersError('');
                         }}
                         onChange={(e): void => {
                           const numberOfMembers = e.target.value;
                           if (Number(numberOfMembers) < 0) {
                             setMaxNumberOfMembersError(
-                              // @ts-expect-error TS(2345): Argument of type "Number can't be negative" is not assignable to par... Remove this comment to see the full error message
                               `Number can't be negative`
                             );
                           } else if (
@@ -755,21 +765,18 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                             Number(numberOfMembers) == 0
                           ) {
                             setMaxNumberOfMembersError(
-                              // @ts-expect-error TS(2345): Argument of type "Please enter a number between 1 and 99" is not assignable to par... Remove this comment to see the full error message
                               `Please enter a number between 1 and 99`
                             );
                           } else if (
                             Number(numberOfMembers) < existingNumberOfMembers
                           ) {
                             setMaxNumberOfMembersError(
-                              // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
                               `Club already has ${existingNumberOfMembers} members`
                             );
                           } else if (
                             Number(numberOfMembers) > MAX_MEMBERS_ALLOWED
                           ) {
                             setMaxNumberOfMembersError(
-                              // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
                               <div>
                                 Between 1 and 99 accepted to maintain investment
                                 club status. Reach out to us at{' '}
@@ -783,7 +790,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                               </div>
                             );
                           } else {
-                            setMaxNumberOfMembersError(null);
+                            setMaxNumberOfMembersError('');
                           }
                           setMaxNumberOfMembers(
                             Number(
@@ -795,8 +802,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                             )
                           );
                         }}
-                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | un... Remove this comment to see the full error message
-                        isInErrorState={maxNumberOfMembersError}
+                        isInErrorState={maxNumberOfMembersError ? true : false}
                         infoLabel={
                           maxNumberOfMembersError ? (
                             maxNumberOfMembersError
@@ -936,11 +942,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     ? CTAType.PRIMARY
                     : CTAType.DISABLED
                 }
-                onClick={
-                  areClubChangesAvailable && isOpenToDeposits
-                    ? handleTransaction
-                    : null
-                }
+                onClick={(): void => {
+                  if (areClubChangesAvailable && isOpenToDeposits) {
+                    void handleTransaction();
+                  }
+                }}
                 extraClasses="transition-all duration-700 w-full lg:w-auto"
               >
                 Submit changes

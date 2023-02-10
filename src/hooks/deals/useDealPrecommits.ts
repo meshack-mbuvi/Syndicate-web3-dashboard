@@ -1,4 +1,4 @@
-import { GetDealPrecommits } from '@/graphql/satsuma_queries';
+import { GetDealPrecommits } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';

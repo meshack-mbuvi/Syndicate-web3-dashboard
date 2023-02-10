@@ -13,7 +13,10 @@ export async function postMetadata({
   name,
   description,
   symbol
-}: ICollectiveMetadata): Promise<any> {
+}: ICollectiveMetadata): Promise<{
+  IpfsHash: string;
+  status: number;
+}> {
   const form = new FormData();
   form.append('file', file);
   form.append('name', name);

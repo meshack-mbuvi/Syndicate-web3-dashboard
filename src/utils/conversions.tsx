@@ -1,3 +1,4 @@
+import { IWeb3 } from '@/state/wallet/types';
 import { BigNumber } from 'bignumber.js';
 import { fromWei, toWei, Unit, unitMap, Units } from 'web3-utils';
 
@@ -10,7 +11,7 @@ import { fromWei, toWei, Unit, unitMap, Units } from 'web3-utils';
  * @param {string} tokenFactor result of 10 raised to the power of token decimals
  * @returns { decimal }
  */
-export const etherToNumber = (value: string, tokenFactor?: string) =>
+export const etherToNumber = (value: string, tokenFactor?: string): number =>
   new BigNumber(value)
     .dividedBy(new BigNumber(tokenFactor ? tokenFactor : '1000000000000000000'))
     .toNumber();
@@ -50,8 +51,8 @@ export const getWeiAmount = (
   amount: string,
   tokenDecimals: number,
   multiplication: boolean
-): any => {
-  if (!amount || isNaN(+amount)) return 0;
+): string => {
+  if (!amount || isNaN(+amount)) return '0';
 
   // get unit mappings from web3
   const unitMappings = unitMap as unknown as Units;
@@ -70,9 +71,9 @@ export const getWeiAmount = (
     // and thus fromWei defaults to 18 decimals.
     // web3.utils.unitMap does not have any unit supporting 8 decimals
     if (multiplication) {
-      return numberToEther(amount, tokenFactor.toString());
+      return numberToEther(amount, tokenFactor.toString()).toString();
     }
-    return etherToNumber(amount, tokenFactor.toString());
+    return etherToNumber(amount, tokenFactor.toString()).toString();
   }
 
   if (multiplication) {
@@ -88,7 +89,10 @@ export const getWeiAmount = (
  * @param denominator
  * @returns division result as a float
  */
-export const divideIfNotByZero = (numerator: any, denominator: any) => {
+export const divideIfNotByZero = (
+  numerator: number,
+  denominator: number
+): number => {
   if (denominator === 0 || numerator === 0 || isNaN(denominator)) {
     return 0;
   } else {
@@ -96,9 +100,10 @@ export const divideIfNotByZero = (numerator: any, denominator: any) => {
   }
 };
 
-export const isUnlimited = (value: any, web3: any) => {
-  if (!value) return;
+export const isUnlimited = (value: string, web3: IWeb3): boolean => {
   const BN = web3.utils.BN;
+
+  if (!value || !BN) return false;
   const BNValue = new BN(value.toString());
   const BNcompareValue = new BN(
     '115792089237316195423570985008687907853269984665640564039457'

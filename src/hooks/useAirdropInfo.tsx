@@ -1,4 +1,3 @@
-import { MERKLE_AIRDROP_CREATED } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
@@ -6,9 +5,9 @@ import {
   setAirdropInfo,
   setLoadingAirdropInfo
 } from '@/state/airdropInfo/slice';
-import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAirdropCreatedQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
 
 const useFetchAirdropInfo: any = (skipQuery: any) => {
@@ -29,9 +28,9 @@ const useFetchAirdropInfo: any = (skipQuery: any) => {
   // Fetch existing claims
   const {
     loading,
-    data: airdropData = {},
+    data: airdropData,
     refetch
-  } = useQuery(MERKLE_AIRDROP_CREATED, {
+  } = useAirdropCreatedQuery({
     variables: {
       where: {
         club: clubAddress.toLowerCase(),
@@ -52,13 +51,13 @@ const useFetchAirdropInfo: any = (skipQuery: any) => {
       clubAddress &&
       activeNetwork.chainId
     ) {
-      refetch();
+      void refetch();
     }
   }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingAirdropInfo(true));
-    if (airdropData.merkleAirdropCreatedERC20S?.length) {
+    if (airdropData?.merkleAirdropCreatedERC20S?.length) {
       const airdropObj =
         airdropData.merkleAirdropCreatedERC20S[
           airdropData.merkleAirdropCreatedERC20S.length - 1
@@ -72,7 +71,6 @@ const useFetchAirdropInfo: any = (skipQuery: any) => {
       );
       dispatch(setLoadingAirdropInfo(false));
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearAirdropInfo());
     }
   }, [loading, JSON.stringify(airdropData)]);

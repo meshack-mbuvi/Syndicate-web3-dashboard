@@ -1,11 +1,10 @@
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
-import { useQuery } from '@apollo/client';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { useRouter } from 'next/router';
-import { Status } from '@/state/wallet/types';
-import { TOKEN_DETAILS } from '@/graphql/backend_queries';
+import { useTokenQuery } from './data-fetching/backend/generated-types';
 
 export type TokenDetails = {
   chainId: number;
@@ -48,7 +47,7 @@ const useTokenDetails = (
   const [tokenDetails, setTokenDetails] =
     useState<TokenDetails>(EmptyTokenDetails);
 
-  const { data, loading } = useQuery<TokenDetailsQuery>(TOKEN_DETAILS, {
+  const { data, loading } = useTokenQuery({
     variables: {
       chainId,
       address
@@ -61,8 +60,8 @@ const useTokenDetails = (
   });
 
   useEffect(() => {
-    if (loading || !data) return;
-    setTokenDetails(data.token);
+    if (loading || !data || !data.token) return;
+    setTokenDetails(data.token as TokenDetails);
   }, [data, loading]);
 
   return tokenDetails;

@@ -9,19 +9,28 @@ const useSubmitMetadata = (
   onIpfsHash: (hash: string) => void,
   onSuccess: () => void,
   onError: () => void
-): any => {
+): {
+  submit: (
+    name: string,
+    symbol: string,
+    description: string,
+    artwork: File | undefined,
+    artworkType: NFTMediaType,
+    artworkUrl: RequestInfo | URL
+  ) => Promise<void>;
+} => {
   const submit = async (
-    name: any,
-    symbol: any,
-    description: any,
-    artwork: any,
-    artworkType: any,
-    artworkUrl: any
-  ) => {
+    name: string,
+    symbol: string,
+    description: string,
+    artwork: File | undefined,
+    artworkType: NFTMediaType,
+    artworkUrl: RequestInfo | URL
+  ): Promise<void> => {
     let error = false;
     beforeSubmit();
     metadataSubmission: try {
-      let file: File = artwork;
+      let file: File | undefined = artwork;
       if (artworkType === NFTMediaType.CUSTOM) {
         // Here we need to convert the base64 url to a file before handing to pinata
         file = await fetch(artworkUrl)
@@ -30,12 +39,15 @@ const useSubmitMetadata = (
             (blob) => new File([blob], `${name}-media`, { type: 'image/png' })
           );
       }
+      if (!file) return;
+
       const { IpfsHash, status } = await postMetadata({
         name,
         symbol,
         description,
         file
       });
+
       if (IpfsHash && status === 200) {
         onIpfsHash(IpfsHash);
         break metadataSubmission;

@@ -1,4 +1,3 @@
-import { utils } from 'ethers';
 import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
@@ -19,15 +18,16 @@ import { ProgressState } from '@/components/progressCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import useGasEstimate from '@/hooks/useGasEstimate';
+import useGasPrice from '@/hooks/useGasPrice';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { getOpenSeaLink } from '@/utils/api/nfts';
+import { useApolloClient } from '@apollo/client';
+import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatUnix } from 'src/utils/dateUtils';
-import { useApolloClient } from '@apollo/client';
-import useGasEstimate from '@/hooks/useGasEstimate';
-import { CONTRACT_ADDRESSES } from '@/Networks';
-import useGasPrice from '@/hooks/useGasPrice';
 
 // TODO: REMOVE AFTER RR PFP LAUNCH
 const NftClaimAndInfoCard: React.FC<{
@@ -65,7 +65,7 @@ const NftClaimAndInfoCard: React.FC<{
       maxTotalSupply,
       totalSupply,
       collectiveSymbol,
-      collectiveName,
+      collectiveName = '',
       createdAt,
       ownerAddress,
       //   collectiveAddress,
@@ -110,10 +110,10 @@ const NftClaimAndInfoCard: React.FC<{
 
   const gasEstimate = gasEstimateData?.gasEstimate;
 
-  const [interval, setIntervalId] = useState(null);
+  const [interval, setIntervalId] = useState<number>();
 
   const { data: nftMetadata } = useFetchCollectiveMetadata(metadataCid);
-  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL || '';
 
   const [walletState, setWalletState] = useState<WalletState>(
     WalletState.NOT_CONNECTED
@@ -140,19 +140,19 @@ const NftClaimAndInfoCard: React.FC<{
 
   const onTxReceipt = (): void => {
     setProgressState(ProgressState.SUCCESS);
-    amplitudeLogger(COLLECTIVE_CLAIM, {
+    void amplitudeLogger(COLLECTIVE_CLAIM, {
       flow: Flow.COLLECTIVE_CLAIM,
       transaction_status: 'Success'
     });
   };
 
-  const onTxFail = (error: any) => {
+  const onTxFail = (error: any): void => {
     if (error?.message.includes('Be aware that it might still be mined')) {
       // Pool for account nft balance
-      const interval = setInterval(() => {
-        web3.eth
+      const interval: number = window.setInterval(() => {
+        void web3?.eth
           .getTransactionReceipt(transactionHash)
-          .then((transaction: any) => {
+          .then((transaction) => {
             if (!transaction) return;
 
             if (transaction.status) {
@@ -163,24 +163,24 @@ const NftClaimAndInfoCard: React.FC<{
           });
       }, 2000);
 
-      // @ts-expect-error TS(2345): Argument of type 'Timeout' is not assignable to par is not assig... Remove this comment to see the full error message
       setIntervalId(interval);
 
       setProgressState(ProgressState.TAKING_LONG);
     } else {
       setProgressState(ProgressState.FAILURE);
-      amplitudeLogger(COLLECTIVE_CLAIM, {
+      void amplitudeLogger(COLLECTIVE_CLAIM, {
         flow: Flow.COLLECTIVE_CLAIM,
         transaction_status: 'Failure'
       });
     }
   };
 
-  const claimCollective = async () => {
+  const claimCollective = async (): Promise<void> => {
     setProgressState(ProgressState.CONFIRM);
-    console.log('the mint module to use for minting', mintModule);
     try {
-      (await mintModule).mint(
+      await (
+        await mintModule
+      ).mint(
         collectiveAddress,
         account,
         onTxConfirm,
@@ -195,7 +195,7 @@ const NftClaimAndInfoCard: React.FC<{
 
   useEffect(() => {
     if (collectiveDetailsLoading) return;
-    getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
+    void getOpenSeaLink(collectiveAddress, chainId).then((link: string) => {
       setOpenSeaLink(link);
     });
   }, [collectiveDetailsLoading, collectiveAddress, chainId]);
@@ -215,7 +215,7 @@ const NftClaimAndInfoCard: React.FC<{
     setWalletState(_walletState);
   }, [account, gasEstimateData?.isValidTx]);
 
-  const shortenOwnerAddress = (address: string) => {
+  const shortenOwnerAddress = (address: string): string => {
     if (!address) return '';
     const addr = address.toLowerCase();
     return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
@@ -224,17 +224,16 @@ const NftClaimAndInfoCard: React.FC<{
   const shareUrl = window.location.href;
 
   // open the collective details page
-  const handleClick = () => {
+  const handleClick = (): void => {
     window.location.pathname = `/collectives/${collectiveAddress}`;
-    amplitudeLogger(VIEW_COLLECTIVE_CLICK, {
+    void amplitudeLogger(VIEW_COLLECTIVE_CLICK, {
       flow: Flow.COLLECTIVE_CLAIM
     });
   };
 
   // Close modal on outside click
-  const handleModalClose = () => {
-    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to par... Remove this comment to see the full error message
-    setProgressState(null);
+  const handleModalClose = (): void => {
+    setProgressState(undefined);
   };
 
   const isDataLoading =
@@ -286,12 +285,11 @@ const NftClaimAndInfoCard: React.FC<{
         ) : (
           <ClaimCollectivePass
             dateOfCreation={formatUnix(+createdAt, 'MMM D, yyyy')}
-            nameOfCollective={collectiveName}
-            nameOfCreator={shortenOwnerAddress(ownerAddress)}
+            nameOfCollective={collectiveName ?? ''}
+            nameOfCreator={shortenOwnerAddress(ownerAddress ?? '')}
             links={{
               externalLink: `${baseUrl}/address/${collectiveAddress}`,
-              // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
-              openSea: openSeaLink
+              openSea: openSeaLink ?? ''
             }}
             numberOfExistingMembers={+numOwners}
             priceToJoin={{
@@ -327,10 +325,9 @@ const NftClaimAndInfoCard: React.FC<{
             transactionHash={transactionHash}
             transactionType="transaction"
             claimCollective={claimCollective}
-            tryAgain={() => {
-              // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to parameter of type
-              setProgressState(null);
-              amplitudeLogger(CLAIM_TRY_AGAIN_CLICK, {
+            tryAgain={(): void => {
+              setProgressState(undefined);
+              void amplitudeLogger(CLAIM_TRY_AGAIN_CLICK, {
                 flow: Flow.COLLECTIVE_CLAIM
               });
             }}
@@ -344,7 +341,9 @@ const NftClaimAndInfoCard: React.FC<{
         transactionHash={transactionHash}
         handleClick={handleClick}
         socialURL={shareUrl}
-        description={`Just joined ${collectiveName} (${collectiveSymbol}) by claiming the collective’s NFT on Syndicate 🎉 `}
+        description={`Just joined ${collectiveName ?? ''} (${
+          collectiveSymbol ?? ''
+        }) by claiming the collective’s NFT on Syndicate 🎉 `}
         customVisual={
           <div className="bg-black w-full h-full">
             <CollectivesInteractiveBackground
@@ -363,11 +362,9 @@ const NftClaimAndInfoCard: React.FC<{
                       'ipfs://',
                       ''
                     )}`
-                  : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                    `${ipfsGateway}/${nftMetadata?.image.replace(
-                      'ipfs://',
-                      ''
-                    )}`
+                  : `${ipfsGateway}/${
+                      nftMetadata?.image?.replace('ipfs://', '') ?? ''
+                    }`
               }
               numberOfParticles={75}
               customId="particles-js-2"

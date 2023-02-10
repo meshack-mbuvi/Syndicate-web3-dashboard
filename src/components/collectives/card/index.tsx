@@ -1,12 +1,13 @@
-import { B2, B3 } from '@/components/typography';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import useERC721Collective from '@/hooks/collectives/useERC721Collective';
-import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
+import { B2, B3 } from '@/components/typography';
+import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMetadata';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import { RequirementType } from '@/hooks/data-fetching/thegraph/generated-types';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import clxs from 'clsx';
 
 interface Props {
-  cardType: CollectiveCardType;
+  cardType: RequirementType;
   closeDate?: string;
   passes: { available: number; total: number };
   price?: { tokenAmount: string; tokenSymbol: string; tokenIcon: string };
@@ -21,20 +22,20 @@ export const CollectiveCard: React.FC<Props> = ({
   const {
     collectiveDetails: { numOwners, metadataCid, mintPrice }
   } = useERC721Collective();
-  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL;
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL || '';
 
   // intermediate step to fetch the nft details from the metadataCid
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } =
     useFetchCollectiveMetadata(metadataCid);
 
   const openWindowTitle =
-    cardType === CollectiveCardType.TIME_WINDOW
+    cardType === RequirementType.TimeWindow
       ? 'Open to new members'
       : 'NFTs available';
   const openWindowValue =
-    cardType === CollectiveCardType.TIME_WINDOW ? (
-      `Until ${closeDate}`
-    ) : cardType === CollectiveCardType.MAX_TOTAL_SUPPLY ? (
+    cardType === RequirementType.TimeWindow ? (
+      `Until ${closeDate || ''}`
+    ) : cardType === RequirementType.MaxTotalSupply ? (
       <span>
         {floatedNumberWithCommas(passes.available - passes.total)}{' '}
         <span className="text-gray-syn4">
@@ -76,7 +77,6 @@ export const CollectiveCard: React.FC<Props> = ({
         />
       )}
       {nftMetadata?.animation_url && (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
         <video
           autoPlay
           playsInline={true}
@@ -108,9 +108,9 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
 
       <div
-        className={`items-start w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${
+        className={`items-start w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${clxs(
           !isLoadingNftMetadata && !nftMetadata && 'mx-6 py-6'
-        }`}
+        )}`}
       >
         <div className={cardinfoResponsiveStyles}>
           <B3 extraClasses="text-gray-syn4">{openWindowTitle}</B3>

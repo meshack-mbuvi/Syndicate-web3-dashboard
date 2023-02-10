@@ -1,6 +1,6 @@
-import { ActiveModule, ModuleType } from '@/types/modules';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { ActiveModule, ModuleType } from '@/types/modules';
 
 /**
  * Temporary placeholder for getting modules by type

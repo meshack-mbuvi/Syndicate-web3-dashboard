@@ -51,6 +51,7 @@ import { default as _moment } from 'moment-timezone';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, {
+  ChangeEvent,
   Dispatch,
   SetStateAction,
   useCallback,
@@ -73,6 +74,16 @@ import { ProgressCard, ProgressState } from '../progressCard';
 import { SkeletonLoader } from '../skeletonLoader';
 
 const MAX_MEMBERS_ALLOWED = 99;
+
+type Token = {
+  name: string;
+  quantity: number;
+  symbol: string;
+  chainId: number;
+  contractAddress: string;
+  icon: string;
+  decimals: number | undefined;
+};
 
 const ModifyTokenGatedClub: React.FC = () => {
   const {
@@ -148,10 +159,13 @@ const ModifyTokenGatedClub: React.FC = () => {
   const [closeTimeError, setCloseTimeError] = useState('');
   const [warning, setWarning] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
-  const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null);
+  const [maxAmountRaisingError, setMaxAmountRaisingError] =
+    useState<string>('');
   const [openToDepositsUntilWarning, setOpenToDepositsUntilWarning] =
     useState(null);
-  const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null);
+  const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState<
+    string | JSX.Element
+  >('');
 
   // Settings change
   const [isSubmitDisabled, setSubmitDisabled] = useState(true);
@@ -318,8 +332,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeModuleDetails?.activeMintModuleReqs.maxTotalSupply;
 
       let _tokencap = getWeiAmount(
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        new BigNumber(maxTotalSupplyMintValue).toFixed(),
+        new BigNumber(maxTotalSupplyMintValue ?? '0').toFixed(),
         18,
         false
       );
@@ -328,15 +341,14 @@ const ModifyTokenGatedClub: React.FC = () => {
         activeNetwork.nativeCurrency.name
       ) {
         _tokencap = getWeiAmount(
-          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-          new BigNumber(maxTotalSupplyMintValue)
+          new BigNumber(maxTotalSupplyMintValue ?? '0')
             .dividedBy(activeNetwork.nativeCurrency.exchangeRate)
             .toFixed(),
           18,
           false
         );
       }
-      dispatch(setMaxAmountRaising(_tokencap));
+      dispatch(setMaxAmountRaising(+_tokencap));
     }
   }, [
     depositTokenSymbol,
@@ -427,7 +439,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setDisclaimerModal(true);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     setDisclaimerModal(false);
     setProgressModal(true);
     setProgressTitle('Confirm in wallet');
@@ -478,7 +490,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         await maxTotalSupplyMixin.updateTotalSupply(
           account,
           clubAddress as string,
-          _tokenCap,
+          +_tokenCap,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -486,7 +498,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         break;
       case EditRowIndex.TokenGate:
         if (!tokenGatedMixin || !clubAddress) return;
-        handleTokenGatingUpdates();
+        void handleTokenGatingUpdates();
         break;
       case EditRowIndex.CloseTimeWindow:
         if (!timeRequirements || !clubAddress) return;
@@ -516,7 +528,7 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressTitle('Settings updated');
     setProgressDescription('');
     setProgressState(ProgressState.SUCCESS);
-    amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+    void amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
       flow: Flow.CLUB_MANAGE,
       transaction_status: 'Success',
       contract_address: getFirstOrString(clubAddress)
@@ -533,27 +545,26 @@ const ModifyTokenGatedClub: React.FC = () => {
     setProgressTitle('Update Failed');
     setProgressDescription('');
     setProgressState(ProgressState.FAILURE);
-    amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
+    void amplitudeLogger(CLUB_SUBMIT_SETTINGS, {
       flow: Flow.CLUB_MANAGE,
       transaction_status: 'Failure',
       contract_address: getFirstOrString(clubAddress)
     });
   };
 
-  const handleTokenGatingUpdates = async () => {
+  const handleTokenGatingUpdates = async (): Promise<void> => {
     const mixins = activeModuleDetails?.activeMintModuleReqs?.mixins;
 
     if (tokenGateOption === TokenGateOption.UNRESTRICTED) {
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      const _mixins = mixins.filter(
-        (mixin) => mixin !== tokenGatedMixin.address
-      );
+      const _mixins =
+        mixins?.filter((mixin) => mixin !== tokenGatedMixin.address) || [];
+
       await guardMixinManager.updateDefaultMixins(
         account,
         clubAddress as string,
         _mixins,
         onTxConfirm,
-        onTxReceipt,
+        onTxReceiptGuardUpdate,
         onTxFail
       );
       return;
@@ -564,8 +575,8 @@ const ModifyTokenGatedClub: React.FC = () => {
       return; // TODO [TOKEN GATING] this is hacky. Should be handled by disabling submit button
     }
 
-    const tokens: any = [];
-    const balances: any = [];
+    const tokens: string[] = [];
+    const balances: string[] = [];
     const logicOperator =
       logicalOperator === LogicalOperator.AND ? true : false;
     const sortedTokenRules = validateAndOrderTokenRules(tokenRules);
@@ -581,12 +592,11 @@ const ModifyTokenGatedClub: React.FC = () => {
               _token.decimals,
               true
             )
-          : _token.quantity
+          : _token.quantity.toString()
       );
     });
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    const isClubGated = mixins.find(
+    const isClubGated = mixins?.find(
       (mixin) => mixin === tokenGatedMixin.address
     );
 
@@ -617,22 +627,20 @@ const ModifyTokenGatedClub: React.FC = () => {
     dispatch(setActiveRowIdx(rowIdx));
   };
 
-  const handleOnChangeAmountRaising = (e: any): void => {
+  const handleOnChangeAmountRaising = (
+    e: ChangeEvent<HTMLInputElement>
+  ): void => {
     const amount = numberInputRemoveCommas(e);
     if (Number(amount) < existingAmountRaised && Number(amount) >= 0) {
       setMaxAmountRaisingError(
-        // @ts-expect-error TS(2345): Argument of type '"Below the current amount raise... Remove this comment to see the full error message
         'Below the current amount raised. Please withdraw funds first before setting a lower limit.'
       );
-      // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
-    } else if (amount < 0 || isNaN(amount)) {
-      // @ts-expect-error TS(2345): Argument of type '"Max amount is required"' is not assig... Remove this comment to see the full error message
+    } else if (Number(amount) < 0 || isNaN(Number(amount))) {
       setMaxAmountRaisingError('Max amount is required');
     } else {
-      setMaxAmountRaisingError(null);
+      setMaxAmountRaisingError('');
     }
-    // @ts-expect-error TS(2365): Operator '<' cannot be applied to types 'string' a... Remove this comment to see the full error message
-    dispatch(setMaxAmountRaising(amount >= 0 ? amount : 0));
+    dispatch(setMaxAmountRaising(Number(amount) >= 0 ? Number(amount) : 0));
   };
 
   const cancelEdit = (): void => {
@@ -644,22 +652,18 @@ const ModifyTokenGatedClub: React.FC = () => {
     }
   };
 
-  const handleOnChangeMaxMembers = (e: any): void => {
+  const handleOnChangeMaxMembers = (e: ChangeEvent<HTMLInputElement>): void => {
     const numberOfMembers = e.target.value;
     if (Number(numberOfMembers) < 0) {
-      // @ts-expect-error TS(2345): Argument of type '"Number can't be negative"' is not assig... Remove this comment to see the full error message
       setMaxNumberOfMembersError(`Number can't be negative`);
-    } else if (isNaN(numberOfMembers) || Number(numberOfMembers) == 0) {
-      // @ts-expect-error TS(2345): Argument of type '"Please enter a number between 1 and 99"' is not assig... Remove this comment to see the full error message
+    } else if (isNaN(Number(numberOfMembers)) || Number(numberOfMembers) == 0) {
       setMaxNumberOfMembersError(`Please enter a number between 1 and 99`);
     } else if (Number(numberOfMembers) < existingNumberOfMembers) {
       setMaxNumberOfMembersError(
-        // @ts-expect-error TS(2345): Argument of type 'string' is not assig... Remove this comment to see the full error message
         `Club already has ${existingNumberOfMembers} members`
       );
     } else if (Number(numberOfMembers) > MAX_MEMBERS_ALLOWED) {
       setMaxNumberOfMembersError(
-        // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
         <div>
           Between 1 and 99 accepted to maintain investment club status. Reach
           out to us at{' '}
@@ -670,13 +674,13 @@ const ModifyTokenGatedClub: React.FC = () => {
         </div>
       );
     } else {
-      setMaxNumberOfMembersError(null);
+      setMaxNumberOfMembersError('');
     }
     dispatch(
       setMaxNumberOfMembers(
         Number(
           `${
-            numberOfMembers > 0 && !isNaN(numberOfMembers)
+            Number(numberOfMembers) > 0 && !isNaN(Number(numberOfMembers))
               ? numberOfMembers
               : ''
           }`
@@ -729,9 +733,10 @@ const ModifyTokenGatedClub: React.FC = () => {
                     <div className="flex flex-col space-y-4">
                       <div>
                         {getFormattedDateTimeWithTZ(
-                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                          +activeModuleDetails?.activeMintModuleReqs?.endTime *
-                            1000,
+                          +(
+                            activeModuleDetails?.activeMintModuleReqs
+                              ?.endTime ?? 0
+                          ) * 1000,
                           'dddd, MMM D, YYYY h:mma zz'
                         )
                           .split(' ')
@@ -766,8 +771,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                         closeTimeError={closeTimeError}
                         setCloseTime={setCloseTime}
                         setCloseDate={setCloseDate}
-                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
-                        dateWarning={openToDepositsUntilWarning}
+                        dateWarning={openToDepositsUntilWarning ?? ''}
                       />
                     )
                   }
@@ -799,8 +803,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                         value={String(maxAmountRaising)}
                         symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
                         onChange={handleOnChangeAmountRaising}
-                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'boolean | u... Remove this comment to see the full error message
-                        isInErrorState={maxAmountRaisingError}
+                        isInErrorState={maxAmountRaisingError ? true : false}
                         infoLabel={
                           maxAmountRaisingError
                             ? maxAmountRaisingError
@@ -829,7 +832,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                         addOn="Max"
                         addOnOnClick={(): void => {
                           dispatch(setMaxNumberOfMembers(MAX_MEMBERS_ALLOWED));
-                          setMaxNumberOfMembersError(null);
+                          setMaxNumberOfMembersError('');
                         }}
                         onChange={handleOnChangeMaxMembers}
                       />
@@ -877,33 +880,36 @@ const ModifyTokenGatedClub: React.FC = () => {
         customClassName="pt-8"
         showHeader={false}
       >
-        <ProgressCard
-          title={progressTitle}
-          description={progressDescription}
-          // @ts-expect-error TS(2345): Argument of type 'ProgressState | undefined' is not assig... Remove this comment to see the full error message
-          state={progressState}
-          transactionHash={transactionHash}
-          transactionType="transaction"
-          buttonLabel={
-            progressState === ProgressState.FAILURE
-              ? 'Try Again'
-              : progressState === ProgressState.SUCCESS
-              ? 'Back to club'
-              : ''
-          }
-          buttonFullWidth={true}
-          buttonOnClick={(): void => {
-            if (progressState === ProgressState.FAILURE) {
-              setProgressModal(false);
-            } else {
-              const _clubAddress = getFirstOrString(clubAddress) || '';
-              void router.push(
-                `/clubs/${_clubAddress}/manage?chain=${activeNetwork.network}`
-              );
-              dispatch(resetClubCreationReduxState());
+        {progressState ? (
+          <ProgressCard
+            title={progressTitle}
+            description={progressDescription}
+            state={progressState}
+            transactionHash={transactionHash}
+            transactionType="transaction"
+            buttonLabel={
+              progressState === ProgressState.FAILURE
+                ? 'Try Again'
+                : progressState === ProgressState.SUCCESS
+                ? 'Back to club'
+                : ''
             }
-          }}
-        />
+            buttonFullWidth={true}
+            buttonOnClick={(): void => {
+              if (progressState === ProgressState.FAILURE) {
+                setProgressModal(false);
+              } else {
+                const _clubAddress = getFirstOrString(clubAddress) || '';
+                void router.push(
+                  `/clubs/${_clubAddress}/manage?chain=${activeNetwork.network}`
+                );
+                dispatch(resetClubCreationReduxState());
+              }
+            }}
+          />
+        ) : (
+          <></>
+        )}
       </Modal>
     </div>
   );
@@ -942,9 +948,9 @@ const EditCloseTime: React.FC<{
     setCloseTime(timeValue);
   };
 
-  const handleDateChange = (targetDate: any): void => {
-    setCloseDate(targetDate);
-    setOpenToDepositsUntil(targetDate);
+  const handleDateChange = (targetDate: Date | number): void => {
+    setCloseDate(targetDate as number);
+    setOpenToDepositsUntil(targetDate as Date);
   };
 
   const now = new Date();
@@ -956,17 +962,18 @@ const EditCloseTime: React.FC<{
       <div className="flex flex-col sm:flex-row flex-shrink-0 sm:space-x-5">
         <div className="sm:w-1/2 flex-shrink-0">
           <InputFieldWithDate
-            onChange={(targetDate): void => handleDateChange(targetDate)}
+            onChange={(targetDate): void => {
+              if (targetDate) handleDateChange(targetDate);
+            }}
             isInErrorState={isInErrorState}
-            // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assignable t... Remove this comment to see the full error message
-            selectedDate={dateWarning ? null : openToDepositsUntil}
+            selectedDate={dateWarning ? undefined : openToDepositsUntil}
             infoLabel={dateWarning && dateWarning}
           />
         </div>
         <div className="mt-4 sm:mt-0 sm:w-1/2">
           <TimeInputField
             placeholderLabel="11:59PM"
-            onChange={(e): void => {
+            onChange={(e: ChangeEvent<HTMLInputElement>): void => {
               onTimeChange(e.target.value);
             }}
             extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced`}
@@ -979,9 +986,9 @@ const EditCloseTime: React.FC<{
       </div>
       {(warning || closeTimeError) && (
         <div
-          className={`${warning && !closeTimeError && 'text-yellow-warning'} ${
-            closeTimeError ? 'text-red-error' : ''
-          } text-sm w-full mt-2`}
+          className={`${
+            (warning && !closeTimeError && 'text-yellow-warning') || ''
+          } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full mt-2`}
         >
           {closeTimeError ? closeTimeError : warning ? warning : ''}
         </div>
@@ -1018,20 +1025,20 @@ const TokenGatedModules: React.FC = () => {
   }, [requiredTokensLogicalOperator]);
 
   useEffect(() => {
-    // @ts-expect-error TS(2345): Argument of type 'TokenGateOption | undefined' is not assig... Remove this comment to see the full error message
+    if (!tokenGateOption) return;
     dispatch(setActiveTokenGateOption(tokenGateOption));
   }, [tokenGateOption]);
 
   useEffect(() => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    if (requiredTokenRules.length) {
+    if (requiredTokenRules?.length) {
       const chainTokens: (typeof SUPPORTED_TOKENS)[1 | 137] =
         SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1];
 
       const notFoundTokens: IRequiredTokenRules[] = [];
 
-      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-      const tokens = requiredTokenRules.map((_token) => {
+      const tokens: Token[] = [];
+
+      requiredTokenRules.map((_token) => {
         const contractAddress = isZeroAddress(_token.contractAddress)
           ? ''
           : _token.contractAddress;
@@ -1043,30 +1050,32 @@ const TokenGatedModules: React.FC = () => {
           notFoundTokens.push(_token);
           return null;
         } else {
-          return {
+          return tokens.push({
             name: chainToken.name,
-            quantity: getWeiAmount(
-              new BigNumber(_token.quantity).toFixed(),
-              chainToken.decimals || 18,
-              false
+            quantity: Number(
+              getWeiAmount(
+                new BigNumber(_token.quantity).toFixed(),
+                chainToken.decimals || 18,
+                false
+              )
             ),
             symbol: chainToken.symbol,
             chainId: activeNetwork.chainId,
             contractAddress: _token.contractAddress,
             icon: chainToken.logoURI,
             decimals: chainToken.decimals
-          };
+          });
         }
       });
 
       if (notFoundTokens.length) {
-        fetchCollectiveDetails(
+        void fetchCollectiveDetails(
           notFoundTokens,
           tokens.filter((t) => t?.name)
         );
       } else {
-        // @ts-expect-error TS(2345): Argument of type "type '({ name: string; quantity: any; symbol: string; chainId:... Remove this comment to see the full error message
-        dispatch(setTokenRules(tokens.filter((t) => t)));
+        const _tokens = tokens?.filter((t) => t !== null);
+        if (_tokens.length) dispatch(setTokenRules(_tokens));
       }
     }
   }, [activeNetwork.chainId, requiredTokenRules]);
@@ -1074,7 +1083,7 @@ const TokenGatedModules: React.FC = () => {
   const fetchTokenDetails = useCallback(
     async (notFoundTokens, foundTokens) => {
       const tokens = await Promise.all(
-        notFoundTokens.map((token: any) =>
+        notFoundTokens.map((token: { contractAddress: string }) =>
           getTokenDetails(token.contractAddress, activeNetwork.chainId)
         )
       ).then((res) =>
@@ -1087,8 +1096,7 @@ const TokenGatedModules: React.FC = () => {
           return {
             icon: _res.data.logo,
             quantity: getWeiAmount(
-              // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-              new BigNumber(quantity).toFixed(),
+              new BigNumber(quantity ?? '0').toFixed(),
               _res.data.decimals,
               false
             ),
@@ -1117,17 +1125,18 @@ const TokenGatedModules: React.FC = () => {
         activeNetwork.chainId
       ).then((res) => res.data.data.syndicateCollectives);
 
-      const _tokens: any = [];
+      const _tokens: Token[] = [];
 
       if (tokens?.length) {
         _tokens.push(
           ...tokens.map((token) => {
             return {
               name: token.name,
-              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-              quantity: +tokenAddresses.find(
-                (t) => t.contractAddress === token.contractAddress
-              ).quantity,
+              quantity: +(
+                tokenAddresses.find(
+                  (t) => t.contractAddress === token.contractAddress
+                )?.quantity ?? 0
+              ),
               symbol: token.symbol,
               chainId: activeNetwork.chainId,
               contractAddress: token.contractAddress,
@@ -1140,7 +1149,7 @@ const TokenGatedModules: React.FC = () => {
 
       const notFoundTokens2 = tokenAddresses.filter((t) =>
         _tokens.every(
-          (t2: any) => !t2.contractAddress.includes(t.contractAddress)
+          (t2: Token) => !t2.contractAddress.includes(t.contractAddress)
         )
       );
 

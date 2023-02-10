@@ -7,7 +7,7 @@ import { Switch, SwitchType } from '@/components/switch';
 import { B2, B3, B4 } from '@/components/typography';
 import { stringNumberRemoveCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { InputFieldMaxPerWallet } from '../inputs/maxPerWallet';
 import { OpenUntil, RadioButtonsOpenUntil } from '../inputs/openUntil/radio';
@@ -42,7 +42,9 @@ interface Props {
   handleOpenUntilChange: (newOpenUntil: OpenUntil) => void;
   openUntil: OpenUntil;
   isContinueButtonActive: boolean;
-  handleContinue: (e: any) => void;
+  handleContinue: (
+    e?: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void | null | undefined;
 }
 
 export const CollectiveFormCustomize: React.FC<Props> = ({
@@ -170,22 +172,22 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
                   })
                 : ''
             }
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLInputElement>): void => {
               const amount = stringNumberRemoveCommas(e.target.value);
               if (Number(amount)) {
-                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-                handleMaxMembersChange(Number(amount));
+                handleMaxMembersChange?.(Number(amount));
               } else if (amount === '') {
-                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-                handleMaxMembersChange(null);
+                handleMaxMembersChange?.(0);
               }
             }}
             placeholderLabel="10,000"
             extraClasses="mt-2"
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-            isInErrorState={maxMembers > 10000}
-            // @ts-expect-error TS(2322): Type 'false | "Max members must be below 10,000"' ... Remove this comment to see the full error message
-            infoLabel={maxMembers > 10000 && 'Max members must be below 10,000'}
+            isInErrorState={Number(maxMembers) > 10000}
+            infoLabel={
+              (Number(maxMembers) > 10000 &&
+                'Max members must be below 10,000') ||
+              ''
+            }
           />
         </div>
 
@@ -337,7 +339,11 @@ export const CollectiveFormCustomize: React.FC<Props> = ({
         <CTAButton
           fullWidth={true}
           type={isContinueButtonActive ? CTAType.PRIMARY : CTAType.DISABLED}
-          onClick={isContinueButtonActive ? handleContinue : null}
+          onClick={(): void => {
+            if (isContinueButtonActive) {
+              handleContinue();
+            }
+          }}
         >
           Continue
         </CTAButton>

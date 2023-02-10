@@ -36,8 +36,12 @@ const InviteMembers: React.FC = () => {
   const [memberAddresses, setMemberAddresses] = useState('');
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
 
-  const [rawMemberAddresses, setRawMemberAddresses] = useState([]);
-  const [resolvedMemberAddresses, setResolvedMemberAddresses] = useState([]);
+  const [rawMemberAddresses, setRawMemberAddresses] = useState<
+    (string | never)[]
+  >([]);
+  const [resolvedMemberAddresses, setResolvedMemberAddresses] = useState<
+    (string | never)[]
+  >([]);
   const [resolutionProgress, setResolutionProgress] = useState(0);
 
   const [progressPercent, setProgressPercent] = useState(0);
@@ -46,7 +50,7 @@ const InviteMembers: React.FC = () => {
 
   const handleMemberAddressesChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  ): void => {
     const { value } = event.target;
 
     setMemberAddresses(value);
@@ -59,7 +63,6 @@ const InviteMembers: React.FC = () => {
   const dispatchMembershipAddresses = (_addresses: string) => {
     if (_addresses.endsWith(',')) {
       const _address = _addresses.slice(0, -1);
-      // @ts-expect-error TS(2345): of type 'string[]' is not assignable to par... Remove this comment to see the full error message
       setRawMemberAddresses(_address.split(','));
       validateAddressArr(removeNewLinesAndWhitespace(_address).split(','));
     } else if (!_addresses.length) {
@@ -68,7 +71,6 @@ const InviteMembers: React.FC = () => {
       dispatch(setMemberAddressesError(''));
       setProgressPercent(0);
     } else {
-      // @ts-expect-error TS(2345): of type 'string[]' is not assignable to par... Remove this comment to see the full error message
       setRawMemberAddresses(_addresses.split(','));
       validateAddressArr(removeNewLinesAndWhitespace(_addresses).split(','));
     }
@@ -118,7 +120,7 @@ const InviteMembers: React.FC = () => {
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
 
-  const validateAddressArr = (arr: string[]) => {
+  const validateAddressArr = (arr: string[]): void => {
     // get last element in array
     const lastElement = arr[arr.length - 1];
 
@@ -132,8 +134,8 @@ const InviteMembers: React.FC = () => {
 
     const ensRegex = /^[-a-zA-Z0-9.-]{1,256}\.(eth|test)$/;
 
-    const errors = newSplitArr?.reduce((accumulator, value) => {
-      if (web3.utils.isAddress(value)) {
+    const errors = newSplitArr?.reduce((accumulator: string[], value) => {
+      if (web3 && web3.utils.isAddress(value)) {
         // check if address added is the connected account (manager)
         if (
           account &&
@@ -142,7 +144,6 @@ const InviteMembers: React.FC = () => {
         ) {
           // setContinueDisabled(true);
           accumulator.push(
-            // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to parameter of type 'never'.
             'You cannot add your own address (manager) to the list of members.'
           );
         }
@@ -150,17 +151,14 @@ const InviteMembers: React.FC = () => {
         // handle duplicates
         if (countOccurrences(newSplitArr, value) > 1) {
           // setContinueDisabled(true);
-          // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to parameter of type 'never'.
           accumulator.push(`${value} has already been added (duplicate).`);
         }
       } else if (!value) {
-        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to parameter of type 'never'.
         accumulator.push(`Please separate valid ERC20 addresses with commas`);
       } else if (ensRegex.test(value)) {
         // continue with ens address
       } else {
         // setContinueDisabled(true);
-        // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to parameter of type 'never'.
         accumulator.push(`${value} is not a valid ERC20 address`);
       }
 
@@ -177,19 +175,15 @@ const InviteMembers: React.FC = () => {
   };
 
   /** Amount per member address */
-  const handleAmountPerAddressChange = (e: any) => {
+  const handleAmountPerAddressChange = (e: any): void => {
     const amount = numberInputRemoveCommas(e);
     if (!amount || +amount <= 0) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(true);
+      setNextBtnDisabled?.(true);
     } else {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      setNextBtnDisabled(false);
+      setNextBtnDisabled?.(false);
     }
-    // @ts-expect-error TS(2365): Operator '>=' cannot be applied to types 'string' ... Remove this comment to see the full error message
-    setAmountPerAddress(amount >= 0 ? amount : '');
-    // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-    dispatch(setAmountToMintPerAddress(amount));
+    setAmountPerAddress(Number(amount) >= 0 ? amount : '');
+    dispatch(setAmountToMintPerAddress(Number(amount)));
   };
 
   // resolve ENS addresses
@@ -207,14 +201,12 @@ const InviteMembers: React.FC = () => {
   /** start resolving any ENS name after we have read the
    * raw addresses from the uploaded file or text area */
   useEffect(() => {
-    if (rawMemberAddresses.length) {
+    if (rawMemberAddresses?.length) {
       rawMemberAddresses.map(async (address) => {
-        // @ts-expect-error TS(2339): Property 'indexOf' does not exist on type 'never'.
         if (address.indexOf('.eth') > 0) {
           resolveENSAddress(address)
             .then((addr) => {
               if (addr) {
-                // @ts-expect-error TS(2345): Argument of type '(prev: never[]) => string[]' is not assi... Remove this comment to see the full error message
                 setResolvedMemberAddresses((prev) => [...prev, addr]);
                 setResolutionProgress((prev) => prev + 1);
               } else {
@@ -243,7 +235,7 @@ const InviteMembers: React.FC = () => {
   useEffect(() => {
     if (
       resolutionProgress > 0 &&
-      resolutionProgress === rawMemberAddresses.length
+      resolutionProgress === rawMemberAddresses?.length
     ) {
       dispatch(setMembershipAddresses([...new Set(resolvedMemberAddresses)]));
       setProgressPercent(100);
@@ -269,7 +261,6 @@ const InviteMembers: React.FC = () => {
         onSelect={handleOnSelectText}
         progressPercent={progressPercent}
         setProgressPercent={setProgressPercent}
-        // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<never[]>>' is not assig ... Remove this comment to see the full error message
         setRawMemberAddresses={setRawMemberAddresses}
       />
 
@@ -288,7 +279,7 @@ const InviteMembers: React.FC = () => {
                     .replace(/^0(?!\.)/, '')
                 )
               : '',
-            onChange: (e) => {
+            onChange: (e): void => {
               if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
                 return;
               }

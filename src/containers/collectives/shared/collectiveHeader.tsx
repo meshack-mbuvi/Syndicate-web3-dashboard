@@ -1,8 +1,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COLLECTIVE_MODIFY_SETTINGS_CLICK } from '@/components/amplitude/eventNames';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B3, H1, H2 } from '@/components/typography';
 import { AppState } from '@/state';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,8 +17,6 @@ import {
   OpenSeaIcon,
   SettingsIcon
 } from 'src/components/iconWrappers';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { COLLECTIVE_MODIFY_SETTINGS_CLICK } from '@/components/amplitude/eventNames';
 
 export const CollectiveHeader: React.FC<{
   collectiveName: string;
@@ -44,9 +45,8 @@ export const CollectiveHeader: React.FC<{
   );
 
   const router = useRouter();
-  const {
-    query: { collectiveAddress }
-  } = router;
+  const collectiveAddress =
+    getFirstOrString(router.query.collectiveAddress) || '';
 
   return (
     <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
@@ -61,8 +61,8 @@ export const CollectiveHeader: React.FC<{
                 className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8 cursor-pointer"
                 data-tip
                 data-for="customize"
-                onClick={() => {
-                  amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
+                onClick={(): void => {
+                  void amplitudeLogger(COLLECTIVE_MODIFY_SETTINGS_CLICK, {
                     flow: Flow.COLLECTIVE_MANAGE
                   });
                 }}
@@ -84,7 +84,7 @@ export const CollectiveHeader: React.FC<{
             </Link>
           ) : null}
 
-          {links && links.openSea ? (
+          {links && links.openSea && links.openSea !== '' ? (
             <a
               href={links.openSea}
               className="rounded-full bg-gray-syn7 hover:bg-gray-syn6 w-8 h-8"
@@ -115,7 +115,6 @@ export const CollectiveHeader: React.FC<{
             data-for="etherscan"
           >
             <BlockExplorerLink
-              // @ts-expect-error TS(2322): Type 'string | string[] | undefined' is not assig... Remove this comment to see the full error message
               resourceId={collectiveAddress}
               iconcolor={ExternalLinkColor.GRAY4}
               iconOnly={true}

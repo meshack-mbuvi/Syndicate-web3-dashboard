@@ -2,8 +2,11 @@ import { NETWORKS } from '@/Networks';
 import { INetwork } from '@/Networks/networks';
 import _ from 'lodash';
 
-export const getNetworkById = (chainId: any): INetwork => {
-  const network: any = _.find(NETWORKS, (el) => el.chainId === chainId);
+export const getNetworkById = (chainId: number): INetwork | undefined => {
+  const network: INetwork | undefined = _.find(
+    NETWORKS,
+    (el) => el.chainId === chainId
+  );
 
   return network;
 };

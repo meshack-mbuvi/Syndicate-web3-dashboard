@@ -1,25 +1,26 @@
+import { IActiveNetwork, IWeb3 } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import MintPolicyABI from 'src/contracts/PolicyMintERC20.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { Contract } from 'web3-eth-contract';
 import { estimateGas } from '../shared/getGasEstimate';
-import { IActiveNetwork } from '@/state/wallet/types';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class MintPolicyContract {
   web3;
   // This will be used to call other functions. eg mint
-  mintPolicyContract;
+  mintPolicyContract: Contract | null;
   address;
   activeNetwork;
 
   constructor(
     mintPolicyAddress: string,
-    web3: Web3,
+    web3: IWeb3,
     activeNetwork: IActiveNetwork
   ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.mintPolicyContract = new this.web3.eth.Contract(
-      // @ts-expect-error TS(2345): Argument of type '({ anonymous: boolean; inputs: (... Remove this comment to see the full error message
-      MintPolicyABI,
+      MintPolicyABI as AbiItem[],
       mintPolicyAddress
     );
     this.address = mintPolicyAddress;
@@ -28,12 +29,10 @@ export class MintPolicyContract {
   init(): void {
     try {
       this.mintPolicyContract = new this.web3.eth.Contract(
-        // @ts-expect-error TS(2345): Argument of type '({ anonymous: boolean; inputs: (... Remove this comment to see the full error message
-        MintPolicyABI,
+        MintPolicyABI as AbiItem[],
         this.address
       );
     } catch (error) {
-      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Contract'.
       this.mintPolicyContract = null;
     }
   }
@@ -51,14 +50,14 @@ export class MintPolicyContract {
     requiredTokenMinBalance: any;
     startTime: any;
   }> {
-    return this.mintPolicyContract.methods.configOf(address).call();
+    return this.mintPolicyContract?.methods.configOf(address).call();
   }
 
   async isModuleAllowed(
     clubAddress: string,
     moduleAddress: string
   ): Promise<boolean> {
-    return this.mintPolicyContract.methods
+    return this.mintPolicyContract?.methods
       .allowedModules(clubAddress, moduleAddress)
       .call();
   }
@@ -96,7 +95,7 @@ export class MintPolicyContract {
     const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
-      this.mintPolicyContract.methods
+      this.mintPolicyContract?.methods
         .updateConfig(club, [
           startTime,
           endTime,
@@ -108,7 +107,6 @@ export class MintPolicyContract {
         .send({ from: wallet, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash: any) => {
           if (
-            // @ts-expect-error TS(2339): Property '_provider' does not exist on type 'Web3'... Remove this comment to see the full error message
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
             gnosisTxHash = transactionHash;
@@ -129,13 +127,10 @@ export class MintPolicyContract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(
-        gnosisTxHash,
-        this.activeNetwork
-      );
+      const receipt = await getGnosisTxnInfo(gnosisTxHash, this.activeNetwork);
       onTxConfirm(receipt.transactionHash);
 
-      const createEvents = await this.mintPolicyContract.getPastEvents(
+      const createEvents = await this.mintPolicyContract?.getPastEvents(
         'ConfigUpdated',
         {
           filter: { transactionHash: receipt.transactionHash },
@@ -144,7 +139,7 @@ export class MintPolicyContract {
         }
       );
 
-      if (receipt.isSuccessful) {
+      if (receipt.isSuccessful && createEvents) {
         onTxReceipt({
           ...receipt,
           events: { ConfigUpdated: createEvents[0] }
@@ -161,11 +156,11 @@ export class MintPolicyContract {
     startTime: number,
     endTime: number,
     maxMemberCount: number,
-    maxTotalSupply: number,
-    onResponse: (gas?: number) => void
+    maxTotalSupply: number | BN,
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     await new Promise(() => {
-      this.mintPolicyContract.methods
+      this.mintPolicyContract?.methods
         .updateConfig(club, [
           startTime,
           endTime,

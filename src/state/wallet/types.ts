@@ -1,11 +1,15 @@
 import { Web3Provider } from '@ethersproject/providers';
+import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-
-const initialWeb3 = {};
+import { Eth } from 'web3-eth';
+import { Utils } from 'web3-utils';
 
 export interface IWeb3 extends Web3 {
   _provider?: any;
-  utils: any;
+  utils: Utils & {
+    BN?: typeof BigNumber;
+  };
+  eth: Eth;
 }
 export interface IGnosis {
   txServiceUrl: string;
@@ -43,7 +47,7 @@ export interface IActiveNetwork {
   network: string;
   testnet: boolean;
   chainId: number;
-  networkId: number;
+  networkId: number | null;
   rpcUrl: string;
   publicRPC: string;
   logo: string;
@@ -78,25 +82,27 @@ export enum Status {
   DISCONNECTED = 'disconnected'
 }
 
-export interface InitialState {
-  web3: {
-    status: Status;
-    connect: boolean;
-    showConnectionModal: boolean;
-    isErrorModalOpen: boolean;
-    error: IModalErrors | any;
-    web3: any;
-    chainId: number;
-    account: string;
-    providerName: string;
-    activeNetwork: IActiveNetwork;
-    currentEthereumNetwork: string;
-    ethereumNetwork: {
-      correctEthereumNetwork: string;
-      invalidEthereumNetwork: boolean;
-    };
-    ethersProvider: Web3Provider | null;
+export interface IWeb3State {
+  status: Status;
+  connect: boolean;
+  showConnectionModal: boolean;
+  isErrorModalOpen: boolean;
+  error: IModalErrors | any;
+  web3: IWeb3 | null;
+  chainId: number;
+  account: string;
+  providerName: string;
+  activeNetwork: IActiveNetwork;
+  currentEthereumNetwork: string;
+  ethereumNetwork: {
+    correctEthereumNetwork: string;
+    invalidEthereumNetwork: boolean;
   };
+  ethersProvider: Web3Provider | null;
+}
+
+export interface InitialState {
+  web3: IWeb3State;
   showWalletModal: boolean;
   dispatchCreateFlow: boolean;
   showNetworkDropdown: boolean;
@@ -111,7 +117,7 @@ export const initialState: InitialState = {
     showConnectionModal: false,
     isErrorModalOpen: false,
     error: null,
-    web3: initialWeb3,
+    web3: null,
     account: '',
     chainId: 0,
     providerName: '',
@@ -127,7 +133,6 @@ export const initialState: InitialState = {
       network: '',
       testnet: false,
       chainId: 0,
-      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'number'.
       networkId: null,
       rpcUrl: '',
       publicRPC: '',

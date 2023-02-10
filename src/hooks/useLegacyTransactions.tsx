@@ -141,9 +141,8 @@ export type TransactionQueryDetails = {
 const GRAPHQL_HEADER = process.env.NEXT_PUBLIC_GRAPHQL_HEADER;
 
 // Get input, note this is deterministic
-export const getInput: any = (address: string) => {
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  const wordArray = CryptoJS.enc.Utf8.parse(GRAPHQL_HEADER);
+export const getInput = (address: string): string => {
+  const wordArray = CryptoJS.enc.Utf8.parse(GRAPHQL_HEADER ?? '');
   return CryptoJS.AES.encrypt(address, wordArray, {
     mode: CryptoJS.mode.ECB
   }).toString();

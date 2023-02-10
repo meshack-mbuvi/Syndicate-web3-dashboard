@@ -1,15 +1,15 @@
-import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { setUtilityNFT, clearUtilityNFT } from '@/state/UtilityNFT/slice';
 import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+import { AppState } from '@/state';
+import { clearUtilityNFT, setUtilityNFT } from '@/state/UtilityNFT/slice';
 import { MembershipPass, Utility } from '@/state/UtilityNFT/types';
-import { getWeiAmount } from '@/utils/conversions';
 import {
   getNativeTokenPrice,
   getNftTransactionHistory
 } from '@/utils/api/transactions';
+import { getWeiAmount } from '@/utils/conversions';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();
@@ -38,14 +38,14 @@ const useUtilityNFT: any = () => {
   const [loadingMambershipTokens, setMambershipTokens] =
     useState<boolean>(false);
 
-  const getRedemptionToken = async () => {
+  const getRedemptionToken = async (): Promise<string> => {
     setRedemptionToken('');
     const response = await RugUtilityMintModule.redemptionToken();
     setRedemptionToken(response);
     return response;
   };
 
-  const getMembershipToken = async () => {
+  const getMembershipToken = async (): Promise<string> => {
     const response = await RugUtilityMintModule.membership();
     setMembershipToken(response);
     return response;
@@ -55,19 +55,19 @@ const useUtilityNFT: any = () => {
     owner: string,
     contract: string,
     tokenId: string
-  ) => {
+  ): Promise<boolean> => {
     const ERC721tokenContract = new ERC721Contract(contract as string, web3);
 
     return owner == (await ERC721tokenContract.ownerOf(tokenId));
   };
 
-  const getTokenClaimStatus = async (tokenID: any) => {
+  const getTokenClaimStatus = async (tokenID: any): Promise<boolean> => {
     // get claim status
     const response = await RugUtilityMintModule.tokenRedeemed(tokenID);
     return response;
   };
 
-  const getNativePrice = async () => {
+  const getNativePrice = async (): Promise<string> => {
     const response = await Promise.all([
       RugUtilityMintModule.nativePrice(),
       getNativeTokenPrice(activeNetwork.chainId)
@@ -83,7 +83,7 @@ const useUtilityNFT: any = () => {
     return priceResponse;
   };
 
-  const getMembershipTokens = async () => {
+  const getMembershipTokens = async (): Promise<void> => {
     const result = await getNftTransactionHistory(
       address,
       redemptionToken,
@@ -128,7 +128,7 @@ const useUtilityNFT: any = () => {
     setMambershipTokens(false);
   };
 
-  const checkTokenBalance = async () => {
+  const checkTokenBalance = async (): Promise<void> => {
     if (redemptionToken) {
       setMembershipBalance(0);
       const ERC721tokenContract = new ERC721Contract(
@@ -142,7 +142,7 @@ const useUtilityNFT: any = () => {
     setLoadingBalance(false);
   };
 
-  const fetchBasicDetails = async () => {
+  const fetchBasicDetails = async (): Promise<void> => {
     await getRedemptionToken();
     await getMembershipToken();
     await getNativePrice();
@@ -152,14 +152,14 @@ const useUtilityNFT: any = () => {
   useEffect(() => {
     if (redemptionToken && membershipToken) {
       setLoadingBalance(true);
-      checkTokenBalance();
+      void checkTokenBalance();
     }
   }, [redemptionToken, membershipToken]);
 
   useEffect(() => {
     if (balance > 0 && redemptionToken && address) {
       setMambershipTokens(true);
-      getMembershipTokens();
+      void getMembershipTokens();
     } else {
       setMambershipTokens(false);
       setClaimAvailable(false);
@@ -172,11 +172,11 @@ const useUtilityNFT: any = () => {
     if (router.isReady && address) {
       // fetch data
       setLoadingBasic(true);
-      fetchBasicDetails();
+      void fetchBasicDetails();
     }
   }, [address, router.isReady]);
 
-  const processClaimData = () => {
+  const processClaimData = (): void => {
     dispatch(
       setUtilityNFT({
         account: address,
@@ -185,7 +185,7 @@ const useUtilityNFT: any = () => {
         membershipToken,
         totalClaims: balance,
         nativePrice,
-        price: getWeiAmount(nativePrice, 18, false),
+        price: +getWeiAmount(nativePrice, 18, false),
         priceUSD: parseFloat(
           (
             parseFloat(String(tokenPrice)) *

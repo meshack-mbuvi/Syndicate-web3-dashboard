@@ -2,8 +2,8 @@ import IconGas from '@/components/icons/Gas';
 import IconInfo from '@/components/icons/info';
 import IconWalletConnect from '@/components/icons/walletConnect';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { getNetworkById, getNetworkByName } from '@/helpers/getNetwork';
 import useWindowSize from '@/hooks/useWindowSize';
-import { getNetworkByName, getNetworkById } from '@/helpers/getNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
@@ -12,6 +12,7 @@ import {
   setShowWalletDropdownMenu
 } from '@/state/wallet/actions';
 import { isDev } from '@/utils/environment';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { Popover, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -33,12 +34,13 @@ const NetworkMenuDropDown: FC = () => {
   const { providerName } = useProvider();
 
   const [nativeBalance, setNativeBalance] = useState('');
-  const [blockNumber, setBlockNumber] = useState('');
+  const [blockNumber, setBlockNumber] = useState<number | string>();
   const [gas, setGas] = useState('');
 
   // Switch networks based on URL param
   const router = useRouter();
-  const { network, chain } = router.query;
+  const chain = getFirstOrString(router.query.chain);
+  const network = getFirstOrString(router.query.network);
 
   useEffect(() => {
     let chainId;
@@ -51,39 +53,39 @@ const NetworkMenuDropDown: FC = () => {
       chainId = +chainID;
     }
     if (chainId) {
-      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-      switchNetworks(+chainId);
+      switchNetworks?.(+chainId);
     }
   }, [network, chain]);
 
-  const GetChainIdByName = (name: any) => {
+  const GetChainIdByName = (name: string): number => {
     const network = getNetworkByName(name);
 
     return network?.chainId;
   };
 
-  const VerifyChainId = (chainId: any) => {
+  const VerifyChainId = (chainId: any): number => {
     const network = getNetworkById(chainId);
-    return network?.chainId;
+    return network?.chainId || -1;
   };
 
-  const getNativeBalance = async (address: string) => {
+  const getNativeBalance = async (address: string): Promise<void> => {
     try {
-      const balance = await web3Instance.eth.getBalance(address);
-      const nativeBalance = web3Instance.utils.fromWei(balance, 'ether');
+      const balance = (await web3Instance?.eth.getBalance(address)) || '0';
+      const nativeBalance =
+        web3Instance?.utils.fromWei(balance, 'ether') || '0';
       setNativeBalance(nativeBalance);
     } catch (error) {
       console.log({ error });
     }
   };
 
-  const getGasAndBlock = async () => {
+  const getGasAndBlock = async (): Promise<void> => {
     try {
       // block number of latest mined block
-      await web3Instance.eth.getBlockNumber().then((data: any) => {
+      await web3Instance?.eth.getBlockNumber().then((data: number) => {
         setBlockNumber(data);
       });
-      await web3Instance.eth.getGasPrice().then((value: any) => {
+      await web3Instance?.eth.getGasPrice().then((value: string) => {
         const _gas = +web3Instance.utils.fromWei(value, 'gwei');
         setGas(String(Math.ceil(_gas)));
       });
@@ -93,18 +95,18 @@ const NetworkMenuDropDown: FC = () => {
   };
 
   useEffect(() => {
-    getGasAndBlock();
+    void getGasAndBlock();
   }, [web3Instance]);
 
   useEffect(() => {
     if (account && !nativeBalance) {
-      getNativeBalance(account);
+      void getNativeBalance(account);
     }
   }, [account, nativeBalance]);
 
   useEffect(() => {
     const gasAndBlockInterval = setInterval(() => {
-      getGasAndBlock();
+      void getGasAndBlock();
     }, 3000);
     return () => {
       setBlockNumber('--');
@@ -113,19 +115,18 @@ const NetworkMenuDropDown: FC = () => {
     };
   }, [activeNetwork]);
 
-  const networkSwitchAction = (chainId: any) => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-    providerName !== 'WalletConnect' ? switchNetworks(chainId) : null;
+  const networkSwitchAction = (chainId: number): void => {
+    providerName !== 'WalletConnect' ? switchNetworks?.(chainId) : null;
   };
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     dispatch(setShowNetworkDropdownMenu(!showNetworkDropdown));
     dispatch(setShowWalletDropdownMenu(false));
   };
 
   const refId = 'networkButton';
 
-  const closeDropdown = (event: any) => {
+  const closeDropdown = (event: any): void => {
     // find whether click is coming from any of the component in path
     const [isClickedInsideRefId] =
       event?.path?.filter((path: any) => path?.id === 'accountButton') || [];

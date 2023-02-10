@@ -4,8 +4,9 @@ import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { getNetworkByName } from '@/helpers/getNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
 import { AppState } from '@/state';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const TokenEmptyState: React.FC<{
@@ -23,7 +24,7 @@ const TokenEmptyState: React.FC<{
   const [urlNetwork, setUrlNetwork] = useState<any>(null);
 
   const router = useRouter();
-  const { chain } = router.query;
+  const chain = getFirstOrString(router.query.chain);
 
   useEffect(() => {
     if (chain) {
@@ -31,12 +32,12 @@ const TokenEmptyState: React.FC<{
     }
   }, [chain]);
 
-  const GetNetworkByName = (name: any) => {
+  const GetNetworkByName = (name: string): void => {
     const network = getNetworkByName(name);
     setUrlNetwork(network);
   };
 
-  const isValidAddress = web3.utils.isAddress(tokenAddress);
+  const isValidAddress = web3?.utils.isAddress(tokenAddress);
 
   return (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">

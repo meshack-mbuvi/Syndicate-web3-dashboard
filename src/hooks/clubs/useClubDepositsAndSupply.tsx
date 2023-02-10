@@ -1,5 +1,4 @@
-import { SINGLE_CLUB_DETAILS } from '@/graphql/subgraph_queries';
-import { SingleClubData } from '@/graphql/types';
+import { useSyndicateDaOsQuery } from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setActiveModuleDetails, setIsNewClub } from '@/state/erc20token/slice';
@@ -13,7 +12,6 @@ import {
 } from '@/utils/mockdata';
 import getModuleByType from '@/utils/modules/getModuleByType';
 import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,9 +33,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   endTime: any;
   hasActiveModules: boolean;
   mintModule: string;
-  activeMintModuleReqs: ModuleReqs;
+  activeMintModuleReqs: ModuleReqs | null;
   ownerModule: string;
-  activeOwnerModuleReqs: ModuleReqs;
+  activeOwnerModuleReqs: ModuleReqs | null;
   loadingClubDeposits: boolean;
 } {
   const {
@@ -60,30 +58,26 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   const [hasActiveModules, setHasActiveModules] = useState<boolean>(false);
   const [ownerModule, setOwnerModule] = useState<string>('');
   const [mintModule, setMintModule] = useState<string>('');
-  const [activeOwnerReqs, setActiveOwnerReqs] = useState<ModuleReqs>({});
-  const [activeMintReqs, setActiveMintReqs] = useState<ModuleReqs>({});
+  const [activeOwnerReqs, setActiveOwnerReqs] = useState<ModuleReqs | null>({});
+  const [activeMintReqs, setActiveMintReqs] = useState<ModuleReqs | null>({});
 
   const { isReady } = useRouter();
   const isDemoMode = useDemoMode();
   const dispatch = useDispatch();
 
   // SINGLE_CLUB_DETAILS
-  const { loading, data, refetch } = useQuery<SingleClubData>(
-    SINGLE_CLUB_DETAILS,
-    {
-      variables: {
-        where: {
-          contractAddress: contractAddress?.toLocaleLowerCase()
-        }
-      },
-      context: {
-        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-        chainId: activeNetwork.chainId
-      },
-      // Avoid unnecessary calls when contractAddress is not defined or in demo mode
-      skip: !contractAddress || !activeNetwork.chainId || isDemoMode
-    }
-  );
+  const { loading, data, refetch } = useSyndicateDaOsQuery({
+    variables: {
+      where: {
+        contractAddress: contractAddress?.toLocaleLowerCase()
+      }
+    },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
+    },
+    skip: !contractAddress || !activeNetwork.chainId || isDemoMode
+  });
 
   const { memberDeposits, accountTokens } = useConnectedAccountDetails();
 
@@ -115,7 +109,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       syndicateDAOs: [syndicateDAO]
     } = data || {};
 
-    let { startTime, endTime } = syndicateDAO || {};
+    let { startTime, endTime } = syndicateDAO;
 
     const activeModules = syndicateDAO.activeModules;
 
@@ -125,18 +119,17 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeMintReqs: ModuleReqs;
+      let _activeMintReqs: ModuleReqs | null = null;
 
       if (mintModule) {
-        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
-        activeMintReqs = getReqsByModuleType(
+        _activeMintReqs = getReqsByModuleType(
           ModuleType.MINT,
           activeModules,
           activeNetwork,
           mintModule
         );
         setMintModule(web3.utils.toChecksumAddress(mintModule.contractAddress));
-        setActiveMintReqs(activeMintReqs);
+        setActiveMintReqs(_activeMintReqs);
       }
 
       const ownerModule = getModuleByType(
@@ -144,39 +137,40 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         activeModules,
         activeNetwork
       );
-      let activeOwnerReqs: ModuleReqs;
+      let _activeOwnerReqs: ModuleReqs | null = null;
 
       if (ownerModule) {
-        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ModuleReqs'.
-        activeOwnerReqs = getReqsByModuleType(
+        _activeOwnerReqs = getReqsByModuleType(
           ModuleType.OWNER,
           activeModules,
           activeNetwork,
           ownerModule
         );
         setOwnerModule(ownerModule.contractAddress);
-        setActiveOwnerReqs(activeOwnerReqs);
+        setActiveOwnerReqs(_activeOwnerReqs);
       }
 
-      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
-      startTime = `${activeMintReqs?.startTime}`;
-      // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
-      endTime = `${activeMintReqs?.endTime}`;
-      dispatch(
-        setActiveModuleDetails({
-          hasActiveModules: activeModules.length > 0,
-          activeModules: activeModules,
-          mintModule:
-            web3.utils.toChecksumAddress(mintModule?.contractAddress) ?? '',
-          // @ts-expect-error TS(2454): Variable 'activeMintReqs' is used before being assig... Remove this comment to see the full error message
-          activeMintModuleReqs: activeMintReqs,
-          ownerModule:
-            web3.utils.toChecksumAddress(ownerModule?.contractAddress) ?? '',
-          // @ts-expect-error TS(2454): Variable 'activeOwnerReqs' is used before being assig... Remove this comment to see the full error message
-          activeOwnerModuleReqs: activeOwnerReqs
-        })
-      );
-      dispatch(setIsNewClub(activeModules.length > 0));
+      startTime = `${_activeMintReqs?.startTime ?? ''}`;
+      endTime = `${_activeMintReqs?.endTime ?? ''}`;
+
+      if (_activeMintReqs && _activeOwnerReqs) {
+        dispatch(
+          setActiveModuleDetails({
+            hasActiveModules: activeModules.length > 0,
+            activeModules: activeModules,
+            mintModule:
+              web3.utils.toChecksumAddress(mintModule?.contractAddress ?? '') ??
+              '',
+            activeMintModuleReqs: _activeMintReqs,
+            ownerModule:
+              web3.utils.toChecksumAddress(
+                ownerModule?.contractAddress ?? ''
+              ) ?? '',
+            activeOwnerModuleReqs: _activeOwnerReqs
+          })
+        );
+        dispatch(setIsNewClub(activeModules.length > 0));
+      }
     }
 
     setTotalSupply(

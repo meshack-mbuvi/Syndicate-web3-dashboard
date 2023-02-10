@@ -32,11 +32,13 @@ import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { mockActiveERC20Token } from '@/utils/mockdata';
-import { Contract } from 'ethers';
+
 import router, { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { Contract } from 'web3-eth-contract';
+
 import DistributionHeader from '../DistributionHeader';
 import { GraphStatusWarningModal } from './graphStatusWarning';
 
@@ -61,7 +63,7 @@ export interface memberDetail {
   ensName: string;
   avatar?: string;
   address: string;
-  createdAt: string;
+  createdAt: number;
   clubTokenHolding?: number;
   distributionShare: number;
   ownershipShare: number;
@@ -144,7 +146,7 @@ const ReviewDistribution: React.FC<Props> = ({
 
     if (
       !isZeroAddress(clubAddress as string) &&
-      web3.utils.isAddress(clubAddress as string) &&
+      web3?.utils.isAddress(clubAddress as string) &&
       syndicateContracts?.DepositTokenMintModule
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
@@ -361,6 +363,7 @@ const ReviewDistribution: React.FC<Props> = ({
     tokenDecimal: number;
     symbol: string;
   }): Promise<void> => {
+    if (!web3) return;
     updateSteps('isInErrorState', false);
     setIsTransactionPending(true);
 
@@ -434,6 +437,8 @@ const ReviewDistribution: React.FC<Props> = ({
     tokenDecimal: number;
     contractAddress: string;
   }): Promise<string> => {
+    if (!web3) return '0';
+
     const _tokenContract = new web3.eth.Contract(
       ERC20ABI as AbiItem[],
       token.contractAddress
@@ -654,10 +659,12 @@ const ReviewDistribution: React.FC<Props> = ({
     }
   };
 
-  const showDistributeDisclaimer = (e: MouseEvent): void => {
+  const showDistributeDisclaimer = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ): void => {
     e.preventDefault();
     setIsModalVisible(true);
-    amplitudeLogger(DISTRIBUTION_SUBMIT_CLICK, {
+    void amplitudeLogger(DISTRIBUTION_SUBMIT_CLICK, {
       flow: Flow.CLUB_DISTRIBUTE
     });
   };
@@ -670,7 +677,9 @@ const ReviewDistribution: React.FC<Props> = ({
     clearErrorStepErrorStates();
   };
 
-  const handleClickAction = async (e: MouseEvent): Promise<void> => {
+  const handleClickAction = async (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     const token = steps[activeIndex];

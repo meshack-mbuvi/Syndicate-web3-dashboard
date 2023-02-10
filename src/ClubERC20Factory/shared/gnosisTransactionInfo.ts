@@ -5,10 +5,15 @@ function sleep(ms: number) {
 }
 
 interface GnosisTxInfo {
+  transactionHash: string;
+  blockNumber: number | undefined;
   isSuccessful: boolean;
 }
 
-export const getGnosisTxnInfo = async (txHash: string, activeNetwork: any) => {
+export const getGnosisTxnInfo = async (
+  txHash: string,
+  activeNetwork: any
+): Promise<GnosisTxInfo> => {
   const transactionInfo = await new Promise<GnosisTxInfo>(
     async (resolve, reject) => {
       let status: boolean | undefined;

@@ -1,4 +1,3 @@
-import { CLAIMED_TOKEN } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
@@ -6,9 +5,9 @@ import {
   setLoadingTokenClaimed,
   setTokenClaimed
 } from '@/state/claimedToken/slice';
-import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCheckTokenClaimQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
 
 const useFetchTokenClaim: any = (skipQuery: any) => {
@@ -27,11 +26,7 @@ const useFetchTokenClaim: any = (skipQuery: any) => {
   const isDemoMode = useDemoMode();
 
   // Fetch existing claims
-  const {
-    loading,
-    data: claimData = {},
-    refetch
-  } = useQuery(CLAIMED_TOKEN, {
+  const { loading, data: claimData } = useCheckTokenClaimQuery({
     variables: {
       where: {
         claimant: account.toLowerCase(),
@@ -48,28 +43,16 @@ const useFetchTokenClaim: any = (skipQuery: any) => {
   });
 
   useEffect(() => {
-    if (
-      myMerkleProof.amount &&
-      account &&
-      clubAddress &&
-      activeNetwork.chainId
-    ) {
-      refetch();
-    }
-  }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
-
-  useEffect(() => {
     dispatch(setLoadingTokenClaimed(true));
-    if (claimData.tokensClaimedERC20S?.length) {
+    if (claimData?.tokensClaimedERC20S?.length) {
       dispatch(
         setTokenClaimed({
-          ...claimData.tokensClaimedERC20S[0],
+          ...claimData?.tokensClaimedERC20S[0],
           claimed: true
         })
       );
       dispatch(setLoadingTokenClaimed(false));
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearTokenClaimed());
     }
   }, [loading, JSON.stringify(claimData)]);

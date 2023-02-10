@@ -1,22 +1,30 @@
-import { MY_CLUBS_QUERY } from '@/graphql/subgraph_queries';
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { processClubERC20Tokens } from '@/hooks/clubs/utils/helpers';
-import { IClubERC20 } from '@/hooks/clubs/utils/types';
+import { CustomSyndicateDao } from '@/hooks/clubs/utils/types';
+import { useGetCubsIAdminQuery } from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
-import { useApolloClient, useQuery } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+type myClubs = {
+  clubName: string;
+  clubSymbol: string;
+}[];
+
 const useAdminClubs = (): {
-  adminClubs: IClubERC20[];
-  adminClubsLoading: boolean;
+  adminClubs: Partial<CustomSyndicateDao>[];
+  loading: boolean;
+  totalClubs: number;
+  myClubs: myClubs;
 } => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, activeNetwork, web3, status }
+      web3: { account, web3, activeNetwork, status }
     }
   } = useSelector((state: AppState) => state);
 
@@ -24,10 +32,12 @@ const useAdminClubs = (): {
 
   const router = useRouter();
   const accountAddress = useMemo(() => account?.toLocaleLowerCase(), [account]);
-  const [adminClubs, setAdminClubs] = useState<IClubERC20[]>([]);
+  const [adminClubs, setAdminClubs] = useState<Partial<CustomSyndicateDao>[]>(
+    []
+  );
+  const [myClubs, setMyClubs] = useState<myClubs | undefined>();
 
-  // Retrieve syndicates that I manage
-  const { loading, data, refetch } = useQuery(MY_CLUBS_QUERY, {
+  const { loading, data } = useGetCubsIAdminQuery({
     variables: {
       where: { ownerAddress: accountAddress }
     },
@@ -35,7 +45,6 @@ const useAdminClubs = (): {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
       chainId: activeNetwork.chainId
     },
-    // Avoid unnecessary calls when account is not defined
     skip:
       !accountAddress ||
       !router.isReady ||
@@ -43,31 +52,70 @@ const useAdminClubs = (): {
       status !== Status.CONNECTED
   });
 
-  useEffect(() => {
-    void refetch({
-      where: { ownerAddress: accountAddress }
-    });
-  }, [activeNetwork.chainId, accountAddress]);
+  const processMyClubs = async (
+    tokens: Partial<CustomSyndicateDao>[] | undefined
+  ): Promise<void> => {
+    if (!tokens) return;
+    const _clubs: myClubs = [];
+
+    await Promise.all([
+      ...tokens.map(async (token) => {
+        const { contractAddress } = token;
+
+        let clubERC20Contract;
+
+        if (!contractAddress) return;
+
+        try {
+          clubERC20Contract = new ClubERC20Contract(
+            contractAddress,
+            web3,
+            activeNetwork
+          );
+
+          _clubs.push({
+            clubName: await clubERC20Contract.name(),
+            clubSymbol: await clubERC20Contract.symbol()
+          });
+        } catch (error) {
+          return;
+        }
+      })
+    ])
+      .then((res) => res)
+      .catch(() => {
+        return [];
+      });
+
+    if (_clubs.length > 0) {
+      setMyClubs(_clubs);
+    }
+  };
 
   // Process clubs a given wallet manages
   useEffect(() => {
     if (loading || !data?.syndicateDAOs) return;
 
+    void processMyClubs(data?.syndicateDAOs);
+
     void processClubERC20Tokens(
       account,
       data?.syndicateDAOs,
       activeNetwork,
-      web3,
       syndicateContracts,
       apolloClient
     ).then((processedClubs) => {
-      setAdminClubs(processedClubs);
+      if (processedClubs) {
+        setAdminClubs(processedClubs);
+      }
     });
   }, [loading, data]);
 
   return {
     adminClubs,
-    adminClubsLoading: loading || (adminClubs.length == 0 && data == null)
+    myClubs: myClubs || [],
+    totalClubs: myClubs?.length || 0,
+    loading: loading || (adminClubs.length == 0 && data == null)
   };
 };
 

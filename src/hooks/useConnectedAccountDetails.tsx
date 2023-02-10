@@ -1,29 +1,44 @@
-import { CLUB_MEMBER_QUERY } from '@/graphql/subgraph_queries';
+import {
+  Exact,
+  InputMaybe,
+  Membership_Filter,
+  Member_Filter,
+  useMemberDetailsQuery
+} from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { getFirstOrString } from '@/utils/stringUtils';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
+export type ConnectedAccountDetails = {
+  accountTokens: string;
+  memberDeposits: string;
+  memberOwnership: string;
+  loadingMemberOwnership: boolean;
+  refetchMemberData: (
+    variables?:
+      | Partial<
+          Exact<{
+            where?: InputMaybe<Member_Filter> | undefined;
+            syndicateDaOsWhere2?: InputMaybe<Membership_Filter> | undefined;
+          }>
+        >
+      | undefined
+  ) => void;
+  startPolling: (pollInterval: number) => void;
+  stopPolling: () => void;
+};
 /**
  * Used to retrieve member ownership details for a given member address
  * and club address
  * @returns
  */
-export function useConnectedAccountDetails(): {
-  accountTokens: any;
-  memberDeposits: any;
-  memberOwnership: any;
-  loadingMemberOwnership: any;
-  refetchMemberData: any;
-  startPolling: any;
-  stopPolling: any;
-} {
+export function useConnectedAccountDetails(): ConnectedAccountDetails {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, status }
@@ -48,9 +63,8 @@ export function useConnectedAccountDetails(): {
 
   const isDemoMode = useDemoMode();
 
-  const { loading, data, refetch, startPolling, stopPolling } = useQuery(
-    CLUB_MEMBER_QUERY,
-    {
+  const { loading, data, refetch, startPolling, stopPolling } =
+    useMemberDetailsQuery({
       context: {
         clientName: SUPPORTED_GRAPHS.THE_GRAPH,
         chainId: activeNetwork.chainId
@@ -63,15 +77,13 @@ export function useConnectedAccountDetails(): {
           syndicateDAO: clubAddress?.toLowerCase()
         }
       },
-      // Avoid unnecessary calls when account/clubAddress is not defined
       skip:
         !account ||
         !activeNetwork.chainId ||
         !clubAddress ||
         isDemoMode ||
         status !== Status.CONNECTED
-    }
-  );
+    });
 
   useEffect(() => {
     if (isDemoMode) {
@@ -81,8 +93,7 @@ export function useConnectedAccountDetails(): {
       return;
     }
 
-    if (loading || !data) return;
-
+    if (loading || !data || loadingDepositsDetails) return;
     // adding this block to reset values.
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
@@ -113,14 +124,14 @@ export function useConnectedAccountDetails(): {
             syndicateDAO: { totalSupply = 0 }
           } = clubMemberData;
 
-          const clubTokens = getWeiAmount(tokens, tokenDecimals, false);
-          const clubTotalSupply = getWeiAmount(
+          const clubTokens = +getWeiAmount(tokens, tokenDecimals, false);
+          const clubTotalSupply = +getWeiAmount(
             totalSupply,
             tokenDecimals,
             false
           );
 
-          setAccountTokens(clubTokens);
+          setAccountTokens(clubTokens.toString());
           setMemberDeposits(
             getWeiAmount(depositAmount, depositTokenDecimals, false)
           );

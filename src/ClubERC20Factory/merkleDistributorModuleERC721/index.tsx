@@ -1,6 +1,6 @@
 import merkleDistributorModuleERC721_ABI from 'src/contracts/MerkleDistributorModuleERC721.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 export class MerkleDistributorModuleERC721Contract {
   isGnosisSafe: boolean;
   contract;
@@ -59,9 +59,12 @@ export class MerkleDistributorModuleERC721Contract {
     });
   }
 
-  getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
-    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
+  getPastEvents = async (
+    distEvent: string,
+    filter = {}
+  ): Promise<[] | undefined> => {
     if (!distEvent.trim()) return;
+
     try {
       const events = await this.contract.getPastEvents(distEvent, {
         filter,

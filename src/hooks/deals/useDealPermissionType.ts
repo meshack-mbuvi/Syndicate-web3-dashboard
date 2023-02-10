@@ -21,7 +21,7 @@ export const useDealPermissionType = (): PermissionType | null => {
 
   // set permission type based on contract owner and balance.
   useEffect(() => {
-    if (account && ownerAddress) {
+    if (account && ownerAddress && web3) {
       if (
         web3.utils.toChecksumAddress(ownerAddress) ===
         web3.utils.toChecksumAddress(account)

@@ -49,24 +49,23 @@ const ClaimCard: React.FC<{
 
   useEffect(() => {
     if (status == Status.DISCONNECTED) {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721Claimed());
     }
   }, [status]);
 
-  const connectWallet = () => {
+  const connectWallet = (): void => {
     dispatch(showWalletModal());
   };
 
-  const tryAgain = () => {
+  const tryAgain = (): void => {
     setClaimFailed(false);
   };
 
-  const viewCollection = () => {
+  const viewCollection = (): void => {
     window.open(openseaLink, '_blank');
   };
 
-  const updateClaimAmount = (increase: any) => {
+  const updateClaimAmount = (increase: any): void => {
     if (increase) {
       setClaimAmount((claimAmount) => claimAmount + 1);
     } else if (claimAmount > 1) {
@@ -178,7 +177,7 @@ const ClaimCard: React.FC<{
     setClaimAvailable(!erc721Claimed?.claimed);
   }, [erc721Claimed?.claimed]);
 
-  const onTxConfirm = () => {
+  const onTxConfirm = (): void => {
     setSubmitting(true);
   };
 
@@ -191,7 +190,7 @@ const ClaimCard: React.FC<{
     }
   };
 
-  const onTxFail = () => {
+  const onTxFail = (): void => {
     setSubmitting(false);
     setSuccessfulClaim(false);
     setClaimFailed(true);

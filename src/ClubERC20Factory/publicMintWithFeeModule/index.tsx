@@ -1,6 +1,6 @@
 import publicMintWithFeeModule_ABI from 'src/contracts/PublicMintWithFeeModule.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 export class PublicMintWithFeeModuleContract {
   isGnosisSafe: boolean;
   contract;
@@ -99,8 +99,8 @@ export class PublicMintWithFeeModuleContract {
   }
 
   getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
-    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
-    if (!distEvent.trim()) return;
+    if (!distEvent.trim()) return [];
+
     try {
       const events = await this.contract.getPastEvents(distEvent, {
         filter,

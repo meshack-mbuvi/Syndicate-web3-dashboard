@@ -1,3 +1,4 @@
+import { RequirementType } from '@/hooks/data-fetching/thegraph/generated-types';
 import { TokenGateOption } from '@/state/createInvestmentClub/types';
 import { TokenDetails } from './token';
 
@@ -6,36 +7,29 @@ export enum ModuleType {
   OWNER = 'owner'
 }
 
-export enum RequirementType {
-  MAX_MEMBER = 'MAX_MEMBER_COUNT',
-  MAX_PER_MEMBER = 'MAX_PER_MEMBER',
-  MAX_SUPPLY = 'MAX_TOTAL_SUPPLY',
-  TIME_WINDOW = 'TIME_WINDOW',
-  TOKEN_GATED = 'TOKEN_GATED'
-}
-
 export interface Requirement {
+  id: string;
   contractAddress: string;
-  requirementType: RequirementType;
+  requirementType?: RequirementType;
   maxMemberCount?: string;
   maxTotalSupply?: string;
   maxPerMember?: string;
   startTime?: string;
   endTime?: string;
-  requiredTokensLogicalOperator?: boolean;
-  requiredTokens?: string[];
-  requiredTokenBalances?: string[];
+  requiredTokensLogicalOperator?: boolean | null;
+  requiredTokens?: string[] | null;
+  requiredTokenBalances?: string[] | null;
 }
 
 export interface Module {
   contractAddress: string;
 }
 export interface ActiveRequirement {
-  id: string;
   requirement: Requirement;
 }
 
 export interface ActiveModule extends Module {
+  id: string;
   contractAddress: string;
   activeRequirements: ActiveRequirement[];
 }
@@ -46,14 +40,14 @@ export interface IRequiredTokenRules {
 }
 
 export interface ModuleReqs {
-  maxMemberCount?: string;
-  maxTotalSupply?: string;
-  maxPerMember?: string;
-  startTime?: string;
-  endTime?: string;
-  requiredTokensLogicalOperator?: boolean;
-  requiredTokens?: string[];
-  requiredTokenBalances?: string[];
+  maxMemberCount?: string | null;
+  maxTotalSupply?: string | null;
+  maxPerMember?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  requiredTokensLogicalOperator?: boolean | null;
+  requiredTokens?: string[] | null;
+  requiredTokenBalances?: string[] | null;
   requiredTokenRules?: IRequiredTokenRules[];
   requiredTokenGateOption?: TokenGateOption;
   isTokenGated?: boolean;

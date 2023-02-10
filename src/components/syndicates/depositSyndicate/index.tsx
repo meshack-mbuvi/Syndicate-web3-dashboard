@@ -192,7 +192,7 @@ const DepositSyndicate: React.FC = () => {
       // converting to Wei here to multiply because of a weird js precision issue when multiplying.
       // for instance, 0.0003 * 10000 returns 2.9999 instead of 3.
       const memberTokens = nativeDepositToken
-        ? (getWeiAmount(depositAmountFinalized, depositTokenDecimals, true) *
+        ? (+getWeiAmount(depositAmountFinalized, depositTokenDecimals, true) *
             activeNetwork.nativeCurrency.exchangeRate) /
           10 ** depositTokenDecimals
         : +depositAmountFinalized;
@@ -771,8 +771,12 @@ const DepositSyndicate: React.FC = () => {
   ]);
 
   // method to handle approval of allowances by a member.
-  const handleAllowanceApproval = async (event: any) => {
+  const handleAllowanceApproval = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
     event.preventDefault();
+    if (!web3) return;
+
     setMetamaskConfirmPending(true);
     setTransactionRejected(false);
     setTransactionFailed(false);
@@ -1218,7 +1222,7 @@ const DepositSyndicate: React.FC = () => {
               ) : (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">
-                    {+memberDeposits > 0 || accountTokens > 0
+                    {+memberDeposits > 0 || +accountTokens > 0
                       ? 'deposit more'
                       : 'join this club'}
                   </p>
@@ -1226,7 +1230,9 @@ const DepositSyndicate: React.FC = () => {
                     <div className="flex items-center">
                       <AutoGrowInputField
                         value={depositAmount}
-                        onChangeHandler={(value) => handleSetDeposit(value)}
+                        onChangeHandler={(value: string): void =>
+                          handleSetDeposit(value)
+                        }
                         placeholder={'0'}
                         decimalSeparator="."
                         decimalScale={2}
@@ -1501,18 +1507,22 @@ const DepositSyndicate: React.FC = () => {
                               ? 'cursor-not-allowed'
                               : 'cursor-pointer'
                           }`}
-                          onClick={(e) => {
+                          onClick={(
+                            e: React.MouseEvent<HTMLButtonElement>
+                          ): void => {
                             if (submittingAllowanceApproval) {
                               toggleDepositProcessingModal();
                               return;
                             }
+
                             if (!sufficientAllowanceSet) {
                               setDepositAmountFinalized(depositAmount);
-                              handleAllowanceApproval(e);
+                              void handleAllowanceApproval(e);
                             } else {
-                              investInSyndicate(depositAmountFinalized);
+                              void investInSyndicate(depositAmountFinalized);
                             }
-                            amplitudeLogger(DEPOSIT_CONTINUE_CLICK, {
+
+                            void amplitudeLogger(DEPOSIT_CONTINUE_CLICK, {
                               flow: Flow.CLUB_DEPOSIT
                             });
                             toggleDepositProcessingModal();
@@ -1537,6 +1547,7 @@ const DepositSyndicate: React.FC = () => {
                       <div className="ml-4">{clubWideErrors}</div>
                     </div>
                   )}
+
                   {!clubWideErrors && (
                     <div className="mt-4 flex w-full justify-center">
                       <p className="text-sm text-gray-syn5">
@@ -1551,8 +1562,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{' '}
                             {floatedNumberWithCommas(
-                              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                              nativeBalance * depositTokenPriceInUSD
+                              nativeBalance * (depositTokenPriceInUSD || 1)
                             )}{' '}
                             USD)
                           </>
@@ -1560,8 +1570,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{' '}
                             {floatedNumberWithCommas(
-                              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                              erc20Balance * depositTokenPriceInUSD
+                              erc20Balance * (depositTokenPriceInUSD || 1)
                             )}{' '}
                             USD)
                           </>

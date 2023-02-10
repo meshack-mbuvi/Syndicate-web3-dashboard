@@ -1,6 +1,7 @@
+import { Dispatch, SetStateAction } from 'react';
 import OwnerMintModule_ABI from 'src/contracts/OwnerMintModule.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class OwnerMintModuleContract {
   web3;
@@ -107,8 +108,8 @@ export class OwnerMintModuleContract {
     account: string,
     clubAddress: string,
     memberAddress: string,
-    amountToMint: string,
-    onResponse: (gas?: number) => void
+    amountToMint: string | BN,
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     await new Promise(() => {
       this.OwnerMintModuleContract.methods

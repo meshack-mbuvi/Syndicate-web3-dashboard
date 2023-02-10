@@ -19,7 +19,7 @@ interface Props {
     ensName: string;
     avatar?: string;
     address: string;
-    createdAt: string;
+    createdAt: number;
     clubTokenHolding?: number;
     distributionShare: number;
     ownershipShare: number;
@@ -88,7 +88,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   const [_membersDetails, setMemberDetails] = useState<
     {
-      createdAt: string;
+      createdAt: number;
       ensName: string;
       address: string;
       avatar?: string;

@@ -4,7 +4,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useSelector } from 'react-redux';
 
 const useSubmitReqsToFactory = (
-  onTxConfirm: (transactionHash: any) => void,
+  onTxConfirm: (transactionHash: string) => void,
   onTxReceipt: (receipt: any) => void,
   onTxFail: (err: any) => void
 ): { submitCreateClub: () => Promise<void> } => {
@@ -54,7 +54,7 @@ const useSubmitReqsToFactory = (
     logicalOperator
   };
 
-  const handleTxReceipt = (receipt: any) => {
+  const handleTxReceipt = (receipt: any): void => {
     onTxReceipt({
       events: {
         ERC20ClubCreated: {

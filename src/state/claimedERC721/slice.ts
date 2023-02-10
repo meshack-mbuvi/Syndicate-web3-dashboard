@@ -1,19 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ERC721laimed, initialState } from './types';
+import { ERC721claimed, initialState } from './types';
 
 const setClaimedERC721Slice = createSlice({
   name: 'claimedERC721',
   initialState,
   reducers: {
-    setERC721Claimed(state, action: PayloadAction<ERC721laimed>) {
+    setERC721Claimed(state, action: PayloadAction<ERC721claimed>) {
       const claimed = action.payload;
       state.erc721Claimed = claimed;
     },
     setLoadingERC721Claimed(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    clearERC721Claimed(state, action: PayloadAction<boolean>) {
+    clearERC721Claimed(state) {
       state.erc721Claimed = initialState.erc721Claimed;
     }
   }

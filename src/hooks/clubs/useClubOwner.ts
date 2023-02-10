@@ -1,4 +1,5 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { IActiveNetwork, IWeb3 } from '@/state/wallet/types';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -17,15 +18,21 @@ import { useEffect, useState } from 'react';
  */
 export const useTokenOwner = (
   contractAddress: string,
-  web3: any,
-  activeNetwork: any,
+  web3: IWeb3 | null,
+  activeNetwork: IActiveNetwork,
   account: string
 ): { isOwner: boolean; isLoading: boolean } => {
   const [isOwner, setIsOwner] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!contractAddress || !account || isEmpty(web3) || isEmpty(activeNetwork))
+    if (
+      !contractAddress ||
+      !account ||
+      !web3 ||
+      isEmpty(web3) ||
+      isEmpty(activeNetwork)
+    )
       return;
 
     const token = new ClubERC20Contract(contractAddress, web3, activeNetwork);
@@ -48,10 +55,11 @@ export const useTokenOwner = (
 export const getMemberBalance = async (
   contractAddress: string,
   account: string,
-  web3: any,
-  activeNetwork: any
+  web3: IWeb3,
+  activeNetwork: IActiveNetwork
 ): Promise<number> => {
   if (!contractAddress || !account || !web3) return 0;
+
   try {
     const club = new ClubERC20Contract(contractAddress, web3, activeNetwork);
     return parseInt(await club.balanceOf(account));

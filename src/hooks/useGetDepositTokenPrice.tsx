@@ -1,11 +1,17 @@
 import { AppState } from '@/state';
 import { setDepositTokenUSDPrice } from '@/state/erc20token/slice';
-import { getNativeTokenPrice, getTokenPrices } from '@/utils/api/transactions';
+import {
+  ContractPriceResponse,
+  getNativeTokenPrice,
+  getTokenPrices
+} from '@/utils/api/transactions';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const useGetDepositTokenPrice = (chainId: number) => {
+export const useGetDepositTokenPrice = (
+  chainId: number
+): [number, boolean, any] => {
   const {
     erc20TokenSliceReducer: {
       depositDetails: { depositToken, loading: detailsLoading }
@@ -17,7 +23,7 @@ export const useGetDepositTokenPrice = (chainId: number) => {
 
   const [tokenPriceInUSDState, setTokenPriceInUSDState] = useState<number>(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<any>(null);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -28,10 +34,9 @@ export const useGetDepositTokenPrice = (chainId: number) => {
           ? getNativeTokenPrice(activeNetwork.chainId)
           : getTokenPrices(depositToken.toLowerCase(), chainId);
       pricePromise
-        .then((res) => {
+        .then((res: any | ContractPriceResponse) => {
           const price = depositToken
-            ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              res[depositToken.toLowerCase()]['usd']
+            ? res[depositToken.toLowerCase()]['usd']
             : res;
           setTokenPriceInUSDState(price);
           dispatch(setDepositTokenUSDPrice(price));

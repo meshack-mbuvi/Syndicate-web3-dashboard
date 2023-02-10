@@ -1,7 +1,8 @@
 import PRECOMMIT_MODULE_ABI from '@/contracts/AllowancePrecommitModuleERC20.json';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { ContractBase } from '../ContractBase';
+import { Dispatch, SetStateAction } from 'react';
 import { TransactionReceipt } from 'web3-core';
+import { ContractBase } from '../ContractBase';
 
 export class AllowancePrecommitModuleERC20 extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
@@ -110,7 +111,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
     dealToken: string,
     amount: string,
     ownerAddress: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       ownerAddress,
@@ -127,7 +128,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
   async getCancelPrecommitGasEstimate(
     dealToken: string,
     account: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,
@@ -146,7 +147,7 @@ export class AllowancePrecommitModuleERC20 extends ContractBase {
     dealToken: string,
     ownerAddress: string,
     addresses: string[],
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       ownerAddress,

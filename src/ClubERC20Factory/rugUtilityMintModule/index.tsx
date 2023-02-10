@@ -1,6 +1,9 @@
+import { IWeb3 } from '@/state/wallet/types';
 import rugUtilityMintModule_ABI from 'src/contracts/RugUtilityMintModule.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { EventData } from 'web3-eth-contract';
 import { estimateGas } from '../shared/getGasEstimate';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+
 export class RugUtilityMintModuleContract {
   isGnosisSafe: boolean;
   contract;
@@ -8,11 +11,11 @@ export class RugUtilityMintModuleContract {
   activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork: any) {
+  constructor(contractAddress: string, web3: IWeb3, activeNetwork: any) {
     this.activeNetwork = activeNetwork;
     this.web3 = web3;
     this.contract = new web3.eth.Contract(
-      rugUtilityMintModule_ABI,
+      rugUtilityMintModule_ABI as AbiItem[],
       contractAddress
     );
     this.isGnosisSafe =
@@ -126,9 +129,11 @@ export class RugUtilityMintModuleContract {
     }
   }
 
-  getPastEvents = async (distEvent: string, filter = {}): Promise<[]> => {
-    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '[]'.
-    if (!distEvent.trim()) return;
+  getPastEvents = async (
+    distEvent: string,
+    filter = {}
+  ): Promise<EventData[]> => {
+    if (!distEvent.trim()) return [];
     try {
       const events = await this.contract.getPastEvents(distEvent, {
         filter,

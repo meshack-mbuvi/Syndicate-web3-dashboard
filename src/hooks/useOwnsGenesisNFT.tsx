@@ -4,6 +4,7 @@ import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Contract } from 'web3-eth-contract';
 
 const useOwnsGenesisNFT: any = () => {
   const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
@@ -22,7 +23,7 @@ const useOwnsGenesisNFT: any = () => {
   const [claimEnabled, setClaimEnabled] = useState(false);
   const [claimStartTime, setClaimStartTime] = useState(0);
 
-  const checkTokenBalance = async () => {
+  const checkTokenBalance = async (): Promise<void> => {
     if (!account || !GENESIS_NFT) return;
     try {
       const ERC721tokenContract = new ERC721Contract(
@@ -43,7 +44,7 @@ const useOwnsGenesisNFT: any = () => {
 
   // account has tokens
   const [accountRugTokens, setAccountRugTokens] = useState(0);
-  const [rugRadioContract, setRugRadioContract] = useState(null);
+  const [rugRadioContract, setRugRadioContract] = useState<Contract>();
 
   useEffect(() => {
     if (web3?.eth) {
@@ -54,13 +55,14 @@ const useOwnsGenesisNFT: any = () => {
   }, [activeNetwork.chainId]);
 
   // check whether user has RUG tokens
-  const availableRugTokens = async () => {
+  const availableRugTokens = async (): Promise<void> => {
     try {
-      // @ts-expect-error TS(2339): Property 'methods' does not exist on type 'never'.
-      const tokens = await rugRadioContract?.methods.balanceOf(account).call();
-      // @ts-expect-error TS(2339): Property 'methods' does not exist on type 'never'.
-      const decimals = await rugRadioContract?.methods.decimals().call();
-      setAccountRugTokens(getWeiAmount(tokens, decimals, false));
+      const [tokens, decimals] = await Promise.all([
+        rugRadioContract?.methods.balanceOf(account).call(),
+        rugRadioContract?.methods.decimals().call()
+      ]).catch(() => [0, '0']);
+
+      setAccountRugTokens(+getWeiAmount(tokens, decimals, false));
     } catch (error) {
       setAccountRugTokens(0);
     }

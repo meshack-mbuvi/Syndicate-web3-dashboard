@@ -1,5 +1,6 @@
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 import { estimateGas } from './shared/getGasEstimate';
@@ -9,12 +10,10 @@ export abstract class ContractBase {
   web3: Web3;
   address: string;
   activeNetwork: IActiveNetwork;
-  // @ts-expect-error TS(2564): Property 'contract' has no initializer and is not ... Remove this comment to see the full error message
   contract: Contract;
   abiItem: AbiItem[];
-  // @ts-expect-error TS(2564): Property 'isGnosisSafe' has no initializer and is ... Remove this comment to see the full error message
   isGnosisSafe: boolean;
-  addresses: typeof CONTRACT_ADDRESSES[1 | 137];
+  addresses: (typeof CONTRACT_ADDRESSES)[1 | 137];
 
   constructor(
     address: string,
@@ -22,6 +21,8 @@ export abstract class ContractBase {
     activeNetwork: IActiveNetwork,
     CONTRACT_ABI: AbiItem[]
   ) {
+    this.contract = new web3.eth.Contract(CONTRACT_ABI, address);
+    this.isGnosisSafe = false;
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = address;
@@ -31,12 +32,7 @@ export abstract class ContractBase {
   }
 
   protected init(): void {
-    try {
-      this.contract = new this.web3.eth.Contract(this.abiItem, this.address);
-    } catch (error) {
-      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'Contract'.
-      this.contract = null;
-    }
+    this.contract = new this.web3.eth.Contract(this.abiItem, this.address);
   }
 
   protected async send(
@@ -92,7 +88,7 @@ export abstract class ContractBase {
   protected async estimateGas(
     account: string,
     contractMethod: any,
-    onResponse: (gas?: number) => void,
+    onResponse: Dispatch<SetStateAction<number>>,
     value?: string
   ): Promise<void> {
     await new Promise(() => {
@@ -101,7 +97,7 @@ export abstract class ContractBase {
           from: account,
           ...(value && { value })
         },
-        (_error: any, gasAmount: any) => {
+        (_error: any, gasAmount: number) => {
           if (gasAmount) onResponse(gasAmount);
           if (_error) console.log('EstimateGasError', _error); // TODO: should be logged to Error monitoring tool (Sentry)
         }

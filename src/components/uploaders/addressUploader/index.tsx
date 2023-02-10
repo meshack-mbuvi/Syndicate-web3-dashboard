@@ -1,11 +1,12 @@
 import { TextArea } from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal/ActivityNote/textArea';
 import { AppState } from '@/state';
-import React, { useState, useEffect, SetStateAction, Dispatch } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { setMembershipAddresses } from '@/state/createInvestmentClub/slice';
+import clsx from 'clsx';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as XLSX from 'xlsx';
 import { InfoActionWrapper } from '../../infoActionWrapper';
 import { FileUploader } from '../fileUploader';
-import * as XLSX from 'xlsx';
-import { setMembershipAddresses } from '@/state/createInvestmentClub/slice';
 
 interface Props {
   title?: string;
@@ -17,7 +18,7 @@ interface Props {
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   setProgressPercent: Dispatch<SetStateAction<number>>;
-  setRawMemberAddresses: Dispatch<SetStateAction<string[]>>;
+  setRawMemberAddresses: Dispatch<SetStateAction<(string | never)[]>>;
   progressPercent: number;
 }
 
@@ -91,7 +92,7 @@ export const AddressUploader: React.FC<Props> = ({
   /* file upload functions */
   const fileReader = new FileReader();
 
-  const csvFileToArray = (string: any) => {
+  const csvFileToArray = (string: string): void => {
     // csv file rows can be separated by carriage return and new line or just a new line.
     // excel files rows are separated by new lines.
     const rows = string.split(/\r\n|\r|\n/);
@@ -101,7 +102,7 @@ export const AddressUploader: React.FC<Props> = ({
       // the check for manager account will be done at the review stage
       const firstColumnAddress = value.split(',')[0];
       if (
-        web3.utils.isAddress(firstColumnAddress) ||
+        web3?.utils.isAddress(firstColumnAddress) ||
         firstColumnAddress.indexOf('.eth') > 0
       ) {
         accumulator.push(firstColumnAddress);
@@ -135,8 +136,8 @@ export const AddressUploader: React.FC<Props> = ({
         const workSheetData = workbook.Sheets[worksheetName];
         const data = XLSX.utils.sheet_to_csv(workSheetData);
 
-        if (isCsvFile) {
-          csvFileToArray(text);
+        if (isCsvFile && text) {
+          csvFileToArray(text as string);
         } else if (isSpreadsheetFile) {
           csvFileToArray(data);
         }
@@ -174,8 +175,8 @@ export const AddressUploader: React.FC<Props> = ({
         isUploadMethodSpreadsheet ? 'Enter addresses' : 'Upload a spreadsheet'
       }
       helperText={helperText}
-      customClasses={`${customClasses}`}
-      handleAction={() => {
+      customClasses={`${customClasses ?? ''}`}
+      handleAction={(): void => {
         setIsUploadMethodSpreadsheet(!isUploadMethodSpreadsheet);
       }}
       errors={errors.memberAddresses} // TODO: make dynamic to support file upload errors
@@ -184,21 +185,23 @@ export const AddressUploader: React.FC<Props> = ({
       <button
         className={`${height} relative w-full ${
           isUploadMethodSpreadsheet ? '' : ''
-        } ${isDraggingOver && 'bg-gray-syn8'}`}
+        } ${(isDraggingOver && 'bg-gray-syn8') || ''}`}
         style={{ borderRadius: '0.3125rem' }}
-        onDragOver={() => {
+        onDragOver={(): void => {
           setIsDraggingOver(true);
         }}
-        onDragLeave={() => {
+        onDragLeave={(): void => {
           setIsDraggingOver(false);
         }}
       >
         {/* Write addresses as text */}
-        <div className={`h-full ${isUploadMethodSpreadsheet && 'hidden'}`}>
+        <div
+          className={`h-full ${clsx(isUploadMethodSpreadsheet && 'hidden')}`}
+        >
           {' '}
           {/* use this div to avoid button's default vertical centering of content */}
           <TextArea
-            value={textInputValue}
+            value={textInputValue as string}
             onChange={handleTextInputChange}
             heightoverride="13rem"
             classoverride="p-6 border border-gray-syn6 hover:border-gray-syn3 focus:border-blue rounded no-scroll-bar"
@@ -225,7 +228,7 @@ export const AddressUploader: React.FC<Props> = ({
           }
           handleUpload={handleFileUpload}
           handleCancelUpload={handleCancelUpload}
-          customClasses={`${!isUploadMethodSpreadsheet && 'hidden'}`}
+          customClasses={`${clsx(!isUploadMethodSpreadsheet && 'hidden')}`}
         />
       </button>
     </InfoActionWrapper>

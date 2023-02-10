@@ -1,5 +1,6 @@
 import { IActiveNetwork } from '@/state/wallet/types';
 import { validateInputs } from '@/utils/abi/validateInputs';
+import { Dispatch, SetStateAction } from 'react';
 import { ContractBase } from '../ContractBase';
 
 export class RemixActiveModule extends ContractBase {
@@ -19,7 +20,7 @@ export class RemixActiveModule extends ContractBase {
     inputValues: string[],
     functionName: string,
     account: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     const inputs = this.getAbiObject(functionName)?.inputs;
     const hasValidInputs = validateInputs(inputValues, inputs);

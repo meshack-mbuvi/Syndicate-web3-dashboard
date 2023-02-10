@@ -13,7 +13,7 @@ const setERC721MerkleProofSlice = createSlice({
       state.loading = action.payload;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    clearERC721MerkleProof(state, action: PayloadAction<boolean>) {
+    clearERC721MerkleProof(state) {
       state.erc721MerkleProof = initialState.erc721MerkleProof;
     }
   }

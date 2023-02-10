@@ -29,7 +29,7 @@ export default function useRugRadioAllowance(
     queryKey: ['rugRadioAllowance', activeNetwork.chainId, account, spender],
     queryFn: async () => {
       try {
-        const dataResult = await RugToken.allowance(
+        const dataResult: string = await RugToken.allowance(
           account as string,
           spender as string
         );

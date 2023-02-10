@@ -46,6 +46,8 @@ export const useGraphSyncState = (): {
 
   const getGraphStats = useCallback(
     async (lastSyncedBlock: number): Promise<void> => {
+      if (!web3) return;
+
       const currentBlock: IBlock = (await web3.eth.getBlock(
         'latest'
       )) as IBlock;

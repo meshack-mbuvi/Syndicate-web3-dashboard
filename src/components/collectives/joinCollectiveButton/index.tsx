@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 interface IProps {
   alreadyMember: boolean;
-  onClick: (e?: React.MouseEvent<HTMLInputElement>) => void;
+  onClick: (
+    e?: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
 }
 
 export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
@@ -17,11 +19,11 @@ export const JoinCollectiveCTA: React.FC<IProps> = (args) => {
         <CTAButton
           fullWidth={true}
           extraClasses={`flex ease-in-out justify-center py-4 border text-base rounded-full leading-5.75`}
-          onMouseOver={() => setShowMoreContent(true)}
-          onMouseOut={() => setShowMoreContent(false)}
+          onMouseOver={(): void => setShowMoreContent(true)}
+          onMouseOut={(): void => setShowMoreContent(false)}
           onClick={onClick}
-          onBlur={() => setShowMoreContent(false)}
-          onFocus={() => setShowMoreContent(true)}
+          onBlur={(): void => setShowMoreContent(false)}
+          onFocus={(): void => setShowMoreContent(true)}
         >
           <div className="flex items-center">
             <span

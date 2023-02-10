@@ -17,7 +17,7 @@ import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useCreateState from './useCreateState';
 
-const useSubmitToContracts = () => {
+const useSubmitToContracts = (): { submit: () => Promise<void> } => {
   const dispatch = useDispatch();
 
   const {
@@ -70,7 +70,7 @@ const useSubmitToContracts = () => {
     creationStatus.ipfsHash
   ]);
 
-  const submit = async () => {
+  const submit = async (): Promise<void> => {
     dispatch(setCollectiveTransactionTakingTooLong(false));
 
     dispatch(setCollectiveWaitingForConfirmation(true));
@@ -87,26 +87,32 @@ const useSubmitToContracts = () => {
     }
   };
 
-  const onTxConfirm = (_txn: string) => {
+  const onTxConfirm = (_txn: string): void => {
     dispatch(setCollectiveTransactionHash(_txn));
     dispatch(setCollectiveConfirmed(true));
   };
 
-  // @ts-expect-error TS(7030): Not all code paths return a value.
-  const onTxFail = (error: any) => {
+  const onTxFail = (error: any): void => {
     try {
       if (error?.message.includes('Be aware that it might still be mined')) {
-        return dispatch(setCollectiveTransactionTakingTooLong(true));
+        dispatch(setCollectiveTransactionTakingTooLong(true));
       }
 
       dispatch(setCollectiveTransactionTakingTooLong(false));
       dispatch(setCollectiveTransactionError(true));
+      return;
     } catch (error) {
       console.log({ error });
     }
   };
 
-  const onTxReceipt = (receipt: any): void => {
+  const onTxReceipt = (receipt: {
+    events: {
+      ERC721CollectiveCreated: {
+        returnValues: { collective: string; name: string; symbol: string };
+      };
+    };
+  }): void => {
     if (receipt?.events?.ERC721CollectiveCreated?.returnValues?.collective) {
       dispatch(
         setCollectiveCreationReceipt({

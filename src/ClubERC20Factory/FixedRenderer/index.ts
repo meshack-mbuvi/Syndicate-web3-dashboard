@@ -1,5 +1,6 @@
 import FIXED_RENDERER_ABI from '@/contracts/FixedRenderer.json';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import { ContractBase } from '../ContractBase';
 
 export class FixedRenderer extends ContractBase {
@@ -10,8 +11,7 @@ export class FixedRenderer extends ContractBase {
   // Set token URI
   public setTokenURI(token: string, uri: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
-      this.getAbiObject('updateTokenURI'),
+      this.getAbiObject('updateTokenURI') as AbiItem,
       [token, uri]
     );
   }
@@ -37,7 +37,7 @@ export class FixedRenderer extends ContractBase {
     account: string,
     token: string,
     uri: number,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

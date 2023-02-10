@@ -48,7 +48,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     }
   });
 
-  const processMerkleProofData = async (merkleObj: any) => {
+  const processMerkleProofData = async (merkleObj: any): Promise<void> => {
     dispatch(setLoadingMerkleProof(true));
     dispatch(
       setMerkleProof({
@@ -69,15 +69,15 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     )
       return;
 
-    if (router.isReady && web3.utils.isAddress(clubAddress)) {
-      refetchMerkle();
+    if (router.isReady && web3 && web3.utils.isAddress(clubAddress)) {
+      void refetchMerkle();
     }
   }, [clubAddress, address, activeNetwork.chainId, status]);
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));
     if (merkleData.Financial_getIndexAndProof?.accountIndex >= 0) {
-      processMerkleProofData(merkleData.Financial_getIndexAndProof);
+      void processMerkleProofData(merkleData.Financial_getIndexAndProof);
     } else {
       dispatch(clearMerkleProof());
     }

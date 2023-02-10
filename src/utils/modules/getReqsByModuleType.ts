@@ -1,12 +1,8 @@
-import {
-  ActiveModule,
-  ModuleReqs,
-  ModuleType,
-  RequirementType
-} from '@/types/modules';
-import { IActiveNetwork } from '@/state/wallet/types';
-import getModuleByType from './getModuleByType';
+import { RequirementType } from '@/hooks/data-fetching/thegraph/generated-types';
 import { TokenGateOption } from '@/state/createInvestmentClub/types';
+import { IActiveNetwork } from '@/state/wallet/types';
+import { ActiveModule, ModuleReqs, ModuleType } from '@/types/modules';
+import getModuleByType from './getModuleByType';
 
 /**
  * Temporary placeholder for getting active module reqs by module type
@@ -20,11 +16,10 @@ const getReqsByModuleByType = (
   type: ModuleType,
   modules: ActiveModule[],
   activeNetwork: IActiveNetwork,
-  module?: ActiveModule
+  module: ActiveModule | null
 ): ModuleReqs | null => {
-  let activeModule = module;
-  if (!activeModule) {
-    // @ts-expect-error TS(2322): Type 'ActiveModule | null' is not assignable to type 'ActiveModule | undefined'.
+  let activeModule: ActiveModule | null = module;
+  if (!activeModule && modules) {
     activeModule = getModuleByType(type, modules, activeNetwork);
   }
 
@@ -33,17 +28,11 @@ const getReqsByModuleByType = (
   }
 
   const moduleReqs: ModuleReqs = {
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxMemberCount: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxTotalSupply: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     maxPerMember: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     startTime: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     endTime: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string | undefined'.
     requiredTokensLogicalOperator: null,
     requiredTokens: [],
     requiredTokenBalances: [],
@@ -51,31 +40,31 @@ const getReqsByModuleByType = (
     requiredTokenGateOption: TokenGateOption.UNRESTRICTED
   };
   const activeModuleReqs = activeModule.activeRequirements;
-  const mixins = [];
+  const mixins: string[] = [];
   for (let i = 0; i < activeModuleReqs.length; i++) {
     const req = activeModuleReqs[i].requirement;
     mixins.push(req.contractAddress);
     switch (req.requirementType) {
-      case RequirementType.MAX_MEMBER:
+      case RequirementType.MaxMemberCount:
         moduleReqs.maxMemberCount = req.maxMemberCount;
         break;
-      case RequirementType.MAX_SUPPLY:
+      case RequirementType.MaxTotalSupply:
         moduleReqs.maxTotalSupply = req.maxTotalSupply;
         break;
-      case RequirementType.MAX_PER_MEMBER:
+      case RequirementType.MaxPerMember:
         moduleReqs.maxPerMember = req.maxPerMember;
         break;
-      case RequirementType.TIME_WINDOW:
+      case RequirementType.TimeWindow:
         moduleReqs.startTime = req.startTime;
         moduleReqs.endTime = req.endTime;
         break;
-      case RequirementType.TOKEN_GATED:
+      case RequirementType.TokenGated:
         moduleReqs.requiredTokensLogicalOperator =
           req.requiredTokensLogicalOperator;
         moduleReqs.requiredTokens = req.requiredTokens;
         moduleReqs.requiredTokenBalances = req.requiredTokenBalances;
         moduleReqs.requiredTokenRules = req?.requiredTokens?.map(
-          (contractAddress, index) => ({
+          (contractAddress: string, index: number) => ({
             contractAddress,
             quantity: req.requiredTokenBalances
               ? req.requiredTokenBalances[index]
@@ -92,6 +81,7 @@ const getReqsByModuleByType = (
     }
   }
   moduleReqs.mixins = mixins;
+
   return moduleReqs;
 };
 

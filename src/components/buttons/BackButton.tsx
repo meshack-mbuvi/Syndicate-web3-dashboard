@@ -1,4 +1,5 @@
 import { AppState } from '@/state';
+import { getFirstOrString } from '@/utils/stringUtils';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
@@ -75,7 +76,7 @@ const generateBackUrl = (
   query: ParsedUrlQuery
 ): string => {
   const { clubAddress, collectiveAddress } = query;
-  const address = collectiveAddress || clubAddress;
+  const address = getFirstOrString(collectiveAddress || clubAddress) || '';
   const page = collectiveAddress ? '/collectives' : '/clubs';
   const params = `?chain=${network}`;
   const baseUrl = `${page}/${address}`;

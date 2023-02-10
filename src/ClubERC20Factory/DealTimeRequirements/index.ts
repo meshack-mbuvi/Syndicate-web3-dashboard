@@ -1,7 +1,8 @@
 import DEAL_TIME_REQUIREMENTS_ABI from '@/contracts/DealTimeRequirements.json';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { ContractBase } from '../ContractBase';
+import { Dispatch, SetStateAction } from 'react';
 import { TransactionReceipt } from 'web3-core';
+import { ContractBase } from '../ContractBase';
 
 export class DealTimeRequirements extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
@@ -51,7 +52,7 @@ export class DealTimeRequirements extends ContractBase {
     token: string,
     startTime: number,
     endTime: number,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,
@@ -89,7 +90,7 @@ export class DealTimeRequirements extends ContractBase {
   public async getEstimateGasCloseTimeWindow(
     account: string,
     token: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

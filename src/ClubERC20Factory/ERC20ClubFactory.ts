@@ -8,6 +8,7 @@ import {
   unzipTokenRules,
   validateAndOrderTokenRules
 } from '@/utils/mixins/mixinHelpers';
+import { Dispatch, SetStateAction } from 'react';
 import ERC20ClubFactory_ABI from 'src/contracts/ERC20ClubFactory.json';
 import { ContractBase } from './ContractBase';
 import { DepositTokenMintModuleContract } from './depositTokenMintModule';
@@ -22,7 +23,7 @@ export interface ClubMixinParams {
   clubTokenSymbol: string;
   isNativeDeposit: boolean;
   depositToken: string;
-  tokenCap: number;
+  tokenCap: string;
   startTime: string;
   endTime: string;
   membersCount: number;
@@ -222,7 +223,7 @@ export class ERC20ClubFactory extends ContractBase {
   public async getEstimateGas(
     account: string,
     clubParams: ClubMixinParams,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     if (!account) return;
     const { salt, contractAddresses, encodedFunctions } =

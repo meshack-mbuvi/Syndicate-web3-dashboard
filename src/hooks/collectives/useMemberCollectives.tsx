@@ -1,4 +1,3 @@
-import { GetMemberCollectives } from '@/graphql/subgraph_queries';
 import { getCollectiveMedia } from '@/hooks/collectives/utils/helpers';
 import {
   ICollective,
@@ -9,10 +8,10 @@ import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNftsQuery } from '../data-fetching/thegraph/generated-types';
 
 const useMemberCollectives = (): {
   memberCollectives: ICollective[];
@@ -31,7 +30,7 @@ const useMemberCollectives = (): {
   const [memberCollectives, setMemberCollectives] = useState<ICollective[]>([]);
 
   // retrieve member collectives
-  const { data, refetch, loading } = useQuery(GetMemberCollectives, {
+  const { data, loading } = useNftsQuery({
     variables: {
       where: { owner: walletAddress }
     },
@@ -45,12 +44,6 @@ const useMemberCollectives = (): {
       !activeNetwork.chainId ||
       status !== Status.CONNECTED
   });
-
-  useEffect(() => {
-    refetch({
-      where: { owner: walletAddress }
-    });
-  }, [activeNetwork.chainId, walletAddress]);
 
   // Process collectives the connected account is a member of
   useEffect(() => {
@@ -86,11 +79,11 @@ const useMemberCollectives = (): {
             address: contractAddress,
             tokenName: name,
             tokenSymbol: symbol,
-            pricePerNft: getWeiAmount(
+            pricePerNft: +getWeiAmount(
               mintPrice,
               +activeNetwork.nativeCurrency.decimals,
               false
-            ) as number,
+            ),
             totalClaimed: +totalSupply,
             tokenMedia: mediaData?.animation_url
               ? `${ipfsGateway}/${mediaData?.animation_url.replace(
@@ -111,7 +104,7 @@ const useMemberCollectives = (): {
           };
         }
       )
-      .filter((collective: any) => collective !== undefined);
+      .filter((collective) => collective !== undefined);
 
     void Promise.all<ICollective>(processedMemberCollectives).then(
       (collectives: ICollective[]) => {
