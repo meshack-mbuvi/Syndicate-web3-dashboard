@@ -17,7 +17,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '3. Molecules/Auth/Wallet Card',
+  title: 'Molecules/Auth/Wallet Card',
   decorators: [
     (Story: any) => (
       <Provider store={store}>

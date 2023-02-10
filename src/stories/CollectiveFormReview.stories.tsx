@@ -20,7 +20,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '4. Organisms/Collectives/Create/Review',
+  title: 'Organisms/Collectives/Create/Review',
   isFullscreen: true,
   decorators: [
     (Story: any) => (

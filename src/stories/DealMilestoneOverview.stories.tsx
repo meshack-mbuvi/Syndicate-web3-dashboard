@@ -2,7 +2,7 @@ import { DealsMilestoneOverview } from '@/features/deals/components/create/miles
 import { DealMilestoneType } from '@/features/deals/components/create/milestone/types';
 
 export default {
-  title: '4. Organisms/Deals/Milestone'
+  title: 'Organisms/Deals/Milestone'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

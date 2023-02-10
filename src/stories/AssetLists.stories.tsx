@@ -2,7 +2,7 @@ import { AssetList } from '@/components/distributions/assetList';
 import React, { useState } from 'react';
 
 export default {
-  title: '3. Molecules/Asset List'
+  title: 'Molecules/Distributions/Asset List'
 };
 
 const Template = (args: any) => {

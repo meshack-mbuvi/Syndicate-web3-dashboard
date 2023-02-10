@@ -1,7 +1,7 @@
 import { CollectivesCreateOutline } from '@/components/collectives/createOutline';
 
 export default {
-  title: '4. Organisms/Collectives/Create Outline'
+  title: 'Organisms/Collectives/Create Outline'
 };
 
 const Template = (args: any) => {

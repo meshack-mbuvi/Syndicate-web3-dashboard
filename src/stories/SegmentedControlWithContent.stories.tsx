@@ -2,7 +2,7 @@ import SegmentedControlAndContent from '@/components/segmentedControl/tabsAndCon
 import { useState } from 'react';
 
 export default {
-  title: "3. Molecules/Segmented Control w' Content"
+  title: "Molecules/Segmented Control w' Content"
 };
 
 const Template = (args: any) => {

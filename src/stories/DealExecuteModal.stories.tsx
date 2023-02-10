@@ -2,7 +2,7 @@ import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
 
 export default {
-  title: '4. Organisms/Deals/Close/Execute'
+  title: 'Organisms/Deals/Close/Execute'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

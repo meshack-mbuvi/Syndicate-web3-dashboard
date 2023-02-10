@@ -8,7 +8,7 @@ import { store } from '@/state/index';
 
 export default {
   title:
-    '4. Organisms/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
+    'Organisms/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
   argTypes: {
     state: {
       options: [

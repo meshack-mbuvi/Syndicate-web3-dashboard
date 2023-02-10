@@ -5,7 +5,7 @@ import {
 } from '@/components/shared/ensAddress/display';
 
 export default {
-  title: '3. Molecules/Auth/Address with ENS',
+  title: 'Molecules/Auth/Address with ENS',
   argTypes: {
     layout: {
       options: [AddressLayout.ONE_LINE, AddressLayout.TWO_LINES],

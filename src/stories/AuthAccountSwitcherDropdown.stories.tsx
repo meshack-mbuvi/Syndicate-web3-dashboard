@@ -1,7 +1,7 @@
 import AuthAccountSwitcherDropdown from '@/features/auth/components/accountSwitcherDropdown';
 
 export default {
-  title: '3. Molecules/Auth/Account Switcher Dropdown'
+  title: 'Molecules/Auth/Account Switcher Dropdown'
 };
 
 const Template = (args: any) => {

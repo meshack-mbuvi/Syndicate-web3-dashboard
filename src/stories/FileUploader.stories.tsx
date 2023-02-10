@@ -6,7 +6,7 @@ import {
 import React from 'react';
 
 export default {
-  title: '3. Molecules/File Uploader',
+  title: 'Molecules/File Uploader',
   argTypes: {
     handleCancelUpload: {
       action: 'Clicked delete'

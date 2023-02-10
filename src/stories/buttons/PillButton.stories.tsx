@@ -2,7 +2,7 @@ import { PillButton } from '@/components/pillButtons';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/Pill Button/Regular',
+  title: 'Atoms/Buttons/Pill Button/Regular',
   component: PillButton,
   argTypes: {
     isActive: {

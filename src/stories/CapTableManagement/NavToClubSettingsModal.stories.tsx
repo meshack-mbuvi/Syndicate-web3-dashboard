@@ -5,7 +5,7 @@ import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareToke
 
 export default {
   title:
-    '3. Molecules/Cap Table Management/Modals/Add Member/Navigate To Club Settings Modal',
+    'Molecules/Cap Table Management/Modals/Add Member/Navigate To Club Settings Modal',
   decorators: [
     (Story: any) => (
       <Provider store={store}>

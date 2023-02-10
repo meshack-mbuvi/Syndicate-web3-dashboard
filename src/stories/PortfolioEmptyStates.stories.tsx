@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Portfolio/Empty States',
+  title: 'Molecules/Portfolio/Empty States',
   decorators: [
     (Story: any) => (
       <Provider store={store}>

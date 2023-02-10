@@ -2,7 +2,7 @@ import { DealsCreateGoal } from '@/features/deals/components/create/goals';
 import { useState } from 'react';
 
 export default {
-  title: '4. Organisms/Deals/Create/Goal'
+  title: 'Organisms/Deals/Create/Goal'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

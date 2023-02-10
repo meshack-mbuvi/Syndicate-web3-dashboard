@@ -11,7 +11,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '3. Molecules/Transaction Details',
+  title: 'Molecules/Investment Clubs/Transaction Details',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

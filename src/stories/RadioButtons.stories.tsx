@@ -2,7 +2,7 @@ import { RadioButtons } from '@/components/buttons/radioButtons';
 import { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Radio Buttons'
+  title: 'Atoms/Radio Buttons'
 };
 
 const Template = (args: any) => {

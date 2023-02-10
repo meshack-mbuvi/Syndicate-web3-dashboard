@@ -4,7 +4,7 @@ import {
 } from '@/components/progressDescriptor';
 
 export default {
-  title: '3. Molecules/Progress Descriptor'
+  title: 'Molecules/Progress Descriptor'
 };
 
 const Template = (args: any) => <ProgressDescriptor {...args} />;

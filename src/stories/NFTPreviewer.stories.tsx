@@ -5,7 +5,7 @@ import {
 } from '@/components/collectives/nftPreviewer';
 
 export default {
-  title: '3. Molecules/NFT Previewer',
+  title: 'Molecules/Collectives/NFT Previewer',
   component: NFTPreviewer
 };
 

@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
 });
 
 export default {
-  title: '4. Organisms/Auth/Linked Wallets',
+  title: 'Organisms/Auth/Linked Wallets',
   decorators: [
     (Story: any) => (
       <QueryClientProvider client={queryClient}>

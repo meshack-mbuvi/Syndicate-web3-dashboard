@@ -1,7 +1,7 @@
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
 
 export default {
-  title: '2. Atoms/Generated Icons/Gradient Avatar'
+  title: 'Atoms/Generated Icons/Gradient Avatar'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

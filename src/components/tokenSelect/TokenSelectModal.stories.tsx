@@ -14,7 +14,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '4. Organisms/Token Select Modal',
+  title: 'Organisms/Token Select Modal',
   decorators: [
     (Story: React.FC): React.ReactElement => (
       <ApolloProvider client={client}>

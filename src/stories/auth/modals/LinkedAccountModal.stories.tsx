@@ -5,7 +5,7 @@ import LinkedAccountModal, {
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Linked Account',
+  title: 'Organisms/Auth/Modal/Linked Account',
   argTypes: {
     authType: {
       options: [AuthType.Discord, AuthType.Twitter],

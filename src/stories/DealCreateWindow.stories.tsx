@@ -5,7 +5,7 @@ import {
 import { useState } from 'react';
 
 export default {
-  title: '4. Organisms/Deals/Create/Window'
+  title: 'Organisms/Deals/Create/Window'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

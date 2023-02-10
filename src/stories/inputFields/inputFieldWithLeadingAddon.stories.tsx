@@ -4,7 +4,7 @@ import {
 } from '@/components/inputs';
 
 export default {
-  title: '2. Atoms/Input Field/With Leading Addon',
+  title: 'Atoms/Input Field/With Leading Addon',
   component: InputWithLeadingAddon,
   argTypes: {
     isButtonActive: {

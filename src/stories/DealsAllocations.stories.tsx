@@ -1,7 +1,7 @@
 import { DealsAllocations } from '@/features/deals/components/allocations';
 
 export default {
-  title: '4. Organisms/Deals/Allocations'
+  title: 'Organisms/Deals/Allocations'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

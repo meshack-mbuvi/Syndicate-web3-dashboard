@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Table/Collapsible',
+  title: 'Molecules/Table/Collapsible',
   decorators: [
     (Story: React.FC): React.ReactElement => (
       <Provider store={store}>

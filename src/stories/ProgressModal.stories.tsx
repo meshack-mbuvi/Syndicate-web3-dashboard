@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '4. Organisms/Modify Club Settings/Progress Modal',
+  title: 'Organisms/Modify Club Settings/Progress Modal',
   argTypes: {
     state: {
       options: [

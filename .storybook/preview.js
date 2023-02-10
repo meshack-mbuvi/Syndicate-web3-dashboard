@@ -26,6 +26,20 @@ export const parameters = {
   nextRouter: {
     Provider: RouterContext.Provider
   },
+  options: {
+    storySort: {
+      order: [
+        'Styles',
+        'Atoms',
+        'Molecules',
+        'Organisms',
+        'Templates',
+        'Pages',
+        'Animations',
+        'Experiments'
+      ]
+    }
+  },
   backgrounds: {
     default: 'black',
     values: [

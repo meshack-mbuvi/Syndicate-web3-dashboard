@@ -2,7 +2,7 @@ import React from 'react';
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
 
 export default {
-  title: '3. Molecules/Club Details/Duplicate club warning',
+  title: 'Molecules/Investment Clubs/Duplicate club warning',
   component: DuplicateClubWarning
 };
 

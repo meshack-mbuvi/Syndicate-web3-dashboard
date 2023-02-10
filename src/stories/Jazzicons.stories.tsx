@@ -1,7 +1,7 @@
 import { JazziconGenerator } from '@/features/auth/components/jazziconGenerator';
 
 export default {
-  title: '2. Atoms/Generated Icons/Jazzicons'
+  title: 'Atoms/Generated Icons/Jazzicons'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

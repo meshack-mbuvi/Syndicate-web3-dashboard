@@ -1,7 +1,7 @@
 import { TokenCollection } from '@/components/distributions/tokenCollection';
 
 export default {
-  title: '3. Molecules/Token Collection'
+  title: 'Molecules/Investment Clubs/Token Collection'
 };
 
 const Template = (args: any) => {

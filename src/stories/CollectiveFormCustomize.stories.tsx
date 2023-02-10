@@ -3,7 +3,7 @@ import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radi
 import { useState } from 'react';
 
 export default {
-  title: '4. Organisms/Collectives/Create/Customize'
+  title: 'Organisms/Collectives/Create/Customize'
 };
 
 const Template = (args: any) => {

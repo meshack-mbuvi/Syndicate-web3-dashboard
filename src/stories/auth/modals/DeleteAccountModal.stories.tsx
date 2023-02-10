@@ -2,7 +2,7 @@ import DeleteAccountModal from '@/features/auth/components/modals/deleteAccountM
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Delete Account'
+  title: 'Organisms/Auth/Modal/Delete Account'
 };
 
 const Template = (args: any) => {

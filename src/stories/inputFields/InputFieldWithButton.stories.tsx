@@ -2,7 +2,7 @@ import { InputFieldWithAddOn } from '@/components/inputs/inputFieldWithAddOn';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Input Field/With Button',
+  title: 'Atoms/Input Field/With Button',
   component: InputFieldWithAddOn,
   argTypes: {
     isButtonActive: {

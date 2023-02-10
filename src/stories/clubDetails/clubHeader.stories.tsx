@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Club Details/Club Header',
+  title: 'Molecules/Investment Clubs/Club Header',
   component: ClubHeader,
   decorators: [
     (Story: any) => (

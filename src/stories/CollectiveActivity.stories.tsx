@@ -4,7 +4,7 @@ import {
 } from '@/components/collectives/activity';
 
 export default {
-  title: '3. Molecules/Collectives/Activity'
+  title: 'Molecules/Collectives/Activity'
 };
 
 const Template = (args: any) => {

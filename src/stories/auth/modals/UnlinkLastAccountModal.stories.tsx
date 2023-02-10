@@ -2,7 +2,7 @@ import UnlinkLastAccountModal from '@/features/auth/components/modals/UnlinkLast
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Unlink Last Account'
+  title: 'Organisms/Auth/Modal/Unlink Last Account'
 };
 
 const Template = (args: any) => {

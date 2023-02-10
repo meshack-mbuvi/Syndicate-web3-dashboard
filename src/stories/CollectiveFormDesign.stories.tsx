@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state';
 
 export default {
-  title: '4. Organisms/Collectives/Create/Design',
+  title: 'Organisms/Collectives/Create/Design',
   decorators: [
     (Story: any) => (
       <Provider store={store}>

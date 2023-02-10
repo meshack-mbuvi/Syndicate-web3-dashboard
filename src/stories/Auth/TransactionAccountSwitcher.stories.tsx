@@ -2,7 +2,7 @@ import TransactionWalletSwitcher from '@/features/auth/components/walletSwitchin
 import React from 'react';
 
 export default {
-  title: '3. Molecules/Auth/Transaction Wallet Switcher',
+  title: 'Molecules/Auth/Transaction Wallet Switcher',
   decorators: [
     (Story: any): React.ReactElement => (
       <div style={{ margin: '0rem' }}>

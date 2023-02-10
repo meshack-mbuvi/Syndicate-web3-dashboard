@@ -2,7 +2,7 @@ import { DealsCreateParticipation } from '@/features/deals/components/create/par
 import { useState } from 'react';
 
 export default {
-  title: '4. Organisms/Deals/Create/Participation'
+  title: 'Organisms/Deals/Create/Participation'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
