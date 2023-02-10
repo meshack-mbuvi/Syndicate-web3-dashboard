@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { ProgressState } from '@/components/progressCard';
 import { ProgressModal } from '@/components/progressModal';
+import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
 import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
 import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
@@ -14,11 +16,9 @@ import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
-import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
-import { CONTRACT_ADDRESSES } from '@/Networks';
-import { ProgressState } from '@/components/progressCard';
 import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   show: boolean;
@@ -128,6 +128,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
   const handleAddressChange = (e: any) => {
     const addressValue = e.target.value;
+    if (!web3) return;
 
     setMemberAddress(addressValue);
 
@@ -158,7 +159,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
         <span>
           Amount exceeds available club token supply of{' '}
           <button
-            onClick={() => {
+            onClick={(): void => {
               setMaxRemainingSupply();
             }}
           >
@@ -257,7 +258,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       /* set max token supply to current total supply.
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
-      const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
+      const _tokenCap = +getWeiAmount(String(totalSupply), 18, true);
 
       if (isNewClub) {
         await timeRequirements.closeTimeWindow(
@@ -276,7 +277,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
             activeNetwork.chainId
           ]?.policyMintERC20.toLowerCase()
       ) {
-        if (!currentMintPolicyAddress) return;
+        if (!currentMintPolicyAddress || !web3) return;
         const mintPolicy = new MintPolicyContract(
           currentMintPolicyAddress,
           web3,

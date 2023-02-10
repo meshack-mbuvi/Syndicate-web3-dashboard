@@ -1,12 +1,12 @@
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { AccountHoldings } from '@/graphql/types';
-import { useCallback, useEffect, useState } from 'react';
+import { AppState } from '@/state';
 import { getAccountHoldings } from '@/utils/api';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export const useFetchAccountHoldingsAndDetails = (): {
   loading: boolean;
-  data: AccountHoldings;
+  data: AccountHoldings | undefined;
 } => {
   const {
     web3Reducer: {
@@ -20,14 +20,12 @@ export const useFetchAccountHoldingsAndDetails = (): {
 
   const fetchHoldings = useCallback(() => {
     setLoading(true);
-    getAccountHoldings(
-      // @ts-expect-error TS(2345): Argument of type 'string[] | undefined' is not assig... Remove this comment to see the full error message
+    const _tokens =
       activeModuleDetails?.activeMintModuleReqs?.requiredTokens?.map((token) =>
         token.toLocaleLowerCase()
-      ),
-      activeNetwork?.chainId,
-      account
-    )
+      ) || [];
+
+    void getAccountHoldings(_tokens, activeNetwork?.chainId, account)
       .then((res) => {
         setAccountHoldings(res.data.data);
         setLoading(false);
@@ -45,7 +43,6 @@ export const useFetchAccountHoldingsAndDetails = (): {
 
   return {
     loading,
-    // @ts-expect-error TS(2322): Type 'AccountHoldings | undefined' is not assign... Remove this comment to see the full error message
     data: accountHoldings
   };
 };

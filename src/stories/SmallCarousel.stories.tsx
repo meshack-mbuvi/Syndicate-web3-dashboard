@@ -4,7 +4,7 @@ import {
 } from '@/components/shared/smallCarousel';
 
 export default {
-  title: '3. Molecules/Small Carousel'
+  title: 'Molecules/Collectives/Small Carousel'
 };
 
 const Template = (args: any) => {

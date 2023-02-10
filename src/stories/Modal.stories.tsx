@@ -2,7 +2,7 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { E1 } from '@/components/typography';
 
 export default {
-  title: '3. Molecules/Modal'
+  title: 'Molecules/Modal'
 };
 
 const Template = (args: any) => {

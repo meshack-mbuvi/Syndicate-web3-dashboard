@@ -2,7 +2,7 @@ import { ActionButton, ActionButtonType } from '@/components/actionButton';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/Action Button',
+  title: 'Atoms/Buttons/Action Button',
   component: ActionButton
 };
 

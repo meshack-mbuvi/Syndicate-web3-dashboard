@@ -1,7 +1,7 @@
 import { SimpleTile, TileElevation } from '@/components/tile/simpleTile';
 
 export default {
-  title: '2. Atoms/Simple Tile',
+  title: 'Atoms/Simple Tile',
   argTypes: {
     state: {
       control: { type: 'select' }

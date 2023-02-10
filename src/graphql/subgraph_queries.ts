@@ -1,5 +1,122 @@
 import { gql } from '@apollo/client';
 
+export const GetAdminDeals = gql`
+  query AdminDeals($where: Deal_filter) {
+    deals(where: $where) {
+      id
+      closed
+      numCommits
+      goal
+      totalCommitted
+      depositToken
+      dealToken {
+        id
+        name
+        symbol
+      }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
+      }
+    }
+  }
+`;
+
+export const GetDealDetails = gql`
+  query DealDetails($dealId: ID!) {
+    deal(id: $dealId) {
+      id
+      ownerAddress
+      destinationAddress
+      closed
+      numCommits
+      goal
+      totalCommitted
+      depositToken
+      dealToken {
+        id
+        contractAddress
+        createdAt
+        name
+        symbol
+      }
+      mixins {
+        id
+        requirementType
+        minPerMember
+        startTime
+        endTime
+      }
+    }
+  }
+`;
+
+export const GetDealPrecommits = gql`
+  query Precommits($dealId: ID!) {
+    deal(id: $dealId) {
+      id
+      precommits(
+        where: { status_not: CANCELED }
+        orderBy: createdAt
+        orderDirection: asc
+      ) {
+        id
+        userAddress
+        amount
+        status
+        createdAt
+      }
+    }
+  }
+`;
+
+export const GetMemberPrecommit = gql`
+  query Precommit($where: Precommit_filter) {
+    precommits(where: $where) {
+      id
+      deal {
+        id
+      }
+      userAddress
+      amount
+      createdAt
+      status
+    }
+  }
+`;
+
+export const GetMemberDeals = gql`
+  query MemberPrecommits($where: Precommit_filter) {
+    precommits(where: $where) {
+      id
+      status
+      deal {
+        id
+        closed
+        numCommits
+        goal
+        totalCommitted
+        depositToken
+        dealToken {
+          id
+          name
+          symbol
+        }
+        mixins {
+          id
+          requirementType
+          minPerMember
+          startTime
+          endTime
+        }
+      }
+    }
+  }
+`;
+
 export const MY_CLUBS_QUERY = gql`
   query getCubsIAdmin($where: SyndicateDAO_filter) {
     syndicateDAOs(where: $where) {
@@ -10,6 +127,7 @@ export const MY_CLUBS_QUERY = gql`
       members {
         id
         depositAmount
+        tokens
       }
       totalSupply
       totalDeposits
@@ -26,6 +144,7 @@ export const MY_CLUBS_QUERY = gql`
 export const CLUBS_HAVE_INVESTED = gql`
   query getClubsHaveInvestedIn($where: Member_filter) {
     members(where: $where) {
+      createdAt
       id
       memberAddress
       syndicateDAOs {
@@ -38,6 +157,7 @@ export const CLUBS_HAVE_INVESTED = gql`
             depositAmount
             tokens
             member {
+              createdAt
               id
               memberAddress
             }
@@ -180,7 +300,7 @@ export const SINGLE_CLUB_DETAILS = gql`
 `;
 
 export const CLUB_TOKEN_QUERY = gql`
-  query Query($syndicateDaoId: ID!) {
+  query SyndicateDAOById($syndicateDaoId: ID!) {
     syndicateDAO(id: $syndicateDaoId) {
       id
       depositToken

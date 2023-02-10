@@ -7,7 +7,7 @@ import { ShareSocialModal } from '@/components/distributions/shareSocialModal';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
-  title: '3. Molecules/Share Social Modal',
+  title: 'Molecules/Share Social Modal',
   component: ShareSocialModal,
   decorators: [
     (Story: any) => (

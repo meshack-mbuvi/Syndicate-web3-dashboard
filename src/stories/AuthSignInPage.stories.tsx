@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
 });
 
 export default {
-  title: '5. Pages/Auth/Sign In',
+  title: 'Pages/Auth/Sign In',
   argTypes: {
     state: {
       options: [

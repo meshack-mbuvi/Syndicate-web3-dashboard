@@ -359,12 +359,12 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
               : transfer.tokenLogo,
           tokenAmount:
             contractAddress === ''
-              ? getWeiAmount(
+              ? +getWeiAmount(
                   String(transfer.value),
                   Number(activeNetwork.nativeCurrency.decimals),
                   false
                 )
-              : getWeiAmount(
+              : +getWeiAmount(
                   String(transfer.value),
                   Number(transfer.tokenDecimal),
                   false

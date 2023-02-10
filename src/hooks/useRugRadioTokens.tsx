@@ -23,7 +23,7 @@ const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
   });
   const [loading, setLoading] = useState(true);
 
-  const getTokenProperties = async () => {
+  const getTokenProperties = async (): Promise<void> => {
     if (!collectiblesResult.length) return;
 
     const totalClaimedTokens = +getWeiAmount(

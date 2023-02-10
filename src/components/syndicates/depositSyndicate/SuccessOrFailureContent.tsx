@@ -17,7 +17,7 @@ export const SuccessOrFailureContent: React.FC<{
   copied: boolean;
   accountClubTokens: string;
   clubTokenSymbol: string;
-  memberPercentShare: number;
+  memberPercentShare: string;
 }> = ({
   closeCard,
   successfulDeposit,

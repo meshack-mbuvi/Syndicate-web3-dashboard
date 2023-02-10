@@ -1,4 +1,7 @@
+import { B2, B3 } from '@/components/typography';
+import { DealPreview, DealStatus } from '@/hooks/deals/types';
 import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
   numberWithCommas
@@ -8,10 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { B2, B3 } from '@/components/typography';
 import GradientAvatar from '../GradientAvatar';
-import { DealPreview, DealStatus } from '@/hooks/deals/types';
-import { getWeiAmount } from '@/utils/conversions';
 
 interface Props {
   columns: string[];
@@ -49,10 +49,10 @@ const DealsTable: FC<Props> = ({ columns, tableData }) => {
     totalDepositsInWei: any,
     depositERC20TokenSymbol: any
   ): string => {
-    const totalDeposits = getWeiAmount(totalDepositsInWei, 6, false);
+    const totalDeposits = +getWeiAmount(totalDepositsInWei, 6, false);
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
-          parseFloat(totalDeposits),
+          parseFloat(totalDeposits.toString()),
           depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
             ? true
             : false

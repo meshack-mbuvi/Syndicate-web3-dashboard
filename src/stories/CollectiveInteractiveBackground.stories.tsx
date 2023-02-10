@@ -2,7 +2,7 @@ import { CollectivesInteractiveBackground } from '@/components/collectives/inter
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
 
 export default {
-  title: '3. Molecules/Collectives/Interactive Background',
+  title: 'Molecules/Collectives/Interactive Background',
   component: CollectivesInteractiveBackground
 };
 

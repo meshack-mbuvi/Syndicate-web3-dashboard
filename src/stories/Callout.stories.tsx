@@ -7,7 +7,7 @@ import IconSignature from '@/components/icons/signature';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Callout',
+  title: 'Atoms/Callout',
   component: Callout,
   parameters: {
     componentSubtitle: 'For calling attention'

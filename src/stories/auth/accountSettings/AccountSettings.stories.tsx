@@ -12,7 +12,7 @@ const queryClient = new QueryClient({
 });
 
 export default {
-  title: '4. Organisms/Auth/Account Settings',
+  title: 'Organisms/Auth/Account Settings',
   argTypes: {
     authType: {
       options: [AuthType.Discord, AuthType.Twitter],

@@ -26,7 +26,7 @@ import { PermissionType } from '../shared/types';
 
 interface Props {
   inviteLink?: string;
-  admins?: string[];
+  admins?: (string | undefined)[];
   members?: string[];
   permissionType: PermissionType;
 }
@@ -49,29 +49,29 @@ export const BadgeWithMembers: React.FC<Props> = ({
     }
   } = useSelector((state: AppState) => state);
   const {
-    collectiveDetails: { collectiveAddress, isOpen, maxPerWallet }
+    collectiveDetails: { contractAddress, isOpen, maxPerMember }
   } = useERC721Collective();
 
   const [copyState, setCopyState] = useState(false);
   const [collectiveBalance, setCollectiveBalance] = useState<number>(0);
 
-  const goToClaim = (e: React.MouseEvent<HTMLInputElement>) => {
+  const goToClaim = (e: MouseEvent): void => {
     e.preventDefault();
 
-    router.push({
-      pathname: `/collectives/${collectiveAddress}/claim`,
+    void router.push({
+      pathname: `/collectives/${contractAddress || ''}/claim`,
       query: { chain: activeNetwork.network }
     });
 
-    amplitudeLogger(JOIN_COLLECTIVE_CLICK, {
+    void amplitudeLogger(JOIN_COLLECTIVE_CLICK, {
       flow: Flow.COLLECTIVE_CLAIM
     });
   };
 
-  const handleUpdateCopyState = () => {
+  const handleUpdateCopyState = (): void => {
     setCopyState(true);
 
-    amplitudeLogger(INVITE_LINK_COPY, {
+    void amplitudeLogger(INVITE_LINK_COPY, {
       flow: Flow.COLLECTIVE_CREATE
     });
 
@@ -81,15 +81,15 @@ export const BadgeWithMembers: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!collectiveAddress) {
+    if (!contractAddress || !web3) {
       return;
     }
-    getCollectiveBalance(collectiveAddress.toString(), account, web3).then(
+    void getCollectiveBalance(contractAddress.toString(), account, web3).then(
       (balance) => {
         setCollectiveBalance(balance);
       }
     );
-  }, [account, collectiveAddress, web3]);
+  }, [account, contractAddress, web3]);
 
   return (
     <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
@@ -101,8 +101,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
           <div className="rounded-2.5xl bg-gray-syn8">
             <div className="p-1">
               <CopyLink
-                // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
-                link={inviteLink}
+                link={inviteLink || ''}
                 updateCopyState={handleUpdateCopyState}
                 showCopiedState={copyState}
                 accentColor="white"
@@ -133,7 +132,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
       ) : null}
 
       {(permissionType == PermissionType.NON_MEMBER ||
-        collectiveBalance < +maxPerWallet) &&
+        collectiveBalance < +maxPerMember) &&
       isOpen ? (
         <JoinCollectiveCTA
           alreadyMember={collectiveBalance > 0}

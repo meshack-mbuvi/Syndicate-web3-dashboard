@@ -70,7 +70,11 @@ export const useConnectWalletContext = (): Partial<AuthProviderProps> =>
  * @param error
  * @returns {string} message indicating the type of error that occurred
  */
-const getErrorMessage = () => {
+const getErrorMessage = (): {
+  title: string;
+  message: string;
+  type: string;
+} => {
   return {
     title: 'Connection unsuccessful',
     message: 'Please authorize this website to access your Ethereum account.',
@@ -78,9 +82,8 @@ const getErrorMessage = () => {
   };
 };
 
-const getWalletconnectRPCs = () => {
-  const links = {};
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+const getWalletconnectRPCs = (): { [key: string]: string } => {
+  const links: { [key: string]: string } = {};
   Object.entries(NETWORKS).map(([key, value]) => (links[key] = value.rpcUrl));
   return links;
 };
@@ -446,7 +449,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // if the application is still on staging (DEBUG = true), it should
   // be connected to the 'rinkeby' network.
   // otherwise it should be connected to mainnet
-  const getCurrentEthNetwork = async () => {
+  const getCurrentEthNetwork = async (): Promise<void> => {
     try {
       const currentNetwork = await web3.eth.net.getNetworkType();
       dispatch(storeCurrentEthNetwork(currentNetwork));
@@ -455,7 +458,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const switchNetworks = async (_chainId: any) => {
+  const switchNetworks = async (_chainId: number): Promise<void> => {
     if (account) {
       try {
         /*

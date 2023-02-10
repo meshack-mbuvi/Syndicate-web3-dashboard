@@ -96,7 +96,7 @@ const Layout: FC<Props> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const { adminClubs, adminClubsLoading } = useAdminClubs();
+  const { adminClubs, loading: adminClubsLoading } = useAdminClubs();
   const { memberClubs, memberClubsLoading } = useMemberClubs();
   const loading = adminClubsLoading || memberClubsLoading;
 

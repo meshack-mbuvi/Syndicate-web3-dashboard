@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
 });
 
 export default {
-  title: '4. Organisms/Distribution Members Table',
+  title: 'Organisms/Distributions/Distribution Members Table',
   decorators: [
     (Story: any) => (
       <QueryClientProvider client={queryClient}>

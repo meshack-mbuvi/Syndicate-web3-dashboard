@@ -6,6 +6,7 @@ import { GuardModuleAllowed } from '../GuardModuleAllowed';
 import { MinPerMemberERC20Mixin } from '../MinPerMemberERC20Mixin';
 import { DealTimeRequirements } from '../DealTimeRequirements';
 import { TransactionReceipt } from 'web3-core';
+import { Dispatch, SetStateAction } from 'react';
 
 export interface IDealParams {
   dealName: string;
@@ -171,7 +172,7 @@ export class ERC20DealFactory extends ContractBase {
   public async getCreateDealGasEstimate(
     account: string,
     dealParams: IDealParams,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     const { salt, contractAddresses, encodedFunctions } =
       await this.createSetupParams(account, dealParams);

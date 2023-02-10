@@ -15,7 +15,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '4. Organisms/Collectives/Claim Pass',
+  title: 'Organisms/Collectives/Claim Pass',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

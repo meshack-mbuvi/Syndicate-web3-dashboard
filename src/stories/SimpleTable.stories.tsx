@@ -1,7 +1,7 @@
 import { SimpleTable } from '@/components/simpleTable';
 
 export default {
-  title: '3. Molecules/Table/Simple',
+  title: 'Molecules/Table/Simple',
   decorators: [
     (Story: any): React.ReactElement => (
       <div style={{ margin: '0rem' }}>

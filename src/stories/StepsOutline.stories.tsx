@@ -1,7 +1,7 @@
 import { StepsOutline } from '@/components/stepsOutline';
 
 export default {
-  title: '3. Molecules/Steps Outline'
+  title: 'Molecules/Steps Outline'
 };
 
 const Template = (args: any) => <StepsOutline {...args} />;

@@ -1,7 +1,7 @@
 import DealPrecommitCompleteModal from '@/features/deals/components/precommit/completeModal';
 
 export default {
-  title: '4. Organisms/Deals/Precommit/Complete'
+  title: 'Organisms/Deals/Precommit/Complete'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

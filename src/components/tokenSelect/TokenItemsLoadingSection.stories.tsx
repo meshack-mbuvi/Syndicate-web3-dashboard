@@ -4,7 +4,7 @@ import { Story } from '@storybook/react';
 import { Provider } from 'react-redux';
 
 export default {
-  title: '2. Atoms/Token Items Loading Section',
+  title: 'Molecules/Token Select/Items Loading Section',
   component: TokenItemsLoadingSection,
   decorators: [
     (Story: React.FC): React.ReactElement => (

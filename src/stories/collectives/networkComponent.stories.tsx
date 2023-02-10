@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
 });
 
 export default {
-  title: '4. Organisms/Network component',
+  title: 'Organisms/Network component',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

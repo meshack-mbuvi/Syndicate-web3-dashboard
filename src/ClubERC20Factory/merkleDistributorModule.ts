@@ -1,3 +1,4 @@
+import { IActiveNetwork } from '@/state/wallet/types';
 import merkleDistributorModule_ABI from 'src/contracts/MerkleDistributorModuleERC20.json';
 import { estimateGas } from './shared/getGasEstimate';
 import { getGnosisTxnInfo } from './shared/gnosisTransactionInfo';
@@ -10,7 +11,11 @@ export class MerkleDistributorModuleContract {
   web3;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any, activeNetwork: any) {
+  constructor(
+    contractAddress: string,
+    web3: any,
+    activeNetwork: IActiveNetwork
+  ) {
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(

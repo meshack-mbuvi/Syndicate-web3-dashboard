@@ -2,7 +2,7 @@ import AccountInfoWithAvatar from '@/features/auth/components/settings/AccountIn
 import { AuthType } from '@/features/auth/components/settings/SocialCard';
 
 export default {
-  title: '3. Molecules/Auth/Wallet Address With Avatar'
+  title: 'Molecules/Auth/Wallet Address With Avatar'
 };
 
 const Template = (args: any) => {

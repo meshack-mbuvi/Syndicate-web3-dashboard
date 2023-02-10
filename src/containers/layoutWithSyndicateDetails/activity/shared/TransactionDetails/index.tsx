@@ -6,10 +6,10 @@ import { AppState } from '@/state';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import Image from 'next/image';
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { isAddress } from 'ethers/lib/utils';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export type Transaction = 'outgoing' | 'incoming';
 
@@ -53,8 +53,18 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  // @ts-expect-error TS(7030): Not all code paths return a value.
-  const getTransactionText = (transactionType: string, onModal: boolean) => {
+  const [firstAddressIsMember, setFirstAddressIsmember] = useState(false);
+
+  useEffect(() => {
+    void AddressIsMember(addresses[0]).then((member) => {
+      setFirstAddressIsmember(member);
+    });
+  }, [addresses]);
+
+  const getTransactionText = (
+    transactionType: string,
+    onModal: boolean
+  ): string => {
     if (transactionType === 'outgoing') {
       if (onModal) {
         return 'to';
@@ -72,8 +82,9 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
         ? 'deposited by'
         : 'received from';
     }
+    return '';
   };
-  const addGrayToDecimalInput = (str: any) => {
+  const addGrayToDecimalInput = (str: any): JSX.Element => {
     if (typeof str !== 'string') {
       str.toString();
     }
@@ -86,7 +97,9 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     );
   };
 
-  const AddressIsMember = async (address: string) => {
+  const AddressIsMember = async (address: string): Promise<boolean> => {
+    if (!web3) return false;
+
     return await getMemberBalance(
       contractAddress,
       address,
@@ -153,18 +166,17 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 transactionType === 'incoming' &&
                 isTransactionAnnotated ? (
                   <>
-                    {
-                      // @ts-expect-error TS(2801): This condition will always return true since this 'Promise<boolean>' is always defined.
-                      AddressIsMember(addresses[0]) && (
-                        <div className="mx-2 flex items-center">
-                          <Image
-                            src={'/images/User_Icon.svg'}
-                            height={24}
-                            width={24}
-                          />
-                        </div>
-                      )
-                    }
+                    {firstAddressIsMember ? (
+                      <div className="mx-2 flex items-center">
+                        <Image
+                          src={'/images/User_Icon.svg'}
+                          height={24}
+                          width={24}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </>
                 ) : null}
                 {onModal && category === TransactionCategory.DEPOSIT ? (
@@ -180,7 +192,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                   <div className="text-base">
                     {numClubMembers === 1
                       ? `${numClubMembers} member`
-                      : `${numClubMembers} members`}
+                      : `${numClubMembers ?? '0'} members`}
                   </div>
                 )}
                 <div

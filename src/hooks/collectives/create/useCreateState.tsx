@@ -2,9 +2,10 @@
 // ==============================================================
 
 import { AppState } from '@/state';
+import { CollectiveCreation } from '@/state/createCollective/types';
 import { useSelector } from 'react-redux';
 
-const useCreateState = () => {
+const useCreateState = (): CollectiveCreation => {
   const { createCollectiveSliceReducer } = useSelector(
     (state: AppState) => state
   );

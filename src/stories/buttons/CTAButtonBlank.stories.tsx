@@ -2,7 +2,7 @@ import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/CTA/Blank'
+  title: 'Atoms/Buttons/CTA/Blank'
 };
 
 const Template = (args: any) => <CTAButton {...args}>{args.label}</CTAButton>;

@@ -16,7 +16,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '3. Molecules/Collectives/Card',
+  title: 'Molecules/Collectives/Card',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

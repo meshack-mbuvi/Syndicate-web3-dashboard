@@ -1,4 +1,3 @@
-import { ERC721_INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
@@ -6,10 +5,10 @@ import {
   setERC721MerkleProof,
   setLoadingERC721MerkleProof
 } from '@/state/erc721MerkleProofs/slice';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetErc721IndexAndProofQuery } from './data-fetching/backend/generated-types';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     loading,
     data: merkleData = {},
     refetch: refetchMerkle
-  } = useQuery(ERC721_INDEX_AND_PROOF, {
+  } = useGetErc721IndexAndProofQuery({
     variables: {
       clubAddress: nftAddress,
       address,
@@ -42,7 +41,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     }
   });
 
-  const processMerkleProofData = async (merkleObj: any) => {
+  const processMerkleProofData = async (merkleObj: any): Promise<void> => {
     dispatch(setLoadingERC721MerkleProof(true));
     await dispatch(
       setERC721MerkleProof({
@@ -59,16 +58,17 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
       web3?.utils?.isAddress(nftAddress) &&
       activeNetwork.chainId
     ) {
-      refetchMerkle();
+      void refetchMerkle();
     }
   }, [nftAddress, address, router.isReady, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingERC721MerkleProof(true));
-    if (merkleData.Financial_getERC721IndexAndProof?.accountIndex >= 0) {
-      processMerkleProofData(merkleData.Financial_getERC721IndexAndProof);
+    const _merkleAccountIndex =
+      merkleData.Financial_getERC721IndexAndProof?.accountIndex;
+    if (_merkleAccountIndex && _merkleAccountIndex >= 0) {
+      void processMerkleProofData(merkleData.Financial_getERC721IndexAndProof);
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721MerkleProof());
     }
   }, [address, loading, JSON.stringify(merkleData)]);

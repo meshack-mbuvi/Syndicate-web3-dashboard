@@ -275,12 +275,12 @@ export const ClaimCollectivePass: React.FC<Props> = ({
                       ? CTAType.PRIMARY
                       : CTAType.TRANSACTIONAL
                   }
-                  onClick={() => {
+                  onClick={(): void => {
                     if (walletState === WalletState.NOT_CONNECTED) {
                       dispatch(showWalletModal());
                     } else if (walletState === WalletState.ELIGIBLE) {
                       claimCollective();
-                      amplitudeLogger(CLAIM_CLICK, {
+                      void amplitudeLogger(CLAIM_CLICK, {
                         flow: Flow.COLLECTIVE_CLAIM
                       });
                     }

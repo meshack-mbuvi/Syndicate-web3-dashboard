@@ -4,7 +4,7 @@ import SegmentedControl from '@/components/segmentedControl/tabs';
 import { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Segmented Control'
+  title: 'Atoms/Segmented Control'
 };
 
 const Template = (args: any) => {

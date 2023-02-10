@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 
 export default {
-  title: '4. Organisms/Token Gated Logic'
+  title: 'Organisms/Token Gating/Logic'
 };
 
 const Template = (args: any) => {

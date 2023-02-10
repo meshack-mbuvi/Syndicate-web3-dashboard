@@ -1,10 +1,10 @@
-import React, { FC, useState } from 'react';
-import { useForm, useFormState, Controller } from 'react-hook-form';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { formatAddress } from 'src/utils/formatAddress';
-import { isUnlimited } from 'src/utils/conversions';
 import { AppState } from '@/state';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { FC, useState } from 'react';
+import { Controller, useForm, useFormState } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import { isUnlimited } from 'src/utils/conversions';
+import { formatAddress } from 'src/utils/formatAddress';
 
 /**
  * An editable form component
@@ -59,7 +59,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
     display = true
   } = props;
 
-  const getPercentMargin = (value: string | number) => {
+  const getPercentMargin = (value: string | number): number => {
     let variableWidth = 2.5;
     if (value && value.toString().length > 1) {
       variableWidth = value.toString().length + 1.4;
@@ -67,8 +67,11 @@ export const EditableInput: FC<Props> = (props: Props) => {
     return variableWidth;
   };
 
-  const formatCurrency = (value: any) => {
-    if (isUnlimited(value, web3) || value.toLowerCase() === 'unlimited') {
+  const formatCurrency = (value: string): string => {
+    if (
+      (web3 && isUnlimited(value, web3)) ||
+      value.toLowerCase() === 'unlimited'
+    ) {
       return 'Unlimited';
     } else {
       return floatedNumberWithCommas(value);
@@ -79,11 +82,11 @@ export const EditableInput: FC<Props> = (props: Props) => {
 
   const [showEditButton, setShowEditButton] = useState<boolean>(false);
 
-  const handleShowEditButton = () => {
+  const handleShowEditButton = (): void => {
     setShowEditButton(true);
   };
 
-  const handleHideEditButton = () => {
+  const handleHideEditButton = (): void => {
     setShowEditButton(false);
   };
 

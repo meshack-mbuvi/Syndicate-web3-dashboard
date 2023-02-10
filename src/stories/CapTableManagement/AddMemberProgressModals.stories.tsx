@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '4. Organisms/Cap Table Management/Modals/Add Member/Progress Modals',
+  title: 'Organisms/Cap Table Management/Modals/Add Member/Progress Modals',
   argTypes: {
     state: {
       options: [

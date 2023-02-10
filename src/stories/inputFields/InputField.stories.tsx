@@ -2,7 +2,7 @@ import { InputField } from '@/components/inputs/inputField';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Input Field/Regular',
+  title: 'Atoms/Input Field/Regular',
   component: InputField
 };
 

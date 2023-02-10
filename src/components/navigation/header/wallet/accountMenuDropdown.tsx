@@ -13,11 +13,12 @@ import { FC, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 
-import { useDetectClickOutside } from 'react-detect-click-outside';
 import { CTAButton } from '@/components/CTAButton';
+import { IWeb3State } from '@/state/wallet/types';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 
 interface IAddressMenuDropDown {
-  Web3: any;
+  Web3: IWeb3State;
   showWalletDropdown: boolean;
 }
 
@@ -30,23 +31,23 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   const [showCopyState, setShowCopyState] = useState(false);
   const [nativeBalance, setNativeBalance] = useState('');
 
-  const updateAddressCopyState = () => {
+  const updateAddressCopyState = (): void => {
     setShowCopyState(true);
     setTimeout(() => setShowCopyState(false), 1000);
   };
 
   useEffect(() => {
-    if (account && !nativeBalance) {
+    if (account && !nativeBalance && web3) {
       web3.eth
         .getBalance(account)
-        .then((balance: any) => web3.utils.fromWei(balance, 'ether'))
+        .then((balance: string) => web3.utils.fromWei(balance, 'ether'))
         .then(setNativeBalance);
     }
   }, [account, nativeBalance]);
 
   const dispatch = useDispatch();
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     dispatch(setShowWalletDropdownMenu(!showWalletDropdown));
     dispatch(setShowNetworkDropdownMenu(false));
   };

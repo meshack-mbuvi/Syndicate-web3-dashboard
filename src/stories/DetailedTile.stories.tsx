@@ -2,7 +2,7 @@ import { DetailedTile } from '@/components/tile/detailedTile';
 import { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Detailed Tile'
+  title: 'Atoms/Detailed Tile'
 };
 
 const Template = (args: any) => {

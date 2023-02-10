@@ -3,7 +3,7 @@ import { LogicalOperator } from '@/state/createInvestmentClub/types';
 import { useState } from 'react';
 
 export default {
-  title: '3. Molecules/Token Logic List'
+  title: 'Molecules/Token Gating/Token Logic List'
 };
 
 const Template = (args: any) => {

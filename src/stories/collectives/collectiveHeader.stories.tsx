@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: '3. Molecules/Collectives/Collective Header',
+  title: 'Molecules/Collectives/Collective Header',
   decorators: [
     (Story: any) => (
       <Provider store={store}>

@@ -1,7 +1,7 @@
 import { ShareCard } from '@/components/social';
 
 export default {
-  title: '3. Molecules/Share Social',
+  title: 'Molecules/Share Social',
   component: ShareCard
 };
 

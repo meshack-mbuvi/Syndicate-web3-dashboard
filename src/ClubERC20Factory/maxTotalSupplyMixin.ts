@@ -1,4 +1,5 @@
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import MaxTotalSupply_ABI from 'src/contracts/MaxTotalSupply.json';
 import { ContractBase } from './ContractBase';
 
@@ -9,11 +10,10 @@ export class MaxTotalSupplyMixin extends ContractBase {
 
   public setTotalSupplyRequirements(
     token: string,
-    totalSupply: number
+    totalSupply: string
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assig... Remove this comment to see the full error message
-      this.getAbiObject('setMixinRequirements'),
+      this.getAbiObject('setMixinRequirements') as AbiItem,
       [token, totalSupply] as string[]
     );
   }
@@ -43,7 +43,7 @@ export class MaxTotalSupplyMixin extends ContractBase {
     account: string,
     token: string,
     totalSupply: number | string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

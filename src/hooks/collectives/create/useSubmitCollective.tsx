@@ -1,19 +1,21 @@
 // Collective submission hook
 // ==============================================================
-import useSubmitMetadata from './useSubmitMetadata';
-import useSubmitToContracts from './useSubmitToContracts';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { LAUNCH_CLICK } from '@/components/amplitude/eventNames';
 import {
   setCollectiveSubmittingToIPFS,
   setIpfsError,
   setIpfsHash
 } from '@/state/createCollective/slice';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import useCreateState from './useCreateState';
-import { useEffect } from 'react';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { LAUNCH_CLICK } from '@/components/amplitude/eventNames';
+import useSubmitMetadata from './useSubmitMetadata';
+import useSubmitToContracts from './useSubmitToContracts';
 
-const useSubmitCollective = () => {
+const useSubmitCollective = (): {
+  handleSubmit: () => void;
+} => {
   const dispatch = useDispatch();
   const { submit: submitToContracts } = useSubmitToContracts();
   const {
@@ -26,36 +28,42 @@ const useSubmitCollective = () => {
     creationStatus: { ipfsHash }
   } = useCreateState();
 
-  const beforeMetadataSubmission = () => {
+  const beforeMetadataSubmission = (): void => {
     dispatch(setCollectiveSubmittingToIPFS(true));
   };
 
-  const onIpfsHash = (hash: string) => {
+  const onIpfsHash = (hash: string): void => {
     dispatch(setIpfsHash(hash));
   };
 
-  const onIpfsError = () => {
+  const onIpfsError = (): void => {
     dispatch(setIpfsError(true));
   };
 
   useEffect(() => {
     if (ipfsHash) {
-      submitToContracts();
+      void submitToContracts();
     }
   }, [ipfsHash]);
 
   const { submit: submitMetadata } = useSubmitMetadata(
     beforeMetadataSubmission,
     onIpfsHash,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    () => {},
+    () => '',
     onIpfsError
   );
 
   // Create collective
-  const handleSubmit = () => {
-    submitMetadata(name, symbol, description, artwork, artworkType, artworkUrl);
-    amplitudeLogger(LAUNCH_CLICK, {
+  const handleSubmit = (): void => {
+    void submitMetadata(
+      name,
+      symbol,
+      description,
+      artwork,
+      artworkType,
+      artworkUrl
+    );
+    void amplitudeLogger(LAUNCH_CLICK, {
       flow: Flow.COLLECTIVE_CREATE
     });
   };

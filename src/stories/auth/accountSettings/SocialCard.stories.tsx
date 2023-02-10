@@ -4,7 +4,7 @@ import SocialCard, {
 import React from 'react';
 
 export default {
-  title: '3. Molecules/Auth/Social Card',
+  title: 'Molecules/Auth/Social Card',
   argTypes: {
     authType: {
       options: [AuthType.Discord, AuthType.Twitter],

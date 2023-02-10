@@ -3,7 +3,7 @@ import { AuthType } from '@/features/auth/components/settings/SocialCard';
 import React from 'react';
 
 export default {
-  title: '4. Organisms/Auth/Social Accounts',
+  title: 'Organisms/Auth/Social Accounts',
   argTypes: {
     authType: {
       options: [AuthType.Discord, AuthType.Twitter],

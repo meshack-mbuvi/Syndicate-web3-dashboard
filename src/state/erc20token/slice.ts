@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isEqual } from 'lodash';
-import { DepositDetails, ERC20Token, initialState } from './types';
 import {
   ActiveModuleDetails,
   TokenGatedRequirementsDetails
 } from '@/types/modules';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { isEqual } from 'lodash';
+import { DepositDetails, ERC20Token, initialState } from './types';
 
 const erc20TokenSlice = createSlice({
   name: 'erc20token',

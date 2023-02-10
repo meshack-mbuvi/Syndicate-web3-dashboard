@@ -1,4 +1,5 @@
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import NativeTokenPriceMerkleMintModule_ABI from 'src/contracts/NativeTokenPriceMerkleMintModule.json';
 import { ContractBase } from './ContractBase';
 
@@ -38,7 +39,7 @@ export class NativeTokenPriceMerkleMintModule extends ContractBase {
     collective: string,
     merkleProof: string[],
     amount: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

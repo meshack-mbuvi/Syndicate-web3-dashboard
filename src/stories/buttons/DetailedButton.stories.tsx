@@ -1,7 +1,7 @@
 import { DetailedButton } from '@/components/buttons/detailedButton';
 
 export default {
-  title: '2. Atoms/Buttons/Detailed Button',
+  title: 'Atoms/Buttons/Detailed Button',
   argTypes: {
     icon: {
       options: ['/images/category/club.svg', '/images/category/dashboard.svg'],

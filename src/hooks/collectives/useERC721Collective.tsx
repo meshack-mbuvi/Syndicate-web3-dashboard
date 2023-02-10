@@ -1,46 +1,25 @@
-import { GetAdminCollectives } from '@/graphql/subgraph_queries';
 import useVerifyCollectiveNetwork from '@/hooks/collectives/useVerifyCollectiveNetwork';
+import {
+  RequirementType,
+  useSyndicateCollectivesQuery
+} from '@/hooks/data-fetching/thegraph/generated-types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { CollectiveCardType } from '@/state/modifyCollectiveSettings/types';
 import { getCollectiveName } from '@/utils/contracts/collective';
 import { getWeiAmount } from '@/utils/conversions';
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { getFirstOrString } from '@/utils/stringUtils';
+import { NetworkStatus } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
+import { ICollectiveDetails } from './utils/types';
 
-export interface ICollectiveDetails {
-  collectiveName: string;
-  ownerAddress: string;
-  collectiveSymbol: string;
-  collectiveAddress: string;
-  maxPerWallet: string;
-  maxTotalSupply: string;
-  totalSupply: string;
-  createdAt: any;
-  numOwners: string;
-  owners: any;
-  mintPrice: string;
-  isTransferable: boolean;
-  mintEndTime: string;
-  maxSupply: number;
-  description: string;
-  isOpen: boolean;
-  metadataCid: string;
-  mediaCid: string;
-  collectiveCardType: CollectiveCardType;
-  custom?: any;
-}
-
-const emptyCollective: ICollectiveDetails = {
+const emptyCollective: Partial<ICollectiveDetails> = {
   collectiveName: '',
   ownerAddress: '',
   collectiveSymbol: '',
-  collectiveAddress: '',
-  maxPerWallet: '',
   maxTotalSupply: '',
   totalSupply: '',
   createdAt: '',
@@ -54,12 +33,12 @@ const emptyCollective: ICollectiveDetails = {
   isOpen: false,
   metadataCid: '',
   mediaCid: '',
-  collectiveCardType: CollectiveCardType.TIME_WINDOW,
+  collectiveCardType: RequirementType.TimeWindow,
   custom: {}
 };
 
 export interface ICollectiveDetailsResponse {
-  collectiveDetails: ICollectiveDetails;
+  collectiveDetails: Partial<ICollectiveDetails>;
   collectiveDetailsLoading: boolean;
   collectiveNotFound: boolean;
   correctCollectiveNetwork: boolean;
@@ -73,9 +52,8 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const {
-    query: { collectiveAddress }
-  } = router;
+
+  const collectiveAddress = getFirstOrString(router.query.collectiveAddress);
 
   const isDemoMode = useDemoMode();
   const { correctCollectiveNetwork, checkingNetwork } =
@@ -88,13 +66,12 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeTokenPriceMerkleMintModule;
 
   const [collectiveDetails, setCollectiveDetails] =
-    useState<ICollectiveDetails>(emptyCollective);
+    useState<Partial<ICollectiveDetails>>(emptyCollective);
   const [collectiveNotFound, setCollectiveNotFound] = useState(false);
 
   // get collective details
-  const { loading, data, startPolling, stopPolling, networkStatus } = useQuery(
-    GetAdminCollectives,
-    {
+  const { loading, data, startPolling, stopPolling, networkStatus } =
+    useSyndicateCollectivesQuery({
       variables: {
         where: {
           contractAddress_contains_nocase: collectiveAddress
@@ -105,8 +82,7 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
         clientName: SUPPORTED_GRAPHS.THE_GRAPH,
         chainId: activeNetwork.chainId
       }
-    }
-  );
+    });
 
   // process collective details
   // NOTE: Usually we want useMemo here, but since we need to verify if a collective exists we need more complicated logic
@@ -120,55 +96,56 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
 
       const collective =
         data.syndicateCollectives[data.syndicateCollectives.length - 1];
+
+      const { description, metadataCid, mediaCid } =
+        collective.nftMetadata || {};
       const {
         mintPrice,
         createdAt,
         ownerAddress,
         numOwners,
         owners,
+        contractAddress,
         name: collectiveName,
         symbol: collectiveSymbol,
-        contractAddress: address,
-        maxPerMember: maxPerWallet,
+        maxPerMember,
         totalSupply,
         maxTotalSupply,
         transferGuardAddress,
-        nftMetadata: { description, metadataCid, mediaCid },
         activeModules
       } = collective;
 
-      let collectiveCardType = CollectiveCardType.TIME_WINDOW,
+      let collectiveCardType = RequirementType.TimeWindow,
         mintEndTime = '',
         isOpen = true,
         maxSupply = 0,
         custom = {};
 
       // set collective card type and check if collective is active
-      activeModules.map((module: any) => {
+      activeModules.map((module) => {
         const { contractAddress, activeRequirements } = module;
         if (
+          web3 &&
           MINT_MODULE &&
           web3.utils.toChecksumAddress(contractAddress) ===
             web3.utils.toChecksumAddress(MINT_MODULE)
         ) {
-          activeRequirements.map((activeRequirement: any) => {
+          activeRequirements.map((activeRequirement) => {
             const { requirement } = activeRequirement;
             const { endTime, requirementType } = requirement;
 
             if (
               +endTime > 0 &&
-              requirementType === CollectiveCardType.TIME_WINDOW
+              requirementType === RequirementType.TimeWindow
             ) {
-              collectiveCardType = CollectiveCardType.TIME_WINDOW;
+              collectiveCardType = RequirementType.TimeWindow;
               mintEndTime = String(endTime);
               isOpen =
                 parseInt((new Date().getTime() / 1000).toString()) < +endTime;
               return;
-            } else if (
-              requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY
-            ) {
+            } else if (requirementType === RequirementType.MaxTotalSupply) {
               const currentTime = Date.now();
-              collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
+              collectiveCardType = RequirementType.MaxTotalSupply;
               isOpen = +totalSupply < +maxTotalSupply;
               mintEndTime = String(Math.ceil(currentTime / 1000));
               maxSupply = maxTotalSupply;
@@ -180,29 +157,28 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
         }
 
         if (
+          web3 &&
           web3.utils.toChecksumAddress(contractAddress) ===
-          web3.utils.toChecksumAddress(CUSTOM_MERKLE_MINT)
+            web3.utils.toChecksumAddress(CUSTOM_MERKLE_MINT)
         ) {
           custom = { merkle: true };
-          activeRequirements.map((activeRequirement: any) => {
+          activeRequirements.map((activeRequirement) => {
             const {
               requirement: { endTime, requirementType }
             } = activeRequirement;
 
             if (
               +endTime > 0 &&
-              requirementType === CollectiveCardType.TIME_WINDOW
+              requirementType === RequirementType.TimeWindow
             ) {
-              collectiveCardType = CollectiveCardType.TIME_WINDOW;
+              collectiveCardType = RequirementType.TimeWindow;
               mintEndTime = String(endTime);
               isOpen =
                 parseInt((new Date().getTime() / 1000).toString()) < +endTime;
               return;
-            } else if (
-              requirementType === CollectiveCardType.MAX_TOTAL_SUPPLY
-            ) {
+            } else if (requirementType === RequirementType.MaxTotalSupply) {
               const currentTime = Date.now();
-              collectiveCardType = CollectiveCardType.MAX_TOTAL_SUPPLY;
+              collectiveCardType = RequirementType.MaxTotalSupply;
               isOpen = +totalSupply < +maxTotalSupply;
               mintEndTime = String(Math.ceil(currentTime / 1000));
               maxSupply = maxTotalSupply;
@@ -215,37 +191,39 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
       });
 
       setCollectiveDetails({
-        collectiveName,
+        collectiveName: collectiveName || '',
         ownerAddress,
         collectiveSymbol,
-        maxPerWallet,
-        maxTotalSupply,
-        totalSupply,
-        numOwners,
+        maxPerMember: maxPerMember as number,
+        maxTotalSupply: maxTotalSupply as number,
+        totalSupply: totalSupply as number,
+        numOwners: numOwners as number,
         createdAt,
+        contractAddress,
         owners,
         isTransferable:
           transferGuardAddress.toString().toLocaleLowerCase() ==
           CONTRACT_ADDRESSES[
             activeNetwork.chainId
           ]?.GuardAlwaysAllow.toString().toLocaleLowerCase(),
-        collectiveAddress: address,
         mintPrice: getWeiAmount(mintPrice, 18, false),
         isOpen,
         mintEndTime,
         maxSupply,
-        metadataCid,
-        description,
-        mediaCid,
+        metadataCid: metadataCid || '',
+        description: description || '',
+        mediaCid: mediaCid || '',
         collectiveCardType,
         custom
       });
     } else {
-      verifyNotFound();
+      void verifyNotFound();
     }
   }, [loading, data, activeNetwork?.chainId, MINT_MODULE]);
 
-  const verifyNotFound = async () => {
+  const verifyNotFound = async (): Promise<void> => {
+    if (!web3) return;
+
     const collectiveName = await getCollectiveName(
       collectiveAddress as string,
       web3
@@ -261,7 +239,7 @@ const useERC721Collective = (): ICollectiveDetailsResponse => {
       setCollectiveDetails({
         ...emptyCollective,
         collectiveName: collectiveName as string,
-        collectiveAddress: collectiveAddress as string
+        contractAddress: collectiveAddress as string
       });
     }
   };

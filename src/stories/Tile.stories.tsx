@@ -2,7 +2,7 @@ import { Tile, TileAction, TileState } from '@/components/tile';
 import React, { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Tile',
+  title: 'Atoms/Tile',
   component: Tile,
   argTypes: {
     state: {

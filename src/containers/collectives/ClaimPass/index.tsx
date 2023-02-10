@@ -1,15 +1,15 @@
-import Modal, { ModalStyle } from '@/components/modal';
-import { L2 } from '@/components/typography';
-import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
-import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
-import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
-import { useEffect, useRef, useState } from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   CLAIM_PAGE_LANDING,
   COLLECTIVE_CLAIM_DISCLAIMER_AGREE
 } from '@/components/amplitude/eventNames';
 import { CTAButton } from '@/components/CTAButton';
+import Modal, { ModalStyle } from '@/components/modal';
+import { L2 } from '@/components/typography';
+import NftClaimAndInfoCard from '@/containers/collectives/ClaimPass/NftClaimAndInfoCard';
+import NftImageCard from '@/containers/collectives/ClaimPass/NftImageCard';
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
+import { useEffect, useRef, useState } from 'react';
 
 const ClaimPass: React.FC = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -19,13 +19,13 @@ const ClaimPass: React.FC = () => {
 
   const scrollAgreementRef = useRef<HTMLInputElement>();
 
-  const handleScrolledToBottom = () => {
+  const handleScrolledToBottom = (): void => {
     setAgreedToTerms(!hasAgreedToTerms);
   };
 
-  const handleDisclaimerClick = () => {
+  const handleDisclaimerClick = (): void => {
     setShowDisclaimer(false);
-    amplitudeLogger(COLLECTIVE_CLAIM_DISCLAIMER_AGREE, {
+    void amplitudeLogger(COLLECTIVE_CLAIM_DISCLAIMER_AGREE, {
       flow: Flow.COLLECTIVE_CLAIM
     });
 
@@ -53,7 +53,7 @@ const ClaimPass: React.FC = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      amplitudeLogger(CLAIM_PAGE_LANDING, {
+      void amplitudeLogger(CLAIM_PAGE_LANDING, {
         flow: Flow.COLLECTIVE_CLAIM
       });
     }, 500);
@@ -61,7 +61,7 @@ const ClaimPass: React.FC = () => {
 
   useEffect(() => {
     if (!scrollAgreementRef.current) return;
-    const onScroll = () => {
+    const onScroll = (): void => {
       // @ts-expect-error TS(2339): Property 'scrollTop' does not exist on type 'HTMLInputElement | undefined'.
       const { scrollTop, scrollHeight, clientHeight } =
         scrollAgreementRef.current;

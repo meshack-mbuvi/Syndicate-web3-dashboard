@@ -1,7 +1,7 @@
 import { DealsOverview } from '@/features/deals/components/overview';
 
 export default {
-  title: '3. Molecules/Deals/Overview'
+  title: 'Molecules/Deals/Overview'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

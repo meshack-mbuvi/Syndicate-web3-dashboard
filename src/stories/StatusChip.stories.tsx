@@ -3,7 +3,7 @@ import { DealStatus, ParticipantStatus } from '@/hooks/deals/types';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Status Chip',
+  title: 'Atoms/Status Chip',
   component: StatusChip,
   argTypes: {
     status: {

@@ -4,7 +4,7 @@ import WalletProgressModal, {
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Wallet Progress',
+  title: 'Organisms/Auth/Modal/Wallet Progress',
   argTypes: {
     txnProgress: {
       options: [TxnProgress.Confirm, TxnProgress.Signing, TxnProgress.Success],

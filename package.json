@@ -105,15 +105,15 @@
     "fix:prettier": "prettier --write \"**/*.{css,js,jsx,ts,tsx,json,md}\"",
     "prepare": "husky install",
     "fix": "npm run fix:lint && npm run fix:prettier",
-    "dev": "NODE_OPTIONS='--trace-warnings --max_old_space_size=16384' next dev",
-    "build": "NODE_OPTIONS='--trace-warnings --max_old_space_size=12288' && CI=false && next build",
+    "dev": "yarn run codegen && NODE_OPTIONS='--trace-warnings --max_old_space_size=16384' next dev",
+    "build": "yarn run codegen && NODE_OPTIONS='--trace-warnings --max_old_space_size=12288' && CI=false && next build",
     "start": "NODE_OPTIONS='--inspect' next start ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-types": "typechain --target=truffle-v5 'src/contracts/*.json' --out-dir='src/@types/contracts'",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "storybook": "yarn run codegen && start-storybook -p 6006",
+    "build-storybook": "yarn run codegen && build-storybook",
     "chromatic": "npx chromatic --project-token=f6d7eb9d5271",
-    "codegen": "export NEXT_PUBLIC_SATSUMA_KEY=1c670bde8301 && export NEXT_PUBLIC_SCHEMA_SERVER=thegraph && graphql-codegen --config codegen.ts && export NEXT_PUBLIC_SCHEMA_SERVER=backend && graphql-codegen --config codegen.ts"
+    "codegen": "export NEXT_PUBLIC_SATSUMA_BACKEND_KEY=cA8027rMoB74 && export NEXT_PUBLIC_SCHEMA_SERVER=thegraph && graphql-codegen --config codegen.ts && export NEXT_PUBLIC_SCHEMA_SERVER=backend && graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
     "@graphql-codegen/typescript-operations": "^2.5.13",

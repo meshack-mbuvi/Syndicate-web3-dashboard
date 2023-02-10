@@ -2,7 +2,7 @@ import { Accordion } from '@/components/accordion';
 import { useState } from 'react';
 
 export default {
-  title: '3. Molecules/Accordion'
+  title: 'Molecules/Accordion'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

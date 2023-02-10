@@ -1,21 +1,21 @@
 import Layout from '@/components/layout';
+import useERC721Collective from '@/hooks/collectives/useERC721Collective';
+import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import { isEmpty } from 'lodash';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import NotFoundPage from '@/pages/404';
-import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 
-import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
-import Head from '@/components/syndicates/shared/HeaderTitle';
-import { Spinner } from '@/components/shared/spinner';
-import useFeatureFlag from '@/hooks/useFeatureFlag';
-import { usePermissionType } from '@/hooks/collectives/usePermissionType';
 import { PermissionType } from '@/components/collectives/shared/types';
-import { useRouter } from 'next/router';
-import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { Spinner } from '@/components/shared/spinner';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import CollectivesContainer from '@/containers/collectives/CollectivesContainer';
 import MerkleView from '@/containers/collectives/Merkle/MerkleView';
+import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { usePermissionType } from '@/hooks/collectives/usePermissionType';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
 import { FEATURE_FLAGS } from '@/pages/_app';
+import { useRouter } from 'next/router';
 
 const CollectiveMerkleView: React.FC = () => {
   const {
@@ -28,7 +28,10 @@ const CollectiveMerkleView: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const {
-    collectiveDetails: { collectiveName, collectiveAddress }
+    collectiveDetails: {
+      collectiveName,
+      contractAddress: collectiveAddress = ''
+    }
   } = useERC721Collective();
 
   const router = useRouter();

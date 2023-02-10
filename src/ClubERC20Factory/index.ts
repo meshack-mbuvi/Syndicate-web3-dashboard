@@ -1,6 +1,7 @@
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { ISyndicateContracts } from '@/state/contracts';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { AllowancePrecommitModuleERC20 } from './AllowancePrecommitModuleERC20';
 import { ClubERC20Contract } from './clubERC20';
 import { ClubERC20Factory } from './clubERC20Factory';
 import { ClubERC20FactoryNative } from './clubERC20FactoryNative';
@@ -8,6 +9,7 @@ import { DepositTokenMintModuleContract } from './depositTokenMintModule';
 import { DistributionsERC20 } from './distributionsERC20';
 import { DistributionsETH } from './distributionsETH';
 import { ERC20ClubFactory } from './ERC20ClubFactory';
+import { ERC20DealFactory } from './ERC20DealFactory';
 import { ERC721Collective } from './ERC721Collective';
 import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
 import { ERC721Contract } from './ERC721Membership';
@@ -22,6 +24,7 @@ import { MerkleDistributorModuleContract } from './merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from './merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from './mintPolicyERC721';
 import { NativeMintModuleContract } from './nativeMintModule';
+import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
 import { OwnerMintModuleContract } from './ownerMintModule';
 import { MintPolicyContract } from './policyMintERC20';
 import { PublicMintWithFeeModuleContract } from './publicMintWithFeeModule';
@@ -29,14 +32,11 @@ import { PublicOnePerAddressModuleContract } from './publicOnePerAddressModule';
 import { DepositExchangeMintModule } from './RugRadio/DepositExchangeTokenMintModule';
 import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
+import { RugPFPClaimModuleContract } from './RugRadio/RugPFPClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { TimeRequirements } from './TimeRequirements';
 import { TokenGatedMixin } from './tokenGatingMixin';
-import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
-import { AllowancePrecommitModuleERC20 } from './AllowancePrecommitModuleERC20';
-import { ERC20DealFactory } from './ERC20DealFactory';
-import { RugPFPClaimModuleContract } from './RugRadio/RugPFPClaimModule';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -172,11 +172,10 @@ export const getSyndicateContracts = async (
     : null;
 
   const RugClaimModule = new RugERC20ClaimModule(
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    RUG_CLAIM_MODULE,
-    RUG_TOKEN,
-    GENESIS_NFT,
-    RUG_PROPERTIES,
+    RUG_CLAIM_MODULE || '',
+    RUG_TOKEN || '',
+    GENESIS_NFT || '',
+    RUG_PROPERTIES || '',
     web3,
     activeNetwork
   );

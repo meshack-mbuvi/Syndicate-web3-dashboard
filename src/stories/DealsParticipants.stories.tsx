@@ -1,7 +1,7 @@
 import { DealsParticipants } from '@/features/deals/components/participants';
 
 export default {
-  title: '3. Molecules/Deals/Participants'
+  title: 'Molecules/Deals/Participants'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

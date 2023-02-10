@@ -1,4 +1,5 @@
 import { B3, B4 } from '@/components/typography';
+import clsx from 'clsx';
 import React, { useRef, useState } from 'react';
 
 export enum UploaderProgressType {
@@ -56,7 +57,7 @@ export const FileUploader: React.FC<Props> = ({
         isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6'
       } border-dashed rounded ${
         progressPercent <= 0 && 'hover:bg-gray-syn8'
-      } transition-all ease-out ${customClasses} ${
+      } transition-all ease-out ${clsx(customClasses)} ${
         progressPercent > 0 ? 'py-6-percent' : ''
       }`}
     >
@@ -69,12 +70,12 @@ export const FileUploader: React.FC<Props> = ({
           progressPercent > 0 && 'pointer-events-none'
         } cursor-pointer w-full text-white`}
         onChange={handleUpload}
-        onFocus={() => {
+        onFocus={(): void => {
           if (!isInputFocused) {
             setIsInputFocused(true);
           }
         }}
-        onBlur={() => {
+        onBlur={(): void => {
           if (isInputFocused) {
             setIsInputFocused(false);
           }

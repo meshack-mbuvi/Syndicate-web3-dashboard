@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SearchInput } from '@/containers/managerActions/shared/searchInput';
 
 export default {
-  title: '2. Atoms/Input Field/Search Input (Manager Actions)',
+  title: 'Atoms/Input Field/Search Input (Manager Actions)',
   component: SearchInput
 };
 

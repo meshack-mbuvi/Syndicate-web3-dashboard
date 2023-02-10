@@ -1,7 +1,7 @@
 import { DistributionsDisclaimerModal } from '@/components/distributions/disclaimerModal';
 
 export default {
-  title: '4. Organisms/Distributions Disclaimer Modal'
+  title: 'Organisms/Distributions/Distributions Disclaimer Modal'
 };
 
 const Template = (args: any) => {

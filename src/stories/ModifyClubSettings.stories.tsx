@@ -3,7 +3,7 @@ import { store } from '@/state/index';
 import { Provider } from 'react-redux';
 
 export default {
-  title: '4. Organisms/Modify Club Settings/Settings Modal',
+  title: 'Organisms/Modify Club Settings/Settings Modal',
   parameters: {
     nextRouter: {
       query: {

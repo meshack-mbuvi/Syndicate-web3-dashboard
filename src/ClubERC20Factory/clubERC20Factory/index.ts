@@ -1,18 +1,26 @@
-import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.json';
+import { IActiveNetwork, IWeb3 } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import DISTRIBUTION_ERC20_ABI from 'src/contracts/DistributionModuleERC20.json';
-import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.json';
+import { Contract } from 'web3-eth-contract';
 import { estimateGas } from '../shared/getGasEstimate';
-import { IActiveNetwork } from '@/state/wallet/types';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class ClubERC20Factory {
   web3;
   address;
-  clubERC20Factory: any;
-  distributionERC20: any;
+  clubERC20Factory: Contract | null;
+  distributionERC20: Contract | null;
   activeNetwork: IActiveNetwork;
 
   // initialize new instance of clubERC20FactoryAddress
-  constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork: any) {
+  constructor(
+    clubERC20FactoryAddress: string,
+    web3: IWeb3,
+    activeNetwork: IActiveNetwork
+  ) {
+    this.clubERC20Factory = null;
+    this.distributionERC20 = null;
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = clubERC20FactoryAddress;
@@ -22,11 +30,11 @@ export class ClubERC20Factory {
   init(): void {
     try {
       this.clubERC20Factory = new this.web3.eth.Contract(
-        CLUB_ERC20_FACTORY_ABI,
+        CLUB_ERC20_FACTORY_ABI as AbiItem[],
         this.address
       );
       this.distributionERC20 = new this.web3.eth.Contract(
-        DISTRIBUTION_ERC20_ABI,
+        DISTRIBUTION_ERC20_ABI as AbiItem[],
         this.address
       );
     } catch (error) {
@@ -71,7 +79,7 @@ export class ClubERC20Factory {
     const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
-      this.clubERC20Factory.methods
+      this.clubERC20Factory?.methods
         .createWithMintParams(
           clubTokenName, // name of club token
           tokenSymbol, // symbol
@@ -112,7 +120,7 @@ export class ClubERC20Factory {
       );
       onTxConfirm(receipt.transactionHash);
 
-      const createEvents = await this.clubERC20Factory.getPastEvents(
+      const createEvents = await this.clubERC20Factory?.getPastEvents(
         'ERC20ClubCreated',
         {
           filter: { transactionHash: receipt.transactionHash },
@@ -121,7 +129,7 @@ export class ClubERC20Factory {
         }
       );
 
-      if (receipt.isSuccessful) {
+      if (receipt.isSuccessful && createEvents) {
         onTxReceipt({
           ...receipt,
           events: { ERC20ClubCreated: createEvents[0] }
@@ -143,7 +151,7 @@ export class ClubERC20Factory {
    */
   public async getEstimateGas(
     account: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     const clubTokenName = 'Alpha DAO';
     const tokenSymbol = 'ALDA';
@@ -158,7 +166,7 @@ export class ClubERC20Factory {
     };
 
     await new Promise(() => {
-      this.clubERC20Factory.methods
+      this.clubERC20Factory?.methods
         .createWithMintParams(
           clubTokenName,
           tokenSymbol,

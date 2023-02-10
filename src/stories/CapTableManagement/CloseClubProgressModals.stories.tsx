@@ -7,7 +7,7 @@ import { store } from '@/state/index';
 
 export default {
   title:
-    '3. Molecules/Cap Table Management/Modals/Add Member/Close Club Progress Modals',
+    'Molecules/Cap Table Management/Modals/Add Member/Close Club Progress Modals',
   argTypes: {
     state: {
       options: [

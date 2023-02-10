@@ -71,7 +71,10 @@ const createCollectiveSlice = createSlice({
     setCollectiveTransferrable(state, action: PayloadAction<boolean>) {
       state.transferrable = action.payload;
     },
-    setColectiveTokenDetails(state, action: PayloadAction<any>) {
+    setColectiveTokenDetails(
+      state,
+      action: PayloadAction<{ symbol: string; icon: string }>
+    ) {
       state.tokenDetails = action.payload;
     },
 

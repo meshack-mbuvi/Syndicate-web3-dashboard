@@ -2,7 +2,7 @@ import AddWallet from '@/features/auth/components/settings/AddWallet';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/Text Button',
+  title: 'Atoms/Buttons/Text Button',
   argTypes: {
     handleAddWallet: {
       action: 'Action Add Wallet'

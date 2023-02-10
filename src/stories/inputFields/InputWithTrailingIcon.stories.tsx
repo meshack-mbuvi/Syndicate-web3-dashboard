@@ -1,7 +1,7 @@
 import { InputWithTrailingIcon } from '@/components/inputs';
 
 export default {
-  title: '2. Atoms/Input Field/With Trailing Icon',
+  title: 'Atoms/Input Field/With Trailing Icon',
   component: InputWithTrailingIcon,
   argTypes: {
     isButtonActive: {

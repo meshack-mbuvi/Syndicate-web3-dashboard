@@ -31,26 +31,28 @@ const useFetchAirdropInfo: any = () => {
   const getAirdropInfo = async (merkleExists: any) => {
     setLoading(true);
     const { MerkleDistributorModuleERC721 } = syndicateContracts;
-    let events;
+    let _events;
     if (merkleExists) {
-      events = await MerkleDistributorModuleERC721?.getPastEvents(
+      _events = await MerkleDistributorModuleERC721?.getPastEvents(
         'MerkleAirdropCreated',
         {
           token: nftAddress,
           treeIndex: erc721MerkleProof.treeIndex.toString()
         }
       );
-      setAirdropData(events);
+      if (_events) {
+        setAirdropData(_events);
+      }
     } else {
       // alternative to get info when the user has no claim.
-      events = await MerkleDistributorModuleERC721?.getPastEvents(
+      _events = await MerkleDistributorModuleERC721?.getPastEvents(
         'MerkleAirdropCreated',
         {
           token: nftAddress
         }
       );
-      if (events.length) {
-        setAirdropData([events[events.length - 1]]);
+      if (_events) {
+        setAirdropData([_events[_events.length - 1]]);
       }
     }
 
@@ -59,9 +61,9 @@ const useFetchAirdropInfo: any = () => {
 
   useEffect(() => {
     if (erc721MerkleProof.accountIndex && account && nftAddress) {
-      getAirdropInfo(true);
+      void getAirdropInfo(true);
     } else if (account && nftAddress) {
-      getAirdropInfo(false);
+      void getAirdropInfo(false);
     }
   }, [erc721MerkleProof.accountIndex, account, nftAddress, activeNetwork]);
 
@@ -83,7 +85,6 @@ const useFetchAirdropInfo: any = () => {
       );
       dispatch(setLoadingERC721AirdropInfo(false));
     } else {
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       dispatch(clearERC721AirdropInfo());
     }
   }, [

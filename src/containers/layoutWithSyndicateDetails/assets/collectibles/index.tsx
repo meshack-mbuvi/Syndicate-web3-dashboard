@@ -2,6 +2,10 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H4 } from '@/components/typography';
 import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
+import {
+  CollapseChevronButton,
+  CollapsedSectionType
+} from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import {
@@ -10,13 +14,9 @@ import {
 } from '@/state/assets/collectibles/slice';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { FC, useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  CollapseChevronButton,
-  CollapsedSectionType
-} from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
 interface Props {
   isOwner: boolean;
   showHiddenNfts: boolean;
@@ -387,7 +387,7 @@ export const Collectibles: FC<Props> = ({
                       // sometimes the NFT name is an Ethereum address
                       // we need to break this to fit onto the collectible card
                       const isNameEthereumAddress: boolean =
-                        web3.utils?.isAddress(name);
+                        web3?.utils?.isAddress(name) || false;
 
                       const blankValue = (
                         <span className="text-gray-syn4">-</span>

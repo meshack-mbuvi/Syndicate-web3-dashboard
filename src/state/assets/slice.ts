@@ -16,6 +16,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
+import { IWeb3 } from '../wallet/types';
 import { initialState } from './types';
 
 /** Async thunks */
@@ -111,8 +112,8 @@ export const fetchTokenTransactions = createAsyncThunk(
       tokenSymbol: activeNetwork.nativeCurrency.symbol,
       tokenBalance: nativeBalance,
       tokenName: activeNetwork.nativeCurrency.name,
-      // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
-      tokenValue: parseFloat(nativePriceResponse) * parseFloat(nativeBalance)
+      tokenValue:
+        parseFloat(nativePriceResponse.toString()) * parseFloat(nativeBalance)
     };
 
     // add native token details as the first item.
@@ -232,7 +233,11 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
   return uniqueTokensByContractAddress;
 };
 
-const fetchTokenBalances = (tokensList: any[], account: string, web3: any) => {
+const fetchTokenBalances = (
+  tokensList: any[],
+  account: string,
+  web3: IWeb3
+) => {
   return Promise.all(
     tokensList.map(async (token) => {
       const tokenCopy = { ...token };

@@ -1,7 +1,7 @@
 import DealPrecommitModal from '@/features/deals/components/precommit/allocateModal';
 
 export default {
-  title: '4. Organisms/Deals/Precommit/Allocate'
+  title: 'Organisms/Deals/Precommit/Allocate'
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

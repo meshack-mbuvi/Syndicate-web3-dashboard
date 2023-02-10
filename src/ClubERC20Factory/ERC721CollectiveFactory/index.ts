@@ -1,5 +1,6 @@
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import ERC721_COLLECTIVE_FACTORY_ABI from 'src/contracts/ERC721CollectiveFactory.json';
 import { ContractBase } from '../ContractBase';
 import { ERC721Collective } from '../ERC721Collective';
@@ -239,7 +240,7 @@ export class ERC721CollectiveFactory extends ContractBase {
   public async getEstimateGas(
     account: string,
     collectiveParams: ICollectiveParams,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     const { salt, contractAddresses, encodedFunctions } =
       await this.createSetupParams(account, collectiveParams);

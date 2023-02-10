@@ -2,7 +2,7 @@ import { ICBrandedWrapper } from '@/components/icBrandedWrapper';
 import React from 'react';
 
 export default {
-  title: '3. Molecules/IC Branded Wrapper'
+  title: 'Organisms/IC Branded Wrapper'
 };
 
 const Template = (args: any) => <ICBrandedWrapper {...args} />;

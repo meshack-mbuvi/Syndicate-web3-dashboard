@@ -173,7 +173,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
 
   const handleDestinationAddressChange = (address: string): void => {
     // check if ens address is valid.
-    if (address.endsWith('.eth')) {
+    if (address.endsWith('.eth') && web3) {
       web3.eth.ens
         .getAddress(address)
         .then(function (resolvedAddress: string) {
@@ -187,7 +187,7 @@ const CreateDealProvider: React.FC = ({ children }) => {
     }
 
     // check if non-ens address is valid
-    if (!address.endsWith('.eth') && !web3.utils.isAddress(address)) {
+    if (!address.endsWith('.eth') && web3 && !web3.utils.isAddress(address)) {
       setDestinationAddressError('Invalid address');
     } else {
       setDestinationAddressError('');

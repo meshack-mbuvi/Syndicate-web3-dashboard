@@ -1,6 +1,7 @@
 import ERC721_COLLECTIVE_ABI from 'src/contracts/ERC721Collective.json';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { ContractBase } from '../ContractBase';
+import { Dispatch, SetStateAction } from 'react';
 
 export class ERC721Collective extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
@@ -47,7 +48,7 @@ export class ERC721Collective extends ContractBase {
     account: string,
     collectiveAddress: string,
     isAllowed: boolean,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     const collectiveContract = new this.web3.eth.Contract(
       ERC721_COLLECTIVE_ABI as AbiItem[],

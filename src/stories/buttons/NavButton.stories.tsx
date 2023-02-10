@@ -2,7 +2,7 @@ import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/Navigation Button',
+  title: 'Atoms/Buttons/Navigation Button',
   component: null,
   argTypes: {
     type: {

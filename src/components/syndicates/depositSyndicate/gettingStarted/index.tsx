@@ -35,14 +35,14 @@ const GettingStarted: React.FC = () => {
   // Check whether form query param exist when page has loaded
   useEffect(() => {
     if (router.isReady && !form) {
-      router.push('/clubs');
+      void router.push('/clubs');
     }
   }, [router.isReady]);
 
-  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (!activeNetwork.chainId) return;
-    if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
+
+    if (web3 && router.isReady && web3.utils.isAddress(clubAddress as string)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -55,11 +55,12 @@ const GettingStarted: React.FC = () => {
         resetClubState(dispatch);
       };
     }
+    return;
   }, [clubAddress, account, router.isReady, activeNetwork]);
 
   useEffect(() => {
     setTimeout(() => {
-      amplitudeLogger(MBR_DOCS_PAGE_LANDING, {
+      void amplitudeLogger(MBR_DOCS_PAGE_LANDING, {
         flow: Flow.CLUB_LEGAL
       });
     }, 500);
@@ -69,11 +70,11 @@ const GettingStarted: React.FC = () => {
 
   const memberHasSigned = false;
 
-  const handleGetStarted = () => {
-    amplitudeLogger(MBR_GET_STARTED_CLICK, {
+  const handleGetStarted = (): void => {
+    void amplitudeLogger(MBR_GET_STARTED_CLICK, {
       flow: Flow.CLUB_LEGAL
     });
-    router.push(`/clubs/${clubAddress}/member/legal/prepare?form=${form}`);
+    void router.push(`/clubs/${clubAddress}/member/legal/prepare?form=${form}`);
   };
 
   const steps = [

@@ -1,12 +1,14 @@
 import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { getGnosisTxnInfo } from '@/ClubERC20Factory/shared/gnosisTransactionInfo';
 import { translateProviderName } from '@/components/navigation/header/wallet/accountMenuDropdown';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import DealActionConfirmModal from '@/features/deals/components/close/confirm';
 import DealCloseModal from '@/features/deals/components/close/execute';
 import { DealEndType } from '@/features/deals/components/close/types';
 import { DealAllocationCard } from '@/features/deals/components/details/dealAllocationCard';
 import DealPrecommitModal from '@/features/deals/components/precommit/allocateModal';
 import DealPrecommitCompleteModal from '@/features/deals/components/precommit/completeModal';
+import { Precommit, PrecommitStatus } from '@/hooks/deals/types';
 import { IDealDetails } from '@/hooks/deals/useDealsDetails';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
 import useFetchTokenBalance from '@/hooks/useFetchTokenBalance';
@@ -19,8 +21,6 @@ import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Precommit, PrecommitStatus } from '@/hooks/deals/types';
-import { SkeletonLoader } from '@/components/skeletonLoader';
 
 const PrecommitContainer: React.FC<{
   dealDetails: IDealDetails;
@@ -161,6 +161,7 @@ const PrecommitContainer: React.FC<{
   };
 
   const checkAllowanceAllows = async (current: number): Promise<boolean> => {
+    if (!web3) return false;
     // TODO [REFACTOR]: ERC20 base / helpers for allowances
     const depositTokenContract = new web3.eth.Contract(
       ERC20ABI as AbiItem[],
@@ -188,6 +189,7 @@ const PrecommitContainer: React.FC<{
   };
 
   const cancelAllowance = async (): Promise<void> => {
+    if (!web3) return;
     setShowWaitingOnWallet(true);
     const depositTokenContract = new web3.eth.Contract(
       ERC20ABI as AbiItem[],
@@ -248,6 +250,7 @@ const PrecommitContainer: React.FC<{
 
   // TODO [REFACTOR]: ERC20 base / helpers for allowances
   const handleAllowance = async (): Promise<void> => {
+    if (!web3) return;
     setShowWaitingOnWallet(true);
     const depositTokenContract = new web3.eth.Contract(
       ERC20ABI as AbiItem[],

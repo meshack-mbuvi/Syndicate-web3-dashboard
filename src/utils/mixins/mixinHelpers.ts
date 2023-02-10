@@ -43,7 +43,7 @@ export const unzipTokenRules = (tokenRules: TokenGateRule[]) => {
         splitRules['tokenGateTokenBalances'].push(value.quantity);
       } else {
         splitRules['tokenGateTokenBalances'].push(
-          getWeiAmount(value.quantity.toString(), value.decimals, true)
+          +getWeiAmount(value.quantity.toString(), value.decimals, true)
         );
       }
       return splitRules;

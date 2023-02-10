@@ -140,7 +140,9 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           <CTAButton
             type={isContinueButtonActive ? CTAType.PRIMARY : CTAType.DISABLED}
             fullWidth={true}
-            onClick={isContinueButtonActive ? handleContinueButton : null}
+            onClick={(e): void => {
+              if (isContinueButtonActive) handleContinueButton(e);
+            }}
           >
             {isContinueButtonLoading ? (
               <Spinner

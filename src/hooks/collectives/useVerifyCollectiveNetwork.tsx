@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { getCollectiveName } from '@/utils/contracts/collective';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import useIsPolygon from '@/hooks/collectives/useIsPolygon';
+import { AppState } from '@/state';
+import { getCollectiveName } from '@/utils/contracts/collective';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const useVerifyCollectiveNetwork = (
   collectiveAddress: string
@@ -33,7 +33,7 @@ const useVerifyCollectiveNetwork = (
         setCorrectCollectiveNetwork(false);
         return;
       }
-      if (account) {
+      if (account && web3) {
         try {
           await getCollectiveName(collectiveAddress as string, web3);
           setCorrectCollectiveNetwork(true);

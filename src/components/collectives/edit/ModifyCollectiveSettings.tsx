@@ -54,7 +54,7 @@ import { EditRowIndex } from '@/state/modifyCollectiveSettings/types';
 import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import { NFTMediaType, NFTPreviewer } from '../nftPreviewer';
@@ -68,6 +68,8 @@ type step = {
   isInErrorState: boolean;
   status: string;
 };
+
+const PINATA_GATEWAY_URL = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL ?? '';
 
 const ModifyCollectiveSettings: React.FC = () => {
   const {
@@ -106,12 +108,12 @@ const ModifyCollectiveSettings: React.FC = () => {
       collectiveSymbol,
       createdAt,
       mintPrice,
-      maxPerWallet,
-      collectiveAddress,
-      mintEndTime,
-      maxSupply,
-      metadataCid,
-      isTransferable
+      mintEndTime = '',
+      maxSupply = 0,
+      metadataCid = '',
+      isTransferable = false,
+      maxPerMember: maxPerWallet,
+      contractAddress: collectiveAddress = ''
     },
     collectiveDetailsLoading
   } = useERC721Collective();
@@ -125,7 +127,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const { getArtworkType } = useUpdateState();
 
   const [description, setDescription] = useState(nftMetadata?.description);
-  const [artworkState, setArtworkState] = useState({});
+  const [artworkState, setArtworkState] = useState<File | undefined>();
   const [artworkTypeState, setArtworkTypeState] = useState<NFTMediaType>(
     NFTMediaType.CUSTOM
   );
@@ -142,7 +144,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const [editGroupFieldClicked, setEditGroupFieldClicked] =
     useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string>('');
-  const [progressState, setProgressState] = useState<string>('');
+  const [progressState, setProgressState] = useState<ProgressState | string>();
 
   // Modal change settings states
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -162,7 +164,8 @@ const ModifyCollectiveSettings: React.FC = () => {
   // flag to check whether there is pending transaction before closing modal
   const [isTransactionPending, setIsTransactionPending] =
     useState<boolean>(false);
-  const [currentOpenUntilState, setCurrentOpenUntilState] = useState(null);
+  const [currentOpenUntilState, setCurrentOpenUntilState] =
+    useState<OpenUntil>();
 
   const [subfieldEditing, setSubfieldEditing] = useState<boolean>(false);
 
@@ -186,10 +189,8 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   useEffect(() => {
     if (maxSupply === 0) {
-      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.FUTURE_DATE' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.FUTURE_DATE);
     } else {
-      //@ts-expect-error TS(2345): Argument of type 'OpenUntil.MAX_MEMBERS' is not assignable to par... Remove this comment to see the full error message
       setCurrentOpenUntilState(OpenUntil.MAX_MEMBERS);
     }
   }, [maxSupply]);
@@ -220,15 +221,12 @@ const ModifyCollectiveSettings: React.FC = () => {
     if (!nftMetadata) return;
     nftMetadata?.image == null
       ? setArtworkUrlState(
-          `${
-            process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
-            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          }/${nftMetadata?.animation_url.replace('ipfs://', '')}`
+          `${PINATA_GATEWAY_URL ?? ''}/${
+            nftMetadata?.animation_url?.replace('ipfs://', '') ?? ''
+          }`
         )
       : setArtworkUrlState(
-          `${
-            process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
-          }/${nftMetadata?.image.replace('ipfs://', '')}`
+          `${PINATA_GATEWAY_URL}/${nftMetadata?.image.replace('ipfs://', '')}`
         );
     setDescription(nftMetadata?.description);
   }, [nftMetadata]);
@@ -270,7 +268,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
     setSubfieldEditing(false);
     setTransactionHash(transactionHash);
-    setProgressState('pending');
+    setProgressState(ProgressState.PENDING);
     if (openUntilSettingsChanged) {
       setOpenUntilSettingsChanged(false);
       setOpenUntilStepModalVisible(false);
@@ -278,24 +276,24 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const onTxReceipt = (): void => {
-    setProgressState('success');
-    amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+    setProgressState(ProgressState.SUCCESS);
+    void amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
       flow: Flow.COLLECTIVE_MANAGE,
       transaction_status: 'Success',
       contract_address: collectiveAddress
     });
   };
 
-  const onTxFail = () => {
-    setProgressState('failure');
-    amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
+  const onTxFail = (): void => {
+    setProgressState(ProgressState.FAILURE);
+    void amplitudeLogger(COLLECTIVE_SUBMIT_SETTINGS, {
       flow: Flow.COLLECTIVE_MANAGE,
       transaction_status: 'Failure',
       contract_address: collectiveAddress
     });
   };
 
-  const onSwitchTxConfirm = (transactionHash: any) => {
+  const onSwitchTxConfirm = (transactionHash: string): void => {
     // Update progress state
     setProgressDescriptorTitle(`Updating...`);
     setProgressDescriptorDescription(
@@ -309,8 +307,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const onSwitchTxReceipt = (): void => {
     setOpenUntilStepModalVisible(true);
 
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    if (activeIndex == steps.length - 1) {
+    if (steps && activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
       setOpenUntilStepModalVisible(false);
     } else {
@@ -322,7 +319,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     setIsTransactionPending(false);
   };
 
-  const onSwitchTxFail = (error?: any) => {
+  const onSwitchTxFail = (error?: any): void => {
     setOpenUntilStepModalVisible(true);
     updateSteps('isInErrorState', true);
     updateSteps('status', ProgressDescriptorState.FAILURE);
@@ -383,16 +380,13 @@ const ModifyCollectiveSettings: React.FC = () => {
     }
   };
 
-  const handleClickAction = async (e: any): Promise<void> => {
-    e.preventDefault();
-
+  const handleClickAction = async (): Promise<void> => {
     updateSteps('status', ProgressDescriptorState.PENDING);
     updateSteps('isInErrorState', false);
 
     setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
     setProgressDescriptorTitle(`Applying changes...`);
-    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
-    dispatch(setOpenUntil(currentOpenUntilState));
+    dispatch(setOpenUntil(currentOpenUntilState || 0));
 
     await updateMixin();
   };
@@ -403,8 +397,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const clearErrorStepErrorStates = (): void => {
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    const updatedSteps = steps.map((step) => ({
+    const updatedSteps = steps?.map((step) => ({
       ...step,
       isInErrorState: false,
       status: ProgressDescriptorState.PENDING
@@ -443,12 +436,11 @@ const ModifyCollectiveSettings: React.FC = () => {
   };
 
   const handleCancelUpload = (): void => {
-    setArtworkState({});
+    setArtworkState(undefined);
     setArtworkTypeState(NFTMediaType.CUSTOM);
     setArtworkUrlState('');
     setProgressPercent(0);
-    // @ts-expect-error TS(2345): Argument of type '""' is not assignable to par... Remove this comment to see the full error message
-    setFileName('');
+    setFileName(null);
   };
 
   const handleFileUpload = async (e: any): Promise<void> => {
@@ -472,7 +464,6 @@ const ModifyCollectiveSettings: React.FC = () => {
 
   const currentOpenUntilChange = (openUntil: OpenUntil): void => {
     setOpenUntilSettingsChanged(!openUntilSettingsChanged);
-    // @ts-expect-error TS(2345): Argument of type 'OpenUntil' is not assignable to par... Remove this comment to see the full error message
     setCurrentOpenUntilState(openUntil);
   };
 
@@ -492,8 +483,7 @@ const ModifyCollectiveSettings: React.FC = () => {
   const { submit: submitMetadata } = useSubmitMetadata(
     beforeMetadataSubmission,
     onIpfsHash,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    () => {},
+    () => ({}),
     onIpfsError
   );
 
@@ -532,13 +522,21 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
   };
 
-  const handleEdit = async (e: any): Promise<void> => {
+  const handleEdit = async (e: MouseEvent): Promise<void> => {
     e.preventDefault();
     setIsModalVisible(false);
-    setProgressState('confirm');
+    setProgressState(ProgressState.CONFIRM);
     switch (activeRow) {
       case EditRowIndex.ImageDescriptionGroup:
-        if (!fixedRenderer || !collectiveAddress || !web3) return;
+        if (
+          !fixedRenderer ||
+          !collectiveAddress ||
+          !web3 ||
+          !collectiveName ||
+          !collectiveSymbol ||
+          !description
+        )
+          return;
         try {
           submitMetadata(
             collectiveName,
@@ -647,14 +645,21 @@ const ModifyCollectiveSettings: React.FC = () => {
     setProgressState('');
   };
 
-  const progressModalStates = {
-    confirm: {
+  const progressModalStates: {
+    [key: string]: {
+      title: string;
+      description: string | JSX.Element;
+      state: ProgressState;
+      buttonLabel: string;
+    };
+  } = {
+    [ProgressState.CONFIRM]: {
       title: 'Confirm in wallet',
       description: 'Please confirm the changes in your wallet',
       state: ProgressState.CONFIRM,
       buttonLabel: ''
     },
-    success: {
+    [ProgressState.SUCCESS]: {
       title: 'Settings updated',
       description: (
         <a
@@ -676,7 +681,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       state: ProgressState.SUCCESS,
       buttonLabel: 'Back to collective'
     },
-    pending: {
+    [ProgressState.PENDING]: {
       title: 'Approving',
       description: (
         <>
@@ -703,7 +708,7 @@ const ModifyCollectiveSettings: React.FC = () => {
       state: ProgressState.PENDING,
       buttonLabel: ''
     },
-    failure: {
+    [ProgressState.FAILURE]: {
       title: 'Settings were not updated',
       description: transactionHash ? (
         <a
@@ -825,7 +830,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                     <NFTPreviewer
                       mediaSource={
                         nftMetadata
-                          ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/${
+                          ? `${PINATA_GATEWAY_URL}/${
                               nftMetadata?.image
                                 ? nftMetadata?.image.replace('ipfs://', '')
                                 : nftMetadata?.animation_url
@@ -833,7 +838,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                                     'ipfs://',
                                     ''
                                   )
-                                : null
+                                : ''
                             }`
                           : null
                       }
@@ -845,7 +850,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                       }
                       mediaOnly={true}
                       isEditable={true}
-                      handleEdit={() => {
+                      handleEdit={(): void => {
                         setShowImageUploader(true);
                         setActiveRow(EditRowIndex.ImageDescriptionGroup);
                         dispatch(
@@ -868,17 +873,15 @@ const ModifyCollectiveSettings: React.FC = () => {
                           artworkUrlState && artworkUrlState !== ''
                             ? artworkUrlState
                             : nftMetadata?.image === null
-                            ? `${
-                                process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                              }/${nftMetadata?.animation_url.replace(
-                                'ipfs://',
-                                ''
-                              )}`
-                            : `${
-                                process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL
-                                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                              }/${nftMetadata?.image.replace('ipfs://', '')}`
+                            ? `${PINATA_GATEWAY_URL}/${
+                                nftMetadata?.animation_url?.replace(
+                                  'ipfs://',
+                                  ''
+                                ) ?? ''
+                              }`
+                            : `${PINATA_GATEWAY_URL}/${
+                                nftMetadata?.image?.replace('ipfs://', '') ?? ''
+                              }`
                         }
                         mediaType={
                           nftMetadata?.image === null
@@ -892,8 +895,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                       />
                       <FileUploader
                         progressPercent={progressPercent}
-                        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
-                        fileName={fileName}
+                        fileName={fileName || ''}
                         errorText={exceededUploadLimit}
                         promptTitle="Upload artwork"
                         promptSubtitle="PNG or MP4 allowed"
@@ -916,9 +918,8 @@ const ModifyCollectiveSettings: React.FC = () => {
                   rowIndex: EditRowIndex.ImageDescriptionGroup,
                   inputField: (
                     <TextArea
-                      // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to type 'string'.
-                      value={description}
-                      handleValueChange={(e) => setDescription(e)}
+                      value={description || ''}
+                      handleValueChange={(e): void => setDescription(e)}
                       placeholderLabel="Description about this NFT collection that will be visible everywhere"
                       widthClass="w-full"
                       heightRows={5}
@@ -996,7 +997,11 @@ const ModifyCollectiveSettings: React.FC = () => {
                 inputField: (
                   <InputField
                     value={settingsMaxPerWallet}
-                    onChange={(e) => dispatch(setMaxPerWallet(e.target.value))}
+                    onChange={(
+                      e: ChangeEvent<HTMLInputElement>
+                    ): { payload: string; type: string } =>
+                      dispatch(setMaxPerWallet(e.target.value))
+                    }
                     type="number"
                   />
                 )
@@ -1036,8 +1041,7 @@ const ModifyCollectiveSettings: React.FC = () => {
                 inputField: (
                   <>
                     <RadioButtonsOpenUntil
-                      // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OpenUntil'.
-                      openUntil={currentOpenUntilState}
+                      openUntil={currentOpenUntilState || 0}
                       setOpenUntil={currentOpenUntilChange}
                     />
                     {/* A future date */}
@@ -1104,47 +1108,48 @@ const ModifyCollectiveSettings: React.FC = () => {
         }}
       />
 
-      <OpenUntilStepModal
-        activeStepIndex={activeIndex}
-        isModalVisible={openUntilStepModalVisible}
-        // @ts-expect-error TS(2322): Type 'step[] | undefined' is not assignable to typ... Remove this comment to see the full error message
-        steps={steps}
-        handleModalClose={handleCloseConfirmModal}
-        showCloseButton={false}
-        outsideOnClick={false}
-      >
-        <>
-          {steps?.[activeIndex].status !== '' && (
-            <ProgressDescriptor
-              title={progressDescriptorTitle}
-              description={progressDescriptorDescription}
-              state={progressDescriptorStatus}
-              transactionHash={transactionHash}
-            />
-          )}
-
-          {steps?.[activeIndex].action === 'apply' &&
-            (steps?.[activeIndex].status == '' ||
-              steps?.[activeIndex].status ==
-                ProgressDescriptorState.FAILURE) && (
-              <div className="mt-6">
-                <CTAButton onClick={handleClickAction}>Apply changes</CTAButton>
-              </div>
+      {steps ? (
+        <OpenUntilStepModal
+          activeStepIndex={activeIndex}
+          isModalVisible={openUntilStepModalVisible}
+          steps={steps}
+          handleModalClose={handleCloseConfirmModal}
+          showCloseButton={false}
+          outsideOnClick={false}
+        >
+          <>
+            {steps?.[activeIndex].status !== '' && (
+              <ProgressDescriptor
+                title={progressDescriptorTitle}
+                description={progressDescriptorDescription}
+                state={progressDescriptorStatus}
+                transactionHash={transactionHash}
+              />
             )}
-        </>
-      </OpenUntilStepModal>
+
+            {steps?.[activeIndex].action === 'apply' &&
+              (steps?.[activeIndex].status == '' ||
+                steps?.[activeIndex].status ==
+                  ProgressDescriptorState.FAILURE) && (
+                <div className="mt-6">
+                  <CTAButton onClick={handleClickAction}>
+                    Apply changes
+                  </CTAButton>
+                </div>
+              )}
+          </>
+        </OpenUntilStepModal>
+      ) : null}
 
       {/* progress modal that updates state depending on transaction outcome */}
       {progressState && !openUntilSettingsChanged ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressModal
             {...{
-              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               ...progressModalStates[progressState],
               isVisible: true,
               txHash: transactionHash,
               buttonOnClick:
-                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again'
                   ? handleCloseModal
                   : handleExit,
@@ -1152,18 +1157,14 @@ const ModifyCollectiveSettings: React.FC = () => {
               iconColor: ExternalLinkColor.BLUE,
               transactionType: 'transaction',
               showCloseButton:
-                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
-                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true
                   : false,
               closeModal: handleCloseModal,
               outsideOnClick:
-                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel == 'Try again' ||
-                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 progressModalStates[progressState].buttonLabel ==
                   'Back to collective'
                   ? true

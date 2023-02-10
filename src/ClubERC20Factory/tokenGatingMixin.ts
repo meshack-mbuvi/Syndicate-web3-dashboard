@@ -1,4 +1,5 @@
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import TokenGated_ABI from 'src/contracts/TokenGated.json';
 import { ContractBase } from './ContractBase';
 
@@ -14,8 +15,7 @@ export class TokenGatedMixin extends ContractBase {
     balances: number[]
   ): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assig... Remove this comment to see the full error message
-      this.getAbiObject('setMixinRequirements'),
+      this.getAbiObject('setMixinRequirements') as AbiItem,
       [token, logicOperator, tokens, balances] as string[]
     );
   }
@@ -51,7 +51,7 @@ export class TokenGatedMixin extends ContractBase {
     logicOperator: boolean,
     tokens: string[],
     balances: string[],
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

@@ -6,7 +6,7 @@ import { Story } from '@storybook/react';
 import { Provider } from 'react-redux';
 
 export default {
-  title: '2. Atoms/Token Item Details',
+  title: 'Molecules/Token Select/Item Details',
   component: TokenItemDetails,
   decorators: [
     (Story: React.FC): React.ReactElement => (

@@ -2,7 +2,7 @@ import UnlinkAccountModal from '@/features/auth/components/modals/UnlinkAccountM
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Unlink Account'
+  title: 'Organisms/Auth/Modal/Unlink Account'
 };
 
 const Template = (args: any) => {

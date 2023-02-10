@@ -2,7 +2,7 @@ import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import React, { useState } from 'react';
 
 export default {
-  title: '2. Atoms/Checkbox'
+  title: 'Atoms/Checkbox'
 };
 
 const Template = (args: any) => {

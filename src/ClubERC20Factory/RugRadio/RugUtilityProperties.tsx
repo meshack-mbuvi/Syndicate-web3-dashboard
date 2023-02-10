@@ -1,12 +1,13 @@
+import { IWeb3 } from '@/state/wallet/types';
 import RugUtilityPropertiesABI from 'src/contracts/RugUtilityProperties.json';
-
+import { Contract } from 'web3-eth-contract';
 export class RugUtilityProperties {
-  contract;
+  contract: Contract;
   isGnosisSafe: boolean;
 
-  constructor(contractAddress: string, web3: any) {
+  constructor(contractAddress: string, web3: IWeb3) {
     this.contract = new web3.eth.Contract(
-      RugUtilityPropertiesABI,
+      RugUtilityPropertiesABI as AbiItem[],
       contractAddress
     );
     this.isGnosisSafe =

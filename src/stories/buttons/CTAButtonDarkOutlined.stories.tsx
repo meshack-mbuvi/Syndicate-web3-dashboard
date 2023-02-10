@@ -2,7 +2,7 @@ import { CTAButton, CTAStyle, CTAType } from '@/components/CTAButton';
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Buttons/CTA/Dark Outlined'
+  title: 'Atoms/Buttons/CTA/Dark Outlined'
 };
 
 const Template = (args: any) => <CTAButton {...args}>{args.label}</CTAButton>;

@@ -1,7 +1,7 @@
-import { GetAdminCollectives } from '@/graphql/subgraph_queries';
+import { useSyndicateCollectivesQuery } from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { NetworkStatus } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -26,9 +26,8 @@ const useVerifyCollectiveCreation = (
   const [collectiveAddress, setCollectiveAddress] = useState<string>('');
   const [collectiveIndexed, setCollectiveIndexed] = useState(false);
 
-  const { loading, data, startPolling, stopPolling, networkStatus } = useQuery(
-    GetAdminCollectives,
-    {
+  const { loading, data, startPolling, stopPolling, networkStatus } =
+    useSyndicateCollectivesQuery({
       variables: {
         where: {
           contractAddress_contains_nocase: collectiveAddress.toLowerCase()
@@ -44,10 +43,9 @@ const useVerifyCollectiveCreation = (
         clientName: SUPPORTED_GRAPHS.THE_GRAPH,
         chainId: activeNetwork.chainId
       }
-    }
-  );
+    });
 
-  const verifyCreation = async (collectiveAddress: any) => {
+  const verifyCreation = async (collectiveAddress: string): Promise<void> => {
     // Verification will start once collectiveAddress is set
     setCollectiveAddress(collectiveAddress);
   };

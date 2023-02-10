@@ -5,7 +5,7 @@ import {
 import React from 'react';
 
 export default {
-  title: '2. Atoms/Input Field/With Token',
+  title: 'Atoms/Input Field/With Token',
   argTypes: {
     token: {
       control: { type: 'select' }

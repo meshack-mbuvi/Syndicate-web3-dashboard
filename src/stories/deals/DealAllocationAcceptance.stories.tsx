@@ -3,7 +3,7 @@ import UponAllocationAcceptance from '@/features/deals/components/details/uponAl
 import { PrecommitStatus } from '@/hooks/deals/types';
 
 export default {
-  title: '4. Organisms/Deals/Details/Deal Allocation Acceptance'
+  title: 'Organisms/Deals/Details/Deal Allocation Acceptance'
 };
 
 const Template = (args: any) => <UponAllocationAcceptance {...args} />;

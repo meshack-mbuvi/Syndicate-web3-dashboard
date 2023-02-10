@@ -62,7 +62,6 @@ const ConnectWallet: React.FC = () => {
 
   // set the correct text for the loading modal
   // After 10 seconds, we switch the wallet connect message, showing a help link.
-  // @ts-expect-error TS(7030): Not all code paths return a value.
   useEffect(() => {
     if (providerName) {
       const name = providerName === 'Injected' ? 'Metamask' : providerName;
@@ -89,10 +88,11 @@ const ConnectWallet: React.FC = () => {
         return () => clearTimeout(timeoutId);
       }
     }
+    return;
   }, [providerName]);
 
   // This handles closing the modal after user selects a provider to activate
-  const closeWalletModal = () => {
+  const closeWalletModal = (): void => {
     dispatch(hideWalletModal());
     if (dispatchCreateFlow) {
       dispatch(setDispatchCreateFlow(false));
@@ -307,7 +307,7 @@ const ConnectWallet: React.FC = () => {
                 <div className="w-full flex justify-center">
                   <button
                     className="my-6 text-base text-blue font-whyte-light hover:underline text-center w-fit-content cursor-pointer"
-                    onClick={() =>
+                    onClick={(): void =>
                       openExternalLink('https://metamask.zendesk.com/hc/en-us')
                     }
                   >
@@ -337,7 +337,9 @@ const ConnectWallet: React.FC = () => {
         show={isErrorModalOpen}
         showCloseButton={!!metamaskNotInstalledError}
         height={error?.type === 'web3InstantionError' ? 'h-auto' : 'h-72'}
-        closeModal={() => dispatch(hideErrorModal())}
+        closeModal={(): { payload: undefined; type: string } =>
+          dispatch(hideErrorModal())
+        }
         type="error"
       >
         <div className="flex flex-col justify-between m-auto">

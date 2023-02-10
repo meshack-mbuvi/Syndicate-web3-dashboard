@@ -1,7 +1,8 @@
 import MIN_PER_MEMBER_ERC20_ABI from '@/contracts/MinPerMemberERC20.json';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { ContractBase } from '../ContractBase';
+import { Dispatch, SetStateAction } from 'react';
 import { TransactionReceipt } from 'web3-core';
+import { ContractBase } from '../ContractBase';
 
 export class MinPerMemberERC20Mixin extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
@@ -39,7 +40,7 @@ export class MinPerMemberERC20Mixin extends ContractBase {
     account: string,
     dealToken: string,
     minPerMember: number,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,

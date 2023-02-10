@@ -2,7 +2,7 @@ import WalletSheetMobileModal from '@/features/auth/components/modals/WalletShee
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Wallet Sheet Mobile',
+  title: 'Organisms/Auth/Modal/Wallet Sheet Mobile',
   argTypes: {
     isConnectedWallet: {
       options: [true, false],

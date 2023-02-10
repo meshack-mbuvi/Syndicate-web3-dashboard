@@ -29,9 +29,8 @@ export default function useRugGenesisClaimAmount(
     queryFn: async () => {
       try {
         if (tokenIDs === null) return null;
-        const dataResult = await rugPFPClaimModule?.getMintsRemainingPerNFTs(
-          tokenIDs
-        );
+        const dataResult: string =
+          await rugPFPClaimModule?.getMintsRemainingPerNFTs(tokenIDs);
 
         return dataResult;
       } catch (error) {

@@ -3,7 +3,7 @@ import { DealAllocationCard } from '@/features/deals/components/details/dealAllo
 import { PrecommitStatus } from '@/hooks/deals/types';
 
 export default {
-  title: '4. Organisms/Deals/Details/Deal Allocation Card'
+  title: 'Organisms/Deals/Details/Deal Allocation Card'
 };
 
 const Template = (args: any) => <DealAllocationCard {...args} />;

@@ -1,7 +1,7 @@
 import { JoinCollectiveCTA } from '@/components/collectives/joinCollectiveButton';
 
 export default {
-  title: '2. Atoms/Buttons/Join collective CTA',
+  title: 'Atoms/Buttons/Join collective CTA',
   component: JoinCollectiveCTA,
   argTypes: {
     backgroundColor: { control: 'color' }

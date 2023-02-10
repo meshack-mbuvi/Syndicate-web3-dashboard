@@ -57,7 +57,7 @@ const DealDetails: React.FC = () => {
       const _currentParticipants = participants.map((participant) => {
         return {
           address: participant.address,
-          contributionAmount: getWeiAmount(participant.amount, 6, false),
+          contributionAmount: +getWeiAmount(participant.amount, 6, false),
           ensName: '',
           joinedDate: moment
             .utc(+participant.createdAt * 1000)
@@ -198,11 +198,9 @@ const DealDetails: React.FC = () => {
                     participants={currentParticipants}
                     tokenLogo="/images/prodTokenLogos/USDCoin.svg"
                     tokenSymbol="USDC"
-                    totalParticipantsAmount={getWeiAmount(
-                      totalCommitted,
-                      6,
-                      false
-                    )}
+                    totalParticipantsAmount={
+                      +getWeiAmount(totalCommitted, 6, false)
+                    }
                   />
                 ) : (
                   <DealsParticipants

@@ -1,9 +1,9 @@
 import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CTAButton, CTAType } from '@/components/CTAButton';
 import {
   ADMIN_DOCS_SIGN,
   MBR_DOCS_SIGN
 } from '@/components/amplitude/eventNames';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
 import Modal, { ModalStyle } from '@/components/modal';
@@ -11,6 +11,7 @@ import { AppState } from '@/state';
 import { setWalletSignature } from '@/state/legalInfo';
 import { IClubInfo, IMemberInfo } from '@/state/legalInfo/types';
 import { formatAddress } from '@/utils/formatAddress';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { getTemplates } from '@/utils/templates';
 import {
   ArrowLeftIcon,
@@ -78,7 +79,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { clubAddress } = router.query;
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
 
   const {
     web3Reducer: {
@@ -152,8 +153,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         "span[data-item='signature']"
       );
 
-      // @ts-expect-error TS(2531): Object is possibly 'null'.
-      signatureElement.scrollIntoView({
+      signatureElement?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'end'
@@ -200,7 +200,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     handleScroll();
   }, [router.isReady, currentField]);
 
-  const handleScroll = () => {
+  const handleScroll = (): void => {
     if (documentFields.length && currentField > documentFields.length)
       return setFieldError(true);
     if (!router.isReady || isNaN(currentField) || currentField < 1) return;
@@ -223,18 +223,18 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     });
   };
 
-  const handleNextField = () =>
+  const handleNextField = (): void =>
     setCurrentField((prev) =>
       currentField === documentFields.length ? currentField : prev + 1
     );
 
-  const handlePreviousField = () =>
+  const handlePreviousField = (): void =>
     setCurrentField((prev) => (currentField === 1 ? 1 : prev - 1));
 
   const isGnosisSafe =
-    web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
+    web3?._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
 
-  const handleWalletSignature = async () => {
+  const handleWalletSignature = async (): Promise<void> => {
     const name = isManager
       ? (fieldInfo as IClubInfo).adminName
       : (fieldInfo as IMemberInfo).memberName;
@@ -245,11 +245,12 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
       signature = account;
       setShowManualSignModal(false);
     } else {
-      signature = await web3.eth.personal.sign(
-        `Please sign your name: ${name}`,
-        account,
-        null
-      );
+      signature =
+        (await web3?.eth.personal.sign(
+          `Please sign your name: ${name}`,
+          account,
+          ''
+        )) || '';
     }
 
     if (!signature) return;
@@ -265,13 +266,13 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         }
       };
       localStorage.setItem('legal', JSON.stringify(legal));
-      amplitudeLogger(ADMIN_DOCS_SIGN, {
+      void amplitudeLogger(ADMIN_DOCS_SIGN, {
         flow: Flow.CLUB_LEGAL
       });
     }
 
     if (!isManager) {
-      amplitudeLogger(MBR_DOCS_SIGN, {
+      void amplitudeLogger(MBR_DOCS_SIGN, {
         flow: Flow.CLUB_LEGAL
       });
     }

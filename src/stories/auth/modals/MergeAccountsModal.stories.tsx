@@ -3,7 +3,7 @@ import MergeAccountsModal from '@/features/auth/components/modals/MergeAccountsM
 import { useState } from '@storybook/addons';
 
 export default {
-  title: '4. Organisms/Auth/Modal/Merge Accounts'
+  title: 'Organisms/Auth/Modal/Merge Accounts'
 };
 
 const Template = (args: any) => {

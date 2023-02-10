@@ -12,7 +12,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '5. Pages/Auth/Sign In Widget',
+  title: 'Pages/Auth/Sign In Widget',
   argTypes: {
     state: {
       options: [

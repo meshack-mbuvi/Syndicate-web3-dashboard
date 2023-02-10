@@ -9,7 +9,7 @@ const client = new ApolloClient({
 });
 
 export default {
-  title: '4. Organisms/Badge/With Overview',
+  title: 'Organisms/Badge/With Overview',
   decorators: [
     (Story: any) => (
       <ApolloProvider client={client}>

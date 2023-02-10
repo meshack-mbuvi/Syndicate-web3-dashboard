@@ -178,13 +178,12 @@ export const getERC20TokenDetails = async (
         memberCount,
         loading: false,
         maxMemberCount,
-        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
         requiredToken,
         depositsEnabled,
-        // @ts-expect-error TS(2322): Type 'boolean | undefined' is not assignable to ty... Remove this comment to see the full error message
-        claimEnabled,
         requiredTokenMinBalance,
-        maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
+        claimEnabled: claimEnabled || false,
+        maxTotalSupply: +getWeiAmount(maxTotalSupply, tokenDecimals, false),
+        maxTotalDeposits: +getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };

@@ -1,5 +1,6 @@
 import ETH_PRICE_MINT_MODULE_ABI from '@/contracts/EthPriceMintModule.json';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { Dispatch, SetStateAction } from 'react';
 import { ContractBase } from '../ContractBase';
 
 export class EthPriceMintModule extends ContractBase {
@@ -9,8 +10,7 @@ export class EthPriceMintModule extends ContractBase {
 
   public setEthPrice(token: string, price: string): string {
     return this.web3.eth.abi.encodeFunctionCall(
-      // @ts-expect-error TS(2345): Argument of type 'AbiItem | undefined' is not assi... Remove this comment to see the full error message
-      this.getAbiObject('updateEthPrice'),
+      this.getAbiObject('updateEthPrice') as AbiItem,
       [token, price]
     );
   }
@@ -36,7 +36,7 @@ export class EthPriceMintModule extends ContractBase {
     account: string,
     token: string,
     price: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       account,
@@ -58,7 +58,7 @@ export class EthPriceMintModule extends ContractBase {
     collective: string,
     numOfTokens: string,
     ownerAddress: string,
-    onResponse: (gas?: number) => void
+    onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     this.estimateGas(
       ownerAddress,

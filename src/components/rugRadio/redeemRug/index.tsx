@@ -7,6 +7,7 @@ import NumberTreatment from '@/components/NumberTreatment';
 import { Spinner } from '@/components/shared/spinner';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { AppState } from '@/state';
+import ERC20ABI from '@/utils/abi/erc20.json';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
@@ -16,7 +17,6 @@ import { CheckIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import ERC20ABI from '@/utils/abi/erc20.json';
 import RugRadioIcon from '/public/images/rugRadio/rugRadioIcon.svg';
 
 /**
@@ -64,10 +64,9 @@ const RedeemRug: React.FC = () => {
 
   const [disableMaxButton, setDisableMaxButton] = useState(false);
 
-  const rugRadioContract = new web3.eth.Contract(
-    ERC20ABI as AbiItem[],
-    rugTokenAddress
-  );
+  const rugRadioContract = web3
+    ? new web3.eth.Contract(ERC20ABI as AbiItem[], rugTokenAddress)
+    : null;
 
   const rugTokensToRedeem = tokenSwitched
     ? +amountToRedeem * ratio
@@ -100,7 +99,7 @@ const RedeemRug: React.FC = () => {
     try {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAvailableTokens(getWeiAmount(tokens, decimals, false));
+      setAvailableTokens(+getWeiAmount(tokens, decimals, false));
     } catch (error) {
       setAvailableTokens(0);
     }
@@ -203,7 +202,11 @@ const RedeemRug: React.FC = () => {
   };
 
   // method to handle approval of allowances by a member.
-  const handleAllowanceApproval = async (event: any) => {
+  const handleAllowanceApproval = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
+    if (!web3) return;
+
     event.preventDefault();
     setMetamaskConfirmPending(true);
     setTransactionRejected(false);
@@ -282,8 +285,7 @@ const RedeemRug: React.FC = () => {
   const handleRedeem = async () => {
     setMetamaskConfirmPending(true);
     await depositExchangeMintModule.mint(
-      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      rugDaoTokenAddress,
+      rugDaoTokenAddress ?? '',
       getWeiAmount(rugTokensToRedeem.toString(), 18, true),
       account,
       onTxConfirm,
@@ -320,7 +322,7 @@ const RedeemRug: React.FC = () => {
     }
   ];
 
-  const closeSuccessModal = () => {
+  const closeSuccessModal = (): void => {
     setShowRedeemProcessingModal(false);
     setAmountToRedeem('');
   };
@@ -647,11 +649,11 @@ const RedeemRug: React.FC = () => {
                   ))}
                 <button
                   className="w-full rounded-lg text-base py-4 bg-white text-black"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
                     if (sufficientAllowanceSet) {
-                      handleRedeem();
+                      void handleRedeem();
                     } else {
-                      handleAllowanceApproval(e);
+                      void handleAllowanceApproval(e);
                     }
                     setTransactionRejected(false);
                     setRedeemFailed(false);
