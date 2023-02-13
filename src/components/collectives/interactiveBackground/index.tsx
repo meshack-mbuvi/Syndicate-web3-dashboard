@@ -1,5 +1,5 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import React from 'react';
+import React, { useCallback } from 'react';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { NFTMediaType } from '../nftPreviewer';
@@ -15,6 +15,11 @@ interface Props {
   customId?: string;
 }
 
+function sleep(ms: number) {
+  // add ms millisecond timeout before promise resolution
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // eslint-disable-next-line react/display-name
 export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
   ({
@@ -27,9 +32,13 @@ export const CollectivesInteractiveBackground: React.FC<Props> = React.memo(
     isLoadingFloatingIcon,
     customId = ''
   }) => {
-    const particlesInit = async (main: any) => {
-      await loadFull(main);
-    };
+    const particlesInit = useCallback(async (engine) => {
+      // you can initialize the tsParticles instance (engine) here, adding custom shapes or presets
+      // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+      // starting from v2 you can add only the features you need reducing the bundle size
+      await sleep(1); // avoid a potential race condition that prevented the particles from rendering
+      await loadFull(engine);
+    }, []);
 
     return (
       <div

@@ -23,13 +23,19 @@ interface Props {
   captureRef?: MutableRefObject<HTMLButtonElement>;
   label?: string;
   backgroundColorClass?: string;
-  numberOfNodes?: number;
+  hideParticles?: boolean;
   customId?: string;
   isForDisplay?: boolean; // Mark as true when creating an instance for display in the app, and not for image capture
 }
 
 export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
-  ({ captureRef, label, backgroundColorClass, customId }) => {
+  ({
+    captureRef,
+    label,
+    backgroundColorClass,
+    customId,
+    hideParticles = false
+  }) => {
     const containerRef = useRef<HTMLButtonElement>(null);
     const containerPaddingRem = 2;
     const pxPerRem = 16;
@@ -111,7 +117,7 @@ export const CollectivesGeneratedArtwork: React.FC<Props> = React.forwardRef(
         <CollectivesInteractiveBackground
           heightClass="h-full"
           widthClass="w-full"
-          numberOfParticles={55}
+          numberOfParticles={hideParticles ? 0 : 55}
           isArtwork={true}
           customId={customId}
         />

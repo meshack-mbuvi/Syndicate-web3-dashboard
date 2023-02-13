@@ -152,6 +152,7 @@ const CreateCollectiveContainer: FC = () => {
                 setNextBtnDisabled={setNextBtnDisabled}
                 captureArtworkRef={captureArtworkRef}
                 activeIndex={activeIndex}
+                hideParticlesEngine={activeIndex > 0} // hide particles to avoid glitchy behavior on a page with multiple particle components
               />
               <CreateCollectiveCustomize
                 handleNext={handleNext}
@@ -224,9 +225,11 @@ const CreateCollectiveContainer: FC = () => {
               <div
                 className={`${
                   activeIndex > 0 ? 'scale-100' : 'scale-0'
-                } transform transition-all duration-1000 delay-700 h-full`}
+                } transform transition-all duration-1000 delay-500 h-full`}
               >
-                <CustomizeRightPanel />
+                <CustomizeRightPanel
+                  showInteractiveBackground={activeIndex > 0}
+                />
               </div>
             </div>
 

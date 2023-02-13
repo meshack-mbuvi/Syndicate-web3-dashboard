@@ -79,6 +79,7 @@ module.exports = {
         800: '800ms'
       },
       transitionDelay: {
+        400: '400ms',
         2000: '2000ms'
       },
       transitionTimingFunction: {
