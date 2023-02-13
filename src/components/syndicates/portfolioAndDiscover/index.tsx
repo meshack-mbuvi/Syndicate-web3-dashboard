@@ -73,14 +73,20 @@ const PortfolioAndDiscover: React.FC = () => {
 
   const { adminClubs, loading: adminClubsLoading } = useAdminClubs();
   const { memberClubs, memberClubsLoading } = useMemberClubs();
-  const isLoading = memberClubsLoading || adminClubsLoading;
+
   const { width } = useWindowSize();
 
   const { adminCollectives } = useAdminCollectives();
   const { memberCollectives } = useMemberCollectives();
 
-  const { adminDeals } = useAdminDeals();
-  const { memberDeals } = useMemberDeals();
+  const { adminDeals, adminDealsLoading } = useAdminDeals();
+  const { memberDeals, memberDealsLoading } = useMemberDeals();
+
+  const isLoading =
+    memberClubsLoading ||
+    adminClubsLoading ||
+    adminDealsLoading ||
+    memberDealsLoading;
 
   // Check to make sure collectives are not viewable on Polygon
   const { isPolygon } = useIsPolygon();

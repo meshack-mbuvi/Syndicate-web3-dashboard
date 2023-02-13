@@ -23,6 +23,7 @@ const useMemberPrecommit = (overridePoll: boolean): PrecommitResponse => {
   const {
     query: { dealAddress }
   } = router;
+  const abortController = new AbortController();
 
   // get precommit for a specific member
   const { loading, data, startPolling, stopPolling } = useQuery<{
@@ -34,7 +35,10 @@ const useMemberPrecommit = (overridePoll: boolean): PrecommitResponse => {
         deal_: {
           id: dealAddress
         },
-        status_not: 'CANCELED'
+        status_not: 'CANCELED',
+        fetchOptions: {
+          signal: abortController.signal
+        }
       }
     },
     skip: !dealAddress || !account || !activeNetwork.chainId,
@@ -51,6 +55,12 @@ const useMemberPrecommit = (overridePoll: boolean): PrecommitResponse => {
       stopPolling;
     }
   }, [overridePoll]);
+
+  useEffect(() => {
+    return () => {
+      abortController.abort();
+    };
+  }, [activeNetwork.chainId, dealAddress, account]);
 
   return {
     precommit: data?.precommits[0],

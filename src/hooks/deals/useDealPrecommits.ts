@@ -3,7 +3,7 @@ import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { Precommit } from './types';
@@ -34,8 +34,9 @@ const useDealsPrecommits = (): IPrecommitResponse => {
   } = router;
 
   const isDemoMode = useDemoMode();
+  const abortController = new AbortController();
 
-  const [precommits, setPrecommits] = useState<IPrecommit[]>([]);
+  let precommits = <IPrecommit[]>[];
 
   // get precommits for a deal
   const { loading, data } = useQuery<{
@@ -47,38 +48,38 @@ const useDealsPrecommits = (): IPrecommitResponse => {
     skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-      chainId: activeNetwork.chainId
+      chainId: activeNetwork.chainId,
+      fetchOptions: {
+        signal: abortController.signal
+      }
     }
   });
 
   // process precommits
+  if (!loading && data) {
+    precommits = data.deal?.precommits.map((pre: Precommit) => {
+      return {
+        dealAddress: data.deal.id,
+        address: pre.userAddress,
+        amount: pre.amount,
+        status: pre.status,
+        createdAt: pre.createdAt
+      };
+    });
+  } else {
+    precommits = [];
+  }
+
   useEffect(() => {
-    if (loading) {
-      return;
-    }
-    let isComponentMounted = true;
-
-    if (data && isComponentMounted) {
-      setPrecommits(
-        data.deal?.precommits.map((pre: Precommit) => {
-          return {
-            dealAddress: data.deal.id,
-            address: pre.userAddress,
-            amount: pre.amount,
-            status: pre.status,
-            createdAt: pre.createdAt
-          };
-        })
-      );
-    }
-    return (): void => {
-      isComponentMounted = false;
+    return () => {
+      abortController.abort();
     };
-  }, [loading, data, activeNetwork?.chainId]);
+  }, [activeNetwork.chainId, dealAddress]);
 
+  console.log('loading precommits', loading);
   return {
     precommits,
-    precommitsLoading: false
+    precommitsLoading: loading
   };
 };
 
