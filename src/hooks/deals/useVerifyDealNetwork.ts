@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { getDealOwner } from '@/utils/contracts/deal';
 import { AppState } from '@/state';
+import { getDealOwner } from '@/utils/contracts/deal';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useIsPolygon from '../collectives/useIsPolygon';
 
@@ -34,7 +34,7 @@ const useVerifyDealNetwork = (
         setCorrectDealNetwork(false);
         return;
       }
-      if (account) {
+      if (account && web3) {
         try {
           await getDealOwner(dealAddress as string, web3, activeNetwork);
           if (isMounted) {

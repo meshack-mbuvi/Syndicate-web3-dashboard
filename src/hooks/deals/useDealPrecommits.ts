@@ -1,23 +1,21 @@
-import { GetDealPrecommits } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  Precommit,
+  usePrecommitsQuery
+} from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
-import { Precommit } from './types';
 
-export interface IPrecommit {
-  dealAddress: string;
-  address: string;
-  amount: string;
-  status: string;
-  createdAt: string;
-}
+export type IPrecommit = Partial<
+  Precommit & { dealAddress: string; ensName?: string }
+>;
 
 export interface IPrecommitResponse {
-  precommits: IPrecommit[];
+  precommits: IPrecommit[] | undefined;
   precommitsLoading: boolean;
 }
 
@@ -29,19 +27,16 @@ const useDealsPrecommits = (): IPrecommitResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const {
-    query: { dealAddress }
-  } = router;
+
+  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
 
   const isDemoMode = useDemoMode();
   const abortController = new AbortController();
 
-  let precommits = <IPrecommit[]>[];
+  let precommits = <IPrecommit[] | undefined>[];
 
   // get precommits for a deal
-  const { loading, data } = useQuery<{
-    deal: { id: string; precommits: Precommit[] };
-  }>(GetDealPrecommits, {
+  const { loading, data } = usePrecommitsQuery({
     variables: {
       dealId: dealAddress
     },
@@ -57,9 +52,9 @@ const useDealsPrecommits = (): IPrecommitResponse => {
 
   // process precommits
   if (!loading && data) {
-    precommits = data.deal?.precommits.map((pre: Precommit) => {
+    precommits = data.deal?.precommits.map((pre) => {
       return {
-        dealAddress: data.deal.id,
+        dealAddress: data?.deal?.id,
         address: pre.userAddress,
         amount: pre.amount,
         status: pre.status,
@@ -76,7 +71,6 @@ const useDealsPrecommits = (): IPrecommitResponse => {
     };
   }, [activeNetwork.chainId, dealAddress]);
 
-  console.log('loading precommits', loading);
   return {
     precommits,
     precommitsLoading: loading
