@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
+import { useWarnIfUnsavedRouterChanges } from '@/hooks/useWarnIfUnsavedChanges';
 
 interface Props {
   showBackButton?: boolean;
@@ -130,6 +131,7 @@ const Layout: FC<Props> = ({
     router.pathname === `/collectives/[collectiveAddress]/modify`;
   const distributionPage =
     router.pathname === `/clubs/[clubAddress]/distribute`;
+  const isCreateFlow = router.pathname.includes('/create');
 
   // show a slightly lighter shade of background color on the create flow pages
   const isCreateFlowPage = router.pathname.includes('create');
@@ -140,6 +142,9 @@ const Layout: FC<Props> = ({
     activeNetwork,
     account
   );
+
+  // prevent user from navigating away from the page if they have unsaved changes
+  useWarnIfUnsavedRouterChanges(isCreateFlow);
 
   const handleRouting = (): void => {
     const { chain, ...rest } = router.query;
