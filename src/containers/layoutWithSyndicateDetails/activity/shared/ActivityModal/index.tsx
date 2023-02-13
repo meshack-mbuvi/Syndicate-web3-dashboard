@@ -114,12 +114,13 @@ const ActivityModal: React.FC<IActivityModal> = ({
     if (!batchIdentifiers || !currentBatchIdentifier || assetsView) return;
     const tokenDetailsList: Array<TokenDetailsList> = [];
     batchIdentifiers[currentBatchIdentifier]?.map((transaction) => {
-      const transfer = transaction.transfers[1] ?? transaction.transfers[0];
-      if (transfer.contractAddress !== '') {
+      const transfer =
+        transaction?.transfers?.[1] ?? transaction?.transfers?.[0];
+      if (transfer && transfer.contractAddress !== '') {
         tokenDetailsList.push({
-          name: String(transfer.tokenName),
+          name: String(transfer?.tokenName),
           symbol: String(transfer.tokenSymbol),
-          icon: transfer.tokenLogo,
+          icon: transfer.tokenLogo ?? '',
           amount: getWeiAmount(
             String(transfer.value),
             Number(transfer.tokenDecimal),
@@ -132,7 +133,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
           symbol: activeNetwork.nativeCurrency.symbol,
           icon: activeNetwork.nativeCurrency.logo,
           amount: getWeiAmount(
-            String(transfer.value),
+            String(transfer?.value),
             Number(activeNetwork.nativeCurrency.decimals),
             false
           )
@@ -470,14 +471,14 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 <div className="mb-8">
                   <CategoryPill
                     isOwner={isOwner}
-                    category={category}
+                    category={category ?? TransactionCategory.Uncategorized}
                     outgoing={
                       transactionInfo?.isOutgoingTransaction
                         ? transactionInfo.isOutgoingTransaction
                         : false
                     }
                     readonly={
-                      category === TransactionCategory.DISTRIBUTION
+                      category === TransactionCategory.Distribution
                         ? true
                         : readOnly
                     }
@@ -507,9 +508,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
                         : transactionInfo.from
                     ]}
                     onModal={true}
-                    category={category}
-                    companyName={annotation?.companyName}
-                    round={annotation?.roundCategory}
+                    category={category ?? TransactionCategory.Uncategorized}
+                    companyName={annotation?.companyName ?? ''}
+                    round={annotation?.roundCategory ?? ''}
                     numClubMembers={clubMembers.length}
                   />
                 )}
@@ -541,7 +542,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
             {!data?.Financial_memberSigned &&
               !loading &&
-              category === TransactionCategory.DEPOSIT &&
+              category === TransactionCategory.Deposit &&
               isOwner && (
                 <div className="flex flex-col space-y-6 py-6 px-5">
                   <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
@@ -559,8 +560,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
               )}
 
             {/* Note and details section */}
-            {category === TransactionCategory.DEPOSIT ||
-            category === TransactionCategory.UNCATEGORIZED ||
+            {category === TransactionCategory.Deposit ||
+            category === TransactionCategory.Uncategorized ||
             category === null ||
             (!isOwner && !note && !showDetailSection) ? null : (
               <div
@@ -598,7 +599,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 )}
 
                 {/* details */}
-                {(category === TransactionCategory.INVESTMENT ||
+                {(category === TransactionCategory.Investment ||
                   category === TransactionCategory.OFF_CHAIN_INVESTMENT) && (
                   <div>
                     {/* Checks if the stored investment details has empty values */}
@@ -639,7 +640,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               </div>
             )}
 
-            {category === TransactionCategory.DISTRIBUTION && (
+            {category === TransactionCategory.Distribution && (
               <>
                 <div
                   className={`${

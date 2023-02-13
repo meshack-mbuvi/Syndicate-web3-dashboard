@@ -58,16 +58,16 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
       if (onModal) {
         return 'to';
       }
-      return category === TransactionCategory.INVESTMENT
+      return category === TransactionCategory.Investment
         ? 'invested in'
-        : category === TransactionCategory.DISTRIBUTION
+        : category === TransactionCategory.Distribution
         ? 'distributed to'
         : 'sent to';
     } else if (transactionType === 'incoming') {
       if (onModal) {
         return 'from';
       }
-      return category === TransactionCategory.DEPOSIT
+      return category === TransactionCategory.Deposit
         ? 'deposited by'
         : 'received from';
     }
@@ -169,7 +169,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     }
                   </>
                 ) : null}
-                {onModal && category === TransactionCategory.DEPOSIT ? (
+                {onModal && category === TransactionCategory.Deposit ? (
                   <div className="mr-2 flex items-center">
                     <Image
                       src={'/images/User_Icon.svg'}
@@ -178,7 +178,7 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                     />
                   </div>
                 ) : null}
-                {!onModal && category === TransactionCategory.DISTRIBUTION && (
+                {!onModal && category === TransactionCategory.Distribution && (
                   <div className="text-base">
                     {numClubMembers === 1
                       ? `${numClubMembers} member`
@@ -192,14 +192,14 @@ const BatchTransactionDetails: React.FC<IBatchTransactionDetails> = ({
                 >
                   {companyName
                     ? companyName
-                    : !onModal && category === TransactionCategory.DISTRIBUTION
+                    : !onModal && category === TransactionCategory.Distribution
                     ? ''
                     : onModal &&
-                      category === TransactionCategory.DISTRIBUTION &&
+                      category === TransactionCategory.Distribution &&
                       numClubMembers === 1
                     ? `${numClubMembers} member`
                     : onModal &&
-                      category === TransactionCategory.DISTRIBUTION &&
+                      category === TransactionCategory.Distribution &&
                       numClubMembers !== 1
                     ? `${numClubMembers ?? '0'} members`
                     : web3 && !web3.utils.isAddress(addresses[0])

@@ -1,9 +1,10 @@
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
-import { TokenReqDetails } from '@/types/modules';
-import { getWeiAmount } from '@/utils/conversions';
 import { TokenHoldings } from '@/graphql/types';
+import { AppState } from '@/state';
+import { TokenReqDetails } from '@/types/modules';
 import { isZeroAddress } from '@/utils';
+import { getWeiAmount } from '@/utils/conversions';
+import { useSelector } from 'react-redux';
+
 export const useMeetsTokenGatedRequirements = (): {
   getTokenReqDetails: (tokenHoldings: TokenHoldings[]) => {
     meetsRequirements: boolean;

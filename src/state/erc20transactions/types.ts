@@ -1,15 +1,33 @@
+import {
+  Maybe,
+  TransactionAnnotation,
+  TransactionCategory as Category
+} from '@/hooks/data-fetching/backend/generated-types';
+
+/**
+ * NOTE: Had to use Pascal case since the category from generated types is using
+ * this case. Been unable to merge the two enums without getting errors
+ *
+ */
 export enum TransactionCategory {
-  INVESTMENT = 'INVESTMENT',
-  INVESTMENT_TOKEN = 'INVESTMENT_TOKEN',
-  EXPENSE = 'EXPENSE',
-  DEPOSIT = 'DEPOSIT',
-  OTHER = 'OTHER',
-  UNCATEGORIZED = 'UNCATEGORIZED',
   SELECT_CATEGORY = 'SELECT_CATEGORY',
   TOKEN = 'TOKEN',
   COLLECTIBLE = 'COLLECTIBLE',
   OFF_CHAIN_INVESTMENT = 'OFF_CHAIN_INVESTMENT',
-  DISTRIBUTION = 'DISTRIBUTION'
+  Deposit = 'DEPOSIT',
+  DepositReturned = 'DEPOSIT_RETURNED',
+  DepositToken = 'DEPOSIT_TOKEN',
+  DepositWithdrawal = 'DEPOSIT_WITHDRAWAL',
+  Distribution = 'DISTRIBUTION',
+  DistributionWithdrawal = 'DISTRIBUTION_WITHDRAWAL',
+  Expense = 'EXPENSE',
+  Investment = 'INVESTMENT',
+  InvestmentToken = 'INVESTMENT_TOKEN',
+  MemberDistributed = 'MEMBER_DISTRIBUTED',
+  MemberMinted = 'MEMBER_MINTED',
+  Other = 'OTHER',
+  TokenDistribution = 'TOKEN_DISTRIBUTION',
+  Uncategorized = 'UNCATEGORIZED'
 }
 
 export enum RoundCategory {
@@ -25,25 +43,8 @@ export enum RoundCategory {
   OTHER
 }
 
-export type SyndicateDetailsAnnotation = {
-  acquisitionDate: Date;
-  annotationMetadata: any;
-  companyName: string;
-  equityStake: string;
-  fromLabel: string;
-  memo: string;
-  postMoneyValuation: string;
-  preMoneyValuation: string;
-  roundCategory: string;
-  sharesAmount: string;
-  toLabel: string;
-  tokenAmount: string;
-  transactionCategory: TransactionCategory;
-  transactionId: string;
-};
-
 export interface CurrentTransaction {
-  category: TransactionCategory;
+  category?: Maybe<TransactionCategory>;
   note: string;
   hash: string;
   transactionInfo: {
@@ -59,7 +60,7 @@ export interface CurrentTransaction {
   readOnly: boolean;
   timestamp: string;
   transactionId?: string;
-  annotation: SyndicateDetailsAnnotation;
+  annotation?: Partial<TransactionAnnotation> | null;
   blockTimestamp?: number;
 }
 
@@ -68,7 +69,7 @@ interface InitialState {
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
-  category: TransactionCategory.UNCATEGORIZED,
+  category: TransactionCategory.Uncategorized as Category,
   note: '',
   hash: '',
   transactionInfo: {
@@ -94,7 +95,7 @@ export const emptyCurrentTransaction: CurrentTransaction = {
     sharesAmount: '',
     toLabel: '',
     tokenAmount: '',
-    transactionCategory: TransactionCategory.UNCATEGORIZED,
+    transactionCategory: TransactionCategory.Uncategorized as Category,
     memo: '',
     companyName: '',
     annotationMetadata: ''

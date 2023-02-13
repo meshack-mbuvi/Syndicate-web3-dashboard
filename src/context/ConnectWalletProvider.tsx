@@ -333,7 +333,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setAccount(address);
       };
 
-      const handleChainChanged = async () => {
+      const handleChainChanged = async (): Promise<void> => {
         await getCurrentEthNetwork();
         await newWeb3Instance(activeProvider);
         const { network, ethersProvider } = await getProviderAccountAndNetwork(
@@ -343,7 +343,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setEthersProvider(ethersProvider);
       };
 
-      const handleDisconnect = () => {
+      const handleDisconnect = (): void => {
         dispatch(setDisConnected());
       };
 

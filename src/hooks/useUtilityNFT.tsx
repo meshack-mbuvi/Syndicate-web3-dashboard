@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const useUtilityNFT: any = () => {
+const useUtilityNFT = (): { loading: boolean } => {
   const dispatch = useDispatch();
 
   const {
@@ -61,7 +61,7 @@ const useUtilityNFT: any = () => {
     return owner == (await ERC721tokenContract.ownerOf(tokenId));
   };
 
-  const getTokenClaimStatus = async (tokenID: any): Promise<boolean> => {
+  const getTokenClaimStatus = async (tokenID: string): Promise<boolean> => {
     // get claim status
     const response = await RugUtilityMintModule.tokenRedeemed(tokenID);
     return response;

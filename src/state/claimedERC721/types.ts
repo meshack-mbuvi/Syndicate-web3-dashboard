@@ -2,8 +2,8 @@ export interface ERC721claimed {
   id: string;
   claimant: string;
   token: string;
-  treeIndex: string;
-  index: string;
+  treeIndex: string | null;
+  index: string | null;
   claimed: boolean;
 }
 

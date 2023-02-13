@@ -3,13 +3,16 @@ import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { activityDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
+import {
+  GraphEvent,
+  TransactionAnnotation,
+  Transfer
+} from '@/hooks/data-fetching/backend/generated-types';
 
 import { useDemoMode } from '@/hooks/useDemoMode';
 import {
   getInput,
-  SyndicateAnnotation,
-  SyndicateEvents,
-  SyndicateTransfers,
+  TransactionEvents,
   useLegacyTransactions
 } from '@/hooks/useLegacyTransactions';
 import useForceUpdate from '@/hooks/utils/forceUpdate';
@@ -30,13 +33,13 @@ import { v4 as uuidv4 } from 'uuid';
 import FilterPill from '../shared/FilterPill';
 
 interface DistributionTokenDetails {
-  annotation: SyndicateAnnotation;
-  hash: string;
-  timestamp: number;
-  ownerAddress: string;
-  syndicateEvents: Array<SyndicateEvents>;
-  transfers: Array<SyndicateTransfers>;
-  tokenName: string | undefined;
+  annotation?: TransactionAnnotation | null;
+  hash?: string;
+  timestamp?: number;
+  ownerAddress?: string;
+  syndicateEvents: Array<GraphEvent>;
+  transfers: Array<Transfer> | undefined;
+  tokenName?: string | undefined;
   tokenSymbol: string | undefined;
   tokenDecimal: number | undefined;
   icon: string | undefined;
@@ -270,7 +273,8 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     false
   );
 
-  const [transactionEventsState, setTransactionEventsState] = useState<any>();
+  const [transactionEventsState, setTransactionEventsState] =
+    useState<TransactionEvents[]>();
 
   useEffect(() => {
     if (isDemoMode) {
@@ -305,99 +309,87 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     let newBatchIdValue: Array<DistributionTokenDetails> = [];
     let last = '';
 
-    transactionEventsState.map(
-      (transaction: {
-        [x: string]: any;
-        transfers?: any;
-        annotation?: any;
-        hash?: any;
-        timestamp?: any;
-        ownerAddress?: any;
-        syndicateEvents?: any;
-        contractAddress?: any;
-      }) => {
-        const {
-          annotation,
-          hash,
-          timestamp,
-          ownerAddress,
-          syndicateEvents,
-          contractAddress,
-          transfers,
-          ...rest
-        } = transaction;
+    transactionEventsState.map((transaction) => {
+      const {
+        annotation,
+        hash,
+        timestamp,
+        ownerAddress,
+        syndicateEvents,
+        contractAddress,
+        transfers,
+        ...rest
+      } = transaction;
+      /**
+       * For erc20 token, the first transfer recorded is incorrect.
+       * The second item seems to have the correct data
+       * */
+      const transfer = transfers?.[1] ?? transfers?.[0];
 
-        /**
-         * For erc20 token, the first transfer recorded is incorrect.
-         * The second item seems to have the correct data
-         * */
-        const transfer = transfers[1] ?? transfers[0];
+      const newTokenDetails: DistributionTokenDetails = {
+        ...rest,
+        annotation,
+        hash,
+        timestamp,
+        ownerAddress: ownerAddress,
+        transfers: transfers,
+        syndicateEvents: syndicateEvents ?? [],
+        tokenName:
+          contractAddress === ''
+            ? activeNetwork.nativeCurrency.name
+            : transfer?.tokenName ?? '',
+        tokenSymbol:
+          contractAddress === ''
+            ? activeNetwork.nativeCurrency.symbol
+            : transfer?.tokenSymbol ?? '',
+        tokenDecimal:
+          contractAddress === ''
+            ? Number(activeNetwork.nativeCurrency.decimals)
+            : transfer?.tokenDecimal ?? 0,
+        icon:
+          contractAddress === ''
+            ? activeNetwork.nativeCurrency.logo
+            : transfer?.tokenLogo ?? '',
+        tokenAmount:
+          contractAddress === ''
+            ? +getWeiAmount(
+                String(transfer?.value),
+                Number(activeNetwork.nativeCurrency.decimals),
+                false
+              )
+            : +getWeiAmount(
+                String(transfer?.value),
+                Number(transfer?.tokenDecimal),
+                false
+              )
+      };
 
-        const newTokenDetails: DistributionTokenDetails = {
-          ...rest,
-          annotation,
-          hash,
-          timestamp,
-          ownerAddress: ownerAddress,
-          transfers: transfers,
-          syndicateEvents: syndicateEvents,
-          tokenName:
-            contractAddress === ''
-              ? activeNetwork.nativeCurrency.name
-              : transfer.tokenName,
-          tokenSymbol:
-            contractAddress === ''
-              ? activeNetwork.nativeCurrency.symbol
-              : transfer.tokenSymbol,
-          tokenDecimal:
-            contractAddress === ''
-              ? Number(activeNetwork.nativeCurrency.decimals)
-              : transfer.tokenDecimal,
-          icon:
-            contractAddress === ''
-              ? activeNetwork.nativeCurrency.logo
-              : transfer.tokenLogo,
-          tokenAmount:
-            contractAddress === ''
-              ? +getWeiAmount(
-                  String(transfer.value),
-                  Number(activeNetwork.nativeCurrency.decimals),
-                  false
-                )
-              : +getWeiAmount(
-                  String(transfer.value),
-                  Number(transfer.tokenDecimal),
-                  false
-                )
-        };
-
-        if (
-          syndicateEvents?.length === 0 ||
-          syndicateEvents?.[0]?.eventType !== 'MEMBER_DISTRIBUTED'
-        ) {
-          const newId = uuidv4();
-          batchIds[`nonBatching-${newId}`] = [
-            {
-              ...newTokenDetails,
-              isOutgoingTransaction: ownerAddress === transfer?.from
-            }
-          ];
-          return;
-        }
-
-        const event = syndicateEvents[0];
-        // Checks if transaction is a Distribution
-        if (event.distributionBatch) {
-          if (last === '' || last !== event.distributionBatch) {
-            last = event.distributionBatch;
-            newBatchIdValue = [];
+      if (
+        syndicateEvents?.length === 0 ||
+        syndicateEvents?.[0]?.eventType !== 'MEMBER_DISTRIBUTED'
+      ) {
+        const newId = uuidv4();
+        batchIds[`nonBatching-${newId}`] = [
+          {
+            ...newTokenDetails,
+            isOutgoingTransaction: ownerAddress === transfer?.from
           }
-          newBatchIdValue.push(newTokenDetails);
+        ];
+        return;
+      }
+
+      const event = syndicateEvents[0];
+      // Checks if transaction is a Distribution
+      if (event.distributionBatch) {
+        if (last === '' || last !== event.distributionBatch) {
+          last = event.distributionBatch;
+          newBatchIdValue = [];
         }
+        newBatchIdValue.push(newTokenDetails);
 
         batchIds[event.distributionBatch] = newBatchIdValue;
       }
-    );
+    });
 
     setBatchIdentifiers(batchIds);
   }, [
@@ -502,10 +494,10 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
     selectedCategory: TransactionCategory
   ): void => {
     const outgoingCategories = [
-      TransactionCategory.INVESTMENT,
-      TransactionCategory.EXPENSE
+      TransactionCategory.Investment,
+      TransactionCategory.Expense
     ];
-    const incomingCategories = [TransactionCategory.INVESTMENT_TOKEN];
+    const incomingCategories = [TransactionCategory.InvestmentToken];
 
     let listData = [];
     if (outgoingCategories.indexOf(selectedCategory) > -1) {
@@ -517,18 +509,18 @@ const ActivityTable: React.FC<IActivityTable> = ({ isOwner }) => {
         (transaction) => transaction.isOutgoingTransaction === false
       );
     } else if (
-      selectedCategory === TransactionCategory.OTHER ||
+      selectedCategory === TransactionCategory.Other ||
       selectedCategory === null
     ) {
       listData = transactionsChecked;
     }
 
     const txnAnnotationListData = listData.map((transaction) => ({
-      transactionId: transaction.hash,
+      transactionId: transaction.hash as string,
       transactionCategory: selectedCategory
     }));
 
-    annotationMutation({
+    void annotationMutation({
       variables: {
         transactionAnnotationList: txnAnnotationListData,
         chainId: activeNetwork.chainId,

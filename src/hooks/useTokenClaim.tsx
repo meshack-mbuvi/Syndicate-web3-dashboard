@@ -10,7 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCheckTokenClaimQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
 
-const useFetchTokenClaim: any = (skipQuery: any) => {
+const useFetchTokenClaim = (
+  skipQuery?: boolean | undefined
+): { loading: boolean } => {
   const dispatch = useDispatch();
 
   const {

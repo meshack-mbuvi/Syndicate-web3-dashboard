@@ -1,4 +1,3 @@
-import { INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import {
@@ -6,12 +5,13 @@ import {
   setLoadingMerkleProof,
   setMerkleProof
 } from '@/state/merkleProofs/slice';
+import { MerkleProof } from '@/state/merkleProofs/types';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetIndexAndProofQuery } from './data-fetching/backend/generated-types';
 import { useDemoMode } from './useDemoMode';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
@@ -32,9 +32,9 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
 
   const {
     loading,
-    data: merkleData = {},
+    data: merkleData,
     refetch: refetchMerkle
-  } = useQuery(INDEX_AND_PROOF, {
+  } = useGetIndexAndProofQuery({
     variables: { clubAddress, address, chainId: activeNetwork.chainId },
     skip:
       !address ||
@@ -48,7 +48,9 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     }
   });
 
-  const processMerkleProofData = async (merkleObj: any): Promise<void> => {
+  const processMerkleProofData = async (
+    merkleObj: MerkleProof
+  ): Promise<void> => {
     dispatch(setLoadingMerkleProof(true));
     dispatch(
       setMerkleProof({
@@ -76,8 +78,14 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));
-    if (merkleData.Financial_getIndexAndProof?.accountIndex >= 0) {
-      void processMerkleProofData(merkleData.Financial_getIndexAndProof);
+    if (
+      merkleData &&
+      merkleData.Financial_getIndexAndProof?.accountIndex &&
+      merkleData?.Financial_getIndexAndProof?.accountIndex >= 0
+    ) {
+      void processMerkleProofData(
+        merkleData?.Financial_getIndexAndProof as MerkleProof
+      );
     } else {
       dispatch(clearMerkleProof());
     }

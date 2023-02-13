@@ -6,14 +6,12 @@ import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activit
 import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown';
 import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/backend_mutations';
+import { TransactionAnnotation } from '@/hooks/data-fetching/backend/generated-types';
 
 import { getInput } from '@/hooks/useLegacyTransactions';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import {
-  CurrentTransaction,
-  SyndicateDetailsAnnotation
-} from '@/state/erc20transactions/types';
+import { CurrentTransaction } from '@/state/erc20transactions/types';
 import { useMutation } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import Image from 'next/image';
@@ -140,20 +138,20 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   const onSubmit = (values: Details): void => {
     // fields without values will be sent to the backend as an empty string
     // this makes it possible to remove a previously set value.
-    const detailsAnnotationData: SyndicateDetailsAnnotation = {
+    const detailsAnnotationData: Partial<TransactionAnnotation> = {
       acquisitionDate: values.acquisitionDate,
-      annotationMetadata: annotation.annotationMetadata,
+      annotationMetadata: annotation?.annotationMetadata,
       companyName: values.companyName,
       equityStake: values.equityStake,
-      fromLabel: annotation.fromLabel,
-      memo: annotation.memo,
+      fromLabel: annotation?.fromLabel,
+      memo: annotation?.memo,
       postMoneyValuation: values.postMoneyValuation,
       preMoneyValuation: values.preMoneyValuation,
       roundCategory: values.roundCategory,
       sharesAmount: values.sharesAmount,
-      toLabel: annotation.toLabel,
+      toLabel: annotation?.toLabel,
       tokenAmount: values.tokenAmount,
-      transactionCategory: annotation.transactionCategory,
+      transactionCategory: annotation?.transactionCategory,
       transactionId: transactionId
     };
 

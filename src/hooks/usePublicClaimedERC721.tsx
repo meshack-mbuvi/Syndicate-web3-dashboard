@@ -24,7 +24,7 @@ const useFetchERC721PublicClaim: any = () => {
   const [loading, setLoading] = useState(false);
   const [hasMinted, setHasMinted] = useState<boolean>(false);
 
-  const getClaim = async () => {
+  const getClaim = async (): Promise<void> => {
     setLoading(true);
     setHasMinted(false);
     const { PublicOnePerAddressModule } = syndicateContracts;
@@ -57,9 +57,7 @@ const useFetchERC721PublicClaim: any = () => {
         setERC721Claimed({
           claimant: account,
           token: nftAddress,
-          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
           index: null,
-          // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'string'.
           treeIndex: null,
           id: '',
           claimed: true
