@@ -237,7 +237,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                       alt="Token"
                       className="h-5 w-5 mr-1"
                     />{' '}
-                    <div>{priceToJoin}</div>
+                    <div>{floatedNumberWithCommas(priceToJoin)}</div>
                     <div>{tokenDetails?.symbol}</div>
                   </div>
                 </div>
@@ -284,7 +284,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
                     : 'max-h-0 opacity-0'
                 } overflow-hidden ${transitionStyles}`}
               >
-                {maxPerWallet}
+                {floatedNumberWithCommas(maxPerWallet)}
               </div>
             </div>
           </div>
