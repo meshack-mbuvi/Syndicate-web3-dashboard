@@ -190,4 +190,12 @@ export class ERC20DealFactory extends ContractBase {
       onResponse
     );
   }
+
+  async owner(): Promise<string> {
+    try {
+      return this.contract.methods.owner().call();
+    } catch (error) {
+      return '';
+    }
+  }
 }

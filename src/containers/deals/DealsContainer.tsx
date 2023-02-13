@@ -35,8 +35,6 @@ const DealDetails: React.FC = () => {
     },
     dealDetailsLoading
   } = useDealsDetails(false);
-  //TODO []: add polling override for newly created deal
-  //TODO [ENG-4934]: add polling override for correctNetwork
 
   const [isReviewingCommittments, setIsReviewingCommittments] = useState(false);
 

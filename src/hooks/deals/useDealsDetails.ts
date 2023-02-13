@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDemoMode } from '../useDemoMode';
 import { Deal, MixinModuleRequirementType } from './types';
+import useVerifyDealNetwork from './useVerifyDealNetwork';
 
 export interface IDealDetails {
   dealName: string;
@@ -50,7 +51,7 @@ export interface IDealDetailsResponse {
   dealDetails: IDealDetails;
   dealDetailsLoading: boolean;
   dealNotFound: boolean;
-  //   dealNetwork: boolean;
+  isCorrectDealNetwork: boolean;
 }
 
 const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
@@ -66,24 +67,32 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   } = router;
 
   const isDemoMode = useDemoMode();
-
+  const { isCorrectDealNetwork, isLoadingNetwork } = useVerifyDealNetwork(
+    dealAddress as string
+  );
   let dealDetails = emptyDeal;
   let dealNotFound = false;
 
   // get deal details
-  const { loading, data, startPolling, stopPolling } = useQuery<{ deal: Deal }>(
-    GetDealDetails,
-    {
-      variables: {
-        dealId: dealAddress
-      },
-      skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
-      context: {
-        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-        chainId: activeNetwork.chainId
-      }
+  const { loading, data, startPolling, stopPolling, refetch } = useQuery<{
+    deal: Deal;
+  }>(GetDealDetails, {
+    variables: {
+      dealId: dealAddress
+    },
+    skip:
+      !dealAddress || !activeNetwork.chainId || !router.isReady || isDemoMode,
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
     }
-  );
+  });
+
+  useEffect(() => {
+    void refetch({
+      where: { dealId: dealAddress }
+    });
+  }, [activeNetwork.chainId, dealAddress, isCorrectDealNetwork]);
 
   useEffect(() => {
     if (overridePoll) {
@@ -91,7 +100,7 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
     } else {
       stopPolling;
     }
-  }, [overridePoll]);
+  }, [overridePoll, activeNetwork.chainId]);
 
   // process deal details
   if (!loading) {
@@ -140,9 +149,7 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
         minPerMember: minPerMember
       };
     } else {
-      if (!overridePoll) {
-        dealNotFound = true;
-      }
+      dealNotFound = true;
       dealDetails = emptyDeal;
     }
   }
@@ -150,9 +157,11 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   return {
     dealDetails,
     dealDetailsLoading:
-      !dealNotFound && dealDetails.dealName === '' && !overridePoll,
-    dealNotFound
-    // correctDealNetwork
+      (!dealNotFound && dealDetails.dealName === '') ||
+      overridePoll ||
+      isLoadingNetwork,
+    dealNotFound,
+    isCorrectDealNetwork
   };
 };
 
