@@ -79,6 +79,13 @@ const NftClaimAndInfoCard: React.FC = () => {
     }
   }, [account, collectiveAddress, syndicateContracts]);
 
+  const [args, setArgs] = useState<any[]>([]);
+  useEffect(() => {
+    if (mintModule.args) {
+      void mintModule.args(collectiveAddress, account).then(setArgs);
+    }
+  }, [mintModule, collectiveAddress, account]);
+
   const mintModuleType = custom?.merkle
     ? syndicateContracts.nativeTokenPriceMerkleMintModule
     : syndicateContracts.ethPriceMintModule;
@@ -87,8 +94,8 @@ const NftClaimAndInfoCard: React.FC = () => {
     useGasEstimate({
       contract: mintModuleType,
       functionName: 'mint',
-      args: [collectiveAddress, 1],
-      value: mintPrice,
+      args,
+      value: getWeiAmount(mintModule.mintPrice, 18, false),
       withFiat: true
     });
 

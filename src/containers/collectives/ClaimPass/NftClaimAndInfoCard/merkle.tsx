@@ -86,7 +86,7 @@ const NftClaimAndInfoCard: React.FC<{
   const [args, setArgs] = useState<any[]>([]);
   useEffect(() => {
     if (mintModule.args) {
-      void mintModule.args(account).then((res) => {
+      void mintModule.args(collectiveAddress, account).then((res) => {
         if (isCoreyVanLew) {
           res[2] = 5;
           setArgs(res);
@@ -95,7 +95,7 @@ const NftClaimAndInfoCard: React.FC<{
         }
       });
     }
-  }, []);
+  }, [mintModule, account]);
 
   const { data: gasEstimateData, isLoading: isGasEstimateLoading } =
     useGasEstimate({

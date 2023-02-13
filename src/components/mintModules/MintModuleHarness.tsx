@@ -14,7 +14,7 @@ interface MintModuleHarness {
     onTxFail: (error: string) => void,
     amount?: string
   ) => Promise<void>;
-  args?: (account: string) => Promise<any[]>;
+  args?: (collectiveAddress: string, account: string) => Promise<any[]>;
 }
 
 export default MintModuleHarness;
