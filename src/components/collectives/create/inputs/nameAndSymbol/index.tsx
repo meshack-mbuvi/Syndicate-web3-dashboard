@@ -66,7 +66,7 @@ export const InputFieldsNameAndSymbol: React.FC<Props> = ({
           placeholderLabel="✺ e.g. ABC"
           onChange={(e) => {
             const input: string = e.target.value;
-            const value = input.length > 1 ? input.substring(2) : input; // remove the burst symbol
+            const value = input.indexOf('✺') > -1 ? input.substring(2) : input; // remove the burst symbol
             if (validateSymbol(value)) {
               handleTokenSymbolChange(value.toUpperCase());
               setSymbolError(null);
