@@ -1,11 +1,10 @@
 import { CollectiveMetadata } from '@/hooks/collectives/utils/types';
+import { isIPFSHash } from '@/utils/stringUtils';
 import axios, { AxiosResponse } from 'axios';
 
 const ipfsGateway = 'https://syndicate.mypinata.cloud/ipfs/';
 
-export const getJson = async (
-  metadataCid: string
-): Promise<CollectiveMetadata> => {
+const getJson = async (metadataCid: string): Promise<CollectiveMetadata> => {
   const url = metadataCid.replace('ipfs://', '');
   return axios
     .get<any, AxiosResponse<CollectiveMetadata>>(ipfsGateway + url)
@@ -17,9 +16,7 @@ export const getCollectiveMedia = async (
   metadataCid: string
 ): Promise<CollectiveMetadata | null> => {
   let mediaData = null;
-  // putting this 'hash' check here because I noticed there are some
-  // test collectives with the value set to an actual 'hash'
-  if (metadataCid && metadataCid !== 'hash') {
+  if (isIPFSHash(metadataCid)) {
     mediaData = await getJson(metadataCid);
   }
 
