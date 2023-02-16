@@ -89,12 +89,12 @@ export const getERC20TokenDetails = async (
 
       const {
         currentMintPolicyAddress,
-        endTime,
+        endTime = 0,
         maxMemberCount,
         maxTotalSupply,
         requiredToken,
         requiredTokenMinBalance,
-        startTime
+        startTime = 0
       } = await getSyndicateValues(
         address,
         policyMintERC20,
@@ -332,7 +332,6 @@ export const setERC20Token =
         DepositTokenMintModule,
         SingleTokenMintModule
       );
-
       dispatch(
         setERC20TokenDetails({
           ...erc20Token,
