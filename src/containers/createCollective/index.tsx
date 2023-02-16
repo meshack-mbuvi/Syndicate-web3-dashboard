@@ -22,6 +22,7 @@ import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
 import CreateCollectiveDesign, { DesignRightPanel } from './design';
 import CreateCollectiveReview, { ReviewRightPanel } from './review';
 import { CreateCollectiveSuccess, SuccessRightPanel } from './success';
+import { useWarnIfUnsavedRouterChanges } from '@/hooks/useWarnIfUnsavedChanges';
 
 const CreateCollectiveContainer: FC = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,11 @@ const CreateCollectiveContainer: FC = () => {
   const [flipColumns, setFlipColumns] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
   const captureArtworkRef = useRef<HTMLButtonElement>(null);
+
+  // prevent user from navigating away from the page if they have unsaved changes
+  // activeIndex === 3 is the success page
+  const showWarning = activeIndex !== 3;
+  useWarnIfUnsavedRouterChanges(showWarning);
 
   useEffect(() => {
     if (creationStatus.transactionSuccess) {

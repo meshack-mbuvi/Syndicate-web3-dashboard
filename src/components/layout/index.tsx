@@ -19,6 +19,7 @@ import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
 import { useWarnIfUnsavedRouterChanges } from '@/hooks/useWarnIfUnsavedChanges';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 
 interface Props {
   showBackButton?: boolean;
@@ -101,6 +102,8 @@ const Layout: FC<Props> = ({
   const { memberClubs, memberClubsLoading } = useMemberClubs();
   const loading = adminClubsLoading || memberClubsLoading;
 
+  const { transactionModal } = useCreateInvestmentClubContext();
+
   const router = useRouter();
   const isDemoMode = useDemoMode();
   const { height } = useWindowSize();
@@ -131,7 +134,6 @@ const Layout: FC<Props> = ({
     router.pathname === `/collectives/[collectiveAddress]/modify`;
   const distributionPage =
     router.pathname === `/clubs/[clubAddress]/distribute`;
-  const isCreateFlow = router.pathname.includes('/create');
 
   // show a slightly lighter shade of background color on the create flow pages
   const isCreateFlowPage = router.pathname.includes('create');
@@ -143,8 +145,10 @@ const Layout: FC<Props> = ({
     account
   );
 
-  // prevent user from navigating away from the page if they have unsaved changes
-  useWarnIfUnsavedRouterChanges(isCreateFlow);
+  // prevent user from navigating away from the page if they have club unsaved changes
+  // transactionModal is true on the club creation flow success page
+  const showWarning = createClubPage && !transactionModal;
+  useWarnIfUnsavedRouterChanges(showWarning);
 
   const handleRouting = (): void => {
     const { chain, ...rest } = router.query;
