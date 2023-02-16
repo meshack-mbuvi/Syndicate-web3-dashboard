@@ -56,6 +56,7 @@ import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import ActivityView from './activity';
 import { Assets } from './assets';
 import TabButton from './TabButton';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -64,7 +65,6 @@ const LayoutWithSyndicateDetails: FC<{
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
     },
-    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status, activeNetwork }
     },
@@ -77,6 +77,8 @@ const LayoutWithSyndicateDetails: FC<{
     },
     assetsSliceReducer: { collectiblesResult }
   } = useSelector((state: AppState) => state);
+
+  const { merkleProof: myMerkleProof } = useFetchMerkleProof();
 
   const {
     isValid,

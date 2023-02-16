@@ -64,9 +64,6 @@ const DepositSyndicate: React.FC = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    merkleProofSliceReducer: { myMerkleProof },
-    airdopInfoSliceReducer: { airdropInfo },
-    tokenClaimedSliceReducer: { isTokenClaimed },
     web3Reducer: {
       web3: { account, web3, status, activeNetwork }
     },
@@ -104,9 +101,11 @@ const DepositSyndicate: React.FC = () => {
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
 
-  const { loading: merkleLoading } = useFetchMerkleProof();
-  const { loading: claimLoading } = useFetchTokenClaim();
-  const { loading: airdropInfoLoading } = useFetchAirdropInfo();
+  const { merkleProofLoading: merkleLoading, merkleProof: myMerkleProof } =
+    useFetchMerkleProof();
+  const { tokenClaimLoading: claimLoading, isTokenClaimed } =
+    useFetchTokenClaim();
+  const { airdropInfoLoading, airdropInfo } = useFetchAirdropInfo();
 
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskConfirmPending, setMetamaskConfirmPending] =
@@ -264,7 +263,7 @@ const DepositSyndicate: React.FC = () => {
     const now = ~~(Date.now() / 1000);
 
     if (
-      isTokenClaimed.claimed ||
+      isTokenClaimed ||
       !airdropInfo.id ||
       airdropInfo.startTime > now ||
       airdropInfo.endTime < now

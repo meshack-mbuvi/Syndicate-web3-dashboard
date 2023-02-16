@@ -1,8 +1,6 @@
-import airdopInfoSliceReducer from '@/state/airdropInfo/slice';
 import setCollectibleDetailsSliceReducer from '@/state/assets/collectibles/slice';
 import assetsSliceReducer from '@/state/assets/slice';
 import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
-import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
 import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
@@ -12,7 +10,6 @@ import erc721MerkleProofSliceReducer from '@/state/erc721MerkleProofs/slice';
 import erc721TokenSliceReducer from '@/state/erc721token/slice';
 import featureFlagClientSliceReducer from '@/state/featureFlagClient/slice';
 import legalInfoReducer from '@/state/legalInfo';
-import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
 import modifyCollectiveSettingsReducer from '@/state/modifyCollectiveSettings';
@@ -33,9 +30,6 @@ export const store = configureStore({
     initializeContractsReducer,
     assetsSliceReducer,
     legalInfoReducer,
-    merkleProofSliceReducer,
-    tokenClaimedSliceReducer,
-    airdopInfoSliceReducer,
     erc721MerkleProofSliceReducer,
     erc721AirdropInfoSliceReducer,
     claimedERC721SliceReducer,

@@ -22,6 +22,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NumberTreatment from '../NumberTreatment';
 import { DetailsCard, ProgressIndicator } from './shared';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 interface ClubDetails {
   header: string;
@@ -47,11 +48,12 @@ const SyndicateDetails: FC<{
       activeModuleDetails,
       isNewClub
     },
-    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { web3, status, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  const { merkleProof: myMerkleProof } = useFetchMerkleProof();
 
   const {
     address,

@@ -1,31 +1,30 @@
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import {
-  clearTokenClaimed,
-  setLoadingTokenClaimed,
-  setTokenClaimed
-} from '@/state/claimedToken/slice';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useCheckTokenClaimQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
-const useFetchTokenClaim = (
-  skipQuery?: boolean | undefined
-): { loading: boolean } => {
-  const dispatch = useDispatch();
-
+const useFetchTokenClaim = (): {
+  tokenClaimLoading: boolean;
+  isTokenClaimed: boolean;
+} => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork }
     },
-    merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress }
     }
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
+
+  const { merkleProofLoading: merkleLoading, merkleProof: myMerkleProof } =
+    useFetchMerkleProof();
+
+  const [isTokenClaimed, setIsTokenClaimed] = useState(false);
 
   // Fetch existing claims
   const { loading, data: claimData } = useCheckTokenClaimQuery({
@@ -37,7 +36,7 @@ const useFetchTokenClaim = (
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || skipQuery || !activeNetwork.chainId || isDemoMode,
+    skip: !account || !activeNetwork.chainId || isDemoMode || merkleLoading,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
       chainId: activeNetwork.chainId
@@ -45,21 +44,16 @@ const useFetchTokenClaim = (
   });
 
   useEffect(() => {
-    dispatch(setLoadingTokenClaimed(true));
+    if (loading) return;
+
     if (claimData?.tokensClaimedERC20S?.length) {
-      dispatch(
-        setTokenClaimed({
-          ...claimData?.tokensClaimedERC20S[0],
-          claimed: true
-        })
-      );
-      dispatch(setLoadingTokenClaimed(false));
+      setIsTokenClaimed(true);
     } else {
-      dispatch(clearTokenClaimed());
+      setIsTokenClaimed(false);
     }
   }, [loading, JSON.stringify(claimData)]);
 
-  return { loading };
+  return { tokenClaimLoading: loading, isTokenClaimed };
 };
 
 export default useFetchTokenClaim;
