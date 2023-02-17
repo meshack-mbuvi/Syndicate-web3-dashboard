@@ -93,7 +93,7 @@ export const CreateDealContainer: React.FC = () => {
       }}
     >
       <div className="w-full container mx-auto flex items-center justify-center bg-gray-syn9">
-        <div className="px-16">
+        <div className="md:px-12 lg:px-16">
           <TransitionBetweenChildren
             visibleChildIndex={currentStep ? currentStep : 0}
             transitionType={TransitionBetweenChildrenType.VERTICAL_MOVE}

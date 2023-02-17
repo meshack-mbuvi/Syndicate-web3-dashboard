@@ -156,7 +156,7 @@ const CreateInvestmentClub: React.FC = () => {
         image="/images/social/create-club.png"
       />
       <div className="w-full container mx-auto flex items-center justify-center">
-        <div className="px-16">
+        <div className="md:px-12 lg:px-16">
           <TransitionBetweenChildren
             visibleChildIndex={currentStep ? currentStep : 0}
             transitionType={TransitionBetweenChildrenType.VERTICAL_MOVE}
