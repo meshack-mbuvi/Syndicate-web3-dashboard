@@ -1,23 +1,21 @@
-import { GetDealPrecommits } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  Precommit,
+  usePrecommitsQuery
+} from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
-import { Precommit } from './types';
 
-export interface IPrecommit {
-  dealAddress: string;
-  address: string;
-  amount: string;
-  status: string;
-  createdAt: string;
-}
+export type IPrecommit = Partial<
+  Precommit & { dealAddress: string; ensName?: string }
+>;
 
 export interface IPrecommitResponse {
-  precommits: IPrecommit[];
+  precommits: IPrecommit[] | undefined;
   precommitsLoading: boolean;
 }
 
@@ -29,56 +27,53 @@ const useDealsPrecommits = (): IPrecommitResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const {
-    query: { dealAddress }
-  } = router;
+
+  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
 
   const isDemoMode = useDemoMode();
+  const abortController = new AbortController();
 
-  const [precommits, setPrecommits] = useState<IPrecommit[]>([]);
+  let precommits = <IPrecommit[] | undefined>[];
 
   // get precommits for a deal
-  const { loading, data } = useQuery<{
-    deal: { id: string; precommits: Precommit[] };
-  }>(GetDealPrecommits, {
+  const { loading, data } = usePrecommitsQuery({
     variables: {
       dealId: dealAddress
     },
     skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-      chainId: activeNetwork.chainId
+      chainId: activeNetwork.chainId,
+      fetchOptions: {
+        signal: abortController.signal
+      }
     }
   });
 
   // process precommits
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    let isComponentMounted = true;
+  if (!loading && data) {
+    precommits = data.deal?.precommits.map((pre) => {
+      return {
+        dealAddress: data?.deal?.id,
+        address: pre.userAddress,
+        amount: pre.amount,
+        status: pre.status,
+        createdAt: pre.createdAt
+      };
+    });
+  } else {
+    precommits = [];
+  }
 
-    if (data && isComponentMounted) {
-      setPrecommits(
-        data.deal?.precommits.map((pre: Precommit) => {
-          return {
-            dealAddress: data.deal.id,
-            address: pre.userAddress,
-            amount: pre.amount,
-            status: pre.status,
-            createdAt: pre.createdAt
-          };
-        })
-      );
-    }
-    return (): void => {
-      isComponentMounted = false;
+  useEffect(() => {
+    return () => {
+      abortController.abort();
     };
-  }, [loading, data, activeNetwork?.chainId]);
+  }, [activeNetwork.chainId, dealAddress]);
 
   return {
     precommits,
-    precommitsLoading: false
+    precommitsLoading: loading
   };
 };
 

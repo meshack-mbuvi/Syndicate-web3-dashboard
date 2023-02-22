@@ -1,8 +1,10 @@
-export enum MixinModuleRequirementType {
-  TIME_WINDOW = 'TIME_WINDOW',
-  MIN_PER_MEMBER = 'MIN_PER_MEMBER'
-}
+import { Deal, StatusType } from '../data-fetching/thegraph/generated-types';
 
+/**
+ * Note: When you get an error that type for PrecommitStatus is incompatible
+ * with StatusType, cast PrecommitStatus to PrecommitStatus.
+ * e.g.: status = PrecommitStatus.NONE as PrecommitStatus.
+ */
 export enum PrecommitStatus {
   CANCELED = 'CANCELED',
   EXECUTED = 'EXECUTED',
@@ -30,36 +32,9 @@ export type Precommit = {
   id: string;
   userAddress: string;
   amount: string;
-  status: PrecommitStatus;
+  status: StatusType;
   createdAt: string;
-  deal: Deal;
-};
-
-export type Deal = {
-  id: string;
-  ownerAddress: string;
-  destinationAddress: string;
-  closed: boolean;
-  goal: string;
-  depositToken: string;
-  dealToken: {
-    id: string;
-    contractAddress: string;
-    createdAt: string;
-    name: string;
-    symbol: string;
-  };
-  totalCommitted: string;
-  numCommits: string;
-  mixins: [
-    {
-      id: string;
-      requirementType: MixinModuleRequirementType;
-      minPerMember: string;
-      startTime: string;
-      endTime: string;
-    }
-  ];
+  deal: Partial<Deal>;
 };
 
 export interface DealPreview {

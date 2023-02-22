@@ -5,15 +5,15 @@ import { getMemberBalance } from '@/hooks/clubs/useClubOwner';
 // import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 // import { mockOffChainTransactionsData } from '@/utils/mockdata';
+import { SearchInput } from '@/components/inputs';
+import FilterPill from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill';
+import { assetsDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
+import { TransactionCategory } from '@/hooks/data-fetching/backend/generated-types';
+import { useLegacyTransactions } from '@/hooks/useLegacyTransactions';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Collectibles } from './collectibles';
-import { SearchInput } from '@/components/inputs';
-import FilterPill from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill';
-import { assetsDropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
-import { useLegacyTransactions } from '@/hooks/useLegacyTransactions';
-import { TransactionCategory } from '@/state/erc20transactions/types';
 
 export enum SortOrderType {
   TOKENS = 'TOKENS',
@@ -53,15 +53,18 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
   useEffect(() => {
     if (!account || !clubAddress || isEmpty(web3)) return;
 
-    getMemberBalance(clubAddress as string, account, web3, activeNetwork).then(
-      (balance) => {
-        if (balance) {
-          setIsMember(true);
-        } else {
-          setIsMember(false);
-        }
+    void getMemberBalance(
+      clubAddress as string,
+      account,
+      web3,
+      activeNetwork
+    ).then((balance) => {
+      if (balance) {
+        setIsMember(true);
+      } else {
+        setIsMember(false);
       }
-    );
+    });
   }, [account, clubAddress, web3, activeNetwork]);
 
   const {
@@ -70,7 +73,7 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
     transactionEvents,
     refetchTransactions
   } = useLegacyTransactions(
-    { category: TransactionCategory.INVESTMENT },
+    { category: TransactionCategory.Investment },
     0,
     200,
     false
@@ -259,21 +262,25 @@ export const Assets: React.FC<{ isOwner: boolean }> = ({ isOwner }) => {
         {/* investments filter active  */}
         {activeAssetTab === 'investments' && (
           <div className="mt-16">
-            <InvestmentsView
-              {...{
-                isOwner,
-                isMember,
-                setPageOffset,
-                pageOffset,
-                canNextPage,
-                transactionsLoading,
-                numTransactions,
-                transactionEvents,
-                dataLimit: DATA_LIMIT,
-                refetchTransactions: () => refetchTransactions(),
-                storeSortColumn
-              }}
-            />
+            {transactionEvents ? (
+              <InvestmentsView
+                {...{
+                  isOwner,
+                  isMember,
+                  setPageOffset,
+                  pageOffset,
+                  canNextPage,
+                  transactionsLoading,
+                  numTransactions,
+                  transactionEvents,
+                  dataLimit: DATA_LIMIT,
+                  refetchTransactions: () => refetchTransactions(),
+                  storeSortColumn
+                }}
+              />
+            ) : (
+              ''
+            )}
           </div>
         )}
 

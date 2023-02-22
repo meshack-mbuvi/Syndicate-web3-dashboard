@@ -14,6 +14,10 @@ class NativePriceMintModuleHarness implements MintModuleHarness {
     return { isEligible: true };
   }
 
+  public async args(collectiveAddress: string): Promise<any[]> {
+    return [collectiveAddress, 1];
+  }
+
   public async mint(
     tokenAddress: string,
     account: string,

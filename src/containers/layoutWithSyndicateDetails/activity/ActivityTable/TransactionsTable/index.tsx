@@ -7,7 +7,6 @@ import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import {
-  CurrentTransaction,
   emptyCurrentTransaction,
   TransactionCategory
 } from '@/state/erc20transactions/types';
@@ -70,8 +69,9 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   useOnClickOutside(ref, () => setCurrentBatchIdentifier(''));
 
   const [pillHover, setPillHover] = useState<any>({});
-  const [currentTransaction, setCurrentTransaction] =
-    useState<CurrentTransaction>(emptyCurrentTransaction);
+  const [currentTransaction, setCurrentTransaction] = useState(
+    emptyCurrentTransaction
+  );
   const [currentBatchIdentifier, setCurrentBatchIdentifier] =
     useState<string>('');
   // table functionality
@@ -157,7 +157,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
          * For erc20 token, the first transfer recorded is incorrect.
          * The second item seems to have the correct data
          * */
-        const transfer = transaction.transfers[1] ?? transaction.transfers[0];
+        const transfer =
+          transaction?.transfers?.[1] ?? transaction?.transfers?.[0];
 
         if (transfer && !isEmpty(transfer)) {
           tokensList.push({
@@ -189,15 +190,16 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
       (
         {
           annotation,
-          hash,
-          timestamp,
+          hash = '',
           transfers,
           ownerAddress,
-          syndicateEvents
+          syndicateEvents,
+          timestamp = 0
         },
         index
       ) => {
-        if (!(batchIdentifiers[key].length === 1) && index > 0) return;
+        if ((!(batchIdentifiers[key].length === 1) && index > 0) || !transfers)
+          return;
         /**
          * For erc20 token, the first transfer recorded is incorrect.
          * The second item seems to have the correct data
@@ -213,7 +215,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           'dddd, MMM Do YYYY, h:mm A'
         );
 
-        let category: TransactionCategory = TransactionCategory.UNCATEGORIZED;
+        let category: TransactionCategory = TransactionCategory.Uncategorized;
 
         if (annotation?.transactionCategory) {
           category = annotation?.transactionCategory;
@@ -221,12 +223,12 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           syndicateEvents?.[0]?.eventType === 'MEMBER_DISTRIBUTED' &&
           isOutgoingTransaction
         ) {
-          category = TransactionCategory.DISTRIBUTION;
+          category = TransactionCategory.Distribution;
         } else if (
           syndicateEvents?.[0]?.eventType === 'MEMBER_MINTED' ||
           syndicateEvents?.[0]?.eventType === 'MEMBER_MINTED_ETH'
         ) {
-          category = TransactionCategory.DEPOSIT;
+          category = TransactionCategory.Deposit;
         }
 
         return (
@@ -242,7 +244,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               ) {
                 const selectedTransactionData = {
                   category,
-                  note: annotation ? annotation.memo : '',
+                  note: annotation ? annotation.memo ?? '' : '',
                   hash,
                   transactionInfo: {
                     transactionHash: hash,
@@ -264,12 +266,12 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   tokenSymbol: currentTransfer.tokenSymbol
                     ? currentTransfer.tokenSymbol
                     : activeNetwork.nativeCurrency.symbol,
-                  tokenLogo: currentTransfer.tokenLogo,
+                  tokenLogo: currentTransfer.tokenLogo ?? '',
                   tokenName: currentTransfer.tokenName
                     ? currentTransfer.tokenName
                     : activeNetwork.nativeCurrency.name,
                   readOnly:
-                    category === TransactionCategory.DEPOSIT ? true : false,
+                    category === TransactionCategory.Deposit ? true : false,
                   timestamp: formattedBlockTime,
                   transactionId: annotation?.transactionId,
                   annotation,
@@ -287,29 +289,29 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
             }}
             aria-hidden={true}
             onMouseEnter={(): void => {
-              if (category !== TransactionCategory.DEPOSIT)
+              if (category !== TransactionCategory.Deposit)
                 toggleRowCheckbox(key, true);
             }}
             onMouseLeave={(): void => {
-              if (category !== TransactionCategory.DEPOSIT)
+              if (category !== TransactionCategory.Deposit)
                 toggleRowCheckbox(key, false);
             }}
           >
             <div
               className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
               onMouseEnter={(): void => {
-                if (category !== TransactionCategory.DEPOSIT)
+                if (category !== TransactionCategory.Deposit)
                   toggleRowCheckbox(key, true);
               }}
               onMouseLeave={(): void => {
-                if (category !== TransactionCategory.DEPOSIT)
+                if (category !== TransactionCategory.Deposit)
                   toggleRowCheckbox(key, false);
               }}
             >
               {rowCheckboxActiveData &&
                 rowCheckboxActiveData[key] &&
                 rowCheckboxActiveData[key].checkboxVisible &&
-                category !== TransactionCategory.DISTRIBUTION && (
+                category !== TransactionCategory.Distribution && (
                   <div
                     onMouseEnter={(): void => {
                       setCheckboxActive(true);
@@ -331,11 +333,11 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               <div
                 className="w-fit-content py-3"
                 onMouseEnter={(): void => {
-                  if (category !== TransactionCategory.DISTRIBUTION)
+                  if (category !== TransactionCategory.Distribution)
                     toggleCategoryPillReadOnly(key, false);
                 }}
                 onMouseLeave={(): void => {
-                  if (category !== TransactionCategory.DISTRIBUTION)
+                  if (category !== TransactionCategory.Distribution)
                     toggleCategoryPillReadOnly(key, true);
                 }}
               >
@@ -347,8 +349,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   setInlineCategorising={setInlineCategorising}
                   readonly={
                     pillHover[key]?.categoryIsReadonly === undefined ||
-                    category === TransactionCategory.DEPOSIT ||
-                    category === TransactionCategory.DISTRIBUTION
+                    category === TransactionCategory.Deposit ||
+                    category === TransactionCategory.Distribution
                       ? true
                       : pillHover[key]?.categoryIsReadonly
                   }
@@ -381,8 +383,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       : currentTransfer.from
                   ]}
                   category={category}
-                  companyName={annotation?.companyName}
-                  round={annotation?.roundCategory}
+                  companyName={annotation?.companyName ?? ''}
+                  round={annotation?.roundCategory ?? ''}
                   numClubMembers={clubMembers.length}
                 />
               </div>
@@ -427,8 +429,8 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       : currentTransfer.from
                   ]}
                   category={category}
-                  companyName={annotation?.companyName}
-                  round={annotation?.roundCategory}
+                  companyName={annotation?.companyName ?? ''}
+                  round={annotation?.roundCategory ?? ''}
                   numClubMembers={clubMembers.length}
                 />
               </div>

@@ -1,6 +1,5 @@
 import { PermissionType } from '@/components/collectives/shared/types';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { ParticipantStatus } from '@/hooks/deals/types';
 import { DealSidePanel } from '@/containers/deals/dealSidePanel';
 import { DealsContainer } from '@/features/deals/components';
 import { DealsAllocations } from '@/features/deals/components/allocations';
@@ -10,6 +9,7 @@ import {
   DealsParticipantsTable,
   Participant
 } from '@/features/deals/components/participants/table';
+import { ParticipantStatus } from '@/hooks/deals/types';
 import { useDealPermissionType } from '@/hooks/deals/useDealPermissionType';
 import useDealsPrecommits from '@/hooks/deals/useDealPrecommits';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
@@ -35,8 +35,6 @@ const DealDetails: React.FC = () => {
     },
     dealDetailsLoading
   } = useDealsDetails(false);
-  //TODO []: add polling override for newly created deal
-  //TODO [ENG-4934]: add polling override for correctNetwork
 
   const [isReviewingCommittments, setIsReviewingCommittments] = useState(false);
 
@@ -56,7 +54,7 @@ const DealDetails: React.FC = () => {
     if (participants) {
       const _currentParticipants = participants.map((participant) => {
         return {
-          address: participant.address,
+          address: participant.userAddress,
           contributionAmount: +getWeiAmount(participant.amount, 6, false),
           ensName: '',
           joinedDate: moment

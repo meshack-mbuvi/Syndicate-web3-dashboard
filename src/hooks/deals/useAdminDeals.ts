@@ -1,13 +1,15 @@
-import { GetAdminDeals } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  Deal,
+  useAdminDealsQuery
+} from '../data-fetching/thegraph/generated-types';
 import { processDealsToDealPreviews } from './helpers';
-import { Deal, DealPreview } from './types';
+import { DealPreview } from './types';
 
 const useAdminDeals = (): {
   adminDeals: DealPreview[];
@@ -15,55 +17,58 @@ const useAdminDeals = (): {
 } => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, status }
+      web3: { account, status, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
-  const router = useRouter();
+  const abortController = new AbortController();
 
+  const router = useRouter();
   const walletAddress = useMemo(() => account.toLowerCase(), [account]);
-  const [adminDeals, setAdminDeals] = useState<DealPreview[]>([]);
+  let adminDeals = new Array<DealPreview>();
 
   // retrieve admin deals
-  const { loading, refetch, data } = useQuery<{ deals: Deal[] }>(
-    GetAdminDeals,
-    {
-      variables: {
-        where: { ownerAddress: walletAddress }
-      },
-      context: {
-        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-        chainId: activeNetwork.chainId
-      },
-      skip:
-        !walletAddress ||
-        !router.isReady ||
-        !activeNetwork.chainId ||
-        status !== Status.CONNECTED
-    }
-  );
-
+  const { loading, refetch, data, error } = useAdminDealsQuery({
+    variables: {
+      where: { ownerAddress: walletAddress }
+    },
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId,
+      fetchOptions: {
+        signal: abortController.signal
+      }
+    },
+    skip:
+      !walletAddress ||
+      !router.isReady ||
+      !activeNetwork.chainId ||
+      status !== Status.CONNECTED ||
+      activeNetwork.chainId !== 5 //TODO: hardcoded check only for goerli until contracts are on other chains
+  });
   useEffect(() => {
+    //TODO: hardcoded check only for goerli until contracts are on other chains
+    if (error || activeNetwork.chainId !== 5) {
+      return;
+    }
     void refetch({
       where: { ownerAddress: walletAddress }
     });
-  }, [activeNetwork.chainId, walletAddress, refetch]);
 
-  useEffect(() => {
-    if (loading || !data?.deals) return;
-    let isComponentMounted = true;
-    if (data && isComponentMounted) {
-      setAdminDeals(processDealsToDealPreviews(data.deals));
-    }
-
-    return (): void => {
-      isComponentMounted = false;
+    return () => {
+      abortController.abort();
     };
-  }, [loading, data]);
+  }, [activeNetwork.chainId, walletAddress]);
+
+  if (!loading && data?.deals) {
+    adminDeals = processDealsToDealPreviews(data.deals as Deal[]);
+  } else {
+    adminDeals = [];
+  }
 
   return {
     adminDeals,
-    adminDealsLoading: loading || (adminDeals.length == 0 && data != null)
+    adminDealsLoading: loading && !data
   };
 };
 

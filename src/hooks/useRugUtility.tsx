@@ -2,7 +2,10 @@ import { AppState } from '@/state';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const useRugUtility: any = (tokenId: any, refresh: any) => {
+const useRugUtility = (
+  tokenId: string,
+  refresh: boolean | undefined
+): { loading: boolean; tokenBalance: string; tokenProduction: string } => {
   const {
     web3Reducer: {
       web3: { account }

@@ -3,7 +3,10 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const useRugRadioTokenCount: any = (collectiblesResult: any, refresh: any) => {
+const useRugRadioTokenCount: any = (
+  collectiblesResult: any[],
+  refresh: any
+) => {
   const {
     web3Reducer: {
       web3: { account }

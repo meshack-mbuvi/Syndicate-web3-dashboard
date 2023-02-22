@@ -12,6 +12,7 @@ import {
   setCollectiveTransactionTakingTooLong,
   setCollectiveWaitingForConfirmation
 } from '@/state/createCollective/slice';
+import { setIpfsError } from '@/state/createCollective/slice';
 import { getWeiAmount } from '@/utils/conversions';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,19 +72,22 @@ const useSubmitToContracts = (): { submit: () => Promise<void> } => {
   ]);
 
   const submit = async (): Promise<void> => {
-    dispatch(setCollectiveTransactionTakingTooLong(false));
-
-    dispatch(setCollectiveWaitingForConfirmation(true));
-    try {
-      await erc721CollectiveFactory.createERC721Collective(
-        account,
-        collectiveParams,
-        onTxConfirm,
-        onTxReceipt,
-        onTxFail
-      );
-    } catch (error) {
-      onTxFail(error);
+    if (collectiveParams.tokenURI === '') {
+      dispatch(setIpfsError(true));
+    } else {
+      dispatch(setCollectiveTransactionTakingTooLong(false));
+      dispatch(setCollectiveWaitingForConfirmation(true));
+      try {
+        await erc721CollectiveFactory.createERC721Collective(
+          account,
+          collectiveParams,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail
+        );
+      } catch (error) {
+        onTxFail(error);
+      }
     }
   };
 

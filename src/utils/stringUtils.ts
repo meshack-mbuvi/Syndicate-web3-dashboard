@@ -26,3 +26,7 @@ export const getFirstOrString = (
 
   return param[0];
 };
+
+export const isIPFSHash = (value: string): boolean => {
+  return value.startsWith('Qm') && value.length === 46;
+};

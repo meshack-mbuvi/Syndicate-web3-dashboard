@@ -139,7 +139,9 @@ const CreateCollectiveCustomize: FC<Props> = ({
 
 export default CreateCollectiveCustomize;
 
-export const CustomizeRightPanel: React.FC = () => {
+export const CustomizeRightPanel: React.FC<{
+  showInteractiveBackground?: boolean;
+}> = React.memo(({ showInteractiveBackground = true }) => {
   const { artworkType } = useCreateState();
   // show a slightly lighter shade of background color on the create flow pages
   const isCreateFlowPage = router.pathname.includes('create');
@@ -149,13 +151,15 @@ export const CustomizeRightPanel: React.FC = () => {
         isCreateFlowPage ? 'bg-gray-syn9' : 'bg-black'
       } w-full h-full`}
     >
-      <CollectivesInteractiveBackground
-        heightClass="h-full"
-        widthClass="w-full"
-        mediaType={artworkType}
-        numberOfParticles={95}
-        customId="particles-js-3"
-      />
+      {showInteractiveBackground && (
+        <CollectivesInteractiveBackground
+          heightClass="h-full"
+          widthClass="w-full"
+          mediaType={artworkType}
+          numberOfParticles={95}
+          customId="particles-js-3"
+        />
+      )}
     </div>
   );
-};
+});

@@ -1,6 +1,5 @@
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { useDemoMode } from '@/hooks/useDemoMode';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { AppState } from '@/state';
 import {
@@ -85,9 +84,7 @@ const StatusBadge = (props: Props): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
 
-  const isDemoMode = useDemoMode();
-
-  const { loading: claimLoading } = useFetchTokenClaim(isDemoMode);
+  const { tokenClaimLoading: claimLoading } = useFetchTokenClaim();
 
   let badgeBackgroundColor = 'bg-blue-darker';
   let badgeIcon: string | React.ReactNode = 'depositIcon.svg';

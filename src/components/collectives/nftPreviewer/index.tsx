@@ -67,7 +67,7 @@ export const NFTPreviewer: React.FC<Props> = ({
   //TODO: align waiting copy with design after create header updated
   return (
     <>
-      {!mediaSource && !name && !description ? (
+      {loadingMediaSource ? (
         <div
           className={`flex h-120 ${maxHeight} ${maxWidth} flex-col md:ml-0 mx-auto my-auto text-gray-syn4 w-full items-center justify-center`}
         >

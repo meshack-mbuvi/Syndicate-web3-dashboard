@@ -1,4 +1,4 @@
-import { getJson } from '@/hooks/collectives/utils/helpers';
+import { getCollectiveMedia } from '@/hooks/collectives/utils/helpers';
 import { CollectiveMetadata } from '@/hooks/collectives/utils/types';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
@@ -7,7 +7,7 @@ const useFetchCollectiveMetadata = (
 ): UseQueryResult<CollectiveMetadata> => {
   return useQuery(
     ['nftMetadata', metadataCid],
-    () => getJson(metadataCid ?? ''),
+    () => getCollectiveMedia(metadataCid ?? ''),
     {
       enabled: metadataCid !== undefined
     }

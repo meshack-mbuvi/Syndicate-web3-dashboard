@@ -2,7 +2,20 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H4 } from '@/components/typography';
+import { SortOrderType } from '@/containers/layoutWithSyndicateDetails/assets';
+import {
+  CollapseChevronButton,
+  CollapsedSectionType
+} from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
+import {
+  TransactionAnnotation,
+  TransactionCategory as Category
+} from '@/hooks/data-fetching/backend/generated-types';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import {
+  SyndicateTransfers,
+  TransactionEvents
+} from '@/hooks/useLegacyTransactions';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import {
@@ -19,22 +32,12 @@ import {
   Dispatch,
   FC,
   SetStateAction,
+  useEffect,
   useRef,
-  useState,
-  useEffect
+  useState
 } from 'react';
 import { useSelector } from 'react-redux';
 import ActivityModal from '../activity/shared/ActivityModal';
-import {
-  CollapseChevronButton,
-  CollapsedSectionType
-} from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
-import { SortOrderType } from '@/containers/layoutWithSyndicateDetails/assets';
-import {
-  TransactionEvents,
-  SyndicateTransfers,
-  SyndicateAnnotation
-} from '@/hooks/useLegacyTransactions';
 interface InvestmentsViewProps {
   pageOffset: number;
   setPageOffset: Dispatch<SetStateAction<number>>;
@@ -42,7 +45,7 @@ interface InvestmentsViewProps {
   isMember: boolean;
   transactionsLoading: boolean;
   numTransactions: number;
-  transactionEvents: Array<TransactionEvents>;
+  transactionEvents?: Array<TransactionEvents>;
   dataLimit: number;
   refetchTransactions: () => void;
   isOwner: boolean;
@@ -238,7 +241,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const showPagination = numTransactions > dataLimit;
 
   const viewInvestmentDetails: any = (
-    annotation: SyndicateAnnotation,
+    annotation: TransactionAnnotation,
     hash: string,
     timestamp: number,
     transfers: Array<SyndicateTransfers>,
@@ -252,7 +255,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       'dddd, MMM Do YYYY, h:mm A'
     );
 
-    const category = TransactionCategory.OFF_CHAIN_INVESTMENT;
+    const category = TransactionCategory.OFF_CHAIN_INVESTMENT as Category;
     const isOutgoingTransaction = ownerAddress === currentTransfer.from;
 
     const selectedTransactionData = {
@@ -342,7 +345,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                   ))}
                 </div>
               </div>
-              {transactionEvents.map(
+              {transactionEvents?.map(
                 (
                   { annotation, hash, timestamp, transfers, ownerAddress },
                   index
@@ -350,11 +353,12 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                   // Handles cases where annotations are null or transactions are not investments
                   if (
                     !annotation ||
-                    annotation.transactionCategory !==
-                      TransactionCategory.INVESTMENT
+                    (annotation.transactionCategory &&
+                      annotation.transactionCategory !==
+                        TransactionCategory.Investment)
                   )
                     return;
-                  const currentTransfer = transfers[0];
+                  const currentTransfer = transfers?.[0];
                   const {
                     companyName,
                     roundCategory,
@@ -379,8 +383,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                     </span>
                   );
                   const investmentDataValue = getWeiAmount(
-                    String(currentTransfer.value),
-                    Number(currentTransfer.tokenDecimal),
+                    String(currentTransfer?.value),
+                    Number(currentTransfer?.tokenDecimal),
                     false
                   );
                   const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
@@ -395,7 +399,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                         </span>
                       )}
                       &nbsp;
-                      {currentTransfer.tokenSymbol}
+                      {currentTransfer?.tokenSymbol}
                     </span>
                   );
 
@@ -406,7 +410,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                         isMember || isOwner ? 'cursor-pointer' : ''
                       }`}
                       onClick={(): void =>
-                        viewInvestmentDetails(
+                        void viewInvestmentDetails(
                           annotation,
                           hash,
                           timestamp,
@@ -429,7 +433,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
                       {/* cost basis  */}
                       <div className="text-base flex col-span-2 items-center">
-                        {+postMoneyValuation > 0 ? (
+                        {Number(postMoneyValuation) > 0 ? (
                           <span>
                             {costBasisUSD}
                             {costBasisDecimalValue && (
@@ -448,7 +452,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       {/* current investment value  */}
 
                       <div className="text-base flex col-span-2 items-center">
-                        {+preMoneyValuation > 0 ? (
+                        {Number(preMoneyValuation) > 0 ? (
                           <span>
                             {investmentValueUSD}
                             {investmentDecimalValue && (
@@ -540,7 +544,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                 </button>
                 <p className="">
                   {pageOffset === 0 ? '1' : pageOffset} -{' '}
-                  {transactionEvents.length < dataLimit
+                  {transactionEvents && transactionEvents?.length < dataLimit
                     ? pageOffset + transactionEvents.length
                     : pageOffset + dataLimit}
                   {` of `} {numTransactions}

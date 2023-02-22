@@ -31,6 +31,7 @@ interface Props {
     imageURI: string,
     backgroundColorClass: string
   ) => void;
+  hideParticlesEngine?: boolean;
   captureArtworkRef: any;
 }
 
@@ -54,6 +55,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   generatedArtworkBackgroundColor,
   handleCreateGeneratedArtwork,
   handleCaptureGeneratedArtwork,
+  hideParticlesEngine = false,
   captureArtworkRef
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
@@ -86,6 +88,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
             label={nameValue}
             backgroundColorClass={generatedArtworkBackgroundColor}
             customId="particles-js-0"
+            hideParticles={hideParticlesEngine}
           />
         </div>
       )}
@@ -119,7 +122,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
 
             <div className="md:hidden mt-8 mb-10">
               <div className="flex justify-center md:justify-start w-full flex-grow">
-                <DesignRightPanel customId={'design-left-panel'} />
+                <DesignRightPanel customId={'particles-js-5'} />
               </div>
             </div>
           </div>

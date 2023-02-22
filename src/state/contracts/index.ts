@@ -18,19 +18,14 @@ import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
 import { MaxTotalSupplyMixin } from '@/ClubERC20Factory/maxTotalSupplyMixin';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from '@/ClubERC20Factory/merkleDistributorModuleERC721';
-import { ERC721MintPolicyContract } from '@/ClubERC20Factory/mintPolicyERC721';
 import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
 import { NativeTokenPriceMerkleMintModule } from '@/ClubERC20Factory/NativeTokenPriceMerkleMintModule';
 import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
-import { PublicMintWithFeeModuleContract } from '@/ClubERC20Factory/publicMintWithFeeModule';
-import { PublicOnePerAddressModuleContract } from '@/ClubERC20Factory/publicOnePerAddressModule';
 import { DepositExchangeMintModule } from '@/ClubERC20Factory/RugRadio/DepositExchangeTokenMintModule';
 import { RugBonusTokenModule } from '@/ClubERC20Factory/RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from '@/ClubERC20Factory/RugRadio/RugERC20ClaimModule';
-import { RugPFPClaimModuleContract } from '@/ClubERC20Factory/RugRadio/RugPFPClaimModule';
 import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProperties';
-import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
 import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
 import { TokenGatedMixin } from '@/ClubERC20Factory/tokenGatingMixin';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -48,16 +43,11 @@ export interface ISyndicateContracts {
   NativeMintModule: NativeMintModuleContract;
   MerkleDistributorModule: MerkleDistributorModuleContract;
   MerkleDistributorModuleERC721: MerkleDistributorModuleERC721Contract;
-  PublicOnePerAddressModule: PublicOnePerAddressModuleContract;
-  mintPolicyERC721: ERC721MintPolicyContract;
-  RugUtilityMintModule: RugUtilityMintModuleContract;
-  PublicMintWithFeeModule: PublicMintWithFeeModuleContract;
   RugClaimModule: RugERC20ClaimModule;
   RugUtilityProperty: RugUtilityProperties;
   RugToken: ClubERC20Contract;
   GenesisNFTContract: any;
   rugBonusClaimModule: RugBonusTokenModule;
-  rugPFPClaimModule: RugPFPClaimModuleContract;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
   erc721Collective: ERC721Collective;
@@ -72,11 +62,6 @@ export interface ISyndicateContracts {
   maxTotalSupplyMixin: MaxTotalSupplyMixin;
   tokenGatedMixin: TokenGatedMixin;
   nativeTokenPriceMerkleMintModule: NativeTokenPriceMerkleMintModule;
-
-  // TODO: REMOVE AFTER RR PFP LAUNCH
-  nativeTokenPriceMerkleMintModule_copy1: NativeTokenPriceMerkleMintModule;
-  nativeTokenPriceMerkleMintModule_copy2: NativeTokenPriceMerkleMintModule;
-
   allowancePrecommitModuleERC20: AllowancePrecommitModuleERC20;
   erc20DealFactory: ERC20DealFactory;
 }
@@ -111,14 +96,6 @@ const initialState: InitialState = {
     MerkleDistributorModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'MerkleDistr... Remove this comment to see the full error message
     MerkleDistributorModuleERC721: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'PublicOnePe... Remove this comment to see the full error message
-    PublicOnePerAddressModule: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC721MintP... Remove this comment to see the full error message
-    mintPolicyERC721: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugUtilityM... Remove this comment to see the full error message
-    RugUtilityMintModule: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'PublicMintW... Remove this comment to see the full error message
-    PublicMintWithFeeModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugERC20Cla... Remove this comment to see the full error message
     RugClaimModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugUtilityP... Remove this comment to see the full error message
@@ -128,8 +105,6 @@ const initialState: InitialState = {
     GenesisNFTContract: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
     rugBonusClaimModule: null,
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
-    rugPFPClaimModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'OwnerMintMo... Remove this comment to see the full error message
     OwnerMintModule: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'DepositExch... Remove this comment to see the full error message
@@ -158,14 +133,6 @@ const initialState: InitialState = {
     tokenGatedMixin: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
     nativeTokenPriceMerkleMintModule: null,
-
-    // TODO: REMOVE AFTER RR PFP LAUNCH
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
-    nativeTokenPriceMerkleMintModule_copy1: null,
-    // TODO: REMOVE AFTER RR PFP LAUNCH
-    // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'TokenGatedM.... Remove this comment to see the full error message
-    nativeTokenPriceMerkleMintModule_copy2: null,
-
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'AllowancePr.... Remove this comment to see the full error message
     allowancePrecommitModuleERC20: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ERC20DealFa.... Remove this comment to see the full error message

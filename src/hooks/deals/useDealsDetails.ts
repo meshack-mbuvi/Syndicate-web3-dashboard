@@ -1,12 +1,15 @@
-import { GetDealDetails } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  RequirementType,
+  useDealDetailsQuery
+} from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
-import { Deal, MixinModuleRequirementType } from './types';
+import useVerifyDealNetwork from './useVerifyDealNetwork';
 
 export interface IDealDetails {
   dealName: string;
@@ -50,7 +53,7 @@ export interface IDealDetailsResponse {
   dealDetails: IDealDetails;
   dealDetailsLoading: boolean;
   dealNotFound: boolean;
-  //   dealNetwork: boolean;
+  isCorrectDealNetwork: boolean;
 }
 
 const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
@@ -61,29 +64,28 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const {
-    query: { dealAddress }
-  } = router;
+
+  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
 
   const isDemoMode = useDemoMode();
-
+  const { isCorrectDealNetwork, isLoadingNetwork } = useVerifyDealNetwork(
+    dealAddress as string
+  );
   let dealDetails = emptyDeal;
   let dealNotFound = false;
 
   // get deal details
-  const { loading, data, startPolling, stopPolling } = useQuery<{ deal: Deal }>(
-    GetDealDetails,
-    {
-      variables: {
-        dealId: dealAddress
-      },
-      skip: !dealAddress || !activeNetwork.chainId || isDemoMode,
-      context: {
-        clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-        chainId: activeNetwork.chainId
-      }
+  const { loading, data, startPolling, stopPolling } = useDealDetailsQuery({
+    variables: {
+      dealId: dealAddress
+    },
+    skip:
+      !dealAddress || !activeNetwork.chainId || !router.isReady || isDemoMode,
+    context: {
+      clientName: SUPPORTED_GRAPHS.THE_GRAPH,
+      chainId: activeNetwork.chainId
     }
-  );
+  });
 
   useEffect(() => {
     if (overridePoll) {
@@ -91,7 +93,7 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
     } else {
       stopPolling;
     }
-  }, [overridePoll]);
+  }, [overridePoll, activeNetwork.chainId]);
 
   // process deal details
   if (!loading) {
@@ -100,27 +102,16 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
       let dealStartTime = '';
       let dealEndTime = '';
       let minPerMember = '';
-      deal.mixins?.map(
-        (mixin: {
-          requirementType: MixinModuleRequirementType;
-          endTime: string;
-          startTime: string;
-          minPerMember: string;
-        }) => {
-          if (
-            mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
-          ) {
-            dealEndTime = mixin.endTime;
-            dealStartTime = mixin.startTime;
-          }
-
-          if (
-            mixin.requirementType === MixinModuleRequirementType.MIN_PER_MEMBER
-          ) {
-            minPerMember = mixin.minPerMember;
-          }
+      deal.mixins?.map((mixin) => {
+        if (mixin.requirementType === RequirementType.TimeWindow) {
+          dealEndTime = mixin.endTime;
+          dealStartTime = mixin.startTime;
         }
-      );
+
+        if (mixin.requirementType === RequirementType.MinPerMember) {
+          minPerMember = mixin.minPerMember;
+        }
+      });
       dealDetails = {
         dealName: deal.dealToken.name,
         dealDescription: '', // When we add descriptions after v0, pass it in here
@@ -140,9 +131,7 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
         minPerMember: minPerMember
       };
     } else {
-      if (!overridePoll) {
-        dealNotFound = true;
-      }
+      dealNotFound = true;
       dealDetails = emptyDeal;
     }
   }
@@ -150,9 +139,11 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   return {
     dealDetails,
     dealDetailsLoading:
-      !dealNotFound && dealDetails.dealName === '' && !overridePoll,
-    dealNotFound
-    // correctDealNetwork
+      (!dealNotFound && dealDetails.dealName === '') ||
+      overridePoll ||
+      isLoadingNetwork,
+    dealNotFound,
+    isCorrectDealNetwork
   };
 };
 

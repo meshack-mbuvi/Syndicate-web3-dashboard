@@ -22,33 +22,24 @@ import { MaxTotalSupplyERC721 } from './MaxTotalSupplyERC721';
 import { MaxTotalSupplyMixin } from './maxTotalSupplyMixin';
 import { MerkleDistributorModuleContract } from './merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from './merkleDistributorModuleERC721';
-import { ERC721MintPolicyContract } from './mintPolicyERC721';
 import { NativeMintModuleContract } from './nativeMintModule';
 import { NativeTokenPriceMerkleMintModule } from './NativeTokenPriceMerkleMintModule';
 import { OwnerMintModuleContract } from './ownerMintModule';
 import { MintPolicyContract } from './policyMintERC20';
-import { PublicMintWithFeeModuleContract } from './publicMintWithFeeModule';
-import { PublicOnePerAddressModuleContract } from './publicOnePerAddressModule';
 import { DepositExchangeMintModule } from './RugRadio/DepositExchangeTokenMintModule';
 import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
-import { RugPFPClaimModuleContract } from './RugRadio/RugPFPClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
-import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { TimeRequirements } from './TimeRequirements';
 import { TokenGatedMixin } from './tokenGatingMixin';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
-const PUBLIC_RUG_UTILITY_MINT_MODULE =
-  process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
 const RUG_TOKEN = process.env.NEXT_PUBLIC_RUG_TOKEN;
 const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
 const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
-const RUG_PFP_CLAIM_MODULE = '0x6dfdf07b941c91d1d58d08d5918374c922d647a1';
-const RUG_PFP = '0xc28313a1080322cD4a23A89b71Ba5632D1Fc8962';
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -135,37 +126,9 @@ export const getSyndicateContracts = async (
       )
     : null;
 
-  const PublicOnePerAddressModule = addresses.PublicOnePerAddressModule
-    ? new PublicOnePerAddressModuleContract(
-        addresses.PublicOnePerAddressModule,
-        web3,
-        activeNetwork
-      )
-    : null;
-
-  const mintPolicyERC721 = addresses.ERC721MintPolicy
-    ? new ERC721MintPolicyContract(addresses.ERC721MintPolicy, web3)
-    : null;
-
-  const PublicMintWithFeeModule = addresses.publicUtility
-    ? new PublicMintWithFeeModuleContract(
-        addresses.publicUtility,
-        web3,
-        activeNetwork
-      )
-    : null;
-
   const OwnerMintModule = addresses.OwnerMintModule
     ? new OwnerMintModuleContract(
         addresses.OwnerMintModule,
-        web3,
-        activeNetwork
-      )
-    : null;
-
-  const RugUtilityMintModule = PUBLIC_RUG_UTILITY_MINT_MODULE
-    ? new RugUtilityMintModuleContract(
-        PUBLIC_RUG_UTILITY_MINT_MODULE,
         web3,
         activeNetwork
       )
@@ -188,13 +151,6 @@ export const getSyndicateContracts = async (
 
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const GenesisNFTContract = new ERC721Contract(GENESIS_NFT, web3);
-
-  const rugPFPClaimModule = new RugPFPClaimModuleContract(
-    RUG_PFP_CLAIM_MODULE as string,
-    RUG_PFP as string,
-    web3,
-    activeNetwork
-  );
 
   const rugBonusClaimModule = new RugBonusTokenModule(
     // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
@@ -278,28 +234,6 @@ export const getSyndicateContracts = async (
         )
       : null;
 
-  // Duplicate 1
-  // TODO: REMOVE AFTER RR PFP LAUNCH
-  const nativeTokenPriceMerkleMintModule_copy1 =
-    addresses.nativeTokenPriceMerkleMintModule
-      ? new NativeTokenPriceMerkleMintModule(
-          addresses.nativeTokenPriceMerkleMintModule_copy1,
-          web3,
-          activeNetwork
-        )
-      : null;
-
-  // Duplicate 2
-  // TODO: REMOVE AFTER RR PFP LAUNCH
-  const nativeTokenPriceMerkleMintModule_copy2 =
-    addresses.nativeTokenPriceMerkleMintModule
-      ? new NativeTokenPriceMerkleMintModule(
-          addresses.nativeTokenPriceMerkleMintModule_copy2,
-          web3,
-          activeNetwork
-        )
-      : null;
-
   // Precommit
   const allowancePrecommitModuleERC20 = addresses.AllowancePrecommitModuleERC20
     ? new AllowancePrecommitModuleERC20(
@@ -339,20 +273,11 @@ export const getSyndicateContracts = async (
     MerkleDistributorModule,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     MerkleDistributorModuleERC721,
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    PublicOnePerAddressModule,
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    mintPolicyERC721,
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    RugUtilityMintModule,
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    PublicMintWithFeeModule,
     RugClaimModule,
     RugUtilityProperty,
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
-    rugPFPClaimModule,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     OwnerMintModule,
     depositExchangeMintModule,
@@ -382,14 +307,6 @@ export const getSyndicateContracts = async (
     allowancePrecommitModuleERC20,
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     nativeTokenPriceMerkleMintModule,
-
-    // TODO: REMOVE AFTER RR PFP LAUNCH
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    nativeTokenPriceMerkleMintModule_copy1,
-    // TODO: REMOVE AFTER RR PFP LAUNCH
-    // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
-    nativeTokenPriceMerkleMintModule_copy2,
-
     // @ts-expect-error TS(2345): Argument of type [contract] | null not assign... Remove this comment to see the full error message
     erc20DealFactory
   };

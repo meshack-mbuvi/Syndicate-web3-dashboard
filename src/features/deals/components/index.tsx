@@ -5,11 +5,11 @@ import ProductTokenNotFound, {
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 
 export const DealsContainer: React.FC = ({ children }) => {
-  const { dealNotFound } = useDealsDetails(false);
+  const { dealNotFound, isCorrectDealNetwork } = useDealsDetails(false);
 
   return (
     <div>
-      {dealNotFound ? (
+      {dealNotFound || !isCorrectDealNetwork ? (
         <Layout>
           <ProductTokenNotFound tokenTitle={ProductType.DEAL} />
         </Layout>

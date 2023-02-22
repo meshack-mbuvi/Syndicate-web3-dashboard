@@ -146,21 +146,25 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   }, [activeInputIndex, windowSize.width]);
 
   const transitionDuration = 700;
+  const paddingToAccomodateReviewStepHoverStates = 'px-4';
 
   return (
     <div
       ref={containerRef}
-      className={`flex ${
-        hideCallouts ? 'space-x-0' : 'space-x-24'
-      } justify-center px-10 pb-10 ${hideCallouts ? 'overflow-hidden' : ''}`}
+      className={`flex  ${
+        hideCallouts ? 'space-x-0' : 'space-x-10 lg:space-x-12 xl:space-x-24'
+      } justify-center ${paddingToAccomodateReviewStepHoverStates} pb-10 ${
+        hideCallouts ? 'overflow-hidden' : ''
+      }`}
     >
+      {/* Left column */}
       <div
         className={`flex-grow ${
           hideCallouts && !isReviewStep
             ? 'w-full'
             : hideCallouts && isReviewStep
             ? 'max-w-640 h-screen pt-10 mb-56'
-            : 'sm:w-1/2'
+            : 'md:w-1/2'
         } duration-${transitionDuration}`}
       >
         {/* Title */}
@@ -263,12 +267,12 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
         ) : null}
       </div>
 
-      {/* Moving callout */}
+      {/* Right column - moving callout */}
       <div
         className={`${
           hideCallouts
             ? 'w-0 h-0 opacity-0 pl-0'
-            : 'hidden sm:block w-1/2 opacity-100 pl-12'
+            : 'hidden md:block w-1/2 opacity-100 pl-12'
         } transition-all duration-${transitionDuration}`}
       >
         <div

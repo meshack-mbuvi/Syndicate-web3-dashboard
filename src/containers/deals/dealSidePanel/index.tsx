@@ -13,8 +13,7 @@ import { DealMilestoneType } from '@/features/deals/components/create/milestone/
 import DealDetailsAdminTools from '@/features/deals/components/details/adminTools';
 import UponAllocationAcceptance from '@/features/deals/components/details/uponAllocationAcceptance';
 import { Participant } from '@/features/deals/components/participants/table';
-import { InactiveDealCard } from './inactiveDealCard';
-import { PrecommitStatus, ParticipantStatus } from '@/hooks/deals/types';
+import { ParticipantStatus, PrecommitStatus } from '@/hooks/deals/types';
 import useDealsDetails from '@/hooks/deals/useDealsDetails';
 import useMemberPrecommit from '@/hooks/deals/useMemberPrecommit';
 import useFetchEnsAssets from '@/hooks/useFetchEnsAssets';
@@ -27,6 +26,7 @@ import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PrecommitContainer from '../precommit/precommitContainer';
+import { InactiveDealCard } from './inactiveDealCard';
 
 export const DealSidePanel: React.FC<{
   permissionType: PermissionType | null;
@@ -113,7 +113,9 @@ export const DealSidePanel: React.FC<{
   }, [isClosed]);
 
   useEffect(() => {
-    setCurrentPrecommitStatus(precommit?.status ?? PrecommitStatus.NONE);
+    setCurrentPrecommitStatus(
+      (precommit?.status ?? PrecommitStatus.NONE) as PrecommitStatus
+    );
   }, [precommit?.status]);
 
   useEffect(() => {
@@ -252,7 +254,9 @@ export const DealSidePanel: React.FC<{
             connectedWallet: { address: account, avatar: '' },
             precommitAmount: precommit ? precommit.amount : '0',
             dealName,
-            status: precommit ? precommit.status : PrecommitStatus.PENDING
+            status: (precommit
+              ? precommit.status
+              : PrecommitStatus.PENDING) as PrecommitStatus
           }}
         />
       )}

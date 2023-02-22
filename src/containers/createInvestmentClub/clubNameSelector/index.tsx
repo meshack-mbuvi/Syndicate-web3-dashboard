@@ -62,14 +62,12 @@ const ClubNameSelector: React.FC<{
   const handleSymbolChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const _sym = (e.target.value as string).trim().toUpperCase();
     const { validSym, errorMsg } = symbolValidation(_sym);
+
     dispatch(setInvestmentClubSymbolPlaceHolder(validSym));
     setErrors(errorMsg); // It will default to empty string if no errors
 
-    // This ensure we don't override what the user typed with our auto generated abbreviation
+    // This ensures we don't override what the user typed with our auto generated abbreviation
     setSymbolEditState(true);
-    if (!_sym.length) {
-      setSymbolEditState(false);
-    }
   };
 
   const randomize = (e: React.MouseEvent<HTMLElement>): void => {

@@ -88,12 +88,15 @@ class NativeTokenPriceMerkleMintModuleHarness implements MintModuleHarness {
     }
   }
 
-  public async args(account: string): Promise<any[]> {
+  public async args(
+    collectiveAddress: string,
+    account: string
+  ): Promise<any[]> {
     if (await this.isEligible(account)) {
-      return [this.collectiveAddress, this.proof, 1];
+      return [collectiveAddress, this.proof, 1];
     }
 
-    return [this.collectiveAddress, [], 1];
+    return [collectiveAddress, [], 1];
   }
 
   public async mint(

@@ -16,13 +16,15 @@ interface Props {
   setNextBtnDisabled: (disabled: boolean) => void;
   captureArtworkRef: any;
   activeIndex?: number;
+  hideParticlesEngine?: boolean;
 }
 
 const CreateCollectiveDesign: FC<Props> = ({
   handleNext,
   setNextBtnDisabled,
   captureArtworkRef,
-  activeIndex
+  activeIndex,
+  hideParticlesEngine = false
 }) => {
   const { name, symbol, artwork, artworkUrl, artworkType, description } =
     useCreateState();
@@ -91,6 +93,7 @@ const CreateCollectiveDesign: FC<Props> = ({
         handleCreateGeneratedArtwork={handleCreateGeneratedArtwork}
         handleCaptureGeneratedArtwork={handleCaptureGeneratedArtwork}
         captureArtworkRef={captureArtworkRef}
+        hideParticlesEngine={hideParticlesEngine}
       />
     </div>
   );

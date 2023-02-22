@@ -1,22 +1,35 @@
-import { INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import {
-  clearMerkleProof,
-  setLoadingMerkleProof,
-  setMerkleProof
-} from '@/state/merkleProofs/slice';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useGetIndexAndProofQuery } from './data-fetching/backend/generated-types';
 import { useDemoMode } from './useDemoMode';
 
-const useFetchMerkleProof: any = (skipQuery = false) => {
-  const dispatch = useDispatch();
+export interface IMerkleProof {
+  accountIndex: number;
+  amount: string;
+  merkleProof: [];
+  account: string;
+  treeIndex: number;
+  _amount: string;
+}
 
+const emptyMerkleProof: IMerkleProof = {
+  accountIndex: 0,
+  amount: '',
+  merkleProof: [],
+  account: '',
+  treeIndex: 0,
+  _amount: ''
+};
+
+const useFetchMerkleProof = (): {
+  merkleProofLoading: boolean;
+  merkleProof: IMerkleProof;
+} => {
   const {
     web3Reducer: {
       web3: { account: address, web3, activeNetwork, status }
@@ -27,38 +40,22 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
-
   const router = useRouter();
+
+  const [merkleProof, setMerkleProof] = useState(emptyMerkleProof);
 
   const {
     loading,
-    data: merkleData = {},
+    data: merkleData,
     refetch: refetchMerkle
-  } = useQuery(INDEX_AND_PROOF, {
+  } = useGetIndexAndProofQuery({
     variables: { clubAddress, address, chainId: activeNetwork.chainId },
-    skip:
-      !address ||
-      !clubAddress ||
-      skipQuery ||
-      !activeNetwork.chainId ||
-      isDemoMode,
+    skip: !address || !clubAddress || !activeNetwork.chainId || isDemoMode,
     context: {
       clientName: SUPPORTED_GRAPHS.BACKEND,
       chainId: activeNetwork.chainId
     }
   });
-
-  const processMerkleProofData = async (merkleObj: any): Promise<void> => {
-    dispatch(setLoadingMerkleProof(true));
-    dispatch(
-      setMerkleProof({
-        ...merkleObj,
-        account: address,
-        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false)
-      })
-    );
-    dispatch(setLoadingMerkleProof(false));
-  };
 
   useEffect(() => {
     if (
@@ -75,15 +72,24 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   }, [clubAddress, address, activeNetwork.chainId, status]);
 
   useEffect(() => {
-    dispatch(setLoadingMerkleProof(true));
-    if (merkleData.Financial_getIndexAndProof?.accountIndex >= 0) {
-      void processMerkleProofData(merkleData.Financial_getIndexAndProof);
-    } else {
-      dispatch(clearMerkleProof());
+    if (loading) return;
+
+    if (
+      merkleData &&
+      merkleData.Financial_getIndexAndProof?.accountIndex &&
+      merkleData?.Financial_getIndexAndProof?.accountIndex >= 0
+    ) {
+      const merkleObject =
+        merkleData?.Financial_getIndexAndProof as IMerkleProof;
+      setMerkleProof({
+        ...merkleObject,
+        account: address,
+        _amount: getWeiAmount(merkleObject?.amount, tokenDecimals, false)
+      });
     }
   }, [address, loading, JSON.stringify(merkleData)]);
 
-  return { loading };
+  return { merkleProofLoading: loading, merkleProof };
 };
 
 export default useFetchMerkleProof;

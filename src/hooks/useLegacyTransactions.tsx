@@ -1,11 +1,15 @@
-import { LEGACY_TRANSACTIONS_QUERY } from '@/graphql/backend_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { TransactionCategory } from '@/state/erc20transactions/types';
-import { useQuery } from '@apollo/client';
 import * as CryptoJS from 'crypto-js';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  GraphEventType,
+  LegacyTransactionEvent,
+  TransferType,
+  useGetLegacyTransactionsQuery
+} from './data-fetching/backend/generated-types';
 import { useDemoMode } from './useDemoMode';
 
 export type SyndicateEvents = {
@@ -54,20 +58,11 @@ export type SyndicateAnnotation = {
 };
 
 export type TransactionEvents = {
-  length: number;
-  chainId: number;
-  ownerAddress: string;
-  hash: string;
-  blockNumber: number;
-  timestamp: number;
-  transactionIndex: number;
-  contractAddress: string;
-  transfers: Array<SyndicateTransfers>;
-  annotation: SyndicateAnnotation;
-  syndicateEvents: Array<SyndicateEvents>;
-};
+  length?: number;
+  transactionIndex?: number;
+} & Partial<LegacyTransactionEvent>;
 
-export const EmptyTransactionEvent = [
+export const EmptyTransactionEvent: TransactionEvents[] = [
   {
     length: 0,
     chainId: 1,
@@ -80,17 +75,15 @@ export const EmptyTransactionEvent = [
     transfers: [
       {
         chainId: 1,
-        blockNumber: 0,
-        timestamp: 0,
         hash: '',
         from: '',
         to: '',
         contractAddress: '',
-        gas: 0,
         tokenName: '',
         tokenSymbol: '',
         tokenDecimal: 18,
-        value: 0
+        value: '0',
+        type: TransferType.Erc20
       }
     ],
     annotation: {
@@ -108,14 +101,14 @@ export const EmptyTransactionEvent = [
       sharesAmount: '',
       toLabel: '',
       tokenAmount: '',
-      transactionCategory: TransactionCategory.UNCATEGORIZED,
+      transactionCategory: null,
       memo: '',
       companyName: '',
       annotationMetadata: ''
     },
     syndicateEvents: [
       {
-        eventType: '',
+        eventType: GraphEventType.DepositToken,
         id: '',
         transactionId: '',
         distributionBatch: ''
@@ -127,14 +120,14 @@ export const EmptyTransactionEvent = [
 export type TransactionsQuery = {
   legacyTransactionEvents: {
     cursor: null;
-    events: Array<TransactionEvents>;
+    events: TransactionEvents[];
   };
 };
 
 export type TransactionQueryDetails = {
   transactionsLoading: boolean;
   numTransactions: number;
-  transactionEvents: Array<TransactionEvents>;
+  transactionEvents?: TransactionEvents[];
   refetchTransactions: () => void;
 };
 
@@ -168,7 +161,7 @@ export const useLegacyTransactions = (
     data,
     loading: transactionsLoading,
     refetch: refetchTransactions
-  } = useQuery<TransactionsQuery>(LEGACY_TRANSACTIONS_QUERY, {
+  } = useGetLegacyTransactionsQuery({
     variables: {
       chainId: activeNetwork.chainId,
       input,
@@ -187,15 +180,18 @@ export const useLegacyTransactions = (
 
   const [numTransactions, setNumTransactions] = useState<number>(0);
   const [transactionEvents, setTransactionEvents] = useState<
-    Array<TransactionEvents>
-  >(EmptyTransactionEvent);
+    TransactionEvents[] | undefined
+  >();
 
   useEffect(() => {
     if (transactionsLoading || !data?.legacyTransactionEvents) return;
     const { events } = data.legacyTransactionEvents;
 
-    setNumTransactions(events.length);
-    setTransactionEvents(events);
+    setNumTransactions(events?.length ?? 0);
+
+    if (events) {
+      setTransactionEvents(events as TransactionEvents[]);
+    }
   }, [data?.legacyTransactionEvents, transactionsLoading]);
 
   return {
