@@ -29,7 +29,7 @@ export const SimpleTile: React.FC<Props> = ({
       onClick={onClick}
     >
       <div>{children}</div>
-      {addOn && <div>{addOn}</div>}
+      {addOn}
     </button>
   );
 };
