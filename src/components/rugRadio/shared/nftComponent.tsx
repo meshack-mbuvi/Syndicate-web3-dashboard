@@ -9,7 +9,6 @@ interface INFTComponentProps {
   showCollectibles: boolean;
   mediaType: string;
   refresh?: boolean;
-  setDetailsOfSelectedCollectible?: (details: any) => void;
   collectible: {
     assetId: string;
     id: string;

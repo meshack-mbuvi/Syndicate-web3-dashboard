@@ -1,23 +1,26 @@
 import FutureCollectiblePill from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill';
-import { AppState } from '@/state';
-import {
-  setOverlayCollectibleDetails,
-  setShowFullScreen
-} from '@/state/assets/collectibles/slice';
 import { FC, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
 import HideAssetPill from '@/containers/layoutWithSyndicateDetails/assets/shared/HideAssetPill';
-import { Collectible } from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
+import {
+  Collectible,
+  CollectibleDetails
+} from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
 
 interface ICollectibleMedia {
   showCollectibles: boolean;
   showHiddenNfts?: boolean;
   showOrHideNfts?: (e: Event, contractAddress: string) => void;
   mediaType: string;
-  setDetailsOfSelectedCollectible?: (details: any) => void;
+  setDetailsOfSelectedCollectible: (details: CollectibleDetails) => void;
   isOwner?: boolean;
   collectible: Collectible;
+
+  overlayCollectibleId: string;
+  setOverlayCollectibleId: (overlayCollectibleId: string) => void;
+  showCollectibleModal: boolean;
+  showFullScreen: boolean;
+  setShowFullScreen: (showFullScreen: boolean) => void;
 }
 
 const CollectibleMedia: FC<ICollectibleMedia> = ({
@@ -27,19 +30,16 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   setDetailsOfSelectedCollectible,
   showHiddenNfts,
   showOrHideNfts,
-  isOwner
+  isOwner,
+
+  overlayCollectibleId,
+  setOverlayCollectibleId,
+  showCollectibleModal,
+  showFullScreen,
+  setShowFullScreen
 }) => {
   const {
-    setCollectibleDetailsSliceReducer: {
-      showFullScreen,
-      showCollectibleModal,
-      overlayCollectibleDetails
-    }
-  } = useSelector((state: AppState) => state);
-
-  const dispatch = useDispatch();
-  const {
-    id,
+    assetId,
     image,
     animation,
     permalink,
@@ -89,7 +89,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   };
 
   const handleMobileFullScreenExit = () => {
-    dispatch(setShowFullScreen(false));
+    setShowFullScreen(false);
   };
 
   // @ts-expect-error TS(7030): Not all code paths return a value.
@@ -108,25 +108,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     }
   }, []);
 
-  const setActiveCollectibleDetails = (details: {
-    collectible: {
-      id: string;
-      name: string;
-      animation: string;
-      image: string;
-      description: string;
-      collection: any;
-      permalink: string;
-    };
-    mediaType: string;
-    moreDetails: {
-      'Token ID': string | React.ReactElement;
-      'Token collection': any;
-      'Floor price': any;
-      'Last purchase price': any;
-    };
-  }) => {
-    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
+  const setActiveCollectibleDetails = (details: CollectibleDetails): void => {
     setDetailsOfSelectedCollectible(details);
     muteBackgroundMedia();
   };
@@ -175,7 +157,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           collectible,
           mediaType,
           moreDetails: {
-            'Token ID': collectible?.futureNft ? '' : id,
+            'Token ID': collectible?.futureNft ? '' : assetId,
             'Token collection': collection.name,
             'Floor price': floorPrice,
             'Last purchase price': lastPurchasePrice
@@ -233,8 +215,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
         <video
           autoPlay
           playsInline={
-            showFullScreen &&
-            collectible.id === overlayCollectibleDetails?.collectible?.id
+            showFullScreen && collectible.id === overlayCollectibleId
               ? false
               : true
           }
@@ -390,7 +371,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
               <button
                 className="mr-4 z-10"
                 onClick={() => {
-                  dispatch(setShowFullScreen(false));
+                  setShowFullScreen(false);
                 }}
               >
                 <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center">
@@ -494,13 +475,8 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                       className=""
                       onClick={() => {
                         muteBackgroundMedia();
-                        dispatch(
-                          setOverlayCollectibleDetails({
-                            collectible,
-                            mediaType
-                          })
-                        );
-                        dispatch(setShowFullScreen(true));
+                        setOverlayCollectibleId(collectible.id);
+                        setShowFullScreen(true);
                       }}
                     >
                       <img
@@ -525,7 +501,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                       collectible,
                       mediaType,
                       moreDetails: {
-                        'Token ID': collectible?.futureNft ? '' : id,
+                        'Token ID': collectible?.futureNft ? '' : assetId,
                         'Token collection': collection.name,
                         'Floor price': floorPrice,
                         'Last purchase price': lastPurchasePrice

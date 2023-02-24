@@ -8,15 +8,45 @@ import {
 } from '@/containers/layoutWithSyndicateDetails/assets/shared/CollapseChevronButton';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
-import {
-  setCollectibleModalDetails,
-  setShowCollectibleModal
-} from '@/state/assets/collectibles/slice';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
+
+export interface CollectibleDetails {
+  collectible: Collectible;
+  mediaType: string;
+  moreDetails: {
+    'Token ID': string;
+    'Token collection': string;
+    'Floor price': string;
+    'Last purchase price': string;
+  };
+}
+
+const emptyCollectibleDetails: CollectibleDetails = {
+  collectible: {
+    id: '',
+    assetId: '',
+    name: '',
+    animation: '',
+    image: '',
+    description: '',
+    collection: {},
+    permalink: '',
+    floorPrice: '',
+    lastPurchasePrice: ''
+  },
+  mediaType: '',
+  moreDetails: {
+    'Token ID': '',
+    'Token collection': '',
+    'Floor price': '',
+    'Last purchase price': ''
+  }
+};
+
 interface Props {
   isOwner: boolean;
   showHiddenNfts: boolean;
@@ -25,6 +55,7 @@ interface Props {
 
 export interface Collectible {
   id: string;
+  assetId: string;
   image: string;
   animation: string;
   permalink: string;
@@ -56,10 +87,12 @@ export const Collectibles: FC<Props> = ({
       erc20Token,
       depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
-    },
-    setCollectibleDetailsSliceReducer: { showFullScreen }
+    }
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
+
+  const [showFullScreen, setShowFullScreen] = useState(false);
+  const [showCollectibleModal, setShowCollectibleModal] = useState(false);
 
   const nftsGallery = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -276,26 +309,16 @@ export const Collectibles: FC<Props> = ({
     );
   };
 
-  const setDetailsOfSelectedCollectible = (details: {
-    collectible: {
-      id: string;
-      name: string;
-      animation: string;
-      image: string;
-      description: string;
-      collection: any;
-      permalink: string;
-    };
-    mediaType: string;
-    moreDetails: {
-      'Token ID': string;
-      'Token collection': any;
-      'Floor price': any;
-      'Last purchase price': any;
-    };
-  }): void => {
-    dispatch(setCollectibleModalDetails(details));
-    dispatch(setShowCollectibleModal(true));
+  const [selectedCollectibleDetails, setSelectedCollectibleDetails] = useState(
+    emptyCollectibleDetails
+  );
+  const [overlayCollectibleId, setOverlayCollectibleId] = useState('');
+
+  const setDetailsOfSelectedCollectible = (
+    details: CollectibleDetails
+  ): void => {
+    setSelectedCollectibleDetails(details);
+    setShowCollectibleModal(true);
   };
 
   return (
@@ -413,7 +436,13 @@ export const Collectibles: FC<Props> = ({
                                   showCollectibles: true,
                                   showHiddenNfts,
                                   showOrHideNfts: showOrHideNftsById,
-                                  isOwner
+                                  isOwner,
+
+                                  overlayCollectibleId,
+                                  setOverlayCollectibleId,
+                                  showCollectibleModal,
+                                  showFullScreen,
+                                  setShowFullScreen
                                 }}
                               />
                             ) : null}
@@ -495,7 +524,17 @@ export const Collectibles: FC<Props> = ({
         </div>
       </div>
 
-      <CollectibleDetailsModal isOwner={isOwner} />
+      <CollectibleDetailsModal
+        isOwner={isOwner}
+        selectedCollectibleDetails={selectedCollectibleDetails}
+        setDetailsOfSelectedCollectible={setDetailsOfSelectedCollectible}
+        overlayCollectibleId={overlayCollectibleId}
+        setOverlayCollectibleId={setOverlayCollectibleId}
+        showCollectibleModal={showCollectibleModal}
+        setShowCollectibleModal={setShowCollectibleModal}
+        showFullScreen={showFullScreen}
+        setShowFullScreen={setShowFullScreen}
+      />
     </div>
   );
 };

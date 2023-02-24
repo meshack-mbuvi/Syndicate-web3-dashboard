@@ -2,35 +2,42 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
 import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
-import { AppState } from '@/state';
-import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { CollectibleDetails } from '.';
 import FullScreenOverlay from './shared/FullscreenOverlay';
 
-const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
-  isOwner
+const CollectibleDetailsModal: React.FC<{
+  isOwner: boolean;
+
+  selectedCollectibleDetails: CollectibleDetails;
+  setDetailsOfSelectedCollectible: (details: CollectibleDetails) => void;
+  overlayCollectibleId: string;
+  setOverlayCollectibleId: (id: string) => void;
+  showCollectibleModal: boolean;
+  setShowCollectibleModal: (b: boolean) => void;
+  showFullScreen: boolean;
+  setShowFullScreen: (b: boolean) => void;
+}> = ({
+  isOwner,
+  selectedCollectibleDetails,
+  setDetailsOfSelectedCollectible,
+  overlayCollectibleId,
+  setOverlayCollectibleId,
+  showCollectibleModal,
+  setShowCollectibleModal,
+  showFullScreen,
+  setShowFullScreen
 }) => {
-  const {
-    setCollectibleDetailsSliceReducer: {
-      showCollectibleModal,
-      collectibleModalDetails,
-      showFullScreen,
-      overlayCollectibleDetails
-    }
-  } = useSelector((state: AppState) => state);
-  const dispatch = useDispatch();
-  const { collectible, moreDetails, mediaType } = collectibleModalDetails;
+  const { collectible, moreDetails, mediaType } = selectedCollectibleDetails;
 
   // description can sometimes be a html string
   const htmlRegex = new RegExp(/<\/?[a-z][\s\S]*>/i);
-  let descriptionValue = collectible?.description;
-  if (htmlRegex.test(collectible?.description)) {
-    descriptionValue = (
-      <div dangerouslySetInnerHTML={{ __html: collectible?.description }}></div>
-    );
-  }
+  const descriptionValue = htmlRegex.test(collectible?.description) ? (
+    <div dangerouslySetInnerHTML={{ __html: collectible?.description }}></div>
+  ) : (
+    collectible?.description
+  );
 
   const blankValue = <span className="text-gray-syn4">-</span>;
 
@@ -39,8 +46,8 @@ const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
       <Modal
         modalStyle={ModalStyle.DARK}
         show={showCollectibleModal}
-        closeModal={() => {
-          dispatch(setShowCollectibleModal(false));
+        closeModal={(): void => {
+          setShowCollectibleModal(false);
         }}
         customWidth="w-full sm:w-564"
         customClassName="p-0"
@@ -70,7 +77,14 @@ const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
                     {...{
                       collectible,
                       mediaType,
-                      showCollectibles: false
+                      showCollectibles: false,
+
+                      setDetailsOfSelectedCollectible,
+                      overlayCollectibleId,
+                      setOverlayCollectibleId,
+                      showCollectibleModal,
+                      showFullScreen,
+                      setShowFullScreen
                     }}
                   />
                 </div>
@@ -93,7 +107,14 @@ const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
                     Object.keys(moreDetails).map((key, index) => {
                       return (
                         <div key={index}>
-                          <TokenDetail title={key} value={moreDetails[key]} />
+                          <TokenDetail
+                            title={key}
+                            value={
+                              moreDetails[
+                                key as keyof CollectibleDetails['moreDetails']
+                              ]
+                            }
+                          />
                         </div>
                       );
                     })}
@@ -103,9 +124,30 @@ const CollectibleDetailsModal: React.FC<{ isOwner: boolean }> = ({
           )}
         </>
       </Modal>
-      {showFullScreen &&
-      collectible.id === overlayCollectibleDetails.collectible.id ? (
-        <FullScreenOverlay />
+      {showFullScreen && collectible.id === overlayCollectibleId ? (
+        <FullScreenOverlay
+          showFullScreen={showFullScreen}
+          videoNft={
+            selectedCollectibleDetails.mediaType === 'videoNFT' ||
+            selectedCollectibleDetails.mediaType === 'htmlNFT'
+          }
+        >
+          <CollectibleMedia
+            {...{
+              selectedCollectibleDetails,
+              setDetailsOfSelectedCollectible,
+              collectible,
+              mediaType,
+              showCollectibles: false,
+
+              overlayCollectibleId,
+              setOverlayCollectibleId,
+              showCollectibleModal,
+              showFullScreen,
+              setShowFullScreen
+            }}
+          />
+        </FullScreenOverlay>
       ) : null}
     </>
   );

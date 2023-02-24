@@ -1,4 +1,3 @@
-import setCollectibleDetailsSliceReducer from '@/state/assets/collectibles/slice';
 import assetsSliceReducer from '@/state/assets/slice';
 import initializeContractsReducer from '@/state/contracts';
 import createCollectiveSliceReducer from '@/state/createCollective/slice';
@@ -27,7 +26,6 @@ export const store = configureStore({
     assetsSliceReducer,
     legalInfoReducer,
     modifyCapTableSlice,
-    setCollectibleDetailsSliceReducer,
     modifyClubSettingsReducer,
     modifyCollectiveSettingsReducer
   },
