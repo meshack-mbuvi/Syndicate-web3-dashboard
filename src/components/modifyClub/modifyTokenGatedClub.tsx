@@ -105,6 +105,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         startTime,
         endTime,
         totalSupply,
+        symbol,
         memberCount
       },
       activeModuleDetails,
@@ -490,7 +491,7 @@ const ModifyTokenGatedClub: React.FC = () => {
         await maxTotalSupplyMixin.updateTotalSupply(
           account,
           clubAddress as string,
-          +_tokenCap,
+          _tokenCap,
           onTxConfirm,
           onTxReceipt,
           onTxFail
@@ -813,7 +814,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                                       maxAmountRaising * nativeEchageRate
                                     )
                                   : floatedNumberWithCommas(maxAmountRaising)
-                              } ${depositTokenSymbol}.`
+                              } ${symbol}.`
                         }
                       />
                     )

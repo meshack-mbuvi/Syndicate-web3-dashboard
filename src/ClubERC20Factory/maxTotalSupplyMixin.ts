@@ -25,7 +25,7 @@ export class MaxTotalSupplyMixin extends ContractBase {
   public async updateTotalSupply(
     account: string,
     token: string,
-    totalSupply: number,
+    totalSupply: string,
     onTxConfirm: (transactionHash: string) => void,
     onTxReceipt: (receipt: TransactionReceipt) => void,
     onTxFail: (err: string) => void
