@@ -1,20 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
 
-import CollectibleMedia from './CollectibleMedia';
+type FullScreenOverlayProps = {
+  showFullScreen: boolean;
+  videoNft: boolean;
+};
 
-const FullScreenOverlay: React.FC = () => {
-  const {
-    setCollectibleDetailsSliceReducer: {
-      showFullScreen,
-      overlayCollectibleDetails
-    }
-  } = useSelector((state: AppState) => state);
-
-  const { collectible, mediaType } = overlayCollectibleDetails;
-  const videoNft = mediaType === 'videoNFT' || mediaType === 'htmlNFT';
-
+const FullScreenOverlay: React.FC<FullScreenOverlayProps> = ({
+  showFullScreen,
+  videoNft,
+  children
+}) => {
   return (
     <>
       {showFullScreen ? (
@@ -30,13 +25,7 @@ const FullScreenOverlay: React.FC = () => {
             }}
             className={'bg-black flex items-center justify-center'}
           >
-            <CollectibleMedia
-              {...{
-                collectible,
-                mediaType,
-                showCollectibles: false
-              }}
-            />
+            {children}
           </div>
         </div>
       ) : null}

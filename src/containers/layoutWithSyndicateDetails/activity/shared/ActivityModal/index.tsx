@@ -451,7 +451,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
       showCloseButton={false}
       outsideOnClick={true}
       showHeader={false}
-      overflow="overflow-y-scroll "
+      overflow={
+        category === TransactionCategory.Distribution
+          ? 'overflow-y-scroll'
+          : 'overflow-x-visible'
+      }
       overflowYScroll={false}
       isMaxHeightScreen={true}
       overflowXScroll={false}

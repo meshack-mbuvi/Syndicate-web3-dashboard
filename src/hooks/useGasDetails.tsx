@@ -156,7 +156,7 @@ const useGasDetails: (props: IProps) => {
           startTime,
           endTime,
           args.maxMemberCount,
-          web3.utils.toWei(args.maxTotalSupply),
+          web3.utils.toWei(String(args.maxTotalSupply)),
           setGasUnits
         );
       }
