@@ -97,3 +97,7 @@ export const formatUnix = (date: number, dateFormat: string): string => {
   const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return _moment(moment.unix(date)).tz(timeZoneString).format(dateFormat);
 };
+
+export const isValidDate = (date: any): boolean => {
+  return !Number.isNaN(new Date(date).getTime());
+};

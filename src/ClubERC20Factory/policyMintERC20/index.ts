@@ -156,7 +156,7 @@ export class MintPolicyContract {
     startTime: number,
     endTime: number,
     maxMemberCount: number,
-    maxTotalSupply: number | BN,
+    maxTotalSupply: number | BN | string,
     onResponse: Dispatch<SetStateAction<number>>
   ): Promise<void> {
     await new Promise(() => {

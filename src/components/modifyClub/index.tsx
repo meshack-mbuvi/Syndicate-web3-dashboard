@@ -46,6 +46,7 @@ import {
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import { ProgressState } from '../progressCard';
 import { Spinner } from '../shared/spinner';
+import { isValidDate } from '@/utils/dateUtils';
 
 const progressModalStates: {
   [x: string]: {
@@ -189,7 +190,6 @@ export const ModifyClubSettings = (props: {
   const [closeTimeError, setCloseTimeError] = useState('');
   const [warning, setWarning] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
-
   const MAX_MEMBERS_ALLOWED = 99;
 
   const router = useRouter();
@@ -630,7 +630,9 @@ export const ModifyClubSettings = (props: {
                           selectedDate={
                             openToDepositsUntilWarning
                               ? undefined
-                              : openToDepositsUntil
+                              : isValidDate(openToDepositsUntil)
+                              ? openToDepositsUntil
+                              : undefined
                           }
                           onChange={(targetDate): void =>
                             handleDateChange(targetDate)
