@@ -49,7 +49,7 @@ export type clubMember = {
   clubTokens: number;
   ownershipShare: number;
   symbol: string;
-  totalSupply?: number;
+  totalSupply?: string;
   ensName: string;
   avatar: string;
   createdAt: number;

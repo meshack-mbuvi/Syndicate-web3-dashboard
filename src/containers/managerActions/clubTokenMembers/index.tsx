@@ -3,17 +3,20 @@ import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareToke
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
 import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
 import useClubTokenMembers from '@/hooks/clubs/useClubTokenMembers';
+import { clubMember } from '@/hooks/clubs/utils/types';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
 import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
+import { SelectedMember } from '@/state/modifyCapTable/types';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
+import { Column } from 'react-table';
 import GenerateDepositLink from '../GenerateDepositLink';
 import ModifyCapTable from '../modifyMemberAllocation';
 import { MemberAddressComponent } from './memberAddress';
@@ -58,7 +61,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
   // fetch club members
   const { clubMembers, isFetchingMembers } = useClubTokenMembers();
 
-  const setClubDepositLink = (clubDepositLink: string) => {
+  const setClubDepositLink = (clubDepositLink: string): void => {
     dispatch(
       setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink })
     );
@@ -87,7 +90,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     }
   }, [clubAddress, signature, showGenerateLinkModal]);
 
-  const updateDepositLinkCopyState = () => {
+  const updateDepositLinkCopyState = (): void => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
   };
@@ -95,7 +98,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
   const searchValueOnChangeHandler = (event: {
     preventDefault: () => void;
     target: { value: string };
-  }) => {
+  }): void => {
     event.preventDefault();
     const { value } = event.target;
     setSearchValue(value.trim());
@@ -106,9 +109,9 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     show: false,
     memberAddress: ''
   });
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState<clubMember[]>([]);
 
-  const generateTableData = () => {
+  const generateTableData = (): void => {
     const allMembers = [...clubMembers];
 
     if (searchValue.trim()) {
@@ -132,13 +135,17 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
   }, [JSON.stringify(clubMembers), searchValue]);
 
   useEffect(() => {
-    // @ts-expect-error TS(2345): Argument of type '{ depositAmount: string; memberA... Remove this comment to see the full error message
     setTableData(syndicateMembersToShow);
   }, [JSON.stringify(syndicateMembersToShow), JSON.stringify(clubMembers)]);
 
-  const [selectedMember, setSelectedMember] = useState<any>();
+  const [selectedMember, setSelectedMember] = useState<
+    | {
+        [x: string]: string;
+      }
+    | undefined
+  >();
   const [showModifyCapTable, setShowModifyCapTable] = useModal();
-  const moreOptionItems = (
+  const moreOptionItems: ReactNode = (
     <div className="space-x-2 flex">
       <p className="flex my-auto">
         <Image src="/images/edit.svg" alt="" height={16} width={16} />
@@ -149,7 +156,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     </div>
   );
 
-  const handleMenuItemClick = (member: any) => {
+  const handleMenuItemClick = (member: SelectedMember): void => {
     dispatch(setMemberToUpdate(member));
     setShowModifyCapTable();
   };
@@ -158,11 +165,13 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
     () => [
       {
         Header: 'Member',
-        accessor: function memberAddress(row: { memberAddress: string }) {
+        accessor: function memberAddress(row: {
+          memberAddress: string;
+        }): JSX.Element {
           return (
             <MemberAddressComponent
               {...row}
-              setSelectedMember={() => setSelectedMember(row)}
+              setSelectedMember={(): void => setSelectedMember(row)}
             />
           );
         }
@@ -172,7 +181,9 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
         accessor: function depositAmount({
           depositAmount,
           depositSymbol = depositTokenSymbol
-        }: any) {
+        }: {
+          [x: string]: string;
+        }): JSX.Element {
           return (
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
@@ -189,7 +200,9 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
           ownershipShare,
           clubTokens,
           symbol
-        }: any) {
+        }: {
+          [x: string]: string;
+        }): JSX.Element {
           return (
             <p>
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
@@ -202,8 +215,9 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
       },
       {
         Header: ` `,
-        // @ts-expect-error TS(7030): Not all code paths return a value.
-        accessor: function distributionShare(club: any) {
+        accessor: function distributionShare(
+          club: SelectedMember
+        ): JSX.Element {
           // Only show this option for club owners.
           // and only on hover
           const { memberAddress } = club;
@@ -224,11 +238,12 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
               </div>
             );
           }
+          return <></>;
         }
       }
     ],
     [clubMembers, showMemberOptions, isOwner]
-  );
+  ) as Column<clubMember>[];
 
   const membersTabInstruction = isOwner
     ? "Invite members by sharing your club's deposit link.\
@@ -292,7 +307,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
               searchValueOnChangeHandler={searchValueOnChangeHandler}
               searchValue={searchValue}
               selectedMember={selectedMember}
-              setSelectedMember={() => setSelectedMember(undefined)}
+              setSelectedMember={(): void => setSelectedMember(undefined)}
               toggleAddMemberModal={toggleAddMemberModal}
               setShowMemberOptions={setShowMemberOptions}
               setShowMintNavToClubSettings={setShowMintNavToClubSettings}
@@ -320,7 +335,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
                       {!adminSigned && (
                         <button
                           className="flex space-between mb-6"
-                          onClick={() =>
+                          onClick={(): void =>
                             setLinkShareAgreementChecked(
                               !linkShareAgreementChecked
                             )
@@ -328,7 +343,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
                         >
                           <input
                             className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
-                            onChange={() =>
+                            onChange={(): void =>
                               setLinkShareAgreementChecked(
                                 !linkShareAgreementChecked
                               )
@@ -379,7 +394,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
 
                         <button
                           className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
-                          onClick={() => {
+                          onClick={(): void => {
                             if (depositsEnabled) {
                               toggleMintTokensModal(true);
                             } else {
@@ -403,7 +418,7 @@ const ClubTokenMembers: FC<{ isOwner: boolean }> = ({
 
       <AddMemberModal
         showModal={showAddMemberModal}
-        closeModal={() => toggleAddMemberModal()}
+        closeModal={(): void => toggleAddMemberModal()}
         mintTokens={toggleMintTokensModal}
       />
 

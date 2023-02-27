@@ -33,7 +33,7 @@ interface Props {
   handleCloseDateChange?: (newDate: Date) => void;
   closeTime?: string;
   handleCloseTimeChange?: (newTime: string) => void;
-  maxSupply: any;
+  maxSupply: string | number;
   handleMaxSupplyChange: (newMaxSupply: number) => void;
   selectedTimeWindow?: TimeWindow;
   handleTimeWindowChange?: (newTimeWindowIndex: number) => void;
@@ -124,7 +124,7 @@ export const CollectiveFormReview: React.FC<Props> = ({
             totalSupply,
             maxPerMember,
             openUntil: openUntilWindow,
-            ethPrice: pricePerNFT,
+            ethPrice: pricePerNFT.toString(),
             tokenURI: creationStatus.ipfsHash,
             startTime: '0',
             endTime: String(EpochCloseTime),

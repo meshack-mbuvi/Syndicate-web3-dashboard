@@ -46,7 +46,7 @@ import Web3 from 'web3';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string, walletName?: string) => void;
-  activeNetwork: any;
+  activeNetwork: IActiveNetwork;
   chainToken: string;
   showSuccessModal: boolean;
   walletConnecting: boolean;

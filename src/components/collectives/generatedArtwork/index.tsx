@@ -20,7 +20,7 @@ export const GeneratedArtworkDarkBGColors = [
 ];
 
 interface Props {
-  captureRef?: MutableRefObject<HTMLButtonElement>;
+  captureRef?: MutableRefObject<HTMLButtonElement> | null;
   label?: string;
   backgroundColorClass?: string;
   hideParticles?: boolean;

@@ -416,8 +416,8 @@ const ModifyCollectiveSettings: React.FC = () => {
     clearErrorStepErrorStates();
   };
 
-  const handleSubfieldEditing = (boolean: boolean): void => {
-    setSubfieldEditing(boolean);
+  const handleSubfieldEditing = (arg: boolean): void => {
+    setSubfieldEditing(arg);
   };
 
   const handleOpenCollective = (): void => {
@@ -522,7 +522,9 @@ const ModifyCollectiveSettings: React.FC = () => {
     dispatch(setActiveRowIdx(0));
   };
 
-  const handleEdit = async (e: MouseEvent): Promise<void> => {
+  const handleEdit = async (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>
+  ): Promise<void> => {
     e.preventDefault();
     setIsModalVisible(false);
     setProgressState(ProgressState.CONFIRM);
@@ -938,7 +940,6 @@ const ModifyCollectiveSettings: React.FC = () => {
             isNotInteractableExpanded: isOpen,
             setIsNotInteractableExpanded: handleOpenCollective,
             subfieldEditing: subfieldEditing,
-            // @ts-expect-error TS(2322): Type '(boolean: boolean) => void' is not assig... Remove this comment to see the full error message
             setSubfieldEditing: handleSubfieldEditing
           }}
           handleDisclaimerConfirmation={handleDisclaimerConfirmation}
@@ -1104,7 +1105,7 @@ const ModifyCollectiveSettings: React.FC = () => {
         {...{
           isModalVisible,
           handleModalClose,
-          onClick: handleEdit
+          onClick: (e) => handleEdit(e)
         }}
       />
 

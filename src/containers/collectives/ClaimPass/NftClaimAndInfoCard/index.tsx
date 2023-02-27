@@ -110,8 +110,6 @@ const NftClaimAndInfoCard: React.FC = () => {
     WalletState.NOT_CONNECTED
   );
 
-  console.log(walletState);
-
   const [transactionHash, setTransactionHash] = useState('');
   const [progressState, setProgressState] = useState<ProgressState>();
   const [openSeaLink, setOpenSeaLink] = useState<string>();

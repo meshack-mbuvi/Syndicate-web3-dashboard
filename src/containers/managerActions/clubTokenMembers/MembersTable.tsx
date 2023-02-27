@@ -4,9 +4,11 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
 import { SET_MEMBER_SIGN_STATUS } from '@/graphql/backend_mutations';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/backend_queries';
+import { clubMember } from '@/hooks/clubs/utils/types';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
+import { SelectedMember } from '@/state/modifyCapTable/types';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useMutation, useQuery } from '@apollo/client';
@@ -15,12 +17,31 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { usePagination, useTable } from 'react-table';
+import { Column, usePagination, useTable } from 'react-table';
 
 import { NotSignedIcon } from '../shared/notSignedIcon';
 import { SignedIcon } from '../shared/signedIcon';
 import SignerMenu from './signerMenu';
 
+type MemberTableProps = {
+  columns: Column<clubMember>[];
+  data: clubMember[];
+  searchValueOnChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  searchValue: string;
+  selectedMember:
+    | {
+        [x: string]: string;
+      }
+    | undefined;
+  setSelectedMember: (member: SelectedMember | undefined) => void;
+  toggleAddMemberModal: () => void;
+  setShowMemberOptions: (member: {
+    show: boolean;
+    memberAddress: string;
+  }) => void;
+  setShowMintNavToClubSettings: (show: boolean) => void;
+  isOwner: boolean;
+};
 const MembersTable = ({
   columns,
   data,
@@ -32,7 +53,7 @@ const MembersTable = ({
   setShowMemberOptions,
   setShowMintNavToClubSettings,
   isOwner
-}: any): JSX.Element => {
+}: MemberTableProps): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol, depositsEnabled },
@@ -205,7 +226,7 @@ const MembersTable = ({
           <div className="inline-flex items-right">
             <ActionButton
               type={ActionButtonType.ADD}
-              onClick={() => {
+              onClick={(): void => {
                 if (depositsEnabled) {
                   toggleAddMemberModal();
                 } else {

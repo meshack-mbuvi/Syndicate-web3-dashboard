@@ -107,7 +107,7 @@ const useUpdateState = () => {
     dispatch(
       setCollectiveArtwork({
         artwork: {
-          backgroundColorClass: backgroundColorClass
+          backgroundColorClass
         },
         artworkType: NFTMediaType.CUSTOM,
         artworkUrl: imageURI

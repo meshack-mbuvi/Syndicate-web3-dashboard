@@ -13,7 +13,7 @@ export enum ProgressState {
 
 export const ProgressCard = (props: {
   title: string;
-  description?: any;
+  description?: string | JSX.Element;
   state: ProgressState;
   buttonLabel?: string;
   buttonFullWidth?: boolean;

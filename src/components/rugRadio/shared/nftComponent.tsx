@@ -17,7 +17,6 @@ interface INFTComponentProps {
     permalink: string;
     name: string;
     description: string;
-    collection: any;
     floorPrice: string;
   };
 }

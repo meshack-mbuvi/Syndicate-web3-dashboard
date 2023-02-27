@@ -5,7 +5,9 @@ import { B2, L2 } from '@/components/typography';
 interface Props {
   isModalVisible: boolean;
   handleModalClose: () => void;
-  onClick: any;
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
 }
 
 export const ChangeSettingsDisclaimerModal: React.FC<Props> = ({

@@ -228,7 +228,9 @@ export const AssetList: React.FC<Props> = ({
                 } hidden xl:block transition-all transform duration-300 -mt-6`}
               >
                 <PillButton
-                  onClick={(e: MouseEvent): void => {
+                  onClick={(
+                    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                  ): void => {
                     e.stopPropagation();
                     handleMaxOnClick(index);
                   }}

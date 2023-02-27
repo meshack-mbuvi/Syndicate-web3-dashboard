@@ -87,7 +87,7 @@ export const NFTChecker: React.FC = () => {
     };
   }, [genesisNFT_ID]);
 
-  const getTokenProperties = async (tokenId: any) => {
+  const getTokenProperties = async (tokenId: number): Promise<void> => {
     if (tokenId > +currentSupply || tokenId == 0) {
       setNftFound(false);
     } else {
@@ -97,9 +97,10 @@ export const NFTChecker: React.FC = () => {
     setLoading(true);
 
     try {
-      const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
-      const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
-      const tokenBonus = await rugBonusClaimModule.getClaimAmount(tokenId);
+      const _tokenId = tokenId.toString();
+      const tokenBalance = await RugClaimModule.getClaimAmount(_tokenId);
+      const tokenProduction = await RugUtilityProperty.getProduction(_tokenId);
+      const tokenBonus = await rugBonusClaimModule.getClaimAmount(_tokenId);
 
       setTokenProperties({
         tokenBalance,
@@ -120,7 +121,7 @@ export const NFTChecker: React.FC = () => {
 
     if (!genesisNFT_ID) return;
 
-    getTokenProperties(+genesisNFT_ID.trim());
+    void getTokenProperties(+genesisNFT_ID.trim());
   };
 
   return (

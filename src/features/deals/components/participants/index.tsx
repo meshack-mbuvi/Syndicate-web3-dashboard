@@ -1,21 +1,29 @@
-import IconEtherscan from '@/components/icons/etherscan';
-import IconInvest from '@/components/icons/invest';
-import IconRosette from '@/components/icons/rosette';
-import IconVerified from '@/components/icons/verified';
 import {
   AddressLayout,
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
-import { StatusChip } from '@/components/statusChip';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { B2 } from '@/components/typography';
-import { ParticipantStatus } from '@/hooks/deals/types';
-import { IPrecommit } from '@/hooks/deals/useDealPrecommits';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import ReactTooltip from 'react-tooltip';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import { StatusChip } from '@/components/statusChip';
+import IconVerified from '@/components/icons/verified';
+import IconRosette from '@/components/icons/rosette';
+import IconInvest from '@/components/icons/invest';
+import IconEtherscan from '@/components/icons/etherscan';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ParticipantStatus } from '@/hooks/deals/types';
+
+export interface DealParticipant {
+  dealAddress: string;
+  address: string;
+  ensName?: string;
+  createdAt: string;
+  amount: string;
+  status: string;
+}
 
 interface Props {
-  participants: IPrecommit[] | undefined;
+  participants: DealParticipant[];
   addressOfLeader?: string;
 }
 
@@ -25,8 +33,8 @@ export const DealsParticipants: React.FC<Props> = ({
 }) => {
   // Deal leader
   const filteredParticipantsByLeader = addressOfLeader
-    ? participants?.map((participant, index) => {
-        if (participant.userAddress === addressOfLeader) {
+    ? participants.map((participant: DealParticipant, index) => {
+        if (participant.address === addressOfLeader) {
           return index;
         } else {
           return undefined;
@@ -40,33 +48,31 @@ export const DealsParticipants: React.FC<Props> = ({
   // Largest backer
   let indexOfLargestBacker = 0;
   let largestBackingAmountHasDuplicates = false; // if this is true we don't want to show the badge
-  const numberOfParticipants = participants?.length ?? 0;
   // Find the largest backer
-  for (let index = 0; index < numberOfParticipants; index++) {
-    const currentParticipantAmount = Number(participants?.[index].amount);
-    const largestParticipantAmount = Number(
-      participants?.[indexOfLargestBacker].amount
-    );
-
-    if (currentParticipantAmount > largestParticipantAmount) {
+  for (let index = 0; index < participants.length; index++) {
+    const currentParticipant = participants[index];
+    const largestParticipant = participants[indexOfLargestBacker];
+    if (currentParticipant.amount > largestParticipant.amount) {
       indexOfLargestBacker = index;
       largestBackingAmountHasDuplicates = false;
     }
-    if (currentParticipantAmount === largestParticipantAmount && index !== 0) {
+    if (
+      currentParticipant.amount === largestParticipant.amount &&
+      index !== 0
+    ) {
       largestBackingAmountHasDuplicates = true;
     }
   }
-
   return (
     <div>
       <B2 extraClasses="text-gray-syn4 mb-2">
-        {participants?.length ?? 0 > 0 ? 'Backers' : 'No backers yet'}
+        {participants.length > 0 ? 'Backers' : 'No backers yet'}
       </B2>
-      {participants?.map((participant, index) => {
+      {participants.map((participant, index) => {
         const showFirstBackerBadge =
           indexOfDealLeader === 0 ? index === 1 : index === 0;
         const showDealLeaderBadge =
-          participants[index].userAddress === addressOfLeader;
+          participants[index].address === addressOfLeader;
         const showLargestBackerBadge =
           indexOfLargestBacker !== undefined &&
           index === indexOfLargestBacker &&
@@ -74,7 +80,7 @@ export const DealsParticipants: React.FC<Props> = ({
         const isAnyBadgeVisible =
           showFirstBackerBadge || showDealLeaderBadge || showLargestBackerBadge;
         return (
-          <div key={`${index}-${participant.userAddress}`}>
+          <div key={`${index}-${participant.address}`}>
             <div
               key={index}
               className={`inline-flex space-x-2 mt-2 visibility-container`}
@@ -83,7 +89,7 @@ export const DealsParticipants: React.FC<Props> = ({
             >
               <DisplayAddressWithENS
                 name={participant.ensName}
-                address={participant.userAddress}
+                address={participant.address}
                 layout={AddressLayout.ONE_LINE}
                 onlyShowOneOfNameOrAddress={true}
               />
@@ -115,19 +121,17 @@ export const DealsParticipants: React.FC<Props> = ({
                 </div>
               )}
 
-              {participant?.userAddress ? (
-                <BlockExplorerLink
-                  resourceId={participant?.userAddress}
-                  noIconOrText={true}
+              <BlockExplorerLink
+                resourceId={participant.address}
+                noIconOrText={true}
+              >
+                <div
+                  className="w-7.5 h-7.5 rounded-full bg-white bg-opacity-10 flex items-center justify-center invisible visibility-hover"
+                  style={{}}
                 >
-                  <div
-                    className="w-7.5 h-7.5 rounded-full bg-white bg-opacity-10 flex items-center justify-center invisible visibility-hover"
-                    style={{}}
-                  >
-                    <IconEtherscan textColorClass="text-white" />
-                  </div>
-                </BlockExplorerLink>
-              ) : null}
+                  <IconEtherscan textColorClass="text-white" />
+                </div>
+              </BlockExplorerLink>
             </div>
             <br />
 

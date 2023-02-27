@@ -1,13 +1,11 @@
-import { FC, useState, SetStateAction, Dispatch } from 'react';
+import { MemberSelectDropdown } from '@/containers/managerActions/shared/memberSelectDropdown';
+import { clubMember } from '@/hooks/clubs/utils/types';
 import { formatAddress } from '@/utils/formatAddress';
-import {
-  MemberSelectDropdown,
-  IMember
-} from '@/containers/managerActions/shared/memberSelectDropdown';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 interface IMemberField {
   memberAddress: string;
   className?: string;
-  memberList: IMember[];
+  memberList: clubMember[];
   setMemberAddress: Dispatch<SetStateAction<string>>;
 }
 

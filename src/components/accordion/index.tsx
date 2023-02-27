@@ -3,7 +3,7 @@ import React from 'react';
 import TransitionInChildren from '../transition/transitionInChildren';
 
 interface Props {
-  items: { title: string; content: any }[];
+  items: { title: string; content: string }[];
   visibleItemIndex?: number | null;
   handleVisibleItemChange: (newIndex: number | null) => void;
   titleClassName?: string;
@@ -20,7 +20,7 @@ export const Accordion: React.FC<Props> = ({
   extraClasses
 }) => {
   const renderedAccordion = items.map(
-    (item: { title: string; content: any }, index: number) => {
+    (item: { title: string; content: string }, index: number) => {
       return (
         <button
           key={index}

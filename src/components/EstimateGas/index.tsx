@@ -1,3 +1,6 @@
+import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
+import { IDealParams } from '@/ClubERC20Factory/ERC20DealFactory';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
 import { FunctionFragment } from 'ethers/lib/utils';
@@ -10,11 +13,24 @@ interface RemixDetails {
   remixAbi: AbiItem[];
 }
 
+export type GasArgs = Record<
+  string,
+  | ClubMixinParams
+  | ICollectiveParams
+  | IDealParams
+  | string
+  | number
+  | boolean
+  | BN
+  | string[]
+  | Date
+>;
+
 interface Props {
   contract: ContractMapper;
   customClasses?: string;
   withFiatCurrency?: boolean;
-  args?: Record<string, any>;
+  args?: GasArgs;
   skipQuery?: boolean;
   remixDetails?: RemixDetails;
 }
@@ -23,7 +39,7 @@ const EstimateGas: React.FC<Props> = ({
   contract,
   customClasses = '',
   withFiatCurrency = false,
-  args = {},
+  args,
   skipQuery = false,
   remixDetails
 }) => {

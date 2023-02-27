@@ -21,7 +21,7 @@ interface props {
   showNav?: boolean;
   activeIndex?: number;
   dotIndicatorOptions?: string[];
-  handleExitClick?: () => void;
+  handleExitClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   handlePrevious?: (event?: any) => void;
   handleNext?: (event?: any) => void;
   hideWallet?: boolean;

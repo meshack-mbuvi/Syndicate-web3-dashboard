@@ -12,7 +12,7 @@ export const SearchInput = (props: {
   searchValue: string;
   name?: string;
   id?: string;
-  onChangeHandler: (event: any) => void;
+  onChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   error?: string;
   column?: boolean;
@@ -20,7 +20,7 @@ export const SearchInput = (props: {
   itemsCount?: number;
   customClass?: string;
   searchItem?: string;
-  clearSearchValue?: (event: any) => void;
+  clearSearchValue?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   width?: number;
   parentBackground?: string;
   padding?: string;

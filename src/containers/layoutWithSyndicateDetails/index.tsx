@@ -21,6 +21,7 @@ import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -56,7 +57,6 @@ import { RemixContractsContainer } from '../remix/RemixContractsContainer';
 import ActivityView from './activity';
 import { Assets } from './assets';
 import TabButton from './TabButton';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;

@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 export enum PillButtonStyle {
   DARK = 'DARK',
   LIGHT = 'LIGHT'
@@ -7,8 +9,8 @@ export const PillButton = (props: {
   isActive?: boolean;
   extraClasses?: string;
   style?: PillButtonStyle;
-  onClick: (e: any) => void;
-  children: any;
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  children: string | JSX.Element;
 }): React.ReactElement => {
   const {
     isActive = false,
@@ -28,9 +30,12 @@ export const PillButton = (props: {
 
   return (
     <button
-      className={`inline-flex flex flex-row items-center space-x-1 text-sm px-4 py-1.5 rounded-full text-center ${lightStyles} hover:ring-1 hover:ring-blue-navy ${
-        isActive && activeClasses
-      } ${extraClasses}`}
+      className={clsx(
+        'inline-flex flex flex-row items-center space-x-1 text-sm px-4 py-1.5 rounded-full text-center hover:ring-1 hover:ring-blue-navy ',
+        lightStyles,
+        isActive && activeClasses,
+        extraClasses
+      )}
       onClick={onClick}
       {...rest}
     >

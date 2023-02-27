@@ -1,18 +1,18 @@
-import React, { FC } from 'react';
+import { MoreInfoIcon } from '@/components/shared/Icons/index';
+import { TooltipState } from '@/components/syndicates/shared/progressIndicator';
 import { AppState } from '@/state';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
-import Image from 'next/image';
-import { MoreInfoIcon } from '@/components/shared/Icons/index';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { TooltipState } from '@/components/syndicates/shared/progressIndicator';
 
 interface IProgressIndicatorTooltip {
   show: boolean;
   tooltipTitle: string;
   tooltipTokenAmount: number;
   tooltipTokenPercentage: number;
-  currentToolTip: any;
+  currentToolTip: TooltipState;
   depositTokensAmount: number;
 }
 

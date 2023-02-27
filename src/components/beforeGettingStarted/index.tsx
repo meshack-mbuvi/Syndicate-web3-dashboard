@@ -25,7 +25,7 @@ const BeforeGettingStartedModal: React.FC = () => {
           showCloseButton: false,
           customWidth: 'w-full max-w-480',
           outsideOnClick: buttonDisabled, // allow outside click only when button is disabled.
-          closeModal: () => handleClickOutside(),
+          closeModal: () => handleClickOutside?.(),
           customClassName: 'py-8 px-10',
           showHeader: false,
           overflowYScroll: false,
@@ -41,20 +41,20 @@ const BeforeGettingStartedModal: React.FC = () => {
                   ? 'text-red-error outline-red-error focus:ring-1 focus:ring-red-error border-red-error'
                   : undefined
               }`}
-              onChange={(e) => {
+              onChange={(e): void => {
                 e.stopPropagation();
-                handleChange(e);
+                handleChange?.();
               }}
               type="checkbox"
               checked={agreementChecked}
             />
             <animated.p
               className={`text-base text-gray-syn4 ml-4 cursor-pointer select-none leading-6 ${
-                error ? 'text-red-error' : undefined
+                error ? 'text-red-error' : ''
               }`}
-              onClick={(e) => {
+              onClick={(e): void => {
                 e.stopPropagation();
-                handleChange(e);
+                handleChange?.();
               }}
             >
               I agree to only share this link privately. I understand that

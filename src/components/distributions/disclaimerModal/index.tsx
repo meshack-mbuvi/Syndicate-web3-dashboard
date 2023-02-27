@@ -63,12 +63,12 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
               <Checkbox
                 isActive={isActive}
                 extraClasses="mb-1"
-                onChange={() => setIsActive(!isActive)}
+                onChange={(): void => setIsActive(!isActive)}
               />
             </B2>
             <B2
               extraClasses="cursor-pointer"
-              onClick={() => setIsActive(!isActive)}
+              onClick={(): void => setIsActive(!isActive)}
             >
               I understand that distributions are irreversible.
             </B2>

@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 interface ILinkModal {
   showShareOrChangeDocs: boolean;
   setShowShareOrChangeDocsModal: Dispatch<SetStateAction<boolean>>;
-  handleChangeLegalDocument: any;
+  handleChangeLegalDocument: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({

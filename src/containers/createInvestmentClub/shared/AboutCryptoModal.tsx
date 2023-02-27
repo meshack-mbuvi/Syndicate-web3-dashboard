@@ -4,7 +4,7 @@ import React from 'react';
 
 interface ICryptoAssetModal {
   showModal: boolean;
-  closeModal: any;
+  closeModal: () => void;
 }
 
 const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
@@ -30,7 +30,7 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
         <div className="flex">
           <button
             className="mr-4 items-center focus:outline-none"
-            onClick={() => closeModal()}
+            onClick={(): void => closeModal()}
           >
             <Image src={'/images/arrowBackWhite.svg'} width={16} height={16} />
           </button>
@@ -50,7 +50,7 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
         </p>
         <button
           className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8 mt-10"
-          onClick={() => closeModal()}
+          onClick={(): void => closeModal()}
         >
           <p className="text-black whitespace-nowrap text-base font-whyte font-bold">
             Back

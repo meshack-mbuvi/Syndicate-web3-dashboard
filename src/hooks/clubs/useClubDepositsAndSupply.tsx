@@ -1,4 +1,10 @@
-import { useSyndicateDaOsQuery } from '@/hooks/data-fetching/thegraph/generated-types';
+import {
+  Exact,
+  InputMaybe,
+  SyndicateDaOsQuery,
+  SyndicateDao_Filter,
+  useSyndicateDaOsQuery
+} from '@/hooks/data-fetching/thegraph/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setActiveModuleDetails, setIsNewClub } from '@/state/erc20token/slice';
@@ -12,6 +18,7 @@ import {
 } from '@/utils/mockdata';
 import getModuleByType from '@/utils/modules/getModuleByType';
 import getReqsByModuleType from '@/utils/modules/getReqsByModuleType';
+import { ApolloQueryResult } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,11 +33,19 @@ import { useDemoMode } from '../useDemoMode';
  * @returns
  */
 export function useClubDepositsAndSupply(contractAddress: string): {
-  refetch: any;
-  totalDeposits: any;
-  totalSupply: any;
-  startTime: any;
-  endTime: any;
+  refetch: (
+    variables?:
+      | Partial<
+          Exact<{
+            where?: InputMaybe<SyndicateDao_Filter> | undefined;
+          }>
+        >
+      | undefined
+  ) => Promise<ApolloQueryResult<SyndicateDaOsQuery>>;
+  totalDeposits: string;
+  totalSupply: string;
+  startTime: number;
+  endTime: number;
   hasActiveModules: boolean;
   mintModule: string;
   activeMintModuleReqs: ModuleReqs | null;

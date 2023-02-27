@@ -10,7 +10,16 @@ import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
+import {
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -33,10 +42,16 @@ const emptyCollectibleDetails: CollectibleDetails = {
     animation: '',
     image: '',
     description: '',
-    collection: {},
+    collection: {
+      name: '',
+      slug: ''
+    },
     permalink: '',
     floorPrice: '',
-    lastPurchasePrice: ''
+    lastPurchasePrice: {
+      lastPurchasePriceUSD: 0,
+      lastPurchasePriceETH: 0
+    }
   },
   mediaType: '',
   moreDetails: {
@@ -53,19 +68,32 @@ interface Props {
   showOrHideNfts: (contractAddress: string) => void;
 }
 
+type LocalStorageItem = {
+  [x: string]: {
+    [x: string]: string | boolean | string[];
+  };
+};
+
 export interface Collectible {
   id: string;
-  assetId: string;
+  assetId?: string;
   image: string;
   animation: string;
   permalink: string;
   name: string;
-  description: string;
-  collection: any;
+  description: any;
+  collection: {
+    name: string;
+    slug: string;
+  };
   floorPrice: string;
-  lastPurchasePrice: string;
+  lastPurchasePrice: {
+    lastPurchasePriceUSD: number;
+    lastPurchasePriceETH: number;
+  };
   futureNft?: boolean;
   hidden?: boolean;
+  slug?: string;
 }
 
 export const Collectibles: FC<Props> = ({
@@ -127,18 +155,20 @@ export const Collectibles: FC<Props> = ({
   // get state of nfts section collapsed from localStorage
   useEffect(() => {
     if (window.localStorage) {
+      const _localStorageItems = localStorage.getItem(
+        'clubAssetsCollapsedState'
+      ) as string;
+
       const existingClubsCollapsedStates =
-        JSON.parse(
-          localStorage.getItem('clubAssetsCollapsedState') as string
-        ) || {};
+        (JSON.parse(_localStorageItems) as LocalStorageItem) || {};
 
       const currentClubCollapsedState =
-        existingClubsCollapsedStates[clubAddress as string] || {};
+        existingClubsCollapsedStates?.[clubAddress as string] || {};
 
       const isNftsSectionCollapsed =
-        currentClubCollapsedState[CollapsedSectionType.NFTS] || false;
+        currentClubCollapsedState?.[CollapsedSectionType.NFTS] || false;
 
-      setIsNftsCollapsed(isNftsSectionCollapsed);
+      setIsNftsCollapsed(isNftsSectionCollapsed as SetStateAction<boolean>);
     }
   }, [clubAddress]);
 
@@ -163,8 +193,8 @@ export const Collectibles: FC<Props> = ({
 
   // loading/empty state for collectibles
   const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => (
-    <div className={`${nftsData.length > 0 && 'pt-6'}`}>
-      <div className={`relative ${!animate ? 'px-2' : 'px-0'}`}>
+    <div className={clsx(nftsData.length > 0 && 'pt-6')}>
+      <div className={clsx('relative', !animate ? 'px-2' : 'px-0')}>
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
             <H4 extraClasses="text-white mb-4">This club has no NFTs yet.</H4>
@@ -174,11 +204,12 @@ export const Collectibles: FC<Props> = ({
           </div>
         )}
         <div
-          className={`grid grid-cols-12 gap-5 ${
-            !animate && `filter grayscale blur-md`
-          }`}
+          className={clsx(
+            'grid grid-cols-12 gap-5',
+            !animate && 'filter grayscale blur-md'
+          )}
         >
-          {[...Array(4)].map((_, idx) => (
+          {[...(Array(4) as number[])].map((_, idx) => (
             <div key={idx} className="col-span-5 md:col-span-3 xl:col-span-3">
               <>
                 <div className="w-full">
@@ -229,17 +260,18 @@ export const Collectibles: FC<Props> = ({
   // factor in hidden NFTs
   const getHiddenNfts = useCallback(() => {
     if (window.localStorage) {
-      const existingClubsHiddenAssets =
+      const existingClubsHiddenAssets: { [x: string]: string[] | string } =
         JSON.parse(localStorage.getItem('hiddenAssets') as string) || {};
 
       // filter out hidden Nfts
-      let filteredPaginatedData, filteredData;
+      let filteredPaginatedData, filteredData: Collectible[];
       if (Object.keys(existingClubsHiddenAssets).length) {
-        const clubHiddenAssets =
-          existingClubsHiddenAssets[clubAddress as string] || [];
+        const clubHiddenAssets: string[] = (existingClubsHiddenAssets[
+          clubAddress as string
+        ] || []) as string[];
 
         if (clubHiddenAssets.length) {
-          filteredData = collectiblesResult.map((data: Collectible) => {
+          filteredData = collectiblesResult.map((data) => {
             const { id } = data;
 
             return {
@@ -248,12 +280,10 @@ export const Collectibles: FC<Props> = ({
             };
           });
 
-          filteredPaginatedData = collectiblesResult.filter(
-            (data: Collectible) => {
-              const { id } = data;
-              return clubHiddenAssets.indexOf(id) < 0;
-            }
-          );
+          filteredPaginatedData = collectiblesResult.filter((data) => {
+            const { id } = data;
+            return clubHiddenAssets.indexOf(id) < 0;
+          });
 
           // setting correct data array to use based on whether we need to
           // show hidden tokens or not.
@@ -284,7 +314,7 @@ export const Collectibles: FC<Props> = ({
   ]);
 
   // show/hide Nfts
-  const showOrHideNftsById = (e: Event, id: string) => {
+  const showOrHideNftsById = (e: Event, id: string): void => {
     e.stopPropagation();
     // show or hide nft based on id
     showOrHideNfts(id);
@@ -293,7 +323,7 @@ export const Collectibles: FC<Props> = ({
   };
 
   // fetch more collectibles
-  const fetchMoreCollectibles = () => {
+  const fetchMoreCollectibles = (): void => {
     if (isDemoMode) return;
     setPageOffSet(pageOffSet + 20);
     dispatch(
@@ -302,8 +332,9 @@ export const Collectibles: FC<Props> = ({
         offset: pageOffSet.toString(),
         chainId: activeNetwork.chainId,
         maxTotalDeposits: nativeDepositToken
-          ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-            parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
+          ? parseInt(
+              (depositTokenPriceInUSD ?? 0 * maxTotalDeposits).toString()
+            )
           : maxTotalDeposits
       })
     );
@@ -348,10 +379,7 @@ export const Collectibles: FC<Props> = ({
               >
                 <div className="grid grid-cols-12 gap-5">
                   {nftsData.map(
-                    (
-                      collectible: Collectible,
-                      index: number
-                    ): React.ReactNode => {
+                    (collectible, index: number): React.ReactNode => {
                       const {
                         id,
                         image,
@@ -407,6 +435,7 @@ export const Collectibles: FC<Props> = ({
                           mediaType = 'imageOnlyNFT';
                         }
                       }
+
                       // sometimes the NFT name is an Ethereum address
                       // we need to break this to fit onto the collectible card
                       const isNameEthereumAddress: boolean =
@@ -450,7 +479,7 @@ export const Collectibles: FC<Props> = ({
                               className={`flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36 ${
                                 hidden ? 'cursor-not-allowed' : 'cursor-pointer'
                               }`}
-                              onClick={() => {
+                              onClick={(): void => {
                                 // do not show more details if nft's hidden
                                 if (hidden) return;
                                 setDetailsOfSelectedCollectible({
@@ -460,11 +489,12 @@ export const Collectibles: FC<Props> = ({
                                     'Token ID': futureNft ? '' : id,
                                     'Token collection': collection.name,
                                     'Floor price': floorPrice,
-                                    'Last purchase price': lastPurchasePrice
+                                    'Last purchase price':
+                                      lastPurchasePrice.lastPurchasePriceETH.toString()
                                   }
                                 });
                               }}
-                              onKeyDown={() => ({})}
+                              onKeyDown={(): null => null}
                               tabIndex={0}
                               role="button"
                             >

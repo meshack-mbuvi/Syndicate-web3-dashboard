@@ -1,14 +1,14 @@
-import React from 'react';
 import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import PriceContainer from './PriceContainer';
 
-const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
-  title,
-  value,
-  symbol
-}) => {
+const TokenDetail: React.FC<{
+  title: string;
+  value: any;
+  symbol?: string;
+}> = ({ title, value, symbol }) => {
   const {
     assetsSliceReducer: { nativeTokenPrice }
   } = useSelector((state: AppState) => state);

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 export enum TileAction {
   SELECT = 'SELECT',
   CREATE = 'CREATE',
@@ -10,15 +11,17 @@ export enum TileState {
   UNSELECTED = 'UNSELECTED'
 }
 
-export const Tile = (props: {
+type TileProps = {
   action?: TileAction;
   state?: TileState;
   handleClick: (newState: TileState) => void;
-  leftAddon?: any;
+  leftAddon?: JSX.Element;
   title: string;
   subTitle?: string;
   extraClasses?: string;
-}) => {
+};
+
+export const Tile = (props: TileProps): JSX.Element => {
   const {
     action = TileAction.SELECT,
     state = TileState.UNSELECTED,
@@ -37,19 +40,24 @@ export const Tile = (props: {
 
   return (
     <button
-      onClick={() => {
+      onClick={(): void => {
         if (state === TileState.UNSELECTED) {
           handleClick(TileState.SELECTED);
         } else if (state === TileState.SELECTED) {
           handleClick(TileState.UNSELECTED);
         }
       }}
-      className={`w-full text-left cursor-pointer rounded-lg text-base py-5 px-7 ${borderStyles} ${extraClasses} transition-all`}
+      className={clsx(
+        'w-full text-left cursor-pointer rounded-lg text-base py-5 px-7 transition-all',
+        borderStyles,
+        extraClasses
+      )}
     >
       <div
-        className={`flex items-center ${
+        className={clsx(
+          'flex items-center',
           action !== TileAction.SELECT && 'space-x-4'
-        }`}
+        )}
       >
         {/* Icon */}
         <div className={`${action !== TileAction.SELECT ? 'block' : 'hidden'}`}>

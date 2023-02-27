@@ -7,7 +7,7 @@ interface SelectProps {
   extraClasses: string;
 }
 
-export default function Select(props: SelectProps) {
+export default function Select(props: SelectProps): JSX.Element {
   const { control, name, options, extraClasses } = props;
 
   const { field } = useController({

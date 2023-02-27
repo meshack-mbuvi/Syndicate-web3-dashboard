@@ -16,12 +16,12 @@ import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ModifyClubTokens: React.FC<{
-  showModifyCapTable: any;
-  setShowModifyCapTable: any;
+  showModifyCapTable: boolean;
+  setShowModifyCapTable: Dispatch<SetStateAction<boolean>>;
 }> = (props) => {
   const { showModifyCapTable, setShowModifyCapTable } = props;
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const ModifyClubTokens: React.FC<{
   const [updateFailed, setUpdateFailed] = useState(false);
   const [transactionHash, setTransactionHash] = useState('');
   const [userRejectedUpdate, setUserRejectedUpdate] = useState(false);
-  const [newTotalSupply, setNewTotalSupply] = useState(totalSupply);
+  const [newTotalSupply, setNewTotalSupply] = useState(Number(totalSupply));
   const [member, setMember] = useState(memberToUpdate.memberAddress);
   const [newOwnership, setNewOwnership] = useState(0);
   const [mintClubTokens, setMintClubTokens] = useState(false);
@@ -98,7 +98,7 @@ const ModifyClubTokens: React.FC<{
       newTokenSupply = +totalSupply + +tokensToMintOrBurn;
     }
 
-    setNewTotalSupply(newTokenSupply);
+    setNewTotalSupply(newTokenSupply ?? 0);
 
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const ownership = (+memberAllocation * 100) / newTokenSupply;
@@ -194,7 +194,7 @@ const ModifyClubTokens: React.FC<{
           useOwnerMintModule =
             !!(await syndicateContracts.OwnerMintModule.OwnerMintModuleContract.methods
               .ownerMint(
-                erc20TokenContract.address,
+                erc20TokenContract?.address,
                 memberToUpdate.memberAddress,
                 getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true)
               )
@@ -208,7 +208,7 @@ const ModifyClubTokens: React.FC<{
         if (useOwnerMintModule) {
           await syndicateContracts.OwnerMintModule.ownerMint(
             getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
-            erc20TokenContract.address,
+            erc20TokenContract?.address ?? '',
             memberToUpdate.memberAddress,
             account,
             onTxConfirm,
@@ -219,7 +219,7 @@ const ModifyClubTokens: React.FC<{
         } else {
           // If owner mint module simulated call fails, try to fall back to calling club directly
           if (isDev) {
-            await erc20TokenContract.mintTo(
+            await erc20TokenContract?.mintTo(
               memberToUpdate.memberAddress,
               getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
               account,
@@ -230,7 +230,7 @@ const ModifyClubTokens: React.FC<{
             );
           } else {
             const oldErc20TokenContract = new OldClubERC20Contract(
-              erc20TokenContract.address,
+              erc20TokenContract?.address ?? '',
               web3,
               activeNetwork
             );
@@ -247,7 +247,7 @@ const ModifyClubTokens: React.FC<{
           }
         }
       } else {
-        await erc20TokenContract.controllerRedeem(
+        await erc20TokenContract?.controllerRedeem(
           memberToUpdate.memberAddress,
           getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
           account,
@@ -263,14 +263,14 @@ const ModifyClubTokens: React.FC<{
     }
   };
 
-  const handleAmountChange = (e: any) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const amount = numberInputRemoveCommas(e);
 
     // calculate available tokens supply since we override the
     // current member club tokens and not add onto it.
     let availableTokenSupply = 0;
     if (clubMembers.length === 1) {
-      availableTokenSupply = maxTotalSupply;
+      availableTokenSupply = +maxTotalSupply;
     } else if (clubMembers.length > 1) {
       const otherClubMembersTokens =
         +maxTotalSupply -
@@ -293,7 +293,7 @@ const ModifyClubTokens: React.FC<{
           <span>
             Amount exceeds available club token supply of{' '}
             <button
-              onClick={() => {
+              onClick={(): void => {
                 setMemberAllocation(
                   clubMembers.length > 1
                     ? availableTokenSupply.toString()
@@ -318,8 +318,7 @@ const ModifyClubTokens: React.FC<{
       setMemberAllocationError('');
       setContinueButtonDisabled(false);
     }
-    // @ts-expect-error TS(2365): Operator '>=' cannot be applied to types 'string' ... Remove this comment to see the full error message
-    setMemberAllocation(amount >= 0 ? amount : '');
+    setMemberAllocation(+amount >= 0 ? amount : '');
   };
 
   if (confirm) {
@@ -428,7 +427,7 @@ const ModifyClubTokens: React.FC<{
           mintClubTokens,
           newOwnership,
           tokensToMintOrBurn,
-          newTotalSupply,
+          newTotalSupply: newTotalSupply.toString(),
           handleUpdatingCapTable,
           symbol,
           totalSupply,

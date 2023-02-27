@@ -1,10 +1,10 @@
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCheckTokenClaimQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 const useFetchTokenClaim = (): {
   tokenClaimLoading: boolean;
@@ -21,7 +21,7 @@ const useFetchTokenClaim = (): {
 
   const isDemoMode = useDemoMode();
 
-  const { merkleProofLoading: merkleLoading, merkleProof: myMerkleProof } =
+  const { loading: merkleLoading, merkleProof: myMerkleProof } =
     useFetchMerkleProof();
 
   const [isTokenClaimed, setIsTokenClaimed] = useState(false);

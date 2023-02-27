@@ -326,7 +326,9 @@ const ReviewDistribution: React.FC<Props> = ({
     }
   }, [activeIndex]);
 
-  const handleSaveAction = (e: MouseEvent): void => {
+  const handleSaveAction = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
     e.preventDefault();
     toggleEditDistribution();
   };
@@ -334,7 +336,9 @@ const ReviewDistribution: React.FC<Props> = ({
   /**
    * This function reverts activeAddresses to the state before editing
    */
-  const handleCancelAction = (e: MouseEvent): void => {
+  const handleCancelAction = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
     e.preventDefault();
 
     // restore active indices from state

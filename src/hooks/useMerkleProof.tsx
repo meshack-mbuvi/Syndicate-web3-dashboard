@@ -27,7 +27,7 @@ const emptyMerkleProof: IMerkleProof = {
 };
 
 const useFetchMerkleProof = (): {
-  merkleProofLoading: boolean;
+  loading: boolean;
   merkleProof: IMerkleProof;
 } => {
   const {
@@ -89,7 +89,7 @@ const useFetchMerkleProof = (): {
     }
   }, [address, loading, JSON.stringify(merkleData)]);
 
-  return { merkleProofLoading: loading, merkleProof };
+  return { loading, merkleProof };
 };
 
 export default useFetchMerkleProof;

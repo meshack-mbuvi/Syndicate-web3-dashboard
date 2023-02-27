@@ -1,14 +1,12 @@
+import { GetDealDetails } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { getFirstOrString } from '@/utils/stringUtils';
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  RequirementType,
-  useDealDetailsQuery
-} from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
+import { Deal, MixinModuleRequirementType } from './types';
 import useVerifyDealNetwork from './useVerifyDealNetwork';
 
 export interface IDealDetails {
@@ -64,8 +62,9 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-
-  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
+  const {
+    query: { dealAddress }
+  } = router;
 
   const isDemoMode = useDemoMode();
   const { isCorrectDealNetwork, isLoadingNetwork } = useVerifyDealNetwork(
@@ -75,7 +74,9 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
   let dealNotFound = false;
 
   // get deal details
-  const { loading, data, startPolling, stopPolling } = useDealDetailsQuery({
+  const { loading, data, startPolling, stopPolling, refetch } = useQuery<{
+    deal: Deal;
+  }>(GetDealDetails, {
     variables: {
       dealId: dealAddress
     },
@@ -86,6 +87,12 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
       chainId: activeNetwork.chainId
     }
   });
+
+  useEffect(() => {
+    void refetch({
+      where: { dealId: dealAddress }
+    });
+  }, [activeNetwork.chainId, dealAddress, isCorrectDealNetwork]);
 
   useEffect(() => {
     if (overridePoll) {
@@ -102,16 +109,27 @@ const useDealsDetails = (overridePoll: boolean): IDealDetailsResponse => {
       let dealStartTime = '';
       let dealEndTime = '';
       let minPerMember = '';
-      deal.mixins?.map((mixin) => {
-        if (mixin.requirementType === RequirementType.TimeWindow) {
-          dealEndTime = mixin.endTime;
-          dealStartTime = mixin.startTime;
-        }
+      deal.mixins?.map(
+        (mixin: {
+          requirementType: MixinModuleRequirementType;
+          endTime: string;
+          startTime: string;
+          minPerMember: string;
+        }) => {
+          if (
+            mixin.requirementType === MixinModuleRequirementType.TIME_WINDOW
+          ) {
+            dealEndTime = mixin.endTime;
+            dealStartTime = mixin.startTime;
+          }
 
-        if (mixin.requirementType === RequirementType.MinPerMember) {
-          minPerMember = mixin.minPerMember;
+          if (
+            mixin.requirementType === MixinModuleRequirementType.MIN_PER_MEMBER
+          ) {
+            minPerMember = mixin.minPerMember;
+          }
         }
-      });
+      );
       dealDetails = {
         dealName: deal.dealToken.name,
         dealDescription: '', // When we add descriptions after v0, pass it in here

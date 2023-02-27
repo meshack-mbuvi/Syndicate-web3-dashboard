@@ -8,7 +8,7 @@ export type mintEndTime = {
 export type tokenDetails = {
   depositToken: string;
   depositTokenSymbol: string;
-  depositTokenLogo: any;
+  depositTokenLogo: string;
   depositTokenName: string;
   depositTokenDecimals: number;
 };

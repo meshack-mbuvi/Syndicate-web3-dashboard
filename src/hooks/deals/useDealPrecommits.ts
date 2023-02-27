@@ -1,21 +1,23 @@
+import { GetDealPrecommits } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { getFirstOrString } from '@/utils/stringUtils';
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Precommit,
-  usePrecommitsQuery
-} from '../data-fetching/thegraph/generated-types';
 import { useDemoMode } from '../useDemoMode';
+import { Precommit } from './types';
 
-export type IPrecommit = Partial<
-  Precommit & { dealAddress: string; ensName?: string }
->;
+export interface IPrecommit {
+  dealAddress: string;
+  address: string;
+  amount: string;
+  status: string;
+  createdAt: string;
+}
 
 export interface IPrecommitResponse {
-  precommits: IPrecommit[] | undefined;
+  precommits: IPrecommit[];
   precommitsLoading: boolean;
 }
 
@@ -27,16 +29,19 @@ const useDealsPrecommits = (): IPrecommitResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-
-  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
+  const {
+    query: { dealAddress }
+  } = router;
 
   const isDemoMode = useDemoMode();
   const abortController = new AbortController();
 
-  let precommits = <IPrecommit[] | undefined>[];
+  let precommits = <IPrecommit[]>[];
 
   // get precommits for a deal
-  const { loading, data } = usePrecommitsQuery({
+  const { loading, data } = useQuery<{
+    deal: { id: string; precommits: Precommit[] };
+  }>(GetDealPrecommits, {
     variables: {
       dealId: dealAddress
     },
@@ -52,9 +57,9 @@ const useDealsPrecommits = (): IPrecommitResponse => {
 
   // process precommits
   if (!loading && data) {
-    precommits = data.deal?.precommits.map((pre) => {
+    precommits = data.deal?.precommits.map((pre: Precommit) => {
       return {
-        dealAddress: data?.deal?.id,
+        dealAddress: data.deal.id,
         address: pre.userAddress,
         amount: pre.amount,
         status: pre.status,

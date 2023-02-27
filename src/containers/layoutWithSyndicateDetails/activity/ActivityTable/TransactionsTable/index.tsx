@@ -14,12 +14,14 @@ import { getWeiAmount } from '@/utils/conversions';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
 import Image from 'next/image';
-import { FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, ReactNode, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import BatchTransactionDetails from '../../shared/BatchTransactionDetails';
+import BatchTransactionDetails, {
+  TokenDetails
+} from '../../shared/BatchTransactionDetails';
 import { BatchIdTokenDetails } from '../index';
 
-interface ITransactionsTableProps {
+interface TransactionsTableProps {
   canNextPage: boolean;
   isOwner: boolean;
   dataLimit: number;
@@ -33,13 +35,18 @@ interface ITransactionsTableProps {
   batchIdentifiers: BatchIdTokenDetails;
   emptyState: JSX.Element;
   toggleRowCheckbox: (batchKey: string, checkboxVisible: boolean) => void;
-  handleCheckboxSelect: (e: any, key: string) => void;
-  rowCheckboxActiveData: any;
+  handleCheckboxSelect: (e: ChangeEvent<HTMLInputElement>, key: string) => void;
+  rowCheckboxActiveData: {
+    [key: string]: {
+      [key: string]: ReactNode;
+      checkboxActive: boolean;
+    };
+  };
   activeTransactionHashes?: Array<string>;
   setActiveTransactionHashes?: (transactionHashes: Array<string>) => void;
 }
 
-const TransactionsTable: FC<ITransactionsTableProps> = ({
+const TransactionsTable: FC<TransactionsTableProps> = ({
   canNextPage,
   dataLimit,
   pageOffset,
@@ -68,7 +75,12 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const ref = useRef(null);
   useOnClickOutside(ref, () => setCurrentBatchIdentifier(''));
 
-  const [pillHover, setPillHover] = useState<any>({});
+  const [pillHover, setPillHover] = useState<{
+    [key: string | number]: {
+      [x: string]: ReactNode;
+      categoryIsReadonly: boolean;
+    };
+  }>({});
   const [currentTransaction, setCurrentTransaction] = useState(
     emptyCurrentTransaction
   );
@@ -121,8 +133,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   // use loading state
   if (
     transactionsLoading &&
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-    !activeTransactionHashes.length &&
+    !activeTransactionHashes?.length &&
     !batchIdentifiers &&
     !emptyState
   ) {
@@ -133,7 +144,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const toggleCategoryPillReadOnly = (
     batchId: string,
     categoryReadonlyState: boolean
-  ) => {
+  ): void => {
     if (!isOwner) return;
 
     const _pillHover = pillHover;
@@ -150,7 +161,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   const batchTransactionsList = Object.keys(batchIdentifiers).map(function (
     key
   ) {
-    const tokensList: any = [];
+    const tokensList: TokenDetails[] = [];
     if (!(batchIdentifiers[key].length === 1)) {
       batchIdentifiers[key].map((transaction) => {
         /**

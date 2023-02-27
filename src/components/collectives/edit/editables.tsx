@@ -32,7 +32,7 @@ export const SubmitContent: React.FC<{
   const {
     modifyCollectiveSettingsReducer: {
       activeRow,
-      settings: { isTransferable, mintPrice, mintEndTime, maxPerWallet }
+      settings: { isTransferable = false, mintPrice, mintEndTime, maxPerWallet }
     },
     modifyClubSettingsReducer: { maxNumberOfMembers, maxAmountRaising },
     erc20TokenSliceReducer: {
@@ -46,8 +46,9 @@ export const SubmitContent: React.FC<{
   const { openUntil } = useCreateState();
 
   const router = useRouter();
-  const clubAddress = getFirstOrString(router.query.clubAddress);
-  const collectiveAddress = getFirstOrString(router.query.collectiveAddress);
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
+  const collectiveAddress =
+    getFirstOrString(router.query.collectiveAddress) || '';
 
   const activeContract = useMemo(() => {
     switch (activeRow) {
@@ -119,8 +120,8 @@ export const SubmitContent: React.FC<{
                 maxNumberOfMembers,
                 totalSupply: maxAmountRaising,
                 logicOperator: 1,
-                tokens: requiredTokens,
-                balances: requiredTokenBalances,
+                tokens: requiredTokens as string[],
+                balances: requiredTokenBalances as string[],
                 clubMintEndTime: endTime
               }}
               customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center"

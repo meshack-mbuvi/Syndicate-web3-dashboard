@@ -1,18 +1,19 @@
 /**
  * TODO: This component is not called anywhere in the app
  */
-import React, { Dispatch, SetStateAction } from 'react';
+import { Callout } from '@/components/callout';
+import { CTAButton } from '@/components/CTAButton';
+import EstimateGas from '@/components/EstimateGas';
 import Modal, { ModalStyle } from '@/components/modal';
+import { L2 } from '@/components/typography';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { SelectedMember } from '@/state/modifyCapTable/types';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import { formatAddress } from '@/utils/formatAddress';
-import EstimateGas from '@/components/EstimateGas';
-import { Callout } from '@/components/callout';
-import { L2 } from '@/components/typography';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { CTAButton } from '@/components/CTAButton';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface IConfirmMemberAllocations {
   preview: boolean;
@@ -25,8 +26,8 @@ interface IConfirmMemberAllocations {
   newTotalSupply: string;
   handleUpdatingCapTable: () => void;
   symbol: string;
-  totalSupply: number;
-  memberToUpdate: any;
+  totalSupply: string;
+  memberToUpdate: SelectedMember;
 }
 
 const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
@@ -42,8 +43,14 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
   symbol,
   totalSupply,
   memberToUpdate
-}): React.ReactElement => {
-  const DetailContent = ({ label, value, symbol }: any) => (
+}): JSX.Element => {
+  const DetailContent = ({
+    label,
+    value,
+    symbol
+  }: {
+    [x: string]: string;
+  }): JSX.Element => (
     <div className="flex justify-between">
       <span className="text-gray-syn4 font-whyte text-base leading-6">
         {label}
@@ -53,6 +60,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
       </span>
     </div>
   );
+
   return (
     <Modal
       {...{
@@ -61,7 +69,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
         showCloseButton: true,
         customWidth: 'w-full max-w-480',
         outsideOnClick: true,
-        closeModal: () => {
+        closeModal: (): void => {
           setShowModifyCapTable(false);
           setPreview(false);
         },

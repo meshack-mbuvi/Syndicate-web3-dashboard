@@ -9,6 +9,7 @@ import { ERC20ClubFactory } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { ERC20DealFactory } from '@/ClubERC20Factory/ERC20DealFactory';
 import { ERC721Collective } from '@/ClubERC20Factory/ERC721Collective';
 import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 import { EthPriceMintModule } from '@/ClubERC20Factory/EthPriceMintModule';
 import { FixedRenderer } from '@/ClubERC20Factory/FixedRenderer';
 import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
@@ -46,7 +47,7 @@ export interface ISyndicateContracts {
   RugClaimModule: RugERC20ClaimModule;
   RugUtilityProperty: RugUtilityProperties;
   RugToken: ClubERC20Contract;
-  GenesisNFTContract: any;
+  GenesisNFTContract: ERC721Contract;
   rugBonusClaimModule: RugBonusTokenModule;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
@@ -102,6 +103,7 @@ const initialState: InitialState = {
     RugUtilityProperty: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'ClubERC20Co... Remove this comment to see the full error message
     RugToken: null,
+    // @ts-expect-error TS(2322)
     GenesisNFTContract: null,
     // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RugBonusTok... Remove this comment to see the full error message
     rugBonusClaimModule: null,

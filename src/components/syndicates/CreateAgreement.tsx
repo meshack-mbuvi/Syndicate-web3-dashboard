@@ -1,9 +1,12 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { ADMIN_GENERATE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import { Checkbox } from '@/components/inputs/checkbox';
 import { TextArea } from '@/components/inputs/textArea';
 import { TextField } from '@/components/inputs/textField';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { setClubLegalInfo } from '@/state/legalInfo';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -12,8 +15,6 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { CTAButton, CTAType } from '../CTAButton';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { ADMIN_GENERATE_DOCS_CLICK } from '@/components/amplitude/eventNames';
 
 interface FormInputs {
   legalEntityName: string;
@@ -36,7 +37,7 @@ const schema = yup.object({
     .string()
     .email('Invalid email address')
     .when('counselName', {
-      is: (counselName: any) => counselName?.trim().length > 0,
+      is: (counselName: string) => counselName?.trim().length > 0,
       then: yup
         .string()
         .email('Invalid email address')
@@ -66,7 +67,7 @@ const CreateAgreementComponent: React.FC = () => {
     watch,
     formState: { isValid },
     setValue
-  } = useForm<FormInputs>({
+  } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange'
   });
@@ -75,16 +76,19 @@ const CreateAgreementComponent: React.FC = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
-  const { clubAddress } = router.query;
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
 
-  const setFormValues = (clubData: any) => {
+  const setFormValues = (clubData: {
+    isSeriesLLC: boolean;
+    seriesLLC: string;
+  }): void => {
     for (const [key, value] of Object.entries(clubData)) {
       if (key === 'legalEntityName' && clubData.isSeriesLLC) {
         setValue('legalEntityName', clubData.seriesLLC, {
           shouldValidate: true
         });
       } else {
-        setValue(key as any, value, { shouldValidate: true });
+        setValue(key as keyof FormInputs, value, { shouldValidate: true });
       }
     }
   };
@@ -106,7 +110,7 @@ const CreateAgreementComponent: React.FC = () => {
         adminSignDate: moment().format('LL')
       })
     );
-    router.push(`/clubs/${clubAddress}/manage/legal/sign`);
+    void router.push(`/clubs/${clubAddress}/manage/legal/sign`);
   };
 
   return (

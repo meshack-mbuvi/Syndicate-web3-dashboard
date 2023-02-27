@@ -25,7 +25,11 @@ import { getSyndicateValues } from '@/utils/contracts/getSyndicateValues';
 import { getWeiAmount } from '@/utils/conversions';
 import { Dispatch } from 'redux';
 
-export const ERC20TokenDefaultState = {
+export const ERC20TokenDefaultState: ERC20Token & {
+  nativeDepositToken: boolean;
+  memberCount: number;
+  isOwner: boolean;
+} = {
   isValid: false,
   name: '',
   owner: '',
@@ -35,9 +39,9 @@ export const ERC20TokenDefaultState = {
   nativeDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
-  totalSupply: 0,
+  totalSupply: '0',
   tokenDecimals: 18, //default to 18
-  totalDeposits: 0,
+  totalDeposits: '0',
   symbol: '',
   startTime: 0,
   endTime: 0,
@@ -46,7 +50,7 @@ export const ERC20TokenDefaultState = {
   isOwner: false,
   loading: false,
   maxMemberCount: 0,
-  maxTotalSupply: 0,
+  maxTotalSupply: '0',
   requiredToken: '', //TODO: [GRAPH_COORD] remove from queries / contract calls + deprecate on the graph
   requiredTokenMinBalance: '', //TODO: [GRAPH_COORD] remove from queries / contract calls + deprecate on the graph
   currentMintPolicyAddress: ''
@@ -182,7 +186,7 @@ export const getERC20TokenDetails = async (
         depositsEnabled,
         requiredTokenMinBalance,
         claimEnabled: claimEnabled || false,
-        maxTotalSupply: +getWeiAmount(maxTotalSupply, tokenDecimals, false),
+        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
         maxTotalDeposits: +getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds

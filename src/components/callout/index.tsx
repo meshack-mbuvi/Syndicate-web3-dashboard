@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import IconInfo from '../icons/info';
 import IconWarning from '../icons/warning';
 import { B3 } from '../typography';
@@ -20,7 +21,7 @@ interface Props {
   showIcon?: boolean;
   icon?: string | undefined | null | React.ReactNode;
   iconPosition?: CalloutIconPosition;
-  children?: any;
+  children?: string | ReactNode;
   textColor?: string;
   backgroundOpacity?: string;
   backgroundColor?: string;

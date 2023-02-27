@@ -1,7 +1,7 @@
 interface Props {
   rows: {
     title: string;
-    value: string | any;
+    value: string;
     externalLink?: string;
   }[];
   extraClasses: string;

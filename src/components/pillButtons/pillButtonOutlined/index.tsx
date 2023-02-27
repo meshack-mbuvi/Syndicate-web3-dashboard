@@ -1,6 +1,6 @@
 interface Props {
   onClick: () => void;
-  children: any;
+  children: string | JSX.Element;
 }
 
 export const PillButtonOutlined: React.FC<Props> = ({

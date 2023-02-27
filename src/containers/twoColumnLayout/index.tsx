@@ -1,11 +1,18 @@
+import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import { useTailwindScreenWidth } from '@/helpers/layout';
 import useWindowSize from '@/hooks/useWindowSize';
-import { Dispatch, FC, ReactChild, ReactChildren, SetStateAction } from 'react';
-import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import { useRouter } from 'next/router';
+import {
+  Dispatch,
+  FC,
+  ReactChild,
+  ReactChildren,
+  ReactNode,
+  SetStateAction
+} from 'react';
 
 export enum TwoColumnLayoutType {
   DEFAULT = 'DEFAULT',
@@ -16,10 +23,10 @@ export enum TwoColumnLayoutType {
 const TwoColumnLayout: FC<{
   dotIndicatorOptions: string[];
   managerSettingsOpen: boolean;
-  leftColumnComponent: any;
-  rightColumnComponent: any;
+  leftColumnComponent: ReactNode;
+  rightColumnComponent: ReactNode;
   fullComponent?: ReactChild | ReactChildren;
-  handleExitClick?: any;
+  handleExitClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   hideWallet?: boolean;
   hideEllipsis?: boolean;
   hideFooter?: boolean;
@@ -33,8 +40,8 @@ const TwoColumnLayout: FC<{
   showSideNav?: boolean;
   gridGapClass?: string;
   showDotIndicatorLabels?: boolean;
-  handlePrevious?: (event?: any) => void;
-  handleNext?: (event?: any) => void;
+  handlePrevious?: (index?: number) => void;
+  handleNext?: (index?: number) => void;
   nextBtnDisabled?: boolean;
 
   // deals only

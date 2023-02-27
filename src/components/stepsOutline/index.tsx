@@ -4,7 +4,7 @@ import { B2 } from '../typography';
 
 interface Step {
   title: string;
-  description?: string | any;
+  description?: string | JSX.Element;
   isInErrorState?: boolean;
 }
 interface Props {

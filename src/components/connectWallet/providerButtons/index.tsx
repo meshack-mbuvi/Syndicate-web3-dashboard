@@ -1,7 +1,14 @@
 import { SimpleTile, TileElevation } from '@/components/tile/simpleTile';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 
-declare let window: any;
+declare let window: {
+  ethereum: {
+    providers: IProvider[];
+    isMetaMask: boolean;
+    isConnectWallet: boolean;
+  };
+  open: (arg0: string, arg1: string) => void;
+};
 
 interface Props {
   elevation?: TileElevation;

@@ -1,5 +1,6 @@
 import IconPlus from '@/components/icons/plusIcon';
 import { ChevronRightIcon } from '@heroicons/react/outline';
+import { ReactNode } from 'react';
 import IconCirclePlus from '../icons/circlePlusIcon';
 export enum LinkType {
   CALENDAR = 'CALENDAR',
@@ -11,7 +12,7 @@ export const LinkButton = (props: {
   extraClasses?: string;
   onClick?: () => void;
   URL?: string;
-  children?: any;
+  children?: ReactNode;
   showChevron?: boolean;
 }): JSX.Element => {
   const {

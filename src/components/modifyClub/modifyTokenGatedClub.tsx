@@ -213,7 +213,7 @@ const ModifyTokenGatedClub: React.FC = () => {
       (pathname.includes('/modify') && !isOwner && !isLoading) ||
       isDemoMode
     ) {
-      router.replace(
+      void router.replace(
         `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }
@@ -242,7 +242,9 @@ const ModifyTokenGatedClub: React.FC = () => {
       }
       if (+maxTotalSupply === 0 && depositTokenSymbol) {
         if (depositTokenSymbol === nativeSymbol) {
-          dispatch(setMaxAmountRaising(+maxTotalSupply / nativeEchageRate));
+          dispatch(
+            setMaxAmountRaising(`${+maxTotalSupply / nativeEchageRate}`)
+          );
           // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
         } else {
@@ -349,7 +351,7 @@ const ModifyTokenGatedClub: React.FC = () => {
           false
         );
       }
-      dispatch(setMaxAmountRaising(+_tokencap));
+      dispatch(setMaxAmountRaising(_tokencap));
     }
   }, [
     depositTokenSymbol,
@@ -641,7 +643,9 @@ const ModifyTokenGatedClub: React.FC = () => {
     } else {
       setMaxAmountRaisingError('');
     }
-    dispatch(setMaxAmountRaising(Number(amount) >= 0 ? Number(amount) : 0));
+    dispatch(
+      setMaxAmountRaising(`${Number(amount) >= 0 ? Number(amount) : 0}`)
+    );
   };
 
   const cancelEdit = (): void => {
@@ -811,7 +815,7 @@ const ModifyTokenGatedClub: React.FC = () => {
                             : `Upper limit of the club’s raise, corresponding to a club token supply of ${
                                 depositTokenSymbol === nativeSymbol
                                   ? floatedNumberWithCommas(
-                                      maxAmountRaising * nativeEchageRate
+                                      +maxAmountRaising * nativeEchageRate
                                     )
                                   : floatedNumberWithCommas(maxAmountRaising)
                               } ${symbol}.`

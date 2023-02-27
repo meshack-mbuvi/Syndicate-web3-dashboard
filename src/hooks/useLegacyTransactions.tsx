@@ -37,7 +37,7 @@ export type SyndicateTransfers = {
 
 export type SyndicateAnnotation = {
   acquisitionDate: Date;
-  annotationMetadata: any;
+  annotationMetadata: string;
   chainId: number;
   companyName: string;
   createdAt: Date;

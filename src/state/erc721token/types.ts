@@ -1,3 +1,5 @@
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+
 export interface ERC721Token {
   name: string;
   owner: string;
@@ -21,7 +23,7 @@ export interface ERC721Token {
 
 export const initialState: {
   erc721Token: ERC721Token;
-  erc721TokenContract: any;
+  erc721TokenContract: ERC721Contract | null;
 } = {
   erc721Token: {
     name: '',

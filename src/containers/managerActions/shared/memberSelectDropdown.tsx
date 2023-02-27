@@ -1,9 +1,10 @@
-import { useEffect, useState, SetStateAction, Dispatch } from 'react';
-import { useDispatch } from 'react-redux';
 import { SearchInput } from '@/containers/managerActions/shared/searchInput';
-import { formatAddress } from 'src/utils/formatAddress';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { clubMember } from '@/hooks/clubs/utils/types';
 import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { formatAddress } from 'src/utils/formatAddress';
 
 export interface IMember {
   clubTokens: string;
@@ -15,7 +16,7 @@ export interface IMember {
 }
 
 interface IMemberSelectDropdown {
-  membersData: IMember[];
+  membersData: clubMember[];
   setMemberAddress?: Dispatch<SetStateAction<string>>;
   setShowMembersList?: Dispatch<SetStateAction<boolean>>;
 }

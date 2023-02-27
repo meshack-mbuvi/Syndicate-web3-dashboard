@@ -30,10 +30,22 @@ interface Props {
   onClick?: (
     event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
   ) => void;
-  onMouseOver?: any;
-  onMouseOut?: any;
-  onBlur?: any;
-  onFocus?: any;
+  onMouseOver?: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
+  onMouseOut?: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
+  onBlur?: (
+    event: React.FocusEvent<
+      HTMLInputElement | HTMLAnchorElement | HTMLButtonElement
+    >
+  ) => void;
+  onFocus?: (
+    event: React.FocusEvent<
+      HTMLInputElement | HTMLAnchorElement | HTMLButtonElement
+    >
+  ) => void;
   href?: string;
   target?: string;
   rel?: string;

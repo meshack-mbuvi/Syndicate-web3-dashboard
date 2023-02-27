@@ -1,6 +1,6 @@
 import { B3, B4 } from '@/components/typography';
 import clsx from 'clsx';
-import React, { useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 
 export enum UploaderProgressType {
   LOADING_BAR = 'LOADING_BAR',
@@ -14,10 +14,10 @@ interface Props {
   errorText?: string;
   promptTitle?: string;
   promptSubtitle?: string;
-  handleUpload: (e: any) => void;
+  handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCancelUpload: () => void;
   progressDisplayType?: UploaderProgressType;
-  addOn?: any;
+  addOn?: ReactNode;
   heightClass?: string;
   accept?: string;
   customClasses?: string;
@@ -38,37 +38,44 @@ export const FileUploader: React.FC<Props> = ({
   accept = '*',
   customClasses
 }) => {
-  const fileInput = useRef(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const isAddOnVisible = addOn && progressPercent === 0;
 
-  const cancelUpload = (e: any) => {
+  const cancelUpload = (e: { preventDefault: () => void }): void => {
     e.preventDefault();
-    // @ts-expect-error TS(2531): Object is possibly 'null'.
-    fileInput.current.value = null;
+    if (fileInput.current) {
+      fileInput.current.value = '';
+    }
+
     handleCancelUpload();
   };
 
   return (
     <button
-      className={`w-full relative transition-all ${
-        isAddOnVisible ? 'h-auto' : heightClass
-      } px-6 ${addOn && 'py-8'} border ${
-        isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6'
-      } border-dashed rounded ${
-        progressPercent <= 0 && 'hover:bg-gray-syn8'
-      } transition-all ease-out ${clsx(customClasses)} ${
-        progressPercent > 0 ? 'py-6-percent' : ''
-      }`}
+      className={clsx(
+        'w-full relative transition-all',
+        isAddOnVisible ? 'h-auto' : heightClass,
+        'px-6',
+        addOn && 'py-8',
+        'border',
+        isInputFocused ? 'border-blue-neptune' : 'border-gray-syn6',
+        'border-dashed rounded',
+        progressPercent <= 0 && 'hover:bg-gray-syn8',
+        'transition-all ease-out',
+        customClasses,
+        progressPercent > 0 && 'py-6-percent'
+      )}
     >
       <input
         type="file"
         ref={fileInput}
-        className={`absolute z-0 top-0 opacity-0 left-0 ${
-          addOn ? 'h-full' : heightClass
-        } ${
-          progressPercent > 0 && 'pointer-events-none'
-        } cursor-pointer w-full text-white`}
+        className={clsx(
+          'absolute z-0 top-0 opacity-0 left-0',
+          addOn ? 'h-full' : heightClass,
+          progressPercent > 0 && 'pointer-events-none',
+          'cursor-pointer w-full text-white'
+        )}
         onChange={handleUpload}
         onFocus={(): void => {
           if (!isInputFocused) {
@@ -84,9 +91,10 @@ export const FileUploader: React.FC<Props> = ({
       />
       {/* Waiting for file */}
       <div
-        className={`pointer-events-none text-center space-y-2 text-gray-syn4 ${
+        className={clsx(
+          'pointer-events-none text-center space-y-2 text-gray-syn4',
           progressPercent > 0 && 'hidden'
-        }`}
+        )}
       >
         <div className="flex justify-center space-x-2">
           <img
@@ -107,9 +115,10 @@ export const FileUploader: React.FC<Props> = ({
 
       {/* Upload progress */}
       <div
-        className={` space-y-3.5 text-left ${
+        className={clsx(
+          'space-y-3.5 text-left ',
           progressPercent === 0 && 'hidden'
-        }`}
+        )}
       >
         {/* File name */}
         <div className="flex -mt-4">
@@ -127,9 +136,10 @@ export const FileUploader: React.FC<Props> = ({
                         ? 'spinner-blue'
                         : 'checkmark-circle'
                     }.svg`}
-                    className={`w-4 h-4 ${
+                    className={clsx(
+                      'w-4 h-4',
                       progressPercent < 100 && 'animate-spin'
-                    }`}
+                    )}
                     alt="Icon"
                   />
                 )}
@@ -138,9 +148,10 @@ export const FileUploader: React.FC<Props> = ({
             {/* Upload success text */}
             {successText && !errorText && (
               <B3
-                extraClasses={`${
+                extraClasses={clsx(
+                  'text-sm mt-1',
                   progressPercent < 100 && 'hidden'
-                } text-sm mt-1`}
+                )}
               >
                 {successText}
               </B3>

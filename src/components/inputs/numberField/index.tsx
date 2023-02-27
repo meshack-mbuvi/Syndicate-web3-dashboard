@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent, ReactNode } from 'react';
 import { useController } from 'react-hook-form';
 import NumberFormat from 'react-number-format';
 
@@ -7,9 +7,9 @@ interface IProps {
   name?: string;
   placeholder?: string;
   type?: string;
-  info?: string;
+  info?: string | ReactNode;
   control: any;
-  addOn?: any;
+  addOn?: string | JSX.Element;
   column?: boolean;
   borderStyles?: string;
   paddingStyles?: string;
@@ -56,7 +56,7 @@ export const NumberField: React.FC<IProps> = ({
     defaultValue
   });
 
-  const handleSetMax = () => {
+  const handleSetMax = (): void => {
     onChange(maximumValue);
   };
 
@@ -98,7 +98,7 @@ export const NumberField: React.FC<IProps> = ({
               : 'pr-4'
           }`}
           placeholder={placeholder}
-          onChange={(event: any) => {
+          onChange={(event: ChangeEvent<HTMLInputElement>): void => {
             const { value } = event.target;
 
             onChange(value.replaceAll(',', ''));

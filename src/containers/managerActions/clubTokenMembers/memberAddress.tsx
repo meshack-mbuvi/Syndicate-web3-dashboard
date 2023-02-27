@@ -1,7 +1,6 @@
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
 
@@ -9,13 +8,14 @@ import {
   AddressImageSize,
   AddressWithENS
 } from '@/components/shared/ensAddress';
+import { useMemberHasSignedQuery } from '@/hooks/data-fetching/backend/generated-types';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
+import { getFirstOrString } from '@/utils/stringUtils';
 import { SignedIcon } from '../shared/signedIcon';
-import { MEMBER_SIGNED_QUERY } from '@/graphql/backend_queries';
 
 interface IProps {
   memberAddress: string;
-  setSelectedMember: any;
+  setSelectedMember: (member: { [x: string]: ReactNode }) => void;
 }
 export const MemberAddressComponent: React.FC<IProps> = (props) => {
   const { memberAddress, setSelectedMember, ...rest } = props;
@@ -25,11 +25,11 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
     }
   } = useSelector((state: AppState) => state);
 
-  const {
-    query: { clubAddress }
-  } = useRouter();
+  const router = useRouter();
 
-  const { data, refetch } = useQuery(MEMBER_SIGNED_QUERY, {
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
+
+  const { data, refetch } = useMemberHasSignedQuery({
     variables: {
       clubAddress,
       address: memberAddress
@@ -43,14 +43,14 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     if (memberAddress && activeNetwork.chainId) {
-      refetch();
+      void refetch();
     }
   }, [memberAddress, activeNetwork.chainId]);
 
   return (
     <button
       className="flex space-x-3 align-center text-base leading-6"
-      onClick={() => setSelectedMember({ memberAddress, ...rest })}
+      onClick={(): void => setSelectedMember({ memberAddress, ...rest })}
     >
       <p className="flex my-1 items-center ">
         {ethersProvider ? (

@@ -44,8 +44,8 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
     const baseURL = activeNetwork?.blockExplorer?.baseUrl;
     const resource =
       type === 'transaction'
-        ? activeNetwork.blockExplorer.resources.transaction
-        : activeNetwork.blockExplorer.resources.address;
+        ? activeNetwork?.blockExplorer.resources.transaction
+        : activeNetwork?.blockExplorer.resources.address;
     return [baseURL, resource, explorerInfo].join('/');
   }, [activeNetwork, type, explorerInfo]);
 
@@ -72,7 +72,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
                     : 'text-white'
                 }`}
               >
-                {prefix} {activeNetwork.blockExplorer.name} {suffix}
+                {prefix} {activeNetwork?.blockExplorer.name} {suffix}
               </div>
               <ExternalLinkIcon
                 className={`ml-2 w-4 text-blue`}

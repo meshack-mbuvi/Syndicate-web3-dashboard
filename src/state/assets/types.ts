@@ -1,3 +1,15 @@
+import { Collectible } from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
+
+export type CollectibleResult = {
+  [x: string]:
+    | ({
+        [x: string]: string | number | boolean;
+      } & { assetId?: string })
+    | string
+    | number
+    | null;
+};
+
 export interface IToken {
   isEditingInFiat?: boolean;
   isLoading?: boolean;
@@ -23,7 +35,7 @@ export interface IToken {
 }
 export interface InitialState {
   tokensResult: IToken[];
-  collectiblesResult: any;
+  collectiblesResult: Collectible[];
   loading: boolean;
   loadingCollectibles: boolean;
   tokensFetchError: boolean;

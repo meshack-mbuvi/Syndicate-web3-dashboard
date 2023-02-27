@@ -2,10 +2,11 @@ import {
   EditButton,
   SubmitContent
 } from '@/components/collectives/edit/editables';
-import { useRef, Dispatch, SetStateAction } from 'react';
-import { B2, B3, H3 } from '../typography';
-import { useDispatch } from 'react-redux';
 import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
+import clsx from 'clsx';
+import { Dispatch, MutableRefObject, SetStateAction, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { B2, B3, H3 } from '../typography';
 interface Props {
   title: string;
   subtitle?: string;
@@ -28,7 +29,7 @@ interface Props {
   editGroupFieldClicked?: boolean;
   setEditGroupFieldClicked?: Dispatch<SetStateAction<boolean>>;
   handleDisclaimerConfirmation?: () => void;
-  cancelEdit?: any;
+  cancelEdit?: () => void;
   errorUploadText?: string;
 }
 
@@ -45,8 +46,8 @@ export const GroupSettingsTable: React.FC<Props> = ({
   cancelEdit,
   errorUploadText
 }) => {
-  const rowsRef = useRef<HTMLInputElement>();
-  const editRef = useRef<HTMLInputElement>();
+  const rowsRef = useRef<HTMLInputElement | HTMLDivElement>();
+  const editRef = useRef<HTMLInputElement>(null);
   const transitionSettings = 'transition-all duration-700';
 
   const dispatch = useDispatch();
@@ -56,9 +57,10 @@ export const GroupSettingsTable: React.FC<Props> = ({
       <div className="space-y-8">
         {/* Top row */}
         <div
-          className={`flex justify-between items-center ${
+          className={clsx(
+            'flex justify-between items-center',
             activeRow && 'opacity-50'
-          }`}
+          )}
         >
           <div className="flex flex-col">
             <H3>{title}</H3>
@@ -71,8 +73,7 @@ export const GroupSettingsTable: React.FC<Props> = ({
 
         {/* Rows */}
         <div
-          // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
-          ref={rowsRef}
+          ref={rowsRef as MutableRefObject<HTMLDivElement>}
           className={`space-y-10 transition-all duration-500 overflow-hidden ${extraClasses}`}
         >
           {rows.map((row, index) => {
@@ -97,7 +98,6 @@ export const GroupSettingsTable: React.FC<Props> = ({
                     className={`xl:mr-0 ${
                       editGroupFieldClicked ? 'sm:col-span-8' : 'sm:col-span-6'
                     } xl:mr-0 flex space-x-3 items-center text-white`}
-                    // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
                     ref={editRef}
                   >
                     <div className="w-full flex flex-col space-y-6">
@@ -116,13 +116,12 @@ export const GroupSettingsTable: React.FC<Props> = ({
                     <div className="sm:col-span-2 flex justify-end">
                       {isEditable && (
                         <EditButton
-                          handleClick={() => {
-                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-                            setActiveRow(rowIndex);
-                            // @ts-expect-error TS(2345): Argument of type 'number | undefined' is not assig... Remove this comment to see the full error message
-                            dispatch(setActiveRowIdx(rowIndex));
-                            // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-                            setEditGroupFieldClicked(true);
+                          handleClick={(): void => {
+                            setEditGroupFieldClicked?.(true);
+                            if (rowIndex) {
+                              setActiveRow?.(rowIndex);
+                              dispatch(setActiveRowIdx(rowIndex));
+                            }
                           }}
                         />
                       )}
@@ -138,15 +137,14 @@ export const GroupSettingsTable: React.FC<Props> = ({
               <div className="sm:col-span-8 xl:mr-0 flex">
                 <SubmitContent
                   isSubmitDisabled={errorUploadText !== ''}
-                  // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
-                  handleEdit={handleDisclaimerConfirmation}
-                  cancelEdit={() => {
-                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-                    setActiveRow(0);
+                  handleEdit={(): void => {
+                    handleDisclaimerConfirmation?.();
+                  }}
+                  cancelEdit={(): void => {
+                    setActiveRow?.(0);
                     dispatch(setActiveRowIdx(0));
-                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-                    setEditGroupFieldClicked(false);
-                    cancelEdit();
+                    setEditGroupFieldClicked?.(false);
+                    cancelEdit?.();
                   }}
                 />
               </div>

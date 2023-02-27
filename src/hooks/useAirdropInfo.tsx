@@ -1,10 +1,10 @@
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAirdropCreatedQuery } from './data-fetching/thegraph/generated-types';
 import { useDemoMode } from './useDemoMode';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 export interface IAirdropInfo {
   id: string;
@@ -39,7 +39,7 @@ const useFetchAirdropInfo = (): {
 
   const isDemoMode = useDemoMode();
 
-  const { merkleProofLoading: merkleLoading, merkleProof: myMerkleProof } =
+  const { loading: merkleLoading, merkleProof: myMerkleProof } =
     useFetchMerkleProof();
 
   const [airdropInfo, setAirdropInfo] = useState(emptyAirdropInfo);

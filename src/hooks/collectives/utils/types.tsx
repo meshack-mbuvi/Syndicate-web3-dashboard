@@ -22,7 +22,7 @@ export type ICollectiveDetails = Omit<SyndicateCollective, 'owners'> & {
   metadataCid: string;
   mediaCid: string;
   collectiveCardType: RequirementType;
-  custom?: any;
+  custom?: { [x: string]: string };
 };
 export interface CollectiveMetadata {
   name: string;

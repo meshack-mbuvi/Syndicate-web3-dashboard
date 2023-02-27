@@ -10,7 +10,7 @@ export interface SectionCardProps {
   /** Header text for the section card */
   header: string;
   /** Subtext to render on this component */
-  content: any;
+  content: React.ReactNode;
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
@@ -72,7 +72,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
         </div>
       </Portal>
       <div
-        onMouseEnter={(e) => {
+        onMouseEnter={(e): void => {
           handlePopoverOpen(e);
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           setCoords({
@@ -80,7 +80,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
             top: `${rect.y + 60}px` // add scrollY offset, as soon as getBountingClientRect takes on screen coords
           });
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(): void => {
           handlePopoverClose();
         }}
       >

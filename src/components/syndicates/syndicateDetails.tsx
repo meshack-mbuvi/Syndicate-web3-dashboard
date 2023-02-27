@@ -6,6 +6,7 @@ import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useConnectedAccountDetails } from '@/hooks/useConnectedAccountDetails';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
@@ -22,7 +23,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NumberTreatment from '../NumberTreatment';
 import { DetailsCard, ProgressIndicator } from './shared';
-import useFetchMerkleProof from '@/hooks/useMerkleProof';
 
 interface ClubDetails {
   header: string;
@@ -490,7 +490,7 @@ const SyndicateDetails: FC<{
           !managerSettingsOpen && (
             <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
-                totalDeposits={totalDeposits}
+                totalDeposits={Number(totalDeposits)}
                 depositTotalMax={maxTotalSupply.toString()}
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}

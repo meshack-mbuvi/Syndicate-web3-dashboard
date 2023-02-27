@@ -15,7 +15,7 @@ import {
 import { resetCollectiveCreationState } from '@/state/createCollective/slice';
 import { elementToImage } from '@/utils/elementToImage';
 import router from 'next/router';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import TwoColumnLayout, { TwoColumnLayoutType } from '../twoColumnLayout';
 import CreateCollectiveCustomize, { CustomizeRightPanel } from './customize';
@@ -156,7 +156,9 @@ const CreateCollectiveContainer: FC = () => {
               <CreateCollectiveDesign
                 handleNext={handleNext}
                 setNextBtnDisabled={setNextBtnDisabled}
-                captureArtworkRef={captureArtworkRef}
+                captureArtworkRef={
+                  captureArtworkRef as MutableRefObject<HTMLButtonElement>
+                }
                 activeIndex={activeIndex}
                 hideParticlesEngine={activeIndex > 0} // hide particles to avoid glitchy behavior on a page with multiple particle components
               />

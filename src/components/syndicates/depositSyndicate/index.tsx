@@ -101,7 +101,7 @@ const DepositSyndicate: React.FC = () => {
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
 
-  const { merkleProofLoading: merkleLoading, merkleProof: myMerkleProof } =
+  const { loading: merkleLoading, merkleProof: myMerkleProof } =
     useFetchMerkleProof();
   const { tokenClaimLoading: claimLoading, isTokenClaimed } =
     useFetchTokenClaim();
@@ -197,7 +197,7 @@ const DepositSyndicate: React.FC = () => {
         : +depositAmountFinalized;
       const newTotalSupply = +totalSupply + +memberTokens;
       const memberPercentShare = memberTokens / newTotalSupply;
-      const memberDilutedShare = memberTokens / maxTotalSupply;
+      const memberDilutedShare = memberTokens / +maxTotalSupply;
 
       setOwnershipShare(+memberPercentShare * 100);
       setFullyDilutedShare(memberDilutedShare * 100);
@@ -426,7 +426,7 @@ const DepositSyndicate: React.FC = () => {
       if (mintModule?.toLowerCase() === NATIVE_MINT_MODULE?.toLowerCase()) {
         await syndicateContracts.NativeMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
-          erc20TokenContract.clubERC20Contract._address,
+          erc20TokenContract?.clubERC20Contract._address,
           account,
           onTxConfirm,
           onTxReceipt,
@@ -439,7 +439,7 @@ const DepositSyndicate: React.FC = () => {
       ) {
         await syndicateContracts.SingleTokenMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
-          erc20TokenContract.clubERC20Contract._address,
+          erc20TokenContract?.clubERC20Contract._address,
           account,
           onTxConfirm,
           onTxReceipt,
@@ -451,7 +451,7 @@ const DepositSyndicate: React.FC = () => {
       ) {
         await syndicateContracts.DepositTokenMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
-          erc20TokenContract.clubERC20Contract._address,
+          erc20TokenContract?.clubERC20Contract._address,
           account,
           onTxConfirm,
           onTxReceipt,

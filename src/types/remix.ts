@@ -17,7 +17,7 @@ export interface FuncABI {
   inputs: FuncInput[];
   stateMutability: string;
   anonymous?: boolean;
-  outputs?: any[];
+  outputs?: { [x: string]: string }[];
   payable?: boolean;
-  constant?: any;
+  constant?: boolean;
 }

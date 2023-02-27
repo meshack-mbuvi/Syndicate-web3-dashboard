@@ -5,6 +5,7 @@ import Modal, { ModalStyle } from '@/components/modal';
 import { ShareCard } from '@/components/social';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { H4 } from '@/components/typography';
+import { ReactNode } from 'react';
 
 interface Props {
   isModalVisible: boolean;
@@ -13,10 +14,12 @@ interface Props {
   title?: string;
   socialURL: string;
   description: string;
-  handleClick: any;
-  buttonLabel: string | any;
+  handleClick: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
+  buttonLabel: string | ReactNode;
   imageOptions?: string[];
-  customVisual?: any;
+  customVisual?: ReactNode;
   showCollectiveCTA?: boolean;
 }
 

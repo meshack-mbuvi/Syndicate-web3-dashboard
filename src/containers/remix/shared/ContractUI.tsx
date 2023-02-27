@@ -16,7 +16,7 @@ import { toChecksumAddress } from 'ethereumjs-util';
 import { FunctionFragment, isAddress } from 'ethers/lib/utils';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AbiItem } from 'web3-utils';
 import AbiUI from './AbiUI';
@@ -76,7 +76,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
   const [hasError, setHasError] = useState(false);
   const [progressTitle, setProgressTitle] = useState<string>();
   const [progressDescription, setProgressDescription] = useState<
-    string | ReactNode
+    string | JSX.Element
   >();
   const [transactionHash, setTransactionHash] = useState<string>();
 
@@ -196,7 +196,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         The function{`${isError ? ' call' : ''}`}
         <M2 extraClasses="text-gray-syn3  inline-block">
           <span className="bg-gray-syn7 pb-1 px-2 text-center rounded">
-            {`${fnFragment?.name}: ${getInputs(fnFragment)}`}
+            {`${fnFragment?.name ?? ''}: ${getInputs(fnFragment)}`}
           </span>
         </M2>
         {!isError
@@ -224,7 +224,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         The function{' '}
         <M2 extraClasses="text-gray-syn3 inline-block">
           <span className="bg-gray-syn7 pb-1 px-2 text-center rounded">
-            {`${fnFragment?.name}: ${getInputs(fnFragment)}`}
+            {`${fnFragment?.name ?? ''}: ${getInputs(fnFragment)}`}
           </span>
         </M2>{' '}
         was called successfully.
@@ -241,7 +241,7 @@ export const ContractUI: React.FC<ContractUIProps> = ({
         The function{' '}
         <M2 extraClasses="text-gray-syn3 inline-block">
           <span className="bg-gray-syn7 pb-1 px-2 text-center rounded">
-            {`${fnFragment?.name}: ${getInputs(fnFragment)}`}
+            {`${fnFragment?.name ?? ''}: ${getInputs(fnFragment)}`}
           </span>
         </M2>{' '}
         has failed. Please verify that the data inputs are valid.

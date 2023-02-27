@@ -74,8 +74,10 @@ export const TokenLogicBuilder: React.FC<Props> = ({
             ]);
           }}
         >
-          <img src="/images/add-gray.svg" alt="Icon" className="w-4 h-4" />
-          <div>Add a rule</div>
+          <>
+            <img src="/images/add-gray.svg" alt="Icon" className="w-4 h-4" />
+            <div>Add a rule</div>
+          </>
         </PillButtonOutlined>
       )}
     </div>

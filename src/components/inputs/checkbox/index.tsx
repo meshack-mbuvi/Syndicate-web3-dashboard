@@ -1,22 +1,21 @@
 import clsx from 'clsx';
 import React from 'react';
-import { useController } from 'react-hook-form';
+import { Control, useController } from 'react-hook-form';
 
 interface IProps {
   label?: string;
   name?: string;
-  control: any;
+  control: Control;
   className?: string;
 }
 
 export const Checkbox: React.FC<IProps> = ({
   control,
-  name,
+  name = '',
   label,
   className
 }) => {
   const { field } = useController({
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     defaultValue: false
@@ -29,7 +28,7 @@ export const Checkbox: React.FC<IProps> = ({
           <input
             type="checkbox"
             className="bg-transparent rounded focus:ring-offset-0"
-            checked={field.value}
+            checked={field.value as boolean}
             {...field}
           />
           <span className="pl-4">{label}</span>

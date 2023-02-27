@@ -5,7 +5,7 @@ export enum TileElevation {
 
 interface Props {
   elevation?: TileElevation;
-  addOn?: any;
+  addOn?: React.ReactNode;
   onClick?: () => void;
 }
 

@@ -1,36 +1,39 @@
 /* This example requires Tailwind CSS v2.0+ */
+import { SearchInput } from '@/components/inputs';
 import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { Listbox, Transition } from '@headlessui/react';
 import Image from 'next/image';
-import { SearchInput } from '@/components/inputs';
+import { ReactNode } from 'react';
 // import { SearchForm } from '../searchForm';
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+type MemberItem = {
+  clubTokens: string;
+  memberAddress: string;
+  ownershipShare: string;
+};
 /**
  * Custom select input for member item
  *
  * @param props
- *   - memberItems -> an array of objects containing
- *      - memberAddress
- *      - tokens
- *      - ownershipShare, etc
- *   - selected -> the item which is currently selected
+ *   - memberItem[]
+ *   - selected -> address which is currently selected
  *   - label -> label of the select component/field
  *   - searchValue -> string representing the value typed by user from the search field
  *   - searchHandler -> a function that sets searchValue
  * @returns
  */
 export const SelectField: React.FC<{
-  memberItems: any;
-  label: any;
-  handleSelected: any;
-  selected: any;
-  searchHandler: any;
-  searchValue: any;
+  memberItems: MemberItem[];
+  label: string;
+  handleSelected: (selected: MemberItem) => void;
+  selected: MemberItem;
+  searchHandler: (searchValue: string) => void;
+  searchValue: string;
 }> = (props) => {
   const {
     memberItems,
@@ -41,7 +44,7 @@ export const SelectField: React.FC<{
     searchValue
   } = props;
 
-  const handleSearch = (event: any) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
     searchHandler(value.trim());
   };
@@ -49,14 +52,14 @@ export const SelectField: React.FC<{
   return (
     <Listbox
       value={selected}
-      onChange={(selected) => {
+      onChange={(selected): void => {
         const [selectedMember] = memberItems.filter(
-          (member: any) => member.memberAddress === selected
+          (member) => member.memberAddress === selected.memberAddress
         );
         handleSelected(selectedMember);
       }}
     >
-      {({ open }) => (
+      {({ open }): ReactNode => (
         <div>
           <Listbox.Label className="block font-whyte mb-2">
             {label}
@@ -134,17 +137,17 @@ export const SelectField: React.FC<{
                         <p>Club tokens (share)</p>
                       </div>
                       <div className="space-y-4">
-                        {memberItems.map((member: any) => (
+                        {memberItems.map((member) => (
                           <Listbox.Option
                             key={member.memberAddress}
-                            className={() =>
+                            className={(): string =>
                               classNames(
                                 'cursor-pointer select-none relative text-white'
                               )
                             }
                             value={member?.memberAddress}
                           >
-                            {({ selected }) => (
+                            {({ selected }): ReactNode => (
                               <div>
                                 <div className="flex justify-between">
                                   <div className="flex space-x-3">

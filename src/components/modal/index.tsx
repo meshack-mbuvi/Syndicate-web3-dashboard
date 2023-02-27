@@ -179,8 +179,7 @@ const Modal = (props: ModalProps): JSX.Element => {
                   <button
                     type="button"
                     className="bg-white m-4 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-0"
-                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
-                    onClick={() => closeModal()}
+                    onClick={(): void => closeModal?.()}
                   >
                     <span className="sr-only">Back</span>
                     <img

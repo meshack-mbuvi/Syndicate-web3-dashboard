@@ -469,7 +469,7 @@ const Stepper = ({
     }
   }, [isOperatingAgVisible, isSubscriptionAgVisible]);
 
-  const handleActiveAg = (idx: number) => {
+  const handleActiveAg = (idx: number): void => {
     setActiveAgreement(idx);
     const mapper = { 0: operatingAgTitleRef, 1: subscriptionAgTitleRef };
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -488,7 +488,7 @@ const Stepper = ({
               idx === activeAgreement ? '' : 'opacity-50'
             }`}
             key={idx}
-            onClick={() => handleActiveAg(idx)}
+            onClick={(): void => handleActiveAg(idx)}
             aria-hidden="true"
           >
             <div>{step.noun}</div>

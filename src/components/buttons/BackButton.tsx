@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 const BackButton: React.FC<{
   isSticky?: boolean;
   customClasses?: string;
-  transform?: any;
+  transform?: string;
   isHidden?: boolean;
   isSettingsPage?: boolean;
 }> = ({

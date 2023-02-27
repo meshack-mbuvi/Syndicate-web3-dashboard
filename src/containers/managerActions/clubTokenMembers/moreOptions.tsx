@@ -1,14 +1,16 @@
 import { Menu, Transition } from '@headlessui/react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 /**
  * Adds more options component to club members table
  */
 const moreOptions: React.FC<{
-  moreOptionItems: any;
-  handleMenuItemClick: any;
+  moreOptionItems: ReactNode;
+  handleMenuItemClick: () => void;
 }> = ({ moreOptionItems, handleMenuItemClick }) => {
-  const handleMenuItemSelect = (e: any) => {
+  const handleMenuItemSelect = (
+    e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>
+  ): void => {
     // stops click event from opening the member details modal
     e.stopPropagation();
     handleMenuItemClick();
@@ -17,13 +19,13 @@ const moreOptions: React.FC<{
     <Menu
       as="div"
       className="flex justify-end w-fit-content z-50"
-      onClick={(e: any) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement>): void => {
         // since there is only one menu item
         // use just e.stopPropagation(); here once more menu items are added.
         handleMenuItemSelect(e);
       }}
     >
-      {({ open }) => (
+      {({ open }): ReactNode => (
         <>
           <Menu.Button
             className="relative text-right justify-end flex space-x-2 items-center text-end"
@@ -54,7 +56,9 @@ const moreOptions: React.FC<{
               className="absolute w-68 right-0 mt-7 z-50 origin-top-right bg-gray-syn7 divide-y divide-gray-9 rounded-1.5lg shadow-lg outline-none px-4 py-5 flex items-center justify-center"
             >
               <button
-                onClick={(e) => {
+                onClick={(
+                  e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                ): void => {
                   handleMenuItemSelect(e);
                 }}
               >

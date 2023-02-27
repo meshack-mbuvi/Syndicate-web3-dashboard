@@ -1,14 +1,14 @@
 import { B3, B4, H4 } from '@/components/typography';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 /**
  * Displays a component with title and subtitle text
  * @returns
  */
-const DistributionHeader: React.FC<{ titleText: any; subTitleText: any }> = ({
-  titleText,
-  subTitleText
-}) => {
+const DistributionHeader: React.FC<{
+  titleText: ReactNode;
+  subTitleText: ReactNode;
+}> = ({ titleText, subTitleText }) => {
   return (
     <>
       {/* Desktop */}

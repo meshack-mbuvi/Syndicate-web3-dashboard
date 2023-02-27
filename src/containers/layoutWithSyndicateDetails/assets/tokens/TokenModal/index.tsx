@@ -2,14 +2,14 @@ import Modal, { ModalStyle } from '@/components/modal';
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
 import { TransactionCategory } from '@/state/erc20transactions/types';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { CategoryPill } from '../../../activity/shared/CategoryPill';
 import TokenDetail from '../../collectibles/shared/TokenDetail';
 
 interface ITokenModal {
   showModal: boolean;
-  closeModal: any;
-  tokenDetails: any;
+  closeModal: () => void;
+  tokenDetails: { [x: string]: string };
   isOwner: boolean;
 }
 
@@ -19,11 +19,8 @@ const TokenModal: React.FC<ITokenModal> = ({
   tokenDetails,
   isOwner
 }) => {
-  const addGrayToDecimalInput = (str: any) => {
-    if (typeof str !== 'string') {
-      str.toString();
-    }
-    const [wholeNumber, decimalPart] = str.split('.');
+  const addGrayToDecimalInput = (str: string | number): ReactNode => {
+    const [wholeNumber, decimalPart] = str.toString().split('.');
     return (
       <div className="flex">
         {wholeNumber ? <p className="text-white">{wholeNumber}</p> : null}
@@ -32,7 +29,7 @@ const TokenModal: React.FC<ITokenModal> = ({
     );
   };
 
-  const additionalDetails = {
+  const additionalDetails: { [x: string]: string } = {
     'Token name': tokenDetails.tokenName,
     'Club balance': floatedNumberWithCommas(tokenDetails.tokenBalance),
     Value: tokenDetails.value
@@ -41,7 +38,7 @@ const TokenModal: React.FC<ITokenModal> = ({
     <Modal
       modalStyle={ModalStyle.DARK}
       show={showModal}
-      closeModal={() => closeModal()}
+      closeModal={(): void => closeModal()}
       customWidth="sm:w-564 w-full"
       customClassName="p-0"
       showCloseButton={false}
@@ -96,7 +93,6 @@ const TokenModal: React.FC<ITokenModal> = ({
                 <div key={index}>
                   <TokenDetail
                     title={key}
-                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     value={additionalDetails[key]}
                     symbol={tokenDetails.tokenSymbol}
                   />

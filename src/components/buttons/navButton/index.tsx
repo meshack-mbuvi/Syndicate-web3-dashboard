@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import Image from 'next/image';
 import React from 'react';
 
@@ -12,9 +13,9 @@ export enum NavButtonType {
 
 interface Props {
   type?: NavButtonType;
-  onClick?: (event?: any) => void;
-  handlePrevious?: (event?: any) => void;
-  handleNext?: (event?: any) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handlePrevious?: (index?: number) => void;
+  handleNext?: (index?: number) => void;
   currentStep?: number;
   disabled?: boolean;
   extraClasses?: string;
@@ -71,12 +72,20 @@ export const NavButton: React.FC<Props> = ({
       )}
       {(type === NavButtonType.UP || type === NavButtonType.VERTICAL) && (
         <button
-          className={`p-1 -m-2 relative ${
+          className={clsx(
+            'p-1 -m-2 relative text-gray-syn4 hover:text-white ease-out transition-all',
             type === NavButtonType.VERTICAL && 'top-1'
-          } text-gray-syn4 hover:text-white ease-out transition-all`}
-          onClick={type === NavButtonType.UP ? onClick : handlePrevious}
-          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-          disabled={type === NavButtonType.UP && currentStep <= 1}
+          )}
+          onClick={
+            type === NavButtonType.UP
+              ? (e): void => onClick?.(e)
+              : (): void => handlePrevious?.()
+          }
+          disabled={
+            type === NavButtonType.UP &&
+            currentStep !== undefined &&
+            currentStep <= 1
+          }
         >
           <svg
             className="fill-current w-5 h-5"
@@ -90,12 +99,13 @@ export const NavButton: React.FC<Props> = ({
       )}
       {(type === NavButtonType.DOWN || type === NavButtonType.VERTICAL) && (
         <button
-          className={`p-1 -m-2 relative ${
+          className={clsx(
+            `p-1 -m-2 relative text-gray-syn4 ${
+              disabled ? 'cursor-not-allowed' : 'hover:text-white'
+            } ease-out transition-all`,
             type === NavButtonType.VERTICAL && 'top-1'
-          } text-gray-syn4 ${
-            disabled ? 'cursor-not-allowed' : 'hover:text-white'
-          } ease-out transition-all`}
-          onClick={handleNext}
+          )}
+          onClick={() => handleNext?.()}
           disabled={disabled}
         >
           <svg
@@ -112,11 +122,11 @@ export const NavButton: React.FC<Props> = ({
       {/* Horizontal navigation buttons */}
       {type === NavButtonType.HORIZONTAL && (
         <button
-          className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
+          className={clsx(
+            'flex py-auto text-gray-syn4 hover:text-white ease-out transition-all',
             !handlePrevious && 'cursor-not-allowed'
-          }`}
-          // @ts-expect-error TS(2322): Type '((event?: any) => void) | null' is not assig... Remove this comment to see the full error message
-          onClick={handlePrevious ? handlePrevious : null}
+          )}
+          onClick={(): void => handlePrevious?.()}
         >
           <Image
             src="/images/chevron-left-gray.svg"
@@ -129,11 +139,11 @@ export const NavButton: React.FC<Props> = ({
 
       {type === NavButtonType.HORIZONTAL && (
         <button
-          className={`flex py-auto text-gray-syn4 hover:text-white ease-out transition-all ${
+          className={clsx(
+            'flex py-auto text-gray-syn4 hover:text-white ease-out transition-all',
             (!handleNext || disabled) && 'cursor-not-allowed'
-          }`}
-          // @ts-expect-error TS(2322): Type '((event?: any) => void) | null' is not assig... Remove this comment to see the full error message
-          onClick={handleNext ? handleNext : null}
+          )}
+          onClick={() => handleNext?.()}
           disabled={disabled}
         >
           <Image

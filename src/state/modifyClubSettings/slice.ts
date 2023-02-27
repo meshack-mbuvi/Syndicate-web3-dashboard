@@ -14,7 +14,7 @@ const modifyClubSettingsSlice = createSlice({
     setExistingAmountRaised(state, action: PayloadAction<number>) {
       state.existingAmountRaised = action.payload;
     },
-    setExistingMaxAmountRaising(state, action: PayloadAction<number>) {
+    setExistingMaxAmountRaising(state, action: PayloadAction<string>) {
       state.existingMaxAmountRaising = action.payload;
     },
     setExistingMaxNumberOfMembers(state, action: PayloadAction<number>) {
@@ -26,7 +26,7 @@ const modifyClubSettingsSlice = createSlice({
     setMaxNumberOfMembers(state, action: PayloadAction<number>) {
       state.maxNumberOfMembers = action.payload;
     },
-    setMaxAmountRaising(state, action: PayloadAction<number>) {
+    setMaxAmountRaising(state, action: PayloadAction<string>) {
       state.maxAmountRaising = action.payload;
     },
     setOpenToDepositsUntil(state, action: PayloadAction<Date>) {

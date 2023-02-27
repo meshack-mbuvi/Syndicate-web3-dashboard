@@ -43,7 +43,7 @@ Default.args = {
   tokensToMintOrBurn: 83948,
   newTotalSupply: 30000,
   symbol: '✺RACA',
-  totalSupply: 20000,
+  totalSupply: '20000',
   memberToUpdate: {
     clubTokens: '3455',
     memberAddress: '0x9c6ce69f349430d31a2bfbe5a052fc3e48ad28cf',

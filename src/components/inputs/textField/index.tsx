@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useController } from 'react-hook-form';
 import ClearIcon from '/public/images/close-circle.svg';
 
@@ -8,7 +8,7 @@ interface IProps {
   label?: string;
   name?: string;
   placeholder?: string;
-  info?: any;
+  info?: string | JSX.Element;
   control: any;
   addOn?: string;
   column?: boolean;
@@ -17,11 +17,11 @@ interface IProps {
   borderOutline?: boolean;
   textAlignment?: string;
   cornerHint?: {
-    text: string | any;
+    text: string | ReactNode;
     textColor?: string;
   };
   disabled?: boolean;
-  style?: any;
+  style?: string;
   required?: boolean;
   autoFocus?: boolean;
   showWarning?: boolean;
@@ -37,7 +37,7 @@ interface IProps {
  */
 export const TextField: React.FC<IProps> = ({
   control,
-  name,
+  name = '',
   placeholder,
   info,
   addOn,
@@ -60,7 +60,6 @@ export const TextField: React.FC<IProps> = ({
     field: { value, ...fieldAttributes },
     formState: { errors }
   } = useController({
-    // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
     name,
     control,
     rules: { required },
@@ -69,15 +68,15 @@ export const TextField: React.FC<IProps> = ({
 
   const [showValidation, setShowValidation] = useState(false);
 
-  const handleOnFocus = () => {
+  const handleOnFocus = (): void => {
     setShowValidation(false);
   };
 
-  const handleOnBlur = () => {
+  const handleOnBlur = (): void => {
     setShowValidation(true);
   };
 
-  const handleClear = () => {
+  const handleClear = (): void => {
     fieldAttributes.onChange('');
   };
 
@@ -116,10 +115,8 @@ export const TextField: React.FC<IProps> = ({
                     : 'border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0'
                 }`
           }  text-white placeholder-gray-syn5`}
-          // @ts-expect-error TS(2783): 'name' is specified more than once, so this usage ... Remove this comment to see the full error message
-          name={name}
           {...fieldAttributes}
-          value={value}
+          value={value as string}
           type="text"
           placeholder={placeholder}
           disabled={disabled}

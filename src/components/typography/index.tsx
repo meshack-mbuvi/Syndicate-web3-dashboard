@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+import { ReactNode, RefObject } from 'react';
 // Title
 
 export const T1 = ({
@@ -7,21 +9,23 @@ export const T1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: string | JSX.Element;
   medium?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: React.ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-T1 transform transition-font-size ${
+      className={clsx(
+        'text-T1 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : medium
           ? 'font-medium'
-          : 'font-semibold'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-semibold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -36,21 +40,23 @@ export const T2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   medium?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-T2 transform transition-font-size ${
+      className={clsx(
+        'text-T2 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : medium
           ? 'font-medium'
-          : 'font-semibold'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-semibold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -65,21 +71,23 @@ export const T3 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   medium?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-T3 transform transition-font-size ${
+      className={clsx(
+        'text-T3 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : medium
           ? 'font-medium'
-          : 'font-semibold'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-semibold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -94,21 +102,23 @@ export const T4 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   medium?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-T4 transform transition-font-size ${
+      className={clsx(
+        'text-T4 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : medium
           ? 'font-medium'
-          : 'font-semibold'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-semibold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -123,21 +133,23 @@ export const T5 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   medium?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-T5 transform transition-font-size ${
+      className={clsx(
+        'text-T5 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : medium
           ? 'font-medium'
-          : 'font-semibold'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-semibold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -155,23 +167,25 @@ export const H1 = ({
   extraClasses,
   ...rest
 }: {
-  forwardRef?: any;
-  children?: any;
+  forwardRef?: RefObject<HTMLDivElement> | null;
+  children?: ReactNode;
   regular?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
       ref={forwardRef}
-      className={`text-H1-mobile sm:text-H1 transform transition-font-size ${
+      className={clsx(
+        'text-H1-mobile sm:text-H1 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : regular
           ? 'font-regular'
-          : 'font-medium'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-medium',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -186,21 +200,23 @@ export const H2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   regular?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-H2-mobile sm:text-H2 transform transition-font-size ${
+      className={clsx(
+        'text-H2-mobile sm:text-H2 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : regular
           ? 'font-regular'
-          : 'font-medium'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-medium',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -215,21 +231,23 @@ export const H3 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   regular?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-H3-mobile sm:text-H3 transform transition-font-size ${
+      className={clsx(
+        'text-H3-mobile sm:text-H3 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : regular
           ? 'font-regular'
-          : 'font-medium'
-      } ${weightClassOverride} ${extraClasses}`}
+          : 'font-medium',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -244,21 +262,23 @@ export const H4 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   regular?: boolean;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-H4-mobile sm:text-H4 transform transition-font-size ${
+      className={clsx(
+        'text-H4-mobile sm:text-H4 transform transition-font-size',
         weightClassOverride
           ? weightClassOverride
           : regular
           ? 'font-regular'
-          : 'font-medium'
-      } ${weightClassOverride ?? ''} ${extraClasses ?? ''}`}
+          : 'font-medium',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -274,16 +294,18 @@ export const L1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-base uppercase tracking-px transform transition-font-size ${
-        weightClassOverride ? weightClassOverride : 'font-bold'
-      } ${weightClassOverride ?? ''} ${extraClasses ?? ''}`}
+      className={clsx(
+        'text-base uppercase tracking-px transform transition-font-size',
+        weightClassOverride ? weightClassOverride : 'font-bold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -297,16 +319,18 @@ export const L2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm uppercase tracking-px transform transition-font-size ${
-        weightClassOverride ? weightClassOverride : 'font-bold'
-      } ${weightClassOverride} ${extraClasses}`}
+      className={clsx(
+        'text-sm uppercase tracking-px transform transition-font-size',
+        weightClassOverride ? weightClassOverride : 'font-bold',
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -322,16 +346,18 @@ export const E1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono uppercase tracking-e1 transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+      className={clsx(
+        'font-mono uppercase tracking-e1 transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -345,16 +371,18 @@ export const E2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono text-sm uppercase tracking-e2 transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+      className={clsx(
+        'font-mono text-sm uppercase tracking-e2 transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -370,16 +398,18 @@ export const B1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-lg transform transition-font-size ${
-        (weightClassOverride && weightClassOverride) || ''
-      } ${extraClasses || ''}`}
+      className={clsx(
+        'text-lg transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -393,16 +423,18 @@ export const B2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-base transform transition-font-size ${
-        weightClassOverride ?? ''
-      } ${extraClasses || ''}`}
+      className={clsx(
+        'text-base transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -416,16 +448,18 @@ export const B3 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm transform transition-font-size ${
-        weightClassOverride ?? ''
-      } ${extraClasses ?? ''}`}
+      className={clsx(
+        'text-sm transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -439,16 +473,18 @@ export const B4 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-xs transform transition-font-size ${
-        weightClassOverride ?? ''
-      } ${extraClasses ?? ''}`}
+      className={clsx(
+        'text-xs transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -464,16 +500,18 @@ export const M1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-base font-mono transform transition-font-size ${
-        weightClassOverride && weightClassOverride
-      } ${extraClasses}`}
+      className={clsx(
+        'text-base font-mono transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -487,16 +525,18 @@ export const M2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm font-mono transform transition-font-size ${
-        (weightClassOverride && weightClassOverride) || ''
-      } ${extraClasses || ''}`}
+      className={clsx(
+        'text-sm font-mono transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -512,16 +552,18 @@ export const D1 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-base font-mono transform transition-font-size ${
-        (weightClassOverride && weightClassOverride) || ''
-      } ${extraClasses || ''}`}
+      className={clsx(
+        'text-base font-mono transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -535,16 +577,18 @@ export const D2 = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   weightClassOverride?: string;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm font-mono transform transition-font-size ${
-        (weightClassOverride && weightClassOverride) || ''
-      } ${extraClasses || ''}`}
+      className={clsx(
+        'text-sm font-mono transform transition-font-size',
+        weightClassOverride,
+        extraClasses
+      )}
       {...rest}
     >
       {children}
@@ -557,15 +601,16 @@ export const FL = ({
   extraClasses,
   ...rest
 }: {
-  children?: any;
+  children?: ReactNode;
   extraClasses?: string;
-  [rest: string]: any;
+  [rest: string]: ReactNode;
 }): JSX.Element => {
   return (
     <div
-      className={`font-medium transform transition-font-size ${
-        extraClasses || ''
-      }`}
+      className={clsx(
+        'font-medium transform transition-font-size',
+        extraClasses
+      )}
       style={{
         fontSize: '0.9375rem'
       }}

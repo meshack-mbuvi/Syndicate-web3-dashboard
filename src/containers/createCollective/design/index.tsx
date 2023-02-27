@@ -8,13 +8,13 @@ import {
   useCreateState,
   useUpdateState
 } from '@/hooks/collectives/useCreateCollective';
-import { FC, useEffect, useState } from 'react';
+import { FC, MutableRefObject, useEffect, useState } from 'react';
 import { CreateCollectiveTitle, createHeader } from '../shared';
 
 interface Props {
   handleNext: (e: any) => void;
   setNextBtnDisabled: (disabled: boolean) => void;
-  captureArtworkRef: any;
+  captureArtworkRef: MutableRefObject<HTMLButtonElement> | null;
   activeIndex?: number;
   hideParticlesEngine?: boolean;
 }

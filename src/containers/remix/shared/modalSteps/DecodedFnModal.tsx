@@ -1,24 +1,24 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { Callout } from '@/components/callout';
+import { CTAButton } from '@/components/CTAButton';
+import EstimateGas from '@/components/EstimateGas';
+import { StepsOutline } from '@/components/stepsOutline';
+import { ContractMapper } from '@/hooks/useGasDetails';
 import { AppState } from '@/state';
+import { showWalletModal } from '@/state/wallet/actions';
 import { FunctionFragment } from 'ethers/lib/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { B2 } from '../../../../components/typography';
-import { EncodeURIComponent, getMultiValsString } from '../encodeParams';
-import { CTAButton } from '@/components/CTAButton';
-import { StepsOutline } from '@/components/stepsOutline';
-import FragmentInputs from './FragmentInputs';
 import { CustomModuleCallout } from '../CustomModuleCallout';
-import EstimateGas from '@/components/EstimateGas';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { Callout } from '@/components/callout';
+import { EncodeURIComponent, getMultiValsString } from '../encodeParams';
 import SharedAbiFnModal from '../SharedAbiFnModal';
-import { showWalletModal } from '@/state/wallet/actions';
+import FragmentInputs from './FragmentInputs';
 interface DecodedFnModalProps {
   isSyndicateSupported: boolean;
   clickCallback: (
-    abi: any,
+    abi: AbiItem[],
     abiFunction: FunctionFragment | null,
     inputsValues: string[] | undefined,
     isLookupOnly?: boolean
@@ -26,7 +26,7 @@ interface DecodedFnModalProps {
   contractAddress: string;
   name: string;
   isLoading: boolean;
-  abi: any;
+  abi: AbiItem[];
   moduleName: string;
   setFnFragment: (fn: FunctionFragment | null) => void;
   fnFragment: FunctionFragment;

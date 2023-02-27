@@ -135,7 +135,7 @@ const InvestmentClubCTAs: React.FC<{ disabled: boolean }> = ({ disabled }) => {
                   ),
                   startTime: (~~(new Date().getTime() / 1000)).toString(),
                   endTime: endMintTime.toString(),
-                  membersCount: membersCount,
+                  membersCount: Number(membersCount),
                   tokenRules: tokenRules,
                   tokenGateOption: tokenGateOption,
                   logicalOperator: logicalOperator

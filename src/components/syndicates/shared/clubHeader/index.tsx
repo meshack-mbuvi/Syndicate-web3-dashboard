@@ -18,9 +18,9 @@ interface Props {
   owner: string;
   loading: boolean;
   clubAddress: string;
-  totalDeposits: any;
-  loadingClubDeposits?: any;
-  managerSettingsOpen: any;
+  totalDeposits: string;
+  loadingClubDeposits?: boolean;
+  managerSettingsOpen: boolean;
 }
 export const ClubHeader: React.FC<Props> = (props) => {
   const {
@@ -43,7 +43,7 @@ export const ClubHeader: React.FC<Props> = (props) => {
   const [showAddressCopyState, setShowAddressCopyState] =
     useState<boolean>(false);
   // show message to the user when address has been copied.
-  const updateAddressCopyState = () => {
+  const updateAddressCopyState = (): void => {
     setShowAddressCopyState(true);
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };

@@ -21,7 +21,7 @@ export const InputFieldWithToken = (props: {
   depositTokenLogo?: string;
   depositTokenSymbol?: string;
   extraClasses?: string;
-  onChange: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   handleTokenClick?: () => void;
   symbolDisplayVariant?: SymbolDisplay;

@@ -20,7 +20,7 @@ export const Checkbox: FC<Props> = ({
       } ${extraClasses || ''}`}
       type="checkbox"
       checked={isActive}
-      onChange={() => {
+      onChange={(): void => {
         if (onChange) {
           onChange(!isActive);
         }

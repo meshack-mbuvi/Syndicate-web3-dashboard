@@ -11,25 +11,27 @@ import {
   numberWithCommas,
   removeTrailingDecimalPoint
 } from '@/utils/formattedNumbers';
+import { Web3Provider } from '@ethersproject/providers';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 
-interface Props {
-  membersDetails: {
-    ensName: string;
-    avatar?: string;
-    address: string;
-    createdAt: number;
-    clubTokenHolding?: number;
-    distributionShare: number;
-    ownershipShare: number;
-    receivingTokens: {
-      amount: number;
-      tokenSymbol: string;
-      tokenIcon: string;
-    }[];
+type MemberDetail = {
+  ensName: string;
+  avatar?: string;
+  address: string;
+  createdAt: number;
+  clubTokenHolding?: number;
+  distributionShare: string | number | undefined;
+  ownershipShare: number;
+  receivingTokens: {
+    amount: number;
+    tokenSymbol: string;
+    tokenIcon: string;
   }[];
-  tokens: any;
+};
+interface Props {
+  membersDetails: MemberDetail[];
+  tokens: any[];
   activeAddresses: Array<string>;
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
@@ -38,9 +40,9 @@ interface Props {
   hideEdit?: boolean;
   handleSearchChange: (event: any) => void;
   searchValue: string;
-  clearSearchValue: (event: any) => void;
+  clearSearchValue: (event: MouseEvent<HTMLButtonElement>) => void;
   extraClasses?: string;
-  ethersProvider?: any;
+  ethersProvider?: Web3Provider | null;
   isBlurred?: boolean;
   fadeGradientColorHEX?: string;
 }
@@ -86,22 +88,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const [hoveredRow, setHoveredRow] = useState(null);
   const [hoveredHeader, setHoveredHeader] = useState('');
 
-  const [_membersDetails, setMemberDetails] = useState<
-    {
-      createdAt: number;
-      ensName: string;
-      address: string;
-      avatar?: string;
-      clubTokenHolding?: number;
-      distributionShare: string | number;
-      ownershipShare: number;
-      receivingTokens: {
-        amount: number;
-        tokenSymbol: string;
-        tokenIcon: string;
-      }[];
-    }[]
-  >(membersDetails.slice(0, dataLimit));
+  const [_membersDetails, setMemberDetails] = useState(
+    membersDetails.slice(0, dataLimit)
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -128,8 +117,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
         }
 
         if (key === SORT_BY.distributionShare) {
-          const aDistributionShare = parseFloat(a.distributionShare.toString());
-          const bDistributionShare = parseFloat(b.distributionShare.toString());
+          const aDistributionShare = parseFloat(
+            a.distributionShare?.toString() ?? ''
+          );
+          const bDistributionShare = parseFloat(
+            b.distributionShare?.toString() ?? ''
+          );
 
           if (order === SORT_ORDER.ASC)
             return bDistributionShare - aDistributionShare;
@@ -174,7 +167,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         0
       );
 
-      const memberDetails = membersDetails
+      const _memberDetails = membersDetails
         .slice(0, currentPage * dataLimit)
         .map(({ ownershipShare, createdAt, ...rest }) => {
           return {
@@ -186,11 +179,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
               cumulativeActiveMemberOwnership
             ).toFixed(4),
             receivingTokens: tokens.map(
-              ({ tokenAmount, tokenSymbol, icon }: any) => {
+              ({ tokenAmount, tokenSymbol, icon }) => {
                 return {
                   amount:
                     (ownershipShare / cumulativeActiveMemberOwnership) *
-                    +tokenAmount,
+                    Number(tokenAmount),
                   tokenSymbol,
                   tokenIcon: icon
                 };
@@ -220,7 +213,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
           return 0;
         });
 
-      setMemberDetails(memberDetails);
+      setMemberDetails(_memberDetails as MemberDetail[]);
     } else {
       setMemberDetails([]);
     }
@@ -342,14 +335,14 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 activeAddresses.length > 0
               }
               usePartialCheck={activeAddresses.length < _membersDetails.length}
-              onChange={() => {
+              onChange={(): void => {
                 if (
                   activeAddresses.length <= _membersDetails.length &&
                   activeAddresses.length > 0
                 ) {
                   handleActiveAddressesChange([]);
                 } else {
-                  const activeAddresses: any = [];
+                  const activeAddresses: string[] = [];
                   _membersDetails.forEach((member) =>
                     activeAddresses.push(member.address)
                   );

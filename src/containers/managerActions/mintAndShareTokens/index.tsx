@@ -7,6 +7,7 @@ import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareT
 import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
+import { clubMember } from '@/hooks/clubs/utils/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
@@ -23,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 interface Props {
   show: boolean;
   handleShow: (show: boolean) => void;
-  existingMembers: any;
+  existingMembers: clubMember[];
 }
 
 export const MintAndShareTokens: React.FC<Props> = ({
@@ -126,7 +127,9 @@ export const MintAndShareTokens: React.FC<Props> = ({
     }
   }, [maxMemberCount, memberCount]);
 
-  const handleAddressChange = (e: any) => {
+  const handleAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const addressValue = e.target.value;
     if (!web3) return;
 
@@ -178,7 +181,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     setAmountToMint(amount >= 0 ? amount : '');
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: MouseEvent): void => {
     e.preventDefault();
     setPreview(true);
   };
@@ -209,7 +212,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [memberCount]);
 
-  const handleCloseSuccessModal = () => {
+  const handleCloseSuccessModal = (): void => {
     setConfirm(false);
     setPreview(false);
     setMinted(false);
@@ -237,18 +240,18 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
   // states for closing club after re-opening it
   // for the purpose of minting club tokens.
-  const onCloseTxConfirm = (transactionHash: string) => {
+  const onCloseTxConfirm = (transactionHash: string): void => {
     setConfirmCloseClub(false);
     setTransactionHash(transactionHash);
     setClosingClub(true);
   };
-  const onCloseTxReceipt = () => {
+  const onCloseTxReceipt = (): void => {
     setClosingClub(false);
     setClubSuccessfullyClosed(true);
     refreshClubDetails();
   };
 
-  const handleCloseClubPostMint = async () => {
+  const handleCloseClubPostMint = async (): Promise<void> => {
     setConfirmCloseClub(true);
     try {
       // adding 30 minutes since current time will be in the past by the time
@@ -481,7 +484,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       useOwnerMintModule =
         !!(await syndicateContracts.OwnerMintModule.OwnerMintModuleContract.methods
           .ownerMint(
-            erc20TokenContract.address,
+            erc20TokenContract?.address,
             memberAddress,
             getWeiAmount(amountToMint, tokenDecimals, true)
           )
@@ -495,7 +498,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     if (useOwnerMintModule) {
       await syndicateContracts.OwnerMintModule.ownerMint(
         getWeiAmount(amountToMint, tokenDecimals, true),
-        erc20TokenContract.address,
+        erc20TokenContract?.address ?? '',
         memberAddress,
         owner,
         onTxConfirm,
@@ -506,7 +509,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     } else {
       // If owner mint module simulated call fails, try to fall back to calling club directly
       if (isDev) {
-        await erc20TokenContract.mintTo(
+        await erc20TokenContract?.mintTo(
           memberAddress,
           getWeiAmount(amountToMint, tokenDecimals, true),
           owner,
@@ -517,7 +520,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
         );
       } else {
         const oldErc20TokenContract = new OldClubERC20Contract(
-          erc20TokenContract.address,
+          erc20TokenContract?.address ?? '',
           web3,
           activeNetwork
         );

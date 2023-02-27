@@ -2,6 +2,9 @@ import { MembershipType } from '@/components/collectives/create/customize';
 import { OpenUntil } from '@/components/collectives/create/inputs/openUntil/radio';
 import { TimeWindow } from '@/components/collectives/create/inputs/timeWindow';
 import { NFTMediaType } from '@/components/collectives/nftPreviewer';
+
+export type ArtworkType = File;
+
 export interface CollectiveCreation {
   name: string;
   symbol: string;

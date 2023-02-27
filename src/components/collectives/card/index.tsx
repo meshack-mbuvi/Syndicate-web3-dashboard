@@ -4,7 +4,7 @@ import useFetchCollectiveMetadata from '@/hooks/collectives/create/useFetchNftMe
 import useERC721Collective from '@/hooks/collectives/useERC721Collective';
 import { RequirementType } from '@/hooks/data-fetching/thegraph/generated-types';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import clxs from 'clsx';
+import clsx from 'clsx';
 
 interface Props {
   cardType: RequirementType;
@@ -108,9 +108,10 @@ export const CollectiveCard: React.FC<Props> = ({
       )}
 
       <div
-        className={`items-start w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0 ${clxs(
+        className={clsx(
+          'items-start w-full space-y-2.5 xl:space-y-0 xl:flex xl:flex-grow xl:space-x-2 xl:px-0',
           !isLoadingNftMetadata && !nftMetadata && 'mx-6 py-6'
-        )}`}
+        )}
       >
         <div className={cardinfoResponsiveStyles}>
           <B3 extraClasses="text-gray-syn4">{openWindowTitle}</B3>

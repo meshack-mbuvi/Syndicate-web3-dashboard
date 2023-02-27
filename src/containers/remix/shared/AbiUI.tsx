@@ -1,26 +1,26 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { Callout } from '@/components/callout';
+import { CTAButton } from '@/components/CTAButton';
+import EstimateGas from '@/components/EstimateGas';
+import { B1, B2, B3, B4, E2 } from '@/components/typography';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { AppState } from '@/state';
 import { getInputs, sortAbiFunction } from '@/utils/remix';
 import { FunctionFragment } from 'ethers/lib/utils';
-import SharedAbiFnModal from './SharedAbiFnModal';
-import AbiFnUI from './modalSteps/AbiFnUI';
-import { B1, B2, B3, B4, E2 } from '@/components/typography';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import { CTAButton } from '@/components/CTAButton';
-import FragmentInputs from './modalSteps/FragmentInputs';
-import TxnEncodeUrl from './TxnEncodeUrl';
-import RemixLink from './RemixLink';
 import { getMultiValsString } from './encodeParams';
-import { Callout } from '@/components/callout';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import EstimateGas from '@/components/EstimateGas';
+import AbiFnUI from './modalSteps/AbiFnUI';
+import FragmentInputs from './modalSteps/FragmentInputs';
+import RemixLink from './RemixLink';
+import SharedAbiFnModal from './SharedAbiFnModal';
+import TxnEncodeUrl from './TxnEncodeUrl';
 
 export interface AbiUIProps {
   instance: {
     address: string;
     chainId: number;
     name: string;
-    abi: any;
+    abi: AbiItem[];
     isSyndicateSupported: boolean;
     isActive: boolean;
     description?: string;

@@ -1,3 +1,4 @@
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { useRouter } from 'next/router';
 import {
   createContext,
@@ -6,16 +7,15 @@ import {
   useEffect,
   useState
 } from 'react';
-import { useDemoMode } from '@/hooks/useDemoMode';
 
 type BeforeGettingStartedProps = {
   showBeforeGettingStarted: boolean;
   agreementChecked: boolean;
   hideBeforeGettingStarted: () => void;
   error: boolean;
-  handleClickOutside: any;
-  handleChange: any;
-  buttonDisabled: any;
+  handleClickOutside: () => void;
+  handleChange: () => void;
+  buttonDisabled: boolean;
 };
 
 const BeforeGettingStartedContext = createContext<
@@ -80,7 +80,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, [showBeforeGettingStarted, clubAddress]);
 
-  const hideBeforeGettingStarted = () => {
+  const hideBeforeGettingStarted = (): void => {
     setShowBeforeGettingStarted(false);
     localStorage.setItem(
       clubAddress as string,
@@ -88,13 +88,13 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
-  const handleClickOutside = () => {
+  const handleClickOutside = (): void => {
     if (!agreementChecked) {
       setError(true);
     }
   };
 
-  const handleChange = () => {
+  const handleChange = (): void => {
     setAgreementChecked(!agreementChecked);
     setError(false);
   };

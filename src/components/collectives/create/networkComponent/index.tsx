@@ -1,3 +1,6 @@
+import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
+import { IDealParams } from '@/ClubERC20Factory/ERC20DealFactory';
+import { ICollectiveParams } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 import { CTAButton, CTAType } from '@/components/CTAButton';
 import IconGas from '@/components/icons/Gas';
 import { B3, B4 } from '@/components/typography';
@@ -17,7 +20,10 @@ type NetworkType = {
   account: string;
   disabled: boolean;
   contract: ContractMapper;
-  args: any;
+  args: Record<
+    string,
+    ClubMixinParams | ICollectiveParams | IDealParams | string | number
+  >;
   handleLaunch: () => void;
   handleConnectWallet: () => void;
 };
@@ -43,7 +49,7 @@ const SharedItem: React.FC<IProps> = ({
 }) => {
   const [hovered, setHovered] = useState(false);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     setHovered(!hovered);
   };
 

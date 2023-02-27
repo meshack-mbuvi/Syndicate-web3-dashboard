@@ -17,6 +17,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
+import { Collectible } from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
 import RedeemRug from '../redeemRug';
 import { BonusTokenClaim } from '../shared/bonusToken';
 import { NFTChecker } from '../shared/NFTchecker';
@@ -46,7 +47,7 @@ export const NFTDetails: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [collectibles, setCollectibles] = useState([]);
+  const [collectibles, setCollectibles] = useState<Collectible[]>([]);
   const [pageOffSet, setPageOffSet] = useState<number>(20);
   const [claimBonus, setClaimBonus] = useState(false);
 
@@ -136,11 +137,12 @@ export const NFTDetails: React.FC = () => {
   /**
    * Function to claim all NFTs for a give wallet
    */
-  const handleClaimAll = async (event: any): Promise<void> => {
+  const handleClaimAll = async (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ): Promise<void> => {
     event.preventDefault();
     setClaimBonus(false);
 
-    // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
     const tokenIds = collectibles.map((collectible) => collectible.assetId);
 
     if (!tokenIds.length) return;
@@ -149,7 +151,7 @@ export const NFTDetails: React.FC = () => {
     setShowModal(true);
 
     await RugClaimModule.bulkClaimTokens(
-      tokenIds,
+      tokenIds as string[],
       account,
       onTxConfirm,
       onTxReceipt,
@@ -163,7 +165,6 @@ export const NFTDetails: React.FC = () => {
     setClaimBonus(true);
     event.preventDefault();
 
-    // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
     const tokenIds = collectibles.map((collectible) => collectible.assetId);
 
     if (!tokenIds.length) return;
@@ -172,7 +173,7 @@ export const NFTDetails: React.FC = () => {
     setShowModal(true);
 
     await rugBonusClaimModule.bulkClaimTokens(
-      tokenIds,
+      tokenIds as string[],
       account,
       onTxConfirm,
       onTxReceipt,
@@ -562,10 +563,8 @@ export const NFTDetails: React.FC = () => {
                         } else if (animation) {
                           // animation could be a .mov or .mp4 video
                           const movAnimation =
-                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mov$/) != null;
                           const mp4Animation =
-                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mp4$/) != null;
 
                           if (movAnimation || mp4Animation) {
@@ -577,7 +576,6 @@ export const NFTDetails: React.FC = () => {
                           // The animation link is a .html which is not captured.
                           // Until we find a better way to handle this, let's have the fix below
                           if (
-                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.html$/) != null &&
                             assetId == '3216'
                           ) {
@@ -585,17 +583,14 @@ export const NFTDetails: React.FC = () => {
                           }
 
                           // animation could be a gif
-                          // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                           if (animation.match(/\.gif$/) != null) {
                             mediaType = 'animatedNFT';
                           }
 
                           // add support for .wav and .mp3 files
                           const wavAnimation =
-                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.wav$/) != null;
                           const mp3Animation =
-                            // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
                             animation.match(/\.mp3$/) != null;
                           const soundtrack = wavAnimation || mp3Animation;
 

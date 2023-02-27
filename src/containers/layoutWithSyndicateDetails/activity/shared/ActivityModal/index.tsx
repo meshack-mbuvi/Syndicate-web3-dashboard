@@ -42,7 +42,7 @@ import ActivityNote from './ActivityNote';
 interface IActivityModal {
   showModal: boolean;
   isAnnotationsModalShown: boolean;
-  closeModal: any;
+  closeModal: () => void;
   assetsView: boolean;
   refetchTransactions: () => void;
   showNote: boolean;

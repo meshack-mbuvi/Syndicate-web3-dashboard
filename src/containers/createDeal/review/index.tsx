@@ -1,11 +1,11 @@
-import { DealsCreateReview } from '@/features/deals/components/create/review';
-import { useCreateDealContext } from '@/context/createDealContext';
-import { SelectedTimeWindow } from '@/features/deals/components/create/window';
 import NetworkComponent from '@/components/collectives/create/networkComponent';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from '@/state';
+import { useCreateDealContext } from '@/context/createDealContext';
+import { DealsCreateReview } from '@/features/deals/components/create/review';
+import { SelectedTimeWindow } from '@/features/deals/components/create/window';
 import { ContractMapper } from '@/hooks/useGasDetails';
+import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const ReviewDealDetails: React.FC = () => {
   const {

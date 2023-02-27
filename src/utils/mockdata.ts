@@ -1,3 +1,4 @@
+import { Collectible } from '@/containers/layoutWithSyndicateDetails/assets/collectibles';
 import { ERC20Token } from '@/state/erc20token/types';
 import moment from 'moment';
 
@@ -8,7 +9,7 @@ export const MOCK_END_TIME = 1647526921762;
 
 export const mockERC20Token: ERC20Token = {
   isValid: true,
-  totalSupply: 12044.45,
+  totalSupply: '12044.45',
   address: 'demo',
   name: 'Alpha Beta Club',
   owner: '0x9c6ce69f349430D31a2Bfbe5A052fc3e48AD28cf',
@@ -19,7 +20,7 @@ export const mockERC20Token: ERC20Token = {
   memberCount: 6,
   loading: false,
   maxMemberCount: 30,
-  maxTotalSupply: 50000,
+  maxTotalSupply: '50000',
   requiredToken: '0x0000000000000000000000000000000000000000',
   depositsEnabled: true,
   claimEnabled: false,
@@ -137,12 +138,12 @@ export const mockTokensResult = [
   }
 ];
 
-export const mockCollectiblesResult = [
+export const mockCollectiblesResult: Collectible[] = [
   {
     name: 'CryptoPunk #8219',
     image:
       'https://lh3.googleusercontent.com/c2mUNM1mXC-iLI0Cx9VyLtinCC-R0yeaxSkPbXAT-LEU5PBOEQ1WGAvJkiTYWXWwgPPIkomgNgvhxeAHNeCj3z81mbrgqgIyb3JqOw',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/8219',
     id: '8219',
@@ -153,7 +154,7 @@ export const mockCollectiblesResult = [
     slug: 'cryptopunks',
     description:
       'CryptoPunks launched as a fixed set of 10,000 items in mid-2017 and became one of the inspirations for the ERC-721 standard. They have been featured in places like The New York Times, Christie’s of London, Art|Basel Miami, and The PBS NewsHour.',
-    floorPrice: 2.5,
+    floorPrice: '2.5',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 8498,
       lastPurchasePriceETH: 3.5
@@ -163,7 +164,7 @@ export const mockCollectiblesResult = [
     name: 'taffeta, the appealing bangle',
     image:
       'https://lh3.googleusercontent.com/4JM5nMqOQ4oD6jyMpWbSGKeGJgG-NK80tI259nwm_O5dHFcEzq-05Bc6o0wK9flmwKqINKPkoerpL57f4zUoB_0HjqoqXnhucEQ-hw',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0x5180db8f5c931aae63c74266b211f580155ecac8/6575',
     id: '6575',
@@ -174,7 +175,7 @@ export const mockCollectiblesResult = [
     slug: 'cryptocoven',
     description:
       'You are a WITCH with cunning beyond measure. You pluck secrets from the universe like leaves from a tree. Your magic spawns from bone broth and broccoli. People from all places travel to linger below your balcony and bask in your beauty. FLOURISH MY FRIEND!',
-    floorPrice: 1.6,
+    floorPrice: '1.6',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 4321.84,
       lastPurchasePriceETH: 1.78
@@ -184,7 +185,7 @@ export const mockCollectiblesResult = [
     name: 'Woman #9517',
     image:
       'https://lh3.googleusercontent.com/KbQxvUgsipvBFfAarLpEDhqTSDyn37XH5458mxUGiIzyT06mT_hYt7yWdP1qT3T0U69KHIh8mDOcFza_geN_wc6YsPaZaW9qbAKJ',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0xe785e82358879f061bc3dcac6f0444462d4b5330/9517',
     id: '9517',
@@ -195,7 +196,7 @@ export const mockCollectiblesResult = [
     slug: 'world-of-women-nft',
     description:
       'World of Women: 10,000 unique, cool and diverse Women living on the Blockchain.',
-    floorPrice: 7,
+    floorPrice: '7',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 14033.84,
       lastPurchasePriceETH: 4.78
@@ -205,7 +206,7 @@ export const mockCollectiblesResult = [
     name: 'Rug Radio X Clon',
     image:
       'https://lh3.googleusercontent.com/jWlCmq0OexehrvkV81gTrQLL1CTUYYu7HNphRzw1aqmh1ULpg0FOFViw4RXidDIHVl6gBp7kb7lBKzoykw5zA8U4HoAL424L9pIW6Q',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0x8ff1523091c9517bc328223d50b52ef450200339/14539',
     id: '14539',
@@ -216,7 +217,7 @@ export const mockCollectiblesResult = [
     slug: 'ruggenesis-nft',
     description:
       'The Rug Radio NFT is a Utility NFT that yields token based on the scarcity of the rug. The longer you hold the utility NFT, the more tokens you will receive.\n\nTokens yield per day:\n\nRare 1 & 2 = 11, Scarce 1 & 2 = 7, Standard = 5\n\nTo learn more about the RugRadio ecosystem, join our Discord or visit http://rug.fm/',
-    floorPrice: 0.27,
+    floorPrice: '0.27',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 607,
       lastPurchasePriceETH: 0.25
@@ -226,7 +227,7 @@ export const mockCollectiblesResult = [
     name: 'Bag #4765',
     image:
       'https://openseauserdata.com/files/c9c0126abc74d13fc960eca04a9ceefe.svg',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7/4765',
     id: '4765',
@@ -237,7 +238,7 @@ export const mockCollectiblesResult = [
     slug: 'lootproject',
     description:
       'Loot is randomized adventurer gear generated and stored on chain. Stats, images, and other functionality are intentionally omitted for others to interpret. Feel free to use Loot in any way you want.',
-    floorPrice: 2.29,
+    floorPrice: '2.29',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 3860.52,
       lastPurchasePriceETH: 1.59
@@ -247,7 +248,7 @@ export const mockCollectiblesResult = [
     name: 'Runner #6651',
     image:
       'https://lh3.googleusercontent.com/aQ87u-dwedniQwsfK4QcDFpRYxmPXAmnGAuYOzgP0TuAhX0Z_-2sh5Ex3ulvFaQPQThnYcfNnGeFQiPKxtXypNGOMm01s4l9BQxw7Q',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0x97597002980134bea46250aa0510c9b90d87a587/6651',
     id: '6651',
@@ -258,7 +259,7 @@ export const mockCollectiblesResult = [
     slug: 'chain-runners-nft',
     description:
       'Chain Runners are Mega City renegades 100% generated on chain.',
-    floorPrice: 0.585,
+    floorPrice: '0.585',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 728.4,
       lastPurchasePriceETH: 0.3
@@ -280,7 +281,7 @@ export const mockCollectiblesResult = [
     slug: 'poolsuite-executive-member',
     description:
       'Holding the Poolsuite Executive Member card suggests your esteemed presence within the crème de la crème of internet high society, and says a lot about the way you live your life on the web. This NFT can be connected to your account at Poolsuite.net to unlock perks, including early access to all Poolsuite projects.',
-    floorPrice: 1.5,
+    floorPrice: '1.5',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 3399.72,
       lastPurchasePriceETH: 1.4
@@ -301,7 +302,7 @@ export const mockCollectiblesResult = [
     },
     slug: 'cryptojankyz',
     description: null,
-    floorPrice: 0.61,
+    floorPrice: '0.61',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 1214,
       lastPurchasePriceETH: 0.5
@@ -311,7 +312,7 @@ export const mockCollectiblesResult = [
     name: 'Cool Cat #3155',
     image:
       'https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA',
-    animation: null,
+    animation: '',
     permalink:
       'https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/3155',
     id: '3155',
@@ -322,7 +323,7 @@ export const mockCollectiblesResult = [
     slug: 'cool-cats-nft',
     description:
       'Cool Cats is a collection of 9,999 randomly generated and stylistically curated NFTs that exist on the Ethereum Blockchain. Cool Cat holders can participate in exclusive events such as NFT claims, raffles, community giveaways, and more. Remember, all cats are cool, but some are cooler than others. Visit [www.coolcatsnft.com](https://www.coolcatsnft.com/) to learn more.',
-    floorPrice: 11.89,
+    floorPrice: '11.89',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 25008.4,
       lastPurchasePriceETH: 10.3
@@ -344,7 +345,7 @@ export const mockCollectiblesResult = [
     slug: 'lit-project-two-1',
     description:
       'LIT Project Two with Robert De Niro is a dynamic NFT programmed to react to the movement of Ethereum in different time increments. Zoom in or zoom out. Reflect. Match multiple Motions for multiple perspectives. Every wallet needs a watcher.\n\nSmart contract & metadata by Transient Labs.',
-    floorPrice: 0.1,
+    floorPrice: '0.1',
     lastPurchasePrice: {
       lastPurchasePriceUSD: 1699.6,
       lastPurchasePriceETH: 0.7

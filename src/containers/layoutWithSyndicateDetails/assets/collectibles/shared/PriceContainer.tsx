@@ -1,12 +1,12 @@
-import React from 'react';
 import NumberTreatment from '@/components/NumberTreatment';
 import { AppState } from '@/state';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 const PriceContainer: React.FC<{
   numberValue: string;
   nativeValue?: boolean;
-  customSymbol?: any;
+  customSymbol?: string;
   noUSDValue?: boolean;
   nativeDepositToken?: boolean;
   flexColumn?: boolean;
@@ -26,7 +26,7 @@ const PriceContainer: React.FC<{
   return (
     <div
       className={`text-base md:items-center ${
-        flexColumn ? 'flex-col' : null
+        flexColumn ? 'flex-col' : ''
       } flex md:flex-row`}
     >
       <div>

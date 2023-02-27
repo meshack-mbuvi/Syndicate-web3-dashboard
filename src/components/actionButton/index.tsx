@@ -14,7 +14,7 @@ export const ActionButton = (props: {
   height?: number;
   type?: ActionButtonType;
   disabled?: boolean;
-  children?: any;
+  children?: string | JSX.Element;
   onClick: () => void;
 }): JSX.Element => {
   const {

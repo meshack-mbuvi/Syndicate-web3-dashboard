@@ -11,8 +11,8 @@ import { FileUploader } from '../fileUploader';
 interface Props {
   title?: string;
   helperText?: string;
-  textInputValue: any;
-  handleTextInputChange: (e: any) => void;
+  textInputValue: string;
+  handleTextInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   customClasses?: string;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -49,7 +49,7 @@ export const AddressUploader: React.FC<Props> = ({
   const height = 'h-52'; // 13rem
   const dispatch = useDispatch();
 
-  const handleUploadEvent = (event: any) => {
+  const handleUploadEvent = (event: { type: string }): void => {
     switch (event.type) {
       case 'loadstart':
         setProgressPercent(10);
@@ -70,7 +70,7 @@ export const AddressUploader: React.FC<Props> = ({
   };
 
   // adding event listener to file reader to track upload progress
-  const addUploaderListeners = (reader: any) => {
+  const addUploaderListeners = (reader: FileReader): void => {
     reader.addEventListener('loadstart', handleUploadEvent);
     reader.addEventListener('load', handleUploadEvent);
     reader.addEventListener('loadend', handleUploadEvent);
@@ -80,7 +80,7 @@ export const AddressUploader: React.FC<Props> = ({
   };
 
   // removing event listeners
-  const removeUploaderListeners = (reader: any) => {
+  const removeUploaderListeners = (reader: FileReader): void => {
     reader.removeEventListener('loadstart', handleUploadEvent);
     reader.removeEventListener('load', handleUploadEvent);
     reader.removeEventListener('loadend', handleUploadEvent);
@@ -97,7 +97,7 @@ export const AddressUploader: React.FC<Props> = ({
     // excel files rows are separated by new lines.
     const rows = string.split(/\r\n|\r|\n/);
 
-    const addressesArray = rows?.reduce((accumulator: any, value: any) => {
+    const addressesArray = rows?.reduce((accumulator: string[], value) => {
       // check if address is valid
       // the check for manager account will be done at the review stage
       const firstColumnAddress = value.split(',')[0];
@@ -116,8 +116,8 @@ export const AddressUploader: React.FC<Props> = ({
     setRawMemberAddresses(memberAddresses);
   };
 
-  const handleFileUpload = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
 
     if (file) {
       setFileName(file.name);
@@ -127,7 +127,7 @@ export const AddressUploader: React.FC<Props> = ({
       const isSpreadsheetFile =
         file.name.endsWith('.xls') || file.name.endsWith('.xlsx');
 
-      fileReader.onload = function (event) {
+      fileReader.onload = function (event): void {
         const text = event?.target?.result;
 
         // for spreadsheets
@@ -158,7 +158,7 @@ export const AddressUploader: React.FC<Props> = ({
   };
 
   // cancellation of upload
-  const handleCancelUpload = () => {
+  const handleCancelUpload = (): void => {
     setFileName('');
     setProgressPercent(0);
     dispatch(setMembershipAddresses([]));
@@ -195,13 +195,11 @@ export const AddressUploader: React.FC<Props> = ({
         }}
       >
         {/* Write addresses as text */}
-        <div
-          className={`h-full ${clsx(isUploadMethodSpreadsheet && 'hidden')}`}
-        >
+        <div className={clsx('h-full', isUploadMethodSpreadsheet && 'hidden')}>
           {' '}
           {/* use this div to avoid button's default vertical centering of content */}
           <TextArea
-            value={textInputValue as string}
+            value={textInputValue}
             onChange={handleTextInputChange}
             heightoverride="13rem"
             classoverride="p-6 border border-gray-syn6 hover:border-gray-syn3 focus:border-blue rounded no-scroll-bar"
@@ -228,7 +226,7 @@ export const AddressUploader: React.FC<Props> = ({
           }
           handleUpload={handleFileUpload}
           handleCancelUpload={handleCancelUpload}
-          customClasses={`${clsx(!isUploadMethodSpreadsheet && 'hidden')}`}
+          customClasses={clsx(!isUploadMethodSpreadsheet && 'hidden')}
         />
       </button>
     </InfoActionWrapper>

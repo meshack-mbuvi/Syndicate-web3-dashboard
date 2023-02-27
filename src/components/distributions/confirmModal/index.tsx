@@ -5,9 +5,9 @@ import { L2 } from '@/components/typography';
 interface Props {
   steps: { title: string; description?: string; isInErrorState?: boolean }[];
   activeStepIndex: number;
-  children: any;
+  children: JSX.Element | string;
   isModalVisible: boolean;
-  handleModalClose: (e?: any) => void;
+  handleModalClose: () => void;
   showCloseButton?: boolean;
 }
 

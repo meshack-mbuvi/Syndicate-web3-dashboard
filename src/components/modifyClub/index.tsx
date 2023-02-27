@@ -148,7 +148,8 @@ export const ModifyClubSettings = (props: {
     };
 
     if (mintingForClosedClubDetails?.mintingForClosedClub) {
-      const { mintingForClosedClub, clubAddress } = mintingForClosedClubDetails;
+      const { mintingForClosedClub, clubAddress = '' } =
+        mintingForClosedClubDetails;
       showMintingForClosedClubDisclaimer =
         mintingForClosedClub && clubAddress === address;
     }
@@ -162,8 +163,9 @@ export const ModifyClubSettings = (props: {
   const [openToDepositsUntil, setOpenToDepositsUntil] = useState<Date>(
     new Date(endTime)
   );
-  const [maxAmountRaising, setMaxAmountRaising] =
-    useState<number>(maxTotalSupply);
+  const [maxAmountRaising, setMaxAmountRaising] = useState<number>(
+    Number(maxTotalSupply)
+  );
   const [maxNumberOfMembers, setMaxNumberOfMembers] =
     useState<number>(maxMemberCount);
   const [, setTotalDepositsAmount] = useState(0);
@@ -196,7 +198,7 @@ export const ModifyClubSettings = (props: {
 
   const { pathname, isReady } = router;
 
-  const clubAddress = getFirstOrString(router.query.clubAddress);
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
 
   const { isOwner, isLoading } = useTokenOwner(
     clubAddress as string,
@@ -244,7 +246,8 @@ export const ModifyClubSettings = (props: {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    const _totalSupply = totalSupply || 0;
+    const _totalSupply = Number(totalSupply) || 0;
+    const _maxTotalSupply = Number(maxTotalSupply || 0);
     if (name && depositTokenLogo) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
@@ -259,16 +262,16 @@ export const ModifyClubSettings = (props: {
         }
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
       }
-      if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
+      if (+existingMaxAmountRaising === 0 && depositTokenSymbol) {
         if (depositTokenSymbol === nativeSymbol) {
-          setMaxAmountRaising(maxTotalSupply / nativeEchageRate);
+          setMaxAmountRaising(_maxTotalSupply / nativeEchageRate);
           setTotalDepositsAmount(_totalSupply / nativeEchageRate);
           dispatch(
-            setExistingMaxAmountRaising(maxTotalSupply / nativeEchageRate)
+            setExistingMaxAmountRaising(`${_maxTotalSupply / nativeEchageRate}`)
           );
           dispatch(setExistingAmountRaised(_totalSupply / nativeEchageRate));
         } else {
-          setMaxAmountRaising(maxTotalSupply);
+          setMaxAmountRaising(_maxTotalSupply);
           setTotalDepositsAmount(_totalSupply);
           dispatch(setExistingMaxAmountRaising(maxTotalSupply));
           dispatch(setExistingAmountRaised(_totalSupply));
@@ -389,7 +392,7 @@ export const ModifyClubSettings = (props: {
       );
 
       dispatch(setExistingOpenToDepositsUntil(openToDepositsUntil));
-      dispatch(setExistingMaxAmountRaising(maxAmountRaising));
+      dispatch(setExistingMaxAmountRaising(maxAmountRaising.toString()));
       dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers));
       setProgressState('success');
     } catch (error) {
@@ -538,12 +541,14 @@ export const ModifyClubSettings = (props: {
 
         {loading == false && (
           <PillButtonLarge onClick={handleExit} extraClasses="flex-shrink-0">
-            <div>
-              {areClubChangesAvailable && isOpenToDeposits
-                ? 'Discard & Exit'
-                : 'Exit'}
-            </div>
-            <img src="/images/xmark-gray.svg" className="w-4" alt="cancel" />
+            <>
+              <div>
+                {areClubChangesAvailable && isOpenToDeposits
+                  ? 'Discard & Exit'
+                  : 'Exit'}
+              </div>
+              <img src="/images/xmark-gray.svg" className="w-4" alt="cancel" />
+            </>
           </PillButtonLarge>
         )}
       </div>

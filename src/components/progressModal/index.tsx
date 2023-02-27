@@ -1,11 +1,11 @@
-import Modal, { ModalStyle } from '../modal';
 import { ExternalLinkColor } from 'src/components/iconWrappers';
+import Modal, { ModalStyle } from '../modal';
 import { ProgressCard, ProgressState } from '../progressCard';
 
 export const ProgressModal = (props: {
   isVisible: boolean;
   title: string;
-  description?: any;
+  description?: string | JSX.Element;
   state: ProgressState;
   buttonLabel?: string;
   buttonFullWidth?: boolean;

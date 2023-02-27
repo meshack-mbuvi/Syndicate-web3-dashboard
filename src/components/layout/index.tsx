@@ -1,12 +1,14 @@
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { PortfolioSideNav } from '@/components/syndicates/shared/PortfolioSideNav';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CreateSteps } from '@/context/CreateInvestmentClubContext/steps';
 import { getNetworkByName } from '@/helpers/getNetwork';
 import useAdminClubs from '@/hooks/clubs/useAdminClubs';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
 import useMemberClubs from '@/hooks/clubs/useMemberClubs';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useWarnIfUnsavedRouterChanges } from '@/hooks/useWarnIfUnsavedChanges';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
@@ -18,14 +20,12 @@ import { useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import SEO from '../seo';
-import { useWarnIfUnsavedRouterChanges } from '@/hooks/useWarnIfUnsavedChanges';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
   dotIndicatorOptions?: CreateSteps[] | string[];
-  handleExitClick?: () => void;
+  handleExitClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   showNav?: boolean;
   activeIndex?: number;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];

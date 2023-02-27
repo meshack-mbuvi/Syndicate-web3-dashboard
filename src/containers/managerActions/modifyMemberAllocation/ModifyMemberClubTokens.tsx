@@ -1,26 +1,29 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import Modal, { ModalStyle } from '@/components/modal';
-import { MemberAddressField } from '@/components/inputs/memberAddressField';
+import { CTAButton } from '@/components/CTAButton';
 import {
   InputFieldWithToken,
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
-import { numberWithCommas } from '@/utils/formattedNumbers';
-import { CTAButton } from '@/components/CTAButton';
+import { MemberAddressField } from '@/components/inputs/memberAddressField';
+import Modal, { ModalStyle } from '@/components/modal';
 import { L2 } from '@/components/typography';
+import { clubMember } from '@/hooks/clubs/utils/types';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface IModifyMemberClubTokens {
-  memberList: any;
+  memberList: clubMember[];
   setShowModifyCapTable: Dispatch<SetStateAction<boolean>>;
   showModifyCapTable: boolean;
   clearModalFields: () => void;
-  handleAmountChange: (e: any) => void;
+  handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   memberAllocationError: string | React.ReactElement;
   memberAllocation: string;
-  handleSubmit: (e: any) => void;
+  handleSubmit: (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>
+  ) => void;
   member: string;
   setMember: Dispatch<SetStateAction<string>>;
-  symbol: any;
+  symbol: string;
   continueButtonDisabled: boolean;
 }
 const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
@@ -45,7 +48,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
         showCloseButton: true,
         customWidth: 'w-full max-w-480',
         outsideOnClick: true,
-        closeModal: () => {
+        closeModal: (): void => {
           clearModalFields();
           setShowModifyCapTable(false);
         },
@@ -77,7 +80,9 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                 <div className="mb-2 text-white">Club token allocation</div>
                 <InputFieldWithToken
                   value={numberWithCommas(memberAllocation)}
-                  onChange={(e) => handleAmountChange(e)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                    handleAmountChange(e)
+                  }
                   isInErrorState={Boolean(memberAllocationError)}
                   infoLabel={memberAllocationError ? memberAllocationError : ''}
                   symbolDisplayVariant={SymbolDisplay.ONLY_SYMBOL}
@@ -93,7 +98,12 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                 !member ||
                 continueButtonDisabled
               }
-              onClick={(e: any) => {
+              onClick={(
+                e: React.MouseEvent<
+                  HTMLButtonElement | HTMLAnchorElement,
+                  MouseEvent
+                >
+              ): void => {
                 handleSubmit(e);
               }}
             >

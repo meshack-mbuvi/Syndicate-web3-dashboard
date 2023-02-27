@@ -1,13 +1,13 @@
-import useWindowSize from '@/hooks/useWindowSize';
 import {
   EditButton,
   SubmitContent
 } from '@/components/collectives/edit/editables';
-import { useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
+import useWindowSize from '@/hooks/useWindowSize';
+import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Switch, SwitchType } from '../switch';
 import { B2, B3, H3 } from '../typography';
-import { useDispatch } from 'react-redux';
-import { setActiveRowIdx } from '@/state/modifyCollectiveSettings/index';
 
 const transitionSettings = 'transition-all duration-700';
 
@@ -32,7 +32,7 @@ interface Props {
     isExpandable?: boolean;
     setIsNotInteractableExpanded?: Dispatch<SetStateAction<boolean>>;
     subfieldEditing?: boolean;
-    setSubfieldEditing?: Dispatch<SetStateAction<boolean>>;
+    setSubfieldEditing?: (arg: boolean) => void;
   };
   extraClasses?: string;
   showForm?: boolean;
@@ -40,7 +40,7 @@ interface Props {
   setActiveRow?: (arg: number) => void;
   setEditGroupFieldClicked?: (arg: boolean) => void;
   handleDisclaimerConfirmation?: () => void;
-  cancelEdit?: any;
+  cancelEdit?: () => void;
   switchRowIndex?: number;
 }
 
@@ -174,10 +174,9 @@ export const CollapsibleTableNoContractInteraction: React.FC<Props> = ({
                     showCallout={showCallout}
                     // @ts-expect-error TS(2322): Type '(() => void) | undefined' is not assignable ... Remove this comment to see the full error message
                     handleEdit={handleDisclaimerConfirmation}
-                    cancelEdit={() => {
-                      cancelEdit();
-                      // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefined'.
-                      setActiveRow(0);
+                    cancelEdit={(): void => {
+                      cancelEdit?.();
+                      setActiveRow?.(0);
                       dispatch(setActiveRowIdx(0));
                       setSubfieldEditing(false);
                     }}

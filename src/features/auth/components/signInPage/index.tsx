@@ -34,7 +34,7 @@ export const AuthSignInPage: React.FC<Props> = ({ handleDiscordClick }) => {
     <>
       <DataStoragePrivacyModal
         show={showPrivacyModal}
-        closeModal={() => {
+        closeModal={(): void => {
           setShowPrivacyyModal(false);
         }}
       />

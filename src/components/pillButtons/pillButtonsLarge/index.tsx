@@ -1,8 +1,11 @@
-export const PillButtonLarge = (props: {
+import { ReactNode } from 'react';
+
+type TPillButton = {
   extraClasses?: string;
   onClick: () => void;
-  children: any;
-}) => {
+  children: string | ReactNode;
+};
+export const PillButtonLarge = (props: TPillButton): JSX.Element => {
   const { extraClasses = '', onClick, children, ...rest } = props;
 
   return (

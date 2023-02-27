@@ -3,7 +3,7 @@ import { TextArea } from '@/components/inputs/simpleTextArea';
 import { Spinner } from '@/components/shared/spinner';
 import { DesignRightPanel } from '@/containers/createCollective/design';
 import { elementToImage } from '@/utils/elementToImage';
-import React, { useState } from 'react';
+import React, { MutableRefObject, useState } from 'react';
 import { CollectivesGeneratedArtwork } from '../../generatedArtwork';
 import { CollectivesFileUploader } from '../../uploader';
 import { InputFieldsNameAndSymbol } from '../inputs/nameAndSymbol';
@@ -32,7 +32,7 @@ interface Props {
     backgroundColorClass: string
   ) => void;
   hideParticlesEngine?: boolean;
-  captureArtworkRef: any;
+  captureArtworkRef: MutableRefObject<HTMLButtonElement> | null;
 }
 
 export const CollectiveFormDesign: React.FC<Props> = ({
@@ -60,7 +60,7 @@ export const CollectiveFormDesign: React.FC<Props> = ({
 }) => {
   const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
   const handleContinueButton = async (e: any): Promise<void> => {
-    if (isUsingGeneratedArtwork) {
+    if (isUsingGeneratedArtwork && captureArtworkRef) {
       setIsContinueButtonLoading(true);
       try {
         const imageString = await elementToImage(captureArtworkRef, 2);

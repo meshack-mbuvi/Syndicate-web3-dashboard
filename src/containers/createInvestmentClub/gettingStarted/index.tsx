@@ -1,21 +1,23 @@
+import { ClubMixinParams } from '@/ClubERC20Factory/ERC20ClubFactory';
 import { AnimatedText } from '@/components/animatedText';
+import { CTAButton, CTAType } from '@/components/CTAButton';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
+import EstimateGas from '@/components/EstimateGas';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { ContractMapper } from '@/hooks/useGasDetails';
 import useWindowSize from '@/hooks/useWindowSize';
+import {
+  LogicalOperator,
+  TokenGateOption,
+  TokenGateRule
+} from '@/state/createInvestmentClub/types';
+import { mockERC20Token } from '@/utils/mockdata';
 import React, { useEffect, useState } from 'react';
 import {
   ExternalLinkColor,
   ExternalLinkIcon
 } from 'src/components/iconWrappers';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-import EstimateGas from '@/components/EstimateGas';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { mockERC20Token } from '@/utils/mockdata';
-import {
-  LogicalOperator,
-  TokenGateOption
-} from '@/state/createInvestmentClub/types';
-import { CTAButton, CTAType } from '@/components/CTAButton';
 
 const GettingStarted: React.FC = () => {
   const { handleNext } = useCreateInvestmentClubContext();
@@ -99,7 +101,8 @@ const GettingStarted: React.FC = () => {
                             clubTokenSymbol: 'EST',
                             isNativeDeposit: true,
                             depositToken: mockERC20Token.depositToken,
-                            tokenCap: mockERC20Token.maxTotalDeposits,
+                            tokenCap:
+                              mockERC20Token.maxTotalDeposits.toString(),
                             startTime: mockERC20Token.startTime,
                             endTime: mockERC20Token.endTime,
                             membersCount: 99,
@@ -112,10 +115,10 @@ const GettingStarted: React.FC = () => {
                                 chainId: 4,
                                 contractAddress: ''
                               }
-                            ],
+                            ] as TokenGateRule[],
                             tokenGateOption: TokenGateOption.RESTRICTED,
                             logicalOperator: LogicalOperator.OR
-                          }
+                          } as unknown as ClubMixinParams
                         }}
                       />
                     </div>

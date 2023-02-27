@@ -1,3 +1,4 @@
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import {
   ActiveModuleDetails,
   TokenGatedRequirementsDetails
@@ -22,16 +23,16 @@ const erc20TokenSlice = createSlice({
         state.depositDetails = depositDetails;
       }
     },
-    setERC20TokenContract(state, action: PayloadAction<any>) {
+    setERC20TokenContract(state, action: PayloadAction<ClubERC20Contract>) {
       state.erc20TokenContract = action.payload;
     },
     setLoadingClub(state, action: PayloadAction<boolean>) {
       state.erc20Token.loading = action.payload;
     },
-    setTotalDeposits(state, action: PayloadAction<number>) {
+    setTotalDeposits(state, action: PayloadAction<string>) {
       state.erc20Token.totalDeposits = action.payload;
     },
-    setTotalSupply(state, action: PayloadAction<number>) {
+    setTotalSupply(state, action: PayloadAction<string>) {
       state.erc20Token.totalSupply = action.payload;
     },
     setStartTime(state, action: PayloadAction<number>) {

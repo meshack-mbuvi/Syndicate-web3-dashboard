@@ -1,9 +1,9 @@
 import { PillButton } from '@/components/pillButtons';
-import { MouseEvent } from 'react';
+import { MouseEvent, MutableRefObject } from 'react';
 import { InputField } from '../inputField';
 
 export const InputFieldWithAddOn = (props: {
-  forwardRef?: any;
+  forwardRef?: MutableRefObject<HTMLInputElement> | null;
   value?: string;
   placeholderLabel?: string;
   infoLabel?: string | React.ReactElement;

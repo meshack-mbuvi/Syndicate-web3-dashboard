@@ -2,16 +2,18 @@
  * Primary button has a green background and white text
  * @param {*} props
  */
-const PrimaryButton: React.FC<{
-  disabled?: boolean;
-  customClasses: string;
-  onClick?: (e?: any) => void;
-  type?: any;
-  approved?: boolean;
-  createSyndicate?: boolean;
-  textColor?: string;
-  icon?: string;
-}> = (props) => {
+const PrimaryButton: React.FC<
+  React.ComponentProps<'button'> & {
+    disabled?: boolean;
+    customClasses: string;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    type?: '"button" | "submit" | "reset"';
+    approved?: boolean;
+    createSyndicate?: boolean;
+    textColor?: string;
+    icon?: string;
+  }
+> = (props) => {
   const {
     children,
     customClasses = 'bg-light-green',

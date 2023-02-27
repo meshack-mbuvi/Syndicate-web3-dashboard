@@ -1,4 +1,6 @@
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import clsx from 'clsx';
+import { ChangeEvent, ReactNode } from 'react';
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -8,7 +10,7 @@ export const InputFieldWithMax = (props: {
   label?: string;
   name?: string;
   id?: string;
-  onChange?: any;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   placeholder?: string;
   error?: string;
@@ -16,8 +18,7 @@ export const InputFieldWithMax = (props: {
   required?: boolean;
   value: string | number;
   type?: string;
-  addOn?: any;
-  extraAddon?: any;
+  addOn?: ReactNode;
   isNumber?: boolean;
   hasError?: boolean;
   moreInfo?: string | React.ReactNode;
@@ -69,7 +70,7 @@ export const InputFieldWithMax = (props: {
               name={name}
               id={id}
               onChange={(event): void => {
-                onChange(event);
+                onChange?.(event);
               }}
               value={value}
               min="1"
@@ -79,7 +80,10 @@ export const InputFieldWithMax = (props: {
                 className={`absolute inset-y-0 right-0 pr-4 flex items-center `}
               >
                 <span
-                  className={`font-whyte text-white text-sm ${customClass?.addon}`}
+                  className={clsx(
+                    'font-whyte text-white text-sm',
+                    customClass?.addon
+                  )}
                 >
                   {addOn}
                 </span>
@@ -104,9 +108,11 @@ export const InputFieldWithMax = (props: {
       <div className="w-full lg:w-full">
         {(error || warning) && (
           <p
-            className={`text-sm ${warning && 'text-yellow-saffron'} ${
+            className={clsx(
+              `text-sm pt-2`,
+              warning && 'text-yellow-saffron',
               error && 'text-red-500'
-            } pt-2`}
+            )}
           >
             {(error || warning) && !disabled ? error || warning : ''}
           </p>

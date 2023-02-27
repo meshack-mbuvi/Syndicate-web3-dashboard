@@ -149,7 +149,7 @@ const useGasDetails: (props: IProps) => {
         const now = new Date();
         const startTime = moment(now).valueOf();
         const endTime = moment(moment(now).valueOf()).add(1, 'days').valueOf();
-
+        console.log({ gas: args.maxTotalSupply });
         void policyMintERC20.getEstimateGas(
           account,
           args.clubAddress,

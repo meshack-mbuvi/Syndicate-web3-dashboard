@@ -83,7 +83,7 @@ export class ERC20ClubFactory extends ContractBase {
       isNativeDeposit,
       depositToken,
       tokenCap,
-      startTime,
+      startTime = '0',
       endTime,
       membersCount,
       tokenRules,

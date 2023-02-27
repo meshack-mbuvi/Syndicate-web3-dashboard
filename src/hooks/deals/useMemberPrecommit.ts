@@ -1,13 +1,10 @@
+import { GetMemberPrecommit } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
-import { getFirstOrString } from '@/utils/stringUtils';
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  StatusType,
-  usePrecommitQuery
-} from '../data-fetching/thegraph/generated-types';
 import { Precommit } from './types';
 
 export interface PrecommitResponse {
@@ -23,29 +20,31 @@ const useMemberPrecommit = (overridePoll: boolean): PrecommitResponse => {
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-
-  const dealAddress = getFirstOrString(router.query.dealAddress) || '';
-
+  const {
+    query: { dealAddress }
+  } = router;
   const abortController = new AbortController();
 
   // get precommit for a specific member
-  const { loading, data, startPolling, stopPolling } = usePrecommitQuery({
+  const { loading, data, startPolling, stopPolling } = useQuery<{
+    precommits: Precommit[];
+  }>(GetMemberPrecommit, {
     variables: {
       where: {
         userAddress: account.toLowerCase(),
         deal_: {
           id: dealAddress
         },
-        status_not: 'CANCELED' as StatusType
+        status_not: 'CANCELED',
+        fetchOptions: {
+          signal: abortController.signal
+        }
       }
     },
     skip: !dealAddress || !account || !activeNetwork.chainId,
     context: {
       clientName: SUPPORTED_GRAPHS.THE_GRAPH,
-      chainId: activeNetwork.chainId,
-      fetchOptions: {
-        signal: abortController.signal
-      }
+      chainId: activeNetwork.chainId
     }
   });
 

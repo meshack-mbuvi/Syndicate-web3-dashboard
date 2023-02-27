@@ -1,16 +1,13 @@
+import { GetMemberDeals } from '@/graphql/subgraph_queries';
 import { SUPPORTED_GRAPHS } from '@/Networks/backendLinks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Deal,
-  StatusType,
-  useMemberPrecommitsQuery
-} from '../data-fetching/thegraph/generated-types';
 import { processDealsToDealPreviews } from './helpers';
-import { DealPreview } from './types';
+import { DealPreview, Precommit } from './types';
 
 const useMemberDeals = (): {
   memberDeals: DealPreview[];
@@ -29,11 +26,13 @@ const useMemberDeals = (): {
   let memberDeals = new Array<DealPreview>();
 
   // retrieve member deals
-  const { loading, refetch, data, error } = useMemberPrecommitsQuery({
+  const { loading, refetch, data, error } = useQuery<{
+    precommits: Precommit[];
+  }>(GetMemberDeals, {
     variables: {
       where: {
         userAddress: walletAddress,
-        status_not: 'CANCELED' as StatusType
+        status_not: 'CANCELED'
       }
     },
     context: {
@@ -57,14 +56,12 @@ const useMemberDeals = (): {
     if (error || activeNetwork.chainId !== 5) {
       return;
     }
-
     void refetch({
       where: {
         userAddress: walletAddress,
-        status_not: 'CANCELED' as StatusType
+        status_not: 'CANCELED'
       }
     });
-
     return () => {
       abortController.abort();
     };
@@ -72,7 +69,7 @@ const useMemberDeals = (): {
 
   if (!loading && data?.precommits) {
     memberDeals = processDealsToDealPreviews(
-      data.precommits.map((precommit) => precommit.deal as Deal)
+      data.precommits.map((precommit) => precommit.deal)
     );
   } else {
     memberDeals = [];

@@ -1,12 +1,13 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import Modal, { ModalStyle } from '@/components/modal';
 import { Callout } from '@/components/callout';
-import EstimateGas from '@/components/EstimateGas';
-import { ContractMapper } from '@/hooks/useGasDetails';
-import { useRouter } from 'next/router';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { CTAButton } from '@/components/CTAButton';
+import EstimateGas from '@/components/EstimateGas';
+import Modal, { ModalStyle } from '@/components/modal';
+import { ContractMapper } from '@/hooks/useGasDetails';
+import { AppState } from '@/state';
+import { getFirstOrString } from '@/utils/stringUtils';
+import { useRouter } from 'next/router';
+import React, { Dispatch, SetStateAction } from 'react';
+import { useSelector } from 'react-redux';
 
 interface IClubStillOpenModal {
   showClubStillOpenModal: boolean;
@@ -31,9 +32,7 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
 
   const router = useRouter();
 
-  const {
-    query: { clubAddress }
-  } = router;
+  const clubAddress = getFirstOrString(router.query.clubAddress) || '';
 
   return (
     <Modal
@@ -43,7 +42,7 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
         showCloseButton: false,
         customWidth: 'w-full max-w-480',
         outsideOnClick: true,
-        closeModal: () => {
+        closeModal: (): void => {
           localStorage.removeItem('mintingForClosedClub');
           setShowClubStillOpenModal(false);
         },
@@ -103,7 +102,7 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
               <CTAButton
                 fullWidth={true}
                 buttonType="button"
-                onClick={() => handleCloseClubPostMint()}
+                onClick={(): void => handleCloseClubPostMint()}
               >
                 Yes, close club to deposits
               </CTAButton>
@@ -113,7 +112,7 @@ export const ClubStillOpenModal: React.FC<IClubStillOpenModal> = ({
         <div className="w-full text-center">
           <button
             className="text-gray-syn3"
-            onClick={() => {
+            onClick={(): void => {
               localStorage.removeItem('mintingForClosedClub');
               setShowClubStillOpenModal(false);
             }}

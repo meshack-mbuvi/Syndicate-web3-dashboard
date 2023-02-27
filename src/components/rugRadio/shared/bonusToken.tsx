@@ -5,7 +5,9 @@ import React from 'react';
 import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 type bonusClaimProps = {
-  handleClaimBonus: any;
+  handleClaimBonus: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
   bonusAmount: string;
 };
 

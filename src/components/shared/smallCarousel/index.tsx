@@ -1,9 +1,4 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
-import { ChevronIcon, ChevronIconDirection } from '@/components/icons/chevron';
-import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
-import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
-import { B2, B4 } from '@/components/typography';
-import { useEffect, useState } from 'react';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   GUILD_CLICK,
@@ -12,6 +7,11 @@ import {
   SNAPSHOT_CLICK,
   SYNDICATE_CLICK
 } from '@/components/amplitude/eventNames';
+import { ChevronIcon, ChevronIconDirection } from '@/components/icons/chevron';
+import { SimpleExternalLinkIcon } from '@/components/icons/externalLink';
+import TransitionBetweenChildren from '@/components/transition/transitionBetweenChildren';
+import { B2, B4 } from '@/components/typography';
+import { useEffect, useState } from 'react';
 
 interface Props {
   slides: any[];
@@ -25,11 +25,11 @@ export const SmallCarousel: React.FC<Props> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [showSlideNavigator, setShowSlideNavigator] = useState(false);
   const duration = 2000;
-  let interval: any;
-  const incrementIndex = () => {
+  let interval: string | number | NodeJS.Timeout | undefined;
+  const incrementIndex = (): void => {
     setActiveIndex((activeIndex + slides.length + 1) % slides.length);
   };
-  const decrementIndex = () => {
+  const decrementIndex = (): void => {
     setActiveIndex((activeIndex + slides.length - 1) % slides.length);
   };
   useEffect(() => {
@@ -43,19 +43,19 @@ export const SmallCarousel: React.FC<Props> = ({
   return (
     <div
       className="flex space-x-3 justify-between items-center border border-gray-syn7 h-38.25 p-6 max-w-88 rounded-2xl"
-      onMouseOver={() => {
+      onMouseOver={(): void => {
         clearInterval(interval);
         if (useArrows) {
           setShowSlideNavigator(true);
         }
       }}
-      onFocus={() => {
+      onFocus={(): void => {
         clearInterval(interval);
         if (useArrows) {
           setShowSlideNavigator(true);
         }
       }}
-      onMouseLeave={() => {
+      onMouseLeave={(): void => {
         interval = setInterval(() => {
           incrementIndex();
         }, duration);
@@ -83,7 +83,7 @@ export const SmallCarousel: React.FC<Props> = ({
           {showSlideNavigator ? (
             <div className="items-center flex-col flex justify-between overflow-hidden w-full bg-opacity-10 relative transform top-1/2 -translate-y-1/2">
               <button
-                onClick={() => {
+                onClick={(): void => {
                   decrementIndex();
                 }}
                 className="relative transform left-1/2 -translate-x-1/2 mb-6"
@@ -94,7 +94,7 @@ export const SmallCarousel: React.FC<Props> = ({
                 />
               </button>
               <button
-                onClick={() => {
+                onClick={(): void => {
                   incrementIndex();
                 }}
                 className="relative transform left-1/2 -translate-x-1/2"
@@ -111,7 +111,7 @@ export const SmallCarousel: React.FC<Props> = ({
                 return (
                   <button
                     key={index}
-                    onClick={() => {
+                    onClick={(): void => {
                       setActiveIndex(index);
                     }}
                     className={`block w-2 h-2 rounded-full bg-white ${
@@ -135,8 +135,8 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
-    onClick={() => {
-      amplitudeLogger(SYNDICATE_CLICK, {
+    onClick={(): void => {
+      void amplitudeLogger(SYNDICATE_CLICK, {
         flow: Flow.COLLECTIVE_MANAGE
       });
     }}
@@ -169,8 +169,8 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
-    onClick={() => {
-      amplitudeLogger(SNAPSHOT_CLICK, {
+    onClick={(): void => {
+      void amplitudeLogger(SNAPSHOT_CLICK, {
         flow: Flow.COLLECTIVE_MANAGE
       });
     }}
@@ -202,8 +202,8 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
-    onClick={() => {
-      amplitudeLogger(GUILD_CLICK, {
+    onClick={(): void => {
+      void amplitudeLogger(GUILD_CLICK, {
         flow: Flow.COLLECTIVE_MANAGE
       });
     }}
@@ -235,8 +235,8 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
-    onClick={() => {
-      amplitudeLogger(SLIK_CLICK, {
+    onClick={(): void => {
+      void amplitudeLogger(SLIK_CLICK, {
         flow: Flow.COLLECTIVE_MANAGE
       });
     }}
@@ -268,8 +268,8 @@ export const collectiveSlides = [
     className="hover-parent visibility-container"
     target="_blank"
     rel="noopener noreferrer"
-    onClick={() => {
-      amplitudeLogger(LUMA_CLICK, {
+    onClick={(): void => {
+      void amplitudeLogger(LUMA_CLICK, {
         flow: Flow.COLLECTIVE_MANAGE
       });
     }}

@@ -1,3 +1,4 @@
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import {
   ERC20TokenDefaultState,
   initialActiveModuleDetailsState
@@ -14,9 +15,9 @@ export interface ERC20Token {
   owner: string;
   address: string;
   currentMintPolicyAddress?: string;
-  totalSupply?: number;
+  totalSupply?: string;
   tokenDecimals: number;
-  totalDeposits?: number;
+  totalDeposits?: string;
   depositsEnabled: boolean;
   claimEnabled: boolean;
   symbol: string;
@@ -26,9 +27,9 @@ export interface ERC20Token {
   maxTotalDeposits: number;
   loading: boolean;
   maxMemberCount: number;
-  maxTotalSupply: number;
-  requiredToken: any;
-  requiredTokenMinBalance: any;
+  maxTotalSupply: string;
+  requiredToken: string;
+  requiredTokenMinBalance: string;
   depositToken?: string;
   mintModule?: string;
 }
@@ -91,7 +92,7 @@ export enum IActiveModuleRequirementType {
 export const initialState: {
   erc20Token: ERC20Token;
   depositDetails: DepositDetails;
-  erc20TokenContract: any;
+  erc20TokenContract: ClubERC20Contract | null;
   activeModuleDetails: ActiveModuleDetails;
   tokenGatingDetails: TokenGatedRequirementsDetails;
   depositTokenPriceInUSD?: number;

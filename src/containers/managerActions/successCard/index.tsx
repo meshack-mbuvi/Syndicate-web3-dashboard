@@ -1,4 +1,5 @@
 import CopyLink from '@/components/shared/CopyLink';
+import { Dispatch, SetStateAction } from 'react';
 import Confetti from 'react-confetti';
 
 export const SuccessCard: React.FC<{
@@ -6,8 +7,8 @@ export const SuccessCard: React.FC<{
   clubDepositLink: string;
   updateDepositLinkCopyState: () => void;
   showDepositLinkCopyState: boolean;
-  showConfettiSuccess: any;
-  setShowConfettiSuccess: any;
+  showConfettiSuccess: boolean;
+  setShowConfettiSuccess: Dispatch<SetStateAction<boolean>>;
 }> = ({
   syndicateSuccessfullyCreated,
   clubDepositLink,
