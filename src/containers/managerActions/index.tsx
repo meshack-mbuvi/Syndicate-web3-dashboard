@@ -431,10 +431,10 @@ const ManagerActions = (): JSX.Element => {
             {status !== Status.DISCONNECTED && (
               <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
                 {/* TODO: Update to distributions before merging */}
-                {isDistributionsTreatmentOn && !depositsEnabled ? (
+                {isDistributionsTreatmentOn ? (
                   <div
                     className={`${
-                      loading ? `` : `hover:bg-gray-syn7`
+                      loading || depositsEnabled ? `` : `hover:bg-gray-syn7`
                     } rounded-xl py-2 px-4 w-full`}
                   >
                     {loading ? (
@@ -443,7 +443,7 @@ const ManagerActions = (): JSX.Element => {
                         <SkeletonLoader width="full" height="10" />
                       </>
                     ) : (
-                      <MakeDistributionCard />
+                      <MakeDistributionCard depositsEnabled={depositsEnabled} />
                     )}
                   </div>
                 ) : null}

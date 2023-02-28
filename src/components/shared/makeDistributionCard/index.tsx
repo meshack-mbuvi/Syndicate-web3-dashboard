@@ -6,8 +6,12 @@ import { AppState } from '@/state';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
+import clsx from 'clsx';
 
-const MakeDistributionCard: React.FC = () => {
+const MakeDistributionCard: React.FC<{ depositsEnabled: boolean }> = ({
+  depositsEnabled
+}) => {
   const {
     web3Reducer: {
       web3: { activeNetwork }
@@ -22,7 +26,7 @@ const MakeDistributionCard: React.FC = () => {
   return (
     <a
       href={
-        isDemoMode
+        isDemoMode || depositsEnabled
           ? undefined
           : `/clubs/${clubAddress}/distribute?chain=${activeNetwork.network}`
       }
@@ -32,16 +36,54 @@ const MakeDistributionCard: React.FC = () => {
         });
       }}
     >
-      <div className="rounded-t-2xl space-x-4 flex items-stretch">
+      <div
+        className={clsx(
+          'rounded-t-2xl space-x-4 flex items-stretch',
+          depositsEnabled && 'cursor-not-allowed'
+        )}
+        data-tip
+        data-for="tooltip"
+      >
         <div className="flex-shrink-0">
-          <img src="/images/Distribute.svg" className="mt-1" alt="arrow" />
+          <img
+            src={
+              depositsEnabled
+                ? '/images/distribute-gray.svg'
+                : '/images/Distribute.svg'
+            }
+            className="mt-1"
+            alt="arrow"
+          />
         </div>
         <div className="space-y-1">
-          <p className="text-base leading-6">Make a distribution</p>
-          <p className="text-sm leading-6 text-gray-syn4">
+          <p
+            className={`text-base leading-6 ${
+              depositsEnabled ? 'text-gray-syn5' : 'text-white'
+            }`}
+          >
+            Make a distribution
+          </p>
+          <p
+            className={`text-sm leading-6  ${
+              depositsEnabled ? 'text-gray-syn5' : 'text-gray-syn4'
+            }`}
+          >
             Send all or a portion of tokens to members
           </p>
         </div>
+        {depositsEnabled && (
+          <ReactTooltip
+            id="tooltip"
+            place="top"
+            effect="solid"
+            className="actionsTooltip"
+            arrowColor="#222529"
+            backgroundColor="#222529"
+            offset={{ left: 120 }}
+          >
+            <span>Available once your club is closed to deposits.</span>
+          </ReactTooltip>
+        )}
       </div>
     </a>
   );
