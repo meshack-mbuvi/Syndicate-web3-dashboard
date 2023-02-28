@@ -27,8 +27,9 @@ const useMemberClubs = (): {
     useState<Partial<CustomSyndicateDao>[]>();
 
   const apolloClient = useApolloClient();
+  const abortController = new AbortController();
 
-  const { loading, data } = useGetClubsHaveInvestedInQuery({
+  const { loading, data, error, refetch } = useGetClubsHaveInvestedInQuery({
     variables: {
       where: {
         memberAddress: accountAddress
@@ -43,8 +44,20 @@ const useMemberClubs = (): {
       !accountAddress ||
       !router.isReady ||
       !activeNetwork.chainId ||
-      status !== Status.CONNECTED
+      status !== Status.CONNECTED ||
+      activeNetwork.chainId === 0
   });
+
+  useEffect(() => {
+    if (!error && activeNetwork.chainId !== 0) {
+      void refetch({
+        where: { memberAddress: accountAddress }
+      });
+    }
+    return () => {
+      abortController.abort();
+    };
+  }, [activeNetwork.chainId, accountAddress]);
 
   useEffect(() => {
     if (
@@ -90,13 +103,16 @@ const useMemberClubs = (): {
       );
     });
 
-    void processClubERC20Tokens(
+    processClubERC20Tokens(
       account,
       clubTokens,
       activeNetwork,
       syndicateContracts,
-      apolloClient
-    ).then((tokens) => setMemberClubs(tokens));
+      apolloClient,
+      abortController.signal
+    )
+      .then((tokens) => setMemberClubs(tokens))
+      .catch(() => setMemberClubs([]));
   }, [loading, data]);
 
   return {

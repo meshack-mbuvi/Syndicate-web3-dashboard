@@ -5,6 +5,7 @@ import Layout from '@/components/layout';
 import PortfolioAndDiscover from '@/components/syndicates/portfolioAndDiscover';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useRouter } from 'next/router';
+
 import React, { FC, useEffect } from 'react';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 
@@ -18,12 +19,16 @@ const SyndicatesComponent: FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       router.push('/');
       amplitudeLogger(WEB_APP_LANDING, {
         flow: Flow.WEB_APP
       });
     }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (

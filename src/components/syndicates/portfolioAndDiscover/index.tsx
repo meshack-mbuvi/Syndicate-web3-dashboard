@@ -76,8 +76,9 @@ const PortfolioAndDiscover: React.FC = () => {
 
   const { width } = useWindowSize();
 
-  const { adminCollectives } = useAdminCollectives();
-  const { memberCollectives } = useMemberCollectives();
+  const { adminCollectives, adminCollectivesLoading } = useAdminCollectives();
+  const { memberCollectives, memberCollectivesLoading } =
+    useMemberCollectives();
 
   const { adminDeals, adminDealsLoading } = useAdminDeals();
   const { memberDeals, memberDealsLoading } = useMemberDeals();
@@ -85,6 +86,8 @@ const PortfolioAndDiscover: React.FC = () => {
   const isLoading =
     memberClubsLoading ||
     adminClubsLoading ||
+    adminCollectivesLoading ||
+    memberCollectivesLoading ||
     adminDealsLoading ||
     memberDealsLoading;
 
@@ -152,10 +155,7 @@ const PortfolioAndDiscover: React.FC = () => {
     // deals
     if (memberDeals.length === 0 && adminDeals.length !== 0) {
       setActiveDealsTab(TabsType.ADMIN);
-    } else if (
-      memberCollectives.length !== 0 &&
-      adminCollectives.length === 0
-    ) {
+    } else if (memberDeals.length !== 0 && adminDeals.length === 0) {
       setActiveDealsTab(TabsType.MEMBER);
     }
   }, [

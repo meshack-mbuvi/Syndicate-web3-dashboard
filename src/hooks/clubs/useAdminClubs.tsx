@@ -29,6 +29,7 @@ const useAdminClubs = (): {
   } = useSelector((state: AppState) => state);
 
   const apolloClient = useApolloClient();
+  const abortController = new AbortController();
 
   const router = useRouter();
   const accountAddress = useMemo(() => account?.toLocaleLowerCase(), [account]);
@@ -37,7 +38,7 @@ const useAdminClubs = (): {
   );
   const [myClubs, setMyClubs] = useState<myClubs | undefined>();
 
-  const { loading, data } = useGetCubsIAdminQuery({
+  const { loading, data, error, refetch } = useGetCubsIAdminQuery({
     variables: {
       where: { ownerAddress: accountAddress }
     },
@@ -49,8 +50,20 @@ const useAdminClubs = (): {
       !accountAddress ||
       !router.isReady ||
       !activeNetwork.chainId ||
-      status !== Status.CONNECTED
+      status !== Status.CONNECTED ||
+      activeNetwork.chainId === 0
   });
+
+  useEffect(() => {
+    if (!error && activeNetwork.chainId !== 0) {
+      void refetch({
+        where: { ownerAddress: accountAddress }
+      });
+    }
+    return () => {
+      abortController.abort();
+    };
+  }, [activeNetwork.chainId, accountAddress]);
 
   const processMyClubs = async (
     tokens: Partial<CustomSyndicateDao>[] | undefined
@@ -98,17 +111,20 @@ const useAdminClubs = (): {
 
     void processMyClubs(data?.syndicateDAOs);
 
-    void processClubERC20Tokens(
+    processClubERC20Tokens(
       account,
       data?.syndicateDAOs,
       activeNetwork,
       syndicateContracts,
-      apolloClient
-    ).then((processedClubs) => {
-      if (processedClubs) {
-        setAdminClubs(processedClubs);
-      }
-    });
+      apolloClient,
+      abortController.signal
+    )
+      .then((processedClubs) => {
+        if (processedClubs) {
+          setAdminClubs(processedClubs);
+        }
+      })
+      .catch(() => setAdminClubs([]));
   }, [loading, data]);
 
   return {

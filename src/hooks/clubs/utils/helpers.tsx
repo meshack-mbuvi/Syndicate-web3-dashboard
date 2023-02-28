@@ -15,7 +15,8 @@ export const processClubERC20Tokens = async (
   tokens: Partial<CustomSyndicateDao>[] | undefined,
   activeNetwork: IActiveNetwork,
   syndicateContracts: any,
-  apolloClient: ApolloClient<any>
+  apolloClient: ApolloClient<any>,
+  signal: AbortSignal
 ): Promise<Partial<CustomSyndicateDao>[]> => {
   if (!tokens || !tokens?.length) {
     return [];
@@ -47,7 +48,8 @@ export const processClubERC20Tokens = async (
             const { name, symbol, decimals } = await getTokenDetails(
               contractAddress,
               activeNetwork.chainId,
-              apolloClient
+              apolloClient,
+              signal
             );
 
             const maxTotalSupplyFromWei = getWeiAmount(
@@ -73,7 +75,8 @@ export const processClubERC20Tokens = async (
             } = await getTokenDetails(
               depositToken,
               activeNetwork.chainId,
-              apolloClient
+              apolloClient,
+              signal
             );
 
             const maxTotalDeposits =

@@ -21,7 +21,8 @@ export type ITokenDetailsResponse = {
 export const getTokenDetails = async (
   tokenAddress: string,
   chainId: number,
-  apolloClient: ApolloClient<any>
+  apolloClient: ApolloClient<any>,
+  signal: AbortSignal
 ): Promise<ITokenDetails> => {
   if (isZeroAddress(tokenAddress)) {
     return {
@@ -40,7 +41,7 @@ export const getTokenDetails = async (
       chainId,
       address: tokenAddress
     },
-    context: { clientName: SUPPORTED_GRAPHS.BACKEND, chainId }
+    context: { clientName: SUPPORTED_GRAPHS.BACKEND, chainId, signal }
   });
 
   return response.data.token;
