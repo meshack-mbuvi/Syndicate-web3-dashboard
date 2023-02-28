@@ -1,29 +1,21 @@
+import IconEtherscan from '@/components/icons/etherscan';
+import IconInvest from '@/components/icons/invest';
+import IconRosette from '@/components/icons/rosette';
+import IconVerified from '@/components/icons/verified';
 import {
   AddressLayout,
   DisplayAddressWithENS
 } from '@/components/shared/ensAddress/display';
-import { B2 } from '@/components/typography';
-import ReactTooltip from 'react-tooltip';
-import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
 import { StatusChip } from '@/components/statusChip';
-import IconVerified from '@/components/icons/verified';
-import IconRosette from '@/components/icons/rosette';
-import IconInvest from '@/components/icons/invest';
-import IconEtherscan from '@/components/icons/etherscan';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { B2 } from '@/components/typography';
 import { ParticipantStatus } from '@/hooks/deals/types';
-
-export interface DealParticipant {
-  dealAddress: string;
-  address: string;
-  ensName?: string;
-  createdAt: string;
-  amount: string;
-  status: string;
-}
+import { IPrecommit } from '@/hooks/deals/useDealPrecommits';
+import { getFormattedDateTimeWithTZ } from '@/utils/dateUtils';
+import ReactTooltip from 'react-tooltip';
 
 interface Props {
-  participants: DealParticipant[];
+  participants: IPrecommit[] | undefined;
   addressOfLeader?: string;
 }
 
@@ -33,8 +25,8 @@ export const DealsParticipants: React.FC<Props> = ({
 }) => {
   // Deal leader
   const filteredParticipantsByLeader = addressOfLeader
-    ? participants.map((participant: DealParticipant, index) => {
-        if (participant.address === addressOfLeader) {
+    ? participants?.map((participant, index) => {
+        if (participant.userAddress === addressOfLeader) {
           return index;
         } else {
           return undefined;
@@ -48,31 +40,33 @@ export const DealsParticipants: React.FC<Props> = ({
   // Largest backer
   let indexOfLargestBacker = 0;
   let largestBackingAmountHasDuplicates = false; // if this is true we don't want to show the badge
+  const numberOfParticipants = participants?.length ?? 0;
   // Find the largest backer
-  for (let index = 0; index < participants.length; index++) {
-    const currentParticipant = participants[index];
-    const largestParticipant = participants[indexOfLargestBacker];
-    if (currentParticipant.amount > largestParticipant.amount) {
+  for (let index = 0; index < numberOfParticipants; index++) {
+    const currentParticipantAmount = Number(participants?.[index].amount);
+    const largestParticipantAmount = Number(
+      participants?.[indexOfLargestBacker].amount
+    );
+
+    if (currentParticipantAmount > largestParticipantAmount) {
       indexOfLargestBacker = index;
       largestBackingAmountHasDuplicates = false;
     }
-    if (
-      currentParticipant.amount === largestParticipant.amount &&
-      index !== 0
-    ) {
+    if (currentParticipantAmount === largestParticipantAmount && index !== 0) {
       largestBackingAmountHasDuplicates = true;
     }
   }
+
   return (
     <div>
       <B2 extraClasses="text-gray-syn4 mb-2">
-        {participants.length > 0 ? 'Backers' : 'No backers yet'}
+        {participants?.length ?? 0 > 0 ? 'Backers' : 'No backers yet'}
       </B2>
-      {participants.map((participant, index) => {
+      {participants?.map((participant, index) => {
         const showFirstBackerBadge =
           indexOfDealLeader === 0 ? index === 1 : index === 0;
         const showDealLeaderBadge =
-          participants[index].address === addressOfLeader;
+          participants[index].userAddress === addressOfLeader;
         const showLargestBackerBadge =
           indexOfLargestBacker !== undefined &&
           index === indexOfLargestBacker &&
@@ -80,7 +74,7 @@ export const DealsParticipants: React.FC<Props> = ({
         const isAnyBadgeVisible =
           showFirstBackerBadge || showDealLeaderBadge || showLargestBackerBadge;
         return (
-          <div key={`${index}-${participant.address}`}>
+          <div key={`${index}-${participant.userAddress}`}>
             <div
               key={index}
               className={`inline-flex space-x-2 mt-2 visibility-container`}
@@ -89,7 +83,7 @@ export const DealsParticipants: React.FC<Props> = ({
             >
               <DisplayAddressWithENS
                 name={participant.ensName}
-                address={participant.address}
+                address={participant.userAddress}
                 layout={AddressLayout.ONE_LINE}
                 onlyShowOneOfNameOrAddress={true}
               />
@@ -121,17 +115,19 @@ export const DealsParticipants: React.FC<Props> = ({
                 </div>
               )}
 
-              <BlockExplorerLink
-                resourceId={participant.address}
-                noIconOrText={true}
-              >
-                <div
-                  className="w-7.5 h-7.5 rounded-full bg-white bg-opacity-10 flex items-center justify-center invisible visibility-hover"
-                  style={{}}
+              {participant?.userAddress ? (
+                <BlockExplorerLink
+                  resourceId={participant?.userAddress}
+                  noIconOrText={true}
                 >
-                  <IconEtherscan textColorClass="text-white" />
-                </div>
-              </BlockExplorerLink>
+                  <div
+                    className="w-7.5 h-7.5 rounded-full bg-white bg-opacity-10 flex items-center justify-center invisible visibility-hover"
+                    style={{}}
+                  >
+                    <IconEtherscan textColorClass="text-white" />
+                  </div>
+                </BlockExplorerLink>
+              ) : null}
             </div>
             <br />
 

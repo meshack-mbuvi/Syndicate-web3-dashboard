@@ -133,7 +133,7 @@ const PrecommitContainer: React.FC<{
 
   const onTxPrecommitReceipt = (): void => {
     setShowWaitingOnWallet(false);
-    setPrePollingPrecommitStatus(currentPrecommitStatus);
+    setPrePollingPrecommitStatus(currentPrecommitStatus as PrecommitStatus);
     toggleSuccessModal();
     setPrecommitModalOpen(false);
     // start polling
@@ -320,7 +320,7 @@ const PrecommitContainer: React.FC<{
       )
         return;
       setShowWaitingOnWallet(true);
-      setPrePollingPrecommitStatus(currentPrecommitStatus);
+      setPrePollingPrecommitStatus(currentPrecommitStatus as PrecommitStatus);
       await allowancePrecommitModuleERC20.precommit(
         dealTokenAddress,
         tokenAmountInWei,
@@ -346,7 +346,7 @@ const PrecommitContainer: React.FC<{
       setShowDealActionConfirmModal(false);
       setOpenWithdrawModal(true);
       setIsConfirmingWithdraw(true);
-      setPrePollingPrecommitStatus(currentPrecommitStatus);
+      setPrePollingPrecommitStatus(currentPrecommitStatus as PrecommitStatus);
       await allowancePrecommitModuleERC20.cancelPrecommit(
         dealTokenAddress,
         account,
@@ -426,7 +426,9 @@ const PrecommitContainer: React.FC<{
         <DealAllocationCard
           dealName={dealName}
           //TODO [ENG-4768]: reconcile types between graph status + type in StatusChip
-          precommitStatus={precommit?.status ?? PrecommitStatus.NONE}
+          precommitStatus={
+            (precommit?.status ?? PrecommitStatus.NONE) as PrecommitStatus
+          }
           precommitAmount={
             precommit && precommit?.amount
               ? String(getWeiAmount(precommit.amount, decimals, false))

@@ -1,25 +1,27 @@
 import {
   Deal,
-  DealPreview,
-  DealStatus,
-  MixinModuleRequirementType
-} from './types';
+  RequirementType
+} from '../data-fetching/thegraph/generated-types';
+import { DealPreview, DealStatus } from './types';
 
 const getStatus = (executed: boolean, endTime: string): DealStatus => {
   if (executed) {
     return DealStatus.EXECUTED;
   }
+
   if (parseInt((new Date().getTime() / 1000).toString()) > +endTime) {
     return DealStatus.CLOSED;
   }
+
   return DealStatus.OPEN;
 };
 
-export const processDealsToDealPreviews = (deals: Deal[]): DealPreview[] => {
+export const processDealsToDealPreviews = (
+  deals: Deal[] | []
+): DealPreview[] => {
   return deals.map((deal: Deal): DealPreview => {
-    const timeMixin = deal.mixins.find(
-      (mixin: { requirementType: MixinModuleRequirementType }) =>
-        mixin.requirementType == MixinModuleRequirementType.TIME_WINDOW
+    const timeMixin = deal?.mixins?.find(
+      (mixin) => mixin.requirementType == RequirementType.TimeWindow
     );
     return {
       dealName: deal.dealToken.name,
