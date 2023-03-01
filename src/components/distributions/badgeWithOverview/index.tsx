@@ -1,7 +1,8 @@
-import { Callout } from '@/components/callout';
+import { Callout, CalloutType } from '@/components/callout';
 import { CTAButton } from '@/components/CTAButton';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import { B4 } from '@/components/typography';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
@@ -21,6 +22,8 @@ interface Props {
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
+  sufficientGas?: boolean;
+  isGnosisSafe?: boolean;
   ctaOnclickHandler: (e: any) => void;
 }
 
@@ -30,6 +33,8 @@ export const BadgeWithOverview: React.FC<Props> = ({
   CTALabel,
   isCTADisabled,
   ctaOnclickHandler,
+  sufficientGas,
+  isGnosisSafe = false,
   attribution = 'Price estimates from CoinGecko'
 }) => {
   const [isTotalLoading, setIsTotalLoading] = useState(false);
@@ -186,6 +191,20 @@ export const BadgeWithOverview: React.FC<Props> = ({
                   </div>
                 </div>
               </Callout>
+              {!sufficientGas && isGnosisSafe && (
+                <div className="mt-3 rounded-xl px-4 pt-2 pb-1 text-sm mx-4 text-gray-syn3">
+                  <div className="flex flex-grow space-x-3">
+                    <img
+                      src="/images/syndicateStatusIcons/warning-triangle-yellow.svg"
+                      className="w-4 h-4 opacity-80"
+                    />
+                    <B4>
+                      For a Gnosis Safe, make sure the transaction signer has
+                      enough to cover gas costs.
+                    </B4>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="px-8 py-6 flex space-x-3">
@@ -278,6 +297,22 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
               </div>
             </Callout>
+            {!sufficientGas && isGnosisSafe && (
+              <Callout
+                type={CalloutType.WARNING}
+                extraClasses="rounded-xl px-4 py-3 text-sm"
+              >
+                <div className="flex justify-between space-x-2">
+                  <div className="flex flex-grow space-x-3">
+                    <img src="/images/fuel-pump-blue.svg" alt="Gas icon" />
+                    <div>
+                      For a Gnosis Safe, make sure the transaction signer has
+                      enough to cover gas costs.
+                    </div>
+                  </div>
+                </div>
+              </Callout>
+            )}
             <CTAButton
               disabled={isCTADisabled}
               onClick={ctaOnclickHandler}

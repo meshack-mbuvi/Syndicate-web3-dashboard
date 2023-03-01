@@ -9,6 +9,7 @@ import { resetClubState, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { getNetworkByName } from '@/helpers/getNetwork';
 import { useClubDepositsAndSupply } from '@/hooks/clubs/useClubDepositsAndSupply';
 import { useTokenOwner } from '@/hooks/clubs/useClubOwner';
+import useAddressIsContract from '@/hooks/useAddressIsContract';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import useGasDetails, { ContractMapper } from '@/hooks/useGasDetails';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
@@ -185,6 +186,8 @@ const Distribute: FC = () => {
       setIsClubFound(true);
     }
   }, [isReady, clubAddress, isDemoMode, web3]);
+
+  const { AddressIsContract: isGnosisSafe } = useAddressIsContract();
 
   useEffect(() => {
     if (
@@ -485,7 +488,7 @@ const Distribute: FC = () => {
     // if maximum value is selected, trigger error message
     let error = '';
     if (nativeToken) {
-      if (_newMaxTokenAmount <= 0) {
+      if (_newMaxTokenAmount < 0) {
         error = 'Exceeds amount available for distribution';
         setSufficientGas(false);
       } else {
@@ -624,9 +627,9 @@ const Distribute: FC = () => {
   ]);
 
   useEffect(() => {
-    const _hasError = _options.some((option) => option.error);
+    const _hasError = distributionTokens.some((token) => token.error);
     setHasError(_hasError);
-  }, [_options]);
+  }, [distributionTokens]);
 
   const handleNext = (event: { preventDefault: () => void }): void => {
     event.preventDefault();
@@ -656,10 +659,10 @@ const Distribute: FC = () => {
               }
             : null
         }
-        isCTADisabled={CTAButtonDisabled || !sufficientGas || hasError}
-        CTALabel={
-          sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
-        }
+        isCTADisabled={CTAButtonDisabled || hasError}
+        CTALabel={'Next, review members'}
+        sufficientGas={sufficientGas}
+        isGnosisSafe={isGnosisSafe ?? false}
         ctaOnclickHandler={handleNext}
       />
     </div>
@@ -699,7 +702,6 @@ const Distribute: FC = () => {
 
   const handlePrevious = (): void => {
     if (activeIndex === 0) return;
-
     setActiveIndex(activeIndex - 1);
     setCurrentStep(Steps.selectTokens);
   };

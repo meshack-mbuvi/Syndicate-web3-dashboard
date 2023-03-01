@@ -45,6 +45,28 @@ Default.args = {
   gasEstimate: { tokenSymbol: 'ETH', tokenAmount: 0.05, fiatAmount: 121.77 }
 };
 
+export const Gnosis = Template.bind({});
+// @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
+Default.args = {
+  tokensDetails: [
+    {
+      tokenSymbol: 'ETH',
+      tokenAmount: 40.0,
+      tokenIcon: '/images/ethereum-logo.svg',
+      fiatAmount: 104136.51
+    },
+    {
+      tokenSymbol: 'USDC',
+      tokenAmount: 12342,
+      tokenIcon: '/images/prodTokenLogos/USDCoin.svg',
+      fiatAmount: 12321
+    }
+  ],
+  gasEstimate: { tokenSymbol: 'ETH', tokenAmount: 0.05, fiatAmount: 121.77 },
+  sufficientGas: false,
+  isGnosisSafe: true
+};
+
 export const Loading = Template.bind({});
 // @ts-expect-error TS(2339): Property 'args' does not exist on type '(args: any... Remove this comment to see the full error message
 Loading.args = {

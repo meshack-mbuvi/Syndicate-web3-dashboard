@@ -20,6 +20,16 @@ export const GAS_RATE = gql`
   }
 `;
 
+export const ADDRESS_IS_CONTRACT = gql`
+  query AddressIsContract($chainId: Int!, $address: String!) {
+    account(chainId: $chainId, address: $address) {
+      address
+      chainId
+      isContract
+    }
+  }
+`;
+
 export const LEGACY_TRANSACTIONS_QUERY = gql`
   query GetLegacyTransactions(
     $chainId: Int!
