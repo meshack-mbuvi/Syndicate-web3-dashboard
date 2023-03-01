@@ -168,7 +168,7 @@ export const getERC20TokenDetails = async (
         depositsEnabled = endDateInFuture;
       }
 
-      const isValid = +startTime > 0;
+      const isValid = !isZeroAddress(address);
 
       return {
         isValid,
