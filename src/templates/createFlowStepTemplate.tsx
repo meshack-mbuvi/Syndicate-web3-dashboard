@@ -151,8 +151,10 @@ export const CreateFlowStepTemplate: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className={`flex  ${
-        hideCallouts ? 'space-x-0' : 'space-x-10 lg:space-x-12 xl:space-x-24'
+      className={`flex 3xl:w-10/12 3xl:mx-auto ${
+        hideCallouts
+          ? 'space-x-0'
+          : 'space-x-10 lg:space-x-12 xl:space-x-24 3xl:space-x-36'
       } justify-center ${paddingToAccomodateReviewStepHoverStates} pb-10 ${
         hideCallouts ? 'overflow-hidden' : ''
       }`}

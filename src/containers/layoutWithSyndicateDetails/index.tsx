@@ -452,7 +452,7 @@ const LayoutWithSyndicateDetails: FC<{
                     <div className="grid grid-cols-12 gap-5">
                       {/* Left Column */}
                       <div
-                        className={`col-start-1 col-end-12 ${
+                        className={`col-start-1 col-end-13 ${
                           managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                         }`}
                       >
@@ -491,7 +491,9 @@ const LayoutWithSyndicateDetails: FC<{
                       </div>
                       {/* Right Column */}
                       <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                        <div className="sticky top-33 w-100">{children}</div>
+                        <div className="sticky top-33 w-100 3xl:w-8/12">
+                          {children}
+                        </div>
                       </div>
 
                       {!managerSettingsOpen ? (

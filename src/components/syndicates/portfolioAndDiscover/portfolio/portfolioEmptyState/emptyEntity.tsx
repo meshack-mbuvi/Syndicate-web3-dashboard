@@ -18,7 +18,6 @@ interface Props {
   goToCreateFlow: () => void;
   entityType: EntityType;
   numEmpty: number;
-  index: number;
 }
 
 const entityData = {
@@ -60,27 +59,10 @@ const entityData = {
 const EmptyEntity: React.FC<Props> = ({
   goToCreateFlow,
   entityType,
-  numEmpty,
-  index
+  numEmpty
 }) => {
   const [hoverIndex, setHoverIndex] = useState(HoverState.NOT_HOVERING);
   const animationDuration = 'duration-700';
-
-  // Calculate classes based on number of empty states and index
-  let divClasses;
-  if (numEmpty == 1) {
-    // Only one empty state, can center card
-    divClasses = 'max-w-112 md:text-center mt-14 md:mt-2';
-  } else if (index == 1) {
-    // Multiple empty states but first card
-    divClasses = 'w-full md:max-w-88 pr-6 sm:pr-0 md:pr-14';
-  } else if (numEmpty == 3 && index == 2) {
-    // 3 empty states and middle card
-    divClasses = 'w-full md:max-w-88 sm:pl-3 md:pl-7 pr-6 sm:pr-3 md:pr-7';
-  } else {
-    // Multiple empty states but last card
-    divClasses = 'w-full md:max-w-88 pr-6 sm:pr-0 sm:px-6 md:pl-14';
-  }
 
   const {
     image,
@@ -113,7 +95,7 @@ const EmptyEntity: React.FC<Props> = ({
       onKeyDown={(e) => {
         if (e.key === 'Enter') goToCreateFlow();
       }}
-      className={`flex flex-row md:flex-col sm:space-x-8 md:space-x-0 border-gray-syn7 ${divClasses}`}
+      className={`flex flex-row md:items-center lg:items-start lg:flex-col sm:space-x-8 md:space-x-18 lg:space-x-0 border-gray-syn7`}
     >
       <div
         className={`hidden sm:block flex-shrink-0 relative ${
@@ -124,7 +106,7 @@ const EmptyEntity: React.FC<Props> = ({
           visibleChildIndex={hoverIndex}
           extraClasses={`${
             numEmpty == 1 ? 'w-fit-content mx-auto' : ''
-          } w-52 md:w-60 h-64`}
+          } w-52 md:w-76 lg:w-64 h-64`}
         >
           <img
             style={{ marginBottom: '30.42px' }}

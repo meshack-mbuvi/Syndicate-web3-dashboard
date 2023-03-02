@@ -41,8 +41,8 @@ const BackButton: React.FC<{
         className={`absolute hidden sm:block ${
           isSettingsPage
             ? '-left-20 sm:-left-24'
-            : '-left-9 sm:-left-14 xl:-left-20 '
-        } cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
+            : '-left-9 sm:-left-14 xl:-left-11 p-1'
+        } cursor-pointer w-10 h-10 rounded-full py-4 lg:active:bg-white lg:active:bg-opacity-20 transition-all ease-out duration-100 text-gray-syn5 hover:text-gray-syn3 ${
           isSticky ? 'top-9' : isSettingsPage ? 'top-0' : 'sm:top-5 lg:top-11'
         }`}
         style={{ transform }}
@@ -52,7 +52,7 @@ const BackButton: React.FC<{
           <a>
             <svg
               style={{ left: '-1px' }}
-              className="relative mx-auto vertically-center fill-current text-gray-syn5"
+              className="relative mx-auto vertically-center fill-current"
               width="13"
               height="23"
               viewBox="0 0 13 23"

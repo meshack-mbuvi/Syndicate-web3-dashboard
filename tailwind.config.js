@@ -27,24 +27,24 @@ module.exports = {
           paddingLeft: '6%',
           paddingRight: '6%',
           '@screen sm': {
-            maxWidth: '640px',
-            paddingLeft: '3rem',
-            paddingRight: '3rem'
+            maxWidth: '99%',
+            paddingLeft: '3.25rem',
+            paddingRight: '3.25rem'
           },
           '@screen md': {
-            maxWidth: '900px',
-            paddingLeft: '3rem',
-            paddingRight: '3rem'
+            maxWidth: '99%',
+            paddingLeft: '3.25rem',
+            paddingRight: '3.25rem'
           },
           '@screen lg': {
-            maxWidth: '1480px',
-            paddingLeft: '4rem',
-            paddingRight: '4rem'
+            maxWidth: '99%',
+            paddingLeft: '3.25rem',
+            paddingRight: '3.25rem'
           },
           '@screen xl': {
-            maxWidth: '1680px',
-            paddingLeft: '100px',
-            paddingRight: '100px'
+            maxWidth: '99%',
+            paddingLeft: '3.25rem',
+            paddingRight: '3.25rem'
           }
         }
       });

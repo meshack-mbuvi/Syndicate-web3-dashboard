@@ -42,7 +42,7 @@ export const SmallCarousel: React.FC<Props> = ({
   });
   return (
     <div
-      className="flex space-x-3 justify-between items-center border border-gray-syn7 h-38.25 p-6 max-w-88 rounded-2xl"
+      className="flex space-x-3 justify-between items-center border border-gray-syn7 h-38.25 p-6 rounded-2xl"
       onMouseOver={(): void => {
         clearInterval(interval);
         if (useArrows) {

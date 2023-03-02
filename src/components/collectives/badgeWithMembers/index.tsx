@@ -92,7 +92,7 @@ export const BadgeWithMembers: React.FC<Props> = ({
   }, [account, contractAddress, web3]);
 
   return (
-    <div className="md:max-w-88 w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
+    <div className="w-full overflow-scroll no-scroll-bar space-y-10 relative bottom-0 z-8 h-full">
       {permissionType == PermissionType.ADMIN &&
       isOpen &&
       !invalidEthereumNetwork ? (
