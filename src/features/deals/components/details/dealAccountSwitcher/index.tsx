@@ -31,6 +31,7 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
 }) => {
   const accountsDropdown = useRef<HTMLButtonElement>(null);
   const [isAccountSwitcherOpen, setIsAccountSwitcherOpen] = useState(false);
+  const disableDropdown = disableSwitching || wallets.length < 2;
 
   // close account switcher drop-down when clicking outside of it.
   // or selecting an account
@@ -55,13 +56,16 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
 
   return (
     <button
-      className="border border-gray-syn7 rounded-lg p-4 cursor-pointer w-full flex justify-between items-center relative"
+      className={`border border-gray-syn7 rounded-lg p-4 w-full flex justify-between items-center relative ${
+        disableDropdown ? 'cursor-default' : 'cursor-pointer'
+      }`}
       onClick={() => {
-        if (!disableSwitching) {
+        if (!disableSwitching && wallets.length > 1) {
           setIsAccountSwitcherOpen(!isAccountSwitcherOpen);
         }
       }}
       ref={accountsDropdown}
+      disabled={disableDropdown}
     >
       {/* wallet name and address  */}
       <div className="flex flex-col space-y-1.5">
@@ -88,7 +92,7 @@ const DealAccountSwitcher: React.FC<DealAccountSwitcherProps> = ({
         </div>
       </div>
 
-      {!disableSwitching && (
+      {!disableDropdown && (
         <img src="/images/chevron-down.svg" width="15" alt="down-arrow" />
       )}
 
