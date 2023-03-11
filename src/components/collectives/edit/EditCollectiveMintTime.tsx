@@ -44,7 +44,6 @@ const EditCollectiveMintTime: React.FC = () => {
         <InputFieldWithDate
           selectedDate={new Date(closeDate)}
           onChange={(date) => {
-            // @ts-expect-error TS(2345): Argument of type 'Date | null' is not assig... Remove this comment to see the full error message
             setCloseDate(date);
           }}
           // isInErrorState={false} // TODO

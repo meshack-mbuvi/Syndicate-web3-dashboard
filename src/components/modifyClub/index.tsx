@@ -46,7 +46,6 @@ import {
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import { ProgressState } from '../progressCard';
 import { Spinner } from '../shared/spinner';
-import { isValidDate } from '@/utils/dateUtils';
 
 const progressModalStates: {
   [x: string]: {
@@ -188,7 +187,7 @@ export const ModifyClubSettings = (props: {
 
   // time check states
   const [closeTime, setCloseTime] = useState('');
-  const [closeDate, setCloseDate] = useState<Date | null | number>(0);
+  const [closeDate, setCloseDate] = useState<Date>(new Date());
   const [closeTimeError, setCloseTimeError] = useState('');
   const [warning, setWarning] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
@@ -307,7 +306,13 @@ export const ModifyClubSettings = (props: {
     const eodToday = new Date(new Date().setHours(23, 59, 0, 0));
     if (
       existingOpenToDepositsUntil < eodToday &&
-      openToDepositsUntil < eodToday
+      openToDepositsUntil < eodToday &&
+      existingOpenToDepositsUntil.getDate() !== eodToday.getDate() &&
+      existingOpenToDepositsUntil.getMonth() !== eodToday.getMonth() &&
+      existingOpenToDepositsUntil.getFullYear() !== eodToday.getFullYear() &&
+      openToDepositsUntil.getDate() !== eodToday.getDate() &&
+      openToDepositsUntil.getMonth() !== eodToday.getMonth() &&
+      openToDepositsUntil.getFullYear() !== eodToday.getFullYear()
     ) {
       setOpenToDepositsUntilWarning(
         "You'll need a new date to reopen for deposits"
@@ -326,10 +331,10 @@ export const ModifyClubSettings = (props: {
           Number(numberStringInputRemoveCommas(String(maxAmountRaising))) ||
         Number(existingMaxNumberOfMembers) !== Number(maxNumberOfMembers)) &&
       // Check if there are no errors
-      maxAmountRaisingError === null &&
-      maxNumberOfMembersError === null &&
-      openToDepositsUntilWarning === null &&
-      !closeTimeError
+      maxAmountRaisingError === '' &&
+      maxNumberOfMembersError === '' &&
+      openToDepositsUntilWarning === '' &&
+      closeTimeError === ''
     ) {
       setAreClubChangesAvailable(true);
     } else {
@@ -441,7 +446,7 @@ export const ModifyClubSettings = (props: {
     setCloseTime(time);
   };
 
-  const handleDateChange = (targetDate: Date | null): void => {
+  const handleDateChange = (targetDate: Date): void => {
     setCloseDate(targetDate);
   };
 
@@ -449,8 +454,9 @@ export const ModifyClubSettings = (props: {
   // need to update closeDate and closeTime when it does.
   useEffect(() => {
     if (endTime) {
-      setCloseDate(endTime);
-      setCloseTime(moment(new Date(endTime)).format('HH:mm'));
+      const closeDateValue = new Date(endTime);
+      setCloseDate(closeDateValue);
+      setCloseTime(moment(closeDateValue).format('HH:mm'));
     }
   }, [endTime]);
 
@@ -482,7 +488,7 @@ export const ModifyClubSettings = (props: {
     let targetDate = closeDate;
     if (closeTime && closeDate) {
       const dateString = new Date(closeDate).toDateString();
-      targetDate = moment(dateString + ' ' + closeTime).valueOf();
+      targetDate = new Date(moment(dateString + ' ' + closeTime).valueOf());
     }
 
     if (targetDate) {
@@ -632,16 +638,10 @@ export const ModifyClubSettings = (props: {
                     ) : (
                       <div>
                         <InputFieldWithDate
-                          selectedDate={
-                            openToDepositsUntilWarning
-                              ? undefined
-                              : isValidDate(openToDepositsUntil)
-                              ? openToDepositsUntil
-                              : undefined
-                          }
-                          onChange={(targetDate): void =>
-                            handleDateChange(targetDate)
-                          }
+                          selectedDate={new Date(closeDate)}
+                          onChange={(targetDate): void => {
+                            handleDateChange(targetDate);
+                          }}
                           infoLabel={
                             openToDepositsUntilWarning &&
                             openToDepositsUntilWarning

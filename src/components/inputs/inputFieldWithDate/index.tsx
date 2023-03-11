@@ -10,7 +10,7 @@ export const InputFieldWithDate = (props: {
   infoLabel?: string;
   isInErrorState?: boolean;
   extraClasses?: string;
-  onChange: (date: Date | null) => void;
+  onChange: (date: Date) => void;
 }) => {
   const {
     selectedDate,
