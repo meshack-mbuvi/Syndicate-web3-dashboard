@@ -377,7 +377,7 @@ export const ModifyClubSettings = (props: {
             18,
             true
           )
-        : +getWeiAmount(String(maxAmountRaising), 18, true);
+        : +getWeiAmount(String(maxAmountRaising), 6, true);
 
       const mintPolicy = new MintPolicyContract(
         currentMintPolicyAddress ?? '',
@@ -902,7 +902,6 @@ export const ModifyClubSettings = (props: {
             </div>
 
             <div className="flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
-              {/* Gas fees */}
               <div className="flex-grow">
                 <div
                   className={`${
