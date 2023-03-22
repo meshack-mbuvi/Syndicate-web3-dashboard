@@ -261,7 +261,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       /* set max token supply to current total supply.
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
-      const _tokenCap = +getWeiAmount(String(totalSupply), 18, true);
+      const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
 
       if (isNewClub) {
         await timeRequirements.closeTimeWindow(

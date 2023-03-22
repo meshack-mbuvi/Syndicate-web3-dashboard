@@ -134,7 +134,7 @@ export const ModifyClubSettings = (props: {
     endTime
   } = erc20Token;
 
-  const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
+  const { symbol: nativeSymbol, exchangeRate: nativeExchangeRate } =
     activeNetwork.nativeCurrency;
   let showMintingForClosedClubDisclaimer = false;
 
@@ -263,12 +263,14 @@ export const ModifyClubSettings = (props: {
       }
       if (+existingMaxAmountRaising === 0 && depositTokenSymbol) {
         if (depositTokenSymbol === nativeSymbol) {
-          setMaxAmountRaising(_maxTotalSupply / nativeEchageRate);
-          setTotalDepositsAmount(_totalSupply / nativeEchageRate);
+          setMaxAmountRaising(_maxTotalSupply / nativeExchangeRate);
+          setTotalDepositsAmount(_totalSupply / nativeExchangeRate);
           dispatch(
-            setExistingMaxAmountRaising(`${_maxTotalSupply / nativeEchageRate}`)
+            setExistingMaxAmountRaising(
+              `${_maxTotalSupply / nativeExchangeRate}`
+            )
           );
-          dispatch(setExistingAmountRaised(_totalSupply / nativeEchageRate));
+          dispatch(setExistingAmountRaised(_totalSupply / nativeExchangeRate));
         } else {
           setMaxAmountRaising(_maxTotalSupply);
           setTotalDepositsAmount(_totalSupply);
@@ -372,13 +374,12 @@ export const ModifyClubSettings = (props: {
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
-        ? +getWeiAmount(
-            (maxAmountRaising * nativeEchageRate).toString(),
+        ? getWeiAmount(
+            (maxAmountRaising * nativeExchangeRate).toString(),
             18,
             true
           )
-        : +getWeiAmount(String(maxAmountRaising), 6, true);
-
+        : getWeiAmount(String(maxAmountRaising), 18, true);
       const mintPolicy = new MintPolicyContract(
         currentMintPolicyAddress ?? '',
         web3,
@@ -729,7 +730,7 @@ export const ModifyClubSettings = (props: {
                             : `Upper limit of the club’s raise, corresponding to a club token supply of ${
                                 depositTokenSymbol === nativeSymbol
                                   ? floatedNumberWithCommas(
-                                      maxAmountRaising * nativeEchageRate
+                                      maxAmountRaising * nativeExchangeRate
                                     )
                                   : floatedNumberWithCommas(maxAmountRaising)
                               } ${symbol}.`

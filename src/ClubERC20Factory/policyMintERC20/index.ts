@@ -83,7 +83,7 @@ export class MintPolicyContract {
     startTime: number,
     endTime: number,
     maxMemberCount: number,
-    maxTotalSupply: number,
+    maxTotalSupply: string,
     onTxConfirm: (transactionHash?: any) => void,
     onTxReceipt: (receipt?: any) => void
   ): Promise<void> {
