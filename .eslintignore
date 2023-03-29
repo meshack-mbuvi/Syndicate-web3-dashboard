@@ -1,3 +1,4 @@
 functions/
 next.config.js
 **/stories/*
+.env.local

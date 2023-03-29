@@ -391,8 +391,7 @@ const ModifyCollectiveSettings: React.FC = () => {
     await updateMixin();
   };
 
-  const handleDisclaimerConfirmation = (e?: any): void => {
-    e.preventDefault();
+  const handleDisclaimerConfirmation = (): void => {
     setIsModalVisible(true);
   };
 

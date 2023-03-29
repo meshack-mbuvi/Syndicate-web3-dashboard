@@ -72,7 +72,7 @@ const CreateCollectiveReview: FC<Props> = ({ setNextBtnDisabled }) => {
   const dispatch = useDispatch();
 
   const launchCollective = () => {
-    if (creationStatus.ipfsHash) {
+    if (!creationStatus.ipfsHash) {
       submitToContracts();
     } else {
       handleSubmit();

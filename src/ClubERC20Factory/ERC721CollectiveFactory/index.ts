@@ -202,7 +202,6 @@ export class ERC721CollectiveFactory extends ContractBase {
     onTxFail: (err: any) => void
   ): Promise<void> {
     const { collectiveName, collectiveSymbol } = collectiveParams;
-
     const { salt, contractAddresses, encodedFunctions } =
       await this.createSetupParams(account, collectiveParams);
 

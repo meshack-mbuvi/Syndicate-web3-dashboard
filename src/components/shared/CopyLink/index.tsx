@@ -1,15 +1,15 @@
+import TokenGateBanner from '@/containers/managerActions/clubTokenMembers/tokenGateBanner';
+import useFeatureFlag from '@/hooks/useFeatureFlag';
+import { FEATURE_FLAGS } from '@/pages/_app';
+import { AppState } from '@/state';
 import { FC } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useSelector } from 'react-redux';
 import {
   CopiedLinkIcon,
   CopyLinkIcon,
   LockIcon
 } from 'src/components/iconWrappers';
-import TokenGateBanner from '@/containers/managerActions/clubTokenMembers/tokenGateBanner';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
-import useFeatureFlag from '@/hooks/useFeatureFlag';
-import { FEATURE_FLAGS } from '@/pages/_app';
 
 interface Props {
   link: string;
